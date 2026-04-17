@@ -581,14 +581,18 @@ NuGet.Packaging.PackageBuilder.PackageAssemblyReferences.set -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder() -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream! stream, string? basePath) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream! stream, string? basePath, System.Func<string!, string!>? propertyProvider) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(System.IO.Stream! stream, string? basePath, System.Func<string!, string!>? propertyProvider, string! versionOverride) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(bool deterministic) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(bool deterministic, NuGet.Common.ILogger! logger) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger! logger) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger! logger, string! versionOverride) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic) -> void
 NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger! logger) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, NuGet.Common.ILogger! logger, string! versionOverride) -> void
+NuGet.Packaging.PackageBuilder.PackageBuilder(string! path, string? basePath, System.Func<string!, string!>? propertyProvider, bool includeEmptyDirectories, bool deterministic, string! versionOverride) -> void
 NuGet.Packaging.PackageBuilder.PackageTypes.get -> System.Collections.Generic.ICollection<NuGet.Packaging.Core.PackageType!>!
 NuGet.Packaging.PackageBuilder.PackageTypes.set -> void
 NuGet.Packaging.PackageBuilder.Populate(NuGet.Packaging.ManifestMetadata! manifestMetadata) -> void
@@ -991,6 +995,8 @@ NuGet.Packaging.Signing.Rfc3161TimestampTokenInfo.Timestamp.get -> System.DateTi
 NuGet.Packaging.Signing.Rfc3161TimestampTokenInfo.Version.get -> int
 NuGet.Packaging.Signing.SignPackageRequest
 NuGet.Packaging.Signing.SignPackageRequest.AdditionalCertificates.get -> System.Security.Cryptography.X509Certificates.X509Certificate2Collection!
+NuGet.Packaging.Signing.SignPackageRequest.AllowUntrustedRoot.get -> bool
+NuGet.Packaging.Signing.SignPackageRequest.AllowUntrustedRoot.set -> void
 NuGet.Packaging.Signing.SignPackageRequest.Certificate.get -> System.Security.Cryptography.X509Certificates.X509Certificate2!
 NuGet.Packaging.Signing.SignPackageRequest.Dispose() -> void
 NuGet.Packaging.Signing.SignPackageRequest.PrivateKey.get -> System.Security.Cryptography.CngKey?
@@ -1536,6 +1542,7 @@ static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.IsUnlicensed(th
 static NuGet.Packaging.Licenses.NuGetLicenseExpressionExtensions.OnEachLeafNode(this NuGet.Packaging.Licenses.NuGetLicenseExpression! expression, System.Action<NuGet.Packaging.Licenses.NuGetLicense!>? licenseProcessor, System.Action<NuGet.Packaging.Licenses.NuGetLicenseException!>? exceptionProcessor) -> void
 static NuGet.Packaging.Manifest.Create(NuGet.Packaging.IPackageMetadata! metadata) -> NuGet.Packaging.Manifest!
 static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream! stream, System.Func<string!, string!>? propertyProvider, bool validateSchema) -> NuGet.Packaging.Manifest!
+static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream! stream, System.Func<string!, string!>? propertyProvider, bool validateSchema, NuGet.Versioning.NuGetVersion? overrideVersion) -> NuGet.Packaging.Manifest!
 static NuGet.Packaging.Manifest.ReadFrom(System.IO.Stream! stream, bool validateSchema) -> NuGet.Packaging.Manifest!
 static NuGet.Packaging.Manifest.Validate(NuGet.Packaging.Manifest! manifest) -> void
 static NuGet.Packaging.ManifestSchemaUtility.GetManifestSchemaSet(string! schemaNamespace) -> System.Xml.Schema.XmlSchemaSet!
@@ -1644,6 +1651,7 @@ static NuGet.Packaging.Signing.AttributeUtility.GetSignatureType(System.Security
 static NuGet.Packaging.Signing.AttributeUtility.GetSignatureType(string! oid) -> NuGet.Packaging.Signing.SignatureType
 static NuGet.Packaging.Signing.AttributeUtility.GetSignatureTypeOid(NuGet.Packaging.Signing.SignatureType signatureType) -> string!
 static NuGet.Packaging.Signing.CertificateChainUtility.GetCertificateChain(System.Security.Cryptography.X509Certificates.X509Certificate2! certificate, System.Security.Cryptography.X509Certificates.X509Certificate2Collection! extraStore, NuGet.Common.ILogger! logger, NuGet.Packaging.Signing.CertificateType certificateType) -> NuGet.Packaging.Signing.IX509CertificateChain!
+static NuGet.Packaging.Signing.CertificateChainUtility.GetCertificateChain(System.Security.Cryptography.X509Certificates.X509Certificate2! certificate, System.Security.Cryptography.X509Certificates.X509Certificate2Collection! extraStore, NuGet.Common.ILogger! logger, NuGet.Packaging.Signing.CertificateType certificateType, bool allowUntrustedRoot) -> NuGet.Packaging.Signing.IX509CertificateChain!
 static NuGet.Packaging.Signing.CertificateChainUtility.GetCertificateChain(System.Security.Cryptography.X509Certificates.X509Chain! x509Chain) -> NuGet.Packaging.Signing.IX509CertificateChain!
 static NuGet.Packaging.Signing.CertificateUtility.GetHash(System.Security.Cryptography.X509Certificates.X509Certificate2! certificate, NuGet.Common.HashAlgorithmName hashAlgorithm) -> byte[]!
 static NuGet.Packaging.Signing.CertificateUtility.GetHashString(System.Security.Cryptography.X509Certificates.X509Certificate2! certificate, NuGet.Common.HashAlgorithmName hashAlgorithm) -> string!

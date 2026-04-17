@@ -209,6 +209,18 @@ namespace NuGet.Protocol
 
                     using (var fileStream = File.OpenRead(packagePath))
                     {
+                        var expectedIdentity = new PackageIdentity(id, version);
+                        try
+                        {
+                            HttpStreamValidation.ValidatePackageIdentity(packagePath, fileStream, expectedIdentity);
+                        }
+                        catch (InvalidDataException ex)
+                        {
+                            logger.LogError(ExceptionUtilities.DisplayMessage(ex));
+                            return false;
+                        }
+                        fileStream.Position = 0;
+
                         await fileStream.CopyToAsync(destination, cancellationToken);
                         ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length));
                         return true;
