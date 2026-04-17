@@ -5,7 +5,7 @@
 // use OS-provided compare-and-wait API.
 #define USE_FUTEX
 #elif TARGET_WINDOWS
-#define USE_FUTEX
+#define USE_EVENT
 #else
 // fallback to monitor (condvar+mutex)
 #define USE_MONITOR

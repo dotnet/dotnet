@@ -240,13 +240,13 @@ namespace System.Threading
                 if (!allowFastWake)
                 {
                     // The caller wants that the thread spends some time waiting as a matter of rate limiting
-                    // thus we will require a 16 usec cooldown before reintroducing the thread.
+                    // thus we will require a 2 usec cooldown before reintroducing the thread.
                     // The sleep/wake transition typically takes care of the wait, but the blocker has fast
                     // wake paths and the underlying OS API may have fast/trivial wake paths as well,
                     // thus fast wakeups can happen and are hard to avoid completely.
                     // So, if a fast wake happened when parking was desired, we hold up the thread a bit
                     // before releasing.
-                    long cooldown = Stopwatch.Frequency * 8 / 1000000;
+                    long cooldown = Stopwatch.Frequency * 2 / 1000000;
                     while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
                     {
                         Thread.UninterruptibleSleep0();
