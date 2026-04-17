@@ -1,7 +1,5 @@
 <Project>
   <PropertyGroup>
-  </PropertyGroup>
-  <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
     <Nullable>enable</Nullable>
