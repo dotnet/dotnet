@@ -56,7 +56,7 @@ extends:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     pool:
       name: NetCore1ESPool-Svc-Internal
-      image: 1es-ubuntu-2204
+      image: build.azurelinux.3.amd64
       os: linux
     containers:
       azurelinuxSourceBuildTestContainer:

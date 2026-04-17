@@ -4,7 +4,7 @@
     <VersionMajor>10</VersionMajor>
     <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>2</VersionSDKMinor>
-    <VersionSDKMinorPatch>3</VersionSDKMinorPatch>
+    <VersionSDKMinorPatch>4</VersionSDKMinorPatch>
     <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
     <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
     <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
