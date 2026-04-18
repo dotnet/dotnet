@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -15,8 +15,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
-
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 
@@ -103,11 +101,20 @@ public class DataCollectionTestCaseEventHandlerTests
     [TestMethod]
     public void ProcessRequestsShouldProcessBeforeTestCaseStartEvent()
     {
-        var message = new Message();
-        message.MessageType = MessageType.DataCollectionTestStart;
-        message.Payload = JToken.FromObject(new TestCaseEndEventArgs());
+        var message = new Message
+        {
+            MessageType = MessageType.DataCollectionTestStart,
+            Version = 7,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DataCollectionTestStart, new TestCaseEndEventArgs(), 7),
+        };
 
-        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(new Message() { MessageType = MessageType.SessionEnd, Payload = "false" });
+        var sessionEndMessage = new Message
+        {
+            MessageType = MessageType.SessionEnd,
+            Version = 7,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.SessionEnd, "false", 7),
+        };
+        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(sessionEndMessage);
 
         var requestHandler = new DataCollectionTestCaseEventHandler(_messageSink.Object, _mockCommunicationManager.Object, _mockDataCollectionManager.Object, _dataSerializer.Object);
         _dataSerializer.Setup(x => x.DeserializePayload<TestCaseStartEventArgs>(message)).Returns(new TestCaseStartEventArgs());
@@ -120,12 +127,21 @@ public class DataCollectionTestCaseEventHandlerTests
     [TestMethod]
     public void ProcessRequestsShouldProcessAfterTestCaseCompleteEvent()
     {
-        var message = new Message();
-        message.MessageType = MessageType.DataCollectionTestEnd;
         var testCase = new TestCase("hello", new Uri("world://how"), "1.dll");
-        message.Payload = JToken.FromObject(new TestResultEventArgs(new VisualStudio.TestPlatform.ObjectModel.TestResult(testCase)));
+        var message = new Message
+        {
+            MessageType = MessageType.DataCollectionTestEnd,
+            Version = 7,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DataCollectionTestEnd, new TestResultEventArgs(new VisualStudio.TestPlatform.ObjectModel.TestResult(testCase)), 7),
+        };
 
-        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(new Message() { MessageType = MessageType.SessionEnd, Payload = "false" });
+        var sessionEndMessage = new Message
+        {
+            MessageType = MessageType.SessionEnd,
+            Version = 7,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.SessionEnd, "false", 7),
+        };
+        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(sessionEndMessage);
 
         var requestHandler = new DataCollectionTestCaseEventHandler(_messageSink.Object, _mockCommunicationManager.Object, _mockDataCollectionManager.Object, _dataSerializer.Object);
         _dataSerializer.Setup(x => x.DeserializePayload<TestCaseEndEventArgs>(message)).Returns(new TestCaseEndEventArgs());

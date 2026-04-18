@@ -634,14 +634,14 @@ public class TrxLoggerTests
     public void DefaultTrxFileNameShouldIncludeFrameworkWhenAvailable()
     {
         _parameters.Remove(TrxLoggerConstants.LogFileNameKey);
-        _parameters[DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v10.0";
+        _parameters[DefaultLoggerParameterNames.TargetFramework] = ".NETCoreApp,Version=v11.0";
         _testableTrxLogger.Initialize(_events.Object, _parameters);
 
         MakeTestRunComplete();
 
         var fileName = Path.GetFileName(_testableTrxLogger.TrxFile);
         Assert.IsNotNull(fileName);
-        Assert.Contains("_net10.0", fileName, $"Expected TFM 'net10.0' in filename but got: {fileName}");
+        Assert.Contains("_net11.0", fileName, $"Expected TFM 'net11.0' in filename but got: {fileName}");
         Assert.EndsWith(".trx", fileName, $"Expected .trx extension but got: {fileName}");
     }
 

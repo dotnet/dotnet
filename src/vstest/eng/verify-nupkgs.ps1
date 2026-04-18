@@ -14,19 +14,22 @@ Param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+# Import binding redirect verification.
+. "$PSScriptRoot/verify-binding-redirects.ps1"
+
 function Verify-Nuget-Packages {
     Write-Host "Starting Verify-Nuget-Packages."
     $expectedNumOfFiles = @{
         "Microsoft.CodeCoverage"                      = 76
         "Microsoft.NET.Test.Sdk"                      = 26
-        "Microsoft.TestPlatform"                      = 545
-        "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI" = 388
+        "Microsoft.TestPlatform"                      = 543
+        "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI" = 387
         "Microsoft.TestPlatform.Build"                = 21
-        "Microsoft.TestPlatform.CLI"                  = 483
+        "Microsoft.TestPlatform.CLI"                  = 481
         "Microsoft.TestPlatform.Extensions.TrxLogger" = 35
         "Microsoft.TestPlatform.ObjectModel"          = 93
         "Microsoft.TestPlatform.AdapterUtilities"     = 62
-        "Microsoft.TestPlatform.Portable"             = 609
+        "Microsoft.TestPlatform.Portable"             = 606
         "Microsoft.TestPlatform.TestHost"             = 64
         "Microsoft.TestPlatform.TranslationLayer"     = 175
         "Microsoft.TestPlatform.Internal.Uwp"         = 39
@@ -317,3 +320,6 @@ Start-sleep -Seconds 10
 # skipped, it is hard to find the right dumpbin.exe and corflags tools on server
 # Verify-NugetPackageExe -configuration $configuration -UnzipNugetPackages $unzipNugetPackages
 Verify-NugetPackageVersion -configuration $configuration -UnzipNugetPackages $unzipNugetPackages
+
+Write-Host "`nVerifying binding redirects..."
+Verify-BindingRedirects -PackageDirs $unzipNugetPackages

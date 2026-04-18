@@ -174,26 +174,26 @@ src/sdk/template_feed/Microsoft.DotNet.Common.ProjectTemplates.11.0/content/*/.t
 src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-library
 
 #
-# source-build-reference-packages
+# source-build-assets
 #
 
 # Contributor agreement (DCO), not a software license
-src/source-build-reference-packages/src/externalPackages/src/antlr4/developer-cert-of-origin.txt|dco-1.1
+src/source-build-assets/src/externalPackages/src/antlr4/developer-cert-of-origin.txt|dco-1.1
 
 # False positive
-src/source-build-reference-packages/src/externalPackages/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown-license-reference
-src/source-build-reference-packages/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
-src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
-src/source-build-reference-packages/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
-src/source-build-reference-packages/src/externalPackages/src/spectre-console/README.md|unknown-license-reference
-src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
-src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
-src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.netcore.*/1.*/ThirdPartyNotices.txt|unknown-license-reference
-src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/*/1033/System.Security.Permissions.xml|unknown-license-reference
+src/source-build-assets/src/externalPackages/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown-license-reference
+src/source-build-assets/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
+src/source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
+src/source-build-assets/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
+src/source-build-assets/src/externalPackages/src/spectre-console/README.md|unknown-license-reference
+src/source-build-assets/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
+src/source-build-assets/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
+src/source-build-assets/src/textOnlyPackages/src/microsoft.netcore.*/1.*/ThirdPartyNotices.txt|unknown-license-reference
+src/source-build-assets/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/*/1033/System.Security.Permissions.xml|unknown-license-reference
 
 # Contains references to licenses which are not applicable to the source
-src/source-build-reference-packages/src/packageSourceGenerator/PackageSourceGeneratorTask/RewriteNuspec.cs|unknown-license-reference,ms-net-library-2018-11
-src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/windowsdesktop/1033/PresentationCore.xml|proprietary-license
+src/source-build-assets/src/packageSourceGenerator/PackageSourceGeneratorTask/RewriteNuspec.cs|unknown-license-reference,ms-net-library-2018-11
+src/source-build-assets/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/windowsdesktop/1033/PresentationCore.xml|proprietary-license
 
 #
 # sourcelink

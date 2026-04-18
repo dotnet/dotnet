@@ -625,21 +625,12 @@ public class TestRunRequest : ITestRunRequest, IInternalTestRunEventsHandler
                 testRunCompletePayload.TestRunCompleteArgs.DiscoveredExtensions);
         }
 
-        if (message is VersionedMessage message1)
-        {
-            var version = message1.Version;
+        var version = message?.Version ?? 0;
 
-            rawMessage = _dataSerializer.SerializePayload(
-                MessageType.ExecutionComplete,
-                testRunCompletePayload,
-                version);
-        }
-        else
-        {
-            rawMessage = _dataSerializer.SerializePayload(
-                MessageType.ExecutionComplete,
-                testRunCompletePayload);
-        }
+        rawMessage = _dataSerializer.SerializePayload(
+            MessageType.ExecutionComplete,
+            testRunCompletePayload,
+            version);
 
         return rawMessage;
     }

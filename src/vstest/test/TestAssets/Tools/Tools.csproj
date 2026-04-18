@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net11.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>hanging_child</RootNamespace>
   </PropertyGroup>

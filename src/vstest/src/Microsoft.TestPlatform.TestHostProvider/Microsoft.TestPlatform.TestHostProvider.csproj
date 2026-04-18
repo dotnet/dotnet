@@ -26,9 +26,12 @@
       <FromP2P>true</FromP2P>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />
+  </ItemGroup>
+  <!-- Jsonite source for .NET Framework builds (no STJ dependency) -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <Compile Include="..\Microsoft.TestPlatform.CommunicationUtilities\Json\Jsonite\Jsonite.cs" Link="Json\Jsonite\Jsonite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="NullableHelpers.cs">

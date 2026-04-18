@@ -7,7 +7,6 @@
     <dependencies>
       <group targetFramework="net8.0">
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
       </group>
 
       <group targetFramework="net462"></group>

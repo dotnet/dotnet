@@ -134,7 +134,7 @@ public class CompatibilityRowsBuilder
 
         // Figure out the distinct rows, and shrink the values, so if we have multiple rows that use the same versions and same setup, and only differ in how the version types
         // are called (e.g. Latest and LatestStable have the same version), then we get just single row, with description for both.
-        // like RunMultipleTestAssemblies1 (Row: 0, Matrix, Runner = net10.0, TargetFramework = net462, InIsolation,  vstest.console = 18.6.0-dev [Latest],  Testhost = 18.6.0-dev [Latest],  MSTest = 3.9.3 [LatestPreview, LatestStable])
+        // like RunMultipleTestAssemblies1 (Row: 0, Matrix, Runner = net10.0, TargetFramework = net481, InIsolation,  vstest.console = 18.6.0-dev [Latest],  Testhost = 18.6.0-dev [Latest],  MSTest = 3.9.3 [LatestPreview, LatestStable])
         var distinctRows = new Dictionary<string, RunnerInfo>();
         foreach (var r in rows)
         {
@@ -272,13 +272,13 @@ public class CompatibilityRowsBuilder
         // Runs outside of process, test both tfms of testhost.
         foreach (var hostFramework in _hostFrameworks)
         {
-            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.DEFAULT_RUNNER_NETFX, AcceptanceTestBase.LATEST, hostFramework, AcceptanceTestBase.LATESTSTABLE, AcceptanceTestBase.MSTEST, inIsolation: true);
+            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.RUNNER_NETFX, AcceptanceTestBase.LATEST, hostFramework, AcceptanceTestBase.LATESTSTABLE, AcceptanceTestBase.MSTEST, inIsolation: true);
         }
 
         if (inProcess)
         {
             // Runs in process. We specify the testhost, but it has no impact.
-            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.DEFAULT_RUNNER_NETFX, AcceptanceTestBase.LATEST, AcceptanceTestBase.DEFAULT_HOST_NETFX, AcceptanceTestBase.LATESTSTABLE, AcceptanceTestBase.MSTEST, inIsolation: false);
+            AddRow(dataRows, "VSIX", AcceptanceTestBase.LATESTVSIX, AcceptanceTestBase.RUNNER_NETFX, AcceptanceTestBase.LATEST, AcceptanceTestBase.HOST_NETFX, AcceptanceTestBase.LATESTSTABLE, AcceptanceTestBase.MSTEST, inIsolation: false);
         }
     }
 

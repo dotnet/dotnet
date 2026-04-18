@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 
@@ -106,7 +105,7 @@ public class DataCollectionTestCaseEventSenderTests
         var testCaseEndEventArgs = new TestCaseEndEventArgs();
 
         var attachmentSet = new AttachmentSet(new Uri("my://attachment"), "displayname");
-        _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Returns(new Message() { MessageType = MessageType.DataCollectionTestEndResult, Payload = JToken.FromObject(new Collection<AttachmentSet>() { attachmentSet }) });
+        _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Returns(new Message() { MessageType = MessageType.DataCollectionTestEndResult, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DataCollectionTestEndResult, new Collection<AttachmentSet>() { attachmentSet }, 7) });
         var attachments = _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs)!;
 
         Assert.AreEqual(attachments[0].Uri, attachmentSet.Uri);

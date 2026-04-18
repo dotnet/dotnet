@@ -75,7 +75,7 @@ public class DataCollectionTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var arguments = PrepareArguments(GetTestDllForFramework("AppDomainGetAssembliesTestProject.dll", DEFAULT_HOST_NETCORE), string.Empty, string.Empty, FrameworkArgValue, resultsDirectory: TempDirectory.Path);
+        var arguments = PrepareArguments(GetTestDllForFramework("AppDomainGetAssembliesTestProject.dll", HOST_NET), string.Empty, string.Empty, FrameworkArgValue, resultsDirectory: TempDirectory.Path);
 
         InvokeVsTest(arguments);
         ValidateSummaryStatus(1, 0, 0);

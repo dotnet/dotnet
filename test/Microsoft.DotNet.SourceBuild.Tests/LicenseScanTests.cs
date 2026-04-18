@@ -141,7 +141,7 @@ public class LicenseScanTests : TestBase
 
         // Derive target name for baseline file naming from the relative scan path.
         // For "src/runtime" -> "runtime"
-        // For "src/source-build-reference-packages/src/externalPackages" -> "source-build-reference-packages.externalPackages"
+        // For "src/source-build-assets/src/externalPackages" -> "source-build-assets.externalPackages"
         string repoName = _relativeScanPath.Split('/')[1];
         string dirName = new DirectoryInfo(normalizedPath).Name;
         _targetName = dirName == repoName ? repoName : $"{repoName}.{dirName}";
