@@ -177,8 +177,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         }
 
         Assert.AreEqual("Completed", _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics![TelemetryDataConstants.AttachmentsProcessingState]);
-        Assert.AreEqual(2L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
-        Assert.AreEqual(1L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
+        Assert.AreEqual(2, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
+        Assert.AreEqual(1, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
         Assert.IsTrue(_testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics.ContainsKey(TelemetryDataConstants.TimeTakenInSecForAttachmentsProcessing));
 
         Assert.IsTrue(File.Exists(_runEventHandler.Attachments.First().Attachments.First().Uri.LocalPath));
@@ -287,8 +287,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         }
 
         Assert.AreEqual("Completed", _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics![TelemetryDataConstants.AttachmentsProcessingState]);
-        Assert.AreEqual(3L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
-        Assert.AreEqual(1L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
+        Assert.AreEqual(3, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
+        Assert.AreEqual(1, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
         Assert.IsTrue(_testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics.ContainsKey(TelemetryDataConstants.TimeTakenInSecForAttachmentsProcessing));
 
         Assert.IsTrue(File.Exists(_runEventHandler.Attachments.First().Attachments.First().Uri.LocalPath));
@@ -350,8 +350,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         }
 
         Assert.AreEqual("Completed", _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics![TelemetryDataConstants.AttachmentsProcessingState]);
-        Assert.AreEqual(2L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
-        Assert.AreEqual(1L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
+        Assert.AreEqual(2, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
+        Assert.AreEqual(1, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
         Assert.IsTrue(_testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics.ContainsKey(TelemetryDataConstants.TimeTakenInSecForAttachmentsProcessing));
 
         Assert.IsTrue(File.Exists(_runEventHandler.Attachments.First().Attachments.First().Uri.LocalPath));
@@ -413,8 +413,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         }
 
         Assert.AreEqual("Completed", _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics![TelemetryDataConstants.AttachmentsProcessingState]);
-        Assert.AreEqual(4L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
-        Assert.AreEqual(1L, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
+        Assert.AreEqual(4, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]);
+        Assert.AreEqual(1, _testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics[TelemetryDataConstants.NumberOfAttachmentsAfterProcessing]);
         Assert.IsTrue(_testRunAttachmentsProcessingEventHandler.CompleteArgs.Metrics.ContainsKey(TelemetryDataConstants.TimeTakenInSecForAttachmentsProcessing));
 
         Assert.IsTrue(File.Exists(_runEventHandler.Attachments.First().Attachments.First().Uri.LocalPath));

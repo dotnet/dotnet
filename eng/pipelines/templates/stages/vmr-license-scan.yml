@@ -31,7 +31,7 @@ stages:
 
         # Repos whose src/ subdirectories should be scanned as separate jobs.
         # The repo root is also scanned with --ignore to skip subdirectories covered by sub-scans.
-        splitRepos="source-build-reference-packages"
+        splitRepos="source-build-assets"
 
         # If the repo name is provided, only scan that repo.
         if [ ! -z "$specificRepoName" ]; then

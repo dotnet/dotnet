@@ -101,11 +101,13 @@ if ($performanceTest) {
     # we need to run all, but we don't have a filter for uncategorized tests, https://github.com/microsoft/testfx/issues/5136
     # so we simply don't provide an include filter.
     $filters += "TestCategory=TelemetryPerf"
+    $filters += "TestCategory=Performance"
   }
   
 }
 else {
   $filters += "TestCategory!=TelemetryPerf"
+  $filters += "TestCategory!=Performance"
 }
 
 $null = $PSBoundParameters.Remove("filter")

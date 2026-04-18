@@ -90,8 +90,8 @@
             "defaultRemote": "https://github.com/dotnet/sdk"
         },
         {
-            "name": "source-build-reference-packages",
-            "defaultRemote": "https://github.com/dotnet/source-build-reference-packages",
+            "name": "source-build-assets",
+            "defaultRemote": "https://github.com/dotnet/source-build-assets"
             "exclude": [
               // Contains disallowed binaries
               "src/externalPackages/src/spectre-console/docs/**/*",

@@ -466,7 +466,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
             LastDiscoveredTests = null,
             TotalTests = 1
         };
-        var completeMessage = new Message() { MessageType = MessageType.DiscoveryComplete, Payload = null };
+        var completeMessage = new Message() { MessageType = MessageType.DiscoveryComplete };
         mockTestDiscoveryEventsHandler.Setup(mh => mh.HandleDiscoveredTests(It.IsAny<IEnumerable<TestCase>>())).Callback(
             () =>
             {

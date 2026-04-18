@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -55,32 +55,32 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [DataRow("net462")]
-    [DataRow("net8.0")]
+    [DataRow("net481")]
+    [DataRow("net11.0")]
     public void GetArchitectureShouldReturnCorrentArchForx64Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProject3", framework, Architecture.X64, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
     }
 
     [TestMethod]
-    [DataRow("net462")]
-    [DataRow("net8.0")]
+    [DataRow("net481")]
+    [DataRow("net11.0")]
     public void GetArchitectureShouldReturnCorrentArchForx86Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProjectx86", framework, Architecture.X86, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
     }
 
     [TestMethod]
-    [DataRow("net462")]
-    [DataRow("net8.0")]
+    [DataRow("net481")]
+    [DataRow("net11.0")]
     public void GetArchitectureShouldReturnCorrentArchForAnyCpuAssembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProject", framework, Architecture.AnyCPU, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
     }
 
     [TestMethod]
-    [DataRow("net462")]
-    [DataRow("net8.0")]
+    [DataRow("net481")]
+    [DataRow("net11.0")]
     public void GetArchitectureShouldReturnCorrentArchForArm64Assembly(string framework)
     {
         TestDotnetAssemblyArch("SimpleTestProjectARM64", framework, Architecture.ARM64, expectedElapsedTime: ExpectedTimeForFindingArchForDotNetAssembly);
@@ -108,8 +108,8 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [DataRow("net462")]
-    [DataRow("net8.0")]
+    [DataRow("net481")]
+    [DataRow("net11.0")]
     public void GetFrameWorkForDotNetAssembly(string framework)
     {
         var expectedElapsedTime = 5;
@@ -119,15 +119,15 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
         var actualFx = _assemblyMetadataProvider.GetFrameworkName(assemblyPath);
         stopWatch.Stop();
 
-        if (framework.Equals("net462"))
+        if (framework.StartsWith("net4"))
         {
             // Reason is unknown for why full framework it is taking more time. Need to investigate.
             expectedElapsedTime = 100;
-            Assert.AreEqual(".NETFramework,Version=v4.6.2", actualFx.FullName);
+            Assert.AreEqual(".NETFramework,Version=v4.8.1", actualFx.FullName);
         }
         else
         {
-            Assert.AreEqual(".NETCoreApp,Version=v8.0", actualFx.FullName);
+            Assert.AreEqual(".NETCoreApp,Version=v11.0", actualFx.FullName);
         }
 
         Console.WriteLine("Framework:{0}, {1}", framework, string.Format(CultureInfo.CurrentCulture, PerfAssertMessageFormat, expectedElapsedTime, stopWatch.ElapsedMilliseconds));

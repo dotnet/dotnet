@@ -10,46 +10,38 @@ namespace Microsoft.TestPlatform.TestUtilities;
 
 public class AcceptanceTestBase : IntegrationTestBase
 {
-    public const string DesktopTargetFramework = Net462TargetFramework;
+    // Target framework constants for test assets.
     public const string Net462TargetFramework = "net462";
-    public const string Net47TargetFramework = "net47";
-    public const string Net471TargetFramework = "net471";
-    public const string Net472TargetFramework = "net472";
-    public const string Net48TargetFramework = "net48";
-    public const string Core80TargetFramework = "net8.0";
-    public const string Core90TargetFramework = "net9.0";
-    public const string Core10TargetFramework = "net10.0";
+    public const string Net481TargetFramework = "net481";
     public const string Core11TargetFramework = "net11.0";
 
-    public const string DesktopFrameworkArgValue = Net462FrameworkArgValue;
-    public const string Net462FrameworkArgValue = ".NETFramework,Version=v4.6.2";
-    public const string Net47FrameworkArgValue = ".NETFramework,Version=v4.7";
-    public const string Net471FrameworkArgValue = ".NETFramework,Version=v4.7.1";
-    public const string Net472FrameworkArgValue = ".NETFramework,Version=v4.7.2";
-    public const string Net48FrameworkArgValue = ".NETFramework,Version=v4.8";
+    public const string DesktopTargetFramework = Net481TargetFramework;
 
-    public const string Core80FrameworkArgValue = ".NETCoreApp,Version=v8.0";
-    public const string Core90FrameworkArgValue = ".NETCoreApp,Version=v9.0";
-    public const string Core10FrameworkArgValue = ".NETCoreApp,Version=v10.0";
+    // Framework argument values for vstest.console --framework parameter.
+    public const string Net462FrameworkArgValue = ".NETFramework,Version=v4.6.2";
+    public const string Net481FrameworkArgValue = ".NETFramework,Version=v4.8.1";
     public const string Core11FrameworkArgValue = ".NETCoreApp,Version=v11.0";
+
+    public const string DesktopFrameworkArgValue = Net481FrameworkArgValue;
 
     public const string DesktopRunnerTargetRuntime = "win7-x64";
     public const string CoreRunnerTargetRuntime = "";
     public const string InIsolation = "/InIsolation";
 
-    public const string NETFX462_48 = "net462;net472;net48";
-    public const string NETFX462_NET11 = "net462;net472;net48;net8.0;net9.0;net10.0;net11.0";
-    public const string DEFAULT_RUNNER_NETFX = Net48TargetFramework;
-    public const string DEFAULT_HOST_NETFX = Net462TargetFramework;
-    public const string DEFAULT_RUNNER_NETCORE = Core80TargetFramework;
-    public const string DEFAULT_HOST_NETCORE = Core80TargetFramework;
-    /// <summary>
-    /// Our current defaults for .NET and .NET Framework.
-    /// </summary>
-    public const string DEFAULT_HOST_NETFX_AND_NET = "net462;net8.0";
-    public const string DEFAULT_HOST_NET = "net8.0";
-    public const string DEFAULT_RUNNER_NETFX_AND_NET = "net48;net10.0";
-    public const string DEFAULT_RUNNER_NET = "net10.0";
+    // Test asset target framework lists.
+    public const string NETFX = Net481TargetFramework;
+    public const string NETFX_AND_NET = "net481;net11.0";
+
+    // Runner frameworks.
+    public const string RUNNER_NETFX = Net481TargetFramework;
+    public const string RUNNER_NET = Core11TargetFramework;
+    public const string RUNNER_NETFX_AND_NET = "net481;net11.0";
+
+    // Host frameworks (test asset TFMs).
+    public const string HOST_NETFX = Net481TargetFramework;
+    public const string HOST_NET = Core11TargetFramework;
+    public const string HOST_NETFX_AND_NET = "net481;net11.0";
+
     public const string LATEST_TO_LEGACY = "Latest;LatestPreview;LatestStable;RecentStable;MostDownloaded;PreviousStable;LegacyStable";
     public const string LATEST_TO_RECENT_STABLE = "Latest;LatestPreview;LatestStable;RecentStable";
     public const string LATESTPREVIEW_TO_LEGACY = "LatestPreview;LatestStable;RecentStable;MostDownloaded;PreviousStable;LegacyStable";
@@ -81,15 +73,9 @@ public class AcceptanceTestBase : IntegrationTestBase
     protected static string DeriveFrameworkArgValue(IntegrationTestEnvironment testEnvironment)
         => testEnvironment.TargetFramework switch
         {
-            Core80TargetFramework => Core80FrameworkArgValue,
-            Core90TargetFramework => Core90FrameworkArgValue,
-            Core10TargetFramework => Core10FrameworkArgValue,
             Core11TargetFramework => Core11FrameworkArgValue,
             Net462TargetFramework => Net462FrameworkArgValue,
-            Net47TargetFramework => Net47FrameworkArgValue,
-            Net471TargetFramework => Net471FrameworkArgValue,
-            Net472TargetFramework => Net472FrameworkArgValue,
-            Net48TargetFramework => Net48FrameworkArgValue,
+            Net481TargetFramework => Net481FrameworkArgValue,
             _ => throw new NotSupportedException($"{testEnvironment.TargetFramework} is not supported TargetFramework value."),
         };
 

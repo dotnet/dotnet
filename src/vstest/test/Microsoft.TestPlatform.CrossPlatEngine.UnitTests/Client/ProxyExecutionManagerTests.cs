@@ -636,7 +636,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
             RunAttachments = null,
             TestRunCompleteArgs = null
         };
-        var completeMessage = new Message() { MessageType = MessageType.ExecutionComplete, Payload = null };
+        var completeMessage = new Message() { MessageType = MessageType.ExecutionComplete };
         SetupChannelMessage(MessageType.StartTestExecutionWithTests, MessageType.TestRunStatsChange, testRunChangedArgs);
 
         mockTestRunEventsHandler.Setup(mh => mh.HandleTestRunStatsChange(It.IsAny<TestRunChangedEventArgs>())).Callback(
@@ -706,7 +706,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
             RunAttachments = null,
             TestRunCompleteArgs = null
         };
-        var completeMessage = new Message() { MessageType = MessageType.ExecutionComplete, Payload = null };
+        var completeMessage = new Message() { MessageType = MessageType.ExecutionComplete };
         SetupChannelMessage(MessageType.StartTestExecutionWithTests,
             MessageType.LaunchAdapterProcessWithDebuggerAttached, payload);
 

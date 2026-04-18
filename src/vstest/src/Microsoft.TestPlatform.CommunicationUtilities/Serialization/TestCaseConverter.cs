@@ -1,72 +1,71 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+#if NETCOREAPP
 
 using System;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 
 /// <summary>
 /// Converter used by v1 protocol serializer to serialize TestCase object to and from v1 json
 /// </summary>
-public class TestCaseConverter : JsonConverter
+internal class TestCaseConverter : JsonConverter<TestCase>
 {
     /// <inheritdoc/>
-    public override bool CanConvert(Type objectType)
-    {
-        return typeof(TestCase) == objectType;
-    }
-
-    /// <inheritdoc/>
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    public override TestCase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var testCase = new TestCase();
 
-        var data = JObject.Load(reader);
-        var properties = data["Properties"];
+        using var doc = JsonDocument.ParseValue(ref reader);
+        var data = doc.RootElement;
 
-        if (properties == null || !properties.HasValues)
+        if (!data.TryGetProperty("Properties", out var properties) || properties.GetArrayLength() == 0)
         {
             return testCase;
         }
 
         // Every class that inherits from TestObject uses a properties store for <Property, Object>
         // key value pairs.
-        foreach (var property in properties.Values<JToken>())
+        foreach (var property in properties.EnumerateArray())
         {
-            var testProperty = property?["Key"]?.ToObject<TestProperty>(serializer);
+            if (!property.TryGetProperty("Key", out var keyElement))
+            {
+                return null;
+            }
 
-            if (testProperty == null)
+            var testProperty = JsonSerializer.Deserialize<TestProperty>(keyElement.GetRawText(), options);
+
+            if (testProperty is null)
             {
                 return null;
             }
 
             // Let the null values be passed in as null data
-            var token = property?["Value"];
-            string? propertyData = null;
-
-            if (token == null)
+            if (!property.TryGetProperty("Value", out var token))
             {
                 return null;
             }
 
-            if (token.Type != JTokenType.Null)
+            string? propertyData = null;
+
+            if (token.ValueKind != JsonValueKind.Null)
             {
                 // If the property is already a string. No need to convert again.
-                if (token.Type == JTokenType.String)
+                if (token.ValueKind == JsonValueKind.String)
                 {
-                    propertyData = token.ToObject<string>(serializer);
+                    propertyData = token.GetString();
                 }
                 else
                 {
                     // On deserialization, the value for each TestProperty is always a string. It is up
                     // to the consumer to deserialize it further as appropriate.
-                    propertyData = token.ToString(Formatting.None).Trim('"');
+                    propertyData = token.GetRawText().Trim('"');
                 }
             }
 
@@ -99,16 +98,9 @@ public class TestCaseConverter : JsonConverter
     }
 
     /// <inheritdoc/>
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, TestCase value, JsonSerializerOptions options)
     {
-        if (value == null)
-        {
-            return;
-        }
-
         // P2 to P1
-        var testCase = (TestCase)value;
-
         writer.WriteStartObject();
         writer.WritePropertyName("Properties");
         writer.WriteStartArray();
@@ -119,59 +111,62 @@ public class TestCaseConverter : JsonConverter
 
         // TestCase.FullyQualifiedName
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.FullyQualifiedName, serializer);
-        writer.WriteValue(testCase.FullyQualifiedName);
+        WriteProperty(writer, TestCaseProperties.FullyQualifiedName, options);
+        writer.WriteStringValue(value.FullyQualifiedName);
         writer.WriteEndObject();
 
         // TestCase.ExecutorUri
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.ExecutorUri, serializer);
-        writer.WriteValue(testCase.ExecutorUri.OriginalString);
+        WriteProperty(writer, TestCaseProperties.ExecutorUri, options);
+        writer.WriteStringValue(value.ExecutorUri.OriginalString);
         writer.WriteEndObject();
 
         // TestCase.Source
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.Source, serializer);
-        writer.WriteValue(testCase.Source);
+        WriteProperty(writer, TestCaseProperties.Source, options);
+        writer.WriteStringValue(value.Source);
         writer.WriteEndObject();
 
         // TestCase.CodeFilePath
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.CodeFilePath, serializer);
-        writer.WriteValue(testCase.CodeFilePath);
+        WriteProperty(writer, TestCaseProperties.CodeFilePath, options);
+        writer.WriteStringValue(value.CodeFilePath);
         writer.WriteEndObject();
 
         // TestCase.DisplayName
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.DisplayName, serializer);
-        writer.WriteValue(testCase.DisplayName);
+        WriteProperty(writer, TestCaseProperties.DisplayName, options);
+        writer.WriteStringValue(value.DisplayName);
         writer.WriteEndObject();
 
         // TestCase.Id
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.Id, serializer);
-        writer.WriteValue(testCase.Id);
+        WriteProperty(writer, TestCaseProperties.Id, options);
+        writer.WriteStringValue(value.Id.ToString());
         writer.WriteEndObject();
 
         // TestCase.LineNumber
         writer.WriteStartObject();
-        AddProperty(writer, TestCaseProperties.LineNumber, serializer);
-        writer.WriteValue(testCase.LineNumber);
+        WriteProperty(writer, TestCaseProperties.LineNumber, options);
+        writer.WriteNumberValue(value.LineNumber);
         writer.WriteEndObject();
 
-        foreach (var property in testCase.GetProperties())
+        foreach (var property in value.GetProperties())
         {
-            serializer.Serialize(writer, property);
+            JsonSerializer.Serialize(writer, property, options);
         }
 
         writer.WriteEndArray();
         writer.WriteEndObject();
     }
 
-    private static void AddProperty(JsonWriter writer, TestProperty property, JsonSerializer serializer)
+    private static void WriteProperty(Utf8JsonWriter writer, TestProperty property, JsonSerializerOptions options)
     {
         writer.WritePropertyName("Key");
-        serializer.Serialize(writer, property);
+        JsonSerializer.Serialize(writer, property, options);
         writer.WritePropertyName("Value");
     }
 }
+
+#endif
+

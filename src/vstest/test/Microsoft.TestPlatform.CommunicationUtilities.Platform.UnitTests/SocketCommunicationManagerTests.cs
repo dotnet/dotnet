@@ -24,7 +24,7 @@ namespace Microsoft.TestPlatform.CommunicationUtilities.PlatformTests;
 [TestClass]
 public class SocketCommunicationManagerTests : IDisposable
 {
-    private const string TestDiscoveryStartMessageWithNullPayload = "{\"MessageType\":\"TestDiscovery.Start\",\"Payload\":null}";
+    private const string TestDiscoveryStartMessageWithNullPayload = "{\"MessageType\":\"TestDiscovery.Start\"}";
 
     private const string TestDiscoveryStartMessageWithDummyPayload = "{\"MessageType\":\"TestDiscovery.Start\",\"Payload\":\"Dummy Payload\"}";
 
@@ -230,10 +230,9 @@ public class SocketCommunicationManagerTests : IDisposable
         var message = _communicationManager.ReceiveMessage();
 
         Assert.AreEqual(MessageType.StartDiscovery, message?.MessageType);
-        // Payload property is present on the Message, but we don't populate it in the newer versions,
-        // instead we populate internal field with the rawMessage, and wait until Serializer.DeserializePayload<T>(message)
-        // is called by the message consumer. This avoids deserializing the payload when we just want to route the message.
-        Assert.IsNull(message!.Payload);
+        // RawMessage contains the full JSON wire data, but the message itself stores
+        // only the header fields (MessageType, Version). Payload is deserialized on demand.
+        Assert.IsNotNull(message!.RawMessage);
     }
 
     [TestMethod]
@@ -243,13 +242,11 @@ public class SocketCommunicationManagerTests : IDisposable
         WriteToStream(client.GetStream(), TestDiscoveryStartMessageWithVersionAndPayload);
 
         var message = await _communicationManager.ReceiveMessageAsync(CancellationToken.None);
-        var versionedMessage = (VersionedMessage)message!;
-        Assert.AreEqual(MessageType.StartDiscovery, versionedMessage.MessageType);
-        Assert.AreEqual(2, versionedMessage.Version);
-        // Payload property is present on the Message, but we don't populate it in the newer versions,
-        // instead we populate internal field with the rawMessage, and wait until Serializer.DeserializePayload<T>(message)
-        // is called by the message consumer. This avoids deserializing the payload when we just want to route the message.
-        Assert.IsNull(versionedMessage.Payload);
+        Assert.AreEqual(MessageType.StartDiscovery, message!.MessageType);
+        Assert.AreEqual(2, message.Version);
+        // RawMessage contains the full JSON wire data, but the message itself stores
+        // only the header fields (MessageType, Version). Payload is deserialized on demand.
+        Assert.IsNotNull(message.RawMessage);
     }
 
     [TestMethod]

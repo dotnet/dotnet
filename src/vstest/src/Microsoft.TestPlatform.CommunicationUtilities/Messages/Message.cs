@@ -1,37 +1,35 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 /// <summary>
-/// Construct used for communication
+/// Represents a communication message exchanged between vstest processes.
+/// Contains the message type (routing key), protocol version, and the raw
+/// JSON wire data. The payload is not deserialized until explicitly requested
+/// via <see cref="JsonDataSerializer.DeserializePayload{T}"/>.
 /// </summary>
 public class Message
 {
     /// <summary>
-    /// Gets or sets the message type.
+    /// Gets or sets the message type (routing key).
     /// </summary>
     public string? MessageType { get; set; }
 
     /// <summary>
-    /// Gets or sets the payload.
+    /// Gets or sets the protocol version.
     /// </summary>
-    // TODO: Our public contract says that we should be able to communicate over JSON, but we should not be stopping ourselves from
-    // negotiating a different protocol. Or using a different serialization library than NewtonsoftJson. Check why this is published as JToken
-    // and not as a string.
-    public JToken? Payload { get; set; }
+    public int Version { get; set; }
 
     /// <summary>
-    /// To string implementation.
+    /// Gets or sets the raw JSON message as received from the wire.
+    /// This contains the full message including MessageType, Version, and Payload.
     /// </summary>
-    /// <returns> The <see cref="string"/>. </returns>
+    public string? RawMessage { get; set; }
+
+    /// <inheritdoc/>
     public override string ToString()
     {
-        // TODO: Review where this is used, we should avoid extensive serialization and deserialization,
-        // and this might be happening in multiple places that are not the edge of our process.
-        return $"({MessageType}) -> {(Payload == null ? "null" : Payload.ToString(Formatting.Indented))}";
+        return RawMessage ?? "{}";
     }
 }
