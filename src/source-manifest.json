@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.27-servicing.26215.16",
+      "packageVersion": "8.0.27-servicing.26217.6",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "a24cb2a2a2e182ca95a1db21f4fa5597f86b7c9f"
+      "commitSha": "3d60b49231dfa6deeceac74a484a32e09426844b"
     },
     {
       "packageVersion": "0.11.4-alpha.26158.1",
