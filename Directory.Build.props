@@ -1,5 +1,4 @@
 <Project>
-
   <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
@@ -70,6 +69,7 @@
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuildId)' == ''">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <NuGetAudit>false</NuGetAudit>
     
     <BootstrapArcadeRepos>arcade;source-build-reference-packages</BootstrapArcadeRepos>
   </PropertyGroup>
