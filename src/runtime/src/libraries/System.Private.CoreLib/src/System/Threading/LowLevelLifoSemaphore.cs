@@ -52,6 +52,7 @@ namespace System.Threading
         private sealed class LifoWaitNode : LowLevelThreadBlocker
         {
             internal LifoWaitNode? _next;
+            internal long _wakeTick;
         }
 
         private readonly LowLevelLock _stackLock = new LowLevelLock();
@@ -229,8 +230,8 @@ namespace System.Threading
 
             while (true)
             {
-                long blockingStart = allowFastWake ? 0 : Stopwatch.GetTimestamp();
-                if (timeoutMs == 0 || !Block(timeoutMs))
+                long wakeTick;
+                if (timeoutMs == 0 || !Block(timeoutMs, out wakeTick))
                 {
                     // Unregister the waiter, but do not decrement wake count, the thread did not observe a wake.
                     _separated._counts.InterlockedDecrementWaiterCount();
@@ -240,14 +241,14 @@ namespace System.Threading
                 if (!allowFastWake)
                 {
                     // The caller wants that the thread spends some time waiting as a matter of rate limiting
-                    // thus we will require a 2 usec cooldown before reintroducing the thread.
-                    // The sleep/wake transition typically takes care of the wait, but the blocker has fast
-                    // wake paths and the underlying OS API may have fast/trivial wake paths as well,
+                    // thus we will require a 2 usec delay between waking and reintroducing the thread.
+                    // Waking transition typically takes care of the delay, but the blocker has fast
+                    // wake paths and the underlying OS API may have trivial/spinning wake paths as well,
                     // thus fast wakeups can happen and are hard to avoid completely.
                     // So, if a fast wake happened when parking was desired, we hold up the thread a bit
                     // before releasing.
                     long cooldown = Stopwatch.Frequency * 2 / 1000000;
-                    while (Stopwatch.GetTimestamp() - blockingStart < cooldown)
+                    while (Stopwatch.GetTimestamp() - wakeTick < cooldown)
                     {
                         Thread.UninterruptibleSleep0();
                         Thread.SpinWait(1);
@@ -301,7 +302,7 @@ namespace System.Threading
             MaybeWakeWaiters(counts);
         }
 
-        private bool Block(int timeoutMs)
+        private bool Block(int timeoutMs, out long wakeTick)
         {
             Debug.Assert(timeoutMs >= -1);
 
@@ -310,6 +311,11 @@ namespace System.Threading
             {
                 t_blocker = blocker = new LifoWaitNode();
             }
+
+            blocker._wakeTick = 0;
+
+            // if fast wake via _pendingSignals happens, the wake time is now.
+            wakeTick = Stopwatch.GetTimestamp();
 
             _stackLock.Acquire();
             if (_pendingSignals != 0)
@@ -338,14 +344,19 @@ namespace System.Threading
                 {
                     if (TryRemove(blocker))
                     {
+                        wakeTick = 0;
                         return false;
                     }
 
-                    // We timed out, but our waiter is already popped. Someone is waking us.
-                    // We can't leave or the wake could be lost, let's wait again.
-                    // Give it some extra time.
+                    // We timed out, but our waiter is already popped. Someone is waking
+                    // our blocker. This is a very rare case.
+                    // We can't leave or the wake could be lost, so let's wait again.
+                    // The blocker is likely woken already, but give it some extra time,
+                    // just so we do not keep coming here again.
                     timeoutMs = 10;
                 }
+
+                wakeTick = blocker._wakeTick;
             }
 
             return true;
@@ -397,7 +408,11 @@ namespace System.Threading
                 }
 
                 _stackLock.Release();
-                top?.WakeOne(); // LowLevelThreadBlocker.WakeOne()
+                if (top != null)
+                {
+                    top._wakeTick = Stopwatch.GetTimestamp();
+                    top.WakeOne();
+                }
 
                 // lock release has a full fence thus ordinary read of _pendingWakes is ok
                 if (_pendingWakes <= 0)
