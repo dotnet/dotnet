@@ -89,7 +89,7 @@ public abstract class TestCaseEventArgs : DataCollectionEventArgs
     public Guid TestCaseId
     {
         get;
-        private set;
+        set;
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public abstract class TestCaseEventArgs : DataCollectionEventArgs
     public string TestCaseName
     {
         get;
-        private set;
+        set;
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public abstract class TestCaseEventArgs : DataCollectionEventArgs
     public bool IsChildTestCase
     {
         get;
-        private set;
+        set;
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public abstract class TestCaseEventArgs : DataCollectionEventArgs
     public TestCase? TestElement
     {
         get;
-        internal set;
+        set;
     }
 
 }
@@ -318,7 +318,7 @@ public sealed class TestCaseEndEventArgs : TestCaseEventArgs
     public TestOutcome TestOutcome
     {
         get;
-        private set;
+        set;
     }
 }
 

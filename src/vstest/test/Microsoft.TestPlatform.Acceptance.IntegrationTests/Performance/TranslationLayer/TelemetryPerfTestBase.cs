@@ -113,7 +113,7 @@ public class TelemetryPerfTestBase : PerformanceTestBase
     /// Returns the full path to the test asset dll
     /// </summary>
     /// <returns></returns>
-    public string[] GetPerfAssetFullPath(string name, string framework = "net48")
+    public string[] GetPerfAssetFullPath(string name, string framework = "net481")
     {
         // TODO: how was I doing it before? The build is for net48, were we running net8.0 here?
         var dllPath = GetTestDllForFramework($"{name}.dll", framework);

@@ -142,7 +142,7 @@ public class TestRequestHandlerTests
     [TestMethod]
     public void ProcessRequestsVersionCheckShouldAckMinimumOfGivenAndHighestSupportedVersion()
     {
-        var message = new Message { MessageType = MessageType.VersionCheck, Payload = 1 };
+        var message = new Message { MessageType = MessageType.VersionCheck, Version = 1, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, 1, 1) };
         ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
 
         SendMessageOnChannel(message);
@@ -160,7 +160,7 @@ public class TestRequestHandlerTests
             return;
         }
         EqtTrace.ErrorOnInitialization = "non-existent-error";
-        var message = new Message { MessageType = MessageType.VersionCheck, Payload = 1 };
+        var message = new Message { MessageType = MessageType.VersionCheck, Version = 1, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, 1, 1) };
         ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
 
         SendMessageOnChannel(message);
@@ -488,7 +488,7 @@ public class TestRequestHandlerTests
 
     private void SendSessionEnd()
     {
-        SendMessageOnChannel(new Message { MessageType = MessageType.SessionEnd, Payload = string.Empty });
+        SendMessageOnChannel(new Message { MessageType = MessageType.SessionEnd, Version = 1, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.SessionEnd, string.Empty, 1) });
     }
 
 #pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - helper methods not in test context
@@ -505,7 +505,7 @@ public class TestRequestHandlerTests
 
     private string Serialize(Message message)
     {
-        return _dataSerializer.SerializePayload(message.MessageType, message.Payload);
+        return message.RawMessage ?? _dataSerializer.SerializePayload(message.MessageType, null);
     }
 
     private void VerifyResponseMessageEquals(string message)

@@ -450,21 +450,12 @@ public sealed class DiscoveryRequest : IDiscoveryRequest, ITestDiscoveryEventsHa
                 discoveryCompletePayload.DiscoveredExtensions);
         }
 
-        if (message is VersionedMessage message1)
-        {
-            var version = message1.Version;
+        var version = message?.Version ?? 0;
 
-            rawMessage = _dataSerializer.SerializePayload(
-                MessageType.DiscoveryComplete,
-                discoveryCompletePayload,
-                version);
-        }
-        else
-        {
-            rawMessage = _dataSerializer.SerializePayload(
-                MessageType.DiscoveryComplete,
-                discoveryCompletePayload);
-        }
+        rawMessage = _dataSerializer.SerializePayload(
+            MessageType.DiscoveryComplete,
+            discoveryCompletePayload,
+            version);
 
         return rawMessage;
     }

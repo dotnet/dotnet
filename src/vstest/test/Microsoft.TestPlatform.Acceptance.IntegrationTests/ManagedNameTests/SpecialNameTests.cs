@@ -19,7 +19,7 @@ public class SpecialNameTests : AcceptanceTestBase
     [TestMethod]
     public void VerifyThatInvalidIdentifierNamesAreParsed()
     {
-        var asset = _testEnvironment.GetTestAsset("CILProject.dll", "net462");
+        var asset = _testEnvironment.GetTestAsset("CILProject.dll", "net481");
         var assembly = Assembly.LoadFrom(asset);
         var types = assembly.GetTypes();
 

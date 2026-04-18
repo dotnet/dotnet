@@ -70,7 +70,7 @@
 
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
 
-    <SbrpCacheNuGetSourceName>source-build-reference-package-cache</SbrpCacheNuGetSourceName>
+    <SbaCacheNuGetSourceName>source-build-assets-cache</SbaCacheNuGetSourceName>
     <SourceBuiltSourceNamePrefix>source-built-</SourceBuiltSourceNamePrefix>
     <PreviousBuildPassSourceNamePrefix>previous-build-pass-</PreviousBuildPassSourceNamePrefix>
 

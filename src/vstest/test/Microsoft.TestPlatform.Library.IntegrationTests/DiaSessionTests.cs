@@ -18,9 +18,9 @@ public class DiaSessionTests : AcceptanceTestBase
         var currentTargetFrameWork = testEnvironment.TargetFramework;
         testEnvironment.TargetFramework =
 #if NETFRAMEWORK
-            "net462";
+            "net481";
 #else
-            "net8.0";
+            "net11.0";
 #endif
         return currentTargetFrameWork;
     }

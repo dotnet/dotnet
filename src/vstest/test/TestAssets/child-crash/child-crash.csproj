@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net11.0</TargetFrameworks>
     <RootNamespace>child_crash</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -16,7 +16,6 @@
     <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
     <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
     <PackageReference Include="Microsoft.CodeCoverage" Version="$(PackageVersion)" />
-    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
 
 </Project>

@@ -841,9 +841,4 @@ internal class MessageConverter
             TargetFramework = attachDebuggerPayload?.TargetFramework,
         };
     }
-
-    //private static int GetVersion(Message message)
-    //{
-    //    return (message as VersionedMessage)?.Version ?? 0;
-    //}
 }

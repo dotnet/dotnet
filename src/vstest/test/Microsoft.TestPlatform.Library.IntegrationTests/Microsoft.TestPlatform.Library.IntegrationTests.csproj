@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net10.0;net481</TargetFrameworks>
+    <TargetFrameworks>net11.0;net481</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="TestAssets\**" />

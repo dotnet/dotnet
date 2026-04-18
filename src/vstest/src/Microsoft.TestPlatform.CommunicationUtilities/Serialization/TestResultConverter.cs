@@ -1,88 +1,82 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+#if NETCOREAPP
 
 using System;
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 
 /// <summary>
 /// Converter used by v1 protocol serializer to serialize TestResult object to and from v1 json
 /// </summary>
-public class TestResultConverter : JsonConverter
+internal class TestResultConverter : JsonConverter<TestResult>
 {
     /// <inheritdoc/>
-    public override bool CanConvert(Type objectType)
+    public override TestResult Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        return typeof(TestResult) == objectType;
-    }
+        using var doc = JsonDocument.ParseValue(ref reader);
+        var data = doc.RootElement;
 
-    /// <inheritdoc/>
-    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-    {
-        var data = JObject.Load(reader);
-
-        var testCase = data["TestCase"]!.ToObject<TestCase>(serializer)!;
+        var testCaseElement = data.GetProperty("TestCase");
+        var testCase = JsonSerializer.Deserialize<TestCase>(testCaseElement, options)!;
         var testResult = new TestResult(testCase);
 
         // Add attachments for the result
-        var attachments = data["Attachments"];
-        if (attachments != null && attachments.HasValues)
+        if (data.TryGetProperty("Attachments", out var attachments) && attachments.GetArrayLength() > 0)
         {
-            foreach (var attachment in attachments.Values<JToken>())
+            foreach (var attachment in attachments.EnumerateArray())
             {
-                if (attachment!.Type != JTokenType.Null)
+                if (attachment.ValueKind != JsonValueKind.Null)
                 {
-                    testResult.Attachments.Add(attachment!.ToObject<AttachmentSet>(serializer)!);
+                    testResult.Attachments.Add(JsonSerializer.Deserialize<AttachmentSet>(attachment, options)!);
                 }
             }
         }
 
         // Add messages for the result
-        var messages = data["Messages"];
-        if (messages != null && messages.HasValues)
+        if (data.TryGetProperty("Messages", out var messages) && messages.GetArrayLength() > 0)
         {
-            foreach (var message in messages.Values<JToken>())
+            foreach (var message in messages.EnumerateArray())
             {
-                if (message!.Type != JTokenType.Null)
+                if (message.ValueKind != JsonValueKind.Null)
                 {
-                    testResult.Messages.Add(message.ToObject<TestResultMessage>(serializer)!);
+                    testResult.Messages.Add(JsonSerializer.Deserialize<TestResultMessage>(message, options)!);
                 }
             }
         }
 
-        JToken properties = data["Properties"]!;
-        if (properties == null || !properties.HasValues)
+        if (!data.TryGetProperty("Properties", out var properties) || properties.GetArrayLength() == 0)
         {
             return testResult;
         }
 
         // Every class that inherits from TestObject uses a properties store for <Property, Object>
         // key value pairs.
-        foreach (var property in properties.Values<JToken>())
+        foreach (var property in properties.EnumerateArray())
         {
-            var testProperty = property!["Key"]!.ToObject<TestProperty>(serializer)!;
+            var testProperty = JsonSerializer.Deserialize<TestProperty>(property.GetProperty("Key"), options)!;
 
             // Let the null values be passed in as null data
-            var token = property["Value"];
+            var token = property.GetProperty("Value");
             string? propertyData = null;
-            if (token!.Type != JTokenType.Null)
+            if (token.ValueKind != JsonValueKind.Null)
             {
                 // If the property is already a string. No need to convert again.
-                if (token.Type == JTokenType.String)
+                if (token.ValueKind == JsonValueKind.String)
                 {
-                    propertyData = token.ToObject<string>(serializer);
+                    propertyData = token.GetString();
                 }
                 else
                 {
                     // On deserialization, the value for each TestProperty is always a string. It is up
                     // to the consumer to deserialize it further as appropriate.
-                    propertyData = token.ToString(Formatting.None).Trim('"');
+                    propertyData = token.GetRawText().Trim('"');
                 }
             }
 
@@ -95,11 +89,11 @@ public class TestResultConverter : JsonConverter
                 case "TestResult.Outcome":
                     testResult.Outcome = (TestOutcome)Enum.Parse(typeof(TestOutcome), propertyData!); break;
                 case "TestResult.Duration":
-                    testResult.Duration = TimeSpan.Parse(propertyData!, CultureInfo.CurrentCulture); break;
+                    testResult.Duration = TimeSpan.Parse(propertyData!, CultureInfo.InvariantCulture); break;
                 case "TestResult.StartTime":
-                    testResult.StartTime = DateTimeOffset.Parse(propertyData!, CultureInfo.CurrentCulture); break;
+                    testResult.StartTime = DateTimeOffset.Parse(propertyData!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind); break;
                 case "TestResult.EndTime":
-                    testResult.EndTime = DateTimeOffset.Parse(propertyData!, CultureInfo.CurrentCulture); break;
+                    testResult.EndTime = DateTimeOffset.Parse(propertyData!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind); break;
                 case "TestResult.ErrorMessage":
                     testResult.ErrorMessage = propertyData; break;
                 case "TestResult.ErrorStackTrace":
@@ -116,23 +110,16 @@ public class TestResultConverter : JsonConverter
     }
 
     /// <inheritdoc/>
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, TestResult value, JsonSerializerOptions options)
     {
-        if (value == null)
-        {
-            return;
-        }
-
         // P2 to P1
-        var testResult = (TestResult)value;
-
         writer.WriteStartObject();
         writer.WritePropertyName("TestCase");
-        serializer.Serialize(writer, testResult.TestCase);
+        JsonSerializer.Serialize(writer, value.TestCase, options);
         writer.WritePropertyName("Attachments");
-        serializer.Serialize(writer, testResult.Attachments);
+        JsonSerializer.Serialize(writer, value.Attachments, options);
         writer.WritePropertyName("Messages");
-        serializer.Serialize(writer, testResult.Messages);
+        JsonSerializer.Serialize(writer, value.Messages, options);
 
         writer.WritePropertyName("Properties");
         writer.WriteStartArray();
@@ -143,65 +130,68 @@ public class TestResultConverter : JsonConverter
 
         // TestResult.Outcome
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.Outcome, serializer);
-        writer.WriteValue((int)testResult.Outcome);
+        WriteProperty(writer, TestResultProperties.Outcome, options);
+        writer.WriteNumberValue((int)value.Outcome);
         writer.WriteEndObject();
 
         // TestResult.ErrorMessage
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.ErrorMessage, serializer);
-        writer.WriteValue(testResult.ErrorMessage);
+        WriteProperty(writer, TestResultProperties.ErrorMessage, options);
+        writer.WriteStringValue(value.ErrorMessage);
         writer.WriteEndObject();
 
         // TestResult.ErrorStackTrace
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.ErrorStackTrace, serializer);
-        writer.WriteValue(testResult.ErrorStackTrace);
+        WriteProperty(writer, TestResultProperties.ErrorStackTrace, options);
+        writer.WriteStringValue(value.ErrorStackTrace);
         writer.WriteEndObject();
 
         // TestResult.DisplayName
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.DisplayName, serializer);
-        writer.WriteValue(testResult.DisplayName);
+        WriteProperty(writer, TestResultProperties.DisplayName, options);
+        writer.WriteStringValue(value.DisplayName);
         writer.WriteEndObject();
 
         // TestResult.ComputerName
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.ComputerName, serializer);
-        writer.WriteValue(testResult.ComputerName ?? string.Empty);
+        WriteProperty(writer, TestResultProperties.ComputerName, options);
+        writer.WriteStringValue(value.ComputerName ?? string.Empty);
         writer.WriteEndObject();
 
         // TestResult.Duration
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.Duration, serializer);
-        writer.WriteValue(testResult.Duration);
+        WriteProperty(writer, TestResultProperties.Duration, options);
+        writer.WriteStringValue(value.Duration.ToString());
         writer.WriteEndObject();
 
         // TestResult.StartTime
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.StartTime, serializer);
-        writer.WriteValue(testResult.StartTime);
+        WriteProperty(writer, TestResultProperties.StartTime, options);
+        writer.WriteStringValue(value.StartTime);
         writer.WriteEndObject();
 
         // TestResult.EndTime
         writer.WriteStartObject();
-        AddProperty(writer, TestResultProperties.EndTime, serializer);
-        writer.WriteValue(testResult.EndTime);
+        WriteProperty(writer, TestResultProperties.EndTime, options);
+        writer.WriteStringValue(value.EndTime);
         writer.WriteEndObject();
 
-        foreach (var property in testResult.GetProperties())
+        foreach (var property in value.GetProperties())
         {
-            serializer.Serialize(writer, property);
+            JsonSerializer.Serialize(writer, property, options);
         }
 
         writer.WriteEndArray();
         writer.WriteEndObject();
     }
 
-    private static void AddProperty(JsonWriter writer, TestProperty property, JsonSerializer serializer)
+    private static void WriteProperty(Utf8JsonWriter writer, TestProperty property, JsonSerializerOptions options)
     {
         writer.WritePropertyName("Key");
-        serializer.Serialize(writer, property);
+        JsonSerializer.Serialize(writer, property, options);
         writer.WritePropertyName("Value");
     }
 }
+
+#endif
+

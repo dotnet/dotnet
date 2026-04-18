@@ -45,7 +45,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         public string[] SourceBuildSources { get; set; }
 
         [Required]
-        public string SbrpRepoSrcPath { get; set; }
+        public string SbaRepoSrcPath { get; set; }
 
         [Required]
         public string SourceBuiltSourceNamePrefix { get; set; }
@@ -53,7 +53,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         [Required]
         public string PreviousBuildPassSourceNamePrefix { get; set; }
 
-        public string SbrpCacheSourceName { get; set; }
+        public string SbaCacheSourceName { get; set; }
 
         public string ReferencePackagesSourceName { get; set; }
 
@@ -101,11 +101,11 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
             DiscoverPackagesFromAllSourceBuildSources(pkgSourcesElement);
 
-            // Discover all SBRP packages if source-build-reference-package-cache source is present in NuGet.config
-            XElement sbrpCacheSourceElement = GetElement(pkgSourcesElement, "add", SbrpCacheSourceName);
-            if (sbrpCacheSourceElement != null)
+            // Discover all SBA packages if source-build-assets-cache source is present in NuGet.config
+            XElement sbaCacheSourceElement = GetElement(pkgSourcesElement, "add", SbaCacheSourceName);
+            if (sbaCacheSourceElement != null)
             {
-                DiscoverPackagesFromSbrpCacheSource();
+                DiscoverPackagesFromSbaCacheSource();
             }
 
             // If building online, enumerate any existing package source mappings and filter
@@ -237,8 +237,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 .Descendants()
                 .Where(e => e.Name == "add" &&
                         !(SourceBuildSources?.Contains(e.Attribute("key").Value) == true) &&
-                        // SBRP Cache source is not in SourceBuildSources, skip it as it's not an online source
-                        !(e.Attribute("key").Value == SbrpCacheSourceName))
+                        // SBA Cache source is not in SourceBuildSources, skip it as it's not an online source
+                        !(e.Attribute("key").Value == SbaCacheSourceName))
                 .Select(e => e.Attribute("key").Value)
                 .Distinct())
             {
@@ -262,7 +262,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             bool isCurrentSourceBuiltSource =
                 packageSource.StartsWith(SourceBuiltSourceNamePrefix) ||
                 packageSource.StartsWith(PreviousBuildPassSourceNamePrefix) ||
-                packageSource.Equals(SbrpCacheSourceName) ||
+                packageSource.Equals(SbaCacheSourceName) ||
                 packageSource.Equals(ReferencePackagesSourceName);
 
             XElement pkgSrc = new XElement("packageSource", new XAttribute("key", packageSource));
@@ -390,17 +390,17 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             }
         }
 
-        private void DiscoverPackagesFromSbrpCacheSource()
+        private void DiscoverPackagesFromSbaCacheSource()
         {
-            // 'source-build-reference-package-cache' is a dynamic source, populated by SBRP build.
-            // Discover all SBRP packages from checked in nuspec files.
+            // 'source-build-assets-cache' is a dynamic source, populated by SBA build.
+            // Discover all SBA packages from checked in nuspec files.
 
-            if (!Directory.Exists(SbrpRepoSrcPath))
+            if (!Directory.Exists(SbaRepoSrcPath))
             {
-                throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "SBRP repo root does not exist in expected path: {0}", SbrpRepoSrcPath));
+                throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "SBA repo root does not exist in expected path: {0}", SbaRepoSrcPath));
             }
 
-            string[] nuspecFiles = Directory.GetFiles(SbrpRepoSrcPath, "*.nuspec", SearchOption.AllDirectories);
+            string[] nuspecFiles = Directory.GetFiles(SbaRepoSrcPath, "*.nuspec", SearchOption.AllDirectories);
             Array.Sort(nuspecFiles);
             foreach (string nuspecFile in nuspecFiles)
             {
@@ -412,7 +412,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     string version = info.Version.ToLower();
 
                     AddToDictionary(currentPackages, id, version);
-                    AddToDictionary(allSourcesPackages, SbrpCacheSourceName, id);
+                    AddToDictionary(allSourcesPackages, SbaCacheSourceName, id);
                 }
                 catch (Exception ex)
                 {

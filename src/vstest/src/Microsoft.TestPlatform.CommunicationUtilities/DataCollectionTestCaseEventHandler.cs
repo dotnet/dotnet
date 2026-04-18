@@ -75,6 +75,9 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
         do
         {
             var message = _communicationManager.ReceiveMessage();
+
+            EqtTrace.Info("DataCollectionRequestHandler.ProcessRequests: Datacollector received message: {0}", message);
+
             switch (message?.MessageType)
             {
                 case MessageType.DataCollectionTestStart:
