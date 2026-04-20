@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,19 +32,43 @@ public class EventLogXmlWriterTests
     [TestMethod]
     public void WriteEventLogEntriesToXmlFileShouldWriteLogEntryIfPresent()
     {
-        var eventLog = new EventLog("Application");
-        var eventLogEntry = eventLog.Entries[eventLog.Entries.Count - 1];
+        // Get any available event log entry. The Application log may be empty on
+        // clean/quiet machines, so fall back to the System log which always has
+        // entries on a running Windows machine.
+        var eventLogEntry = GetLastEventLogEntry("Application") ?? GetLastEventLogEntry("System");
+        Assert.IsNotNull(eventLogEntry, "No event log entries found in Application or System logs.");
         var eventLogEntries = new List<EventLogEntry> { eventLogEntry };
 
         var mockFileHelper = new Mock<IFileHelper>();
         EventLogXmlWriter.WriteEventLogEntriesToXmlFile(FileName, eventLogEntries, mockFileHelper.Object);
 
-        // Serialize the message in case it contains any special character such as <, >, &, which the XML writer would escape
-        // because otherwise the raw message and the message used to call WriteAllTextToFile won't match. E.g.
-        // api-version=2020-07-01&format=json in raw message, becomes
-        // api-version=2020-07-01&amp;format=json in the xml file.
-        var serializedMessage = new XElement("t", eventLogEntry.Message).LastNode!.ToString();
+        // Escape XML special characters (&, <, >) the same way XmlWriter does for
+        // text content so we can match the DataSet-serialized XML.  We intentionally
+        // avoid XElement for this because XElement normalises lone \n to \r\n, which
+        // does not match the output of DataSet.WriteXml and causes false negatives.
+        var escapedMessage = eventLogEntry.Message
+            .Replace("&", "&amp;")
+            .Replace("<", "&lt;")
+            .Replace(">", "&gt;");
 
-        mockFileHelper.Verify(x => x.WriteAllTextToFile(FileName, It.Is<string>(str => str.Contains(serializedMessage))));
+        mockFileHelper.Verify(x => x.WriteAllTextToFile(FileName, It.Is<string>(str => str.Contains(escapedMessage))));
+    }
+
+    private static EventLogEntry? GetLastEventLogEntry(string logName)
+    {
+        try
+        {
+            var eventLog = new EventLog(logName);
+            if (eventLog.Entries.Count > 0)
+            {
+                return eventLog.Entries[eventLog.Entries.Count - 1];
+            }
+        }
+        catch
+        {
+            // Log may be inaccessible; return null so callers can try another log.
+        }
+
+        return null;
     }
 }

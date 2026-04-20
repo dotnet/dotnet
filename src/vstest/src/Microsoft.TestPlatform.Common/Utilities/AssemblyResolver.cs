@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -41,6 +42,54 @@ internal class AssemblyResolver : IDisposable
     private readonly IAssemblyLoadContext _platformAssemblyLoadContext;
 
     private static readonly string[] SupportedFileExtensions = [".dll", ".exe"];
+
+    /// <summary>
+    /// Tracks all assemblies that vstest resolved from its own search directories on behalf of
+    /// external code. Each entry: assembly name → list of requesting assembly names.
+    /// </summary>
+    private static readonly ConcurrentDictionary<string, ConcurrentBag<string>> ProvidedDependencies = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets the assemblies that vstest provided from its search directories to resolve
+    /// dependencies of other assemblies.
+    /// </summary>
+    internal static IReadOnlyDictionary<string, ConcurrentBag<string>> GetProvidedDependencies() => ProvidedDependencies;
+
+    /// <summary>
+    /// Builds telemetry-safe summary of provided dependencies.
+    /// Splits into user-requested (count only) and Microsoft/System-requested (names).
+    /// </summary>
+    internal static (string assembliesForUser, int userRequestCount, string assembliesForMicrosoft, int microsoftRequestCount) GetProvidedDependencySummary()
+    {
+        var userAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        int userCount = 0;
+        var msAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        int msCount = 0;
+
+        foreach (var kvp in ProvidedDependencies)
+        {
+            foreach (var requester in kvp.Value)
+            {
+                if (requester.StartsWith("Microsoft.", StringComparison.OrdinalIgnoreCase)
+                    || requester.StartsWith("System.", StringComparison.OrdinalIgnoreCase))
+                {
+                    msAssemblies.Add(kvp.Key);
+                    msCount++;
+                }
+                else
+                {
+                    userAssemblies.Add(kvp.Key);
+                    userCount++;
+                }
+            }
+        }
+
+        return (
+            string.Join("|", userAssemblies),
+            userCount,
+            string.Join("|", msAssemblies),
+            msCount);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyResolver"/> class.
@@ -179,6 +228,8 @@ internal class AssemblyResolver : IDisposable
                             assembly = _platformAssemblyLoadContext.LoadAssemblyFromPath(assemblyPath);
                             _resolvedAssemblies[args.Name] = assembly;
 
+                            TrackProvidedDependency(requestedName, assemblyPath, args.RequestingAssembly);
+
                             EqtTrace.Info("AssemblyResolver.OnResolve: Resolved assembly: {0}, from path: {1}", args.Name, assemblyPath);
 
                             return assembly;
@@ -214,6 +265,32 @@ internal class AssemblyResolver : IDisposable
             _resolvedAssemblies[args.Name] = null;
             return null;
         }
+    }
+
+    /// <summary>
+    /// When we resolve an assembly from vstest's search directories for an external requester,
+    /// record it so telemetry can report which dependencies vstest is providing.
+    /// </summary>
+    private void TrackProvidedDependency(AssemblyName requestedName, string resolvedPath, Assembly? requestingAssembly)
+    {
+        if (requestedName.Name is null)
+        {
+            return;
+        }
+
+        // Only track if we resolved from one of OUR search directories.
+        var resolvedDir = Path.GetDirectoryName(resolvedPath);
+        if (resolvedDir is null || !_searchDirectories.Contains(resolvedDir))
+        {
+            return;
+        }
+
+        var requester = requestingAssembly?.GetName().Name ?? "unknown";
+        var bag = ProvidedDependencies.GetOrAdd(requestedName.Name, _ => new ConcurrentBag<string>());
+        bag.Add(requester);
+
+        EqtTrace.Info("AssemblyResolver.TrackProvidedDependency: Resolved '{0}' from '{1}' for '{2}'.",
+            requestedName.Name, resolvedDir, requester);
     }
 
     /// <summary>

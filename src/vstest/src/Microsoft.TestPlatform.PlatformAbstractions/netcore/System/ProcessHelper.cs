@@ -41,16 +41,11 @@ public partial class ProcessHelper : IProcessHelper
             // preview 6 or later, so use the numerical value for now.
             // case System.Runtime.InteropServices.Architecture.S390x:
             (Architecture)5 => PlatformArchitecture.S390x,
+            (Architecture)6 => PlatformArchitecture.LoongArch64,
             (Architecture)8 => PlatformArchitecture.Ppc64le,
             (Architecture)9 => PlatformArchitecture.RiscV64,
             _ => throw new NotSupportedException(),
         };
-    }
-
-    public PlatformArchitecture GetProcessArchitecture(int processId)
-    {
-        // Return the same as the current process.
-        return GetCurrentProcessArchitecture();
     }
 }
 

@@ -310,7 +310,7 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         Assert.IsNotNull(module);
 
         var coverage = double.Parse(module.BlockCoverage, CultureInfo.InvariantCulture);
-        Assert.IsTrue(coverage > ExpectedMinimalModuleCoverage);
+        Assert.IsGreaterThan(ExpectedMinimalModuleCoverage, coverage);
 
         var testSignFunction = module.SkippedFunctions.FirstOrDefault(f => f.Name.Equals("TestSign()"));
         Assert.IsNotNull(testSignFunction);

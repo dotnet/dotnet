@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup Label="NuGet">
-    <NuspecProperty Include="SourceBuildTfmPrevious=$(NetPrevious)" />
     <NuspecProperty Include="SourceBuildTfmCurrent=$(NetCurrent)" />
   </ItemGroup>
 

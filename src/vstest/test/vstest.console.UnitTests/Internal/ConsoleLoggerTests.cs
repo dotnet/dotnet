@@ -61,7 +61,7 @@ public class ConsoleLoggerTests
     [TestMethod]
     public void InitializeShouldThrowExceptionIfEventsIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _consoleLogger.Initialize(null!, string.Empty));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _consoleLogger.Initialize(null!, string.Empty));
     }
 
     [TestMethod]
@@ -78,19 +78,19 @@ public class ConsoleLoggerTests
             { "param1", "value" },
         };
 
-        Assert.ThrowsException<ArgumentNullException>(() => _consoleLogger.Initialize(null!, parameters));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _consoleLogger.Initialize(null!, parameters));
     }
 
     [TestMethod]
     public void InitializeWithParametersShouldThrowExceptionIfParametersIsEmpty()
     {
-        Assert.ThrowsException<ArgumentException>(() => _consoleLogger.Initialize(new Mock<TestLoggerEvents>().Object, new Dictionary<string, string?>()));
+        Assert.ThrowsExactly<ArgumentException>(() => _consoleLogger.Initialize(new Mock<TestLoggerEvents>().Object, new Dictionary<string, string?>()));
     }
 
     [TestMethod]
     public void InitializeWithParametersShouldThrowExceptionIfParametersIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _consoleLogger.Initialize(new Mock<TestLoggerEvents>().Object, (Dictionary<string, string?>)null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _consoleLogger.Initialize(new Mock<TestLoggerEvents>().Object, (Dictionary<string, string?>)null!));
     }
 
     [TestMethod]
@@ -159,7 +159,7 @@ public class ConsoleLoggerTests
         var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);
         loggerEvents.EnableEvents();
 
-        Assert.ThrowsException<ArgumentNullException>(() => loggerEvents.RaiseTestRunMessage(default!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => loggerEvents.RaiseTestRunMessage(default!));
     }
 
     [TestMethod]
@@ -230,7 +230,7 @@ public class ConsoleLoggerTests
         var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);
         loggerEvents.EnableEvents();
 
-        Assert.ThrowsException<ArgumentNullException>(() => loggerEvents.RaiseTestResult(default!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => loggerEvents.RaiseTestResult(default!));
     }
 
     [TestMethod]
@@ -781,7 +781,7 @@ public class ConsoleLoggerTests
     [DataRow("[1 h]", new int[5] { 0, 1, 0, 5, 78 })]
     [DataRow("[5 m]", new int[5] { 0, 0, 5, 0, 78 })]
     [DataRow("[4 s]", new int[5] { 0, 0, 0, 4, 0 })]
-    [DataTestMethod]
+    [TestMethod]
     public void TestResultHandlerForTestResultWithDurationShouldPrintDurationInfo(string expectedDuration, int[] timeSpanArgs)
     {
         var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);
@@ -804,7 +804,7 @@ public class ConsoleLoggerTests
         _mockOutput.Verify(o => o.WriteLine("TestName " + expectedDuration, OutputLevel.Information), Times.Once());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     public void TestResultHandlerForTestResultWithDurationLessThanOneMsShouldPrintDurationInfo()
     {
         var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);

@@ -53,16 +53,12 @@ internal class InProcDataCollectionSink : IDataCollectionSink
 
     private void AddKeyValuePairToDictionary(Guid testCaseId, string key, string value)
     {
-        if (!_testCaseDataCollectionDataMap.ContainsKey(testCaseId))
+        if (!_testCaseDataCollectionDataMap.TryGetValue(testCaseId, out var testCaseCollectionData))
         {
-            var testCaseCollectionData = new TestCaseDataCollectionData();
-            testCaseCollectionData.AddOrUpdateData(key, value);
+            testCaseCollectionData = new TestCaseDataCollectionData();
             _testCaseDataCollectionDataMap[testCaseId] = testCaseCollectionData;
         }
-        else
-        {
-            _testCaseDataCollectionDataMap[testCaseId].AddOrUpdateData(key, value);
-        }
+        testCaseCollectionData.AddOrUpdateData(key, value);
     }
 
     private class TestCaseDataCollectionData
@@ -76,15 +72,11 @@ internal class InProcDataCollectionSink : IDataCollectionSink
 
         internal void AddOrUpdateData(string key, string value)
         {
-            if (!CollectionData.ContainsKey(key))
-            {
-                CollectionData[key] = value;
-            }
-            else
+            if (CollectionData.ContainsKey(key))
             {
                 EqtTrace.Warning("The data for in-proc data collector with key {0} has already been set. Will be reset with new value", key);
-                CollectionData[key] = value;
             }
+            CollectionData[key] = value;
         }
     }
 }

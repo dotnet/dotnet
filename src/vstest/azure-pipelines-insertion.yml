@@ -1,0 +1,158 @@
+parameters:
+  - name: 'ComponentBranchName'
+    default: 'main'
+  - name: 'CreateDraftPR'
+    default: 'false'
+  - name: 'OptionalTitlePrefix'
+    default: '[Auto Insertion]'
+  - name: 'VisualStudioBranchName'
+    default: 'main'
+
+variables:
+- group: DotNet-Roslyn-Insertion-Variables
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- name: BuildQueueName
+  value: 'microsoft-vstest'
+- name: ComponentAzdoUri
+  value: 'https://dev.azure.com/dnceng'
+- name: ComponentProjectName
+  value: 'internal'
+- name: ComponentName
+  value: 'VS Test Platform'
+- name: DropPath
+  value: '/dp=microsoft-vstest/VSSetupArtifacts'
+- name: SpecificBuildNumber
+  value: ''
+- name: CherryPick
+  value: ''
+- name: AutoComplete
+  value: 'true'
+- name: ComponentBranchName
+  value: '${{ parameters.ComponentBranchName }}'
+- name: CreateDraftPR
+  value: '${{ parameters.CreateDraftPR }}'
+- name: OptionalTitlePrefix
+  value: '${{ parameters.OptionalTitlePrefix }}'
+- name: VisualStudioBranchName
+  value: '${{ parameters.VisualStudioBranchName }}'
+
+trigger: none
+
+schedules:
+  # insert at 1am on monday, wednesday and friday
+  - cron: 0 1 * * 1,3,5
+    displayName: Daily midnight insertion to VS
+    branches:
+      include:
+      - rel/18.7
+    always: true
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: windows.vs2026preview.scout.amd64
+      os: windows
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: insert
+      displayName: Insert
+      jobs:
+        - template: /eng/common/templates-official/jobs/jobs.yml@self
+          parameters:
+            jobs:
+            - job: insert
+              displayName: Insert
+              pool:
+                name: $(DncEngInternalBuildPool)
+                demands: ImageOverride -equals windows.vs2026preview.scout.amd64
+              timeoutInMinutes: 90
+
+              steps:
+
+              - task: PowerShell@2
+                displayName: 'Install .NET SDK from global.json'
+                inputs:
+                  filePath: eng/common/dotnet-install.ps1
+                  arguments: -runtime '' -version 'Latest'
+
+              - script: dotnet tool install Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json -g
+                displayName: 'Install roslyn-tools CLI'
+
+              - task: AzureCLI@2
+                displayName: 'Run VS Insertion'
+                inputs:
+                  azureSubscription: 'DncEng Insertion: Roslyn and Razor'
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    # Acquire dnceng AzDO token via WIF service connection
+                    $dncengToken = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
+                    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($dncengToken)) {
+                      Write-Error 'Failed to acquire Azure DevOps access token via WIF.'
+                      exit 1
+                    }
+
+                    # Add VS Interactive experiences team (from devdiv) as reviewer
+                    $team = "10a2f33b-3b3d-47a9-a22f-6bb09247bb63"
+
+                    $insertArgs = @(
+                      "create-insertion"
+                      "--vs-branch", "$(VisualStudioBranchName)"
+                      "--component-branch", "$(ComponentBranchName)"
+                      "--insertion-name", "$(ComponentName)"
+                      "--component-build-queue", "$(BuildQueueName)"
+                      "--component-azdo-uri", "$(ComponentAzdoUri)"
+                      "--component-project", "$(ComponentProjectName)"
+                      "--build-drop-path", "$(DropPath)"
+                      "--no-insert-corext-packages"
+                      "--no-insert-devdiv-source-files"
+                      "--title-prefix", "$(OptionalTitlePrefix)"
+                      "--reviewer-guid", $team
+                      "--dnceng-azdo-token", $dncengToken
+                      "--devdiv-azdo-token", "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
+                      "--ci"
+                    )
+
+                    if ("$(AutoComplete)" -eq "true") {
+                      $insertArgs += "--set-auto-complete"
+                    }
+
+                    if ("$(CreateDraftPR)" -eq "true") {
+                      $insertArgs += "--create-draft-pr"
+                    }
+
+                    if (-not [string]::IsNullOrWhiteSpace("$(SpecificBuildNumber)")) {
+                      $insertArgs += "--specific-build"
+                      $insertArgs += "$(SpecificBuildNumber)"
+                    }
+
+                    if (-not [string]::IsNullOrWhiteSpace("$(CherryPick)")) {
+                      $insertArgs += "--cherry-pick"
+                      $insertArgs += "$(CherryPick)"
+                    }
+
+                    & roslyn-tools @insertArgs
+                    if ($LASTEXITCODE -ne 0) {
+                      exit $LASTEXITCODE
+                    }
+
+              # Avoid warning from subsequent steps.
+              - powershell: |
+                  mkdir artifacts
+                  displayName: 'Create artifacts dir'

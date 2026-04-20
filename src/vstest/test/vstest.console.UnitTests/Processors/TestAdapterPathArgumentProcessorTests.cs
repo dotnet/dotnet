@@ -20,6 +20,8 @@ using Moq;
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 
 [TestClass]
+// Because runsettings tests use the instance of RunSettingsManager which is static.
+[DoNotParallelize]
 public class TestAdapterPathArgumentProcessorTests
 {
     private readonly RunSettings _currentActiveSetting;
@@ -83,20 +85,8 @@ public class TestAdapterPathArgumentProcessorTests
         var message =
             @"The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters";
 
-        var isExceptionThrown = false;
-
-        try
-        {
-            executor.Initialize(null);
-        }
-        catch (Exception ex)
-        {
-            isExceptionThrown = true;
-            Assert.IsTrue(ex is CommandLineException);
-            Assert.AreEqual(message, ex.Message);
-        }
-
-        Assert.IsTrue(isExceptionThrown);
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(null));
+        Assert.AreEqual(message, ex.Message);
     }
 
     [TestMethod]
@@ -109,20 +99,8 @@ public class TestAdapterPathArgumentProcessorTests
         var message =
             @"The /TestAdapterPath parameter requires a value, which is path of a location containing custom test adapters. Example:  /TestAdapterPath:c:\MyCustomAdapters";
 
-        var isExceptionThrown = false;
-
-        try
-        {
-            executor.Initialize("  ");
-        }
-        catch (Exception ex)
-        {
-            isExceptionThrown = true;
-            Assert.IsTrue(ex is CommandLineException);
-            Assert.AreEqual(message, ex.Message);
-        }
-
-        Assert.IsTrue(isExceptionThrown);
+        var ex2 = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize("  "));
+        Assert.AreEqual(message, ex2.Message);
     }
 
     [TestMethod]

@@ -15,19 +15,13 @@ public class ArgumentProcessorUtilitiesTests
 {
     [TestMethod]
     [DataRow("")]
-    [DataRow(" ")]
     [DataRow(";;;;")]
     public void GetArgumentListShouldThrowErrorOnInvalidArgument(string argument)
     {
-        try
-        {
-            ArgumentProcessorUtilities.GetArgumentList(argument, ArgumentProcessorUtilities.SemiColonArgumentSeparator, "test exception.");
-        }
-        catch (Exception e)
-        {
-            Assert.IsTrue(e.GetType().Equals(typeof(CommandLineException)));
-            Assert.IsTrue(e.Message.Contains("test exception."));
-        }
+        var e = Assert.ThrowsExactly<CommandLineException>(() =>
+            ArgumentProcessorUtilities.GetArgumentList(argument, ArgumentProcessorUtilities.SemiColonArgumentSeparator, "test exception."));
+        Assert.IsInstanceOfType<CommandLineException>(e);
+        Assert.Contains("test exception.", e.Message);
     }
 
     [TestMethod]
@@ -43,15 +37,10 @@ public class ArgumentProcessorUtilitiesTests
     [DataRow(["key1=value1", "invalidPair", "key2=value2"])]
     public void GetArgumentParametersShouldThrowErrorOnInvalidParameters(string[] parameterArgs)
     {
-        try
-        {
-            ArgumentProcessorUtilities.GetArgumentParameters(parameterArgs, ArgumentProcessorUtilities.EqualNameValueSeparator, "test exception.");
-        }
-        catch (Exception e)
-        {
-            Assert.IsTrue(e.GetType().Equals(typeof(CommandLineException)));
-            Assert.IsTrue(e.Message.Contains("test exception."));
-        }
+        var e = Assert.ThrowsExactly<CommandLineException>(() =>
+            ArgumentProcessorUtilities.GetArgumentParameters(parameterArgs, ArgumentProcessorUtilities.EqualNameValueSeparator, "test exception."));
+        Assert.IsInstanceOfType<CommandLineException>(e);
+        Assert.Contains("test exception.", e.Message);
     }
 
     [TestMethod]

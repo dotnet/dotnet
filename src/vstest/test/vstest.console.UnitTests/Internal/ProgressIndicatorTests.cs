@@ -12,6 +12,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Internal;
 [TestClass]
 public class ProgressIndicatorTests
 {
+    private readonly SteppableTimer _steppableTimer;
     private readonly ProgressIndicator _indicator;
     private readonly Mock<IOutput> _consoleOutput;
     private readonly Mock<IConsoleHelper> _consoleHelper;
@@ -22,7 +23,8 @@ public class ProgressIndicatorTests
         _consoleHelper = new Mock<IConsoleHelper>();
         _consoleHelper.Setup(c => c.WindowWidth).Returns(100);
         _consoleHelper.Setup(c => c.CursorTop).Returns(20);
-        _indicator = new ProgressIndicator(_consoleOutput.Object, _consoleHelper.Object);
+        _steppableTimer = new SteppableTimer();
+        _indicator = new ProgressIndicator(_consoleOutput.Object, _consoleHelper.Object, _steppableTimer);
     }
 
     [TestCleanup]
@@ -40,16 +42,23 @@ public class ProgressIndicatorTests
     }
 
     [TestMethod]
-    public void StartShouldShowProgressMessage()
+    public void StartShouldShowProgressMessageAndDotForEveryTimeATimerFires()
     {
-        _indicator.Start();
-
         _consoleHelper.Setup(c => c.CursorLeft).Returns(30);
-        System.Threading.Thread.Sleep(1500);
 
+        _indicator.Start();
         Assert.IsTrue(_indicator.IsRunning);
         _consoleOutput.Verify(m => m.Write("Test run in progress.", OutputLevel.Information), Times.Once);
+
+        _steppableTimer.Step();
+
         _consoleOutput.Verify(m => m.Write(".", OutputLevel.Information), Times.Once);
+
+        _steppableTimer.Step();
+
+        _consoleOutput.Verify(m => m.Write(".", OutputLevel.Information), Times.Exactly(2));
+
+        _indicator.Stop();
     }
 
     [TestMethod]

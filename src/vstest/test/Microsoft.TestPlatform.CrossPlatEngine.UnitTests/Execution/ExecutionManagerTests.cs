@@ -22,6 +22,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
+
 using FluentAssertions;
 
 using static TestPlatform.CrossPlatEngine.UnitTests.Execution.RunTestsWithSourcesTests;
@@ -87,7 +88,7 @@ public class ExecutionManagerTests
         Assert.IsNotNull(TestPluginCache.Instance.TestExtensions);
 
         // Executors
-        Assert.IsTrue(TestPluginCache.Instance.TestExtensions.TestExecutors!.Count > 0);
+        Assert.IsNotEmpty(TestPluginCache.Instance.TestExtensions.TestExecutors!);
         var allExecutors = TestExecutorExtensionManager.Create().TestExtensions;
 
         foreach (var executor in allExecutors)
@@ -96,7 +97,7 @@ public class ExecutionManagerTests
         }
 
         // Settings Providers
-        Assert.IsTrue(TestPluginCache.Instance.TestExtensions.TestSettingsProviders!.Count > 0);
+        Assert.IsNotEmpty(TestPluginCache.Instance.TestExtensions.TestSettingsProviders!);
         var settingsProviders = SettingsProviderExtensionManager.Create().SettingsProvidersMap.Values;
 
         foreach (var provider in settingsProviders)

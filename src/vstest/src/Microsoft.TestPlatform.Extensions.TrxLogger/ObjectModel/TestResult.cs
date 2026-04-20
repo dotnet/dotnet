@@ -479,7 +479,7 @@ internal class TestResult : ITestResult, IXmlTestStore
             TPDebug.Assert(collectorDataEntry != null, "'collectorDataEntry' is null");
             TPDebug.Assert(!_collectorDataEntries.Contains(collectorDataEntry), "The collector data entry already exists in the collection");
 
-            _collectorDataEntries.Add(collectorDataEntry.Clone(testResultsDirectory, false));
+            _collectorDataEntries.Add(collectorDataEntry.CloneWithRelativePath(testResultsDirectory));
         }
     }
 

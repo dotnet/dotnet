@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
@@ -67,7 +69,7 @@ internal class ParallelDataCollectionEventsHandler : ParallelRunEventsHandler
             _runDataAggregator.IsAborted,
             _runDataAggregator.GetAggregatedException(),
             _runDataAggregator.RunContextAttachments,
-            _runDataAggregator.InvokedDataCollectors,
+            new Collection<InvokedDataCollector>(_runDataAggregator.InvokedDataCollectors.ToList()),
             _runDataAggregator.ElapsedTime);
 
         // Add Metrics from Test Host

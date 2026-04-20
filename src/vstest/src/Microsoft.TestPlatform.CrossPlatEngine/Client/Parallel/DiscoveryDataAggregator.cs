@@ -144,15 +144,10 @@ internal sealed class DiscoveryDataAggregator
             {
                 var newValue = Convert.ToDouble(metric.Value, CultureInfo.InvariantCulture);
 
-                if (_metricsAggregator.TryGetValue(metric.Key, out object? oldValue))
-                {
-                    double oldDoubleValue = Convert.ToDouble(oldValue, CultureInfo.InvariantCulture);
-                    _metricsAggregator[metric.Key] = newValue + oldDoubleValue;
-                }
-                else
-                {
-                    _metricsAggregator.TryAdd(metric.Key, newValue);
-                }
+                _metricsAggregator.AddOrUpdate(
+                    metric.Key,
+                    newValue,
+                    (_, oldValue) => newValue + Convert.ToDouble(oldValue, CultureInfo.InvariantCulture));
             }
         }
     }
