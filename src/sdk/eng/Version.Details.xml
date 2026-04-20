@@ -399,7 +399,7 @@
       <Sha>47fb725acf5d7094af51aebbb5b7e5c44a3b2a77</Sha>
     </Dependency>
     <!-- Microsoft.CodeAnalysis.Workspaces.MSBuild transitively references M.Bcl.AsyncInterfaces.
-         Adding an explicit dependency to make sure the latest version is used instead of the SBRP
+         Adding an explicit dependency to make sure the latest version is used instead of the SBA
          one under source build. -->
     <Dependency Name="Microsoft.DiaSymReader" Version="2.2.6">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
