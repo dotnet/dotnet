@@ -37,7 +37,7 @@ This table represents the status of the .NET 5 V3 publishing status on a Per-Rep
 | llvm-project        | epananth     | ❌     |                                      |
 | icu                 | masafa       | ❌     |                                      |
 | wcf                 | epananth     | ❌     |                                      |
-| source-build-reference-packages| epananth     | ❌     |                                      |
+| source-build-assets | epananth     | ❌     |                                      |
 
 
 <!-- Begin Generated Content: Doc Feedback -->

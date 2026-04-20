@@ -182,7 +182,7 @@ public abstract class BuildComparer
             {
                 // These repos don't publish assets, so we skip them
                 if (baseDirectory.EndsWith("scenario-tests")
-                    || baseDirectory.EndsWith("source-build-reference-packages")
+                    || baseDirectory.EndsWith("source-build-assets")
                     || baseDirectory.EndsWith("runtime")
                     || baseDirectory.EndsWith("sdk"))
                 {
