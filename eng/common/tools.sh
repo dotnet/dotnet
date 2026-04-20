@@ -429,9 +429,12 @@ function InitializeToolset {
   local download_args=("package" "download" "Microsoft.DotNet.Arcade.Sdk@$toolset_version" "--verbosity" "minimal" "--prerelease" "--output" "$_GetNuGetPackageCachePath")
   local nuget_config="${NUGET_CONFIG:-}"
   if [[ -z "$nuget_config" ]]; then
-    local default_nuget_config="${repo_root}NuGet.config"
-    if [[ -f "$default_nuget_config" ]]; then
-      nuget_config="$default_nuget_config"
+    # Search for any variation of nuget.config in the RepoRoot
+    local found_config
+    found_config=$(find "$repo_root" -maxdepth 1 -iname "nuget.config" -print -quit)
+
+    if [[ -n "$found_config" ]]; then
+      nuget_config="$found_config"
     fi
   fi
 
