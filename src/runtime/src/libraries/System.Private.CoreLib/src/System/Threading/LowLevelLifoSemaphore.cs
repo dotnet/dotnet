@@ -38,7 +38,7 @@ namespace System.Threading
         //    - in between we have a linear gain.
         //    all should be smoothed somewhat by the randomness of individual spin iterations.
 
-        private const int DefaultSemaphoreSpinCountLimit = 256;
+        private const int DefaultSemaphoreSpinCountLimit = 128;
 
         private CacheLineSeparatedCounts _separated;
 
@@ -241,19 +241,19 @@ namespace System.Threading
                     return false;
                 }
 
-                // The caller wants that the thread spends some time waiting as a matter of rate limiting
-                // thus we will require a 10 usec cooldown before reintroducing the thread.
-                // The sleep/wake transition typically takes care of the wait, but the blocker has fast
-                // wake paths and the underlying OS API may have trivial/spinning wake paths as well,
-                // thus fast wakeups can happen and are hard to avoid completely.
-                // So, if a fast wake happened when parking was desired, we hold up the thread a bit
-                // before releasing.
-                long cooldown = Stopwatch.Frequency / 100000 * 2;
-                while (Stopwatch.GetTimestamp() - waitStartTick < cooldown)
-                {
-                    Thread.UninterruptibleSleep0();
-                    Thread.SpinWait(1);
-                }
+                //// The caller wants that the thread spends some time waiting as a matter of rate limiting
+                //// thus we will require a 10 usec cooldown before reintroducing the thread.
+                //// The sleep/wake transition typically takes care of the wait, but the blocker has fast
+                //// wake paths and the underlying OS API may have trivial/spinning wake paths as well,
+                //// thus fast wakeups can happen and are hard to avoid completely.
+                //// So, if a fast wake happened when parking was desired, we hold up the thread a bit
+                //// before releasing.
+                //long cooldown = Stopwatch.Frequency / 100000;
+                //while (Stopwatch.GetTimestamp() - waitStartTick < cooldown)
+                //{
+                //    Thread.UninterruptibleSleep0();
+                //    Thread.SpinWait(1);
+                //}
 
                 uint collisionCount = 0;
                 while (true)
