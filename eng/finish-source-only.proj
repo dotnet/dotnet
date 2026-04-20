@@ -156,8 +156,8 @@
       <ProjectAssetsJsonFile Include="$(SrcDir)**/artifacts/**/project.assets.json" />
     </ItemGroup>
 
-    <WriteSbrpUsageReport SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
-                          SbrpPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-reference-packages"
+    <WriteSbrpUsageReport SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
+                          SbaPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-assets"
                           ProjectAssetsJsons="@(ProjectAssetsJsonFile)"
                           OutputPath="$(ArtifactsLogDir)" />
   </Target>
