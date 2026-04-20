@@ -248,7 +248,7 @@ namespace System.Threading
                 // thus fast wakeups can happen and are hard to avoid completely.
                 // So, if a fast wake happened when parking was desired, we hold up the thread a bit
                 // before releasing.
-                long cooldown = Stopwatch.Frequency / 100000;
+                long cooldown = Stopwatch.Frequency / 100000 * 2;
                 while (Stopwatch.GetTimestamp() - waitStartTick < cooldown)
                 {
                     Thread.UninterruptibleSleep0();
