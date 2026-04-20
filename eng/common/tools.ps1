@@ -744,7 +744,7 @@ function InitializeToolset() {
   $nugetConfig = $env:NUGET_CONFIG
   if (-not $nugetConfig) {
     # Search for any variation of nuget.config in the RepoRoot
-    $configFile = Get-ChildItem -Path $RepoRoot -Filter "nuget.config" -File | Select-Object -First 1
+    $configFile = Get-ChildItem -Path $RepoRoot -File | Where-Object { $_.Name -ieq "nuget.config" } | Select-Object -First 1
 
     if ($configFile) {
         $nugetConfig = $configFile.FullName
