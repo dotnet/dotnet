@@ -233,7 +233,7 @@ namespace System.Threading
 
             while (true)
             {
-                long waitStartTick = Stopwatch.GetTimestamp();
+                // long waitStartTick = Stopwatch.GetTimestamp();
                 if (timeoutMs == 0 || !Block(timeoutMs))
                 {
                     // Unregister the waiter, but do not decrement wake count, the thread did not observe a wake.
