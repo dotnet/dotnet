@@ -6,20 +6,20 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26214.110</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildTasksArchivesPackageVersion>10.0.0-beta.26214.110</MicrosoftDotNetBuildTasksArchivesPackageVersion>
-    <MicrosoftDotNetBuildTasksFeedPackageVersion>10.0.0-beta.26214.110</MicrosoftDotNetBuildTasksFeedPackageVersion>
-    <MicrosoftDotNetBuildTasksInstallersPackageVersion>10.0.0-beta.26214.110</MicrosoftDotNetBuildTasksInstallersPackageVersion>
-    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26214.110</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
-    <MicrosoftDotNetSharedFrameworkSdkPackageVersion>10.0.0-beta.26214.110</MicrosoftDotNetSharedFrameworkSdkPackageVersion>
-    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.7-servicing.26214.110</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
-    <MicrosoftDotNetWpfGitHubPackageVersion>10.0.7-servicing.26214.110</MicrosoftDotNetWpfGitHubPackageVersion>
-    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>10.0.7-servicing.26214.110</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
-    <MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion>10.0.7-servicing.26214.110</MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion>
-    <MicrosoftNETSdkWindowsDesktopPackageVersion>10.0.7-servicing.26214.110</MicrosoftNETSdkWindowsDesktopPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26216.111</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksArchivesPackageVersion>10.0.0-beta.26216.111</MicrosoftDotNetBuildTasksArchivesPackageVersion>
+    <MicrosoftDotNetBuildTasksFeedPackageVersion>10.0.0-beta.26216.111</MicrosoftDotNetBuildTasksFeedPackageVersion>
+    <MicrosoftDotNetBuildTasksInstallersPackageVersion>10.0.0-beta.26216.111</MicrosoftDotNetBuildTasksInstallersPackageVersion>
+    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26216.111</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
+    <MicrosoftDotNetSharedFrameworkSdkPackageVersion>10.0.0-beta.26216.111</MicrosoftDotNetSharedFrameworkSdkPackageVersion>
+    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.7-servicing.26216.111</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
+    <MicrosoftDotNetWpfGitHubPackageVersion>10.0.7-servicing.26216.111</MicrosoftDotNetWpfGitHubPackageVersion>
+    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>10.0.7-servicing.26216.111</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
+    <MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion>10.0.7-servicing.26216.111</MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion>
+    <MicrosoftNETSdkWindowsDesktopPackageVersion>10.0.7-servicing.26216.111</MicrosoftNETSdkWindowsDesktopPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.7</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.7-servicing.26214.110</MicrosoftNETCorePlatformsPackageVersion>
-    <MicrosoftPrivateWinformsPackageVersion>10.0.7-servicing.26214.110</MicrosoftPrivateWinformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.7-servicing.26216.111</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftPrivateWinformsPackageVersion>10.0.7-servicing.26216.111</MicrosoftPrivateWinformsPackageVersion>
     <MicrosoftWin32RegistryAccessControlPackageVersion>10.0.7</MicrosoftWin32RegistryAccessControlPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>10.0.7</MicrosoftWin32SystemEventsPackageVersion>
     <SystemCodeDomPackageVersion>10.0.7</SystemCodeDomPackageVersion>
