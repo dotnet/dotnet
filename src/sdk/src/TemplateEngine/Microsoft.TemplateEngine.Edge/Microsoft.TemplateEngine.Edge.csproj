@@ -33,14 +33,21 @@
     <PackageReference Include="System.Text.Json" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+  <ItemGroup>
     <!--
       This project targets netstandard2.0, but the latest NuGet packages used by the rest of the SDK
       have dropped netstandard support. VersionOverride pins these to an older netstandard-compatible version.
+      For source-build, the VersionOverride is not applied so the version can be lifted.
     -->
-    <PackageReference Include="NuGet.Configuration" VersionOverride="$(NugetNetStandardCompatibleVersion)" />
-    <PackageReference Include="NuGet.Credentials" VersionOverride="$(NugetNetStandardCompatibleVersion)" />
-    <PackageReference Include="NuGet.Protocol" VersionOverride="$(NugetNetStandardCompatibleVersion)" />
+    <PackageReference Include="NuGet.Configuration">
+      <VersionOverride Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NugetNetStandardCompatibleVersion)</VersionOverride>
+    </PackageReference>
+    <PackageReference Include="NuGet.Credentials">
+      <VersionOverride Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NugetNetStandardCompatibleVersion)</VersionOverride>
+    </PackageReference>
+    <PackageReference Include="NuGet.Protocol">
+      <VersionOverride Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NugetNetStandardCompatibleVersion)</VersionOverride>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
