@@ -77,8 +77,8 @@ public class TestRunCacheBehaviors
 
         Assert.AreEqual(1, tester.CacheHitCount);
         Assert.AreEqual(0, cache.TotalExecutedTests);
-        Assert.AreEqual(0, cache.TestResults.Count);
-        Assert.AreEqual(0, cache.InProgressTests.Count);
+        Assert.IsEmpty(cache.TestResults);
+        Assert.IsEmpty(cache.InProgressTests);
         Assert.AreEqual(2, tester.TotalInProgressTestsReceived);
     }
 
@@ -149,7 +149,7 @@ public class TestRunCacheBehaviors
             cache.OnNewTestResult(tr);
         }
 
-        Assert.AreEqual(0, cache.InProgressTests.Count);
+        Assert.IsEmpty(cache.InProgressTests);
     }
 
     [TestMethod]
@@ -167,7 +167,7 @@ public class TestRunCacheBehaviors
 
         Assert.AreEqual(1, tester.CacheHitCount);
         Assert.AreEqual(cacheSize, cache.TotalExecutedTests);
-        Assert.AreEqual(0, cache.TestResults.Count);
+        Assert.IsEmpty(cache.TestResults);
     }
 
     [TestMethod]
@@ -186,7 +186,7 @@ public class TestRunCacheBehaviors
 
         Assert.AreEqual(0, tester.CacheHitCount);
         Assert.AreEqual(executedTests, cache.TotalExecutedTests);
-        Assert.AreEqual(executedTests, cache.TestResults.Count);
+        Assert.HasCount((int)executedTests, cache.TestResults);
     }
 
     [TestMethod]
@@ -206,7 +206,7 @@ public class TestRunCacheBehaviors
 
         Assert.AreEqual(4, tester.CacheHitCount);
         Assert.AreEqual(executedTests, cache.TotalExecutedTests);
-        Assert.AreEqual(5, cache.TestResults.Count);
+        Assert.HasCount(5, cache.TestResults);
     }
 
     #endregion
@@ -248,7 +248,7 @@ public class TestRunCacheBehaviors
             cache.OnTestStarted(tr.TestCase);
             Assert.IsTrue(cache.OnTestCompletion(tr.TestCase));
 
-            Assert.AreEqual(0, cache.InProgressTests.Count);
+            Assert.IsEmpty(cache.InProgressTests);
         }
     }
 
@@ -272,7 +272,7 @@ public class TestRunCacheBehaviors
 
             Assert.IsTrue(cache.OnTestCompletion(clone));
 
-            Assert.AreEqual(0, cache.InProgressTests.Count);
+            Assert.IsEmpty(cache.InProgressTests);
         }
     }
 
@@ -290,7 +290,7 @@ public class TestRunCacheBehaviors
         var tr2 = GetTestResult(1);
         Assert.IsFalse(cache.OnTestCompletion(tr2.TestCase));
 
-        Assert.AreEqual(1, cache.InProgressTests.Count);
+        Assert.ContainsSingle(cache.InProgressTests);
     }
 
     #endregion
@@ -332,7 +332,7 @@ public class TestRunCacheBehaviors
         }
 
         cache.GetLastChunk();
-        Assert.AreEqual(0, cache.TestResults.Count);
+        Assert.IsEmpty(cache.TestResults);
     }
 
     #endregion

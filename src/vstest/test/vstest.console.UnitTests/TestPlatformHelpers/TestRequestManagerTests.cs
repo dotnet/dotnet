@@ -45,6 +45,8 @@ namespace vstest.console.UnitTests.TestPlatformHelpers;
 [TestClass]
 public class TestRequestManagerTests
 {
+    public TestContext TestContext { get; set; } = null!;
+
     private DummyLoggerEvents _mockLoggerEvents;
     private readonly CommandLineOptions _commandLineOptions;
     private readonly Mock<ITestPlatform> _mockTestPlatform;
@@ -331,7 +333,7 @@ public class TestRequestManagerTests
         Assert.AreEqual("Other", targetDevice);
         Assert.AreEqual(2, maxcount);
         Assert.AreEqual("X86", targetPlatform.ToString());
-        Assert.AreEqual(true, disableAppDomain);
+        Assert.IsTrue((bool)disableAppDomain);
     }
 
     [TestMethod]
@@ -519,11 +521,11 @@ public class TestRequestManagerTests
 
         var commandLineArray = commandLineSwitches.ToString();
 
-        Assert.IsTrue(commandLineArray!.Contains("/Parallel"));
-        Assert.IsTrue(commandLineArray.Contains("/EnableCodeCoverage"));
-        Assert.IsTrue(commandLineArray.Contains("/InIsolation"));
-        Assert.IsTrue(commandLineArray.Contains("/UseVsixExtensions"));
-        Assert.IsTrue(commandLineArray.Contains("/settings//.RunSettings"));
+        Assert.Contains("/Parallel", commandLineArray!);
+        Assert.Contains("/EnableCodeCoverage", commandLineArray!);
+        Assert.Contains("/InIsolation", commandLineArray!);
+        Assert.Contains("/UseVsixExtensions", commandLineArray!);
+        Assert.Contains("/settings//.RunSettings", commandLineArray!);
     }
 
     [TestMethod]
@@ -571,7 +573,7 @@ public class TestRequestManagerTests
         Assert.IsTrue(actualRequestData!.MetricsCollection.Metrics.TryGetValue(TelemetryDataConstants.CommandLineSwitches, out var commandLineSwitches));
 
         var commandLineArray = commandLineSwitches.ToString();
-        Assert.IsTrue(commandLineArray!.Contains("/settings//.TestSettings"));
+        Assert.Contains("/settings//.TestSettings", commandLineArray!);
     }
 
     [TestMethod]
@@ -619,7 +621,7 @@ public class TestRequestManagerTests
         Assert.IsTrue(actualRequestData!.MetricsCollection.Metrics.TryGetValue(TelemetryDataConstants.CommandLineSwitches, out var commandLineSwitches));
 
         var commandLineArray = commandLineSwitches.ToString();
-        Assert.IsTrue(commandLineArray!.Contains("/settings//.vsmdi"));
+        Assert.Contains("/settings//.vsmdi", commandLineArray!);
     }
 
     [TestMethod]
@@ -667,7 +669,7 @@ public class TestRequestManagerTests
         Assert.IsTrue(actualRequestData!.MetricsCollection.Metrics.TryGetValue(TelemetryDataConstants.CommandLineSwitches, out var commandLineSwitches));
 
         var commandLineArray = commandLineSwitches.ToString();
-        Assert.IsTrue(commandLineArray!.Contains("/settings//.testrunConfig"));
+        Assert.Contains("/settings//.testrunConfig", commandLineArray!);
     }
 
     [TestMethod]
@@ -698,8 +700,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()));
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()));
 
-        Assert.IsTrue(actualDiscoveryCriteria!.RunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualDiscoveryCriteria.RunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualDiscoveryCriteria!.RunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualDiscoveryCriteria.RunSettings!);
     }
 
     [TestMethod]
@@ -732,8 +734,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()), Times.Never);
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()), Times.Never);
 
-        Assert.IsTrue(actualDiscoveryCriteria!.RunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualDiscoveryCriteria.RunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualDiscoveryCriteria!.RunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualDiscoveryCriteria.RunSettings!);
     }
 
     [TestMethod]
@@ -763,8 +765,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()));
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()));
 
-        Assert.IsTrue(actualDiscoveryCriteria!.RunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualDiscoveryCriteria.RunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualDiscoveryCriteria!.RunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualDiscoveryCriteria.RunSettings!);
     }
 
     [TestMethod]
@@ -804,8 +806,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()), Times.Once);
 
         // but we don't update the settings, to keep what user specified
-        Assert.IsFalse(actualDiscoveryCriteria!.RunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsFalse(actualDiscoveryCriteria.RunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.DoesNotContain(Constants.DotNetFramework46, actualDiscoveryCriteria!.RunSettings!);
+        Assert.DoesNotContain(nameof(Architecture.ARM), actualDiscoveryCriteria.RunSettings!);
     }
 
     [TestMethod]
@@ -976,11 +978,11 @@ public class TestRequestManagerTests
 
         var commandLineArray = commandLineSwitches.ToString();
 
-        Assert.IsTrue(commandLineArray!.Contains("/Parallel"));
-        Assert.IsTrue(commandLineArray.Contains("/EnableCodeCoverage"));
-        Assert.IsTrue(commandLineArray.Contains("/InIsolation"));
-        Assert.IsTrue(commandLineArray.Contains("/UseVsixExtensions"));
-        Assert.IsTrue(commandLineArray.Contains("/settings//.RunSettings"));
+        Assert.Contains("/Parallel", commandLineArray!);
+        Assert.Contains("/EnableCodeCoverage", commandLineArray!);
+        Assert.Contains("/InIsolation", commandLineArray!);
+        Assert.Contains("/UseVsixExtensions", commandLineArray!);
+        Assert.Contains("/settings//.RunSettings", commandLineArray!);
     }
 
     [TestMethod]
@@ -1135,7 +1137,7 @@ public class TestRequestManagerTests
         Assert.AreEqual("Other", targetDevice);
         Assert.AreEqual(2, maxcount);
         Assert.AreEqual("X86", targetPlatform.ToString());
-        Assert.AreEqual(true, disableAppDomain);
+        Assert.IsTrue((bool)disableAppDomain);
     }
 
     [TestMethod]
@@ -1249,10 +1251,10 @@ public class TestRequestManagerTests
         });
 
         var mockCustomlauncher = new Mock<ITestHostLauncher3>();
-        var task1 = Task.Run(() => _testRequestManager.RunTests(payload1, mockCustomlauncher.Object, mockRunEventsRegistrar1.Object, _protocolConfig));
-        var task2 = Task.Run(() => _testRequestManager.RunTests(payload2, mockCustomlauncher.Object, mockRunEventsRegistrar2.Object, _protocolConfig));
+        var task1 = Task.Run(() => _testRequestManager.RunTests(payload1, mockCustomlauncher.Object, mockRunEventsRegistrar1.Object, _protocolConfig), TestContext.CancellationToken);
+        var task2 = Task.Run(() => _testRequestManager.RunTests(payload2, mockCustomlauncher.Object, mockRunEventsRegistrar2.Object, _protocolConfig), TestContext.CancellationToken);
 
-        Task.WaitAll(task1, task2);
+        Task.WaitAll([task1, task2], TestContext.CancellationToken);
 
         if (run1Start < run2Start)
         {
@@ -1290,52 +1292,52 @@ public class TestRequestManagerTests
     [TestMethod]
     public void RunTestsIfThrowsTestPlatformExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<TestPlatformException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new TestPlatformException("HelloWorld")));
+        Assert.ThrowsExactly<TestPlatformException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new TestPlatformException("HelloWorld")));
     }
 
     [TestMethod]
     public void RunTestsIfThrowsSettingsExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<SettingsException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new SettingsException("HelloWorld")));
+        Assert.ThrowsExactly<SettingsException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new SettingsException("HelloWorld")));
     }
 
     [TestMethod]
     public void RunTestsIfThrowsInvalidOperationExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<InvalidOperationException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new InvalidOperationException("HelloWorld")));
+        Assert.ThrowsExactly<InvalidOperationException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new InvalidOperationException("HelloWorld")));
     }
 
     [TestMethod]
     public void RunTestsIfThrowsExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<NotImplementedException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new NotImplementedException("HelloWorld")));
+        Assert.ThrowsExactly<NotImplementedException>(() => RunTestsIfThrowsExceptionShouldThrowOut(new NotImplementedException("HelloWorld")));
     }
 
     [TestMethod]
     public void DiscoverTestsIfThrowsTestPlatformExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<TestPlatformException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new TestPlatformException("HelloWorld")));
+        Assert.ThrowsExactly<TestPlatformException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new TestPlatformException("HelloWorld")));
     }
 
     [TestMethod]
     public void DiscoverTestsIfThrowsSettingsExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<SettingsException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new SettingsException("HelloWorld")));
+        Assert.ThrowsExactly<SettingsException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new SettingsException("HelloWorld")));
     }
 
     [TestMethod]
     public void DiscoverTestsIfThrowsInvalidOperationExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<InvalidOperationException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new InvalidOperationException("HelloWorld")));
+        Assert.ThrowsExactly<InvalidOperationException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new InvalidOperationException("HelloWorld")));
     }
 
     [TestMethod]
     public void DiscoverTestsIfThrowsExceptionShouldThrowOut()
     {
-        Assert.ThrowsException<NotImplementedException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new NotImplementedException("HelloWorld")));
+        Assert.ThrowsExactly<NotImplementedException>(() => DiscoverTestsIfThrowsExceptionShouldThrowOut(new NotImplementedException("HelloWorld")));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void DiscoverTestsShouldUpdateDesignModeAndCollectSourceInformation(bool designModeValue)
@@ -1369,7 +1371,7 @@ public class TestRequestManagerTests
             tp => tp.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.Is<DiscoveryCriteria>(dc => dc.RunSettings!.Contains(designmode)), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void RunTestsShouldUpdateDesignModeIfRunnerIsInDesignMode(bool designModeValue)
@@ -1389,7 +1391,7 @@ public class TestRequestManagerTests
         _mockTestPlatform.Verify(tp => tp.CreateTestRunRequest(It.IsAny<IRequestData>(), It.Is<TestRunCriteria>(rc => rc.TestRunSettings!.Contains(designmode)), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void DiscoverTestsShouldNotUpdateCollectSourceInformationIfUserHasSetItInRunSettings(bool val)
@@ -1433,8 +1435,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()));
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()));
 
-        Assert.IsTrue(actualTestRunCriteria!.TestRunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualTestRunCriteria.TestRunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualTestRunCriteria!.TestRunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualTestRunCriteria.TestRunSettings!);
 
     }
 
@@ -1472,8 +1474,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()), Times.Once);
 
         // but don't update runsettings because we want to keep what user specified
-        Assert.IsTrue(actualTestRunCriteria!.TestRunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualTestRunCriteria!.TestRunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualTestRunCriteria!.TestRunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualTestRunCriteria!.TestRunSettings!);
     }
 
     [TestMethod]
@@ -1513,7 +1515,7 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()), Times.Once);
 
         // don't update it in runsettings to keep what user provided
-        Assert.IsTrue(actualTestRunCriteria!.TestRunSettings!.Contains(targetPlatform));
+        Assert.Contains(targetPlatform, actualTestRunCriteria!.TestRunSettings!);
     }
 
     [TestMethod]
@@ -1545,8 +1547,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()));
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()));
 
-        Assert.IsTrue(actualTestRunCriteria!.TestRunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualTestRunCriteria.TestRunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualTestRunCriteria!.TestRunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualTestRunCriteria.TestRunSettings!);
     }
 
     [TestMethod]
@@ -1585,8 +1587,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()), Times.Once);
 
         // but don't update them in runsettings so we keep what user specified
-        Assert.IsFalse(actualTestRunCriteria!.TestRunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsFalse(actualTestRunCriteria.TestRunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.DoesNotContain(Constants.DotNetFramework46, actualTestRunCriteria!.TestRunSettings!);
+        Assert.DoesNotContain(nameof(Architecture.ARM), actualTestRunCriteria.TestRunSettings!);
     }
 
     [TestMethod]
@@ -1626,8 +1628,8 @@ public class TestRequestManagerTests
         _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()));
         _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()));
 
-        Assert.IsTrue(actualTestRunCriteria!.TestRunSettings!.Contains(Constants.DotNetFramework46));
-        Assert.IsTrue(actualTestRunCriteria.TestRunSettings.Contains(nameof(Architecture.ARM)));
+        Assert.Contains(Constants.DotNetFramework46, actualTestRunCriteria!.TestRunSettings!);
+        Assert.Contains(nameof(Architecture.ARM), actualTestRunCriteria.TestRunSettings!);
         CollectionAssert.AreEqual(actualSources, archSources);
         CollectionAssert.AreEqual(actualSources, fxSources);
     }
@@ -1657,19 +1659,10 @@ public class TestRequestManagerTests
         };
 
         _commandLineOptions.EnableCodeCoverage = false;
-        bool exceptionThrown = false;
 
-        try
-        {
-            _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
-        }
-        catch (SettingsException ex)
-        {
-            exceptionThrown = true;
-            Assert.IsTrue(ex.Message.Contains(@"<SettingsFile>C:\temp.testsettings</SettingsFile>"), ex.Message);
-        }
-
-        Assert.IsTrue(exceptionThrown, "Initialize should throw exception");
+        var ex = Assert.ThrowsExactly<SettingsException>(() =>
+            _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig));
+        Assert.Contains(@"<SettingsFile>C:\temp.testsettings</SettingsFile>", ex.Message);
     }
 
     [TestMethod]
@@ -1697,19 +1690,10 @@ public class TestRequestManagerTests
         };
 
         _commandLineOptions.EnableCodeCoverage = true;
-        bool exceptionThrown = false;
 
-        try
-        {
-            _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
-        }
-        catch (SettingsException ex)
-        {
-            exceptionThrown = true;
-            Assert.IsTrue(ex.Message.Contains(@"<SettingsFile>C:\temp.testsettings</SettingsFile>"), ex.Message);
-        }
-
-        Assert.IsTrue(exceptionThrown, "Initialize should throw exception");
+        var ex = Assert.ThrowsExactly<SettingsException>(() =>
+            _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig));
+        Assert.Contains(@"<SettingsFile>C:\temp.testsettings</SettingsFile>", ex.Message);
     }
 
     [TestMethod]
@@ -1759,7 +1743,7 @@ public class TestRequestManagerTests
         _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualTestRunCriteria!.TestRunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(1, loggerSettingsList.Count);
+        Assert.HasCount(1, loggerSettingsList);
         Assert.AreEqual("Console", loggerSettingsList[0].FriendlyName);
         Assert.IsNotNull(loggerSettingsList[0].AssemblyQualifiedName);
         Assert.IsNotNull(loggerSettingsList[0].CodeBase);
@@ -1797,7 +1781,7 @@ public class TestRequestManagerTests
         _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualTestRunCriteria!.TestRunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(2, loggerSettingsList.Count);
+        Assert.HasCount(2, loggerSettingsList);
         Assert.IsNotNull(loggerSettingsList[0].Configuration);
         Assert.AreEqual("blabla", loggerSettingsList[0].FriendlyName);
         Assert.AreEqual("Console", loggerSettingsList[1].FriendlyName);
@@ -1840,7 +1824,7 @@ public class TestRequestManagerTests
             new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualDiscoveryCriteria!.RunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(2, loggerSettingsList.Count);
+        Assert.HasCount(2, loggerSettingsList);
         Assert.IsNotNull(loggerSettingsList[0].Configuration);
         Assert.AreEqual("blabla", loggerSettingsList[0].FriendlyName);
         Assert.AreEqual("Console", loggerSettingsList[1].FriendlyName);
@@ -1870,7 +1854,7 @@ public class TestRequestManagerTests
             (IRequestData requestData, TestRunCriteria runCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualTestRunCriteria = runCriteria).Returns(mockTestRunRequest.Object);
         _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
 
-        Assert.IsFalse(actualTestRunCriteria!.TestRunSettings!.Contains("LoggerRunSettings"));
+        Assert.DoesNotContain("LoggerRunSettings", actualTestRunCriteria!.TestRunSettings!);
     }
 
     [TestMethod]
@@ -1898,7 +1882,7 @@ public class TestRequestManagerTests
             new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualDiscoveryCriteria!.RunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(1, loggerSettingsList.Count);
+        Assert.HasCount(1, loggerSettingsList);
         Assert.AreEqual("Console", loggerSettingsList[0].FriendlyName);
         Assert.IsNotNull(loggerSettingsList[0].AssemblyQualifiedName);
         Assert.IsNotNull(loggerSettingsList[0].CodeBase);
@@ -1929,7 +1913,7 @@ public class TestRequestManagerTests
         _testRequestManager.DiscoverTests(payload,
             new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
 
-        Assert.IsFalse(actualDiscoveryCriteria!.RunSettings!.Contains("LoggerRunSettings"));
+        Assert.DoesNotContain("LoggerRunSettings", actualDiscoveryCriteria!.RunSettings!);
     }
 
     [TestMethod]
@@ -1969,14 +1953,14 @@ public class TestRequestManagerTests
         _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualTestRunCriteria!.TestRunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(2, loggerSettingsList.Count);
+        Assert.HasCount(2, loggerSettingsList);
         Assert.IsNotNull(loggerSettingsList[0].Configuration);
         Assert.AreEqual("blabla", loggerSettingsList[0].FriendlyName);
         Assert.AreEqual("console", loggerSettingsList[1].FriendlyName);
         Assert.AreEqual(new Uri("logger://tempconsoleUri").ToString(), loggerSettingsList[1].Uri!.ToString());
         Assert.AreNotEqual("tempAssemblyName", loggerSettingsList[1].AssemblyQualifiedName);
         Assert.AreNotEqual("tempCodeBase", loggerSettingsList[1].CodeBase);
-        Assert.IsTrue(loggerSettingsList[1].Configuration!.InnerXml.Contains("Value1"));
+        Assert.Contains("Value1", loggerSettingsList[1].Configuration!.InnerXml);
         Assert.IsNotNull(loggerSettingsList[1].AssemblyQualifiedName);
         Assert.IsNotNull(loggerSettingsList[1].CodeBase);
     }
@@ -2021,14 +2005,14 @@ public class TestRequestManagerTests
             new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualDiscoveryCriteria!.RunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(2, loggerSettingsList.Count);
+        Assert.HasCount(2, loggerSettingsList);
         Assert.IsNotNull(loggerSettingsList[0].Configuration);
         Assert.AreEqual("blabla", loggerSettingsList[0].FriendlyName);
         Assert.AreEqual("consoleTemp", loggerSettingsList[1].FriendlyName);
         Assert.AreEqual(new Uri("logger://Microsoft/TestPlatform/ConsoleLogger/v1").ToString(), loggerSettingsList[1].Uri!.ToString());
         Assert.AreNotEqual("tempAssemblyName", loggerSettingsList[1].AssemblyQualifiedName);
         Assert.AreNotEqual("tempAssemblyName", loggerSettingsList[1].CodeBase);
-        Assert.IsTrue(loggerSettingsList[1].Configuration!.InnerXml.Contains("Value1"));
+        Assert.Contains("Value1", loggerSettingsList[1].Configuration!.InnerXml);
         Assert.IsNotNull(loggerSettingsList[1].AssemblyQualifiedName);
         Assert.IsNotNull(loggerSettingsList[1].CodeBase);
     }
@@ -2070,14 +2054,14 @@ public class TestRequestManagerTests
         _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualTestRunCriteria!.TestRunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(2, loggerSettingsList.Count);
+        Assert.HasCount(2, loggerSettingsList);
         Assert.IsNotNull(loggerSettingsList[0].Configuration);
         Assert.AreEqual("blabla", loggerSettingsList[0].FriendlyName);
         Assert.AreEqual("console", loggerSettingsList[1].FriendlyName);
         Assert.AreEqual(new Uri("logger://tempconsoleUri").ToString(), loggerSettingsList[1].Uri!.ToString());
         Assert.AreNotEqual("tempAssemblyName", loggerSettingsList[1].AssemblyQualifiedName);
         Assert.AreNotEqual("tempCodeBase", loggerSettingsList[1].CodeBase);
-        Assert.IsTrue(loggerSettingsList[1].Configuration!.InnerXml.Contains("Value1"));
+        Assert.Contains("Value1", loggerSettingsList[1].Configuration!.InnerXml);
         Assert.IsNotNull(loggerSettingsList[1].AssemblyQualifiedName);
         Assert.IsNotNull(loggerSettingsList[1].CodeBase);
     }
@@ -2122,14 +2106,14 @@ public class TestRequestManagerTests
             new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
 
         var loggerSettingsList = XmlRunSettingsUtilities.GetLoggerRunSettings(actualDiscoveryCriteria!.RunSettings)!.LoggerSettingsList;
-        Assert.AreEqual(2, loggerSettingsList.Count);
+        Assert.HasCount(2, loggerSettingsList);
         Assert.IsNotNull(loggerSettingsList[0].Configuration);
         Assert.AreEqual("blabla", loggerSettingsList[0].FriendlyName);
         Assert.AreEqual("consoleTemp", loggerSettingsList[1].FriendlyName);
         Assert.AreEqual(new Uri("logger://Microsoft/TestPlatform/ConsoleLogger/v1").ToString(), loggerSettingsList[1].Uri!.ToString());
         Assert.AreNotEqual("tempAssemblyName", loggerSettingsList[1].AssemblyQualifiedName);
         Assert.AreNotEqual("tempAssemblyName", loggerSettingsList[1].CodeBase);
-        Assert.IsTrue(loggerSettingsList[1].Configuration!.InnerXml.Contains("Value1"));
+        Assert.Contains("Value1", loggerSettingsList[1].Configuration!.InnerXml);
         Assert.IsNotNull(loggerSettingsList[1].AssemblyQualifiedName);
         Assert.IsNotNull(loggerSettingsList[1].CodeBase);
     }
@@ -2161,7 +2145,7 @@ public class TestRequestManagerTests
         _mockTestPlatformEventSource.Verify(es => es.TestRunAttachmentsProcessingRequestStop());
 
         _mockMetricsPublisher.Verify(p => p.PublishMetrics(TelemetryDataConstants.TestAttachmentsProcessingCompleteEvent,
-            It.Is<Dictionary<string, object?>>(m =>
+            It.Is<IDictionary<string, object?>>(m =>
                 m.Count == 2
                 && m.ContainsKey(TelemetryDataConstants.NumberOfAttachmentsSentForProcessing)
                 && (int)m[TelemetryDataConstants.NumberOfAttachmentsSentForProcessing]! == 5
@@ -2205,7 +2189,9 @@ public class TestRequestManagerTests
                 {
                     i++;
                     Console.WriteLine($"Iteration {i}");
+#pragma warning disable MSTEST0049 // Intentionally not using CancellationToken - the mock must poll without throwing
                     Task.Delay(5).Wait();
+#pragma warning restore MSTEST0049
                 }
 
                 r.MetricsCollection.Add(TelemetryDataConstants.AttachmentsProcessingState, "Canceled");
@@ -2219,8 +2205,8 @@ public class TestRequestManagerTests
             CollectMetrics = true
         };
 
-        Task task = Task.Run(() => _testRequestManager.ProcessTestRunAttachments(payload, mockEventsHandler.Object, _protocolConfig));
-        await Task.Delay(50);
+        Task task = Task.Run(() => _testRequestManager.ProcessTestRunAttachments(payload, mockEventsHandler.Object, _protocolConfig), TestContext.CancellationToken);
+        await Task.Delay(50, TestContext.CancellationToken);
         _testRequestManager.CancelTestRunAttachmentsProcessing();
 
         await task;
@@ -2230,7 +2216,7 @@ public class TestRequestManagerTests
         _mockTestPlatformEventSource.Verify(es => es.TestRunAttachmentsProcessingRequestStop());
 
         _mockMetricsPublisher.Verify(p => p.PublishMetrics(TelemetryDataConstants.TestAttachmentsProcessingCompleteEvent,
-            It.Is<Dictionary<string, object?>>(m =>
+            It.Is<IDictionary<string, object?>>(m =>
                 m.Count == 1
                 && m.ContainsKey(TelemetryDataConstants.AttachmentsProcessingState)
                 && (string?)m[TelemetryDataConstants.AttachmentsProcessingState] == "Canceled")));
@@ -2303,8 +2289,8 @@ public class TestRequestManagerTests
             .Callback(
                 (IRequestData _, StartTestSessionCriteria criteria, ITestSessionEventsHandler _, Dictionary<string, SourceDetail> _, IWarningLogger _) =>
                 {
-                    Assert.IsTrue(criteria.RunSettings!.Contains(Constants.DotNetFramework46));
-                    Assert.IsTrue(criteria.RunSettings.Contains(nameof(Architecture.ARM)));
+                    Assert.Contains(Constants.DotNetFramework46, criteria.RunSettings!);
+                    Assert.Contains(nameof(Architecture.ARM), criteria.RunSettings!);
                 });
 
         _testRequestManager.StartTestSession(
@@ -2352,8 +2338,8 @@ public class TestRequestManagerTests
             .Callback(
                 (IRequestData _, StartTestSessionCriteria criteria, ITestSessionEventsHandler _, Dictionary<string, SourceDetail> _, IWarningLogger _) =>
                 {
-                    Assert.IsTrue(criteria.RunSettings!.Contains(Constants.DotNetFramework46));
-                    Assert.IsTrue(criteria.RunSettings.Contains(nameof(Architecture.ARM)));
+                    Assert.Contains(Constants.DotNetFramework46, criteria.RunSettings!);
+                    Assert.Contains(nameof(Architecture.ARM), criteria.RunSettings!);
                 });
 
         _testRequestManager.StartTestSession(
@@ -2392,23 +2378,14 @@ public class TestRequestManagerTests
         };
 
         _commandLineOptions.EnableCodeCoverage = false;
-        bool exceptionThrown = false;
 
-        try
-        {
+        var ex = Assert.ThrowsExactly<SettingsException>(() =>
             _testRequestManager.StartTestSession(
                 payload,
                 new Mock<ITestHostLauncher3>().Object,
                 new Mock<ITestSessionEventsHandler>().Object,
-                _protocolConfig);
-        }
-        catch (SettingsException ex)
-        {
-            exceptionThrown = true;
-            Assert.IsTrue(ex.Message.Contains(@"<SettingsFile>C:\temp.testsettings</SettingsFile>"), ex.Message);
-        }
-
-        Assert.IsTrue(exceptionThrown, "Initialize should throw exception");
+                _protocolConfig));
+        Assert.Contains(@"<SettingsFile>C:\temp.testsettings</SettingsFile>", ex.Message);
     }
 
     [TestMethod]
@@ -2561,10 +2538,10 @@ public class TestRequestManagerTests
                 Assert.IsNotNull(eventArgs.TestSessionInfo);
                 Assert.IsNotNull(eventArgs.Metrics);
                 Assert.AreEqual(eventArgs.TestSessionInfo, testSessionInfo);
-                Assert.AreEqual(eventArgs.IsStopped, false);
+                Assert.IsFalse(eventArgs.IsStopped);
             });
 
-        Assert.ThrowsException<Exception>(() =>
+        Assert.ThrowsExactly<Exception>(() =>
             _testRequestManager.StopTestSession(
                 new()
                 {
@@ -2698,7 +2675,7 @@ public class TestRequestManagerTests
 
         // Assert
         Assert.IsTrue(result);
-        StringAssert.Contains(xmlDocument.OuterXml, "<EnableStaticNativeInstrumentation>False</EnableStaticNativeInstrumentation><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage>");
+        Assert.Contains("<EnableStaticNativeInstrumentation>False</EnableStaticNativeInstrumentation><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage>", xmlDocument.OuterXml);
     }
 
     [TestMethod]
@@ -2724,7 +2701,7 @@ public class TestRequestManagerTests
 
         // Assert
         Assert.IsTrue(result);
-        StringAssert.Contains(xmlDocument.OuterXml, $"<Configuration><CodeCoverage><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage></Configuration></DataCollector>");
+        Assert.Contains($"<Configuration><CodeCoverage><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage></Configuration></DataCollector>", xmlDocument.OuterXml);
     }
 
     [TestMethod]
@@ -2762,7 +2739,7 @@ public class TestRequestManagerTests
         // Assert
         // No matter what user has set, we don't override it.
         Assert.IsFalse(result);
-        StringAssert.Contains(xmlDocument.OuterXml, $"<CodeCoverage><EnableDynamicNativeInstrumentation>{setting}</EnableDynamicNativeInstrumentation></CodeCoverage>");
+        Assert.Contains($"<CodeCoverage><EnableDynamicNativeInstrumentation>{setting}</EnableDynamicNativeInstrumentation></CodeCoverage>", xmlDocument.OuterXml);
     }
 
     [TestMethod]
@@ -2801,7 +2778,7 @@ public class TestRequestManagerTests
 
         // Assert
         Assert.IsTrue(result);
-        StringAssert.Contains(xmlDocument.OuterXml, $"<CodeCoverage><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage>");
+        Assert.Contains($"<CodeCoverage><EnableDynamicNativeInstrumentation>False</EnableDynamicNativeInstrumentation></CodeCoverage>", xmlDocument.OuterXml);
     }
 
     private static DiscoveryRequestPayload CreateDiscoveryPayload(string runsettings)

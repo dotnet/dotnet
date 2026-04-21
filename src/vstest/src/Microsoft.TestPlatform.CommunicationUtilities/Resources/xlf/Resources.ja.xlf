@@ -22,6 +22,21 @@
         <target state="translated">アクティブなテスト探索が中止されました。理由: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">{0} プロセスは {2} 秒後に {1} プロセスへの接続に失敗しました。プロセスの起動に失敗しました。ウイルス対策ソフトが起動を妨げている可能性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">{0} プロセスは {2} 秒後に {1} プロセスへの接続に失敗しました。プロセス {3} - {4}は exitCode {5} で終了し、エラー出力は以下の通りです:\n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">{0} プロセスは {2} 秒後に {1} プロセスへの接続に失敗しました。タイムアウトが発生したとき、プロセス {3} -{4} はまだ実行中でした。これは多くの場合、マシンの動作が遅いために発生します。環境変数 {5} を設定して、タイムアウトを延長してください。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">テスト ホスト プロセスと通信できません。</target>

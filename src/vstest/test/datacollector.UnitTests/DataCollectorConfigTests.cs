@@ -23,7 +23,7 @@ public class DataCollectorConfigTests
     [TestMethod]
     public void ConstructorShouldThrowExceptionIfTypeIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => new DataCollectorConfig(null!));
     }
 

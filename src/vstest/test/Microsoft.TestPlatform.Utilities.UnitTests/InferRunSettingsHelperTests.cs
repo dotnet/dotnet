@@ -78,7 +78,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<TargetPlatform>X86</TargetPlatform>");
+        Assert.Contains("<TargetPlatform>X86</TargetPlatform>", xml);
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, $"<TargetFrameworkVersion>{Framework.DefaultFramework.Name}</TargetFrameworkVersion>");
+        Assert.Contains($"<TargetFrameworkVersion>{Framework.DefaultFramework.Name}</TargetFrameworkVersion>", xml);
     }
 
     [TestMethod]
@@ -104,7 +104,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<ResultsDirectory>temp</ResultsDirectory>");
+        Assert.Contains("<ResultsDirectory>temp</ResultsDirectory>", xml);
     }
 
     [TestMethod]
@@ -117,7 +117,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<TargetPlatform>X86</TargetPlatform>");
+        Assert.Contains("<TargetPlatform>X86</TargetPlatform>", xml);
     }
 
     [TestMethod]
@@ -130,7 +130,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<TargetFrameworkVersion>.NETFramework,Version=v4.0</TargetFrameworkVersion>");
+        Assert.Contains("<TargetFrameworkVersion>.NETFramework,Version=v4.0</TargetFrameworkVersion>", xml);
     }
     //TargetFrameworkMoniker
 
@@ -145,7 +145,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<TargetFrameworkVersion>.NETFramework,Version=v4.0</TargetFrameworkVersion>");
+        Assert.Contains("<TargetFrameworkVersion>.NETFramework,Version=v4.0</TargetFrameworkVersion>", xml);
     }
 
     [TestMethod]
@@ -158,7 +158,7 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<ResultsDirectory>someplace</ResultsDirectory>");
+        Assert.Contains("<ResultsDirectory>someplace</ResultsDirectory>", xml);
     }
 
     [TestMethod]
@@ -171,9 +171,9 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<TargetPlatform>X86</TargetPlatform>");
-        StringAssert.Contains(xml, "<TargetFrameworkVersion>Framework40</TargetFrameworkVersion>");
-        StringAssert.Contains(xml, "<ResultsDirectory>someplace</ResultsDirectory>");
+        Assert.Contains("<TargetPlatform>X86</TargetPlatform>", xml);
+        Assert.Contains("<TargetFrameworkVersion>Framework40</TargetFrameworkVersion>", xml);
+        Assert.Contains("<ResultsDirectory>someplace</ResultsDirectory>", xml);
     }
 
     [TestMethod]
@@ -186,9 +186,9 @@ public class InferRunSettingsHelperTests
 
         var xml = xmlDocument.OuterXml;
 
-        StringAssert.Contains(xml, "<TargetPlatform>X64</TargetPlatform>");
-        StringAssert.Contains(xml, $"<TargetFrameworkVersion>{Framework.DefaultFramework.Name}</TargetFrameworkVersion>");
-        StringAssert.Contains(xml, "<ResultsDirectory>temp</ResultsDirectory>");
+        Assert.Contains("<TargetPlatform>X64</TargetPlatform>", xml);
+        Assert.Contains($"<TargetFrameworkVersion>{Framework.DefaultFramework.Name}</TargetFrameworkVersion>", xml);
+        Assert.Contains("<ResultsDirectory>temp</ResultsDirectory>", xml);
     }
 
     [TestMethod]
@@ -218,7 +218,7 @@ public class InferRunSettingsHelperTests
         Assert.AreEqual("False", GetValueOf(xmlDocument, "/RunSettings/RunConfiguration/CollectSourceInformation"));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void UpdateDesignModeOrCsiShouldModifyXmlToValueProvided(bool val)
@@ -240,7 +240,7 @@ public class InferRunSettingsHelperTests
 
         var result = InferRunSettingsHelper.MakeRunsettingsCompatible(settings)!;
 
-        Assert.IsTrue(result.IndexOf("DesignMode", StringComparison.OrdinalIgnoreCase) < 0);
+        Assert.IsLessThan(0, result.IndexOf("DesignMode", StringComparison.OrdinalIgnoreCase));
     }
 
     [TestMethod]
@@ -263,14 +263,14 @@ public class InferRunSettingsHelperTests
 
         var result = InferRunSettingsHelper.MakeRunsettingsCompatible(settings)!;
 
-        Assert.IsTrue(result.IndexOf("TargetPlatform", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("TargetFrameworkVersion", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("TestAdaptersPaths", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("ResultsDirectory", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("SolutionDirectory", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("MaxCpuCount", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("DisableParallelization", StringComparison.OrdinalIgnoreCase) > 0);
-        Assert.IsTrue(result.IndexOf("DisableAppDomain", StringComparison.OrdinalIgnoreCase) > 0);
+        Assert.IsGreaterThan(0, result.IndexOf("TargetPlatform", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("TargetFrameworkVersion", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("TestAdaptersPaths", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("ResultsDirectory", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("SolutionDirectory", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("MaxCpuCount", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("DisableParallelization", StringComparison.OrdinalIgnoreCase));
+        Assert.IsGreaterThan(0, result.IndexOf("DisableAppDomain", StringComparison.OrdinalIgnoreCase));
     }
 
     [TestMethod]
@@ -490,7 +490,7 @@ public class InferRunSettingsHelperTests
                                       </RunSettings>";
 
         Assert.IsTrue(InferRunSettingsHelper.TryGetLegacySettingElements(runSettingsXml, out Dictionary<string, string> legacySettings));
-        Assert.AreEqual(0, legacySettings.Count);
+        Assert.IsEmpty(legacySettings);
     }
 
     [TestMethod]
@@ -519,7 +519,7 @@ public class InferRunSettingsHelperTests
         var expectedExecutionAttributes = "hostProcessPlatform, parallelTestCount";
 
         Assert.IsTrue(InferRunSettingsHelper.TryGetLegacySettingElements(runSettingsXml, out Dictionary<string, string> legacySettings));
-        Assert.AreEqual(3, legacySettings.Count, "count does not match");
+        Assert.HasCount(3, legacySettings, "count does not match");
         Assert.AreEqual(expectedElements, legacySettings["Elements"]);
         Assert.AreEqual(expectedDeploymentAttributes, legacySettings["DeploymentAttributes"]);
         Assert.AreEqual(expectedExecutionAttributes, legacySettings["ExecutionAttributes"]);
@@ -539,7 +539,7 @@ public class InferRunSettingsHelperTests
 
         var envVars = InferRunSettingsHelper.GetEnvironmentVariables(runSettingsXml)!;
 
-        Assert.AreEqual(2, envVars.Count);
+        Assert.HasCount(2, envVars);
         Assert.AreEqual(@"C:\temp", envVars["RANDOM_PATH"]);
         Assert.AreEqual(@"C:\temp2", envVars["RANDOM_PATH2"]);
     }
@@ -558,7 +558,7 @@ public class InferRunSettingsHelperTests
 
         var envVars = InferRunSettingsHelper.GetEnvironmentVariables(runSettingsXml)!;
 
-        Assert.AreEqual(1, envVars.Count);
+        Assert.HasCount(1, envVars);
         Assert.AreEqual(@"C:\temp", envVars["RANDOM_PATH"]);
     }
 
@@ -573,7 +573,7 @@ public class InferRunSettingsHelperTests
                                       </RunSettings>";
 
         var envVars = InferRunSettingsHelper.GetEnvironmentVariables(runSettingsXml)!;
-        Assert.AreEqual(0, envVars.Count);
+        Assert.IsEmpty(envVars);
     }
 
     [TestMethod]

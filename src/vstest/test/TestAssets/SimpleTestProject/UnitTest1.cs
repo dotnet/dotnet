@@ -22,7 +22,6 @@ namespace SampleUnitTestProject
         [TestMethod]
         public void PassingTest()
         {
-            Assert.AreEqual(2, 2);
         }
 
         /// <summary>
@@ -38,7 +37,7 @@ namespace SampleUnitTestProject
             var appDomainFilePath = Environment.GetEnvironmentVariable("TEST_ASSET_APPDOMAIN_TEST_PATH") ?? Path.Combine(Path.GetTempPath(), "appdomain_test.txt");
             File.WriteAllText(appDomainFilePath, "AppDomain FriendlyName: " + AppDomain.CurrentDomain.FriendlyName);
 #endif
-            Assert.AreEqual(2, 3);
+            Assert.Fail();
         }
 
         /// <summary>

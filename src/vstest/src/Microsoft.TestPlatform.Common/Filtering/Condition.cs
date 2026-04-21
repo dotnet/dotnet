@@ -40,7 +40,7 @@ internal enum Operator
 /// <summary>
 /// Represents a condition in filter expression.
 /// </summary>
-internal class Condition
+internal sealed class Condition
 {
     /// <summary>
     ///  Default property name which will be used when filter has only property value.
@@ -52,32 +52,6 @@ internal class Condition
     /// </summary>
     public const Operation DefaultOperation = Operation.Contains;
 
-    /// <summary>
-    /// Name of the property used in condition.
-    /// </summary>
-    internal string Name
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// Value for the property.
-    /// </summary>
-    internal string Value
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// Operation to be performed.
-    /// </summary>
-    internal Operation Operation
-    {
-        get;
-        private set;
-    }
     internal Condition(string name, Operation operation, string value)
     {
         Name = name;
@@ -86,83 +60,74 @@ internal class Condition
     }
 
     /// <summary>
+    /// Name of the property used in condition.
+    /// </summary>
+    internal string Name { get; }
+
+    /// <summary>
+    /// Value for the property.
+    /// </summary>
+    internal string Value { get; }
+
+    /// <summary>
+    /// Operation to be performed.
+    /// </summary>
+    internal Operation Operation { get; }
+
+    private bool EvaluateEqualOperation(string[]? multiValue)
+    {
+        // if any value in multi-valued property matches 'this.Value', for Equal to evaluate true.
+        if (multiValue != null)
+        {
+            foreach (string propertyValue in multiValue)
+            {
+                if (string.Equals(propertyValue, Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool EvaluateContainsOperation(string[]? multiValue)
+    {
+        if (multiValue != null)
+        {
+            foreach (string propertyValue in multiValue)
+            {
+                TPDebug.Assert(null != propertyValue, "PropertyValue can not be null.");
+                if (propertyValue.IndexOf(Value, StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Evaluate this condition for testObject.
     /// </summary>
     internal bool Evaluate(Func<string, object?> propertyValueProvider)
     {
         ValidateArg.NotNull(propertyValueProvider, nameof(propertyValueProvider));
-        var result = false;
         var multiValue = GetPropertyValue(propertyValueProvider);
-        switch (Operation)
+        var result = Operation switch
         {
-            case Operation.Equal:
-                // if any value in multi-valued property matches 'this.Value', for Equal to evaluate true.
-                if (null != multiValue)
-                {
-                    foreach (string propertyValue in multiValue)
-                    {
-                        result = result || string.Equals(propertyValue, Value, StringComparison.OrdinalIgnoreCase);
-                        if (result)
-                        {
-                            break;
-                        }
-                    }
-                }
-                break;
+            // if any value in multi-valued property matches 'this.Value', for Equal to evaluate true.
+            Operation.Equal => EvaluateEqualOperation(multiValue),
+            // all values in multi-valued property should not match 'this.Value' for NotEqual to evaluate true.
+            Operation.NotEqual => !EvaluateEqualOperation(multiValue),
+            // if any value in multi-valued property contains 'this.Value' for 'Contains' to be true.
+            Operation.Contains => EvaluateContainsOperation(multiValue),
+            // all values in multi-valued property should not contain 'this.Value' for NotContains to evaluate true.
+            Operation.NotContains => !EvaluateContainsOperation(multiValue),
+            _ => false,
+        };
 
-
-            case Operation.NotEqual:
-                // all values in multi-valued property should not match 'this.Value' for NotEqual to evaluate true.
-                result = true;
-
-                // if value is null.
-                if (null != multiValue)
-                {
-                    foreach (string propertyValue in multiValue)
-                    {
-                        result = result && !string.Equals(propertyValue, Value, StringComparison.OrdinalIgnoreCase);
-                        if (!result)
-                        {
-                            break;
-                        }
-                    }
-                }
-                break;
-
-            case Operation.Contains:
-                // if any value in multi-valued property contains 'this.Value' for 'Contains' to be true.
-                if (null != multiValue)
-                {
-                    foreach (string propertyValue in multiValue)
-                    {
-                        TPDebug.Assert(null != propertyValue, "PropertyValue can not be null.");
-                        result = result || propertyValue.IndexOf(Value, StringComparison.OrdinalIgnoreCase) != -1;
-                        if (result)
-                        {
-                            break;
-                        }
-                    }
-                }
-                break;
-
-            case Operation.NotContains:
-                // all values in multi-valued property should not contain 'this.Value' for NotContains to evaluate true.
-                result = true;
-
-                if (null != multiValue)
-                {
-                    foreach (string propertyValue in multiValue)
-                    {
-                        TPDebug.Assert(null != propertyValue, "PropertyValue can not be null.");
-                        result = result && propertyValue.IndexOf(Value, StringComparison.OrdinalIgnoreCase) == -1;
-                        if (!result)
-                        {
-                            break;
-                        }
-                    }
-                }
-                break;
-        }
         return result;
     }
 

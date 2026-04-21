@@ -1,1 +1,3 @@
 ﻿#nullable enable
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventArgs.RequestingAssembly.get -> System.Reflection.Assembly?
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventArgs.RequestingAssembly.set -> void

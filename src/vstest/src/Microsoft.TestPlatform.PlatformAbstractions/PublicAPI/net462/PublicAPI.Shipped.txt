@@ -15,6 +15,7 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.RollingFileTraceListener.Rolling
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.~PlatformAssemblyResolver() -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformThread.Run(System.Action? action, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformApartmentState apartmentState, bool waitForCompletion) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.LaunchProcess(string! processPath, string? arguments, string? workingDirectory, System.Collections.Generic.IDictionary<string!, string?>? envVariables, System.Action<object?, string?>? errorCallback, System.Action<object?>? exitCallBack, System.Action<object?, string?>? outputCallBack) -> object!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.LaunchProcess(string! processPath, string? arguments, string? workingDirectory, System.Collections.Generic.IDictionary<string!, string?>? envVariables, System.Action<object?, string?>? errorCallback, System.Action<object?>? exitCallBack, System.Action<object?, string?>? outputCallBack, bool createNoNewWindow) -> object!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.SetExitCallback(int processId, System.Action<object?>? callbackAction) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessStartInfoExtensions
 override Microsoft.VisualStudio.TestPlatform.ObjectModel.RollingFileTraceListener.Dispose(bool disposing) -> void

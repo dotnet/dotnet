@@ -247,7 +247,7 @@ public class TestCaseSerializationTests
         var test = Deserialize<TestCase>(json, version);
 
         var traits = test.Traits.ToArray();
-        Assert.AreEqual(1, traits.Length);
+        Assert.HasCount(1, traits);
         Assert.AreEqual(@"SDJDDHW>,:&^%//\\\\", traits[0].Value);
     }
 

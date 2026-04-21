@@ -99,5 +99,16 @@ namespace Microsoft.VisualStudio.TestPlatform.Client.Resources {
                 return ResourceManager.GetString("NoTestHostProviderFound", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The test platform provided the following assemblies to resolve dependencies of test extensions that did not ship their own copy: {0}. Test extensions should ship all their dependencies..
+        /// </summary>
+        internal static string ProvidedDependenciesWarning
+        {
+            get
+            {
+                return ResourceManager.GetString("ProvidedDependenciesWarning", resourceCulture);
+            }
+        }
     }
 }

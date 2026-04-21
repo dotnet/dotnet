@@ -133,7 +133,7 @@ public class RunTestsArgumentProcessorTests
         var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, TestPlatformFactory.GetTestPlatform(), TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _environment.Object, _environmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager);
 
-        Assert.ThrowsException<CommandLineException>(() => executor.Execute());
+        Assert.ThrowsExactly<CommandLineException>(() => executor.Execute());
     }
 
     private RunTestsArgumentExecutor GetExecutor(ITestRequestManager testRequestManager)
@@ -163,7 +163,7 @@ public class RunTestsArgumentProcessorTests
         var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _environment.Object, _environmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager);
 
-        Assert.ThrowsException<TestPlatformException>(() => executor.Execute());
+        Assert.ThrowsExactly<TestPlatformException>(() => executor.Execute());
     }
 
     [TestMethod]
@@ -179,7 +179,7 @@ public class RunTestsArgumentProcessorTests
         var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _environment.Object, _environmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager);
 
-        Assert.ThrowsException<SettingsException>(() => executor.Execute());
+        Assert.ThrowsExactly<SettingsException>(() => executor.Execute());
     }
 
     [TestMethod]
@@ -195,7 +195,7 @@ public class RunTestsArgumentProcessorTests
         var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _environment.Object, _environmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager);
 
-        Assert.ThrowsException<InvalidOperationException>(() => executor.Execute());
+        Assert.ThrowsExactly<InvalidOperationException>(() => executor.Execute());
     }
 
     [TestMethod]
@@ -211,7 +211,7 @@ public class RunTestsArgumentProcessorTests
         var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _environment.Object, _environmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager);
 
-        Assert.ThrowsException<Exception>(() => executor.Execute());
+        Assert.ThrowsExactly<Exception>(() => executor.Execute());
     }
 
     [TestMethod]

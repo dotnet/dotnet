@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#pragma warning disable MSTEST0049 // CancellationToken not applicable in test setup/Moq callbacks
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -117,7 +119,7 @@ public class ParallelProxyExecutionManagerTests
         parallelExecutionManager.StartTestRun(_testRunCriteriaWith2Sources, new Mock<IInternalTestRunEventsHandler>().Object);
         parallelExecutionManager.Abort(It.IsAny<IInternalTestRunEventsHandler>());
 
-        Assert.AreEqual(2, _usedMockManagers.Count, "Number of Concurrent Managers created should be equal to the amount of dlls that run");
+        Assert.HasCount(2, _usedMockManagers, "Number of Concurrent Managers created should be equal to the amount of dlls that run");
         _usedMockManagers.ForEach(em => em.Verify(m => m.Abort(It.IsAny<IInternalTestRunEventsHandler>()), Times.Once));
     }
 
@@ -130,7 +132,7 @@ public class ParallelProxyExecutionManagerTests
         parallelExecutionManager.StartTestRun(_testRunCriteriaWith2Sources, new Mock<IInternalTestRunEventsHandler>().Object);
         parallelExecutionManager.Cancel(It.IsAny<IInternalTestRunEventsHandler>());
 
-        Assert.AreEqual(2, _usedMockManagers.Count, "Number of Concurrent Managers created should be equal to the amount of dlls that run");
+        Assert.HasCount(2, _usedMockManagers, "Number of Concurrent Managers created should be equal to the amount of dlls that run");
         _usedMockManagers.ForEach(em => em.Verify(m => m.Cancel(It.IsAny<IInternalTestRunEventsHandler>()), Times.Once));
     }
 
@@ -142,7 +144,7 @@ public class ParallelProxyExecutionManagerTests
         parallelExecutionManager.StartTestRun(_testRunCriteriaWith2Sources, _mockEventHandler.Object);
 
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
-        Assert.AreEqual(_sources.Count, _processedSources.Count, "All Sources must be processed.");
+        Assert.HasCount(_sources.Count, _processedSources, "All Sources must be processed.");
         AssertMissingAndDuplicateSources(_processedSources);
     }
 
@@ -156,7 +158,7 @@ public class ParallelProxyExecutionManagerTests
         parallelExecutionManager.StartTestRun(_testRunCriteriaWithTestsFrom3Dlls, _mockEventHandler.Object);
 
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
-        Assert.AreEqual(_testCases.Count, _processedTestCases.Count, "All Tests must be processed.");
+        Assert.HasCount(_testCases.Count, _processedTestCases, "All Tests must be processed.");
         AssertMissingAndDuplicateTestCases(_testCases, _processedTestCases);
     }
 
@@ -168,7 +170,7 @@ public class ParallelProxyExecutionManagerTests
         Task.Run(() => parallelExecutionManager.StartTestRun(_testRunCriteriaWith2Sources, _mockEventHandler.Object));
 
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
-        Assert.AreEqual(_sources.Count, _processedSources.Count, "All Sources must be processed.");
+        Assert.HasCount(_sources.Count, _processedSources, "All Sources must be processed.");
         AssertMissingAndDuplicateSources(_processedSources);
     }
 
@@ -236,7 +238,7 @@ public class ParallelProxyExecutionManagerTests
         }
 
         Assert.IsTrue(executionCompleted, "Test run not completed.");
-        Assert.AreEqual(_testCases.Count, _processedTestCases.Count, "All Tests must be processed.");
+        Assert.HasCount(_testCases.Count, _processedTestCases, "All Tests must be processed.");
         AssertMissingAndDuplicateTestCases(_testCases, _processedTestCases);
     }
 
@@ -252,7 +254,7 @@ public class ParallelProxyExecutionManagerTests
         Task.Run(() => parallelExecutionManager.StartTestRun(_testRunCriteriaWith2Sources, _mockEventHandler.Object));
 
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
-        Assert.AreEqual(1, _processedSources.Count, "Abort should stop all sources execution.");
+        Assert.ContainsSingle(_processedSources, "Abort should stop all sources execution.");
     }
 
     [TestMethod]
@@ -268,7 +270,7 @@ public class ParallelProxyExecutionManagerTests
         Task.Run(() => parallelExecutionManager.StartTestRun(_testRunCriteriaWith2Sources, _mockEventHandler.Object));
 
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
-        Assert.AreEqual(1, _processedSources.Count, "Abort should stop all sources execution.");
+        Assert.ContainsSingle(_processedSources, "Abort should stop all sources execution.");
     }
 
     [TestMethod]
@@ -284,7 +286,7 @@ public class ParallelProxyExecutionManagerTests
 
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
 
-        Assert.AreEqual(2, _processedSources.Count, "Abort should stop all sources execution.");
+        Assert.HasCount(2, _processedSources, "Abort should stop all sources execution.");
     }
 
     [TestMethod]
@@ -301,7 +303,7 @@ public class ParallelProxyExecutionManagerTests
 
         // Processed sources should be 1 since the 2nd source is never discovered
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
-        Assert.AreEqual(1, _processedSources.Count, "All Sources must be processed.");
+        Assert.ContainsSingle(_processedSources, "All Sources must be processed.");
     }
 
     [TestMethod]
@@ -392,9 +394,9 @@ public class ParallelProxyExecutionManagerTests
                     {
                         Assert.AreEqual(TimeSpan.FromMilliseconds(200), completeArgs.ElapsedTimeInRunningTests,
                             "Time should be max of all");
-                        Assert.AreEqual(2, completeArgs.AttachmentSets.Count,
+                        Assert.HasCount(2, completeArgs.AttachmentSets,
                             "All Complete Arg attachments should return");
-                        Assert.AreEqual(2, runAttachments.Count, "All RunContextAttachments should return");
+                        Assert.HasCount(2, runAttachments, "All RunContextAttachments should return");
 
                         Assert.IsTrue(completeArgs.IsAborted, "Aborted value must be OR of all values");
                         Assert.IsTrue(completeArgs.IsCanceled, "Canceled value must be OR of all values");
@@ -423,7 +425,7 @@ public class ParallelProxyExecutionManagerTests
         Assert.IsTrue(_executionCompleted.Wait(Timeout3Seconds), "Test run not completed.");
 
         Assert.IsNull(assertException, assertException?.ToString());
-        Assert.AreEqual(_sources.Count, _processedSources.Count, "All Sources must be processed.");
+        Assert.HasCount(_sources.Count, _processedSources, "All Sources must be processed.");
         AssertMissingAndDuplicateSources(_processedSources);
     }
 
@@ -471,7 +473,7 @@ public class ParallelProxyExecutionManagerTests
                 {
                     if (matchFound)
                     {
-                        Assert.Fail("Concurrreny issue detected: Source['{0}'] got processed twice", processedSrc);
+                        Assert.Fail($"Concurrreny issue detected: Source['{processedSrc}'] got processed twice");
                     }
 
                     matchFound = true;
@@ -505,13 +507,12 @@ public class ParallelProxyExecutionManagerTests
                 if (processedTest.FullyQualifiedName.Equals(test.FullyQualifiedName))
                 {
                     if (matchFound)
-                        Assert.Fail("Concurrency issue detected: Test['{0}'] got processed twice", test.FullyQualifiedName);
+                        Assert.Fail($"Concurrency issue detected: Test['{test.FullyQualifiedName}'] got processed twice");
                     matchFound = true;
                 }
             }
 
-            Assert.IsTrue(matchFound, "Concurrency issue detected: Test['{0}'] did NOT get processed at all",
-                test.FullyQualifiedName);
+            Assert.IsTrue(matchFound, $"Concurrency issue detected: Test['{test.FullyQualifiedName}'] did NOT get processed at all");
         }
     }
 
@@ -576,7 +577,7 @@ public class ParallelProxyExecutionManagerTests
 
         parallelExecutionManager.Initialize(skipDefaultAdapters);
 
-        Assert.AreEqual(0, _usedMockManagers.Count, $"No concurrent managers should be pre-created, until there is work for them");
+        Assert.IsEmpty(_usedMockManagers, $"No concurrent managers should be pre-created, until there is work for them");
         _usedMockManagers.ForEach(em => em.Verify(m => m.Initialize(skipDefaultAdapters), Times.Once));
     }
 }

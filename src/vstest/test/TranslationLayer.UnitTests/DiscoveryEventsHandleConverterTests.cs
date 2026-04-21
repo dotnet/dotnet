@@ -24,7 +24,7 @@ public class DiscoveryEventsHandleConverterTests
     [TestMethod]
     public void ConstructorShouldThrowArgumentExceptionIfTestDiscoveryEventHandlerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => new DiscoveryEventsHandleConverter(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => new DiscoveryEventsHandleConverter(null!));
     }
 
     [TestMethod]

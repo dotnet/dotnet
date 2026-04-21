@@ -75,7 +75,7 @@ DOTNET_CLI_VERSION="latest"
 #
 # Build configuration
 #
-TPB_Solution="TestPlatform.sln"
+TPB_Solution="TestPlatform.slnx"
 TPB_TargetFrameworkCore="net8.0"
 TPB_Configuration=$CONFIGURATION
 TPB_TargetRuntime=$TARGET_RUNTIME

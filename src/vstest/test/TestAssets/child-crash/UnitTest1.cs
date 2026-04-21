@@ -23,19 +23,19 @@ namespace child_crash
 #else
             var directory = "Release";
 #endif
-            // wait for two children to crash
+            // wait for child to crash
             var childProcess = Path.GetFullPath($@"../../../problematic-child/{directory}/net9.0/problematic-child{(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : ".dll")}");
             if (!File.Exists(childProcess))
             {
                 throw new FileNotFoundException(childProcess);
             }
-            // 2 chidren, that is 3 crashing processes
-            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Process.Start(childProcess, "2") : Process.Start("dotnet", $"{childProcess} 2")).WaitForExit();
+            // 1 child, that is 2 crashing processes
+            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Process.Start(childProcess, "1") : Process.Start("dotnet", $"{childProcess} 1")).WaitForExit();
 
             // then crash self with stack overflow (+1 crash)
             Span<byte> s = stackalloc byte[int.MaxValue];
 
-            // we should get 4 crash dumps in total from this test
+            // we should get 3 crash dumps in total from this test
         }
     }
 }
