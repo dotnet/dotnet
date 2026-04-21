@@ -71,10 +71,9 @@ for(var i = 0; i < 5; i++) {
                 __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper2);
                 BeginWriteTagHelperAttribute();
                 WriteLiteral("2000 + ");
-                Write(
 #nullable restore
-#line (8,51)-(8,74) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml"
-ViewBag.DefaultInterval
+#line (8,51)-(8,74) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedScriptTagTagHelpers.cshtml"
+Write(ViewBag.DefaultInterval
 
 #line default
 #line hidden

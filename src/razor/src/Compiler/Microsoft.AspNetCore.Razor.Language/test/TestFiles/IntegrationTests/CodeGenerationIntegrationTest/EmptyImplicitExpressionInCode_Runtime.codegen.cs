@@ -24,9 +24,9 @@ namespace AspNetCoreGeneratedDocument
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
-            Write(
 #nullable restore
-#line (2,6)-(2,6) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpressionInCode.cshtml"
+#line (2,6)-(2,6) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpressionInCode.cshtml"
+Write(
 
 #line default
 #line hidden

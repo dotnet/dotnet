@@ -53,9 +53,8 @@ namespace AspNetCore
             EndContext();
             BeginContext(61, 7, false);
             BeginContext(61, 7, false);
-            Write(
-#line (3,3)-(3,10) "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
-"Hello"
+#line (3,3)-(3,10) 6 "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
+Write("Hello"
 
 #line default
 #line hidden
@@ -133,9 +132,8 @@ DateTime.Now
             EndContext();
             BeginContext(217, 29, false);
             BeginContext(217, 29, false);
-            Write(
-#line (9,2)-(9,6) "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
-Foo(
+#line (9,2)-(9,6) 6 "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
+Write(Foo(
 
 #line default
 #line hidden

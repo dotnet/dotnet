@@ -56,20 +56,18 @@ namespace AspNetCoreGeneratedDocument
 #nullable disable
 
             WriteLiteral("<p>But this should show the comment syntax: ");
-            Write(
 #nullable restore
-#line (13,46)-(13,49) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-bar
+#line (13,46)-(13,49) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+Write(bar
 
 #line default
 #line hidden
 #nullable disable
             );
             WriteLiteral("</p>\r\n\r\n");
-            Write(
 #nullable restore
-#line (15,3)-(15,4) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-a
+#line (15,3)-(15,4) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+Write(a
 
 #line default
 #line hidden

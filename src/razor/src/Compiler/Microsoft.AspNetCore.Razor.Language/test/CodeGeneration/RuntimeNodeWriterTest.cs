@@ -125,8 +125,7 @@ using System
         // Assert
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
-@"Write(
-i++);
+@"Write(i++);
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -150,10 +149,10 @@ i++);
         // Assert
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
-@"Write(
+@"
 #nullable restore
-#line (1,1)-(1,4) ""test.cshtml""
-i++
+#line (1,1)-(1,4) 6 ""test.cshtml""
+Write(i++
 
 #line default
 #line hidden
@@ -186,8 +185,7 @@ i++
         // Assert
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
-@"Write(
-iRender Children
+@"Write(iRender Children
 ++);
 ",
             csharp,
@@ -216,10 +214,10 @@ iRender Children
         // Assert
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
-@"Write(
+@"
 #nullable restore
-#line (1,1)-(1,2) ""test.cshtml""
-i
+#line (1,1)-(1,2) 6 ""test.cshtml""
+Write(i
 
 #line default
 #line hidden
