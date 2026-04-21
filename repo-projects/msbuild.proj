@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != '' and '$(EnableIBCOptimization)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:VisualStudioIbcSourceBranchName=vs18.0</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:VisualStudioIbcSourceBranchName=vs18.3</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:VisualStudioDropAccessToken=$(IBCDropAccessToken)</BuildArgs>
     <!-- This is set to the name of the repository that msbuild builds its official build from. -->
     <BuildArgs>$(BuildArgs) /p:VisualStudioIbcRepositoryName=DotNet-msbuild-Trusted</BuildArgs>

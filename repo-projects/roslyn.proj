@@ -20,7 +20,7 @@
     <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSourceBranchName placeholder</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) $(FlagParameterPrefix)officialVisualStudioDropAccessToken placeholder</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSkipApplyOptimizationData true</BuildArgs>
-    <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSourceBranchName release/dev18.0</BuildArgs>
+    <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSourceBranchName release/dev18.3</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialVisualStudioDropAccessToken $(IBCDropAccessToken)</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)officialSkipApplyOptimizationData false</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' == 'true'">$(BuildArgs) /p:IgnoreIbcMergeErrors=true</BuildArgs>
