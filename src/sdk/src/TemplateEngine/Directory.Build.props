@@ -18,7 +18,7 @@
       transitive NuGet deps also resolve to the older version instead of being pulled up
       to the repo-wide 7.x by CentralPackageTransitivePinningEnabled.
     -->
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+    <CentralPackageTransitivePinningEnabled Condition="'$(DotNetBuildSourceOnly)' != 'true'">false</CentralPackageTransitivePinningEnabled>
 
     <!-- TemplateEngine assembly signing -->
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
