@@ -453,5 +453,13 @@
       <Sha>5bed4499b04cbbaec57ac4209ae993acca3648cc</Sha>
     </Dependency>
     <!-- End of manually updated dependencies -->
+    <Dependency Name="Microsoft.Extensions.ServiceDiscovery" Version="10.4.1">
+      <Uri>https://github.com/dotnet/extensions</Uri>
+      <Sha>24c7e4fc4f08e94d9e977bac3ab7b352762e28b2</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.4.1">
+      <Uri>https://github.com/dotnet/extensions</Uri>
+      <Sha>24c7e4fc4f08e94d9e977bac3ab7b352762e28b2</Sha>
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>
