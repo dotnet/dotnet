@@ -229,7 +229,7 @@ public class LicenseScanTests : TestBase
             string lookaheads = string.Join("", additionalIgnorePatterns.Select(p =>
             {
                 string prefix = p.TrimEnd('*').TrimEnd('/');
-                return $"(?!{Regex.Escape(prefix)}/)";
+                return $"(?!(?:.*/)?{Regex.Escape(prefix)}/)";
             }));
             exclusionRegex += lookaheads;
         }
