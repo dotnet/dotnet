@@ -51,7 +51,7 @@ internal class DataCollectionAttachmentManager : IDataCollectionAttachmentManage
     /// <summary>
     /// Attachment transfer tasks associated with a given datacollection context.
     /// </summary>
-    private readonly ConcurrentDictionary<DataCollectionContext, List<Task>> _attachmentTasks;
+    private readonly ConcurrentDictionary<DataCollectionContext, ConcurrentBag<Task>> _attachmentTasks;
 
     /// <summary>
     /// Use to cancel attachment transfers if test run is canceled.
@@ -79,7 +79,7 @@ internal class DataCollectionAttachmentManager : IDataCollectionAttachmentManage
     {
         _fileHelper = fileHelper;
         _cancellationTokenSource = new CancellationTokenSource();
-        _attachmentTasks = new ConcurrentDictionary<DataCollectionContext, List<Task>>();
+        _attachmentTasks = new ConcurrentDictionary<DataCollectionContext, ConcurrentBag<Task>>();
         AttachmentSets = new ConcurrentDictionary<DataCollectionContext, ConcurrentDictionary<Uri, AttachmentSet>>();
     }
 
@@ -170,12 +170,8 @@ internal class DataCollectionAttachmentManager : IDataCollectionAttachmentManage
             return;
         }
 
-        if (!AttachmentSets.ContainsKey(fileTransferInfo.Context))
-        {
-            var uriAttachmentSetMap = new ConcurrentDictionary<Uri, AttachmentSet>();
-            AttachmentSets.TryAdd(fileTransferInfo.Context, uriAttachmentSetMap);
-            _attachmentTasks.TryAdd(fileTransferInfo.Context, new List<Task>());
-        }
+        AttachmentSets.GetOrAdd(fileTransferInfo.Context, _ => new ConcurrentDictionary<Uri, AttachmentSet>());
+        _attachmentTasks.GetOrAdd(fileTransferInfo.Context, _ => new ConcurrentBag<Task>());
 
         if (!AttachmentSets[fileTransferInfo.Context].ContainsKey(uri))
         {

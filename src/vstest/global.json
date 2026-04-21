@@ -1,42 +1,37 @@
 {
   "sdk": {
-    "version": "10.0.200-preview.0.25568.101",
-    "rollForward": "minor",
-    "allowPrerelease": false,
-    "architecture": "x64",
+    "version": "11.0.100-preview.3.26170.106",
     "paths": [
       ".dotnet",
       "$host$"
     ],
-    "errorMessage": "The .NET SDK could not be found, please run ./build.cmd on Windows or ./build.sh on Linux and macOS."
+    "errorMessage": "The .NET SDK could not be found, please run ./build.cmd on Windows or ./build.sh on Linux and macOS.",
+    "rollForward": "minor",
+    "allowPrerelease": false,
+    "architecture": "x64"
   },
   "tools": {
     "runtimes": {
       "dotnet/x64": [
-        "2.1.30",
-        "3.1.32",
-        "5.0.17",
-        "6.0.32",
-        "7.0.20",
-        "8.0.7",
-        "9.0.5"
+        "8.0.25",
+        "9.0.14",
+        "10.0.4"
       ],
       "dotnet/x86": [
-        "2.1.30",
-        "3.1.32",
-        "5.0.17",
-        "6.0.32",
-        "7.0.20",
-        "8.0.7",
-        "9.0.5"
+        "8.0.25",
+        "9.0.14",
+        "10.0.4"
       ]
     },
     "vs": {
       "version": "17.8.0"
     },
-    "dotnet": "10.0.200-preview.0.25568.101"
+    "dotnet": "11.0.100-preview.3.26170.106"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26110.1"
+    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.26177.6"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
   }
 }

@@ -1,0 +1,121 @@
+<Solution>
+  <Folder Name="/playground/">
+    <File Path="playground/README.md" />
+    <Project Path="playground/MSTest1/MSTest1.csproj" />
+    <Project Path="playground/MSTest2/MSTest2.csproj" />
+    <Project Path="playground/TestPlatform.Playground/TestPlatform.Playground.csproj" />
+  </Folder>
+  <Folder Name="/scripts/">
+    <File Path="scripts/test.ps1" />
+    <File Path="scripts/test.sh" />
+    <File Path="scripts/write-release-notes.ps1" />
+  </Folder>
+  <Folder Name="/scripts/perf/">
+    <File Path="scripts/perf/perf.ps1" />
+    <File Path="scripts/perf/perfconfig.csv" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="azure-pipelines.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="global.json" />
+    <File Path="Nuget.config" />
+    <File Path="THIRD-PARTY-NOTICES.txt" />
+  </Folder>
+  <Folder Name="/Solution Items/eng/">
+    <File Path="eng/AfterSolutionBuild.targets" />
+    <File Path="eng/Analyzers.props" />
+    <File Path="eng/Publishing.props" />
+    <File Path="eng/Signing.props" />
+    <File Path="eng/SourceBuild.props" />
+    <File Path="eng/verify-nupkgs.ps1" />
+    <File Path="eng/Versions.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/AttachVS/AttachVS.csproj" />
+    <Project Path="src/datacollector.arm64/datacollector.arm64.csproj" />
+    <Project Path="src/datacollector/datacollector.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Build/Microsoft.TestPlatform.Build.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Client/Microsoft.TestPlatform.Client.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Execution.Shared/Microsoft.TestPlatform.Execution.Shared.shproj" />
+    <Project Path="src/Microsoft.TestPlatform.TestHostProvider/Microsoft.TestPlatform.TestHostProvider.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+    <Project Path="src/package/Microsoft.CodeCoverage/Microsoft.CodeCoverage.csproj" />
+    <Project Path="src/SettingsMigrator/SettingsMigrator.csproj" />
+    <Project Path="src/testhost.arm64/testhost.arm64.csproj" />
+    <Project Path="src/testhost.x86/testhost.x86.csproj" />
+    <Project Path="src/testhost/testhost.csproj" />
+    <Project Path="src/vstest.console.arm64/vstest.console.arm64.csproj" />
+    <Project Path="src/vstest.console/vstest.console.csproj" />
+  </Folder>
+  <Folder Name="/src/DataCollectors/">
+    <Project Path="src/DataCollectors/DumpMinitool.arm64/DumpMinitool.arm64.csproj" />
+    <Project Path="src/DataCollectors/DumpMinitool.x86/DumpMinitool.x86.csproj" />
+    <Project Path="src/DataCollectors/DumpMinitool/DumpMinitool.csproj" />
+    <Project Path="src/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector/Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Extensions.BlameDataCollector/Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
+  </Folder>
+  <Folder Name="/src/Loggers/">
+    <Project Path="src/Microsoft.TestPlatform.Extensions.HtmlLogger/Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Extensions.TrxLogger/Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
+  </Folder>
+  <Folder Name="/src/Package/">
+    <Project Path="src/package/Microsoft.NET.Test.Sdk/Microsoft.NET.Test.Sdk.csproj" />
+    <Project Path="src/package/Microsoft.TestPlatform.CLI/Microsoft.TestPlatform.CLI.csproj" />
+    <Project Path="src/package/Microsoft.TestPlatform.Internal.Uwp/Microsoft.TestPlatform.Internal.Uwp.csproj" />
+    <Project Path="src/package/Microsoft.TestPlatform.Portable/Microsoft.TestPlatform.Portable.csproj" />
+    <Project Path="src/package/Microsoft.TestPlatform.TestHost/Microsoft.TestPlatform.TestHost.csproj" />
+    <Project Path="src/package/Microsoft.TestPlatform/Microsoft.TestPlatform.csproj" />
+    <Project Path="src/package/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.csproj" />
+  </Folder>
+  <Folder Name="/src/Platform/">
+    <Project Path="src/Microsoft.TestPlatform.AdapterUtilities/Microsoft.TestPlatform.AdapterUtilities.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Common/Microsoft.TestPlatform.Common.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.CommunicationUtilities/Microsoft.TestPlatform.CommunicationUtilities.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.CoreUtilities/Microsoft.TestPlatform.CoreUtilities.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.CrossPlatEngine/Microsoft.TestPlatform.CrossPlatEngine.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.ObjectModel/Microsoft.TestPlatform.ObjectModel.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.PlatformAbstractions/Microsoft.TestPlatform.PlatformAbstractions.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Utilities/Microsoft.TestPlatform.Utilities.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <File Path="test/.editorconfig" />
+    <Project Path="test/datacollector.PlatformTests/datacollector.PlatformTests.csproj" />
+    <Project Path="test/datacollector.UnitTests/datacollector.UnitTests.csproj" />
+    <Project Path="test/Intent.Primitives/Intent.Primitives.csproj" />
+    <Project Path="test/Intent/Intent.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Build.UnitTests/Microsoft.TestPlatform.Build.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Client.UnitTests/Microsoft.TestPlatform.Client.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests/Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.TestHostProvider.UnitTests/Microsoft.TestPlatform.TestHostProvider.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.TestUtilities/Microsoft.TestPlatform.TestUtilities.csproj" />
+    <Project Path="test/SettingsMigrator.UnitTests/SettingsMigrator.UnitTests.csproj" />
+    <Project Path="test/testhost.UnitTests/testhost.UnitTests.csproj" />
+    <Project Path="test/TranslationLayer.UnitTests/TranslationLayer.UnitTests.csproj" />
+    <Project Path="test/vstest.console.UnitTests/vstest.console.UnitTests.csproj" />
+    <Project Path="test/vstest.ProgrammerTests/vstest.ProgrammerTests.csproj" />
+  </Folder>
+  <Folder Name="/test/DataCollectors/">
+    <Project Path="test/coverlet.collector/coverlet.collector.csproj" />
+    <Project Path="test/DataCollectors/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests/Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/test/Integration/">
+    <Project Path="test/Microsoft.TestPlatform.Acceptance.IntegrationTests/Microsoft.TestPlatform.Acceptance.IntegrationTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Library.IntegrationTests/Microsoft.TestPlatform.Library.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/test/Loggers/">
+    <Project Path="test/Microsoft.TestPlatform.Extensions.HtmlLogger.UnitTests/Microsoft.TestPlatform.Extensions.HtmlLogger.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Extensions.TrxLogger.UnitTests/Microsoft.TestPlatform.Extensions.TrxLogger.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/test/Platform/">
+    <Project Path="test/Microsoft.TestPlatform.AdapterUtilities.UnitTests/Microsoft.TestPlatform.AdapterUtilities.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Common.UnitTests/Microsoft.TestPlatform.Common.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests/Microsoft.TestPlatform.CommunicationUtilities.Platform.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.CommunicationUtilities.UnitTests/Microsoft.TestPlatform.CommunicationUtilities.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.CoreUtilities.UnitTests/Microsoft.TestPlatform.CoreUtilities.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.CrossPlatEngine.UnitTests/Microsoft.TestPlatform.CrossPlatEngine.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.ObjectModel.UnitTests/Microsoft.TestPlatform.ObjectModel.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Utilities.UnitTests/Microsoft.TestPlatform.Utilities.UnitTests.csproj" />
+  </Folder>
+</Solution>

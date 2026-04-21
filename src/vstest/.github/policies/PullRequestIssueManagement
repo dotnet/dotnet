@@ -1,0 +1,28 @@
+id: 
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+
+    eventResponderTasks:
+
+    - description: Auto-approve maestro PRs
+      triggerOnOwnActions: false
+      if:
+      - payloadType: Pull_Request
+      - isPullRequest
+      - isActivitySender:
+          user: dotnet-maestro[bot]
+          issueAuthor: False
+      - isAction:
+          action: Opened
+      then:
+      - approvePullRequest:
+          comment: Auto-approve
+
+onFailure: 
+onSuccess:

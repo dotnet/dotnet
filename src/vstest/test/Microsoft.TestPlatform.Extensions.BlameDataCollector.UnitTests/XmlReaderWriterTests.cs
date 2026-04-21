@@ -56,7 +56,7 @@ public class XmlReaderWriterTests
         _testCaseList.Add(_blameTestObject.Id);
         _testObjectDictionary.Add(_blameTestObject.Id, _blameTestObject);
 
-        Assert.ThrowsException<ArgumentNullException>(() => _xmlReaderWriter.WriteTestSequence(_testCaseList, _testObjectDictionary, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _xmlReaderWriter.WriteTestSequence(_testCaseList, _testObjectDictionary, null!));
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public class XmlReaderWriterTests
         _testCaseList.Add(_blameTestObject.Id);
         _testObjectDictionary.Add(_blameTestObject.Id, _blameTestObject);
 
-        Assert.ThrowsException<ArgumentNullException>(() => _xmlReaderWriter.WriteTestSequence(_testCaseList, _testObjectDictionary, string.Empty));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _xmlReaderWriter.WriteTestSequence(_testCaseList, _testObjectDictionary, string.Empty));
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public class XmlReaderWriterTests
     [TestMethod]
     public void ReadTestSequenceShouldThrowExceptionIfFilePathIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _xmlReaderWriter.ReadTestSequence(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _xmlReaderWriter.ReadTestSequence(null!));
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public class XmlReaderWriterTests
     {
         _mockFileHelper.Setup(m => m.Exists(It.IsAny<string>())).Returns(false);
 
-        Assert.ThrowsException<FileNotFoundException>(() => _xmlReaderWriter.ReadTestSequence(string.Empty));
+        Assert.ThrowsExactly<FileNotFoundException>(() => _xmlReaderWriter.ReadTestSequence(string.Empty));
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class XmlReaderWriterTests
 
         // Assert it has some data
         var data = Encoding.UTF8.GetString(stream.ToArray());
-        Assert.IsTrue(data.Length > 0, "Stream should have some data.");
+        Assert.IsGreaterThan(0, data.Length, "Stream should have some data.");
     }
 
     /// <summary>

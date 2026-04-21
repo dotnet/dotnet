@@ -257,7 +257,7 @@ public class TestLoggerManagerTests
     public void AddLoggerShouldNotThrowExceptionIfUriIsNull()
     {
         var testLoggerManager = new DummyTestLoggerManager();
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () => testLoggerManager.InitializeLoggerByUri(null!, null));
     }
 
@@ -320,7 +320,7 @@ public class TestLoggerManagerTests
         var testLoggerManager = new DummyTestLoggerManager();
         testLoggerManager.Dispose();
 
-        Assert.ThrowsException<ObjectDisposedException>(
+        Assert.ThrowsExactly<ObjectDisposedException>(
             () => testLoggerManager.InitializeLoggerByUri(new Uri("some://uri"), null));
     }
 
@@ -330,7 +330,7 @@ public class TestLoggerManagerTests
     {
         var testLoggerManager = new DummyTestLoggerManager();
         testLoggerManager.Dispose();
-        Assert.ThrowsException<ObjectDisposedException>(
+        Assert.ThrowsExactly<ObjectDisposedException>(
             () => testLoggerManager.EnableLogging());
     }
 
@@ -706,7 +706,7 @@ public class TestLoggerManagerTests
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
 
-        Assert.ThrowsException<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
         Assert.AreEqual(0, ValidLoggerWithParameters.Counter);
     }
 
@@ -733,7 +733,7 @@ public class TestLoggerManagerTests
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
 
-        Assert.ThrowsException<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
         Assert.AreEqual(0, InvalidLogger.Counter);
     }
 
@@ -758,7 +758,7 @@ public class TestLoggerManagerTests
                 </RunSettings>";
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
-        Assert.ThrowsException<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
         Assert.AreEqual(0, ValidLoggerWithParameters.Counter);
     }
 
@@ -785,7 +785,7 @@ public class TestLoggerManagerTests
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
 
-        Assert.ThrowsException<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
         Assert.AreEqual(0, ValidLoggerWithParameters.Counter);
     }
 
@@ -876,7 +876,7 @@ public class TestLoggerManagerTests
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
 
-        Assert.ThrowsException<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
     }
 
     [TestMethod]
@@ -902,7 +902,7 @@ public class TestLoggerManagerTests
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
         testLoggerManager.Dispose();
-        Assert.ThrowsException<ObjectDisposedException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<ObjectDisposedException>(() => testLoggerManager.Initialize(settingsXml));
     }
 
     [TestMethod]
@@ -1033,9 +1033,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
 
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
@@ -1073,9 +1073,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(3, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.IsFalse(ValidLoggerWithParameters.Parameters.TryGetValue("Key1", out var key1Value));
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(3, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.IsFalse(ValidLoggerWithParameters.Parameters!.TryGetValue("Key1", out var key1Value));
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
 
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
@@ -1114,9 +1114,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value3", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value3", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
 
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
@@ -1185,9 +1185,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
     }
@@ -1223,9 +1223,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
     }
@@ -1261,9 +1261,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
     }
@@ -1299,9 +1299,9 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
     }
@@ -1343,10 +1343,10 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual("DummyTestResultsFolder", ValidLoggerWithParameters.Parameters["testRunDirectory"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual("DummyTestResultsFolder", ValidLoggerWithParameters.Parameters!["testRunDirectory"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
     }
@@ -1387,10 +1387,10 @@ public class TestLoggerManagerTests
         testLoggerManager.Initialize(settingsXml);
 
         Assert.AreEqual(1, ValidLoggerWithParameters.Counter);
-        Assert.AreEqual(4, ValidLoggerWithParameters.Parameters!.Count); // Two additional because of testRunDirectory and targetFramework
-        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters["Key1"]);
-        Assert.AreEqual(Constants.DefaultResultsDirectory, ValidLoggerWithParameters.Parameters["testRunDirectory"]);
-        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters["Key2"]);
+        Assert.HasCount(4, ValidLoggerWithParameters.Parameters!); // Two additional because of testRunDirectory and targetFramework
+        Assert.AreEqual("Value1", ValidLoggerWithParameters.Parameters!["Key1"]);
+        Assert.AreEqual(Constants.DefaultResultsDirectory, ValidLoggerWithParameters.Parameters!["testRunDirectory"]);
+        Assert.AreEqual("Value2", ValidLoggerWithParameters.Parameters!["Key2"]);
         mockMetricsCollection.Verify(
             rd => rd.Add(TelemetryDataConstants.LoggerUsed, "TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLogger2,TestPlatform.CrossPlatEngine.UnitTests.TestLoggerManagerTests+ValidLoggerWithParameters"));
     }
@@ -1424,7 +1424,7 @@ public class TestLoggerManagerTests
 
         var testLoggerManager = new DummyTestLoggerManager(mockRequestData.Object);
 
-        Assert.ThrowsException<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
+        Assert.ThrowsExactly<InvalidLoggerException>(() => testLoggerManager.Initialize(settingsXml));
         Assert.AreEqual(0, ValidLoggerWithParameters.Counter);
     }
 

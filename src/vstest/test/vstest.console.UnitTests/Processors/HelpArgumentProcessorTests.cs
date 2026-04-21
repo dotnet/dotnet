@@ -69,11 +69,11 @@ public class HelpArgumentProcessorTests
         var output = new DummyConsoleOutput();
         executor.Output = output;
         _ = executor.Execute();
-        Assert.IsTrue(output.Lines.Contains("Usage: vstest.console.exe [Arguments] [Options] [[--] <RunSettings arguments>...]]"));
-        Assert.IsTrue(output.Lines.Contains("Arguments:"));
-        Assert.IsTrue(output.Lines.Contains("Options:"));
-        Assert.IsTrue(output.Lines.Contains("Description: Runs tests from the specified files."));
-        Assert.IsTrue(output.Lines.Contains("  To run tests:" + Environment.NewLine + "    >vstest.console.exe tests.dll " + Environment.NewLine + "  To run tests with additional settings such as  data collectors:" + Environment.NewLine + "    >vstest.console.exe  tests.dll /Settings:Local.RunSettings"));
+        Assert.Contains("Usage: vstest.console.exe [Arguments] [Options] [[--] <RunSettings arguments>...]]", output.Lines);
+        Assert.Contains("Arguments:", output.Lines);
+        Assert.Contains("Options:", output.Lines);
+        Assert.Contains("Description: Runs tests from the specified files.", output.Lines);
+        Assert.Contains("  To run tests:" + Environment.NewLine + "    >vstest.console.exe tests.dll " + Environment.NewLine + "  To run tests with additional settings such as  data collectors:" + Environment.NewLine + "    >vstest.console.exe  tests.dll /Settings:Local.RunSettings", output.Lines);
     }
 }
 

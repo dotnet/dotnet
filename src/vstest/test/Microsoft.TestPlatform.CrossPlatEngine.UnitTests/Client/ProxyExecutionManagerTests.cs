@@ -298,7 +298,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         _mockRequestSender.Setup(s => s.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(false));
 
-        Assert.ThrowsException<TestPlatformException>(() => _testExecutionManager.SetupChannel(new List<string> { "source.dll" }, runsettings));
+        Assert.ThrowsExactly<TestPlatformException>(() => _testExecutionManager.SetupChannel(new List<string> { "source.dll" }, runsettings));
     }
 
     [TestMethod]
@@ -309,7 +309,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         _mockRequestSender.Setup(s => s.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(true)).Callback(() => _mockTestHostManager.Raise(t => t.HostExited += null, new HostProviderEventArgs("I crashed!")));
 
-        Assert.AreEqual(string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.Resources.TestHostExitedWithError, "source.dll", "I crashed!"), Assert.ThrowsException<TestPlatformException>(() => _testExecutionManager.SetupChannel(new List<string> { "source.dll" }, runsettings)).Message);
+        Assert.AreEqual(string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.Resources.TestHostExitedWithError, "source.dll", "I crashed!"), Assert.ThrowsExactly<TestPlatformException>(() => _testExecutionManager.SetupChannel(new List<string> { "source.dll" }, runsettings)).Message);
     }
 
     [TestMethod]
@@ -320,7 +320,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         _mockRequestSender.Setup(s => s.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(true)).Callback(() => _mockTestHostManager.Raise(t => t.HostExited += null, new HostProviderEventArgs("I crashed!")));
 
-        Assert.AreEqual(string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.Resources.TestHostExitedWithError, string.Join("', '", ["source1.dll", "source2.dll"]), "I crashed!"), Assert.ThrowsException<TestPlatformException>(() => _testExecutionManager.SetupChannel(new List<string> { "source1.dll", "source2.dll" }, runsettings)).Message);
+        Assert.AreEqual(string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.Resources.TestHostExitedWithError, string.Join("', '", ["source1.dll", "source2.dll"]), "I crashed!"), Assert.ThrowsExactly<TestPlatformException>(() => _testExecutionManager.SetupChannel(new List<string> { "source1.dll", "source2.dll" }, runsettings)).Message);
     }
 
     [TestMethod]

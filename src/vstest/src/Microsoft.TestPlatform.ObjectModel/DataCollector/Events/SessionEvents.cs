@@ -75,7 +75,7 @@ public sealed class SessionStartEventArgs : DataCollectionEventArgs
     {
         ValidateArg.NotNullOrEmpty(property, nameof(property));
 
-        return _properties.ContainsKey(property) ? (T?)_properties[property] : default;
+        return _properties.TryGetValue(property, out var propertyValue) ? (T?)propertyValue : default;
     }
 
     /// <summary>

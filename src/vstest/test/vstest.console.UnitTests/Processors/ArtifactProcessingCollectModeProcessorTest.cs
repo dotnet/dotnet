@@ -14,7 +14,7 @@ public class ArtifactProcessingCollectModeProcessorTest
 {
     [TestMethod]
     public void ProcessorExecutorInitialize_ShouldFailIfNullCommandOption() =>
-        Assert.ThrowsException<ArgumentNullException>(() => new ArtifactProcessingCollectModeProcessorExecutor(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => new ArtifactProcessingCollectModeProcessorExecutor(null!));
 
     [TestMethod]
     public void ProcessorExecutorInitialize_ShouldNotFailIfNullArg()

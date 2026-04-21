@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
@@ -53,12 +54,26 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
     private readonly bool _isNetCoreRunner;
     private readonly string? _dotnetExePath;
     private readonly ManualResetEvent _processExitedEvent = new(false);
+    private readonly StringBuilder _vstestConsoleError = new();
     private Process? _process;
+
     private bool _vstestConsoleStarted;
     private bool _vstestConsoleExited;
     private bool _isDisposed;
 
     internal IFileHelper FileHelper { get; set; }
+
+    /// <inheritdoc/>
+    public string? ProcessName { get; set; }
+
+    /// <inheritdoc/>
+    public int? ProcessId { get; set; }
+
+    /// <inheritdoc/>
+    public string? ErrorOutput => _vstestConsoleError.ToString();
+
+    /// <inheritdoc/>
+    public int? ExitCode { get; private set; } = -1;
 
     /// <inheritdoc/>
     public event EventHandler? ProcessExited;
@@ -110,6 +125,11 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
             throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, InternalResources.CannotFindConsoleRunner, consoleRunnerPath), consoleRunnerPath);
         }
 
+        ProcessName = null;
+        ProcessId = null;
+        ExitCode = null;
+        _vstestConsoleError.Clear();
+
         var arguments = string.Join(" ", BuildArguments(consoleParameters));
         var info = new ProcessStartInfo(consoleRunnerPath, arguments)
         {
@@ -136,7 +156,7 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
                 {
                     // Not printing the value on purpose, env variables can contain secrets and we don't need to know the values
                     // most of the time.
-                    EqtTrace.Verbose("VsTestCommandLineWrapper.StartProcess: Setting environment variable: {0}", envVariable.Key);
+                    // EqtTrace.Verbose("VsTestCommandLineWrapper.StartProcess: Setting environment variable: {0}", envVariable.Key);
                     info.EnvironmentVariables[envVariable.Key] = envVariable.Value?.ToString();
                 }
             }
@@ -145,6 +165,9 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
         try
         {
             _process = Process.Start(info);
+            ProcessId = _process!.Id;
+            ProcessName = _process.ProcessName;
+            EqtTrace.Info($"VsTestConsoleProcessManager.StartProcess: Started process id:{_process.Id}"); // Not normally needed, but if you run multiple instances of wrapper it helps to also add {Environment.StackTrace}
         }
         catch (Win32Exception ex)
         {
@@ -173,9 +196,10 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
     public void ShutdownProcess()
     {
         // Ideally process should die by itself
+        EqtTrace.Info($"VsTestConsoleProcessManager.ShutDownProcess : Will terminate vstest.console process: {ProcessId}-{ProcessName}, waiting {Endsessiontimeout} milliseconds for it to exit.");
         if (!_processExitedEvent.WaitOne(Endsessiontimeout) && IsProcessInitialized())
         {
-            EqtTrace.Info($"VsTestConsoleProcessManager.ShutDownProcess : Terminating vstest.console process after waiting for {Endsessiontimeout} milliseconds.");
+            EqtTrace.Info($"VsTestConsoleProcessManager.ShutDownProcess : Terminating vstest.console process: {ProcessId}-{ProcessName} after waiting for {Endsessiontimeout} milliseconds.");
             _vstestConsoleExited = true;
             if (_process is not null)
             {
@@ -185,6 +209,11 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
                 _process.Dispose();
                 _process = null;
             }
+            EqtTrace.Info($"VsTestConsoleProcessManager.ShutDownProcess : Terminated vstest.console process: {ProcessId}-{ProcessName}.");
+        }
+        else
+        {
+            EqtTrace.Verbose($"VsTestConsoleProcessManager.ShutDownProcess : Process: {ProcessId}-{ProcessName} already exited, doing nothing.");
         }
     }
 
@@ -209,6 +238,7 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
         {
             _processExitedEvent.Set();
             _vstestConsoleExited = true;
+            ExitCode = ((Process)sender!).ExitCode;
             ProcessExited?.Invoke(sender, e);
         }
     }
@@ -218,6 +248,7 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
         if (e.Data != null)
         {
             EqtTrace.Error(e.Data);
+            _vstestConsoleError.AppendLine(e.Data);
         }
     }
 

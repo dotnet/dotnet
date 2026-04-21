@@ -25,6 +25,20 @@ public interface IProcessHelper
     object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack);
 
     /// <summary>
+    /// Launches the process with the given arguments.
+    /// </summary>
+    /// <param name="processPath">The full file name of the process.</param>
+    /// <param name="arguments">The command-line arguments.</param>
+    /// <param name="workingDirectory">The working directory for this process.</param>
+    /// <param name="envVariables">Environment variables to set while bootstrapping the process.</param>
+    /// <param name="errorCallback">Call back for to read error stream data</param>
+    /// <param name="exitCallBack">Call back for on process exit</param>
+    /// <param name="outputCallBack">Call back for on process output</param>
+    /// <param name="createNoNewWindow">When true, prevents the process from creating a new console window.</param>
+    /// <returns>The process created.</returns>
+    object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack, bool createNoNewWindow);
+
+    /// <summary>
     /// Gets the current process file path.
     /// </summary>
     /// <returns>The current process file path.</returns>
