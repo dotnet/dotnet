@@ -208,6 +208,8 @@ namespace NuGet.Protocol
 
                 await packageStream.CopyToAsync(fileStream, BufferSize, token);
 
+                HttpStreamValidation.ValidatePackageIdentity(directDownloadPath, fileStream, packageIdentity);
+
                 fileStream.Seek(0, SeekOrigin.Begin);
 
                 return new DownloadResourceResult(fileStream, source);

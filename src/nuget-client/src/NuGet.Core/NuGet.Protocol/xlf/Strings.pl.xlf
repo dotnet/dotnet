@@ -79,6 +79,11 @@
         <target state="translated">Nieprawidłowy identyfikator pakietu: „{0}”.</target>
         <note>0 - package id.</note>
       </trans-unit>
+      <trans-unit id="Error_PackageIdentityDoesNotMatch">
+        <source>Expected package {0} {1}, but got package {2} {3}</source>
+        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <note>0 and 2 are package names, and 1 and 3 are version numbers</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">Serwer wysłał odpowiedź HTTP 403 „Zabronione” podczas uzyskiwania dostępu do źródła „{0}”. Może to oznaczać, że serwer uwierzytelnił Twoją tożsamość, ale nie zezwolił Ci na dostęp do żądanego źródła. Podaj poświadczenia z uprawnieniami do wyświetlania tego zasobu.</target>
