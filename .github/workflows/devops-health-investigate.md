@@ -48,7 +48,18 @@ on:
       name: Select Copilot token from pool
       uses: ./.github/actions/select-copilot-pat
       env:
-        SECRET_0: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        # If the secret names are changed here, they must also be changed
+        # in the `engine: env` case expression below
+        SECRET_0: ${{ secrets.COPILOT_PAT_0 }}
+        SECRET_1: ${{ secrets.COPILOT_PAT_1 }}
+        SECRET_2: ${{ secrets.COPILOT_PAT_2 }}
+        SECRET_3: ${{ secrets.COPILOT_PAT_3 }}
+        SECRET_4: ${{ secrets.COPILOT_PAT_4 }}
+        SECRET_5: ${{ secrets.COPILOT_PAT_5 }}
+        SECRET_6: ${{ secrets.COPILOT_PAT_6 }}
+        SECRET_7: ${{ secrets.COPILOT_PAT_7 }}
+        SECRET_8: ${{ secrets.COPILOT_PAT_8 }}
+        SECRET_9: ${{ secrets.COPILOT_PAT_9 }}
 
 # Don't run scheduled triggers on forked repositories — forks lack the
 # secrets and context required, and scheduled runs would consume the
@@ -66,7 +77,9 @@ jobs:
 engine:
   id: copilot
   env:
-    COPILOT_GITHUB_TOKEN: ${{ case(needs.pre_activation.outputs.copilot_pat_number == '0', secrets.COPILOT_GITHUB_TOKEN, secrets.COPILOT_GITHUB_TOKEN) }}
+    # We cannot use line breaks in this expression as it leads to a syntax error in the compiled workflow
+    # If none of the `COPILOT_PAT_#` secrets were selected, then the default COPILOT_GITHUB_TOKEN is used
+    COPILOT_GITHUB_TOKEN: ${{ case(needs.pre_activation.outputs.copilot_pat_number == '0', secrets.COPILOT_PAT_0, needs.pre_activation.outputs.copilot_pat_number == '1', secrets.COPILOT_PAT_1, needs.pre_activation.outputs.copilot_pat_number == '2', secrets.COPILOT_PAT_2, needs.pre_activation.outputs.copilot_pat_number == '3', secrets.COPILOT_PAT_3, needs.pre_activation.outputs.copilot_pat_number == '4', secrets.COPILOT_PAT_4, needs.pre_activation.outputs.copilot_pat_number == '5', secrets.COPILOT_PAT_5, needs.pre_activation.outputs.copilot_pat_number == '6', secrets.COPILOT_PAT_6, needs.pre_activation.outputs.copilot_pat_number == '7', secrets.COPILOT_PAT_7, needs.pre_activation.outputs.copilot_pat_number == '8', secrets.COPILOT_PAT_8, needs.pre_activation.outputs.copilot_pat_number == '9', secrets.COPILOT_PAT_9, secrets.COPILOT_GITHUB_TOKEN) }}
 
 permissions:
   contents: read
