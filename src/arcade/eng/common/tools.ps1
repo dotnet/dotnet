@@ -677,9 +677,19 @@ function InitializeToolset() {
   }
 
   $downloadArgs = @("package", "download", "Microsoft.DotNet.Arcade.Sdk@$toolsetVersion", "--verbosity", "minimal", "--prerelease", "--output", "$nugetCache")
-  if ($env:NUGET_CONFIG) {
+  $nugetConfig = $env:NUGET_CONFIG
+  if (-not $nugetConfig) {
+    # Search for any variation of nuget.config in the RepoRoot
+    $configFile = Get-ChildItem -Path $RepoRoot -File | Where-Object { $_.Name -ieq "nuget.config" } | Select-Object -First 1
+
+    if ($configFile) {
+        $nugetConfig = $configFile.FullName
+    }
+  }
+
+  if ($nugetConfig) {
     $downloadArgs += "--configfile"
-    $downloadArgs += $env:NUGET_CONFIG
+    $downloadArgs += $nugetConfig
   }
   DotNet @downloadArgs
 
