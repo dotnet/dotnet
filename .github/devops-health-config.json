@@ -1,0 +1,44 @@
+{
+  "azure_devops": {
+    "organizations": [
+      {
+        "name": "dnceng-public",
+        "project": "public",
+        "requires_auth": false,
+        "definitions": [
+          { "id": 278, "name": "dotnet-dotnet", "type": "rolling", "timeout_minutes": 480 }
+        ]
+      },
+      {
+        "name": "dnceng",
+        "project": "internal",
+        "requires_auth": true,
+        "definitions": [
+          { "id": 1330, "name": "dotnet-dotnet-official", "type": "official", "timeout_minutes": 600 }
+        ]
+      }
+    ]
+  },
+  "branches": [
+    "main",
+    "release/10.0.1xx",
+    "release/10.0.2xx",
+    "release/10.0.3xx",
+    "release/11.0.1xx-preview3"
+  ],
+  "nuget_feeds": [
+    "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json",
+    "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json",
+    "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json",
+    "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json"
+  ],
+  "thresholds": {
+    "rolling_pass_rate_critical": 50,
+    "rolling_pass_rate_warning": 80,
+    "codeflow_pr_age_critical_hours": 72,
+    "codeflow_pr_count_warning": 5,
+    "open_operational_issues_warning": 10,
+    "build_duration_increase_warning_pct": 30,
+    "cost_increase_warning_pct": 25
+  }
+}
