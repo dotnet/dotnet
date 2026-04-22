@@ -754,7 +754,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Pass()
-            .And.HaveStdOutContaining("""
+            .And.NotHaveStdErr()
+            .And.HaveStdOut("""
                 echo args:./App.csproj
                 Hello from App
                 """);
@@ -773,9 +774,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .WithWorkingDirectory(Path.Join(testInstance.Path, "proj"))
             .Execute()
             .Should().Pass()
-            .And.HaveStdOutContaining("""
-                Hello from Program
-                """);
+            .And.NotHaveStdErr()
+            .And.HaveStdOut("Hello from Program");
     }
 
     [Fact]
@@ -791,9 +791,261 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .WithWorkingDirectory(Path.Join(testInstance.Path, "proj"))
             .Execute()
             .Should().Pass()
-            .And.HaveStdOutContaining("""
-                Hello from Program
+            .And.NotHaveStdErr()
+            .And.HaveStdOut("Hello from Program");
+    }
+
+    /// <summary>
+    /// <c>dotnet run --project App.csproj Program.cs</c> does not warn
+    /// because <c>--project</c> was explicitly specified.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_ProjectOption_NoWarning()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "--project", "App.csproj", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.NotHaveStdErr()
+            .And.HaveStdOut("""
+                echo args:Program.cs
+                Hello from App
                 """);
+    }
+
+    /// <summary>
+    /// <c>dotnet run file.cs</c> in a directory with a project file warns
+    /// because <c>file.cs</c> is passed as an application argument to the project instead of running as a file-based program.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_Warns()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:Program.cs
+                Hello from App
+                """)
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.RunCommandWarningFileArgumentPassedToProject,
+                "Program.cs",
+                Path.Join(testInstance.Path, "App.csproj")));
+    }
+
+    /// <summary>
+    /// <c>dotnet run nonexistent.cs</c> in a directory with a project file warns
+    /// even though the file does not exist, because the <c>.cs</c> extension suggests it was intended as a file-based program.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_NonExistentCsFile_Warns()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "nonexistent.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:nonexistent.cs
+                Hello from App
+                """)
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.RunCommandWarningCsFileArgumentPassedToProject,
+                "nonexistent.cs",
+                Path.Join(testInstance.Path, "App.csproj")));
+    }
+
+    /// <summary>
+    /// <c>dotnet run -- file.cs</c> in a directory with a project file does not warn
+    /// because <c>--</c> signals that the arguments are intentional.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_DoubleDash_NoWarning()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "--", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:Program.cs
+                Hello from App
+                """)
+            .And.NotHaveStdErr();
+    }
+
+    /// <summary>
+    /// <c>dotnet run file.cs -- other</c> still warns because <c>file.cs</c> appears before <c>--</c>.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_DoubleDashAfterFile_Warns()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "Program.cs", "--", "otherArg")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:Program.cs;otherArg
+                Hello from App
+                """)
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.RunCommandWarningFileArgumentPassedToProject,
+                "Program.cs",
+                Path.Join(testInstance.Path, "App.csproj")));
+    }
+
+    /// <summary>
+    /// <c>dotnet run someArg file.cs</c> in a directory with a project warns
+    /// when an unrecognized argument prevents <c>file.cs</c> from being treated as a file-based program entry point.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_UnrecognizedArg_Warns()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "someArg", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:someArg;Program.cs
+                Hello from App
+                """)
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.RunCommandWarningFileArgumentPassedToProject,
+                "Program.cs",
+                Path.Join(testInstance.Path, "App.csproj")));
+    }
+
+    /// <summary>
+    /// <c>dotnet run -c Release Program.cs</c> in a directory with a project warns because
+    /// known options like <c>-c</c> don't suppress the warning; only <c>--project</c>, <c>--file</c>, or <c>--</c> do.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_KnownOption_Warns()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "-c", "Release", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:Program.cs
+                Hello from App
+                Release config
+                """)
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.RunCommandWarningFileArgumentPassedToProject,
+                "Program.cs",
+                Path.Join(testInstance.Path, "App.csproj")));
+    }
+
+    /// <summary>
+    /// <c>dotnet run someArg -- file.cs</c> does not warn because the <c>.cs</c> file is after <c>--</c>.
+    /// </summary>
+    [Fact]
+    public void ProjectInCurrentDirectory_UnrecognizedArg_DoubleDash_NoWarning()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "App.csproj"), s_consoleProject);
+
+        new DotnetCommand(Log, "run", "someArg", "--", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:someArg;Program.cs
+                Hello from App
+                """)
+            .And.NotHaveStdErr();
+    }
+
+    /// <summary>
+    /// <c>dotnet build someArg Program.cs</c> warns because 'Program.cs' is a valid file-based entry point
+    /// but additional positional arguments cause it to fall back to MSBuild.
+    /// </summary>
+    [Theory]
+    [InlineData("build", "someArg", "Program.cs")]
+    [InlineData("clean", "someArg", "Program.cs")]
+    [InlineData("publish", "someArg", "Program.cs")]
+    [InlineData("build", "Program.cs", "-consoleLoggerParameters:NoSummary")]
+    public void ExtraArgWithFileEntryPoint_Warns(string command, string arg1, string arg2)
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+
+        new DotnetCommand(Log, command, arg1, arg2)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.WarningFileArgumentPassedToMSBuild,
+                "Program.cs",
+                command));
+    }
+
+    /// <summary>
+    /// <c>dotnet build nonexistent.cs</c> warns because the <c>.cs</c> extension suggests it was intended as a file-based program.
+    /// </summary>
+    [Theory]
+    [InlineData("build")]
+    [InlineData("clean")]
+    [InlineData("publish")]
+    public void NonExistentCsFile_Warns(string command)
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        new DotnetCommand(Log, command, "nonexistent.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(string.Format(
+                CliCommandStrings.WarningCsFileArgumentPassedToMSBuild,
+                "nonexistent.cs",
+                command));
+    }
+
+    /// <summary>
+    /// <c>dotnet build --no-incremental Program.cs</c> is handled as file-based (known option + single positional arg) and does not warn.
+    /// </summary>
+    [Theory]
+    [InlineData("Program.cs")]
+    [InlineData("--no-incremental", "Program.cs")]
+    public void SingleFileEntryPoint_NoWarning(params string[] extraArgs)
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+
+        new DotnetCommand(Log, ["build", .. extraArgs])
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.NotHaveStdErr();
     }
 
     /// <summary>
@@ -995,11 +1247,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 public static string M() => "String from Util";
             }
             """);
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
             <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableTransitiveDirectives>true</ExperimentalFileBasedProgramEnableTransitiveDirectives>
-              </PropertyGroup>
               <ItemGroup>
                 <Compile Include="B.cs" />
               </ItemGroup>
@@ -1727,14 +1976,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
-
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"),
             $"""
             #!/usr/bin/env dotnet
@@ -1899,15 +2140,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void MissingShebangWarning()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableTransitiveDirectives>true</ExperimentalFileBasedProgramEnableTransitiveDirectives>
-              </PropertyGroup>
-            </Project>
-            """);
 
         // Single-file program without shebang should NOT produce CA2266
         // (the warning only fires when there are multiple files via #:include).
@@ -3667,7 +3899,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             <Project>
               <PropertyGroup>
                 <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>
               </PropertyGroup>
             </Project>
             """);
@@ -3847,8 +4078,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             <Project>
               <PropertyGroup>
                 <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>
               </PropertyGroup>
             </Project>
             """);
@@ -3906,8 +4135,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             <Project>
               <PropertyGroup>
                 <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>
               </PropertyGroup>
             </Project>
             """);
@@ -3972,8 +4199,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             <Project>
               <PropertyGroup>
                 <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective}>
-                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>
               </PropertyGroup>
             </Project>
             """);
@@ -4009,15 +4234,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableExcludeDirective>true</ExperimentalFileBasedProgramEnableExcludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
-
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
             #!/usr/bin/env dotnet
             #:include {includePattern}
@@ -4039,14 +4255,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void IncludeDirective_WorkingDirectory()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var srcDir = Path.Join(testInstance.Path, "src");
         Directory.CreateDirectory(srcDir);
@@ -4083,7 +4291,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 
         new DirectoryInfo(testInstance.Path)
             .Should().HaveSubtree("""
-                Directory.Build.props
                 src/
                 src/A.cs
                 src/A/
@@ -4126,15 +4333,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 
         Directory.CreateDirectory(Path.Join(testInstance.Path, "dir1/dir2"));
         Directory.CreateDirectory(Path.Join(testInstance.Path, "dir3"));
-
-        File.WriteAllText(Path.Join(testInstance.Path, "dir1/Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableTransitiveDirectives>true</ExperimentalFileBasedProgramEnableTransitiveDirectives>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var a = """
             B.M();
@@ -4245,14 +4443,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
-
         var programPath = Path.Join(testInstance.Path, "A.cs");
 
         File.WriteAllText(programPath, """
@@ -4277,14 +4467,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void IncludeDirective_UpToDate_Glob(string glob)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var programPath = Path.Join(testInstance.Path, "Program.cs");
         File.WriteAllText(programPath, $"""
@@ -4345,14 +4527,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
-
         var programPath = Path.Join(testInstance.Path, "Program.cs");
         File.WriteAllText(programPath, $"""
             #!/usr/bin/env dotnet
@@ -4409,15 +4583,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void IncludeDirective_UpToDate_ProjectReference()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableTransitiveDirectives>true</ExperimentalFileBasedProgramEnableTransitiveDirectives>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var libDir = Path.Join(testInstance.Path, "Lib");
         Directory.CreateDirectory(libDir);
@@ -4479,79 +4644,9 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     }
 
     [Fact]
-    public void IncludeDirective_FeatureFlags()
-    {
-        var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        var programPath = Path.Join(testInstance.Path, "Program.cs");
-        File.WriteAllText(programPath, $"""
-            #!/usr/bin/env dotnet
-            #:include *.cs
-            {s_programDependingOnUtil}
-            """);
-
-        var utilPath = Path.Join(testInstance.Path, "Util.cs");
-        File.WriteAllText(utilPath, $"""
-            #:exclude Other.cs
-            {s_util}
-            """);
-
-        new DotnetCommand(Log, "run", "Program.cs")
-            .WithWorkingDirectory(testInstance.Path)
-            .Execute()
-            .Should().Fail()
-            .And.HaveStdErr($"""
-                {DirectiveError(programPath, 2, Resources.ExperimentalFeatureDisabled, CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective)}
-
-                {CliCommandStrings.RunCommandException}
-                """);
-
-        new DotnetCommand(Log, "run", "Program.cs")
-            .WithWorkingDirectory(testInstance.Path)
-            .WithEnvironmentVariable(CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective, "true")
-            .Execute()
-            .Should().Fail()
-            .And.HaveStdErr($"""
-                {DirectiveError(utilPath, 1, Resources.ExperimentalFeatureDisabled, CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableExcludeDirective)}
-
-                {CliCommandStrings.RunCommandException}
-                """);
-
-        new DotnetCommand(Log, "run", "Program.cs")
-            .WithWorkingDirectory(testInstance.Path)
-            .WithEnvironmentVariable(CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective, "true")
-            .WithEnvironmentVariable(CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableExcludeDirective, "true")
-            .Execute()
-            .Should().Fail()
-            .And.HaveStdErr($"""
-                {DirectiveError(utilPath, 1, Resources.ExperimentalFeatureDisabled, CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives)}
-
-                {CliCommandStrings.RunCommandException}
-                """);
-
-        new DotnetCommand(Log, "run", "Program.cs")
-            .WithWorkingDirectory(testInstance.Path)
-            .WithEnvironmentVariable(CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableIncludeDirective, "true")
-            .WithEnvironmentVariable(CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableExcludeDirective, "true")
-            .WithEnvironmentVariable(CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives, "true")
-            .Execute()
-            .Should().Pass()
-            .And.HaveStdOut("Hello, String from Util");
-    }
-
-    [Fact]
     public void IncludeDirective_CustomMapping()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableItemMapping>true</ExperimentalFileBasedProgramEnableItemMapping>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var programPath = Path.Join(testInstance.Path, "Program.cs");
         File.WriteAllText(programPath, $"""
@@ -4606,15 +4701,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void IncludeDirective_CustomMapping_ParseErrors()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableItemMapping>true</ExperimentalFileBasedProgramEnableItemMapping>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var programPath = Path.Join(testInstance.Path, "Program.cs");
         File.WriteAllText(programPath, """
@@ -6776,14 +6862,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void Api_Evaluation()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
 
         var programPath = Path.Join(testInstance.Path, "A.cs");
         File.WriteAllText(programPath, """
