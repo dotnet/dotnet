@@ -13,10 +13,10 @@
       "commitSha": "15602d2cf5aff8483ff7c127a8b36b46c0f9dba3"
     },
     {
-      "barId": 292148,
+      "barId": 310153,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "82f47fc2ff84b3d94e910147d52f2e6795f6ae21"
+      "commitSha": "187393d39be7342146f96562f1e5ca9f7e2b1e24"
     },
     {
       "barId": 310496,
