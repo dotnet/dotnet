@@ -430,6 +430,15 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The MSBuild directory &apos;{0}&apos; appears to be a .NET SDK (dotnet) MSBuild installation. NuGet.exe requires the .NET Framework version of MSBuild....
+        /// </summary>
+        public static string Error_MsBuildIsNetCoreMsBuild {
+            get {
+                return ResourceManager.GetString("Error_MsBuildIsNetCoreMsBuild", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MSBuild is not installed..
         /// </summary>
         public static string Error_MSBuildNotInstalled {

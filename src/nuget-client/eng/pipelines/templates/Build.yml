@@ -152,12 +152,22 @@ steps:
       configuration: "$(BuildConfiguration)"
       msbuildArguments: "/restore:false /target:BuildVSIX /property:BuildRTM=$(BuildRTM) /property:ExcludeTestProjects=$(BuildRTM) /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\13.PackVSIX.binlog"
     condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
+
   - ${{ if not(parameters.BuildRTM)}}:
-      - template: /eng/common/templates-official/steps/generate-sbom.yml@self
-        parameters:
+      - task: PowerShell@1
+        displayName: "Prepare for SBOM generation"
+        inputs:
+          scriptType: "inlineScript"
+          inlineScript: |
+            mkdir $(Build.ArtifactStagingDirectory)/sbom
+
+      - task: ManifestGeneratorTask@0
+        displayName: 'Generate SBOM'
+        inputs:
+          BuildDropPath: '$(System.DefaultWorkingDirectory)/artifacts'
+          ManifestDirPath: '$(Build.ArtifactStagingDirectory)/sbom'
           PackageName: "NuGet.Client"
           PackageVersion: "$(SemanticVersion)"
-          publishArtifacts: false
 
   - task: MSBuild@1
     displayName: "Generate Build Tools package"
