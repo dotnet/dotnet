@@ -104,28 +104,32 @@ GET /repos/{owner}/{repo}/issues?labels=devops-health&state=open&per_page=5
 ```
 Use the most recently created one. If none exist, call `noop` with message "No health dashboard issue found — nothing to groom" and stop.
 
-Record the `issue_number` and current issue `body`.
+Record the `issue_number` and the **full** current issue `body`.
 
 ---
 
 ## Step 2: Fetch Recent Comments
 
-Compute a `since` timestamp equal to **30 days ago** (ISO-8601 format). This covers the 28-day P4 hard age cutoff plus a 2-day buffer.
+Compute a `since` timestamp equal to **30 days ago** (ISO-8601 format, e.g. `2026-03-16T00:00:00Z`). This covers the 28-day P4 hard age cutoff plus a 2-day buffer, ensuring all comments within the retention window are fetched.
 
 ```
 GET /repos/{owner}/{repo}/issues/{issue_number}/comments?per_page=100&since={since_timestamp}
 ```
 
-**You MUST paginate**: If the response contains a `Link` header with `rel="next"`, you MUST fetch subsequent pages until no `rel="next"` link is present.
+The `since` parameter filters to comments created or updated after the timestamp.
+
+**You MUST paginate**: If the response contains a `Link` header with `rel="next"`, you MUST fetch subsequent pages until no `rel="next"` link is present. Failure to paginate means investigation comments may be missed, which is the primary failure mode of this workflow.
 
 Collect every comment with:
 - `id` (numeric REST comment ID)
-- `node_id` (GraphQL node ID — required by `hide-comment`)
+- `node_id` (GraphQL node ID, e.g. `IC_kwDO…` — required by `hide-comment`)
 - `html_url` (link for the issue body)
 - `body` (content to parse)
 - `created_at` (timestamp for age checks)
 
 ### 2.1 Classify Comments
+
+Parse each comment into one of these categories:
 
 | Category | Detection Rule |
 |----------|----------------|
@@ -135,9 +139,16 @@ Collect every comment with:
 
 For each **Investigation** comment, extract:
 - `finding_id` from the `**Finding ID:** \`{id}\`` line
-- `executive_summary` from the `**Executive Summary:**` line
+- `executive_summary` from the `**Executive Summary:**` line (everything after the label)
 - `correlation_id` from the `**Correlation:**` line
 - `comment_url` = the comment's `html_url`
+- `comment_id` = the comment's `id`
+- `comment_node_id` = the comment's `node_id`
+- `created_at` = the comment's timestamp
+
+For each **Daily overview** comment, extract:
+- `date` from the heading `## 📋 Health Check — {date}`
+- `comment_id` = the comment's `id`
 - `comment_node_id` = the comment's `node_id`
 - `created_at` = the comment's timestamp
 
@@ -147,20 +158,38 @@ For each **Investigation** comment, extract:
 
 ### 3.1 Parse the Current Issue Body
 
-Look for the `## 🔍 Investigation Results` section. If missing, create it.
+Load the full issue body from Step 1. Look for ALL occurrences of the `## 🔍 Investigation Results` heading.
+
+**CRITICAL — Duplicate Section Handling:** The issue body may contain MULTIPLE `## 🔍 Investigation Results` sections (one from the health check agent, one from a previous grooming run with `<!-- gh-aw-island-*-->` markers). You MUST:
+1. Keep ONLY ONE Investigation Results section (the first occurrence, between `## 🆕 New Findings` and `## ✅ Resolved`)
+2. REMOVE all other occurrences, including any wrapped in `<!-- gh-aw-island-start:devops-health-groom -->` / `<!-- gh-aw-island-end:devops-health-groom -->` markers
+3. Remove the island markers themselves
+
+If no `## 🔍 Investigation Results` section exists at all, create one and insert it between `## 🆕 New Findings` and `## ✅ Resolved`.
 
 ### 3.2 Build the Updated Table
 
-For each row in the existing Investigation Results table:
-1. Match against investigation comments by finding title or finding_id
-2. If matching comment exists: change status to `✅ Done`, replace Result with `[{executive_summary}]({comment_url})`
-3. If no match: leave unchanged
+Parse the existing Investigation Results table rows. Each row has the format:
+```
+| {finding_title} | {severity} | {status} | {result_or_correlation_id} |
+```
 
-If the section doesn't exist, build it from investigation comments.
+For each row in the table:
+1. Determine the finding for this row by matching the finding title against investigation comments
+2. Also try matching any correlation ID (e.g. `hc-2026-04-21-1`) against the `correlation_id` extracted from investigation comments
+3. If a matching investigation comment exists:
+   - Change the status from `🔄 Dispatched` or `⏳ Dispatched` to `✅ Done`
+   - Replace the Result cell with `[{executive_summary}]({comment_url})`
+4. If no matching investigation comment exists yet, leave the row unchanged
 
-### 3.3 Hold Changes
+Also check for investigation comments that don't match any existing table row. Add rows for those too:
+```
+| {finding_title from comment heading} | {severity from comment} | ✅ Done | [{executive_summary}]({comment_url}) |
+```
 
-Do not call `update-issue` yet — Step 4 will make further edits.
+### 3.3 Hold Changes (Do Not Update Yet)
+
+Do **not** call `update-issue` yet. Keep the modified issue body in memory — Step 4 will make further edits to the same body before a single combined `update-issue` call.
 
 ---
 
@@ -168,68 +197,92 @@ Do not call `update-issue` yet — Step 4 will make further edits.
 
 ### 4.1 Derive Current Fingerprints from Issue Body
 
-Extract active findings from 🆕 New Findings and 📌 Existing Findings sections.
+Extract the set of currently active findings by parsing the issue body:
+- **🆕 New Findings** section → these are current
+- **📌 Existing Findings** section → these are current
+- Extract the `Fingerprint:` line from each finding's detail block
+
+The union of new + existing fingerprints forms the current active set.
 
 ### 4.2 Cross-Reference Investigation Comments
 
-For investigations whose `finding_id` is no longer in current fingerprints, mark as resolved.
+For each investigation comment found in Step 2:
+1. Check if the `finding_id` is still present in the current fingerprint set
+2. If the `finding_id` is **NOT** in the current fingerprints → the finding has been resolved
 
 ### 4.3 Mark Resolved in Investigation Results Table
 
-Change status from `✅ Done` to `✅ Resolved` for resolved findings.
+For findings whose investigation is complete AND the finding is now resolved:
+- Change status from `✅ Done` to `✅ Resolved`
+- Keep the link to the investigation comment (still useful for historical context)
 
 ### 4.4 Write the Updated Issue Body
 
-Use a **single** `update-issue` call with `operation: "replace-island"` to replace only the `## 🔍 Investigation Results` section.
+Now that both Step 3 (linking) and Step 4 (resolving) are applied, write the **full** issue body using a **single** `update-issue` call with `operation: "replace"`.
 
-Only call `update-issue` if at least one change was made.
+**CRITICAL — Use `operation: "replace"` with the FULL body**: You must pass the complete issue body (all sections) as the `body` field. This ensures the old duplicate Investigation Results sections are removed and the updated one is in place. Do NOT use `operation: "replace-island"` — it creates duplicate sections.
+
+Only call `update-issue` if at least one change was made across Steps 3 and 4. If nothing changed, skip the call.
 
 ---
 
 ## Step 5: Hide Stale Comments
 
-Use `hide-comment` to collapse stale comments. Hidden comments remain accessible but collapsed.
+Use `hide-comment` to collapse stale comments. Hidden comments remain accessible
+but are collapsed in the GitHub UI with a reason label.
 
-**Minimum age safeguard:** NEVER hide any comment less than **72 hours** old.
+**Minimum age safeguard:** NEVER hide any comment less than **72 hours** old,
+regardless of which rule matches.
 
 ### 5.1 P1 — Daily Summary Comments (> 7 days)
 
-Hide daily overview comments older than 7 days with reason `OUTDATED`.
+Hide daily overview comments (`## 📋 Health Check —`) older than **7 days** with reason `OUTDATED`.
 
 ### 5.2 P2 — Resolved Investigation Comments (> 7 days)
 
-Hide investigation comments older than 7 days whose finding_id is resolved. Use reason `RESOLVED`.
+Hide investigation comments (`## 🔍 Investigation:`) older than **7 days** whose
+`finding_id` is NOT in the current active fingerprint set (resolved). Use reason `RESOLVED`.
 
 ### 5.3 P3 — Unreferenced Investigation Comments (> 7 days)
 
-Hide investigation comments older than 7 days not referenced in the issue body. Use reason `OUTDATED`.
+Hide investigation comments older than **7 days** whose `finding_id` does **not**
+appear anywhere in the current issue body's Investigation Results table. Use reason `OUTDATED`.
 
 ### 5.4 P4 — Hard Age Cutoff (> 28 days)
 
-Hide any `github-actions[bot]` comment older than 28 days with reason `OUTDATED`.
+Hide **any** bot comment (`github-actions[bot]` author) older than **28 days** with reason `OUTDATED`.
 
 **Never hide human comments.**
 
-### 5.5 Safety Limits
+### 5.5 Hide Order
 
-- Maximum 50 hides per run
-- Prioritize: resolved investigations first, then oldest first
-- **Actual deletion** is handled by the separate `devops-health-cleanup.yml` workflow
+Process hides in this priority order:
+1. P2 — Resolved investigation comments (oldest first) — reason: `RESOLVED`
+2. P3 — Unreferenced investigation comments (oldest first) — reason: `OUTDATED`
+3. P1 — Age-expired daily overview comments (oldest first) — reason: `OUTDATED`
+4. P4 — Hard age cutoff (oldest first) — reason: `OUTDATED`
+
+### 5.6 Safety Limits
+
+- Maximum 50 hides per run (safe-output budget)
+- If more than 50 comments qualify, prioritize: resolved investigations first, then oldest first
+- Hidden comments are NOT deleted — deletion is handled by `devops-health-cleanup.yml`
 
 ---
 
 ## Step 6: Summary
 
-If no changes were made, call `noop` with summary message. Otherwise the safe-output calls are the implicit summary.
+If no `update-issue` or `hide-comment` calls were made, call `noop` with a summary message. If changes were made, the safe-output calls are the implicit summary. Do NOT call `noop` if you already made other safe-output calls.
 
 ---
 
 ## Guidelines
 
-- **Use `operation: "replace-island"`**: Only replace the Investigation Results section.
+- **CRITICAL — Use `operation: "replace"` NOT `replace-island`**: Pass the complete issue body to `update-issue`. The `replace-island` operation creates duplicate sections. You must replace the full body to ensure old Investigation Results sections (including island-marked duplicates) are removed.
+- **Remove duplicate sections**: If the issue body has multiple `## 🔍 Investigation Results` sections, merge them into one and remove duplicates (including `<!-- gh-aw-island-*-->` markers).
 - **Safe output body must be inline**: Never write to a file and reference it.
-- **Minimal edits only**: Only change investigation table rows and resolved annotations.
+- **Minimal edits only**: Only change the Investigation Results table and resolved annotations. Preserve all other sections exactly as they are.
 - **Precise comment parsing**: Match exact patterns from the investigation worker template.
-- **Create missing sections**: If Investigation Results section is missing, create it.
 - **Pagination is mandatory**: Always follow `Link: rel="next"` headers.
 - **No intermediate files**: Do all work in memory.
+- **No Python**: Only use bash tools from the frontmatter.

@@ -279,9 +279,15 @@ Find the open issue with label `devops-health`. If none exists, create one title
 
 ## 🔍 Investigation Results
 
+> Deep investigations are dispatched for new critical/warning findings.
+> The grooming workflow links results ~3 hours after this run.
+
 | Finding | Severity | Status | Result |
 |---------|----------|--------|--------|
-{dispatched findings table — preserve existing ✅ Done rows}
+{For each finding dispatched in the current run:}
+| {finding_title} | {severity_emoji} {severity} | 🔄 Dispatched | [Workflow Run]({workflow_actions_url}) |
+{Preserve any rows from the previous issue body that already show ✅ Done or ✅ Resolved — do not remove them}
+{If no findings were dispatched AND no previous rows exist, render the table header with zero rows — the section MUST still appear}
 
 ---
 
@@ -312,6 +318,8 @@ Find the open issue with label `devops-health`. If none exists, create one title
 ```
 
 **CRITICAL**: The issue body must be passed directly as a string to `update-issue`. NEVER write to a file.
+
+**CRITICAL — Investigation Results section is MANDATORY**: The `## 🔍 Investigation Results` section MUST always appear in the issue body, even if no investigations were dispatched (render the section with the table header and zero data rows). The downstream grooming workflow depends on this section to link investigation results. Never omit it. The section must appear **exactly** between the `## 🆕 New Findings` section and the `## ✅ Resolved` section. Use `🔄 Dispatched` (not `⏳ Dispatched`) as the status text. The last column header must be `Result` (not `Correlation ID`).
 
 ## Step 4: Post Daily Comment
 
