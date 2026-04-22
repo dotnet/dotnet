@@ -5,7 +5,11 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- dotnet/dotnet dependencies -->
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26220.5</MicrosoftDotNetArcadeSdkPackageVersion>
+    <!-- dotnet-aspnetcore dependencies -->
+    <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
+    <!-- dotnet-dotnet dependencies -->
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCommonPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisCommonPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisCSharpPackageVersion>
@@ -25,19 +29,20 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.3.0-2.26064.108</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.3.0-2.26064.108</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26064.108</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.3.0-2.26064.108</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>5.3.0-2.26064.108</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <RoslynDiagnosticsAnalyzersPackageVersion>5.3.0-2.26064.108</RoslynDiagnosticsAnalyzersPackageVersion>
-    <!-- dotnet/aspnetcore dependencies -->
-    <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
-    <!-- dotnet/runtime dependencies -->
+    <!-- dotnet-runtime dependencies -->
     <SystemCollectionsImmutablePackageVersion>9.0.0</SystemCollectionsImmutablePackageVersion>
     <SystemReflectionMetadataPackageVersion>9.0.0</SystemReflectionMetadataPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- dotnet/dotnet dependencies -->
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <!-- dotnet-aspnetcore dependencies -->
+    <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
+    <!-- dotnet-dotnet dependencies -->
     <MicrosoftCodeAnalysisAnalyzersVersion>$(MicrosoftCodeAnalysisAnalyzersPackageVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
     <MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisCommonPackageVersion)</MicrosoftCodeAnalysisCommonVersion>
     <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpVersion>
@@ -57,13 +62,10 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)</MicrosoftCodeAnalysisWorkspacesCommonVersion>
     <MicrosoftCodeAnalysisWorkspacesMSBuildVersion>$(MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion)</MicrosoftCodeAnalysisWorkspacesMSBuildVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkVersion>$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)</MicrosoftCommonLanguageServerProtocolFrameworkVersion>
-    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftVisualStudioLanguageServicesVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</MicrosoftVisualStudioLanguageServicesVersion>
     <RoslynDiagnosticsAnalyzersVersion>$(RoslynDiagnosticsAnalyzersPackageVersion)</RoslynDiagnosticsAnalyzersVersion>
-    <!-- dotnet/aspnetcore dependencies -->
-    <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
-    <!-- dotnet/runtime dependencies -->
+    <!-- dotnet-runtime dependencies -->
     <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
     <SystemReflectionMetadataVersion>$(SystemReflectionMetadataPackageVersion)</SystemReflectionMetadataVersion>
   </PropertyGroup>
