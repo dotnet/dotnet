@@ -229,10 +229,14 @@
     <file src="net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x64\msdia140.dll.manifest" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x86\msdia140.dll" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x86\msdia140.dll.manifest" />
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\arm64\msdia140.dll" />
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\arm64\msdia140.dll.manifest" />
     <file src="net48\Microsoft.Internal.Dia\x64\msdia140.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x64\msdia140.dll" />
     <file src="net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x64\msdia140.dll.manifest" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x86\msdia140.dll" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x86\msdia140.dll.manifest" />
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\arm64\msdia140.dll" />
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\arm64\msdia140.dll.manifest" />
     <file src="net48\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
     <file src="net48\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
     <file src="net48\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
@@ -341,6 +345,8 @@
     <file src="net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\x64\msdia140.dll.manifest" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\x86\msdia140.dll" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\x86\msdia140.dll.manifest" />
+    <!-- arm64\msdia140.dll is already included via the Microsoft.Internal.CodeCoverage wildcard above -->
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" target="tools\net462\Common7\IDE\Extensions\TestPlatform\arm64\msdia140.dll.manifest" />
     <file src="net48\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
     <file src="net48\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
     <file src="net48\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />

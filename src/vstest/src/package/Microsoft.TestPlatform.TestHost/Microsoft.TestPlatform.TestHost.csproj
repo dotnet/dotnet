@@ -42,9 +42,11 @@
     <ItemGroup>
       <DiaFilesX86 Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\x86\*"></DiaFilesX86>
       <DiaFilesX64 Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\x64\*"></DiaFilesX64>
+      <DiaFilesArm64 Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\arm64\*"></DiaFilesArm64>
     </ItemGroup>
     <Copy SourceFiles="@(DiaFilesX86)" DestinationFolder="$(OutDir)\x86" />
     <Copy SourceFiles="@(DiaFilesX64)" DestinationFolder="$(OutDir)\x64" />
+    <Copy SourceFiles="@(DiaFilesArm64)" DestinationFolder="$(OutDir)\arm64" />
   </Target>
 
   <ItemGroup>

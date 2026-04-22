@@ -14,26 +14,18 @@ Param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+$isCI = $env:TF_BUILD -eq 'true' -or $env:CI -eq 'true'
+$expectedCountsFile = Join-Path $PSScriptRoot "expected-nupkg-file-counts.json"
+
 # Import binding redirect verification.
 . "$PSScriptRoot/verify-binding-redirects.ps1"
 
 function Verify-Nuget-Packages {
     Write-Host "Starting Verify-Nuget-Packages."
-    $expectedNumOfFiles = @{
-        "Microsoft.CodeCoverage"                      = 76
-        "Microsoft.NET.Test.Sdk"                      = 26
-        "Microsoft.TestPlatform"                      = 543
-        "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI" = 387
-        "Microsoft.TestPlatform.Build"                = 21
-        "Microsoft.TestPlatform.CLI"                  = 481
-        "Microsoft.TestPlatform.Extensions.TrxLogger" = 35
-        "Microsoft.TestPlatform.ObjectModel"          = 93
-        "Microsoft.TestPlatform.AdapterUtilities"     = 62
-        "Microsoft.TestPlatform.Portable"             = 606
-        "Microsoft.TestPlatform.TestHost"             = 64
-        "Microsoft.TestPlatform.TranslationLayer"     = 175
-        "Microsoft.TestPlatform.Internal.Uwp"         = 39
-        "Microsoft.TestPlatform.Filter.Source"        = 13
+    $expectedNumOfFiles = @{}
+    $json = Get-Content $expectedCountsFile -Raw | ConvertFrom-Json
+    foreach ($property in $json.PSObject.Properties) {
+        $expectedNumOfFiles[$property.Name] = [int]$property.Value
     }
 
     $packageDirectory = Resolve-Path "$PSScriptRoot/../artifacts/packages/$configuration"
@@ -95,6 +87,8 @@ function Verify-Nuget-Packages {
 
     Write-Host "Verify NuGet packages files."
     $errors = @()
+    $actualCounts = @{}
+    $hasCountMismatch = $false
     foreach ($unzipNugetPackageDir in $unzipNugetPackageDirs) {
         # Directory is named after the package file (e.g. "Microsoft.TestPlatform.18.6.0-dev.nupkg"),
         # so strip the extension to get the base name for key derivation.
@@ -103,12 +97,16 @@ function Verify-Nuget-Packages {
         Write-Host "Verifying package '$packageBaseName'."
 
         $actualNumOfFiles = (Get-ChildItem -Recurse -File -Path $unzipNugetPackageDir | Where-Object { $_.Name -ne '.signature.p7s' }).Count
+        $actualCounts[$packageKey] = $actualNumOfFiles
+
         if (-not $expectedNumOfFiles.ContainsKey($packageKey)) {
-            $errors += "Package '$packageKey' is not present in file expectedNumOfFiles table. Is that package known?"
+            $errors += "Package '$packageKey' is not present in '$expectedCountsFile'. Add it to the expected counts file."
+            $hasCountMismatch = $true
             continue
         }
         if ($expectedNumOfFiles[$packageKey] -ne $actualNumOfFiles) {
             $errors += "Number of files are not equal for '$packageBaseName', expected: $($expectedNumOfFiles[$packageKey]) actual: $actualNumOfFiles"
+            $hasCountMismatch = $true
         }
 
         if ($packageKey -eq "Microsoft.TestPlatform") {
@@ -116,7 +114,46 @@ function Verify-Nuget-Packages {
         }
     }
 
-    if ($errors) {
+    if ($hasCountMismatch) {
+        if ($isCI) {
+            $errors += ""
+            $errors += "To fix this, run the following command locally after building and packing:"
+            $errors += "  .\build.cmd -c $configuration"
+            $errors += "This will rebuild, pack, and auto-update '$expectedCountsFile' with the correct values."
+            $errors += "Then commit the updated file."
+            Write-Error "There are file count mismatches:`n$($errors -join "`n")"
+        }
+        else {
+            Write-Host ""
+            Write-Host "File count mismatches detected. Updating '$expectedCountsFile'." -ForegroundColor Yellow
+            foreach ($err in $errors) {
+                Write-Host "  $err" -ForegroundColor Yellow
+            }
+
+            # Build the updated counts: start from expected, overlay with actual
+            $updatedCounts = [ordered]@{}
+            foreach ($key in ($expectedNumOfFiles.Keys + $actualCounts.Keys) | Sort-Object -Unique) {
+                if ($actualCounts.ContainsKey($key)) {
+                    $updatedCounts[$key] = $actualCounts[$key]
+                }
+                else {
+                    $updatedCounts[$key] = $expectedNumOfFiles[$key]
+                }
+            }
+
+            # Write clean JSON (2-space indent, no BOM, no trailing spaces).
+            $lines = @("{")
+            $keys = @($updatedCounts.Keys)
+            for ($i = 0; $i -lt $keys.Count; $i++) {
+                $comma = if ($i -lt $keys.Count - 1) { "," } else { "" }
+                $lines += "  ""$($keys[$i])"": $($updatedCounts[$keys[$i]])$comma"
+            }
+            $lines += "}"
+            [System.IO.File]::WriteAllText($expectedCountsFile, ($lines -join "`n") + "`n", [System.Text.UTF8Encoding]::new($false))
+            Write-Host "Updated '$expectedCountsFile'. Please commit the changes." -ForegroundColor Green
+        }
+    }
+    elseif ($errors) {
         Write-Error "There are $($errors.Count) errors:`n$($errors -join "`n")"
     }
 
@@ -322,4 +359,4 @@ Start-sleep -Seconds 10
 Verify-NugetPackageVersion -configuration $configuration -UnzipNugetPackages $unzipNugetPackages
 
 Write-Host "`nVerifying binding redirects..."
-Verify-BindingRedirects -PackageDirs $unzipNugetPackages
+Verify-BindingRedirects -PackageDirs $unzipNugetPackages -Configuration $configuration
