@@ -183,6 +183,11 @@
         <target state="translated">패키지 ID가 Null이거나 비어 있습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ErrorPackageIdentityDoesNotMatch">
+        <source>Expected package {0} {1}, but got package {2} {3}</source>
+        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <note>0 and 2 are package names, and 1 and 3 are versions numbers.</note>
+      </trans-unit>
       <trans-unit id="ErrorPackageNotSigned">
         <source>The package is not signed.</source>
         <target state="translated">패키지가 서명되어 있지 않습니다.</target>

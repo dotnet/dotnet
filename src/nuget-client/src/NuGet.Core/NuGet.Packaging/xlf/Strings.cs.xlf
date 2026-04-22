@@ -183,6 +183,11 @@
         <target state="translated">ID balíčku má prázdnou hodnotu nebo hodnotu null.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ErrorPackageIdentityDoesNotMatch">
+        <source>Expected package {0} {1}, but got package {2} {3}</source>
+        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <note>0 and 2 are package names, and 1 and 3 are versions numbers.</note>
+      </trans-unit>
       <trans-unit id="ErrorPackageNotSigned">
         <source>The package is not signed.</source>
         <target state="translated">Balíček není podepsaný.</target>
