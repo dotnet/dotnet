@@ -466,6 +466,8 @@ namespace NuGet.Packaging
 
                                     using (var packageReader = new PackageArchiveReader(nupkgStream))
                                     {
+                                        ValidateExpectedPackage(packageIdentity, packageReader);
+
                                         if (packageSaveMode.HasFlag(PackageSaveMode.Nuspec) || packageSaveMode.HasFlag(PackageSaveMode.Files))
                                         {
                                             telemetry.StartIntervalMeasure();
@@ -585,6 +587,22 @@ namespace NuGet.Packaging
                         }
                     },
                     token: token);
+            }
+        }
+
+        private static void ValidateExpectedPackage(PackageIdentity packageIdentity, PackageArchiveReader packageReader)
+        {
+            PackageIdentity actualIdentity = packageReader.GetIdentity();
+            if (!PackageIdentityComparer.Default.Equals(packageIdentity, actualIdentity))
+            {
+                string message = string.Format(
+                    CultureInfo.InvariantCulture,
+                    Strings.ErrorPackageIdentityDoesNotMatch,
+                    packageIdentity.Id,
+                    packageIdentity.Version,
+                    actualIdentity.Id,
+                    actualIdentity.Version);
+                throw new PackagingException(message);
             }
         }
 
@@ -948,6 +966,7 @@ namespace NuGet.Packaging
             {
                 using (var packageReader = new PackageArchiveReader(nupkgFilePath!))
                 {
+                    ValidateExpectedPackage(packageIdentity, packageReader);
                     return await CopySatelliteFilesAsync(
                         packageReader,
                         packagePathResolver,

@@ -342,7 +342,15 @@ namespace NuGet.CommandLine.Test
                 new Action<HttpListenerResponse>(response =>
                 {
                     response.ContentType = "application/atom+xml;type=feed;charset=utf-8";
-                    string feed = server.ToODataFeed(packages, "FindPackagesById");
+                    var requestedId = r.QueryString["id"]?.Trim('\'');
+                    var filteredPackages = string.IsNullOrEmpty(requestedId)
+                        ? packages
+                        : packages.Where(p =>
+                        {
+                            using var reader = new PackageArchiveReader(p.OpenRead());
+                            return string.Equals(reader.NuspecReader.GetId(), requestedId, StringComparison.OrdinalIgnoreCase);
+                        }).ToList();
+                    string feed = server.ToODataFeed(filteredPackages, "FindPackagesById");
                     MockServer.SetResponseContent(response, feed);
                 }));
 
