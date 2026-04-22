@@ -27,6 +27,10 @@
     <!-- Enable reproducible build per binskim -->
     <Deterministic>true</Deterministic>
 
+    <!-- In source-build, exclude netstandard2.0 and .NET Framework TFMs since source-built
+         NuGet packages have dropped netstandard support. -->
+    <TargetFrameworks Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetMinimum);$(NetCurrent)</TargetFrameworks>
+
     <!-- Disable analyzers in sourcebuild -->
     <EnableAnalyzers>true</EnableAnalyzers>
     <EnableAnalyzers Condition="'$(DotNetBuildSourceOnly)' == 'true'">false</EnableAnalyzers>
