@@ -402,6 +402,69 @@ namespace NuGet.CommandLine.Test
             Assert.Contains(badPath, exception.Message);
         }
 
+        [Fact]
+        public void IsNetCoreMsBuildDirectory_WithRuntimeConfig_ReturnsTrue()
+        {
+            using (var dir = TestDirectory.Create())
+            {
+                File.WriteAllText(Path.Combine(dir, "MSBuild.runtimeconfig.json"), "{}");
+
+                Assert.True(MsBuildUtility.IsNetCoreMsBuildDirectory(dir));
+            }
+        }
+
+        [Fact]
+        public void IsNetCoreMsBuildDirectory_WithRuntimeConfigAndMsBuildExe_ReturnsTrue()
+        {
+            // Even if a future AoT SDK ships MSBuild.exe, the runtimeconfig.json
+            // still marks it as .NET Core, and NuGet.exe cannot load its assemblies.
+            using (var dir = TestDirectory.Create())
+            {
+                File.WriteAllText(Path.Combine(dir, "MSBuild.exe"), "fake");
+                File.WriteAllText(Path.Combine(dir, "MSBuild.runtimeconfig.json"), "{}");
+
+                Assert.True(MsBuildUtility.IsNetCoreMsBuildDirectory(dir));
+            }
+        }
+
+        [Fact]
+        public void IsNetCoreMsBuildDirectory_WithMsBuildExeOnly_ReturnsFalse()
+        {
+            using (var dir = TestDirectory.Create())
+            {
+                File.WriteAllText(Path.Combine(dir, "MSBuild.exe"), "fake");
+
+                Assert.False(MsBuildUtility.IsNetCoreMsBuildDirectory(dir));
+            }
+        }
+
+        [Fact]
+        public void IsNetCoreMsBuildDirectory_EmptyDirectory_ReturnsFalse()
+        {
+            using (var dir = TestDirectory.Create())
+            {
+                Assert.False(MsBuildUtility.IsNetCoreMsBuildDirectory(dir));
+            }
+        }
+
+        [Fact]
+        public void GetMsBuildDirectoryFromMsBuildPath_NetCoreMsBuild_ThrowsCommandException()
+        {
+            using (var dir = TestDirectory.Create())
+            {
+                File.WriteAllText(Path.Combine(dir, "MSBuild.runtimeconfig.json"), "{}");
+
+                CommandException exception = Assert.Throws<CommandException>(
+                    () => MsBuildUtility.GetMsBuildDirectoryFromMsBuildPath(dir, null, null));
+
+                string expectedMessage = string.Format(
+                    CultureInfo.CurrentCulture,
+                    LocalizedResourceManager.GetString(nameof(NuGetResources.Error_MsBuildIsNetCoreMsBuild)),
+                    dir.ToString());
+                Assert.Equal(expectedMessage, exception.Message);
+            }
+        }
+
         public static class ToolsetDataSource
         {
             // Legacy toolsets
