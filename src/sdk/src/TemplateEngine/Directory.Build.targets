@@ -4,10 +4,9 @@
 
   <!-- In source-build, exclude netstandard2.0 since source-built NuGet packages have dropped
        netstandard support. This must be in Directory.Build.targets (not .props) so it runs
-       after the csproj sets TargetFrameworks. Also strip duplicate $(NetMinimum) since Arcade
-       sets NetMinimum == NetCurrent in source-build. -->
+       after the csproj sets TargetFrameworks. -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <TargetFrameworks>$(TargetFrameworks.Replace('netstandard2.0', ''))</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks.Replace(';netstandard2.0', '').Replace('netstandard2.0;', '').Replace('netstandard2.0', ''))</TargetFrameworks>
     <TargetFrameworks Condition="'$(NetMinimum)' == '$(NetCurrent)'">$(TargetFrameworks.Replace('$(NetMinimum);$(NetCurrent)', '$(NetCurrent)'))</TargetFrameworks>
   </PropertyGroup>
 
