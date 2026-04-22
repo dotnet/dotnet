@@ -540,6 +540,15 @@ public class ProxyOperationManager
                 CoreUtilitiesConstants.TesthostProcessName,
                 connTimeout,
                 EnvironmentHelper.VstestConnectionTimeout);
+
+            // Add process ID info if available so the user knows which process is stuck.
+            if (_testHostProcessId > 0)
+            {
+                errorMsg += string.Format(
+                    CultureInfo.CurrentCulture,
+                    " The process with id {0} was still running when this message was reported.",
+                    _testHostProcessId);
+            }
         }
 
         // After testhost process launched failed with error.

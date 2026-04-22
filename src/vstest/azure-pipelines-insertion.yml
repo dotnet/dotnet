@@ -1,0 +1,131 @@
+parameters:
+  - name: 'ComponentBranchName'
+    default: 'main'
+  - name: 'CreateDraftPR'
+    default: 'false'
+  - name: 'OptionalTitlePrefix'
+    default: '[Auto Insertion]'
+  - name: 'VisualStudioBranchName'
+    default: 'main'
+
+variables:
+- group: DotNet-Roslyn-Insertion-Variables
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- name: RequiredValueSentinel
+  value: 'REQUIRED'
+- name: DefaultValueSentinel
+  value: '(default)'
+- name: BuildQueueName
+  value: 'microsoft-vstest'
+- name: ComponentAzdoUri
+  value: 'https://dnceng.visualstudio.com/DefaultCollection'
+- name: ComponentProjectName
+  value: 'internal'
+- name: ComponentName
+  value: 'VS Test Platform'
+- name: DropPath
+  value: '/dp=microsoft-vstest/VSSetupArtifacts'
+- name: InsertCore
+  value: 'false'
+- name: InsertDevDiv
+  value: 'false'
+- name: InsertToolset
+  value: 'false'
+- name: QueueValidation
+  value: '(default)'
+- name: UpdateAssemblyVersions
+  value: '(default)'
+- name: UpdateCoreXTLibraries
+  value: 'false'
+- name: InsertionCount
+  value: '1'
+- name: CherryPick
+  value: '(default)'
+- name: ComponentGitHubRepoName
+  value: '(default)'
+- name: SpecificBuildNumber
+  value: '(default)'
+- name: AutoComplete
+  value: 'true'
+- name: ComponentBranchName
+  value: '${{ parameters.ComponentBranchName }}'
+- name: CreateDraftPR
+  value: '${{ parameters.CreateDraftPR }}'
+- name: OptionalTitlePrefix
+  value: '${{ parameters.OptionalTitlePrefix }}'
+- name: VisualStudioBranchName
+  value: '${{ parameters.VisualStudioBranchName }}'
+
+trigger: none
+
+schedules:
+  # insert at 1am on monday, wednesday and friday
+  - cron: 0 1 * * 1,3,5
+    displayName: Daily midnight insertion to VS
+    branches:
+      include:
+      - main
+    always: true
+
+jobs:
+- job: insert
+  displayName: Insert
+  pool:
+    name: $(DncEngInternalBuildPool)
+    demands: ImageOverride -equals windows.vs2026preview.scout.amd64
+  timeoutInMinutes: 90
+
+  steps:
+
+  - task: NuGetCommand@2
+    displayName: 'Install RIT from Azure Artifacts'
+    inputs:
+      command: custom
+      arguments: 'install RoslynTools.VisualStudioInsertionTool -PreRelease -Source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json'
+
+  - powershell: |
+      mv RoslynTools.VisualStudioInsertionTool.* RIT
+        
+      # Path is like .\RIT\tools\net472\OneOffInsertion.ps1, the TFM can change as the
+      # tools gets updated, so we look for it with a wildcard, and use the first one found
+      $script = Get-ChildItem .\RIT\tools\*\OneOffInsertion.ps1 | Select-Object -First 1 -ExpandProperty FullName
+      # Add VS Interactive experiences team (from devdiv) as reviewer. To get the user guid, make PR search with createdBy (in the target organization => devdiv), and you will get the guid in URL.  OR https://dev.azure.com/devdiv/_apis/teams?$mine=true 
+      $team = "10a2f33b-3b3d-47a9-a22f-6bb09247bb63"
+  
+      "Found tool: '$script'"
+      $params = @{
+        userName               = "dn-bot@microsoft.com"
+        password               = "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
+        componentUserName      = "dn-bot@microsoft.com"
+        componentPassword      = "$(dn-bot-dnceng-build-e-code-full-release-e-packaging-r)"
+        requiredValueSentinel  = "$(RequiredValueSentinel)"
+        defaultValueSentinel   = "$(DefaultValueSentinel)"
+        buildQueueName         = "$(BuildQueueName)"
+        componentAzdoUri       = "$(ComponentAzdoUri)"
+        componentProjectName   = "$(ComponentProjectName)"
+        componentBranchName    = "$(ComponentBranchName)"
+        componentName          = "$(ComponentName)"
+        dropPath               = "$(DropPath)"
+        insertCore             = "$(InsertCore)"
+        insertDevDiv           = "$(InsertDevDiv)"
+        insertToolset          = "$(InsertToolset)"
+        queueValidation        = "$(QueueValidation)"
+        specificBuild          = "$(SpecificBuildNumber)"
+        updateAssemblyVersions = "$(UpdateAssemblyVersions)"
+        updateCoreXTLibraries  = "$(UpdateCoreXTLibraries)"
+        visualStudioBranchName = "$(VisualStudioBranchName)"
+        titlePrefix            = "$(OptionalTitlePrefix)"
+        insertionCount         = "$(InsertionCount)"
+        writePullRequest       = "$(System.DefaultWorkingDirectory)\prid.txt"
+        autoComplete           = "$(AutoComplete)"
+        createDraftPR          = "$(CreateDraftPR)"
+        cherryPick             = "$(CherryPick)"
+        componentGitHubRepoName = "$(ComponentGitHubRepoName)"
+        reviewerGuid           = $team
+      }
+      & $script @params
+    workingDirectory: '$(System.DefaultWorkingDirectory)\'
+    displayName: 'Run OneOffInsertion.ps1'
+
+  - script: 'echo. && echo. && type "$(System.DefaultWorkingDirectory)\prid.txt" && echo. && echo.'
+    displayName: 'Report PR URL'

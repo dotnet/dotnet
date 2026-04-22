@@ -242,7 +242,7 @@ public class RunConfigurationTests
 
     [DataRow(true)]
     [DataRow(false)]
-    [DataTestMethod]
+    [TestMethod]
     public void RunConfigurationShouldReadValueForDesignMode(bool designModeValue)
     {
         string settingsXml = string.Format(
@@ -280,12 +280,12 @@ public class RunConfigurationTests
     {
         var runConfiguration = new RunConfiguration { DesignMode = true };
 
-        StringAssert.Contains(runConfiguration.ToXml().InnerXml, "<DesignMode>True</DesignMode>");
+        Assert.Contains("<DesignMode>True</DesignMode>", runConfiguration.ToXml().InnerXml);
     }
 
     [DataRow(true)]
     [DataRow(false)]
-    [DataTestMethod]
+    [TestMethod]
     public void RunConfigurationShouldReadValueForCollectSourceInformation(bool val)
     {
         string settingsXml = string.Format(
@@ -318,13 +318,13 @@ public class RunConfigurationTests
         Assert.AreEqual(runConfiguration.DesignMode, runConfiguration.ShouldCollectSourceInformation);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void RunConfigurationToXmlShouldProvideCollectSourceInformationSameAsDesignMode(bool val)
     {
         var runConfiguration = new RunConfiguration { DesignMode = val };
-        StringAssert.Contains(runConfiguration.ToXml().InnerXml.ToUpperInvariant(), $"<CollectSourceInformation>{val}</CollectSourceInformation>".ToUpperInvariant());
+        Assert.Contains($"<CollectSourceInformation>{val}</CollectSourceInformation>".ToUpperInvariant(), runConfiguration.ToXml().InnerXml.ToUpperInvariant());
     }
 
     [TestMethod]
@@ -332,7 +332,7 @@ public class RunConfigurationTests
     {
         var runConfiguration = new RunConfiguration { ExecutionThreadApartmentState = PlatformApartmentState.STA };
 
-        StringAssert.Contains(runConfiguration.ToXml().InnerXml, "<ExecutionThreadApartmentState>STA</ExecutionThreadApartmentState>");
+        Assert.Contains("<ExecutionThreadApartmentState>STA</ExecutionThreadApartmentState>", runConfiguration.ToXml().InnerXml);
     }
 
     [TestMethod]
@@ -349,5 +349,55 @@ public class RunConfigurationTests
         var exception = Assert.ThrowsExactly<SettingsException>(
                 () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
         Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value '' specified for 'ResultsDirectory'.", exception.Message);
+    }
+
+    [TestMethod]
+    public void RunConfigurationDefaultValueForCreateNoNewWindowShouldBeTrue()
+    {
+        var runConfiguration = new RunConfiguration();
+
+        Assert.IsTrue(runConfiguration.CreateNoNewWindow);
+    }
+
+    [DataRow(true)]
+    [DataRow(false)]
+    [TestMethod]
+    public void RunConfigurationShouldReadValueForCreateNoNewWindow(bool createNoNewWindowValue)
+    {
+        string settingsXml = string.Format(
+            CultureInfo.CurrentCulture,
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <CreateNoNewWindow>{0}</CreateNoNewWindow>
+                     </RunConfiguration>
+                </RunSettings>", createNoNewWindowValue);
+
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml);
+
+        Assert.AreEqual(createNoNewWindowValue, runConfiguration.CreateNoNewWindow);
+    }
+
+    [TestMethod]
+    public void RunConfigurationFromXmlThrowsSettingsExceptionIfCreateNoNewWindowIsInvalid()
+    {
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <CreateNoNewWindow>InvalidValue</CreateNoNewWindow>
+                     </RunConfiguration>
+                </RunSettings>";
+
+        Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+    }
+
+    [TestMethod]
+    public void RunConfigurationToXmlShouldProvideCreateNoNewWindow()
+    {
+        var runConfiguration = new RunConfiguration();
+
+        Assert.Contains("<CreateNoNewWindow>True</CreateNoNewWindow>", runConfiguration.ToXml().InnerXml);
     }
 }

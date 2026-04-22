@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #if NETFRAMEWORK
@@ -68,7 +68,7 @@ public class DataCollectorAttachmentProcessorAppDomainTests
         Task runProcessing = dcap.ProcessAttachmentSetsAsync(doc.DocumentElement, attachments, new Progress<int>((int report) => cts.Cancel()), _loggerMock.Object, cts.Token);
 
         //assert
-        await Assert.ThrowsExceptionAsync<OperationCanceledException>(async () => await runProcessing);
+        await Assert.ThrowsExactlyAsync<OperationCanceledException>(async () => await runProcessing);
     }
 
     [TestMethod]
@@ -95,7 +95,7 @@ public class DataCollectorAttachmentProcessorAppDomainTests
 
         Assert.AreEqual(attachmentSet.DisplayName, firstAttachmentSet.DisplayName);
         Assert.AreEqual(attachmentSet.Uri, firstAttachmentSet.Uri);
-        Assert.AreEqual(attachmentSet.Attachments.Count, attachmentsResult.Count);
+        Assert.HasCount(attachmentSet.Attachments.Count, attachmentsResult);
         Assert.AreEqual(attachmentSet.Attachments[0].Description, firstAttachmentSet.Attachments[0].Description);
         Assert.AreEqual(attachmentSet.Attachments[0].Uri, firstAttachmentSet.Attachments[0].Uri);
         Assert.AreEqual(attachmentSet.Attachments[0].Uri, firstAttachmentSet.Attachments[0].Uri);
@@ -158,7 +158,7 @@ public class DataCollectorAttachmentProcessorAppDomainTests
 
         // assert
         countdownEvent.Wait(new CancellationTokenSource(10000).Token);
-        Assert.AreEqual(3, messages.Count);
+        Assert.HasCount(3, messages);
         Assert.AreEqual(TestMessageLevel.Informational, messages[0].Item1);
         Assert.AreEqual("Info", messages[0].Item2);
         Assert.AreEqual(TestMessageLevel.Warning, messages[1].Item1);
@@ -183,7 +183,7 @@ public class DataCollectorAttachmentProcessorAppDomainTests
         {
             if (messageLevel == TestMessageLevel.Error)
             {
-                Assert.IsTrue(message.Contains("System.Exception: Failed to create the extension"));
+                Assert.Contains("System.Exception: Failed to create the extension", message);
                 errorReportEvent.Set();
             }
         });

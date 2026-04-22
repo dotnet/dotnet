@@ -42,7 +42,9 @@ public class CommandLineOptionsTests
     [TestMethod]
     public void CommandLineOptionsDiscoveryDefaultBatchSizeIsThousand()
     {
+#pragma warning disable MSTEST0025 // Use 'Assert.Fail' instead of an always-failing assert
         Assert.AreEqual(1000, CommandLineOptions.DefaultDiscoveryBatchSize);
+#pragma warning restore MSTEST0025 // Use 'Assert.Fail' instead of an always-failing assert
     }
 
     [TestMethod]
@@ -71,7 +73,7 @@ public class CommandLineOptionsTests
     [TestMethod]
     public void CommandLineOptionsAddSourceShouldThrowCommandLineExceptionForNullSource()
     {
-        Assert.ThrowsException<TestSourceException>(() => CommandLineOptions.Instance.AddSource(null!));
+        Assert.ThrowsExactly<TestSourceException>(() => CommandLineOptions.Instance.AddSource(null!));
     }
 
     [TestMethod]
@@ -89,7 +91,7 @@ public class CommandLineOptionsTests
     [TestMethod]
     public void CommandLineOptionsAddSourceShouldThrowCommandLineExceptionForInvalidSource()
     {
-        Assert.ThrowsException<TestSourceException>(() => CommandLineOptions.Instance.AddSource("DummySource"));
+        Assert.ThrowsExactly<TestSourceException>(() => CommandLineOptions.Instance.AddSource("DummySource"));
     }
 
     [TestMethod]

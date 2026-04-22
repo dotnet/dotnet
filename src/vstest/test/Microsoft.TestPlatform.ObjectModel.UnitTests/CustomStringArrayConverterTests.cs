@@ -27,7 +27,7 @@ public class CustomStringArrayConverterTests
         var data = _customStringArrayConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as string[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(2, data.Length);
+        Assert.HasCount(2, data);
         CollectionAssert.AreEqual(new[] { "val2", "val1" }, data);
     }
 
@@ -39,7 +39,7 @@ public class CustomStringArrayConverterTests
         var data = _customStringArrayConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as string[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(0, data.Length);
+        Assert.IsEmpty(data);
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class CustomStringArrayConverterTests
         var data = _customStringArrayConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as string[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(2, data.Length);
+        Assert.HasCount(2, data);
         Assert.IsNull(data[0]);
         Assert.AreEqual("val", data[1]);
     }
@@ -63,7 +63,7 @@ public class CustomStringArrayConverterTests
         var data = _customStringArrayConverter.ConvertFrom(null, CultureInfo.InvariantCulture, json) as string[];
 
         Assert.IsNotNull(data);
-        Assert.AreEqual(2, data.Length);
+        Assert.HasCount(2, data);
         Assert.AreEqual(string.Empty, data[0]);
         Assert.AreEqual(string.Empty, data[1]);
     }

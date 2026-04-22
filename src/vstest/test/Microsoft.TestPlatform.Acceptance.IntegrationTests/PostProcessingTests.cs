@@ -39,24 +39,26 @@ public class PostProcessingTests : AcceptanceTestBase
             .Add(new XElement("Configuration", new XElement("MergeFile", "MergedFile.txt")));
         runSettingsXml.Save(runSettings);
 
-        // Build and run tests like msbuild
-        Parallel.For(0, 5, i =>
+        // Create and build a single test project once, then reuse it for all parallel vstest runs.
+        string projectFolder = Path.Combine(TempDirectory.Path, "testproject");
+        ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string setupStdOut, out string setupStdError, out int setupExitCode);
+        Assert.AreEqual(0, setupExitCode);
+        ExecuteApplication(GetConsoleRunnerPath(), $"build {projectFolder} -c release", out setupStdOut, out setupStdError, out setupExitCode);
+        Assert.AreEqual(0, setupExitCode);
+
+        string testContainer = Directory.GetFiles(Path.Combine(projectFolder, "bin"), "testproject.dll", SearchOption.AllDirectories).Single();
+
+        // Run vstest 2 times in parallel to collect artifacts (minimum needed to verify merging)
+        Parallel.For(0, 2, i =>
         {
-            string projectFolder = Path.Combine(TempDirectory.Path, i.ToString(CultureInfo.InvariantCulture));
-            ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string stdOut, out string stdError, out int exitCode);
-            Assert.AreEqual(exitCode, 0);
-            ExecuteApplication(GetConsoleRunnerPath(), $"build {projectFolder} -c release", out stdOut, out stdError, out exitCode);
-            Assert.AreEqual(exitCode, 0);
-
-            string testContainer = Directory.GetFiles(Path.Combine(projectFolder, "bin"), $"{i}.dll", SearchOption.AllDirectories).Single();
-
-            ExecuteVsTestConsole($"{testContainer} --Collect:\"SampleDataCollector\" --TestAdapterPath:\"{extensionsPath}\" --ResultsDirectory:\"{Path.GetDirectoryName(testContainer)}\" --Settings:\"{runSettings}\" --ArtifactsProcessingMode-Collect --TestSessionCorrelationId:\"{correlationSessionId}\" --Diag:\"{TempDirectory.Path + '/'}\"", out stdOut, out stdError, out exitCode);
-            Assert.AreEqual(exitCode, 0);
+            string resultsDirectory = Path.Combine(TempDirectory.Path, i.ToString(CultureInfo.InvariantCulture));
+            ExecuteVsTestConsole($"{testContainer} --Collect:\"SampleDataCollector\" --TestAdapterPath:\"{extensionsPath}\" --ResultsDirectory:\"{resultsDirectory}\" --Settings:\"{runSettings}\" --ArtifactsProcessingMode-Collect --TestSessionCorrelationId:\"{correlationSessionId}\" --Diag:\"{TempDirectory.Path + '/'}\"", out string stdOut, out string stdError, out int exitCode);
+            Assert.AreEqual(0, exitCode);
         });
 
         // Post process artifacts
         ExecuteVsTestConsole($"--ArtifactsProcessingMode-PostProcess --TestSessionCorrelationId:\"{correlationSessionId}\" --Diag:\"{TempDirectory.Path + "/mergeLog/"}\"", out string stdOut, out string stdError, out int exitCode);
-        Assert.AreEqual(exitCode, 0);
+        Assert.AreEqual(0, exitCode);
 
         using StringReader reader = new(stdOut);
         Assert.AreEqual(string.Empty, reader.ReadLine().Trim());
@@ -70,11 +72,11 @@ public class PostProcessingTests : AcceptanceTestBase
         while (!streamReader.EndOfStream)
         {
             string line = streamReader.ReadLine();
-            Assert.IsTrue(line.StartsWith("SessionEnded_Handler_"));
+            Assert.StartsWith("SessionEnded_Handler_", line);
             fileContent.Add(line);
         }
 
-        Assert.AreEqual(5, fileContent.Distinct().Count());
+        Assert.AreEqual(2, fileContent.Distinct().Count());
     }
 
     private static string GetRunsettingsFilePath(string resultsDir)

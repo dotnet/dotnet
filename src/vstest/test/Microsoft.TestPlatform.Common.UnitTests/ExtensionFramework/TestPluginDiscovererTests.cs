@@ -85,7 +85,7 @@ public class TestPluginDiscovererTests
         var pluginInformation = new TestLoggerPluginInformation(typeof(ValidLogger));
         var pluginInformation2 = new TestLoggerPluginInformation(typeof(ValidLogger2));
 
-        Assert.AreEqual(1, testExtensions.Keys.Count(k => k.Contains("csv")));
+        Assert.ContainsSingle(testExtensions.Keys.Where(k => k.Contains("csv")));
         Assert.IsTrue(testExtensions.ContainsKey(pluginInformation.IdentifierData!));
     }
 
@@ -99,9 +99,9 @@ public class TestPluginDiscovererTests
 
         var pluginInformation = new DataCollectorConfig(typeof(ValidDataCollector));
 
-        Assert.AreEqual(2, testExtensions.Keys.Count);
-        Assert.AreEqual(1, testExtensions.Keys.Count(k => k.Equals("datacollector://foo/bar")));
-        Assert.AreEqual(1, testExtensions.Keys.Count(k => k.Equals("datacollector://foo/bar1")));
+        Assert.HasCount(2, testExtensions.Keys);
+        Assert.ContainsSingle(testExtensions.Keys.Where(k => k.Equals("datacollector://foo/bar")));
+        Assert.ContainsSingle(testExtensions.Keys.Where(k => k.Equals("datacollector://foo/bar1")));
     }
 
     [TestMethod]
@@ -115,7 +115,7 @@ public class TestPluginDiscovererTests
         var pluginInformation = new TestSettingsProviderPluginInformation(typeof(ValidSettingsProvider));
         var pluginInformation2 = new TestSettingsProviderPluginInformation(typeof(ValidSettingsProvider2));
 
-        Assert.IsTrue(testExtensions.Keys.Select(k => k.Contains("ValidSettingsProvider")).Count() >= 3);
+        Assert.IsGreaterThanOrEqualTo(3, testExtensions.Keys.Select(k => k.Contains("ValidSettingsProvider")).Count());
         Assert.IsTrue(testExtensions.ContainsKey(pluginInformation.IdentifierData!));
         Assert.IsTrue(testExtensions.ContainsKey(pluginInformation2.IdentifierData!));
     }

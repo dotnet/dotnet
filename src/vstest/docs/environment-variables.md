@@ -111,7 +111,7 @@ This document lists all environment variables that are understood and handled by
 - **Values**: Set to any non-empty value to enable
 - **Example**: `VSTEST_DUMP_FORCEPROCDUMP=1`
 
-### VSTEST_DUMP_FORCENETDUMP
+### VSTEST_DUMP_FORCENETDUMP (Removed in 18.5, selection of dumper is automatic.)
 - **Description**: Forces the use of dotnet-dump for crash dump collection.
 - **Values**: Set to any non-empty value to enable
 - **Example**: `VSTEST_DUMP_FORCENETDUMP=1`

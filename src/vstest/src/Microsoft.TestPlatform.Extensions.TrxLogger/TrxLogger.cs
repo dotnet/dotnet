@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
@@ -175,11 +176,15 @@ public class TrxLogger : ITestLoggerWithParameters
 
     internal TestRun? LoggerTestRun { get; private set; }
 
-    internal int TotalTestCount { get; private set; }
+    private int _totalTestCount;
+    private int _passedTestCount;
+    private int _failedTestCount;
 
-    internal int PassedTestCount { get; private set; }
+    internal int TotalTestCount { get => _totalTestCount; private set => _totalTestCount = value; }
 
-    internal int FailedTestCount { get; private set; }
+    internal int PassedTestCount { get => _passedTestCount; private set => _passedTestCount = value; }
+
+    internal int FailedTestCount { get => _failedTestCount; private set => _failedTestCount = value; }
 
     internal int TestResultCount
     {
@@ -298,15 +303,15 @@ public class TrxLogger : ITestLoggerWithParameters
         UpdateTestEntries(executionId, parentExecutionId, testElement, parentTestElement);
 
         // Set various counts (passed tests, failed tests, total tests)
-        TotalTestCount++;
+        Interlocked.Increment(ref _totalTestCount);
         if (testResult.Outcome == TrxLoggerObjectModel.TestOutcome.Failed)
         {
             TestResultOutcome = TrxLoggerObjectModel.TestOutcome.Failed;
-            FailedTestCount++;
+            Interlocked.Increment(ref _failedTestCount);
         }
         else if (testResult.Outcome == TrxLoggerObjectModel.TestOutcome.Passed)
         {
-            PassedTestCount++;
+            Interlocked.Increment(ref _passedTestCount);
         }
     }
 
@@ -531,7 +536,18 @@ public class TrxLogger : ITestLoggerWithParameters
         TPDebug.Assert(LoggerTestRun != null, "LoggerTestRun is null");
         TPDebug.Assert(LoggerTestRun.RunConfiguration != null, "LoggerTestRun.RunConfiguration is null");
         TPDebug.Assert(IsInitialized, "Logger is not initialized");
-        var defaultTrxFileName = LoggerTestRun.RunConfiguration.RunDeploymentRootDirectory + ".trx";
+
+        var baseName = LoggerTestRun.RunConfiguration.RunDeploymentRootDirectory;
+
+        if (_parametersDictionary is not null
+            && _parametersDictionary.TryGetValue(DefaultLoggerParameterNames.TargetFramework, out var framework)
+            && !framework.IsNullOrWhiteSpace())
+        {
+            var shortName = Framework.FromString(framework)?.ShortName ?? framework;
+            baseName = baseName + "_" + shortName;
+        }
+
+        var defaultTrxFileName = baseName + ".trx";
 
         return TrxFileHelper.GetNextIterationFileName(_testResultsDirPath, defaultTrxFileName, false);
     }

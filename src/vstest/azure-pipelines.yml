@@ -32,6 +32,7 @@ pr:
       - CONTRIBUTING.md
       - README.md
       - SECURITY.md
+      - azure-pipelines-official.yml
 
 variables:
   # Cannot use key:value syntax in root defined variables
@@ -54,11 +55,6 @@ variables:
     value: ' '
   - name: _ReleaseVersionKind
     value: ''
-  # Arcade is using global cache of nugets in non-windows build
-  # under some circumstances, but we don't respect that in our code and try to find them
-  # in .packages. Force the location of packages to that folder.
-  - name: NUGET_PACKAGES
-    value: '$(Build.SourcesDirectory)/.packages/'
 
 stages:
 
@@ -103,6 +99,18 @@ stages:
             /p:SourceBranchName=$(Build.SourceBranchName)
           name: Build
           displayName: Build
+        
+        # -ci is allowing to import some environment variables and some required configurations
+        # -nobl avoid overwriting binlog of the main Build
+        - script: Test.cmd
+            -configuration $(_BuildConfig)
+            -ci
+            -nobl
+            /bl:$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)/UnitTest.binlog
+          name: Test
+          displayName: Unit Test
+          env:
+            DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
         # -ci is allowing to import some environment variables and some required configurations
         # -nobl avoid overwriting binlog of the main Build
@@ -111,10 +119,9 @@ stages:
             -ci
             -nobl
             -integrationTest
-            -performanceTest
-            /bl:$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)/Test.binlog
-          name: Test
-          displayName: Test
+            /bl:$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)/IntegrationTest.binlog
+          name: IntegrationTest
+          displayName: Integration Test
           env:
             DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
@@ -134,7 +141,7 @@ stages:
             ArtifactName: PackageArtifacts
 
         - task: PublishBuildArtifacts@1
-          displayName: 'Publish NonShippping Packages'
+          displayName: 'Publish NonShipping Packages'
           inputs:
             PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping'
             ArtifactName: PackageArtifacts

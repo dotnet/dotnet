@@ -55,7 +55,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-templating dependencies -->
     <MicrosoftTemplateEngineAuthoringTasksPackageVersion>10.0.100-preview.4.25220.1</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
     <!-- dotnet-xharness dependencies -->
-    <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26169.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26217.1</MicrosoftDotNetXHarnessCLIPackageVersion>
     <!-- JamesNK-Newtonsoft.Json dependencies -->
     <NewtonsoftJsonPackageVersion>13.0.3</NewtonsoftJsonPackageVersion>
     <!-- microsoft-ApplicationInsights-dotnet dependencies -->

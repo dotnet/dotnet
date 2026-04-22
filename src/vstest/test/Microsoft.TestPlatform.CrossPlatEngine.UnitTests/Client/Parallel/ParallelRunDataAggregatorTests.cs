@@ -1,10 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#pragma warning disable MSTEST0049 // CancellationToken not applicable in test setup/Moq callbacks
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.Parallel;
@@ -29,10 +34,10 @@ public class ParallelRunDataAggregatorTests
         Assert.IsNotNull(aggregator.RunCompleteArgsAttachments, "RunCompleteArgsAttachments list must not be null");
         Assert.IsNotNull(aggregator.RunContextAttachments, "RunContextAttachments list must not be null");
 
-        Assert.AreEqual(0, aggregator.Exceptions.Count, "Exceptions List must be initialized as empty list.");
-        Assert.AreEqual(0, aggregator.ExecutorUris.Count, "Exceptions List must be initialized as empty list.");
-        Assert.AreEqual(0, aggregator.RunCompleteArgsAttachments.Count, "RunCompleteArgsAttachments List must be initialized as empty list.");
-        Assert.AreEqual(0, aggregator.RunContextAttachments.Count, "RunContextAttachments List must be initialized as empty list");
+        Assert.IsEmpty(aggregator.Exceptions, "Exceptions List must be initialized as empty list.");
+        Assert.IsEmpty(aggregator.ExecutorUris, "Exceptions List must be initialized as empty list.");
+        Assert.IsEmpty(aggregator.RunCompleteArgsAttachments, "RunCompleteArgsAttachments List must be initialized as empty list.");
+        Assert.IsEmpty(aggregator.RunContextAttachments, "RunContextAttachments List must be initialized as empty list");
 
         Assert.IsFalse(aggregator.IsAborted, "Aborted must be false by default");
 
@@ -52,7 +57,7 @@ public class ParallelRunDataAggregatorTests
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, attachmentSet1, null, null);
 
 
-        Assert.AreEqual(1, aggregator.RunCompleteArgsAttachments.Count, "RunCompleteArgsAttachments List must have data.");
+        Assert.ContainsSingle(aggregator.RunCompleteArgsAttachments, "RunCompleteArgsAttachments List must have data.");
 
         var attachmentSet2 = new Collection<AttachmentSet>
         {
@@ -61,7 +66,7 @@ public class ParallelRunDataAggregatorTests
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, attachmentSet2, null, null);
 
-        Assert.AreEqual(2, aggregator.RunCompleteArgsAttachments.Count, "RunCompleteArgsAttachments List must have aggregated data.");
+        Assert.HasCount(2, aggregator.RunCompleteArgsAttachments, "RunCompleteArgsAttachments List must have aggregated data.");
     }
 
     [TestMethod]
@@ -76,7 +81,7 @@ public class ParallelRunDataAggregatorTests
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, attachmentSet1, null, null, null);
 
-        Assert.AreEqual(1, aggregator.RunContextAttachments.Count, "RunContextAttachments List must have data.");
+        Assert.ContainsSingle(aggregator.RunContextAttachments, "RunContextAttachments List must have data.");
 
         var attachmentSet2 = new Collection<AttachmentSet>
         {
@@ -85,7 +90,7 @@ public class ParallelRunDataAggregatorTests
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, attachmentSet2, null, null, null);
 
-        Assert.AreEqual(2, aggregator.RunContextAttachments.Count, "RunContextAttachments List must have aggregated data.");
+        Assert.HasCount(2, aggregator.RunContextAttachments, "RunContextAttachments List must have aggregated data.");
     }
 
     [TestMethod]
@@ -98,19 +103,19 @@ public class ParallelRunDataAggregatorTests
             new(new Uri("datacollector://sample"),"sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location,false)
         };
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, invokedDataCollectors, null);
-        Assert.AreEqual(1, aggregator.InvokedDataCollectors.Count, "InvokedDataCollectors List must have data.");
+        Assert.ContainsSingle(aggregator.InvokedDataCollectors, "InvokedDataCollectors List must have data.");
 
         var invokedDataCollectors2 = new Collection<InvokedDataCollector>()
         {
             new(new Uri("datacollector://sample2"),"sample2", typeof(int).AssemblyQualifiedName!, typeof(int).Assembly.Location,false)
         };
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, invokedDataCollectors2, null);
-        Assert.AreEqual(2, aggregator.InvokedDataCollectors.Count, "InvokedDataCollectors List must have aggregated data.");
+        Assert.HasCount(2, aggregator.InvokedDataCollectors, "InvokedDataCollectors List must have aggregated data.");
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, invokedDataCollectors, null);
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, invokedDataCollectors2, null);
 
-        Assert.AreEqual(2, aggregator.InvokedDataCollectors.Count, "InvokedDataCollectors List must have aggregated data.");
+        Assert.HasCount(2, aggregator.InvokedDataCollectors, "InvokedDataCollectors List must have aggregated data.");
         Assert.AreEqual(invokedDataCollectors[0].AssemblyQualifiedName, aggregator.InvokedDataCollectors[0].AssemblyQualifiedName);
         Assert.AreEqual(invokedDataCollectors[0].FilePath, aggregator.InvokedDataCollectors[0].FilePath);
         Assert.AreEqual(invokedDataCollectors[0].Uri, aggregator.InvokedDataCollectors[0].Uri);
@@ -198,7 +203,7 @@ public class ParallelRunDataAggregatorTests
         var aggregatedException = aggregator.GetAggregatedException() as AggregateException;
         Assert.IsNotNull(aggregatedException, "Aggregated exception must NOT be null");
         Assert.IsNotNull(aggregatedException.InnerExceptions, "Inner exception list must NOT be null");
-        Assert.AreEqual(1, aggregatedException.InnerExceptions.Count, "Inner exception list must have one element");
+        Assert.ContainsSingle(aggregatedException.InnerExceptions, "Inner exception list must have one element");
         Assert.AreEqual(exception1, aggregatedException.InnerExceptions[0], "Inner exception must be the one set.");
 
         var exception2 = new NotSupportedException();
@@ -208,7 +213,7 @@ public class ParallelRunDataAggregatorTests
         aggregatedException = aggregator.GetAggregatedException() as AggregateException;
         Assert.IsNotNull(aggregatedException, "Aggregated exception must NOT be null");
         Assert.IsNotNull(aggregatedException.InnerExceptions, "Inner exception list must NOT be null");
-        Assert.AreEqual(2, aggregatedException.InnerExceptions.Count, "Inner exception list must have one element");
+        Assert.HasCount(2, aggregatedException.InnerExceptions, "Inner exception list must have one element");
         Assert.AreEqual(exception2, aggregatedException.InnerExceptions[1], "Inner exception must be the one set.");
     }
 
@@ -219,19 +224,19 @@ public class ParallelRunDataAggregatorTests
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, null, null);
 
-        Assert.AreEqual(0, aggregator.ExecutorUris.Count, "ExecutorUris List must not have data.");
+        Assert.IsEmpty(aggregator.ExecutorUris, "ExecutorUris List must not have data.");
 
         var uri1 = "x://hello1";
         aggregator.Aggregate(null, new List<string>() { uri1 }, null, TimeSpan.Zero, false, false, null, null, null, null);
 
-        Assert.AreEqual(1, aggregator.ExecutorUris.Count, "ExecutorUris List must have data.");
-        Assert.IsTrue(aggregator.ExecutorUris.Contains(uri1), "ExecutorUris List must have correct data.");
+        Assert.ContainsSingle(aggregator.ExecutorUris, "ExecutorUris List must have data.");
+        Assert.Contains(uri1, aggregator.ExecutorUris, "ExecutorUris List must have correct data.");
 
         var uri2 = "x://hello2";
         aggregator.Aggregate(null, new List<string>() { uri2 }, null, TimeSpan.Zero, false, false, null, null, null, null);
 
-        Assert.AreEqual(2, aggregator.ExecutorUris.Count, "ExecutorUris List must have aggregated data.");
-        Assert.IsTrue(aggregator.ExecutorUris.Contains(uri2), "ExecutorUris List must have correct data.");
+        Assert.HasCount(2, aggregator.ExecutorUris, "ExecutorUris List must have aggregated data.");
+        Assert.Contains(uri2, aggregator.ExecutorUris, "ExecutorUris List must have correct data.");
     }
 
     [TestMethod]
@@ -292,7 +297,7 @@ public class ParallelRunDataAggregatorTests
         aggregator.AggregateRunDataMetrics(null);
 
         var runMetrics = aggregator.GetAggregatedRunDataMetrics();
-        Assert.AreEqual(0, runMetrics.Count);
+        Assert.IsEmpty(runMetrics);
     }
 
     [TestMethod]
@@ -379,7 +384,7 @@ public class ParallelRunDataAggregatorTests
         aggregator.AggregateRunDataMetrics(dict);
         var runMetrics = aggregator.GetAggregatedRunDataMetrics();
 
-        Assert.AreEqual(0, runMetrics.Count);
+        Assert.IsEmpty(runMetrics);
     }
 
     [TestMethod]
@@ -391,7 +396,7 @@ public class ParallelRunDataAggregatorTests
         aggregator.AggregateRunDataMetrics(null);
         var runMetrics = aggregator.GetAggregatedRunDataMetrics();
 
-        Assert.AreEqual(0, runMetrics.Count);
+        Assert.IsEmpty(runMetrics);
     }
 
     [TestMethod]
@@ -454,5 +459,67 @@ public class ParallelRunDataAggregatorTests
 
         var runMetrics = aggregator.GetAggregatedRunDataMetrics();
         Assert.IsFalse(runMetrics.TryGetValue(TelemetryDataConstants.NumberOfAdapterDiscoveredDuringExecution, out _));
+    }
+
+    [TestMethod]
+    public void AggregateAndGetAggregatedRunStatsShouldBeThreadSafe()
+    {
+        var aggregator = new ParallelRunDataAggregator(Constants.EmptyRunSettings);
+
+        const int threadCount = 10;
+        const int iterationsPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        // Start threads that call Aggregate concurrently
+        var aggregateTasks = Enumerable.Range(0, threadCount).Select(_ => Task.Run(() =>
+        {
+            barrier.SignalAndWait();
+            for (int i = 0; i < iterationsPerThread; i++)
+            {
+                var stats = new Dictionary<TestOutcome, long>
+                {
+                    { TestOutcome.Passed, 1 },
+                };
+                aggregator.Aggregate(new TestRunStatistics(1, stats), null, null, TimeSpan.Zero, false, false, null, null, null, null);
+            }
+        })).ToArray();
+
+        Task.WaitAll(aggregateTasks.ToArray());
+
+        var finalStats = aggregator.GetAggregatedRunStats();
+        Assert.AreEqual(threadCount * iterationsPerThread, finalStats.ExecutedTests,
+            "All test results should be aggregated without data loss");
+        Assert.AreEqual(threadCount * iterationsPerThread, finalStats.Stats![TestOutcome.Passed],
+            "All passed test counts should be aggregated correctly");
+    }
+
+    [TestMethod]
+    public void AggregateRunDataMetricsShouldBeThreadSafe()
+    {
+        var aggregator = new ParallelRunDataAggregator(Constants.EmptyRunSettings);
+
+        const int threadCount = 10;
+        const int iterationsPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(_ => Task.Run(() =>
+        {
+            barrier.SignalAndWait();
+            for (int i = 0; i < iterationsPerThread; i++)
+            {
+                var dict = new Dictionary<string, object>
+                {
+                    { TelemetryDataConstants.TotalTestsRanByAdapter, 1 }
+                };
+                aggregator.AggregateRunDataMetrics(dict);
+            }
+        })).ToArray();
+
+        Task.WaitAll(tasks);
+
+        var runMetrics = aggregator.GetAggregatedRunDataMetrics();
+        Assert.IsTrue(runMetrics.TryGetValue(TelemetryDataConstants.TotalTestsRanByAdapter, out var value));
+        Assert.AreEqual((double)(threadCount * iterationsPerThread), Convert.ToDouble(value, CultureInfo.InvariantCulture),
+            "All metrics should be aggregated without lost updates");
     }
 }

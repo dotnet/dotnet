@@ -7,6 +7,11 @@
         <target state="translated">因為初始狀態無效，所以無法執行測試回合。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ProvidedDependenciesWarning">
+        <source>The test platform provided the following assemblies to resolve dependencies of test extensions that did not ship their own copy: {0}. Test extensions should ship all their dependencies.</source>
+        <target state="new">The test platform provided the following assemblies to resolve dependencies of test extensions that did not ship their own copy: {0}. Test extensions should ship all their dependencies.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
         <source>Wait for completion operation is not allowed when there is no active test run. </source>
         <target state="translated">沒有使用中的測試回合時，不允許等候完成作業。</target>

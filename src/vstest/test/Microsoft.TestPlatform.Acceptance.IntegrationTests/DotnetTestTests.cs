@@ -21,11 +21,12 @@ public class DotnetTestTests : AcceptanceTestBase
     // patched dotnet is not published on non-windows systems
     [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestCategory("Smoke")]
     public void RunDotnetTestWithCsproj(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var projectPath = GetIsolatedTestAsset("SimpleTestProject.csproj");
+        var projectPath = GetIsolatedTestAsset("SimpleTestProject.csproj", runnerInfo.TargetFramework);
         InvokeDotnetTest($@"{projectPath} -tl:off /p:VSTestNoLogo=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
 
         // ensure our dev version is used
@@ -59,7 +60,7 @@ public class DotnetTestTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var projectPath = GetIsolatedTestAsset("ParametrizedTestProject.csproj");
+        var projectPath = GetIsolatedTestAsset("ParametrizedTestProject.csproj", runnerInfo.TargetFramework);
         InvokeDotnetTest($@"{projectPath} --logger:""Console;Verbosity=normal"" -tl:off /p:VSTestNoLogo=false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion} -- TestRunParameters.Parameter(name =\""weburl\"", value=\""http://localhost//def\"")", workingDirectory: Path.GetDirectoryName(projectPath));
 
         // ensure our dev version is used
@@ -93,7 +94,7 @@ public class DotnetTestTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         string assemblyRelativePath = @"microsoft.testplatform.testasset.nativecpp\2.0.0\contentFiles\any\any\x64\Microsoft.TestPlatform.TestAsset.NativeCPP.dll";
-        var assemblyAbsolutePath = Path.Combine(_testEnvironment.PackageDirectory, assemblyRelativePath);
+        var assemblyAbsolutePath = Path.Combine(_testEnvironment.GlobalPackageDirectory, assemblyRelativePath);
 
         InvokeDotnetTest($@"{assemblyAbsolutePath} --logger:""Console;Verbosity=normal"" --diag:c:\temp\logscpp\", workingDirectory: Path.GetDirectoryName(assemblyAbsolutePath));
 

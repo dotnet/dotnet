@@ -71,7 +71,7 @@ public class CommunicationLayerIntegrationTests
 
         Assert.AreEqual("CustomDataCollector", dataCollectionResult.Attachments![0].DisplayName);
         Assert.AreEqual("my://custom/datacollector", dataCollectionResult.Attachments[0].Uri.ToString());
-        Assert.IsTrue(dataCollectionResult.Attachments[0].Attachments[0].Uri.ToString().Contains("filename.txt"));
+        Assert.Contains("filename.txt", dataCollectionResult.Attachments[0].Attachments[0].Uri.ToString());
     }
 
     [TestMethod]

@@ -36,7 +36,7 @@ public class ResponseFileArgumentProcessorTests
     {
         var capabilities = new ResponseFileArgumentProcessorCapabilities();
         Assert.AreEqual("@", capabilities.CommandName);
-        StringAssert.Contains(capabilities.HelpContentResourceName, "Read response file for more options");
+        Assert.Contains("Read response file for more options", capabilities.HelpContentResourceName);
 
         Assert.AreEqual(HelpContentPriority.ResponseFileArgumentProcessorHelpPriority, capabilities.HelpPriority);
         Assert.IsFalse(capabilities.IsAction);

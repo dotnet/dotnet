@@ -5,7 +5,7 @@ using System.IO;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TestPlatform.TestUtilities;
+namespace Microsoft.TestPlatform.TestUtilities;
 
 public static class FileAssert
 {
@@ -17,7 +17,7 @@ public static class FileAssert
         var fileContent = File.ReadAllText(filePath);
         foreach (var substr in substrs)
         {
-            Assert.IsTrue(fileContent.Contains(substr),
+            Assert.Contains(substr, fileContent,
                 $"{filePath}: file doesn't contains {StringHighlighter} {substr} {StringHighlighter}");
         }
     }

@@ -856,16 +856,13 @@ internal partial class JSONObject : JSONNode
     {
         get
         {
-            return _dict.ContainsKey(aKey) ? _dict[aKey] : new JSONLazyCreator(this, aKey);
+            return _dict.TryGetValue(aKey, out var value) ? value : new JSONLazyCreator(this, aKey);
         }
         set
         {
             if (value == null)
                 value = JSONNull.CreateOrGet();
-            if (_dict.ContainsKey(aKey))
-                _dict[aKey] = value;
-            else
-                _dict.Add(aKey, value);
+            _dict[aKey] = value;
         }
     }
 
@@ -898,10 +895,7 @@ internal partial class JSONObject : JSONNode
 
         if (aKey != null)
         {
-            if (_dict.ContainsKey(aKey))
-                _dict[aKey] = aItem;
-            else
-                _dict.Add(aKey, aItem);
+            _dict[aKey] = aItem;
         }
         else
             _dict.Add(Guid.NewGuid().ToString(), aItem);
@@ -909,9 +903,8 @@ internal partial class JSONObject : JSONNode
 
     public override JSONNode Remove(string aKey)
     {
-        if (!_dict.ContainsKey(aKey))
+        if (!_dict.TryGetValue(aKey, out var tmp))
             return null;
-        JSONNode tmp = _dict[aKey];
         _dict.Remove(aKey);
         return tmp;
     }

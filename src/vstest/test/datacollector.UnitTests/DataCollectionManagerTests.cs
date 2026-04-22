@@ -60,7 +60,7 @@ public class DataCollectionManagerTests
     [TestMethod]
     public void InitializeDataCollectorsShouldThrowExceptionIfSettingsXmlIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _dataCollectionManager.InitializeDataCollectors(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _dataCollectionManager.InitializeDataCollectors(null!));
     }
 
     [TestMethod]
@@ -69,7 +69,7 @@ public class DataCollectionManagerTests
         var runSettings = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Empty);
         _dataCollectionManager.InitializeDataCollectors(runSettings);
 
-        Assert.AreEqual(0, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.IsEmpty(_dataCollectionManager.RunDataCollectors);
     }
 
     [TestMethod]
@@ -80,7 +80,7 @@ public class DataCollectionManagerTests
 
         Assert.IsTrue(_dataCollectionManager.RunDataCollectors.ContainsKey(_mockDataCollector.Object.GetType()));
         Assert.AreEqual(typeof(AttachmentProcessorDataCollector2), _dataCollectionManager.RunDataCollectors[_mockDataCollector.Object.GetType()].DataCollectorConfig.AttachmentsProcessorType);
-        Assert.IsTrue(_dataCollectionManager.RunDataCollectors[_mockDataCollector.Object.GetType()].DataCollectorConfig.Metadata.Contains(true));
+        Assert.Contains<object?>(true, _dataCollectionManager.RunDataCollectors[_mockDataCollector.Object.GetType()].DataCollectorConfig.Metadata);
         _mockDataCollector.Verify(x => x.Initialize(It.IsAny<XmlElement>(), It.IsAny<DataCollectionEvents>(), It.IsAny<DataCollectionSink>(), It.IsAny<DataCollectionLogger>(), It.IsAny<DataCollectionEnvironmentContext>()), Times.Once);
     }
 
@@ -90,7 +90,7 @@ public class DataCollectionManagerTests
         var dataCollectorSettingsDisabled = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, _friendlyName, _uri, _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, "enabled=\"false\""));
         _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsDisabled);
 
-        Assert.AreEqual(0, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.IsEmpty(_dataCollectionManager.RunDataCollectors);
         _mockDataCollector.Verify(x => x.Initialize(It.IsAny<XmlElement>(), It.IsAny<DataCollectionEvents>(), It.IsAny<DataCollectionSink>(), It.IsAny<DataCollectionLogger>(), It.IsAny<DataCollectionEnvironmentContext>()), Times.Never);
     }
 
@@ -111,7 +111,7 @@ public class DataCollectionManagerTests
         var dataCollectorSettingsWithWrongFriendlyName = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, "anyFriendlyName", _uri, _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty));
         _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithWrongFriendlyName);
 
-        Assert.AreEqual(1, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.HasCount(1, _dataCollectionManager.RunDataCollectors);
         _mockDataCollector.Verify(x => x.Initialize(It.IsAny<XmlElement>(), It.IsAny<DataCollectionEvents>(), It.IsAny<DataCollectionSink>(), It.IsAny<DataCollectionLogger>(), It.IsAny<DataCollectionEnvironmentContext>()), Times.Once);
         _mockDataCollector.Verify(x => x.Initialize(_mockTelemetryReporter.Object), Times.Once);
     }
@@ -122,7 +122,7 @@ public class DataCollectionManagerTests
         var dataCollectorSettingsWithWrongUri = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, _friendlyName, "my://custom/WrongDatacollector", _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty));
         _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithWrongUri);
 
-        Assert.AreEqual(1, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.HasCount(1, _dataCollectionManager.RunDataCollectors);
         _mockDataCollector.Verify(x => x.Initialize(It.IsAny<XmlElement>(), It.IsAny<DataCollectionEvents>(), It.IsAny<DataCollectionSink>(), It.IsAny<DataCollectionLogger>(), It.IsAny<DataCollectionEnvironmentContext>()), Times.Once);
         _mockDataCollector.Verify(x => x.Initialize(_mockTelemetryReporter.Object), Times.Once);
     }
@@ -133,7 +133,7 @@ public class DataCollectionManagerTests
         var dataCollectorSettingsWithNullFriendlyName = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, string.Empty, _uri, _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty).Replace("friendlyName=\"\"", string.Empty));
         _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithNullFriendlyName);
 
-        Assert.AreEqual(1, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.HasCount(1, _dataCollectionManager.RunDataCollectors);
         _mockDataCollector.Verify(x => x.Initialize(It.IsAny<XmlElement>(), It.IsAny<DataCollectionEvents>(), It.IsAny<DataCollectionSink>(), It.IsAny<DataCollectionLogger>(), It.IsAny<DataCollectionEnvironmentContext>()), Times.Once);
         _mockDataCollector.Verify(x => x.Initialize(_mockTelemetryReporter.Object), Times.Once);
     }
@@ -142,14 +142,14 @@ public class DataCollectionManagerTests
     public void InitializeDataCollectorsShouldLoadDataCollectorIfFriendlyNameIsCorrectAndUriIsEmpty()
     {
         var dataCollectorSettingsWithEmptyUri = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, _friendlyName, string.Empty, _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty));
-        Assert.ThrowsException<ArgumentNullException>(() => _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithEmptyUri));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithEmptyUri));
     }
 
     [TestMethod]
     public void InitializeDataCollectorsShouldLoadDataCollectorIfFriendlyNameIsEmptyAndUriIsCorrect()
     {
         var dataCollectorSettingsWithEmptyFriendlyName = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, _friendlyName, string.Empty, _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty));
-        Assert.ThrowsException<ArgumentNullException>(() => _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithEmptyFriendlyName));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithEmptyFriendlyName));
     }
 
     [TestMethod]
@@ -158,7 +158,7 @@ public class DataCollectionManagerTests
         var dataCollectorSettingsWithWrongFriendlyNameAndWrongUri = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, "anyFriendlyName", "datacollector://data", _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty));
         _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithWrongFriendlyNameAndWrongUri);
 
-        Assert.AreEqual(0, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.IsEmpty(_dataCollectionManager.RunDataCollectors);
         _mockDataCollector.Verify(x => x.Initialize(It.IsAny<XmlElement>(), It.IsAny<DataCollectionEvents>(), It.IsAny<DataCollectionSink>(), It.IsAny<DataCollectionLogger>(), It.IsAny<DataCollectionEnvironmentContext>()), Times.Never);
     }
 
@@ -200,7 +200,7 @@ public class DataCollectionManagerTests
 
         _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
 
-        Assert.AreEqual(0, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.IsEmpty(_dataCollectionManager.RunDataCollectors);
         _mockMessageSink.Verify(x => x.SendMessage(It.IsAny<DataCollectionMessageEventArgs>()), Times.Once);
     }
 
@@ -211,7 +211,7 @@ public class DataCollectionManagerTests
 
         _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
 
-        Assert.AreEqual(0, _dataCollectionManager.RunDataCollectors.Count);
+        Assert.IsEmpty(_dataCollectionManager.RunDataCollectors);
         _mockMessageSink.Verify(x => x.SendMessage(It.IsAny<DataCollectionMessageEventArgs>()), Times.Once);
     }
 
@@ -244,7 +244,7 @@ public class DataCollectionManagerTests
 
         var result = _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
 
-        Assert.AreEqual(3, result.Count);
+        Assert.HasCount(3, result);
         Assert.AreEqual("clrie", result["cor_profiler"]);
         Assert.AreEqual("path", result["clrie_profiler_vanguard"]);
         Assert.AreEqual("same_value", result["same_key"]);
@@ -340,7 +340,7 @@ public class DataCollectionManagerTests
 
         var result = _dataCollectionManager.SessionEnded();
 
-        Assert.AreEqual(0, result.Count);
+        Assert.IsEmpty(result);
     }
 
     [TestMethod]
@@ -349,7 +349,7 @@ public class DataCollectionManagerTests
         var dataCollectorSettingsWithNullFriendlyName = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, string.Format(CultureInfo.InvariantCulture, _defaultDataCollectionSettings, string.Empty, _uri, _mockDataCollector.Object.GetType().AssemblyQualifiedName, typeof(DataCollectionManagerTests).Assembly.Location, string.Empty).Replace("friendlyName=\"\"", string.Empty));
         _dataCollectionManager.InitializeDataCollectors(dataCollectorSettingsWithNullFriendlyName);
         var invokedDataCollector = _dataCollectionManager.GetInvokedDataCollectors();
-        Assert.AreEqual(1, invokedDataCollector.Count);
+        Assert.HasCount(1, invokedDataCollector);
         Assert.IsTrue(invokedDataCollector[0].HasAttachmentProcessor);
     }
 
@@ -367,7 +367,7 @@ public class DataCollectionManagerTests
 
         var result = _dataCollectionManager.SessionEnded();
 
-        Assert.IsTrue(result[0].Attachments[0].Uri.ToString().Contains("filename.txt"));
+        Assert.Contains("filename.txt", result[0].Attachments[0].Uri.ToString());
     }
 
     [TestMethod]
@@ -378,7 +378,7 @@ public class DataCollectionManagerTests
 
         var result = _dataCollectionManager.SessionEnded();
 
-        Assert.AreEqual(0, result.Count);
+        Assert.IsEmpty(result);
     }
 
     [TestMethod]
@@ -402,7 +402,7 @@ public class DataCollectionManagerTests
 
         var result = _dataCollectionManager.SessionEnded();
 
-        Assert.AreEqual(1, result.Count);
+        Assert.HasCount(1, result);
     }
 
     [TestMethod]
