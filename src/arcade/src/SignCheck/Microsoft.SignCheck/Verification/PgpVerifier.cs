@@ -10,9 +10,12 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public abstract class LinuxPackageVerifier : ArchiveVerifier
+    public abstract class PgpVerifier : ArchiveVerifier
     {
-        protected LinuxPackageVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension) : base(log, exclusions, options, fileExtension) { }
+        protected PgpVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension)
+            : base(log, exclusions, options, fileExtension)
+        {
+        }
 
         public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
             => VerifySupportedFileType(path, parent, virtualPath);
@@ -21,16 +24,40 @@ namespace Microsoft.SignCheck.Verification
         /// Returns the paths to the signature document and the signable content.
         /// Used to verify the signature of the package using gpg.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="tempDir"></param>
-        /// <returns></returns>
         protected abstract (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string path, string tempDir);
+
+        /// <summary>
+        /// Verifies the signature of a file using a detached .sig file.
+        /// If the .sig file exists, verifies as a supported file type; otherwise, as unsupported.
+        /// </summary>
+        protected SignatureVerificationResult VerifyDetachedSignature(string path, string parent, string virtualPath)
+        {
+            if (File.Exists(path + ".sig"))
+            {
+                return VerifySupportedFileType(path, parent, virtualPath);
+            }
+            return VerifyUnsupportedFileType(path, parent, virtualPath);
+        }
+
+        /// <summary>
+        /// Returns the paths to the detached signature document and the signable content.
+        /// For use by verifiers whose signatures are stored in a separate .sig file.
+        /// </summary>
+        protected static (string signatureDocument, string signableContent) GetDetachedSignatureDocumentAndSignableContent(string path, string tempDir)
+        {
+            string signature = $"{path}.sig";
+            string signatureDocument = Path.Combine(tempDir, Path.GetFileName(signature));
+            File.Copy(signature, signatureDocument, overwrite: true);
+
+            return (signatureDocument, path);
+        }
 
         protected override bool IsSigned(string path, SignatureVerificationResult svr)
         {
+#if NET
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                throw new PlatformNotSupportedException("Linux package verification is not supported on Windows.");
+                throw new PlatformNotSupportedException("Pgp verification is not supported on Windows.");
             }
 
             string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -70,6 +97,9 @@ namespace Microsoft.SignCheck.Verification
             {
                 Directory.Delete(tempDir, true);
             }
+#else
+            throw new PlatformNotSupportedException("Pgp verification is not supported on this platform.");
+#endif
         }
 
         /// <summary>
