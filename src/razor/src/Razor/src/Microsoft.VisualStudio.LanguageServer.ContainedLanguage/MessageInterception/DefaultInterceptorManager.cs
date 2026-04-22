@@ -74,7 +74,7 @@ internal sealed class DefaultInterceptorManager : InterceptorManager
         return false;
     }
 
-    public async override Task<TJsonToken?> ProcessGenericInterceptorsAsync<TJsonToken>(string methodName, TJsonToken message, string contentType, CancellationToken cancellationToken)
+    public override async Task<TJsonToken?> ProcessGenericInterceptorsAsync<TJsonToken>(string methodName, TJsonToken message, string contentType, CancellationToken cancellationToken)
         where TJsonToken : default
     {
         _ = message ?? throw new ArgumentNullException(nameof(message));

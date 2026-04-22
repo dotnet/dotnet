@@ -1,6 +1,11 @@
 ﻿#nullable enable
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler.HandleTelemetryEvent(Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent! telemetryEvent) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestOutcome.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.IsChildTestCase.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseId.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseName.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestElement.set -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter! telemetryReporter) -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter

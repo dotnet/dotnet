@@ -100,7 +100,7 @@ internal static class ProcessCodeMethods
         }
         catch (Exception ex)
         {
-            EqtTrace.Verbose($"ProcessCodeMethods.GetParentPidLinux: Error getting parent of process {process.Id} - {process.ProcessName}, {ex}.");
+            EqtTrace.Verbose($"ProcessCodeMethods.GetParentPidWindows: Error getting parent of process {process.Id} - {process.ProcessName}, {ex}.");
             return InvalidProcessId;
         }
     }

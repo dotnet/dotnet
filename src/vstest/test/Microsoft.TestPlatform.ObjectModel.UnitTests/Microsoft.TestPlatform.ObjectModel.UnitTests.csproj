@@ -10,9 +10,4 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.ObjectModel.UnitTests</AssemblyName>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>$(NewtonsoftJsonVersion)</Version>
-    </PackageReference>
-  </ItemGroup>
 </Project>

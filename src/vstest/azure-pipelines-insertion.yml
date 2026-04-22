@@ -1,6 +1,6 @@
 parameters:
   - name: 'ComponentBranchName'
-    default: 'main'
+    default: 'rel/18.7'
   - name: 'CreateDraftPR'
     default: 'false'
   - name: 'OptionalTitlePrefix'

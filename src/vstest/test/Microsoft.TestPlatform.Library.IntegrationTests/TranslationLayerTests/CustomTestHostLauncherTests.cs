@@ -67,8 +67,8 @@ public class CustomTestHostLauncherTests : AcceptanceTestBase
 
         _vstestConsoleWrapper = GetVsTestConsoleWrapper();
         var runEventHandler = new RunEventHandler();
-        var netFrameworkDll = GetTestDllForFramework("MSTestProject1.dll", DEFAULT_HOST_NETFX);
-        var netDll = GetTestDllForFramework("MSTestProject1.dll", DEFAULT_HOST_NETCORE);
+        var netFrameworkDll = GetTestDllForFramework("MSTestProject1.dll", HOST_NETFX);
+        var netDll = GetTestDllForFramework("MSTestProject1.dll", HOST_NET);
         var testHostLauncher = new TestHostLauncherV3();
 
         // Act

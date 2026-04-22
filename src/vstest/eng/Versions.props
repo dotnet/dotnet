@@ -14,7 +14,7 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>18.7.0</VersionPrefix>
+    <VersionPrefix>18.8.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
@@ -40,7 +40,7 @@
     -->
     <!--
       Lot of these versions are not the latest present on nuget.org, we need to use versions that are present in SourceBuild to
-      avoid introducing pre-builts. https://github.com/dotnet/source-build-reference-packages/tree/main/src/referencePackages/src
+      avoid introducing pre-builts. https://github.com/dotnet/source-build-assets/tree/main/src/referencePackages/src
     -->
     <MicrosoftBuildFrameworkPackageVersion>17.11.48</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildPackageVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildPackageVersion>

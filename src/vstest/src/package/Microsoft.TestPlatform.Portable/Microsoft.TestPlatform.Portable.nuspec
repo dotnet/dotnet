@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
@@ -50,7 +50,6 @@
     <file src="net48\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll"	target="tools\net462\zh-Hans\Microsoft.CodeCoverage.IO.dll" />
     <file src="net48\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll"	target="tools\net462\zh-Hant\Microsoft.CodeCoverage.IO.dll" />
 
-    <file src="net48\Newtonsoft.Json.dll"	target="tools\net462\Newtonsoft.Json.dll" />
     <file src="net48\System.Collections.Immutable.dll"	target="tools\net462\System.Collections.Immutable.dll" />
     
     <file src="net48\System.Reflection.Metadata.dll"	target="tools\net462\System.Reflection.Metadata.dll" />
@@ -338,7 +337,6 @@
     <file src="netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll"	target="tools\net8.0\zh-Hans\Microsoft.CodeCoverage.IO.dll" />
     <file src="netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll"	target="tools\net8.0\zh-Hant\Microsoft.CodeCoverage.IO.dll" />
 
-    <file src="netstandard2.0\Newtonsoft.Json.dll"	target="tools\net8.0\Newtonsoft.Json.dll" />
     <file src="net8.0\vstest.console.deps.json"	target="tools\net8.0\vstest.console.deps.json" />
     <file src="net8.0\vstest.console.dll"	target="tools\net8.0\vstest.console.dll" />
     <file src="net8.0\vstest.console.dll.config"	target="tools\net8.0\vstest.console.dll.config" />
@@ -484,14 +482,13 @@
     <file src="net48\datacollector.exe"	target="tools\net8.0\TestHostNetFramework\datacollector.exe" />
     <file src="net48\datacollector.exe.config"	target="tools\net8.0\TestHostNetFramework\datacollector.exe.config" />
 
-    <file src="net8.0\Microsoft.TestPlatform.CommunicationUtilities.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.TestPlatform.CommunicationUtilities.dll" />
+    <file src="net48\Microsoft.TestPlatform.CommunicationUtilities.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.TestPlatform.CommunicationUtilities.dll" />
     <file src="net8.0\Microsoft.TestPlatform.CoreUtilities.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.TestPlatform.CoreUtilities.dll" />
     <file src="net8.0\Microsoft.TestPlatform.CrossPlatEngine.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.TestPlatform.CrossPlatEngine.dll" />
     <file src="net8.0\Microsoft.TestPlatform.PlatformAbstractions.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.TestPlatform.PlatformAbstractions.dll" />
     <file src="net8.0\Microsoft.TestPlatform.Utilities.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.TestPlatform.Utilities.dll" />
     <file src="net8.0\Microsoft.VisualStudio.TestPlatform.Common.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.VisualStudio.TestPlatform.Common.dll" />
     <file src="net8.0\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll"	target="tools\net8.0\TestHostNetFramework\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" />
-    <file src="netstandard2.0\Newtonsoft.Json.dll"	target="tools\net8.0\TestHostNetFramework\Newtonsoft.Json.dll" />
     <file src="netstandard2.0\System.Collections.Immutable.dll"	target="tools\net8.0\TestHostNetFramework\System.Collections.Immutable.dll" />
     <file src="netstandard2.0\System.Reflection.Metadata.dll"	target="tools\net8.0\TestHostNetFramework\System.Reflection.Metadata.dll" />
 

@@ -14,7 +14,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if NETCOREAPP
 using Microsoft.Extensions.DependencyModel;
+#endif
 using Microsoft.TestPlatform.TestHostProvider;
 using Microsoft.TestPlatform.TestHostProvider.Hosting;
 using Microsoft.TestPlatform.TestHostProvider.Resources;
@@ -33,8 +35,11 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+#if NETCOREAPP
+using System.Text.Json;
+#else
+using Jsonite;
+#endif
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 
@@ -898,6 +903,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 // Get testhost relative path
                 using (var stream = _fileHelper.GetStream(depsFilePath, FileMode.Open, FileAccess.Read))
                 {
+#if NETCOREAPP
                     var context = new DependencyContextJsonReader().Read(stream);
                     var testhostPackage = context.RuntimeLibraries.FirstOrDefault(lib => lib.Name.Equals(testHostPackageName, StringComparison.OrdinalIgnoreCase));
 
@@ -923,22 +929,40 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                         IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0");
                         EqtTrace.Verbose("DotnetTestHostmanager: Relative path of testhost.dll with respect to package folder is {0}", testHostPath);
                     }
+#else
+                    var library = DepsJsonParser.FindRuntimeLibrary(stream, testHostPackageName);
+                    if (library != null)
+                    {
+                        testHostPath = library.RuntimeAssemblyPaths
+                            .FirstOrDefault(p => p.EndsWith("testhost.dll", StringComparison.OrdinalIgnoreCase))
+                            ?? testHostPath;
+
+                        if (library.Path is not null)
+                        {
+                            testHostPath = Path.Combine(library.Path, testHostPath);
+                        }
+
+                        _hostPackageVersion = library.Version;
+                        IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0");
+                        EqtTrace.Verbose("DotnetTestHostmanager: Relative path of testhost.dll with respect to package folder is {0}", testHostPath);
+                    }
+#endif
                 }
 
                 // Get probing path
-                using (StreamReader file = new(_fileHelper.GetStream(runtimeConfigDevPath, FileMode.Open, FileAccess.Read)))
-                using (JsonTextReader reader = new(file))
+                using (var stream = _fileHelper.GetStream(runtimeConfigDevPath, FileMode.Open, FileAccess.Read))
                 {
-                    JObject context = (JObject)JToken.ReadFrom(reader);
-                    JObject runtimeOptions = (JObject)context.GetValue("runtimeOptions")!;
-                    JToken additionalProbingPaths = runtimeOptions.GetValue("additionalProbingPaths")!;
-                    foreach (var x in additionalProbingPaths)
+#if NETCOREAPP
+                    using var doc = JsonDocument.Parse(stream);
+                    var runtimeOptions = doc.RootElement.GetProperty("runtimeOptions");
+                    var additionalProbingPaths = runtimeOptions.GetProperty("additionalProbingPaths");
+                    foreach (var x in additionalProbingPaths.EnumerateArray())
                     {
-                        EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, x.ToString());
+                        EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, x.GetString());
                         string testHostFullPath;
                         try
                         {
-                            testHostFullPath = Path.Combine(x.ToString(), testHostPath);
+                            testHostFullPath = Path.Combine(x.GetString()!, testHostPath);
                         }
                         catch (ArgumentException)
                         {
@@ -953,6 +977,35 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                             return testHostFullPath;
                         }
                     }
+#else
+                    using var reader = new StreamReader(stream);
+                    var parsed = Json.Deserialize(reader) as IDictionary<string, object>;
+                    var runtimeOpts = parsed?["runtimeOptions"] as IDictionary<string, object>;
+                    var probingPaths = runtimeOpts?["additionalProbingPaths"] as IList<object>;
+                    if (probingPaths is not null)
+                    {
+                        foreach (var x in probingPaths)
+                        {
+                            var pathStr = x?.ToString();
+                            EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, pathStr);
+                            string testHostFullPath;
+                            try
+                            {
+                                testHostFullPath = Path.Combine(pathStr!, testHostPath);
+                            }
+                            catch (ArgumentException)
+                            {
+                                continue;
+                            }
+
+                            if (_fileHelper.Exists(testHostFullPath))
+                            {
+                                EqtTrace.Verbose("DotnetTestHostmanager: Found testhost.dll in {0}", testHostFullPath);
+                                return testHostFullPath;
+                            }
+                        }
+                    }
+#endif
                 }
             }
             else

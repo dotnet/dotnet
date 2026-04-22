@@ -664,7 +664,7 @@ internal static class StringExtensions
         ///  Therefore, it is the delegate's responsibility to ensure that every element of the span is assigned.
         ///  Otherwise, the resulting string could contain random characters.
         /// </remarks>
-        public unsafe static string Create<TState>(int length, TState state, SpanAction<char, TState> action)
+        public static unsafe string Create<TState>(int length, TState state, SpanAction<char, TState> action)
         {
             ArgHelper.ThrowIfNegative(length);
 

@@ -6,5 +6,6 @@
     "iterationPath": "DevDiv",
     "notificationAliases": [ "netvmr-lt@microsoft.com" ],
     "repositoryName": "dotnet-dotnet",
-    "codebaseName": "dotnet-dotnet"
+    "codebaseName": "dotnet-dotnet",
+    "useDynamicRouting": true
 }

@@ -113,8 +113,8 @@ src/sdk/test/dotnet.Tests/ShellShimTests/WpfBinaryTestAssets/*.dll
 src/sdk/test/Microsoft.NET.Sdk.Publish.Tasks.Tests/Resources/*.zip
 src/sdk/test/TemplateEngine/Microsoft.TemplateEngine.TestTemplates/nupkg_templates/*.nupkg
 
-# source-build-reference-packages
-src/source-build-reference-packages/src/externalPackages/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
+# source-build-assets
+src/source-build-assets/src/externalPackages/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
 
 # symreader
 src/symreader/src/PdbTestResources/Resources/*

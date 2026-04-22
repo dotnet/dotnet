@@ -45,7 +45,7 @@
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <RepositoryReference Include="nuget-client" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="source-build-reference-packages" />
+    <RepositoryReference Include="source-build-assets" />
     <RepositoryReference Include="symreader" />
   </ItemGroup>
 

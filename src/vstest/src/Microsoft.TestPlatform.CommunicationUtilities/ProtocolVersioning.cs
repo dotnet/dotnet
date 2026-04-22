@@ -11,7 +11,7 @@ internal static class ProtocolVersioning
     public const int LowestSupportedVersion = Version0;
 
     // 0: the original protocol with no versioning (Message). It is used during negotiation.
-    // 1: new protocol with versioning (VersionedMessage).
+    // 1: new protocol with versioning (Message with Version field).
     // 2: changed serialization because the serialization of properties in bag was too verbose,
     //    so common properties are considered built-in and serialized without type info.
     // 3: introduced because of changes to allow attaching debugger to external process.
@@ -27,7 +27,7 @@ internal static class ProtocolVersioning
     public const int Version0 = 0;
 
     /// <summary>
-    /// Adds versioning to the protocol by introducing VersionedMessage.
+    /// Adds versioning to the protocol by including a Version field in the Message.
     /// </summary>
     public const int Version1 = 1;
 

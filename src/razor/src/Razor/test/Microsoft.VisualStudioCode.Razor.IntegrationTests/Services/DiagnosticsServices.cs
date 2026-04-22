@@ -69,7 +69,7 @@ public class DiagnosticsServices(IntegrationTestServices testServices) : Service
     public async Task OpenProblemsPanelAsync()
     {
         await TestServices.Editor.ExecuteCommandAsync("View: Toggle Problems");
-        
+
         // Wait for panel to be visible - VS Code uses .markers-panel for the problems panel
         await TestServices.Playwright.Page.Locator(".markers-panel")
             .WaitForAsync(new LocatorWaitForOptions

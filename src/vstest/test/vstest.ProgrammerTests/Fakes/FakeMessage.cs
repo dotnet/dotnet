@@ -24,7 +24,7 @@ internal abstract class FakeMessage
 }
 
 /// <summary>
-/// A class like Message / VersionedMessage that is easier to create and review during debugging.
+/// A class like Message that is easier to create and review during debugging.
 /// </summary>
 internal sealed class FakeMessage<T> : FakeMessage
 {

@@ -23,10 +23,10 @@ public class RunnerCompatibilityDataSource : CompatibilityDataSourceAttribute
         _builder = new CompatibilityRowsBuilder(
             // runner
             AcceptanceTestBase.LATEST,
-            AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
+            AcceptanceTestBase.RUNNER_NETFX_AND_NET,
             // host
             AcceptanceTestBase.LATEST_TO_LEGACY,
-            AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+            AcceptanceTestBase.HOST_NETFX_AND_NET,
             // adapter
             AcceptanceTestBase.LATESTSTABLE,
             AcceptanceTestBase.MSTEST);

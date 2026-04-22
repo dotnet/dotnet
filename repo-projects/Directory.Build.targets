@@ -254,8 +254,8 @@
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       SourceBuildSources="@(_BuildSources)"
-      SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
-      SbrpCacheSourceName="$(SbrpCacheNuGetSourceName)"
+      SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
+      SbaCacheSourceName="$(SbaCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
       PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"
       SharedComponentsSourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
@@ -376,9 +376,9 @@
     <!-- Validate that the shared component package versions don't override with the versions from the current properties, except
        for reference packages. -->
     <ItemGroup Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)' != '' and '@(_DependencyProducedPackage)' != ''">
-      <_CurrentNonSbrpPackages Include="@(_DependencyProducedPackage)" />
-      <_CurrentNonSbrpPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-reference-packages'))" />
-      <_ConflictingSharedComponentPackages Include="@(_CurrentNonSbrpPackages)" Condition="$(_PreviouslyBuiltSourceBuiltSharedComponentPackagesString.Contains(';%(Identity);'))" />
+      <_CurrentNonSbaPackages Include="@(_DependencyProducedPackage)" />
+      <_CurrentNonSbaPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-assets'))" />
+      <_ConflictingSharedComponentPackages Include="@(_CurrentNonSbaPackages)" Condition="$(_PreviouslyBuiltSourceBuiltSharedComponentPackagesString.Contains(';%(Identity);'))" />
     </ItemGroup>
 
     <Error Condition="'@(_ConflictingSharedComponentPackages)' != ''"
@@ -489,7 +489,7 @@
   <Target Name="DiscoverBuiltSdkOverrides" DependsOnTargets="GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses">
     <!--
       Discover the Arcade SDKs built from the live Arcade source and set them as overrides here.
-      This will automatically no-op for Arcade and SBRP, as these packages will not have been produced yet.
+      This will automatically no-op for Arcade and SBA, as these packages will not have been produced yet.
     -->
     <ItemGroup>
       <ArcadeBuiltArcadeSdk Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.DotNet.Arcade.Sdk'))" />
@@ -508,7 +508,7 @@
     </ItemGroup>
 
     <!--
-      Add Microsoft.Build.NoTargets and Microsoft.Build.Traversal SDK overrides, for all repos that have it built (ie. excluding SBRP as it builds the SDKs).
+      Add Microsoft.Build.NoTargets and Microsoft.Build.Traversal SDK overrides, for all repos that have it built (ie. excluding SBA as it builds the SDKs).
 
       We need to override all SDK packages that are used by repos, to prevent NuGet SDK Resolver from trying to
       restore these packages from online feeds. In offline build we only want to use local source-build feeds.
@@ -724,8 +724,8 @@
       <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
       <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-reference-packages. -->
-      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-reference-packages'">$(ProjectDirectory)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-assets. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-assets'">$(ProjectDirectory)</SymbolsRoot>
     </PropertyGroup>
 
     <ItemGroup>

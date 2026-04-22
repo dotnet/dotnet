@@ -224,7 +224,7 @@ public class DiscoveryRequestTests
 
         _discoveryRequest.HandleRawMessage(string.Empty);
 
-        _mockDataSerializer.Verify(x => x.SerializePayload(It.IsAny<string>(), It.IsAny<DiscoveryCompletePayload>()), Times.Once);
+        _mockDataSerializer.Verify(x => x.SerializePayload(It.IsAny<string>(), It.IsAny<DiscoveryCompletePayload>(), It.IsAny<int>()), Times.Once);
         _mockRequestData.Verify(x => x.MetricsCollection, Times.AtLeastOnce);
         Assert.IsTrue(onDiscoveryCompleteInvoked);
     }

@@ -47,13 +47,13 @@ public partial class TestExportJoinableTaskContext
         Thread mainThread;
         SynchronizationContext synchronizationContext;
 #if NETFRAMEWORK
-    if (SynchronizationContext.Current is DispatcherSynchronizationContext)
-    {
-        // The current thread is the main thread, and provides a suitable synchronization context
-        mainThread = Thread.CurrentThread;
-        synchronizationContext = SynchronizationContext.Current;
-    }
-    else
+        if (SynchronizationContext.Current is DispatcherSynchronizationContext)
+        {
+            // The current thread is the main thread, and provides a suitable synchronization context
+            mainThread = Thread.CurrentThread;
+            synchronizationContext = SynchronizationContext.Current;
+        }
+        else
 #endif
         {
             // The current thread is not known to be the main thread; we have no way to know if the
@@ -69,7 +69,9 @@ public partial class TestExportJoinableTaskContext
     }
 
     [Export]
+#pragma warning disable IDE0052 // Used by MEF composition.
     private JoinableTaskContext JoinableTaskContext
+#pragma warning restore IDE0052 // Used by MEF composition.
     {
         get;
     }
