@@ -9,7 +9,7 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public class DebVerifier : LinuxPackageVerifier
+    public class DebVerifier : PgpVerifier
     {
         public DebVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".deb") { }
 
