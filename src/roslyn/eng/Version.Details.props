@@ -6,11 +6,11 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26201.4</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26201.4</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26201.4</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26220.5</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26220.5</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26220.5</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <SystemCommandLinePackageVersion>2.0.7</SystemCommandLinePackageVersion>
+    <SystemCommandLinePackageVersion>2.0.8</SystemCommandLinePackageVersion>
     <!-- dotnet-roslyn dependencies -->
     <MicrosoftCodeAnalysisPackageVersion>3.11.0</MicrosoftCodeAnalysisPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.10.0-1.24061.4</MicrosoftNetCompilersToolsetPackageVersion>
