@@ -213,6 +213,11 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <target state="translated">Parametr źródłowy nie został określony.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_MsBuildIsNetCoreMsBuild">
+        <source>The MSBuild directory '{0}' appears to be a .NET SDK (dotnet) MSBuild installation. NuGet.exe requires the .NET Framework version of MSBuild, which is included with Visual Studio. Use 'dotnet restore' instead, or provide the path to a Visual Studio MSBuild installation.</source>
+        <target state="new">The MSBuild directory '{0}' appears to be a .NET SDK (dotnet) MSBuild installation. NuGet.exe requires the .NET Framework version of MSBuild, which is included with Visual Studio. Use 'dotnet restore' instead, or provide the path to a Visual Studio MSBuild installation.</target>
+        <note>{0} is the MSBuild directory path. Do not localize 'NuGet.exe', 'MSBuild', '.NET SDK', '.NET Framework', 'dotnet restore', 'Visual Studio'.</note>
+      </trans-unit>
       <trans-unit id="Error_MsBuildTimedOut">
         <source>MsBuild timeout out while trying to get project to project references.</source>
         <target state="translated">Przekroczono limit czasu programu MsBuild podczas próby pobrania odwołań projektu do projektu.</target>

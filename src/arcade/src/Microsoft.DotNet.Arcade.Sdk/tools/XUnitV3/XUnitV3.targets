@@ -21,6 +21,10 @@
     <PackageReference Include="Microsoft.Testing.Platform" Version="$(MicrosoftTestingPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(UseMicrosoftTestingPlatformRunner)' != 'true' OR '$(UseVSTestRunner)' == 'true'">
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(MicrosoftTestingPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
+  </ItemGroup>
+
   <PropertyGroup>
     <XUnitDesktopSettingsFile Condition="'$(XUnitDesktopSettingsFile)' == ''">$(MSBuildThisFileDirectory)xunit.runner.json</XUnitDesktopSettingsFile>
     <XUnitCoreSettingsFile Condition="'$(XUnitCoreSettingsFile)' == ''">$(MSBuildThisFileDirectory)xunit.runner.json</XUnitCoreSettingsFile>
