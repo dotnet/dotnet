@@ -12,7 +12,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.CodeActions;
 
 public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCodeActionsEndpointTestBase(testOutputHelper)
 {
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock()
     {
         var input = """
@@ -44,7 +44,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock_WithParameter()
     {
         var input = """
@@ -78,7 +78,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock_ExpressionBodiedMethod1()
     {
         var input = """
@@ -106,7 +106,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock_ExpressionBodiedMethod2()
     {
         var input = """
@@ -134,7 +134,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_ExistingCodeBlock_WithParameter()
     {
         var input = """
@@ -164,7 +164,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_WithoutCodeBlock()
     {
         var input = """
@@ -185,7 +185,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_WithoutCodeBlock_CodeBlockBraceOnNextLine()
     {
         ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = true });
@@ -209,7 +209,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_WithoutCodeBlock_UsesTabsWhenConfigured()
     {
         ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: true, IndentSize: 4));
@@ -232,7 +232,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_EmptyCodeBlock()
     {
         var input = """
@@ -259,7 +259,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_EmptyCodeBlock_UsesConfiguredIndentSize()
     {
         ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: false, IndentSize: 2));
@@ -288,7 +288,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromImplicitExpression_SingleLineCodeBlock()
     {
         var input = """
@@ -312,7 +312,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromCodeBlock_ExistingCodeBlock_WithBlankLineBeforeCloseBrace()
     {
         var input = """
@@ -346,7 +346,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_FromCodeBlock_MultipleCodeBlocks_UsesFirstCodeBlock()
     {
         var input = """
@@ -374,7 +374,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_Legacy_WithoutFunctionsBlock_CodeBlockBraceOnNextLine()
     {
         ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = true });
@@ -401,7 +401,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod, fileKind: RazorFileKind.Legacy);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_Legacy_WithoutFunctionsBlock()
     {
         var input = """
@@ -425,7 +425,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod, fileKind: RazorFileKind.Legacy);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_Legacy_WithFunctionsBlock()
     {
         var input = """
@@ -456,7 +456,7 @@ public class GenerateMethodTests(ITestOutputHelper testOutputHelper) : CohostCod
         await VerifyCodeActionAsync(input, expected, RazorPredefinedCodeFixProviderNames.GenerateMethod, fileKind: RazorFileKind.Legacy);
     }
 
-    [Fact(Skip = "Waiting for Roslyn insertion")]
+    [Fact]
     public async Task GenerateMethod_Legacy_MultipleFunctionsBlocks_UsesFirstFunctionsBlock()
     {
         var input = """

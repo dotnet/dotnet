@@ -18,7 +18,6 @@ src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/deb-package-tool/te
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright|unknown-license-reference
 
 # Doesn't apply to code
-src/arcade/eng/xcopy-msbuild/msbuild.nuspec|ms-visual-2015-sdk
 src/arcade/src/Microsoft.DotNet.Arcade.Sdk/tools/Licenses/*
 
 # Applies to installer, not source

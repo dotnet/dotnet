@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Configuration;
@@ -26,13 +27,19 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             var uri = new Uri("http://fake/content.nupkg");
-            var expectedContent = "TestContent";
             var identity = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0-Beta"));
+            var expectedContent = await GetPackageContentAsync(identity);
             var testHttpSource = new TestHttpSource(
                 new PackageSource("http://fake"),
-                new Dictionary<string, string>
+                new Dictionary<string, Func<HttpRequestMessage, Task<HttpResponseMessage>>>
                 {
-                    { uri.ToString(), expectedContent }
+                    {
+                        uri.ToString(),
+                        _ => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                        {
+                            Content = new ByteArrayContent(expectedContent)
+                        })
+                    }
                 });
             var logger = new TestLogger();
             var token = CancellationToken.None;
@@ -70,7 +77,9 @@ namespace NuGet.Protocol.Tests
 
                     Assert.Equal(0, Directory.EnumerateFileSystemEntries(globalPackagesFolder).Count());
 
-                    var actualContent = new StreamReader(result.PackageStream).ReadToEnd();
+                    var memoryStream = new MemoryStream();
+                    result.PackageStream.CopyTo(memoryStream);
+                    byte[] actualContent = memoryStream.ToArray();
                     Assert.Equal(expectedContent, actualContent);
                 }
 
@@ -84,13 +93,19 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             var uri = new Uri("http://fake/content.nupkg");
-            var expectedContent = "TestContent";
             var identity = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0-Beta"));
+            var expectedContent = await GetPackageContentAsync(identity);
             var testHttpSource = new TestHttpSource(
                 new PackageSource("http://fake"),
-                new Dictionary<string, string>
+                new Dictionary<string, Func<HttpRequestMessage, Task<HttpResponseMessage>>>
                 {
-                    { uri.ToString(), expectedContent }
+                    {
+                        uri.ToString(),
+                        _ => Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
+                        {
+                            Content = new ByteArrayContent(expectedContent)
+                        })
+                    }
                 });
             var logger = new TestLogger();
             var token = CancellationToken.None;
@@ -128,17 +143,16 @@ namespace NuGet.Protocol.Tests
                     Assert.EndsWith(".nugetdirectdownload", Path.GetFileName(files[0]));
                     Assert.EndsWith(".nugetdirectdownload", Path.GetFileName(files[1]));
 
-                    using (var reader = new StreamReader(resultA.PackageStream))
-                    {
-                        var actualContentA = reader.ReadToEnd();
-                        Assert.Equal(expectedContent, actualContentA);
-                    }
+                    var memory = new MemoryStream();
+                    resultA.PackageStream.CopyTo(memory);
+                    var actualContentA = memory.ToArray();
+                    Assert.Equal(expectedContent, actualContentA);
 
-                    using (var reader = new StreamReader(resultB.PackageStream))
-                    {
-                        var actualContentB = reader.ReadToEnd();
-                        Assert.Equal(expectedContent, actualContentB);
-                    }
+                    memory.Seek(0, SeekOrigin.Begin);
+                    memory.SetLength(0);
+                    resultB.PackageStream.CopyTo(memory);
+                    var actualContentB = memory.ToArray();
+                    Assert.Equal(expectedContent, actualContentB);
                 }
 
                 Assert.Equal(0, Directory.EnumerateFileSystemEntries(downloadDirectory).Count());
@@ -182,6 +196,14 @@ namespace NuGet.Protocol.Tests
                 Assert.True(File.Exists(nestedPath), "Nested files should not be deleted.");
                 Assert.True(File.Exists(ignorePath), "Files with the wrong extension should not be deleted.");
             }
+        }
+
+        private async Task<byte[]> GetPackageContentAsync(PackageIdentity identity)
+        {
+            var packageContext = new SimpleTestPackageContext(identity);
+            var memoryStream = await packageContext.CreateAsStreamAsync();
+            byte[] bytes = memoryStream.ToArray();
+            return bytes;
         }
     }
 }

@@ -1,22 +1,22 @@
 {
   "repositories": [
     {
-      "barId": 309226,
+      "barId": 309972,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "1f7eece09d5c6fc2a1319d04f6ae4b7d18455e2d"
+      "commitSha": "a08169b890573cfd7f949ea9062c86a4db1aab1b"
     },
     {
-      "barId": 310389,
+      "barId": 311178,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "15602d2cf5aff8483ff7c127a8b36b46c0f9dba3"
+      "commitSha": "11a9d22aa163093c31bd70c7caafadeb5f656db8"
     },
     {
-      "barId": 292148,
+      "barId": 310153,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "82f47fc2ff84b3d94e910147d52f2e6795f6ae21"
+      "commitSha": "187393d39be7342146f96562f1e5ca9f7e2b1e24"
     },
     {
       "barId": 310496,
@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 310643,
+      "barId": 311333,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "3a6e8253868ac3b7ae3df85091f940af84dcb596"
+      "commitSha": "c945994acc1a87b3aaba854ef5c46890ad5044d6"
     },
     {
       "barId": 309152,
@@ -55,34 +55,34 @@
       "commitSha": "9112d21d43f9de361a224e0dc49af5e16ccd09bd"
     },
     {
-      "barId": 311085,
+      "barId": 311319,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "77a329bb10463d50dcb53871e2251d4d5f0fc3b1"
+      "commitSha": "94dd44374c84ba2d148f17f78bb48b1c440776ec"
     },
     {
-      "barId": 310371,
+      "barId": 310908,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "398128ede8a5e7027383e41fa69670ab9813aecb"
+      "commitSha": "de3b92c2768037cceac21a7bcc53318d42554428"
     },
     {
-      "barId": 310558,
+      "barId": 311163,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "0172d024a51372c9f9b12dc53aa1f1a56359c25f"
+      "commitSha": "2e38756958320216c26497342515dd18826a0898"
     },
     {
-      "barId": 310875,
+      "barId": 311176,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "2afcae2d79950a7b697172fdc1e8c81f934786c0"
+      "commitSha": "5e5ee328113910b2d963ccb8870a810563778cae"
     },
     {
-      "barId": 311183,
+      "barId": 311444,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "c87e7f8945ca218d4f0352724919ff02b515fe70"
+      "commitSha": "e3e5dc31fb0b94c8ac2d65ea52b17aee9071e69b"
     },
     {
       "barId": 309005,
@@ -109,10 +109,10 @@
       "commitSha": "6ea6adb7b969c3d58c5aececc1df68e09288cbbf"
     },
     {
-      "barId": 306126,
+      "barId": 310840,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "e87544a2ca8f13d08c246c0a54db2d54960f2e48"
+      "commitSha": "ddef01748e48f85dcde0c68ebb61b2cab42a7435"
     },
     {
       "barId": 308625,
@@ -127,28 +127,28 @@
       "commitSha": "4b1316b608fd22f607566518e66ac7cb2c19afc9"
     },
     {
-      "barId": 299568,
+      "barId": 310612,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "8350252f689bc85aec91a47e3d7eff9333ef6569"
+      "commitSha": "c96077ee4e0eed712537d9e99f2f4a3aa75b3507"
     },
     {
-      "barId": 310634,
+      "barId": 311308,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "4587f3066eae099e43eeacba4d5146fffa9adf16"
+      "commitSha": "2f889a2894aca8299f9c08a68cc74dcc0134dcfe"
     },
     {
-      "barId": 308880,
+      "barId": 311036,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "7bb98f650deaba40fe9f6e35ae3b14cb74a4c177"
+      "commitSha": "a036b37395623cdf0657f8df10d821db965f3652"
     },
     {
-      "barId": 291230,
+      "barId": 302133,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "a37116d1c37e696cc70fc138c01d02dff7542d82"
+      "commitSha": "0d57d4bbae8518c836ac29bc4fcf9c79a246bf46"
     }
   ],
   "submodules": [
