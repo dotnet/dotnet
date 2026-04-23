@@ -86,10 +86,9 @@ if (true) {
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (5,31)-(5,43) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-string.Empty
+#line (5,31)-(5,43) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+Write(string.Empty
 
 #line default
 #line hidden
@@ -102,10 +101,9 @@ string.Empty
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (5,54)-(5,59) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-false
+#line (5,54)-(5,59) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+Write(false
 
 #line default
 #line hidden
@@ -138,10 +136,9 @@ false
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             BeginWriteTagHelperAttribute();
             WriteLiteral("prefix ");
-            WriteLiteral(
 #nullable restore
-#line (7,23)-(7,35) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-DateTime.Now
+#line (7,23)-(7,35) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+WriteLiteral(DateTime.Now
 
 #line default
 #line hidden
@@ -178,10 +175,9 @@ DateTime.Now
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             BeginWriteTagHelperAttribute();
-            WriteLiteral(
 #nullable restore
-#line (9,16)-(9,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-long.MinValue
+#line (9,16)-(9,29) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+WriteLiteral(long.MinValue
 
 #line default
 #line hidden
@@ -196,10 +192,9 @@ if (true) {
 #line hidden
 #nullable disable
 
-            WriteLiteral(
 #nullable restore
-#line (9,44)-(9,56) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-string.Empty
+#line (9,44)-(9,56) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+WriteLiteral(string.Empty
 
 #line default
 #line hidden
@@ -213,10 +208,9 @@ string.Empty
 #line hidden
 #nullable disable
 
-            WriteLiteral(
 #nullable restore
-#line (9,67)-(9,72) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-false
+#line (9,67)-(9,72) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+WriteLiteral(false
 
 #line default
 #line hidden
@@ -231,10 +225,9 @@ false
 #nullable disable
 
             WriteLiteral(" ");
-            WriteLiteral(
 #nullable restore
-#line (9,76)-(9,88) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-int.MaxValue
+#line (9,76)-(9,88) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+WriteLiteral(int.MaxValue
 
 #line default
 #line hidden
@@ -262,10 +255,9 @@ if (true) {
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (10,46)-(10,58) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-string.Empty
+#line (10,46)-(10,58) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+Write(string.Empty
 
 #line default
 #line hidden
@@ -278,10 +270,9 @@ string.Empty
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (10,69)-(10,74) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-false
+#line (10,69)-(10,74) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+Write(false
 
 #line default
 #line hidden
@@ -374,10 +365,9 @@ if (true) {
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (14,31)-(14,43) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-string.Empty
+#line (14,31)-(14,43) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+Write(string.Empty
 
 #line default
 #line hidden
@@ -390,10 +380,9 @@ string.Empty
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (14,54)-(14,59) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
-false
+#line (14,54)-(14,59) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DynamicAttributeTagHelpers.cshtml"
+Write(false
 
 #line default
 #line hidden

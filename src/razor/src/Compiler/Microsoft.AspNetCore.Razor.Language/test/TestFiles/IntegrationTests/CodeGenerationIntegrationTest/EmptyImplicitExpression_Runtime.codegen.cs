@@ -25,9 +25,9 @@ namespace AspNetCoreGeneratedDocument
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("This is markup\r\n\r\n");
-            Write(
 #nullable restore
-#line (3,2)-(3,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpression.cshtml"
+#line (3,2)-(3,2) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpression.cshtml"
+Write(
 
 #line default
 #line hidden

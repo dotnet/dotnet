@@ -49,10 +49,9 @@ namespace AspNetCoreGeneratedDocument
             WriteLiteral("\r\n<!DOCTYPE html>\r\n<html lang=\"en\">\r\n");
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("head", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "__UniqueIdSuppressedForTesting__", async() => {
                 WriteLiteral("\r\n    <meta charset=\"utf-8\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>");
-                Write(
 #nullable restore
-#line (7,13)-(7,30) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-ViewData["Title"]
+#line (7,13)-(7,30) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+Write(ViewData["Title"]
 
 #line default
 #line hidden
