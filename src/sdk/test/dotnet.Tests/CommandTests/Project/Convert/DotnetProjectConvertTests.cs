@@ -448,8 +448,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             <Project>
               <PropertyGroup>
                 <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableTransitiveDirectives>true</ExperimentalFileBasedProgramEnableTransitiveDirectives>
               </PropertyGroup>
             </Project>
             """);
@@ -1689,15 +1687,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableExcludeDirective>true</ExperimentalFileBasedProgramEnableExcludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
-
         VerifyConversion(
             baseDirectory: testInstance.Path,
             evaluateDirectives: true,
@@ -1742,8 +1731,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
-            #:property ExperimentalFileBasedProgramEnableIncludeDirective=true
-            #:property ExperimentalFileBasedProgramEnableExcludeDirective=true
             #:include **/*.cs
             #:include *.json
             #:exclude my.json
@@ -2632,7 +2619,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         // Create entry point file with #:include directive
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
-            #:property ExperimentalFileBasedProgramEnableIncludeDirective=true
             #:include Util.cs
             Console.WriteLine("Test");
             """);
@@ -2662,7 +2648,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         // Create entry point file with #:include directive
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
-            #:property ExperimentalFileBasedProgramEnableIncludeDirective=true
             #:include Util.cs
             Console.WriteLine("Test");
             """);
@@ -2693,7 +2678,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         // Create entry point file with multiple #:include directives
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
-            #:property ExperimentalFileBasedProgramEnableIncludeDirective=true
             #:include Util.cs
             #:include Helper.cs
             #:include config.json
@@ -2731,8 +2715,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         // Create entry point file with #:include directive
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
-            #:property ExperimentalFileBasedProgramEnableIncludeDirective=true
-            #:property ExperimentalFileBasedProgramEnableTransitiveDirectives=true
             #:include Util.cs
             Console.WriteLine("Test");
             """);
