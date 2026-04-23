@@ -70,10 +70,9 @@ thing
                 item => new global::Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_template_writer) => {
                     PushWriter(__razor_template_writer);
                     WriteLiteral("<span>");
-                    Write(
 #nullable restore
-#line (16,42)-(16,46) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-item
+#line (16,42)-(16,46) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+Write(item
 
 #line default
 #line hidden

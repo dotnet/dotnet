@@ -25,10 +25,9 @@ namespace AspNetCoreGeneratedDocument
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("1 + 1 = ");
-            Write(
 #nullable restore
-#line (1,11)-(1,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpression.cshtml"
-1+1
+#line (1,11)-(1,14) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpression.cshtml"
+Write(1+1
 
 #line default
 #line hidden

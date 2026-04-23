@@ -53,10 +53,9 @@ namespace AspNetCoreGeneratedDocument
             __InputTagHelper = CreateTagHelper<global::InputTagHelper>();
             __tagHelperExecutionContext.Add(__InputTagHelper);
             BeginWriteTagHelperAttribute();
-            WriteLiteral(
 #nullable restore
-#line (3,19)-(3,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithBoundAttributes.cshtml"
-Hello
+#line (3,19)-(3,24) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithBoundAttributes.cshtml"
+WriteLiteral(Hello
 
 #line default
 #line hidden

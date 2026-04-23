@@ -11,40 +11,20 @@ parameters:
 variables:
 - group: DotNet-Roslyn-Insertion-Variables
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
-- name: RequiredValueSentinel
-  value: 'REQUIRED'
-- name: DefaultValueSentinel
-  value: '(default)'
 - name: BuildQueueName
   value: 'microsoft-vstest'
 - name: ComponentAzdoUri
-  value: 'https://dnceng.visualstudio.com/DefaultCollection'
+  value: 'https://dev.azure.com/dnceng'
 - name: ComponentProjectName
   value: 'internal'
 - name: ComponentName
   value: 'VS Test Platform'
 - name: DropPath
   value: '/dp=microsoft-vstest/VSSetupArtifacts'
-- name: InsertCore
-  value: 'false'
-- name: InsertDevDiv
-  value: 'false'
-- name: InsertToolset
-  value: 'false'
-- name: QueueValidation
-  value: '(default)'
-- name: UpdateAssemblyVersions
-  value: '(default)'
-- name: UpdateCoreXTLibraries
-  value: 'false'
-- name: InsertionCount
-  value: '1'
-- name: CherryPick
-  value: '(default)'
-- name: ComponentGitHubRepoName
-  value: '(default)'
 - name: SpecificBuildNumber
-  value: '(default)'
+  value: ''
+- name: CherryPick
+  value: ''
 - name: AutoComplete
   value: 'true'
 - name: ComponentBranchName
@@ -64,7 +44,7 @@ schedules:
     displayName: Daily midnight insertion to VS
     branches:
       include:
-      - main
+      - rel/18.7
     always: true
 
 resources:
@@ -105,59 +85,73 @@ extends:
 
               steps:
 
-              - task: NuGetCommand@2
-                displayName: 'Install RIT from Azure Artifacts'
+              - task: UseDotNet@2
+                displayName: 'Install .NET SDK'
                 inputs:
-                  command: custom
-                  arguments: 'install RoslynTools.VisualStudioInsertionTool -PreRelease -Source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json'
+                  includePreviewVersions: true
+                  useGlobalJson: true
 
-              - powershell: |
-                  mv RoslynTools.VisualStudioInsertionTool.* RIT
-                    
-                  # Path is like .\RIT\tools\net472\OneOffInsertion.ps1, the TFM can change as the
-                  # tools gets updated, so we look for it with a wildcard, and use the first one found
-                  $script = Get-ChildItem .\RIT\tools\*\OneOffInsertion.ps1 | Select-Object -First 1 -ExpandProperty FullName
-                  # Add VS Interactive experiences team (from devdiv) as reviewer. To get the user guid, make PR search with createdBy (in the target organization => devdiv), and you will get the guid in URL.  OR https://dev.azure.com/devdiv/_apis/teams?$mine=true 
-                  $team = "10a2f33b-3b3d-47a9-a22f-6bb09247bb63"
-              
-                  "Found tool: '$script'"
-                  $params = @{
-                    userName               = "dn-bot@microsoft.com"
-                    password               = "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
-                    componentUserName      = "dn-bot@microsoft.com"
-                    componentPassword      = "$(dn-bot-dnceng-build-e-code-full-release-e-packaging-r)"
-                    requiredValueSentinel  = "$(RequiredValueSentinel)"
-                    defaultValueSentinel   = "$(DefaultValueSentinel)"
-                    buildQueueName         = "$(BuildQueueName)"
-                    componentAzdoUri       = "$(ComponentAzdoUri)"
-                    componentProjectName   = "$(ComponentProjectName)"
-                    componentBranchName    = "$(ComponentBranchName)"
-                    componentName          = "$(ComponentName)"
-                    dropPath               = "$(DropPath)"
-                    insertCore             = "$(InsertCore)"
-                    insertDevDiv           = "$(InsertDevDiv)"
-                    insertToolset          = "$(InsertToolset)"
-                    queueValidation        = "$(QueueValidation)"
-                    specificBuild          = "$(SpecificBuildNumber)"
-                    updateAssemblyVersions = "$(UpdateAssemblyVersions)"
-                    updateCoreXTLibraries  = "$(UpdateCoreXTLibraries)"
-                    visualStudioBranchName = "$(VisualStudioBranchName)"
-                    titlePrefix            = "$(OptionalTitlePrefix)"
-                    insertionCount         = "$(InsertionCount)"
-                    writePullRequest       = "$(System.DefaultWorkingDirectory)\prid.txt"
-                    autoComplete           = "$(AutoComplete)"
-                    createDraftPR          = "$(CreateDraftPR)"
-                    cherryPick             = "$(CherryPick)"
-                    componentGitHubRepoName = "$(ComponentGitHubRepoName)"
-                    reviewerGuid           = $team
-                  }
-                  & $script @params
-                workingDirectory: '$(System.DefaultWorkingDirectory)\'
-                displayName: 'Run OneOffInsertion.ps1'
+              - script: dotnet tool install Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json -g
+                displayName: 'Install roslyn-tools CLI'
 
-              - script: 'echo. && echo. && type "$(System.DefaultWorkingDirectory)\prid.txt" && echo. && echo.'
-                displayName: 'Report PR URL'
-              
+              - task: AzureCLI@2
+                displayName: 'Run VS Insertion'
+                inputs:
+                  azureSubscription: 'DncEng Insertion: Roslyn and Razor'
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    # Acquire dnceng AzDO token via WIF service connection
+                    $dncengToken = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
+                    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($dncengToken)) {
+                      Write-Error 'Failed to acquire Azure DevOps access token via WIF.'
+                      exit 1
+                    }
+
+                    # Add VS Interactive experiences team (from devdiv) as reviewer
+                    $team = "10a2f33b-3b3d-47a9-a22f-6bb09247bb63"
+
+                    $insertArgs = @(
+                      "create-insertion"
+                      "--vs-branch", "$(VisualStudioBranchName)"
+                      "--component-branch", "$(ComponentBranchName)"
+                      "--insertion-name", "$(ComponentName)"
+                      "--component-build-queue", "$(BuildQueueName)"
+                      "--component-azdo-uri", "$(ComponentAzdoUri)"
+                      "--component-project", "$(ComponentProjectName)"
+                      "--build-drop-path", "$(DropPath)"
+                      "--no-insert-corext-packages"
+                      "--no-insert-devdiv-source-files"
+                      "--title-prefix", "$(OptionalTitlePrefix)"
+                      "--reviewer-guid", $team
+                      "--dnceng-azdo-token", $dncengToken
+                      "--devdiv-azdo-token", "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
+                      "--ci"
+                    )
+
+                    if ("$(AutoComplete)" -eq "true") {
+                      $insertArgs += "--set-auto-complete"
+                    }
+
+                    if ("$(CreateDraftPR)" -eq "true") {
+                      $insertArgs += "--create-draft-pr"
+                    }
+
+                    if (-not [string]::IsNullOrWhiteSpace("$(SpecificBuildNumber)")) {
+                      $insertArgs += "--specific-build"
+                      $insertArgs += "$(SpecificBuildNumber)"
+                    }
+
+                    if (-not [string]::IsNullOrWhiteSpace("$(CherryPick)")) {
+                      $insertArgs += "--cherry-pick"
+                      $insertArgs += "$(CherryPick)"
+                    }
+
+                    & roslyn-tools @insertArgs
+                    if ($LASTEXITCODE -ne 0) {
+                      exit $LASTEXITCODE
+                    }
+
               # Avoid warning from subsequent steps.
               - powershell: |
                   mkdir artifacts

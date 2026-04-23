@@ -75,6 +75,8 @@
     <file src="net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" target="contentFiles\any\net10.0\TestHostNetFramework\x64" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll"          target="contentFiles\any\net10.0\TestHostNetFramework\x86" />
     <file src="net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" target="contentFiles\any\net10.0\TestHostNetFramework\x86" />
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll"          target="contentFiles\any\net10.0\TestHostNetFramework\arm64" />
+    <file src="net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" target="contentFiles\any\net10.0\TestHostNetFramework\arm64" />
 
     <file src="net48\datacollector.exe" target="contentFiles\any\net10.0\TestHostNetFramework" />
     <file src="net48\datacollector.exe.config" target="contentFiles\any\net10.0\TestHostNetFramework" />
