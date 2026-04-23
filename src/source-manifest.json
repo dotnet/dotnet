@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 309511,
+      "barId": 311433,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "ecdd5c6a7986cafabbf6a322ea09a07736a01a0d"
+      "commitSha": "58713cb9a664ed67642127fcaf70b8c0c3b55ef2"
     },
     {
       "barId": 311180,
@@ -28,7 +28,7 @@
       "barId": 294179,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "6ebef72019b85958ae78d0da73ea49a161c7a28a"
+      "commitSha": "95a979e12bf2a7707a29954612508b2a0ef3d42c"
     },
     {
       "barId": 288647,
@@ -67,10 +67,10 @@
       "commitSha": "fa2dec964199e620ce7acf82a70ba4060862767d"
     },
     {
-      "barId": 301420,
+      "barId": 311446,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "10df92a966e2ce16aca870e81d85912d1629108c"
+      "commitSha": "78c13ba5a751610f79214609af4a21208ee4062f"
     },
     {
       "barId": 310915,
@@ -79,10 +79,10 @@
       "commitSha": "7888e0d795d36806bbaf3cecea9fc61f6aac8279"
     },
     {
-      "barId": 310928,
+      "barId": 311479,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "a45cc9f679bea94cb8f20df4d766a19ef5092ebf"
+      "commitSha": "b82454cad0aaaae3db2cf18fbf2cccc36e201ccc"
     },
     {
       "barId": 309003,
@@ -91,10 +91,10 @@
       "commitSha": "52decd1eeea01ce6e2da5790adc6dbe57a76c92c"
     },
     {
-      "barId": 310879,
+      "barId": 311365,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "80a5888fecc41cb6c8f2860b8d1b165262258f4b"
+      "commitSha": "e1185a10865582addca6dffbb316ca561d88c36d"
     },
     {
       "barId": 310097,
@@ -115,10 +115,10 @@
       "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
     },
     {
-      "barId": 310623,
+      "barId": 311023,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "6f5c6ebe9625d1e593b5f8134f0fad5917c334b7"
+      "commitSha": "4d7f1aadfce4663b2c8cfceb09bd6317e3aa2e62"
     },
     {
       "barId": 308339,
