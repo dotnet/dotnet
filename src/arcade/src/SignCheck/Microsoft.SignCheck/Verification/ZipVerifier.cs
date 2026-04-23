@@ -8,15 +8,15 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public class ZipVerifier : ArchiveVerifier
+    public class ZipVerifier : PgpVerifier
     {
-        public ZipVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension = ".zip") : base(log, exclusions, options, fileExtension)
-        {
-
-        }
+        public ZipVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension = ".zip") : base(log, exclusions, options, fileExtension) { }
 
         public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
-            => VerifyUnsupportedFileType(path, parent, virtualPath);
+            => VerifyDetachedSignature(path, parent, virtualPath);
+
+        protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string path, string tempDir)
+            => GetDetachedSignatureDocumentAndSignableContent(path, tempDir);
 
         protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
         {
