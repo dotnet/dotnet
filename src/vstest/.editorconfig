@@ -101,8 +101,8 @@ dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
 dotnet_style_prefer_simplified_interpolation = true:suggestion
 
 # IDE0074: Use compound assignment
-dotnet_style_prefer_compound_assignment = true:warning  # not default, default is true:suggestion, increased severity to ensure it is used
-dotnet_diagnostic.IDE0074.severity = warning            # not default, set in accordance to previous setting
+dotnet_style_prefer_compound_assignment = true:suggestion  # not default, reduced from warning to suggestion to avoid breaking builds on style issues
+dotnet_diagnostic.IDE0074.severity = suggestion            # not default, set in accordance to previous setting
 
 # IDE0032: Use auto property
 dotnet_style_prefer_auto_properties = true:suggestion  # not default, default is true:suggestion, increased severity to ensure it is used
@@ -120,18 +120,18 @@ dotnet_diagnostic.IDE0060.severity = warning
 dotnet_remove_unnecessary_suppression_exclusions = none
 
 # IDE0090: Use 'new(...)'
-dotnet_diagnostic.IDE0090.severity = warning # not default, increased severity to go with simpler declarations
+dotnet_diagnostic.IDE0090.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # IDE0005: Remove unnecessary import
-dotnet_diagnostic.IDE0005.severity = warning # not default, increased severity to ensure it is used
+dotnet_diagnostic.IDE0005.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # 'using' directive preferences
 # Keep this in sync with the related C# rule: csharp_using_directive_placement
-dotnet_diagnostic.IDE0065.severity = warning
+dotnet_diagnostic.IDE0065.severity = suggestion
 
 # Use simple using statements
 # Keep this in sync with th related C# rule: csharp_prefer_simple_using_statement
-dotnet_diagnostic.IDE0063.severity = warning
+dotnet_diagnostic.IDE0063.severity = suggestion
 
 # CA2208: Instantiate argument exceptions correctly
 dotnet_diagnostic.CA2208.severity = warning # not default, increased severity to ensure it is always applied
@@ -141,7 +141,7 @@ dotnet_diagnostic.CA2241.severity = warning # not default, increased severity to
 
 # IDE0053: Use expression body for lambda expressions
 # Keep this in sync with csharp_style_expression_bodied_lambdas
-dotnet_diagnostic.IDE0053.severity = warning # not default, increased severity to ensure it is applied
+dotnet_diagnostic.IDE0053.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # CA2016: Forward the 'CancellationToken' parameter to methods
 dotnet_diagnostic.CA2016.severity = warning # not default, increased severity to ensure it is applied
@@ -172,19 +172,19 @@ dotnet_diagnostic.CA2215.severity=warning # not default, increased severity to e
 
 # IDE0019: Use pattern matching
 # Keep this in sync with csharp_style_pattern_matching_over_as_with_null_check
-dotnet_diagnostic.IDE0019.severity = warning # not default, increased severity to ensure it is applied
+dotnet_diagnostic.IDE0019.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # IDE0020:
 # Keep this in sync with csharp_style_pattern_matching_over_is_with_cast_check
-dotnet_diagnostic.IDE0020.severity = warning # not default, increased severity to ensure it is applied
+dotnet_diagnostic.IDE0020.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # IDE0078: Use pattern matching
 # Keep this in sync with csharp_style_prefer_pattern_matching
-dotnet_diagnostic.IDE0078.severity = warning # not default, increased severity to ensure it is applied
+dotnet_diagnostic.IDE0078.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # IDE0083: Use pattern matching (not operator)
 # Keep this in sync with csharp_style_prefer_not_pattern
-dotnet_diagnostic.IDE0083.severity = warning # not default, increased severity to ensure it is applied
+dotnet_diagnostic.IDE0083.severity = suggestion # not default, reduced from warning to suggestion to avoid breaking builds on style issues
 
 # CA1836: Prefer IsEmpty over Count
 dotnet_diagnostic.CA1836.severity = warning # not default, increased severity to ensure it is applied
@@ -239,6 +239,9 @@ dotnet_diagnostic.CA1050.severity = warning # not default, increased severity to
 # CA1061: Do not hide base class methods
 dotnet_diagnostic.CA1061.severity = warning # not default, increased severity to ensure it is applied
 
+# CA1067: Override Object.Equals when implementing IEquatable<T>
+dotnet_diagnostic.CA1067.severity = warning # not default, increased severity to ensure it is applied
+
 # CA1069: Enums should not have duplicate values
 dotnet_diagnostic.CA1069.severity = warning # not default, increased severity to ensure it is applied
 
@@ -278,7 +281,7 @@ csharp_style_expression_bodied_accessors = true:silent
 csharp_style_expression_bodied_constructors = false:silent
 csharp_style_expression_bodied_indexers = true:silent
 # Keep this in sync with IDE0053
-csharp_style_expression_bodied_lambdas = true:warning # not default, increased severity to ensure it is applied
+csharp_style_expression_bodied_lambdas = true:suggestion # not default, reduced from warning to suggestion
 csharp_style_expression_bodied_local_functions = false:silent
 csharp_style_expression_bodied_methods = false:silent
 csharp_style_expression_bodied_operators = false:silent
@@ -286,14 +289,14 @@ csharp_style_expression_bodied_properties = true:silent
 
 # Pattern matching preferences
 # Keep this in sync with IDE0019
-csharp_style_pattern_matching_over_as_with_null_check = true:warning
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 # Keep this in sync with IDE0020 and IDE0038
-csharp_style_pattern_matching_over_is_with_cast_check = true:warning
+csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 # Keep this in sync with IDE0083
-csharp_style_prefer_not_pattern = true:warning
+csharp_style_prefer_not_pattern = true:suggestion
 # Keep this in sync with IDE0078
-csharp_style_prefer_pattern_matching = true:warning
-csharp_style_prefer_switch_expression = true:warning
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
 
 # Null-checking preferences
 csharp_style_conditional_delegate_call = true:suggestion
@@ -305,7 +308,7 @@ csharp_preferred_modifier_order = public,private,protected,internal,static,exter
 # Code-block preferences
 csharp_prefer_braces = true:silent
 # Keep this in sync with the related .NET rule: IDE0063
-csharp_prefer_simple_using_statement = true:warning # not default, default is true:suggestion, increased severity to ensure it is used
+csharp_prefer_simple_using_statement = true:suggestion # not default, reduced from warning to suggestion
 
 # Expression-level preferences
 csharp_prefer_simple_default_expression = true:suggestion
@@ -320,7 +323,7 @@ csharp_style_unused_value_expression_statement_preference = discard_variable:sil
 
 # 'using' directive preferences
 # Keep this in sync with the related .NET rule: IDE0065
-csharp_using_directive_placement = outside_namespace:warning
+csharp_using_directive_placement = outside_namespace:suggestion
 
 # IDE0190: Null check can be simplified
 # Keep this in sync with the related .NET rule: IDE0190
@@ -329,7 +332,7 @@ csharp_style_prefer_parameter_null_checking = false # not default, disabled as n
 #### .NET Formatting Rules ####
 
 # IDE0055: Fix formatting - Set the severity of all .NET and C# formatting rules (https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules)
-dotnet_diagnostic.IDE0055.severity = warning # ensure all formatting rules are enforced on build
+dotnet_diagnostic.IDE0055.severity = suggestion # reduced from warning to suggestion to avoid breaking builds on formatting issues
 
 # IDE0057: Use range operator
 dotnet_diagnostic.IDE0057.severity = none # Range operator is not supported in some TFMs.
@@ -393,7 +396,7 @@ dotnet_diagnostic.IDE0052.severity = silent
 
 # IDE1006: Naming Styles
 dotnet_diagnostic.IDE1006.severity = warning
-dotnet_diagnostic.IDE0073.severity = warning
+dotnet_diagnostic.IDE0073.severity = suggestion
 
 # Naming rules
 

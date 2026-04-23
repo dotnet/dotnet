@@ -18,6 +18,8 @@ using Moq;
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 
 [TestClass]
+// Because runsettings tests use the instance of RunSettingsManager which is static.
+[DoNotParallelize]
 public class TestAdapterLoadingStrategyArgumentProcessorTests
 {
     private readonly RunSettings _currentActiveSetting;
@@ -73,19 +75,8 @@ public class TestAdapterLoadingStrategyArgumentProcessorTests
 
         var message = "The path 'd:\\users' specified in the 'TestAdapterPath' is invalid. Error: The custom test adapter search path provided was not found, provide a valid path and try again.";
 
-        var isExceptionThrown = false;
-        try
-        {
-            executor.Initialize(nameof(TestAdapterLoadingStrategy.Default));
-        }
-        catch (Exception ex)
-        {
-            isExceptionThrown = true;
-            Assert.IsTrue(ex is CommandLineException);
-            Assert.AreEqual(message, ex.Message);
-        }
-
-        Assert.IsTrue(isExceptionThrown);
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(nameof(TestAdapterLoadingStrategy.Default)));
+        Assert.AreEqual(message, ex.Message);
     }
 
 
@@ -104,19 +95,7 @@ public class TestAdapterLoadingStrategyArgumentProcessorTests
 
         var message = $"The path '{folder}' specified in the 'TestAdapterPath' is invalid. Error: The custom test adapter search path provided was not found, provide a valid path and try again.";
 
-        var isExceptionThrown = false;
-
-        try
-        {
-            executor.Initialize(nameof(TestAdapterLoadingStrategy.Default));
-        }
-        catch (Exception ex)
-        {
-            isExceptionThrown = true;
-            Assert.IsTrue(ex is CommandLineException);
-            Assert.AreEqual(message, ex.Message);
-        }
-
-        Assert.IsTrue(isExceptionThrown);
+        var ex2 = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(nameof(TestAdapterLoadingStrategy.Default)));
+        Assert.AreEqual(message, ex2.Message);
     }
 }

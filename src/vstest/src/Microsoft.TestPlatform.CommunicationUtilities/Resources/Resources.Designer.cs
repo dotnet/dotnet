@@ -10,7 +10,6 @@
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources {
     using System;
-    using System.Reflection;
     
     
     /// <summary>
@@ -20,7 +19,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -40,7 +39,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources", typeof(Resources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -112,6 +111,33 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources {
         public static string ConnectionTimeoutErrorMessage {
             get {
                 return ResourceManager.GetString("ConnectionTimeoutErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting..
+        /// </summary>
+        public static string ConnectionTimeoutProcessDidNotStartErrorMessage {
+            get {
+                return ResourceManager.GetString("ConnectionTimeoutProcessDidNotStartErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}.
+        /// </summary>
+        public static string ConnectionTimeoutProcessExitedErrorMessage {
+            get {
+                return ResourceManager.GetString("ConnectionTimeoutProcessExitedErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout..
+        /// </summary>
+        public static string ConnectionTimeoutWithDetailsErrorMessage {
+            get {
+                return ResourceManager.GetString("ConnectionTimeoutWithDetailsErrorMessage", resourceCulture);
             }
         }
         

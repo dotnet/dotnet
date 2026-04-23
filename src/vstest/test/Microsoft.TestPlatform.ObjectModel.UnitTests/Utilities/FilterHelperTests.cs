@@ -17,8 +17,8 @@ public class FilterHelpersTests
     [TestMethod]
     public void EscapeUnescapeNullThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => FilterHelper.Escape(null!));
-        Assert.ThrowsException<ArgumentNullException>(() => FilterHelper.Unescape(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => FilterHelper.Escape(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => FilterHelper.Unescape(null!));
     }
 
     [TestMethod]
@@ -70,13 +70,13 @@ public class FilterHelpersTests
     public void UnescapeForInvalidStringThrowsArgumentException1()
     {
         var invalidString = @"TestClass\$""a %4 b""%2.TestMethod";
-        Assert.ThrowsException<ArgumentException>(() => FilterHelper.Unescape(invalidString), string.Format(CultureInfo.CurrentCulture, Resources.TestCaseFilterEscapeException, invalidString));
+        Assert.ThrowsExactly<ArgumentException>(() => FilterHelper.Unescape(invalidString), string.Format(CultureInfo.CurrentCulture, Resources.TestCaseFilterEscapeException, invalidString));
     }
 
     [TestMethod]
     public void UnescapeForInvalidStringThrowsArgumentException2()
     {
         var invalidString = @"TestClass\";
-        Assert.ThrowsException<ArgumentException>(() => FilterHelper.Unescape(invalidString), string.Format(CultureInfo.CurrentCulture, Resources.TestCaseFilterEscapeException, invalidString));
+        Assert.ThrowsExactly<ArgumentException>(() => FilterHelper.Unescape(invalidString), string.Format(CultureInfo.CurrentCulture, Resources.TestCaseFilterEscapeException, invalidString));
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -29,9 +29,9 @@ public class TestSourcesUtilityTests
 
         var sources = TestSourcesUtility.GetSources(adapterSourceMap)!;
         Assert.AreEqual(5, sources.Count());
-        Assert.IsTrue(sources.Contains("source1.dll"));
-        Assert.IsTrue(sources.Contains("source2.dll"));
-        Assert.IsTrue(sources.Contains("source3.dll"));
+        Assert.Contains("source1.dll", sources);
+        Assert.Contains("source2.dll", sources);
+        Assert.Contains("source3.dll", sources);
     }
 
     [TestMethod]
@@ -44,8 +44,8 @@ public class TestSourcesUtilityTests
 
         var sources = TestSourcesUtility.GetSources(tests);
         Assert.AreEqual(2, sources.Count());
-        Assert.IsTrue(sources.Contains("source1.dll"));
-        Assert.IsTrue(sources.Contains("source2.dll"));
+        Assert.Contains("source1.dll", sources);
+        Assert.Contains("source2.dll", sources);
     }
 
     [TestMethod]

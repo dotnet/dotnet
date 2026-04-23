@@ -41,7 +41,7 @@ public class EqtTraceTests
     [TestMethod]
     public void CheckInitializeLogFileTest()
     {
-        Assert.AreEqual(s_logFile, EqtTrace.LogFile, "Expected log file to be {0}", s_logFile);
+        Assert.AreEqual(s_logFile, EqtTrace.LogFile, $"Expected log file to be {s_logFile}");
     }
 
     [TestMethod]
@@ -52,7 +52,7 @@ public class EqtTraceTests
 #else
         EqtTrace.TraceLevel = PlatformTraceLevel.Verbose;
 #endif
-        Assert.IsTrue(EqtTrace.IsVerboseEnabled, "Expected trace state to be verbose actual state {0}", EqtTrace.IsVerboseEnabled);
+        Assert.IsTrue(EqtTrace.IsVerboseEnabled, $"Expected trace state to be verbose actual state {EqtTrace.IsVerboseEnabled}");
     }
 
     [TestMethod]
@@ -63,7 +63,7 @@ public class EqtTraceTests
 #else
         EqtTrace.TraceLevel = PlatformTraceLevel.Error;
 #endif
-        Assert.IsTrue(EqtTrace.IsErrorEnabled, "Expected trace state to be error actual state {0}", EqtTrace.IsErrorEnabled);
+        Assert.IsTrue(EqtTrace.IsErrorEnabled, $"Expected trace state to be error actual state {EqtTrace.IsErrorEnabled}");
     }
 
     [TestMethod]
@@ -74,7 +74,7 @@ public class EqtTraceTests
 #else
         EqtTrace.TraceLevel = PlatformTraceLevel.Info;
 #endif
-        Assert.IsTrue(EqtTrace.IsInfoEnabled, "Expected trace state to be info actual state {0}", EqtTrace.IsInfoEnabled);
+        Assert.IsTrue(EqtTrace.IsInfoEnabled, $"Expected trace state to be info actual state {EqtTrace.IsInfoEnabled}");
     }
 
     [TestMethod]
@@ -85,7 +85,7 @@ public class EqtTraceTests
 #else
         EqtTrace.TraceLevel = PlatformTraceLevel.Warning;
 #endif
-        Assert.IsTrue(EqtTrace.IsWarningEnabled, "Expected trace state to be warning actual state {0}", EqtTrace.IsWarningEnabled);
+        Assert.IsTrue(EqtTrace.IsWarningEnabled, $"Expected trace state to be warning actual state {EqtTrace.IsWarningEnabled}");
     }
 
     [TestMethod]
@@ -109,7 +109,7 @@ public class EqtTraceTests
         EqtTrace.TraceLevel = PlatformTraceLevel.Warning;
 #endif
         EqtTrace.Warning("Dummy Warning Message");
-        Assert.IsTrue(ReadLogFile().Contains("Dummy Warning Message"), "Expected Warning message");
+        Assert.Contains("Dummy Warning Message", ReadLogFile(), "Expected Warning message");
     }
 
     [TestMethod]
@@ -121,7 +121,7 @@ public class EqtTraceTests
         EqtTrace.TraceLevel = PlatformTraceLevel.Verbose;
 #endif
         EqtTrace.Verbose("Dummy Verbose Message");
-        Assert.IsTrue(ReadLogFile().Contains("Dummy Verbose Message"), "Expected Verbose message");
+        Assert.Contains("Dummy Verbose Message", ReadLogFile(), "Expected Verbose message");
     }
 
     [TestMethod]
@@ -133,7 +133,7 @@ public class EqtTraceTests
         EqtTrace.TraceLevel = PlatformTraceLevel.Info;
 #endif
         EqtTrace.Info("Dummy Info Message");
-        Assert.IsTrue(ReadLogFile().Contains("Dummy Info Message"), "Expected Info message");
+        Assert.Contains("Dummy Info Message", ReadLogFile(), "Expected Info message");
     }
 
     [TestMethod]
@@ -148,8 +148,8 @@ public class EqtTraceTests
         EqtTrace.Verbose("Unexpected Dummy Verbose Message");
 
         var logFileContent = ReadLogFile();
-        Assert.IsFalse(logFileContent.Contains("Unexpected Dummy Verbose Message"), "Verbose message not expected");
-        Assert.IsTrue(logFileContent.Contains("Dummy Info Message"), "Expected Info message");
+        Assert.DoesNotContain("Unexpected Dummy Verbose Message", logFileContent, "Verbose message not expected");
+        Assert.Contains("Dummy Info Message", logFileContent, "Expected Info message");
     }
 
     [TestMethod]
@@ -162,7 +162,7 @@ public class EqtTraceTests
         EqtTrace.TraceLevel = PlatformTraceLevel.Info;
 #endif
         EqtTrace.Info("Dummy Info Message: TraceShouldNotWriteIfDoNotInitializationIsSetToTrue");
-        Assert.IsFalse(ReadLogFile().Contains("Dummy Info Message: TraceShouldNotWriteIfDoNotInitializationIsSetToTrue"), "Did not expect Dummy Info message");
+        Assert.DoesNotContain("Dummy Info Message: TraceShouldNotWriteIfDoNotInitializationIsSetToTrue", ReadLogFile(), "Did not expect Dummy Info message");
     }
 
     private static string ReadLogFile()

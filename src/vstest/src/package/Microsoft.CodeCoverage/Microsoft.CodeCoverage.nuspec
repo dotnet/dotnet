@@ -2,6 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <dependencies>
       <group targetFramework="net462"></group>
@@ -11,6 +12,7 @@
 
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <file src="net462\ThirdPartyNoticesCodeCoverage.txt" target="ThirdPartyNotices.txt" />
     <file src="net462\ThirdPartyNoticesCodeCoverage.txt" target="build\netstandard2.0\ThirdPartyNotices.txt" />

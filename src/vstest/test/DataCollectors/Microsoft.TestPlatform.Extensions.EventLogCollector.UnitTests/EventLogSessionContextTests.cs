@@ -29,7 +29,7 @@ public class EventLogSessionContextTests
     public void CreateEventLogContainerStartIndexMapShouldCreateStartIndexMap()
     {
         _eventLogSessionContext = new EventLogSessionContext(_eventLogContainersMap);
-        Assert.IsTrue(_eventLogSessionContext.EventLogContainerStartIndexMap["LogName"] == 2);
+        Assert.AreEqual(2, _eventLogSessionContext.EventLogContainerStartIndexMap["LogName"]);
     }
 
     [TestMethod]
@@ -37,7 +37,7 @@ public class EventLogSessionContextTests
     {
         _eventLogSessionContext = new EventLogSessionContext(_eventLogContainersMap);
         _eventLogSessionContext.CreateEventLogContainerEndIndexMap();
-        Assert.IsTrue(_eventLogSessionContext.EventLogContainerEndIndexMap["LogName"] == 1);
+        Assert.AreEqual(1, _eventLogSessionContext.EventLogContainerEndIndexMap["LogName"]);
     }
 
     [TestMethod]
@@ -47,8 +47,8 @@ public class EventLogSessionContextTests
         _eventLogSessionContext.CreateEventLogContainerStartIndexMap();
         _eventLogSessionContext.CreateEventLogContainerEndIndexMap();
 
-        Assert.IsTrue(_eventLogSessionContext.EventLogContainerStartIndexMap.Count == 0);
-        Assert.IsTrue(_eventLogSessionContext.EventLogContainerEndIndexMap.Count == 0);
+        Assert.IsEmpty(_eventLogSessionContext.EventLogContainerStartIndexMap);
+        Assert.IsEmpty(_eventLogSessionContext.EventLogContainerEndIndexMap);
     }
 
     [TestMethod]
@@ -62,8 +62,8 @@ public class EventLogSessionContextTests
         _eventLogSessionContext.CreateEventLogContainerStartIndexMap();
         _eventLogSessionContext.CreateEventLogContainerEndIndexMap();
 
-        Assert.IsTrue(_eventLogSessionContext.EventLogContainerStartIndexMap["DummyEventLog"] == 0);
-        Assert.IsTrue(_eventLogSessionContext.EventLogContainerEndIndexMap["DummyEventLog"] == -1);
+        Assert.AreEqual(0, _eventLogSessionContext.EventLogContainerStartIndexMap["DummyEventLog"]);
+        Assert.AreEqual(-1, _eventLogSessionContext.EventLogContainerEndIndexMap["DummyEventLog"]);
     }
 }
 

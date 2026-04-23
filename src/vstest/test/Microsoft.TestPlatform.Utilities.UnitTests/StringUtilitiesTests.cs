@@ -29,8 +29,8 @@ public class StringUtilitiesTests
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
 
-        Assert.IsTrue(enumerable.Length == 1);
-        Assert.IsTrue(enumerable.First().Equals(data));
+        Assert.HasCount(1, enumerable);
+        Assert.AreEqual(data, enumerable.First());
     }
 
     [TestMethod]
@@ -40,7 +40,7 @@ public class StringUtilitiesTests
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
 
-        Assert.IsTrue(enumerable.Length == 2);
+        Assert.HasCount(2, enumerable);
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class StringUtilitiesTests
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
 
-        Assert.IsTrue(enumerable.Length == 4);
+        Assert.HasCount(4, enumerable);
     }
 
     [TestMethod]
@@ -60,8 +60,8 @@ public class StringUtilitiesTests
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
 
-        Assert.IsTrue(enumerable.Length == 1);
-        Assert.IsTrue(enumerable.First().Equals("foo,bar"));
+        Assert.HasCount(1, enumerable);
+        Assert.AreEqual("foo,bar", enumerable.First());
     }
 
     [TestMethod]
@@ -70,8 +70,8 @@ public class StringUtilitiesTests
         var data = "foo\\,,bar";
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
-        Assert.IsTrue(enumerable.Length == 2);
-        Assert.IsTrue(enumerable.First().Equals("foo,"));
+        Assert.HasCount(2, enumerable);
+        Assert.AreEqual("foo,", enumerable.First());
     }
 
     [TestMethod]
@@ -81,7 +81,7 @@ public class StringUtilitiesTests
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
 
-        Assert.IsTrue(enumerable.Length == 2);
+        Assert.HasCount(2, enumerable);
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public class StringUtilitiesTests
         var argsList = data.Tokenize(SplitChar, EscapeChar);
         var enumerable = argsList as string[] ?? argsList.ToArray();
 
-        Assert.IsTrue(enumerable.Length == 1);
+        Assert.HasCount(1, enumerable);
     }
 
     private const char SplitChar = ',';

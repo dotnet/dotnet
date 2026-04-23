@@ -108,20 +108,8 @@ public class ResultsDirectoryArgumentProcessorTests
 
     private void InitializeExceptionTestTemplate(string? folder, string message)
     {
-        var isExceptionThrown = false;
-
-        try
-        {
-            _executor.Initialize(folder);
-        }
-        catch (Exception ex)
-        {
-            isExceptionThrown = true;
-            Assert.IsTrue(ex is CommandLineException, "ex is CommandLineException");
-            StringAssert.StartsWith(ex.Message, message);
-        }
-
-        Assert.IsTrue(isExceptionThrown, "isExceptionThrown");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize(folder));
+        Assert.StartsWith(message, ex.Message);
     }
 
     [TestMethod]

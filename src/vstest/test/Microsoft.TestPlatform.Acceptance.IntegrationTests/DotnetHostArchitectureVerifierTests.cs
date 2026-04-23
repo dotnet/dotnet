@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Newtonsoft.Json.Linq;
 
+using NuGet.Versioning;
+
 namespace Microsoft.TestPlatform.AcceptanceTests;
 
 [TestClass]
@@ -23,7 +25,7 @@ public class DotnetHostArchitectureVerifierTests : IntegrationTestBase
     // [DataRow("X86")]
     public void VerifyHostArchitecture(string architecture)
     {
-        _testEnvironment.RunnerFramework = "net8.0";
+        _testEnvironment.RunnerFramework = CoreRunnerFramework;
         string dotnetPath = GetDownloadedDotnetMuxerFromTools(architecture);
         var vstestConsolePath = GetDotnetRunnerPath();
         var dotnetRunnerPath = TempDirectory.CreateDirectory("dotnetrunner");
@@ -38,7 +40,6 @@ public class DotnetHostArchitectureVerifierTests : IntegrationTestBase
 
         var environmentVariables = new Dictionary<string, string?>
         {
-            ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             ["ExpectedArchitecture"] = architecture
         };
 
@@ -67,5 +68,12 @@ public class UnitTest1
     }
 
     private static string GetLatestSdkVersion(string dotnetPath)
-        => Path.GetFileName(Directory.GetDirectories(Path.Combine(Path.GetDirectoryName(dotnetPath)!, @"shared/Microsoft.NETCore.App")).OrderByDescending(x => x).First());
+    {
+        var folders = Directory.GetDirectories(Path.Combine(Path.GetDirectoryName(dotnetPath)!, @"shared/Microsoft.NETCore.App")).Select(f => new
+        {
+            FullName = f,
+            SemanticVersion = SemanticVersion.Parse(new DirectoryInfo(f).Name)
+        }).OrderByDescending(x => x.SemanticVersion).ToList();
+        return Path.GetFileName(folders.First().FullName);
+    }
 }

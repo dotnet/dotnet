@@ -34,6 +34,8 @@ public class TestRunRequestTests
 
     private readonly Mock<IDataSerializer> _mockDataSerializer;
 
+    public TestContext TestContext { get; set; }
+
     public TestRunRequestTests()
     {
         _testRunCriteria = new TestRunCriteria(new List<string> { "foo" }, 1);
@@ -58,14 +60,14 @@ public class TestRunRequestTests
     {
         _testRunRequest.Dispose();
 
-        Assert.ThrowsException<ObjectDisposedException>(() => _testRunRequest.ExecuteAsync());
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _testRunRequest.ExecuteAsync());
     }
 
     [TestMethod]
     public void ExecuteAsycIfStateIsNotPendingThrowsInvalidOperationException()
     {
         _testRunRequest.ExecuteAsync();
-        Assert.ThrowsException<InvalidOperationException>(() => _testRunRequest.ExecuteAsync());
+        Assert.ThrowsExactly<InvalidOperationException>(() => _testRunRequest.ExecuteAsync());
     }
 
     [TestMethod]
@@ -81,16 +83,10 @@ public class TestRunRequestTests
     public void ExecuteAsyncIfStartTestRunThrowsExceptionSetsStateToPendingAndThrowsThatException()
     {
         _executionManager.Setup(em => em.StartTestRun(_testRunCriteria, _testRunRequest)).Throws(new Exception("DummyException"));
-        try
-        {
-            _testRunRequest.ExecuteAsync();
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is not null);
-            Assert.AreEqual("DummyException", ex.Message);
-            Assert.AreEqual(TestRunState.Pending, _testRunRequest.State);
-        }
+        var ex = Assert.ThrowsExactly<Exception>(() => _testRunRequest.ExecuteAsync());
+        Assert.IsNotNull(ex);
+        Assert.AreEqual("DummyException", ex.Message);
+        Assert.AreEqual(TestRunState.Pending, _testRunRequest.State);
     }
 
     [TestMethod]
@@ -122,13 +118,13 @@ public class TestRunRequestTests
     public void WaitForCompletionIfTestRunRequestDisposedShouldThrowObjectDisposedException()
     {
         _testRunRequest.Dispose();
-        Assert.ThrowsException<ObjectDisposedException>(() => _testRunRequest.WaitForCompletion());
+        Assert.ThrowsExactly<ObjectDisposedException>(() => _testRunRequest.WaitForCompletion());
     }
 
     [TestMethod]
     public void WaitForCompletionIfTestRunStatePendingShouldThrowInvalidOperationException()
     {
-        Assert.ThrowsException<InvalidOperationException>(() => _testRunRequest.WaitForCompletion());
+        Assert.ThrowsExactly<InvalidOperationException>(() => _testRunRequest.WaitForCompletion());
     }
 
     [TestMethod]
@@ -585,7 +581,7 @@ public class TestRunRequestTests
 
         _testRunRequest.HandleTestRunComplete(new TestRunCompleteEventArgs(new TestRunStatistics(1, null), false, false, null, null, null, TimeSpan.FromSeconds(0)), null, null, null);
 
-        Assert.AreEqual(2, events.Count);
+        Assert.HasCount(2, events);
         Assert.AreEqual("close", events[0]);
         Assert.AreEqual("complete", events[1]);
     }
@@ -601,7 +597,9 @@ public class TestRunRequestTests
         var testProcessStartInfo = new TestProcessStartInfo();
         _testRunRequest.LaunchProcessWithDebuggerAttached(testProcessStartInfo);
 
+#pragma warning disable MSTEST0049 // Moq Verify pattern - not an actual method invocation
         mockCustomLauncher.Verify(ml => ml.LaunchTestHost(It.IsAny<TestProcessStartInfo>()), Times.Never);
+#pragma warning restore MSTEST0049
     }
 
     [TestMethod]
@@ -617,7 +615,9 @@ public class TestRunRequestTests
         var testProcessStartInfo = new TestProcessStartInfo();
         _testRunRequest.LaunchProcessWithDebuggerAttached(testProcessStartInfo);
 
+#pragma warning disable MSTEST0049 // Moq Verify pattern - not an actual method invocation
         mockCustomLauncher.Verify(ml => ml.LaunchTestHost(It.IsAny<TestProcessStartInfo>()), Times.Never);
+#pragma warning restore MSTEST0049
     }
 
     [TestMethod]
@@ -634,7 +634,9 @@ public class TestRunRequestTests
         mockCustomLauncher.Setup(ml => ml.IsDebug).Returns(true);
         _testRunRequest.LaunchProcessWithDebuggerAttached(testProcessStartInfo);
 
+#pragma warning disable MSTEST0049 // Moq Verify pattern - not an actual method invocation
         mockCustomLauncher.Verify(ml => ml.LaunchTestHost(testProcessStartInfo), Times.Once);
+#pragma warning restore MSTEST0049
     }
 
     /// <summary>

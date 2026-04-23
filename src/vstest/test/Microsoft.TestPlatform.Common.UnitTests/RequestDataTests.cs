@@ -34,19 +34,17 @@ public class RequestDataTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void RequestDataShouldThrowArgumentNullExpectionOnNullMetricsCollection()
     {
         var requestData = new RequestData();
-        requestData.MetricsCollection = null!;
+        Assert.ThrowsExactly<ArgumentNullException>(() => requestData.MetricsCollection = null!);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void RequestDataShouldThrowArgumentNullExpectionOnNullProtocolConfig()
     {
         var requestData = new RequestData();
-        requestData.ProtocolConfig = null;
+        Assert.ThrowsExactly<ArgumentNullException>(() => requestData.ProtocolConfig = null);
     }
 
     [TestMethod]

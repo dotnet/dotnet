@@ -23,7 +23,7 @@ public class RunSettingsUtilitiesTests
     [TestMethod]
     public void CreateRunSettingsShouldThrowExceptionWhenInvalidXmlStringIsPassed()
     {
-        Assert.ThrowsException<SettingsException>(() => RunSettingsUtilities.CreateAndInitializeRunSettings("abc"));
+        Assert.ThrowsExactly<SettingsException>(() => RunSettingsUtilities.CreateAndInitializeRunSettings("abc"));
     }
 
     [TestMethod]

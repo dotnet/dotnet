@@ -18,17 +18,17 @@ namespace CodeCoverageTest
         [TestMethod]
         public void TestAbs()
         {
-            Assert.AreEqual(_logic.Abs(0), 0);
-            Assert.AreEqual(_logic.Abs(-5), 5);
-            Assert.AreEqual(_logic.Abs(7), 7);
+            Assert.AreEqual(0, _logic.Abs(0));
+            Assert.AreEqual(5, _logic.Abs(-5));
+            Assert.AreEqual(7, _logic.Abs(7));
         }
 
         [TestMethod]
         public void TestSign()
         {
-            Assert.AreEqual(_logic.Sign(0), 0);
-            Assert.AreEqual(_logic.Sign(-5), -1);
-            Assert.AreEqual(_logic.Sign(7), 1);
+            Assert.AreEqual(0, _logic.Sign(0));
+            Assert.AreEqual(-1, _logic.Sign(-5));
+            Assert.AreEqual(1, _logic.Sign(7));
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace CodeCoverageTest
         public void __CxxPureMSILEntry_Test()
 #pragma warning restore IDE1006 // Naming Styles
         {
-            Assert.AreEqual(_logic.Abs(0), 0);
+            Assert.AreEqual(0, _logic.Abs(0));
         }
     }
 }
