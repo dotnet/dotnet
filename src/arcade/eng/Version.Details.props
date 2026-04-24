@@ -6,11 +6,11 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26210.2</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26210.2</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26211.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26211.1</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet-arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26202.1</MicrosoftDotNetDarcLibPackageVersion>
-    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26202.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26214.2</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26214.2</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
     <!-- dotnet-command-line-api dependencies -->
     <SystemCommandLinePackageVersion>2.0.3</SystemCommandLinePackageVersion>
     <!-- dotnet-deployment-tools dependencies -->
@@ -18,7 +18,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-diagnostics dependencies -->
     <MicrosoftSymbolManifestGeneratorPackageVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorPackageVersion>
     <!-- dotnet-dnceng dependencies -->
-    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.26201.2</MicrosoftDncEngSecretManagerPackageVersion>
+    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.26216.2</MicrosoftDncEngSecretManagerPackageVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildPackageVersion>17.12.50</MicrosoftBuildPackageVersion>
     <MicrosoftBuildFrameworkPackageVersion>17.12.50</MicrosoftBuildFrameworkPackageVersion>
@@ -38,7 +38,7 @@ This file should be imported by eng/Versions.props
     <SystemCompositionPackageVersion>10.0.3</SystemCompositionPackageVersion>
     <SystemIOPackagingPackageVersion>10.0.3</SystemIOPackagingPackageVersion>
     <SystemSecurityCryptographyPkcsPackageVersion>10.0.3</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>10.0.3</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.6</SystemSecurityCryptographyXmlPackageVersion>
     <!-- dotnet-sdk dependencies -->
     <MicrosoftNETSdkWorkloadManifestReaderPackageVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderPackageVersion>
     <!-- dotnet-symreader-converter dependencies -->
@@ -51,13 +51,13 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-xharness dependencies -->
     <MicrosoftDotNetXHarnessCLIPackageVersion>11.0.0-prerelease.26181.1</MicrosoftDotNetXHarnessCLIPackageVersion>
     <!-- nuget-nuget.client dependencies -->
-    <NuGetCommandsPackageVersion>7.0.1</NuGetCommandsPackageVersion>
-    <NuGetCommonPackageVersion>7.0.1</NuGetCommonPackageVersion>
-    <NuGetConfigurationPackageVersion>7.0.1</NuGetConfigurationPackageVersion>
-    <NuGetFrameworksPackageVersion>7.0.1</NuGetFrameworksPackageVersion>
-    <NuGetPackagingPackageVersion>7.0.1</NuGetPackagingPackageVersion>
-    <NuGetProjectModelPackageVersion>7.0.1</NuGetProjectModelPackageVersion>
-    <NuGetVersioningPackageVersion>7.0.1</NuGetVersioningPackageVersion>
+    <NuGetCommandsPackageVersion>7.0.3</NuGetCommandsPackageVersion>
+    <NuGetCommonPackageVersion>7.0.3</NuGetCommonPackageVersion>
+    <NuGetConfigurationPackageVersion>7.0.3</NuGetConfigurationPackageVersion>
+    <NuGetFrameworksPackageVersion>7.0.3</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>7.0.3</NuGetPackagingPackageVersion>
+    <NuGetProjectModelPackageVersion>7.0.3</NuGetProjectModelPackageVersion>
+    <NuGetVersioningPackageVersion>7.0.3</NuGetVersioningPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
