@@ -80,28 +80,6 @@ secrets:
         location: EngKeyVault
       gitHubBotAccountName: dotnet-renovate-bot
 
-  roslyn-dn-bot-devdiv-build-r-release-r-code-r:
-    type: azure-devops-access-token
-    parameters:
-      description: Created for roslyn-tools pr-tagger
-      organizations: devdiv
-      scopes: build release code
-      domainAccountName: dn-bot
-      domainAccountSecret:
-        name: dn-bot-account-redmond
-        location: helixkv
-
-  roslyn-dn-bot-dnceng-build-r:
-    type: azure-devops-access-token
-    parameters:
-      description: Created for roslyn-tools pr-tagger
-      organizations: dnceng
-      scopes: build 
-      domainAccountName: dn-bot
-      domainAccountSecret:
-        name: dn-bot-account-redmond
-        location: helixkv
-
   # Fine-grained pat with "issue read and write" permission
   # Restricted to the following repositories:
   # - dotnet/roslyn
