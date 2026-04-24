@@ -57,7 +57,7 @@ on:
           project=$(jq -r --arg o "$org" '.azure_devops.organizations[] | select(.name==$o) | .project' "$CONFIG")
           for def_id in $(jq -r --arg o "$org" '.azure_devops.organizations[] | select(.name==$o) | .definitions[].id' "$CONFIG"); do
             def_name=$(jq -r --arg o "$org" --arg d "$def_id" '.azure_devops.organizations[] | select(.name==$o) | .definitions[] | select(.id==($d|tonumber)) | .name' "$CONFIG")
-            for branch in $(jq -r '.branches[:2][]' "$CONFIG"); do
+            for branch in $(jq -r '.branches[]' "$CONFIG"); do
               B24=$(curl -sf --retry 2 --max-time 30 \
                 "https://dev.azure.com/${org}/${project}/_apis/build/builds?definitions=${def_id}&branchName=refs/heads/${branch}&statusFilter=completed&minTime=${AGO_24H}&\$top=20&api-version=7.1" 2>/dev/null || echo '{"value":[]}')
               B14=$(curl -sf --retry 2 --max-time 30 \

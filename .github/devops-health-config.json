@@ -31,14 +31,5 @@
     "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json",
     "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json",
     "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json"
-  ],
-  "thresholds": {
-    "rolling_pass_rate_critical": 50,
-    "rolling_pass_rate_warning": 80,
-    "codeflow_pr_age_critical_hours": 72,
-    "codeflow_pr_count_warning": 5,
-    "open_operational_issues_warning": 10,
-    "build_duration_increase_warning_pct": 30,
-    "cost_increase_warning_pct": 25
-  }
+  ]
 }

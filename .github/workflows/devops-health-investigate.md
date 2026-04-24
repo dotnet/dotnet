@@ -146,7 +146,10 @@ Investigate the finding identified by the inputs provided to this workflow run. 
 
 First, parse the `context_json` input to extract pre-collected Azure DevOps data:
 ```bash
-echo '${{ inputs.context_json }}' | jq .
+cat > context.json <<'EOF'
+${{ inputs.context_json }}
+EOF
+jq . context.json
 ```
 
 This may contain:
@@ -209,7 +212,7 @@ add-comment:
     ## 🔍 Investigation: {finding_title}
 
     **Finding ID:** `{finding_id}`
-    **Severity:** {finding_severity}
+    **Severity:** {severity_emoji} {severity}
     **Correlation:** {correlation_id}
     **Executive Summary:** {one-sentence summary of the root cause and recommended action}
 

@@ -67,18 +67,50 @@ jobs:
             });
             const issueBody = issueData.data.body || '';
 
-            // Fetch all comments (paginate)
-            const comments = await github.paginate(
-              github.rest.issues.listComments,
-              {
+            // Fetch only comments old enough to be eligible for deletion.
+            // Issue comments are returned oldest to newest, so once we reach
+            // comments newer than the earliest retention threshold, we can stop.
+            const earliestDeletionAgeDays = Math.min(
+              SUMMARY_MAX_AGE_DAYS,
+              INVESTIGATION_MAX_AGE_DAYS,
+              HARD_CUTOFF_DAYS
+            );
+            const earliestDeletionCutoff = now - (earliestDeletionAgeDays * msPerDay);
+            const comments = [];
+            let page = 1;
+            let reachedTooNewComments = false;
+
+            while (!reachedTooNewComments) {
+              const response = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issueNumber,
                 per_page: 100,
-              }
-            );
+                page,
+              });
 
-            core.info(`Total comments: ${comments.length}`);
+              const pageComments = response.data;
+              if (pageComments.length === 0) {
+                break;
+              }
+
+              for (const comment of pageComments) {
+                const commentCreatedAt = new Date(comment.created_at).getTime();
+                if (commentCreatedAt > earliestDeletionCutoff) {
+                  reachedTooNewComments = true;
+                  break;
+                }
+                comments.push(comment);
+              }
+
+              if (pageComments.length < 100) {
+                break;
+              }
+
+              page += 1;
+            }
+
+            core.info(`Comments old enough to review: ${comments.length}`);
 
             let deleted = 0;
             let skipped = 0;

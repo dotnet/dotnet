@@ -309,18 +309,12 @@ If `cache-memory` returns no previous state:
 ### 7.6 Azure DevOps Data
 
 The agent does NOT have direct access to Azure DevOps APIs. All Azure DevOps data
-is pre-collected by a standard GitHub Actions step (Phase 1) and written to the
-`health-data/` directory as JSON files. The agent reads these files with `cat` and
-`jq`.
+is pre-collected by a standard GitHub Actions step (Phase 1) and passed into this
+workflow as a single JSON blob via `needs.pre_activation.outputs.health_summary`.
+The workflow saves that blob to `/tmp/health.json`, and the agent should read that
+file with `cat` and `jq`.
 
-Key files:
-- `health-data/manifest.json` — collection metadata (timestamp, error count)
-- `health-data/builds-24h-{org}-{def_id}-{branch}.json` — recent builds
-- `health-data/builds-14d-{org}-{def_id}-{branch}.json` — 14-day build history
-- `health-data/timeline-{org}-{build_id}.json` — failed build step details
-- `health-data/codeflow-prs.json` — open codeflow PRs
-- `health-data/pr-status-{sha}.json` — PR CI status
-- `health-data/operational-issues.json` — open operational issues
-- `health-data/nuget-feed-status.json` — NuGet feed reachability
-- `health-data/source-manifest.json` — repo sync timestamps
-- `health-data/gha-failures.json` — GitHub Actions failures
+The `/tmp/health.json` payload contains the collected health summary data needed
+for analysis, including collection metadata, recent and historical build results,
+timeline failure details, codeflow PR information, PR CI status, operational
+issues, feed reachability, source manifest timestamps, and GitHub Actions failures.
