@@ -51,6 +51,9 @@ public class RoundTripXmlSlnx
     [Fact]
     public Task VersionMinAsync() => TestRoundTripSerializerAsync(SlnAssets.XmlSlnxVersionMin);
 
+    [Fact]
+    public Task ReportProject() => TestRoundTripSerializerAsync(SlnAssets.LoadResource("Report Project.slnx"));
+
     [Theory]
     [MemberData(nameof(XmlSlnxFiles))]
     public Task AllXmlSolutionAsync(ResourceName sampleFile)
@@ -60,12 +63,6 @@ public class RoundTripXmlSlnx
 
     private static async Task TestRoundTripSerializerAsync(ResourceStream slnStream)
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         // Open the Model from stream.
         SolutionModel model = await SolutionSerializers.SlnXml.OpenAsync(slnStream.Stream, CancellationToken.None);
         AssertNotTarnished(model);

@@ -20,7 +20,7 @@
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.10.2</MSBuildLocatorReleaseVersion>
     <NewtonsoftJsonReleaseVersion>13.0.4</NewtonsoftJsonReleaseVersion>
-    <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
+    <VsSolutionPersistenceReleaseVersion>1.0.52</VsSolutionPersistenceReleaseVersion>
     <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
     <OpenTelemetryDotNetReleaseVersion>1.15.1</OpenTelemetryDotNetReleaseVersion>
     <OpenTelemetryDotNetContribHttpReleaseVersion>1.15.0</OpenTelemetryDotNetContribHttpReleaseVersion>
