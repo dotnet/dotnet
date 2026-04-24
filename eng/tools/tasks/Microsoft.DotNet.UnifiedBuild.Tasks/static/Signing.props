@@ -22,7 +22,7 @@
     <ItemsToSign Include="@(SignableSourceBuiltAsset)" />
   </ItemGroup>
 
-  <Target Name="SetFileSignInfoForSourceAsset" BeforeTargets="Sign">
+  <Target Name="SetFileSignInfoForSourceAsset" BeforeTargets="Execute">
     <ItemGroup>
       <SourceBuiltSourceAsset Include="@(SignableSourceBuiltAsset)" Condition="$([System.String]::new('%(Filename)').StartsWith('$(SourceBuiltSourceArtifactName)'))"/>
     </ItemGroup>
