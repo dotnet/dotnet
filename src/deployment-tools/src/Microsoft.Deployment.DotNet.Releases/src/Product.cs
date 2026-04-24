@@ -182,9 +182,9 @@ namespace Microsoft.Deployment.DotNet.Releases
         {
             await Utils.GetLatestFileAsync(path, downloadLatest, ReleasesJson).ConfigureAwait(false);
 
-            using TextReader reader = File.OpenText(path);
+            using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
 
-            return await GetReleasesAsync(reader, this).ConfigureAwait(false);
+            return await GetReleasesAsync(stream, this).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -201,9 +201,8 @@ namespace Microsoft.Deployment.DotNet.Releases
             }
 
             using var stream = new MemoryStream(await Utils.s_httpClient.GetByteArrayAsync(address).ConfigureAwait(false));
-            using var reader = new StreamReader(stream);
 
-            return await GetReleasesAsync(reader, this).ConfigureAwait(false);
+            return await GetReleasesAsync(stream, this).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,19 +223,19 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <returns>A collection of releases. The releases are not linked to a specific <see cref="Product"/>.</returns>
         public static async Task<ReadOnlyCollection<ProductRelease>> GetReleasesAsync(string path)
         {
-            using TextReader reader = File.OpenText(path);
+            using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
 
-            return await GetReleasesAsync(reader, null).ConfigureAwait(false);
+            return await GetReleasesAsync(stream, null).ConfigureAwait(false);
         }
 
-        private static async Task<ReadOnlyCollection<ProductRelease>> GetReleasesAsync(TextReader reader, Product product)
+        private static async Task<ReadOnlyCollection<ProductRelease>> GetReleasesAsync(Stream stream, Product product)
         {
-            if (reader == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(nameof(reader));
+                throw new ArgumentNullException(nameof(stream));
             }
 
-            using var releasesDocument = JsonDocument.Parse(await reader.ReadToEndAsync().ConfigureAwait(false));
+            using var releasesDocument = await JsonDocument.ParseAsync(stream).ConfigureAwait(false);
             JsonElement root = releasesDocument.RootElement;
             var releases = new List<ProductRelease>();
             var enumerator = root.GetProperty("releases").EnumerateArray();
