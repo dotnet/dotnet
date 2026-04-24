@@ -29,7 +29,7 @@
     <PreReleaseVersionLabel>servicing$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
     <FSMajorVersion>10</FSMajorVersion>
     <FSMinorVersion>0</FSMinorVersion>
-    <FSBuildVersion>300</FSBuildVersion>
+    <FSBuildVersion>301</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>    
     <!-- END - SPECIFIC OVERRIDES for 10.0.3xx -->
 
