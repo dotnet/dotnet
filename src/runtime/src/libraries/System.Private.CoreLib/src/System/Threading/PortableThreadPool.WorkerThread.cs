@@ -105,12 +105,14 @@ namespace System.Threading
 
                 while (true)
                 {
-                    bool isIdle = false;
-                    while (isIdle ?
-                        semaphore.WaitNoSpin(timeoutMs) :
-                        semaphore.Wait(timeoutMs, threadPoolInstance._separated.counts.NumExistingThreads))
+                    bool spuriousRequest = false;
+                    while (true)
                     {
-                        WorkerDoWork(threadPoolInstance, out isIdle);
+                        bool timeout = spuriousRequest ? semaphore.WaitNoSpin(timeoutMs) : semaphore.Wait(timeoutMs);
+                        if (timeout)
+                            break;
+
+                        WorkerDoWork(threadPoolInstance, out spuriousRequest);
                     }
 
                     // We've timed out waiting on the semaphore. Time to exit.
@@ -122,7 +124,7 @@ namespace System.Threading
                 }
             }
 
-            private static void WorkerDoWork(PortableThreadPool threadPoolInstance, out bool isIdle)
+            private static void WorkerDoWork(PortableThreadPool threadPoolInstance, out bool spuriousRequest)
             {
                 do
                 {
@@ -137,22 +139,22 @@ namespace System.Threading
                         switch (ThreadPoolWorkQueue.Dispatch())
                         {
                             case ThreadPoolWorkQueue.DispatchResult.Spurious:
-                                isIdle = true;
+                                spuriousRequest = true;
                                 break;
 
                             case ThreadPoolWorkQueue.DispatchResult.ShouldStop:
-                                isIdle = false;
+                                spuriousRequest = false;
                                 // We are above goal and this  worker is already removed in the counts.
                                 return;
 
                             default:
-                                isIdle = false;
+                                spuriousRequest = false;
                                 break;
                         }
                     }
                     else
                     {
-                        isIdle = true;
+                        spuriousRequest = true;
                     }
 
                     // We could not find more work in the queue and will try to stop being active.

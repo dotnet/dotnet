@@ -15,29 +15,6 @@ namespace System.Threading
     /// </summary>
     internal sealed partial class LowLevelLifoSemaphore
     {
-        // Spinning in the threadpool semaphore is not always useful and benefits vary greatly by scenario.
-        //
-        // Example1: An app periodically with rough time span T runs a task and waits for task's completion.
-        //           The app would benefit if a threadpool worker spins for longer than T as worker would not need to be woken up.
-        //
-        // Example2: The new workitems may be produced by non-pool threads and could only arrive if pool threads start blocking.
-        //           For this scenario, once pool is out of work, we benefit from promptly releasing cores.
-        //
-        // Intuitively, when a threadpool has a lot of active threads, they can absorb an occasional extra task, thus benefits from
-        // spinning could be less, while danger of starving non-threadpool threads is higher.
-        //
-        // Based on the above we use the following heuristic (certainly open to improvements):
-        // * We will limit spinning to roughly 256 spinwaits, each taking ~35-40ns. That should be under 10 usec total.
-        //    For reference the wakeup latency of a futex/event with threads queued up is in 4-20 usec range. (year 2026)
-        // * We will dial spin count according to the number of available cores. (i.e. proc_num - active_workers).
-        //                                               |    _ |
-        // * We will use a "hard sigmoid" function like: |   /  | that will map "available cores" to spin count.
-        //                                               | _/   |
-        //    - when threadpool threads use more than 3/4 cores, we do not spin
-        //    - when threadpool occupies 1/4 cores or less we spin to the max,
-        //    - in between we have a linear gain.
-        //    all should be smoothed somewhat by the randomness of individual spin iterations.
-
         private const int DefaultSemaphoreSpinCountLimit = 128;
 
         private CacheLineSeparatedCounts _separated;
@@ -45,7 +22,6 @@ namespace System.Threading
         private readonly int _maximumSignalCount;
         private readonly int _maxSpinCount;
         private readonly Action _onWait;
-        private readonly int _procCount;
 
         // When we need to block threads we use a linked list of thread blockers.
         // When we need to wake a worker, we pop the topmost blocker and release it.
@@ -74,7 +50,6 @@ namespace System.Threading
             _separated = default;
             _maximumSignalCount = maximumSignalCount;
             _onWait = onWait;
-            _procCount = Environment.ProcessorCount;
 
             _maxSpinCount = AppContextConfigHelper.GetInt32ComPlusOrDotNetConfig(
                 "System.Threading.ThreadPool.UnfairSemaphoreSpinLimit",
@@ -88,7 +63,7 @@ namespace System.Threading
                 _maxSpinCount = DefaultSemaphoreSpinCountLimit;
         }
 
-        public bool Wait(int timeoutMs, short tpThreadCount)
+        public bool Wait(int timeoutMs)
         {
             Debug.Assert(timeoutMs >= -1);
 
@@ -108,26 +83,11 @@ namespace System.Threading
 
             RuntimeFeature.ThrowIfMultithreadingIsNotSupported();
 
-            return WaitSlow(timeoutMs, tpThreadCount);
+            return WaitSlow(timeoutMs);
         }
 
-        private bool WaitSlow(int timeoutMs, short tpThreadCount)
+        private bool WaitSlow(int timeoutMs)
         {
-            _ = tpThreadCount;
-
-            //// Now spin briefly with exponential backoff.
-            //// We estimate availability of CPU resources and limit spin count accordingly.
-            //// See comments on DefaultSemaphoreSpinCountLimit for more details.
-            //int active = tpThreadCount - _separated._counts.WaiterCount;
-            //int available = _procCount - active;
-            //int spinStep = _maxSpinCount * 2 / _procCount;
-            //// With activeThreadCount arbitrarily large and _procCount arbitrarily small
-            //// we can, in theory, overflow int, so just use long here.
-            //long spinsRemainingLong = (available - _procCount / 4) * (long)spinStep;
-
-            //// clamp to [0, _maxSpinCount] range.
-            //int spinsRemaining = (int)Math.Clamp(spinsRemainingLong, 0, _maxSpinCount);
-
             int spinsRemaining = Environment.IsSingleProcessor ? 0 : _maxSpinCount;
 
             uint iteration = 0;
@@ -149,32 +109,7 @@ namespace System.Threading
                 }
             }
 
-            // Now we will try registering as a waiter and wait.
-            // If signaled before that, we have to acquire as this can be the last thread that could take that signal.
-            // The difference with spinning above is that we are not waiting for a signal. We should typically
-            // immediately succeed unless a lot of threads are trying to update the counts.
-            uint collisionCount = 0;
-            while (true)
-            {
-                Counts counts = _separated._counts;
-                Counts newCounts = counts;
-                if (counts.SignalCount != 0)
-                {
-                    newCounts.DecrementSignalCount();
-                }
-                else
-                {
-                    newCounts.IncrementWaiterCount();
-                }
-
-                Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
-                if (countsBeforeUpdate == counts)
-                {
-                    return counts.SignalCount != 0 || WaitAsWaiter(timeoutMs);
-                }
-
-                Backoff.Exponential(collisionCount++);
-            }
+            return WaitNoSpin(timeoutMs);
         }
 
         public bool WaitNoSpin(int timeoutMs)
@@ -233,7 +168,7 @@ namespace System.Threading
 
             while (true)
             {
-                // long waitStartTick = Stopwatch.GetTimestamp();
+                long waitStartTick = Stopwatch.GetTimestamp();
                 if (timeoutMs == 0 || !Block(timeoutMs))
                 {
                     // Unregister the waiter, but do not decrement wake count, the thread did not observe a wake.
@@ -241,19 +176,19 @@ namespace System.Threading
                     return false;
                 }
 
-                //// The caller wants that the thread spends some time waiting as a matter of rate limiting
-                //// thus we will require a 10 usec cooldown before reintroducing the thread.
-                //// The sleep/wake transition typically takes care of the wait, but the blocker has fast
-                //// wake paths and the underlying OS API may have trivial/spinning wake paths as well,
-                //// thus fast wakeups can happen and are hard to avoid completely.
-                //// So, if a fast wake happened when parking was desired, we hold up the thread a bit
-                //// before releasing.
-                //long cooldown = Stopwatch.Frequency / 100000;
-                //while (Stopwatch.GetTimestamp() - waitStartTick < cooldown)
-                //{
-                //    Thread.UninterruptibleSleep0();
-                //    Thread.SpinWait(1);
-                //}
+                // The thread could not obtain work for quite a while. We will require a 4 usec
+                // cooldown before reintroducing the thread. The sleep/wake transition typically
+                // takes care of the wait, but the blocker has fast wake paths and the underlying
+                // OS API may have trivial/spinning wake paths as well and fast wakeups can happen
+                // and are hard to avoid completely.
+                // So, if a fast wake happened when parking was desired, we hold up the thread a bit
+                // before releasing.
+                long cooldown = Stopwatch.Frequency * 4 / 1000000;
+                while (Stopwatch.GetTimestamp() - waitStartTick < cooldown)
+                {
+                    Thread.UninterruptibleSleep0();
+                    Thread.SpinWait(1);
+                }
 
                 uint collisionCount = 0;
                 while (true)
