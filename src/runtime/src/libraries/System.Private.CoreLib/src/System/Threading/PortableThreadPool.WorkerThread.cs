@@ -108,8 +108,8 @@ namespace System.Threading
                     bool spuriousRequest = false;
                     while (true)
                     {
-                        bool timeout = spuriousRequest ? semaphore.WaitNoSpin(timeoutMs) : semaphore.Wait(timeoutMs);
-                        if (timeout)
+                        bool signaled = spuriousRequest ? semaphore.WaitNoSpin(timeoutMs) : semaphore.Wait(timeoutMs);
+                        if (!signaled)
                             break;
 
                         WorkerDoWork(threadPoolInstance, out spuriousRequest);
