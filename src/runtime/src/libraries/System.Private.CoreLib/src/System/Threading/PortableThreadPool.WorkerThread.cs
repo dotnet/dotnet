@@ -108,7 +108,7 @@ namespace System.Threading
                     bool spuriousRequest = false;
                     while (true)
                     {
-                        bool signaled = spuriousRequest ? semaphore.WaitNoSpin(timeoutMs) : semaphore.Wait(timeoutMs);
+                        bool signaled = spuriousRequest ? semaphore.Wait(timeoutMs) : semaphore.Wait(timeoutMs);
                         if (!signaled)
                             break;
 
