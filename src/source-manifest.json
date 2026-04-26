@@ -37,10 +37,10 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 311333,
+      "barId": 311626,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "c945994acc1a87b3aaba854ef5c46890ad5044d6"
+      "commitSha": "e87c07b90b37c3d8f1444c5a1f5fc7f2ff3b25ce"
     },
     {
       "barId": 310358,
@@ -49,16 +49,16 @@
       "commitSha": "5258a0e5615530324086e097f3bbc8cd58a01ca9"
     },
     {
-      "barId": 311485,
+      "barId": 311569,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "ec82b948c5dbe18117f4066cc558c4f65c1c0a1c"
+      "commitSha": "a5df95f9fdc611690273c3495b613ba302bd4108"
     },
     {
-      "barId": 311437,
+      "barId": 311574,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "933255e6e50c0114a51d249f2d47fbd2e3c6b12c"
+      "commitSha": "97e30658d2667a799ab9147f0bbb1e7593aede9b"
     },
     {
       "barId": 310908,
@@ -79,10 +79,10 @@
       "commitSha": "58f9a7a5433dab7e3363441dc0e53880b12d6017"
     },
     {
-      "barId": 311517,
+      "barId": 311844,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "a28fe52ce3f656f49c7d552f2b455ff6da9d6b31"
+      "commitSha": "5b456ee1a58f672611dcf4a645f4c4ec5da4c996"
     },
     {
       "barId": 309005,
@@ -91,10 +91,10 @@
       "commitSha": "7bc6a69bc6daf9f820cfa776f9c9066aa013584c"
     },
     {
-      "barId": 311468,
+      "barId": 311635,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e259547ae0d38e7273966e3ff12ae381f4d263bf"
+      "commitSha": "a1f2c13671e73fd0dc0864d374968bc0342c63c2"
     },
     {
       "barId": 309145,
@@ -109,10 +109,10 @@
       "commitSha": "6ea6adb7b969c3d58c5aececc1df68e09288cbbf"
     },
     {
-      "barId": 310840,
+      "barId": 311270,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "ddef01748e48f85dcde0c68ebb61b2cab42a7435"
+      "commitSha": "5951f7085a5f25b429c4362a3a70a29f549b0e18"
     },
     {
       "barId": 311491,
@@ -121,10 +121,10 @@
       "commitSha": "4c17ee53e9a86e2980b3077c388ddd1ffa03cd0f"
     },
     {
-      "barId": 311493,
+      "barId": 311548,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "4b1316b608fd22f607566518e66ac7cb2c19afc9"
+      "commitSha": "dde0931ecd9b0fd2452561e78669aaf91d40961f"
     },
     {
       "barId": 310612,

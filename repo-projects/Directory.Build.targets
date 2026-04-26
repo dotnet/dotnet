@@ -183,6 +183,11 @@
       
       <AddPrebuiltFeeds>true</AddPrebuiltFeeds>
       <AddPrebuiltFeeds Condition="'$(DotNetSourceOnlyTestOnly)' == 'true' or '$(DotNetBuildSourceOnly)' != 'true'">false</AddPrebuiltFeeds>
+
+      <!-- Only clear disabledPackageSources in internal builds where feed credentials are available.
+           This prevents darc-int feeds (kept via KeepFeedPrefixes) from causing 401 errors in public CI. -->
+      <ClearDisabledPackageSources>false</ClearDisabledPackageSources>
+      <ClearDisabledPackageSources Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">true</ClearDisabledPackageSources>
     </PropertyGroup>
 
     <ItemGroup>
@@ -195,6 +200,7 @@
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       KeepFeedPrefixes="@(KeepFeedPrefixes)"
+      ClearDisabledPackageSources="$(ClearDisabledPackageSources)"
       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
     <RemoveBlockedAuditSourcesFromNuGetConfig

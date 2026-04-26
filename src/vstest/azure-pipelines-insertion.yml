@@ -85,14 +85,15 @@ extends:
 
               steps:
 
-              - task: UseDotNet@2
-                displayName: 'Install .NET SDK'
+              - task: PowerShell@2
+                displayName: 'Install .NET SDK from global.json'
                 inputs:
-                  includePreviewVersions: true
-                  useGlobalJson: true
-
-              - script: dotnet tool install Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json -g
-                displayName: 'Install roslyn-tools CLI'
+                  targetType: inline
+                  script: |
+                    $globalJson = Get-Content -Raw global.json | ConvertFrom-Json
+                    $version = $globalJson.sdk.version
+                    Write-Host "Installing .NET SDK version $version from global.json"
+                    & eng/common/dotnet-install.ps1 -version $version -runtime ''
 
               - task: AzureCLI@2
                 displayName: 'Run VS Insertion'
@@ -101,6 +102,10 @@ extends:
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
+                    # Install Roslyn insertion tools from the dnceng feed, using --tool-path as a workaround to avoid resetting the process to pick up dotnet tool path changes
+                    $dotnet = "$(Build.SourcesDirectory)\.dotnet\dotnet.exe"
+                    & $dotnet tool install Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json --tool-path .
+
                     # Acquire dnceng AzDO token via WIF service connection
                     $dncengToken = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
                     if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($dncengToken)) {
@@ -120,8 +125,8 @@ extends:
                       "--component-azdo-uri", "$(ComponentAzdoUri)"
                       "--component-project", "$(ComponentProjectName)"
                       "--build-drop-path", "$(DropPath)"
-                      "--no-insert-corext-packages"
-                      "--no-insert-devdiv-source-files"
+                      "--insert-corext-packages", "false"
+                      "--insert-devdiv-source-files", "false"
                       "--title-prefix", "$(OptionalTitlePrefix)"
                       "--reviewer-guid", $team
                       "--dnceng-azdo-token", $dncengToken
@@ -147,12 +152,9 @@ extends:
                       $insertArgs += "$(CherryPick)"
                     }
 
-                    & roslyn-tools @insertArgs
+                    "Running: ./roslyn-tools.exe $($insertArgs -join ' ')"
+                    ./roslyn-tools.exe @insertArgs
                     if ($LASTEXITCODE -ne 0) {
                       exit $LASTEXITCODE
                     }
 
-              # Avoid warning from subsequent steps.
-              - powershell: |
-                  mkdir artifacts
-                displayName: 'Create artifacts dir'
