@@ -84,42 +84,42 @@ Options:
 |----------------|----------------------------|
 | .a             | macOS                      |
 | .app           | macOS                      |
-| .cab           | Windows                    |
+| .cab           | Windows, macOS, Linux      |
 | .deb           | Linux                      |
 | .dll           | Windows, macOS, Linux      |
 | .dylib         | macOS                      |
 | .exe           | Windows, macOS, Linux      |
 | .gz            | macOS, Linux               |
-| .jar           | Windows                    |
+| .jar           | Windows, macOS, Linux      |
 | .js            | Windows, macOS, Linux      |
 | .lzma          | Windows, macOS, Linux      |
 | .macho         | macOS                      |
 | .msi           | Windows                    |
 | .msp           | Windows                    |
-| .msu           | Windows                    |
+| .msu           | Windows, macOS, Linux *    |
 | .nupkg         | Windows, macOS, Linux      |
 | .pkg           | macOS                      |
-| .ps1           | Windows                    |
-| .ps1xml        | Windows                    |
-| .psd1          | Windows                    |
-| .psm1          | Windows                    |
+| .ps1           | Windows, macOS, Linux      |
+| .ps1xml        | Windows, macOS, Linux      |
+| .psd1          | Windows, macOS, Linux      |
+| .psm1          | Windows, macOS, Linux      |
 | .rpm           | Linux                      |
 | .so            | macOS                      |
 | .tar           | macOS, Linux               |
 | .tgz           | macOS, Linux               |
-| .vsix          | Windows                    |
 | .xml           | Windows, macOS, Linux      |
 | .zip           | Windows, macOS, Linux      |
+
+\* Signature verification is cross-platform. Recursive content extraction is Windows-only.
 
 #### Detected via File Headers
 
 | File Type                  | Platforms                  |
 |----------------------------|----------------------------|
-| Cab Files                  | Windows                    |
+| Cab Files                  | Windows, macOS, Linux      |
 | EXE Files                  | Windows                    |
-| Jar Files                  | Windows                    |
+| Jar Files                  | Windows, macOS, Linux      |
 | Mach-O Files               | macOS                      |
 | NuGet Packages             | Windows, macOS, Linux      |
 | PE Files                   | Windows                    |
-| VSIX Files                 | Windows                    |
 | Zip Files                  | Windows, macOS, Linux      |

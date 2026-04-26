@@ -46,8 +46,8 @@ public class DataCollectionRequestSenderTests
         _mockDataSerializer.Setup(x => x.DeserializePayload<AfterTestRunEndResult>(It.IsAny<Message>())).Returns(
             new AfterTestRunEndResult([attachment], new Collection<InvokedDataCollector>() { invokedDataCollector }, new Dictionary<string, object>()));
         _mockCommunicationManager.SetupSequence(x => x.ReceiveRawMessage()).Returns(rawMessage1).Returns(rawMessage2);
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage, Payload = null });
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.AfterTestRunEndResult, Payload = null });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.AfterTestRunEndResult });
 
         var result = _requestSender.SendAfterTestRunEndAndGetResult(null, false);
 
@@ -82,8 +82,8 @@ public class DataCollectionRequestSenderTests
         _mockDataSerializer.Setup(x => x.DeserializePayload<AfterTestRunEndResult>(It.IsAny<Message>())).Returns(
             new AfterTestRunEndResult([attachment], new Collection<InvokedDataCollector>() { invokedDataCollector }, new Dictionary<string, object>()));
         _mockCommunicationManager.SetupSequence(x => x.ReceiveRawMessage()).Returns(rawMessage1).Returns(rawMessage2);
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage, Payload = null });
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.AfterTestRunEndResult, Payload = null });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.AfterTestRunEndResult });
         var handlerMock = new Mock<ITestMessageEventHandler>();
 
         var result = _requestSender.SendAfterTestRunEndAndGetResult(handlerMock.Object, false);
@@ -121,7 +121,7 @@ public class DataCollectionRequestSenderTests
         var rawMessage = "rawMessage";
         var testSources = new List<string>() { "test1.dll" };
         _mockCommunicationManager.Setup(x => x.ReceiveRawMessage()).Returns(rawMessage);
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult, Payload = null });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult });
         _requestSender.SendBeforeTestRunStartAndGetResult(string.Empty, testSources, true, null);
 
         _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn)));
@@ -135,8 +135,8 @@ public class DataCollectionRequestSenderTests
         var testSources = new List<string>() { "test1.dll" };
         var handlerMock = new Mock<ITestMessageEventHandler>();
         _mockCommunicationManager.SetupSequence(x => x.ReceiveRawMessage()).Returns(rawMessage1).Returns(rawMessage2);
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage, Payload = null });
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult, Payload = null });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult });
         _requestSender.SendBeforeTestRunStartAndGetResult(string.Empty, testSources, true, handlerMock.Object);
 
         handlerMock.Verify(x => x.HandleRawMessage(rawMessage1));
@@ -150,8 +150,8 @@ public class DataCollectionRequestSenderTests
         var rawMessage2 = "rawMessage2";
         var testSources = new List<string>() { "test1.dll" };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveRawMessage()).Returns(rawMessage1).Returns(rawMessage2);
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage, Payload = null });
-        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult, Payload = null });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage1)).Returns(new Message() { MessageType = MessageType.TelemetryEventMessage });
+        _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult });
         _requestSender.SendBeforeTestRunStartAndGetResult(string.Empty, testSources, true, null);
 
         _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn)));

@@ -4,9 +4,8 @@
   <!-- Add targets here that run logic that depends on the merged asset manifest and published packages. -->
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
   
-  <!-- TODO: Remove Publish target hook after a re-bootstrap -->
   <Target Name="ReportPoisonUsage"
-          AfterTargets="Publish;Execute"
+          AfterTargets="Execute"
           DependsOnTargets="CreatePrivateSourceBuiltArtifactsArchive"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
@@ -17,18 +16,18 @@
       <SdkArchive Include="$(ArtifactsAssetsDir)Sdk/**/dotnet-sdk-*$(ArchiveExtension)" />
       <!-- Include shipping nuget packages. -->
       <ShippingPackageToCheck Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" />
-      <!-- Add and mark SBRP packages to validate that they have the correct poison attribute. -->
-      <SbrpPackageToCheck Include="$(ReferencePackagesDir)**\*.nupkg" IsSourceBuildReferencePackage="true" />
+      <!-- Add and mark SBA packages to validate that they have the correct poison attribute. -->
+      <SbaPackageToCheck Include="$(ReferencePackagesDir)**\*.nupkg" IsSourceBuildReferencePackage="true" />
     </ItemGroup>
 
     <Error Condition="'@(SdkArchive)' == ''" Text="SDK will not be poison checked - this is unexpected!" />
     <Error Condition="'@(ShippingPackageToCheck)' == ''" Text="No shipping packages will be poison checked - this is unexpected!" />
-    <Error Condition="'@(SbrpPackageToCheck)' == ''" Text="No SBRP packages will be poison checked - this is unexpected!" />
+    <Error Condition="'@(SbaPackageToCheck)' == ''" Text="No SBA packages will be poison checked - this is unexpected!" />
 
     <ItemGroup>
       <PoisonFileToCheck Include="@(SdkArchive)" />
       <PoisonFileToCheck Include="@(ShippingPackageToCheck)" />
-      <PoisonFileToCheck Include="@(SbrpPackageToCheck)" />
+      <PoisonFileToCheck Include="@(SbaPackageToCheck)" />
     </ItemGroup>
 
     <!-- Check for prebuilt and source-built packages. -->
@@ -102,9 +101,8 @@
 
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <!-- TODO: Remove Publish target hook after a re-bootstrap -->
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
-          AfterTargets="Publish;Execute"
+          AfterTargets="Execute"
           DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
           Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
@@ -165,14 +163,8 @@
           DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
 
-    <!-- TODO: Remove the Publish target hook after a re-bootstrap. -->
-    <PropertyGroup>
-      <_PublishPass2Target>Execute</_PublishPass2Target>
-      <_PublishPass2Target Condition="'@(PackageReference)' == ''">Publish</_PublishPass2Target>
-    </PropertyGroup>
-
     <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="$(_PublishPass2Target)"
+             Targets="Execute"
              Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>

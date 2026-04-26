@@ -76,7 +76,7 @@ safe-outputs:
   add-labels:
     allowed: ["AI-thinks-issue-fixed", "AI-thinks-windows-only"]
     max: 30
-    target: "*" 
+    target: "*"
   remove-labels:
     allowed: ["AI-thinks-issue-fixed", "AI-thinks-windows-only"]
     max: 10
@@ -186,6 +186,8 @@ Take heed of **instructions**: "${{ steps.sanitized.outputs.text }}"
 
 If these are non-empty (not ""), then you have been triggered via `/repo-assist <instructions>`. Follow the user's instructions instead of the normal scheduled workflow. Focus exclusively on those instructions. Apply all the same guidelines (read AGENTS.md, run formatters/linters/tests, be polite, use AI disclosure). Skip the normal task sequence and the monthly activity summary update, and instead directly do what the user requested. If no specific instructions were provided (empty or blank), proceed with the normal scheduled workflow below.
 
+If the instructions don't result in any actionable work, call `noop` with a brief explanation before exiting.
+
 Then exit  -  do not run the normal workflow after completing the instructions.
 
 ## Non-Command Mode
@@ -269,14 +271,14 @@ Each run, do Task 1, Task 3, Task 2, and Task FINAL (in this order — Task 3 fe
     - Signature generation → FCS `GetSignatureText`
     - Navigation / Go to definition → FCS symbol resolution
     - Debugging / breakpoints / sequence points → PDB generation, testable via IL verification
-  
+
   The ONLY issues that are truly windows-only are those involving:
     - VS-specific UI rendering (WPF controls, editor chrome, scroll bars, sticky scroll visual behavior)
     - VS project system integration (solution explorer, project properties dialog)
     - VS-specific installation / VSIX / extension loading
     - VS-specific keyboard shortcuts or editor commands with no FCS equivalent
     - Cross-process VS interaction (e.g., FSI output pane rendering in VS)
-  
+
   If you previously labelled issues as windows-only that fall into the testable category above, you were wrong. Task 3 below will systematically revisit and correct those.
 
 - Otherwise, do nothing to avoid noise. If you don't have high confidence in a fix, it's better to say nothing than to risk a false positive. If you have some other high-confidence judgement, leave a note in the "Additional observations" section of the Monthly Activity Summary. If you have written a solid reproduction not yet covered in the issue, write it down — this helps future implementers.
@@ -334,7 +336,7 @@ This is the primary expected outcome when no existing test is found.
    - Language service (completions, tooltips, find references) → `tests/FSharp.Compiler.Service.Tests/` — **most IDE issues ARE testable on Linux** since the FSharp.Compiler.Service layer is OS-agnostic
    - FSI → `tests/FSharp.Compiler.ComponentTests/Scripting/`
    - Parser / syntax → `tests/FSharp.Compiler.ComponentTests/Language/` or `Conformance/`
-   
+
 2. **Write the test** using the repro from the issue body AND comments (per "Working with Issues" rules — use the best available repro, which may be in a comment, not the original body). Follow the ComponentTests DSL pipeline pattern:
    ```fsharp
    // https://github.com/dotnet/fsharp/issues/{number}
@@ -346,7 +348,7 @@ This is the primary expected outcome when no existing test is found.
        |> typecheck  // or compile, compileExeAndRun as appropriate
        |> shouldSucceed
    ```
-   
+
 3. **Build and run the test** to confirm it passes. **Limit yourself to at most 3 build-and-test cycles per issue** — if the test still doesn't pass after 3 attempts, the issue is likely not fixed (go to step 5). Do not create multiple test file variants; iterate on a single test file:
    ```bash
    dotnet build tests/{TestProject}/{TestProject}.fsproj -c Release
@@ -402,7 +404,7 @@ For each `AI-thinks-windows-only` issue (process up to 5 per run):
      1. Build the compiler and attempt to reproduce the issue on Linux using the repro from the issue (and comments — see "Working with Issues" rules above)
      2. If the issue **still reproduces**: leave a comment with your repro and findings. Do not apply any "fixed" label.
      3. If the issue **no longer reproduces**: apply `AI-thinks-issue-fixed` and add this issue to the Task 2 queue for the current run. Task 2 will then search for existing tests, run adversarial verification, and either point to an existing test or create a regression test PR.
-   
+
    - If the feature is purely VS chrome (WPF rendering, project system dialogs, VSIX loading, VS-specific key bindings, FSI output pane visual rendering) → the label is correct. Leave it.
 
 3. **When removing the label**, comment on the issue explaining that the issue's underlying feature (name it: classification, rename, tooltips, etc.) is testable via FSharp.Compiler.Service and is not windows-only. Then proceed to investigate the issue normally.
@@ -425,7 +427,7 @@ Maintain a single open issue titled `[Repo Assist] Monthly Activity {YYYY}-{MM}`
 
    ## Suggested Actions for Maintainer
 
-   **Comprehensive list** of all pending actions requiring maintainer attention (excludes items already actioned and checked off). 
+   **Comprehensive list** of all pending actions requiring maintainer attention (excludes items already actioned and checked off).
    - Reread the issue you're updating before you update it  -  there may be new checkbox adjustments since your last update that require you to adjust the suggested actions.
    - List **all** the comments, PRs, and issues that need attention
    - Exclude **all** items that have either
@@ -441,9 +443,9 @@ Maintain a single open issue titled `[Repo Assist] Monthly Activity {YYYY}-{MM}`
    * [ ] **Define goal**: <suggestion>  -  [Related issue](<link>)
 
    *(If no actions needed, state "No suggested actions at this time.")*
-   
+
    ## Additional observations for maintainer's attention
-   
+
    Sometimes when analyzing isssues, you won't have been able to determine a clear action item, but you may have discovered with high confidence that the issue has an easy fix, or should be closed, or is a duplicate, or some other simple action. If so, leave a once sentence note for the maintainer here -  e.g. "Issue #384 looks like it has an easy fix because ...". If you have a repro not yet covered in issue details, but proves the issue and is easily repeatable - write it down.
 
    ## Future Work for Repo Assist
@@ -480,6 +482,7 @@ Maintain a single open issue titled `[Repo Assist] Monthly Activity {YYYY}-{MM}`
    - Any strategic suggestions (goals, priorities)
    Use repo memory and the activity log to compile this list. Include direct links for every item. Keep entries to one line each.
 5. Do not update the activity issue if nothing was done in the current run. However, if you conclude "nothing to do", first verify this by checking: (a) Are there any open issues without a Repo Assist comment? (b) Are there issues in your memory flagged for attention? (c) Are there any bugs that could be investigated or fixed? If any of these are true, go back and do that work instead of concluding with no action.
+6. **If genuinely nothing was done across all tasks**, you **must** call `noop` with a brief explanation (e.g., "All scanned issues already have Repo Assist comments and no new activity since last run"). A run with zero safe outputs is treated as a failure.
 
 ## Guidelines
 

@@ -35,6 +35,10 @@ The code flow mechanism relies on metadata files similarly to the existing Maest
 - **`src/source-manifest.json`**
   - A file [contained in the VMR](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json) that contains the last version of every repository synchronized into the VMR.
 
+## Unsafe PRs
+A Codeflow PR is marked as "unsafe" when the commit that's being flown is from a different, divergent branch from the previously flown commit. In this scenario, the codeflow algorithm cannot guarantee 100% code correctness: in rare cases code duplication and other issues can occur because of how `git` works. Because of this, careful reviews are strongly encouraged. If a change in an "unsafe" PR looks wrong, or you simply don't care about losing VMR side changes that haven't backflown, you can use the [`darc vmr reset`](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#reset) command.
+![Unsafe flow](images/unsafe-flow.png)
+
 ## FAQ
 
 - **How can I see dependency subscriptions for my repository**?

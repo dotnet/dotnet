@@ -11,18 +11,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- arcade -->
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- corefx -->
     <SystemRuntimeInteropServicesRuntimeInformation>4.3.0</SystemRuntimeInteropServicesRuntimeInformation>
-    <!-- nuget -->
-    <!-- Important: Don't version higher than what's available in the toolset SDK as
-         NuGet assemblies aren't redistributed with .NETCoreApp msbuild tasks. -->
-    <NuGetCommandsVersion>6.14.0</NuGetCommandsVersion>
-    <NuGetFrameworksVersion>6.14.0</NuGetFrameworksVersion>
-    <NuGetPackagingVersion>6.14.0</NuGetPackagingVersion>
-    <NuGetProjectModelVersion>6.14.0</NuGetProjectModelVersion>
-    <NuGetVersioningVersion>6.14.0</NuGetVersioningVersion>
     <!-- runtime -->
     <MicrosoftNETCorePlatformsVersion>5.0.0</MicrosoftNETCorePlatformsVersion>
     <MicrosoftNETRuntimeEmscripten2023Nodewin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Nodewin_x64>
@@ -37,7 +27,6 @@
     <MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>6.0.22</MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>
     <MicrosoftiOSTemplatesVersion>15.2.302-preview.14.122</MicrosoftiOSTemplatesVersion>
     <MicrosoftiOSTemplatesVersion160527>16.0.527</MicrosoftiOSTemplatesVersion160527>
-    <SystemCompositionVersion>9.0.0-preview.6.24327.7</SystemCompositionVersion>
   </PropertyGroup>
 
 </Project>

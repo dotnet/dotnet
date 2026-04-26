@@ -63,9 +63,9 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
             return new SearchFilter(includePrerelease, filterType)
             {
-                SupportedFrameworks = supportedFrameworks,
+                SupportedFrameworks = supportedFrameworks ?? [],
                 OrderBy = searchOrderBy,
-                PackageTypes = packageTypes,
+                PackageTypes = packageTypes ?? [],
                 IncludeDelisted = includeDelisted,
             };
         }

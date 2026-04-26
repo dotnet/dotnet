@@ -49,7 +49,7 @@
                             PreallocatedTagHelperProperty - (129:4,17 [6] DuplicateAttributeTagHelpers.cshtml) - __tagHelperAttribute_0 - type - Type
                             PreallocatedTagHelperProperty - (129:4,17 [6] DuplicateAttributeTagHelpers.cshtml) - __tagHelperAttribute_0 - type - Type
                             DefaultTagHelperProperty - (146:4,34 [4] DuplicateAttributeTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (146:4,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (146:4,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_2
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_3
                             DefaultTagHelperExecute - 
@@ -62,7 +62,7 @@
                             PreallocatedTagHelperProperty - (205:5,17 [6] DuplicateAttributeTagHelpers.cshtml) - __tagHelperAttribute_4 - type - Type
                             PreallocatedTagHelperProperty - (205:5,17 [6] DuplicateAttributeTagHelpers.cshtml) - __tagHelperAttribute_4 - type - Type
                             DefaultTagHelperProperty - (222:5,34 [4] DuplicateAttributeTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (222:5,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (222:5,34 [4] DuplicateAttributeTagHelpers.cshtml) - CSharp - true
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_2
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_5
                             PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_2
@@ -72,7 +72,7 @@
                             LazyIntermediateToken - (288:5,100 [2] DuplicateAttributeTagHelpers.cshtml) - Html - \n
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                     DefaultTagHelperProperty - (43:2,8 [1] DuplicateAttributeTagHelpers.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (43:2,8 [1] DuplicateAttributeTagHelpers.cshtml) - CSharp - 3
+                        IntermediateToken - (43:2,8 [1] DuplicateAttributeTagHelpers.cshtml) - CSharp - 3
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_7
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_8
                     DefaultTagHelperExecute - 

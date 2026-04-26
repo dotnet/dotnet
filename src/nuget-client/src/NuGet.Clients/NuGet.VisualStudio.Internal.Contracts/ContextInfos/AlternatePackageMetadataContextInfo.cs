@@ -22,7 +22,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         {
             Assumes.NotNull(alternatePackageMetadata);
 
-            return new AlternatePackageMetadataContextInfo(alternatePackageMetadata.PackageId, alternatePackageMetadata.Range);
+            return new AlternatePackageMetadataContextInfo(alternatePackageMetadata.PackageId!, alternatePackageMetadata.Range!);
         }
     }
 }

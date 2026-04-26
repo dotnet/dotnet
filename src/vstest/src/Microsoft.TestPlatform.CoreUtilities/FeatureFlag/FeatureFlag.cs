@@ -44,7 +44,7 @@ internal partial class FeatureFlag : IFeatureFlag
     // Faster JSON serialization relies on less internals of NewtonsoftJson, and on some additional caching.
     public const string VSTEST_DISABLE_FASTER_JSON_SERIALIZATION = nameof(VSTEST_DISABLE_FASTER_JSON_SERIALIZATION);
 
-    // Forces vstest.console to run all sources using the same target framework (TFM) and architecture, instead of allowing
+    // Forces vstest.consoleto run all sources using the same target framework (TFM) and architecture, instead of allowing
     // multiple different tfms and architectures to run at the same time.
     public const string VSTEST_DISABLE_MULTI_TFM_RUN = nameof(VSTEST_DISABLE_MULTI_TFM_RUN);
 
@@ -77,14 +77,6 @@ internal partial class FeatureFlag : IFeatureFlag
 
     // Disable turning dynamic code coverage for native code to OFF by default. Setting this to 1 will skip adding the setting.
     public const string VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING = nameof(VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING);
-
-    // When set, warns when vstest provides its own copy of a tracked assembly (e.g. Newtonsoft.Json)
-    // to resolve a dependency of an extension that did not ship its own copy.
-    // Set VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES=1 to opt into warnings before enforcement.
-    public const string VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES = nameof(VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES);
-
-    // Disables the warning about missing extension dependencies, even after enforcement.
-    public const string VSTEST_DISABLE_WARN_MISSING_EXTENSIONS_DEPENDENCIES = nameof(VSTEST_DISABLE_WARN_MISSING_EXTENSIONS_DEPENDENCIES);
 
 
 

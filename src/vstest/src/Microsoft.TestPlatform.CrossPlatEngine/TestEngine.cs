@@ -689,7 +689,7 @@ public class TestEngine : ITestEngine
                         stringBuilder.Append(Resources.Resources.SkippingSource).Append(' ');
                     }
                     stringBuilder.AppendLine(
-#if NET6_0_OR_GREATER
+#if NET
                         System.Globalization.CultureInfo.InvariantCulture,
 #endif
                         $"{detail.Source} ({detail.Framework}, {detail.Architecture})");

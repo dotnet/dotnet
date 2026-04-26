@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
-    <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
+    <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.4</NewtonsoftJsonPackageVersion>
     <SystemFormatsAsn1PackageVersion Condition="'$(SystemFormatsAsn1PackageVersion)' == ''">8.0.2</SystemFormatsAsn1PackageVersion>
 
     <!-- Read docs/updating-packages.md before updating System.Text.Json's version -->

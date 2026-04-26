@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
     <body>
@@ -680,7 +680,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="Log_AliasContainsDisallowedCharacters">
         <source>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</source>
-        <target state="new">The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</target>
+        <target state="translated">Projekt {0} zawiera TargetFramework „{1}” z niedozwolonymi znakami. Nazwy TargetFramework mogą zawierać tylko znaki ASCII i nie mogą zawierać separatorów ścieżek.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
@@ -1002,7 +1002,7 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       </trans-unit>
       <trans-unit id="Log_VersionConflictForCentralTransitive">
         <source>Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</source>
-        <target state="new">Version conflict detected for {0}. Central Package Management transitive pinning is enabled. Add a PackageVersion for {1} to resolve this issue.</target>
+        <target state="translated">Wykryto konflikt wersji w przypadku {0}. Centralne przypinanie przechodnie rozszerzenia Package Management. Dodaj element PackageVersion dla {1}, aby rozwiązać ten problem.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_WritingAssetsFile">
@@ -1439,7 +1439,7 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">
         <source>unknown</source>
-        <target state="translated">nieznany</target>
+        <target state="translated">nieznana</target>
         <note>As in "This package has a unknown severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="WarningAsError">

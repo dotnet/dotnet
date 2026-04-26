@@ -205,6 +205,9 @@
       <VsixSourceItem Include="$(MsDiaFolder)x86\*">
         <VSIXSubPath>x86</VSIXSubPath>
       </VsixSourceItem>
+      <VsixSourceItem Include="$(MsDiaFolder)arm64\*">
+        <VSIXSubPath>arm64</VSIXSubPath>
+      </VsixSourceItem>
     </ItemGroup>
 
     <!-- Code Coverage -->

@@ -863,12 +863,37 @@ namespace NuGet.CommandLine
                     throw new CommandException(message);
                 }
 
+                if (IsNetCoreMsBuildDirectory(msbuildPath))
+                {
+                    var message = string.Format(
+                        CultureInfo.CurrentCulture,
+                        LocalizedResourceManager.GetString(
+                            nameof(NuGetResources.Error_MsBuildIsNetCoreMsBuild)),
+                        msbuildPath);
+
+                    throw new CommandException(message);
+                }
+
                 return new Lazy<MsBuildToolset>(() => new MsBuildToolset(msbuildVersion, msbuildPath));
             }
             else
             {
                 return new Lazy<MsBuildToolset>(() => GetMsBuildToolset(msbuildVersion, console));
             }
+        }
+
+        /// <summary>
+        /// Detects whether the given directory contains a .NET SDK (dotnet) MSBuild installation
+        /// rather than a .NET Framework MSBuild installation.
+        /// NuGet.exe requires .NET Framework MSBuild because it loads Microsoft.Build.dll
+        /// in-process via Assembly.LoadFrom, which is incompatible with .NET Core assemblies.
+        /// Detection uses the presence of MSBuild.runtimeconfig.json, which is the canonical
+        /// indicator of a .NET Core application and will be present even if a future SDK
+        /// ships an AoT-compiled MSBuild.exe.
+        /// </summary>
+        internal static bool IsNetCoreMsBuildDirectory(string msbuildPath)
+        {
+            return File.Exists(Path.Combine(msbuildPath, "MSBuild.runtimeconfig.json"));
         }
 
         private static void AddProperty(List<string> args, string property, string value)

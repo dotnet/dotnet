@@ -6,10 +6,10 @@ Validating builds is an important part of producing a releasable product. There 
   * Repository-level functional testing. Owned by the product teams and defined in the repositories, and used to identify bugs
 * Official build time (optionally)
   * Source code validation: this includes SDL testing (handled by 1ES Pipeline Templates) and localization testing. Used to confirm that source code meets Microsoft's standards.
-  * Package validation: includes sourcelink validation, symbols validation, nupkg metadata validation. Used to confirm that customers will be able to install and debug packages from .NET.
+  * Package validation: includes symbols validation, nupkg metadata validation. Used to confirm that customers will be able to install and debug packages from .NET.
 * Nightly validation pipeline (optionally)
   * Source code validation: this includes SDL testing (handled by 1ES Pipeline Templates) and localization testing. Used to confirm that source code meets Microsoft's standards.
-  * Package validation: includes sourcelink validation, symbols validation, nupkg metadata validation. Used to confirm that customers will be able to install and debug packages from .NET.
+  * Package validation: includes symbols validation, nupkg metadata validation. Used to confirm that customers will be able to install and debug packages from .NET.
   * Signing validation: Used to validate that all bits that we ship have been signed properly.
 
 While many of these validation steps can be performed in official builds, the supported model is to onboard to the nightly validation pipeline. All of these steps will be performed as part of shipping the product, and all product teams have the option of running these exact validation steps at a nightly cadence.
@@ -26,7 +26,6 @@ To gather all of the assets to be validated, Validate-DotNet uses information fo
 * SDL Validation (which will open TSA issues for any failures found)
 * Localization Validation
 * NuGet Metadata Validation
-* Sourcelink Validation
 * Symbols Validation
 * NuGet Package Icon Validation
 * Checksums Validation

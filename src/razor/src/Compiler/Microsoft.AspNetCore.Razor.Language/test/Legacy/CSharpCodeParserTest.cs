@@ -12,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Test.Legacy;
 
 public class CSharpCodeParserTest
 {
-    public static TheoryData<string, SourceLocation, IEnumerable<RazorDiagnostic>> InvalidTagHelperPrefixData
+    public static TheoryData InvalidTagHelperPrefixData
     {
         get
         {
@@ -105,16 +105,17 @@ public class CSharpCodeParserTest
     public void ValidateTagHelperPrefix_ValidatesPrefix(
         string directiveText,
         SourceLocation directiveLocation,
-        IEnumerable<RazorDiagnostic> expectedErrors)
+        object expectedErrors)
     {
         // Arrange
+        var expectedDiagnostics = (IEnumerable<RazorDiagnostic>)expectedErrors;
         var diagnostics = new List<RazorDiagnostic>();
 
         // Act
         CSharpCodeParser.ValidateTagHelperPrefix(directiveText, directiveLocation, diagnostics);
 
         // Assert
-        Assert.Equal(expectedErrors, diagnostics);
+        Assert.Equal(expectedDiagnostics, diagnostics);
     }
 
     [Theory]

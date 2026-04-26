@@ -10,20 +10,20 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
 internal static class RazorCodeActionFactory
 {
-    private readonly static Guid s_addComponentUsingTelemetryId = new("6c5416b7-7be7-49ee-aa60-904385be676f");
-    private readonly static Guid s_fullyQualifyComponentTelemetryId = new("3d9abe36-7d10-4e08-8c18-ad88baa9a923");
-    private readonly static Guid s_createComponentFromTagTelemetryId = new("a28e0baa-a4d5-4953-a817-1db586035841");
-    private readonly static Guid s_createExtractToCssTelemetryId = new("a3773518-35ff-455c-a8c2-d6adaf1d2c48");
-    private readonly static Guid s_createExtractToCodeBehindTelemetryId = new("f63167f7-fdc6-450f-8b7b-b240892f4a27");
-    private readonly static Guid s_createExtractToComponentTelemetryId = new("af67b0a3-f84b-4808-97a7-b53e85b22c64");
-    private readonly static Guid s_simplifyComponentTelemetryId = new("2207f68c-419e-4baa-8493-2e7769e5c91d");
-    private readonly static Guid s_generateEventHandlerTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
-    private readonly static Guid s_generateAsyncEventHandlerTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
-    private readonly static Guid s_promoteUsingDirectiveTelemetryId = new("751f9012-e37b-444a-9211-b4ebce91d96e");
-    private readonly static Guid s_removeUnnecessaryDirectivesTelemetryId = new("92bbd4a4-6076-4742-b90b-9b480e6a23ec");
-    private readonly static Guid s_wrapAttributesTelemetryId = new("1df50ba6-4ed1-40d8-8fe2-1c4c1b08e8b5");
-    private readonly static Guid s_simplifyFullyQualifiedComponentTelemetryId = new("f8640324-2037-49fd-9697-2227690c33c3");
-    private readonly static Guid s_sortAndConsolidateUsingsTelemetryId = new("a3dc8f52-7e1b-4a09-9c6d-2f5e7a8b3c01");
+    private static readonly Guid s_addComponentUsingTelemetryId = new("6c5416b7-7be7-49ee-aa60-904385be676f");
+    private static readonly Guid s_fullyQualifyComponentTelemetryId = new("3d9abe36-7d10-4e08-8c18-ad88baa9a923");
+    private static readonly Guid s_createComponentFromTagTelemetryId = new("a28e0baa-a4d5-4953-a817-1db586035841");
+    private static readonly Guid s_createExtractToCssTelemetryId = new("a3773518-35ff-455c-a8c2-d6adaf1d2c48");
+    private static readonly Guid s_createExtractToCodeBehindTelemetryId = new("f63167f7-fdc6-450f-8b7b-b240892f4a27");
+    private static readonly Guid s_createExtractToComponentTelemetryId = new("af67b0a3-f84b-4808-97a7-b53e85b22c64");
+    private static readonly Guid s_simplifyComponentTelemetryId = new("2207f68c-419e-4baa-8493-2e7769e5c91d");
+    private static readonly Guid s_generateEventHandlerTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
+    private static readonly Guid s_generateAsyncEventHandlerTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
+    private static readonly Guid s_promoteUsingDirectiveTelemetryId = new("751f9012-e37b-444a-9211-b4ebce91d96e");
+    private static readonly Guid s_removeUnnecessaryDirectivesTelemetryId = new("92bbd4a4-6076-4742-b90b-9b480e6a23ec");
+    private static readonly Guid s_wrapAttributesTelemetryId = new("1df50ba6-4ed1-40d8-8fe2-1c4c1b08e8b5");
+    private static readonly Guid s_simplifyFullyQualifiedComponentTelemetryId = new("f8640324-2037-49fd-9697-2227690c33c3");
+    private static readonly Guid s_sortAndConsolidateUsingsTelemetryId = new("a3dc8f52-7e1b-4a09-9c6d-2f5e7a8b3c01");
 
     public static RazorVSInternalCodeAction CreateWrapAttributes(RazorCodeActionResolutionParams resolutionParams)
         => new RazorVSInternalCodeAction

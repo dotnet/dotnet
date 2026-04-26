@@ -1,0 +1,16 @@
+{
+  "Microsoft.CodeCoverage": 76,
+  "Microsoft.NET.Test.Sdk": 26,
+  "Microsoft.TestPlatform": 548,
+  "Microsoft.TestPlatform.AdapterUtilities": 62,
+  "Microsoft.TestPlatform.Build": 21,
+  "Microsoft.TestPlatform.CLI": 483,
+  "Microsoft.TestPlatform.Extensions.TrxLogger": 35,
+  "Microsoft.TestPlatform.Filter.Source": 13,
+  "Microsoft.TestPlatform.Internal.Uwp": 39,
+  "Microsoft.TestPlatform.ObjectModel": 93,
+  "Microsoft.TestPlatform.Portable": 608,
+  "Microsoft.TestPlatform.TestHost": 65,
+  "Microsoft.TestPlatform.TranslationLayer": 175,
+  "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI": 389
+}

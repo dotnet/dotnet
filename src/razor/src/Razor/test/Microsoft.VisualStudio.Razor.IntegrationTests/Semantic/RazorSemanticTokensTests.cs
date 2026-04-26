@@ -21,8 +21,6 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class RazorSemanticTokensTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    private static readonly AsyncLocal<string?> s_fileName = new();
-
     private static string? s_projectPath;
 
     // WARNING: If you leave this as "true" it will cause the semantic tokens tests to change their expected values.

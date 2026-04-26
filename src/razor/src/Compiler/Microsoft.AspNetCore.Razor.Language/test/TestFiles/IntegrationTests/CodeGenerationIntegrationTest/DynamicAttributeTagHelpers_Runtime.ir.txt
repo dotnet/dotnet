@@ -50,12 +50,12 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                     DefaultTagHelperProperty - (168:6,14 [27] DynamicAttributeTagHelpers.cshtml) - bound - string TestNamespace.InputTagHelper.Bound - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlContent - (168:6,14 [6] DynamicAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (168:6,14 [6] DynamicAttributeTagHelpers.cshtml) - Html - prefix
+                            IntermediateToken - (168:6,14 [6] DynamicAttributeTagHelpers.cshtml) - Html - prefix
                             IntermediateToken -  - Html -  
                         CSharpExpression - (176:6,22 [12] DynamicAttributeTagHelpers.cshtml)
                             LazyIntermediateToken - (176:6,22 [12] DynamicAttributeTagHelpers.cshtml) - CSharp - DateTime.Now
                         HtmlContent - (188:6,34 [7] DynamicAttributeTagHelpers.cshtml)
-                            LazyIntermediateToken - (188:6,34 [7] DynamicAttributeTagHelpers.cshtml) - Html -  suffix
+                            IntermediateToken - (188:6,34 [7] DynamicAttributeTagHelpers.cshtml) - Html -  suffix
                     DefaultTagHelperHtmlAttribute -  - unbound - HtmlAttributeValueStyle.DoubleQuotes
                         HtmlAttributeValue - (206:6,52 [6] DynamicAttributeTagHelpers.cshtml) - 
                             LazyIntermediateToken - (206:6,52 [6] DynamicAttributeTagHelpers.cshtml) - Html - prefix

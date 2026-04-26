@@ -48,9 +48,9 @@ namespace AspNetCoreGeneratedDocument
             WriteLiteral("<html>\r\n    ");
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("head", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "__UniqueIdSuppressedForTesting__", async() => {
                 WriteLiteral("\r\n        ");
-                Write(
 #nullable restore
-#line (3,10)-(3,10) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+#line (3,10)-(3,10) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+Write(
 
 #line default
 #line hidden

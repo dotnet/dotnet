@@ -15,5 +15,8 @@
   },
   "msbuild-sdks": {
     "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26164.1"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
   }
 }

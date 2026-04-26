@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Versioning;
 using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.Deployment.WindowsInstaller.Package;
 using Microsoft.SignCheck.Interop;
@@ -11,9 +12,10 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
+    [SupportedOSPlatform("windows")]
     public class MsiVerifier : AuthentiCodeVerifier
     {
-        public MsiVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msi")
+        public MsiVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msi", new OleStorageSecurityInfoProvider())
         {
 
         }
@@ -60,6 +62,7 @@ namespace Microsoft.SignCheck.Verification
                     catch (Exception e)
                     {
                         Log.WriteError(e.Message);
+                        svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
                     }
                 }
 
@@ -92,6 +95,7 @@ namespace Microsoft.SignCheck.Verification
                 catch (Exception e)
                 {
                     Log.WriteError(e.Message);
+                    svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
                 }
 
                 DeleteDirectory(svr.TempPath);

@@ -23,7 +23,7 @@ public class ProcessesInteractionTests : AcceptanceTestBase
         // Arrange
         SetTestEnvironment(_testEnvironment, runnerInfo);
         const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
-        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core80TargetFramework);
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core11TargetFramework);
         UpdateRuntimeConfigJsonWithInvalidFramework(assemblyPath, testAssetProjectName);
 
         // Act
@@ -31,7 +31,7 @@ public class ProcessesInteractionTests : AcceptanceTestBase
 
         // Assert
         ExitCodeEquals(1);
-        StdErrorRegexIsMatch("You must install or update \\.NET to run this application\\. App: .*testhost\\.(exe|dll) Architecture: x64 Framework: 'Microsoft\\.NETCore\\.App', version '0\\.0\\.0' \\(x64\\)");
+        StdErrorRegexIsMatch("You must install or update \\.NET to run this application\\. App: .*testhost\\.(exe|dll) Architecture: x64 Framework: 'Microsoft\\.NETCore\\.App', version '0\\.0\\.0.*' \\(x64\\)");
 
         static void UpdateRuntimeConfigJsonWithInvalidFramework(string assemblyPath, string testAssetProjectName)
         {
@@ -40,7 +40,7 @@ public class ProcessesInteractionTests : AcceptanceTestBase
             // that's only meant to be used by this project.
             var runtimeConfigJson = Path.Combine(Path.GetDirectoryName(assemblyPath)!, testAssetProjectName + ".runtimeconfig.json");
             var fileContent = File.ReadAllText(runtimeConfigJson);
-            var updatedContent = fileContent.Replace("\"version\": \"8.0.0\"", "\"version\": \"0.0.0\"");
+            var updatedContent = fileContent.Replace("\"version\": \"11.0.0", "\"version\": \"0.0.0");
             File.WriteAllText(runtimeConfigJson, updatedContent);
         }
     }

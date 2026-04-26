@@ -407,7 +407,7 @@ internal abstract class BaseRunTests
                 EqtTrace.Verbose("Attaching to default test host.");
 
                 attachedToTestHost = true;
-#if NET5_0_OR_GREATER
+#if NET
                 var pid = Environment.ProcessId;
 #else
                 var pid = Process.GetCurrentProcess().Id;

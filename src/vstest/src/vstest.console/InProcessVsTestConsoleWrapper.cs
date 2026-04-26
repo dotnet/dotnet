@@ -93,7 +93,7 @@ internal class InProcessVsTestConsoleWrapper : IVsTestConsoleWrapper
 
         // Fill the parameters.
         consoleParameters.ParentProcessId =
-#if NET6_0_OR_GREATER
+#if NET
             Environment.ProcessId;
 #else
             System.Diagnostics.Process.GetCurrentProcess().Id;

@@ -33,7 +33,7 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <RepositoryReference Include="runtime" />
-    <RepositoryReference Include="source-build-reference-packages" />
+    <RepositoryReference Include="source-build-assets" />
     <RepositoryReference Include="symreader" />
     <!-- For the Microsoft.Net.Sdk.WindowsDesktop which is used by roslyn in source-build. -->
     <RepositoryReference Include="wpf" />

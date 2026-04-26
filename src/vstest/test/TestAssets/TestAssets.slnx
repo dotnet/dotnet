@@ -46,6 +46,7 @@
   <Project Path="DiscoveryTestProject/DiscoveryTestProject.csproj" />
   <Project Path="EnvironmentVariablesTestProject/EnvironmentVariablesTestProject.csproj" />
   <Project Path="EventLogUnitTestProject/EventLogUnitTestProject.csproj" />
+  <Project Path="FilterSourcePackageConsumerTests/FilterSourcePackageConsumerTests.csproj" />
   <Project Path="hanging-child/hanging-child.csproj" />
   <Project Path="MstestV1UnitTestProject/MstestV1UnitTestProject.csproj" />
   <Project Path="MultiHostTestExecutionProject/MultiHostTestExecutionProject.csproj" />

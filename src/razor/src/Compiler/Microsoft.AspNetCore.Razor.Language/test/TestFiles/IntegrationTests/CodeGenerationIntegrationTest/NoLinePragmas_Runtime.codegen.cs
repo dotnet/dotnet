@@ -43,10 +43,9 @@ while(i <= 10) {
 #nullable disable
 
             WriteLiteral("    <p>Hello from C#, #");
-            Write(
 #nullable restore
-#line (6,26)-(6,27) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
-i
+#line (6,26)-(6,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
+Write(i
 
 #line default
 #line hidden
@@ -120,10 +119,9 @@ for(int j = 1; j <= 10; j += 2) {
 #nullable disable
 
             WriteLiteral("    <p>Hello again from C#, #");
-            Write(
 #nullable restore
-#line (24,32)-(24,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
-j
+#line (24,32)-(24,33) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
+Write(j
 
 #line default
 #line hidden
@@ -157,10 +155,9 @@ try {
 #nullable disable
 
             WriteLiteral("    <p>Oh no! An error occurred: ");
-            Write(
 #nullable restore
-#line (30,36)-(30,46) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
-ex.Message
+#line (30,36)-(30,46) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
+Write(ex.Message
 
 #line default
 #line hidden
@@ -177,10 +174,9 @@ ex.Message
 #nullable disable
 
             WriteLiteral("<p>i is now ");
-            Write(
 #nullable restore
-#line (34,14)-(34,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
-i
+#line (34,14)-(34,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NoLinePragmas.cshtml"
+Write(i
 
 #line default
 #line hidden

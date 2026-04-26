@@ -6,10 +6,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net48</TargetFrameworks>
+    <TargetFrameworks>net11.0;net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.CommunicationUtilities.UnitTests</AssemblyName>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
+  </ItemGroup>
+
   <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System.Runtime" />
     <Reference Include="System" />

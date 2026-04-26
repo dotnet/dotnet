@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="cmdidAddNestedCsFileEditor|ButtonText">
         <source>Add Nested .cs File</source>
-        <target state="new">Add Nested .cs File</target>
+        <target state="translated">Ajouter un fichier .cs imbriqué</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddNestedCsFileEditor|CommandName">
         <source>AddNestedCsFileEditor</source>
-        <target state="new">AddNestedCsFileEditor</target>
+        <target state="translated">AddNestedCsFileEditor</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddNestedCsFileEditor|LocCanonicalName">
         <source>AddNestedCsFileEditor</source>
-        <target state="new">AddNestedCsFileEditor</target>
+        <target state="translated">AddNestedCsFileEditor</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddOrViewNestedCsFile|ButtonText">
@@ -104,17 +104,17 @@
       </trans-unit>
       <trans-unit id="cmdidViewPageEditor|ButtonText">
         <source>View Page</source>
-        <target state="new">View Page</target>
+        <target state="translated">Afficher la page</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidViewPageEditor|CommandName">
         <source>ViewPageEditor</source>
-        <target state="new">ViewPageEditor</target>
+        <target state="translated">ViewPageEditor</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidViewPageEditor|LocCanonicalName">
         <source>ViewPageEditor</source>
-        <target state="new">ViewPageEditor</target>
+        <target state="translated">ViewPageEditor</target>
         <note />
       </trans-unit>
       <trans-unit id="menuidToolWindowToolbar|ButtonText">

@@ -46,7 +46,7 @@
                         HtmlContent - (45:2,10 [11] SingleTagHelper.cshtml)
                             LazyIntermediateToken - (45:2,10 [11] SingleTagHelper.cshtml) - Html - Hello World
                     DefaultTagHelperProperty - (63:2,28 [4] SingleTagHelper.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (63:2,28 [4] SingleTagHelper.cshtml) - CSharp - 1337
+                        IntermediateToken - (63:2,28 [4] SingleTagHelper.cshtml) - CSharp - 1337
                     DefaultTagHelperExecute - 
             Inject - 
             Inject - 

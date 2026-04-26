@@ -70,6 +70,18 @@ namespace NuGet.Protocol
                 if (packageInfo != null)
                 {
                     var stream = File.OpenRead(packageInfo.Path);
+                    try
+                    {
+                        HttpStreamValidation.ValidatePackageIdentity(packageInfo.Path, stream, identity);
+                    }
+                    catch (InvalidDataException ex)
+                    {
+                        stream.Dispose();
+                        // To make this API consistent with HTTP DownloadReosurce implementations, we need to throw FatalProtocolException.
+                        // Also try to avoid duplicate messages when ExceptionUtilities.DisplayMessage appends inner exception messages.
+                        throw new FatalProtocolException(ex.Message, ex.InnerException ?? ex);
+                    }
+                    stream.Position = 0;
                     return Task.FromResult(new DownloadResourceResult(stream, packageInfo.GetReader(), _localResource.Root));
                 }
                 else

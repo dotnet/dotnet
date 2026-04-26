@@ -56,17 +56,6 @@ secrets:
     parameters:
       description: Client id for akams app
 
-  dn-bot-dotnet-build-rw-code-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dotnet-build
-      organizations: dnceng
-      scopes: build_execute code_write 
-
   dn-bot-all-orgs-build-rw-code-rw:
     type: azure-devops-access-token
     parameters:

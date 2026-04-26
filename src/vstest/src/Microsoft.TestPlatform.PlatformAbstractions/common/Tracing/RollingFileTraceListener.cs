@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#if NETFRAMEWORK || NETCOREAPP || NETSTANDARD2_0
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -480,5 +478,3 @@ public class RollingFileTraceListener : TextWriterTraceListener
         }
     }
 }
-
-#endif

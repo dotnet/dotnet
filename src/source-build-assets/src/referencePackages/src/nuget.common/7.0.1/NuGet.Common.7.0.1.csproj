@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <PackageVersion>7.0.1</PackageVersion>
+    <AssemblyName>NuGet.Common</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../nuget.frameworks/7.0.1/NuGet.Frameworks.7.0.1.csproj" />
+  </ItemGroup>
+
+</Project>

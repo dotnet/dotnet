@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
 {
-    public static TheoryData<string, IEnumerable<KeyValuePair<string, string>>> GetAttributeNameValuePairsData
+    public static TheoryData GetAttributeNameValuePairsData
     {
         get
         {

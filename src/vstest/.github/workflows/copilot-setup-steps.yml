@@ -23,5 +23,5 @@ jobs:
 
       - name: Build the repository
         run: |
-          chmod +x build.sh eng/build.sh eng/common/build.sh eng/common/tools.sh
+          chmod +x build.sh eng/common/build.sh eng/common/tools.sh
           ./build.sh

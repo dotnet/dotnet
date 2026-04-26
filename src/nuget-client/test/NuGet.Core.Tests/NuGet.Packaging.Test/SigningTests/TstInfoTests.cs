@@ -94,6 +94,46 @@ namespace NuGet.Packaging.Test
             Verify(testTstInfo);
         }
 
+        [Fact]
+        public void Encode_WithDefaultOrderingFalse_OmitsBooleanAndIsAcceptedByConsumers()
+        {
+            // DER X.690 §11.5: a value equal to the DEFAULT must not be encoded.
+            // 'ordering BOOLEAN DEFAULT FALSE' must be omitted when false.
+            TestTstInfo testTstInfo = CreateTestTstInfo();
+
+            AsnWriter writer = new(AsnEncodingRules.DER);
+            testTstInfo.Encode(writer);
+            byte[] bytes = writer.Encode();
+
+            // Verify the ordering boolean is not present in the encoded bytes
+            AsnReader reader = new(bytes, AsnEncodingRules.DER);
+            AsnReader sequence = reader.ReadSequence();
+
+            sequence.ReadInteger();          // version
+            sequence.ReadObjectIdentifier(); // policy
+            sequence.ReadSequence();         // messageImprint
+            sequence.ReadInteger();          // serialNumber
+            sequence.ReadGeneralizedTime();  // genTime
+            // accuracy is not present in this test data
+
+            bool hasBooleanTag = sequence.HasData && sequence.PeekTag() == Asn1Tag.Boolean;
+            Assert.False(hasBooleanTag,
+                "Ordering=false must not be explicitly encoded per DER rules (X.690 §11.5).");
+
+            // Verify NuGet's own parser accepts the encoding and reads ordering as false
+            TstInfo parsed = TstInfo.Read(bytes);
+            Assert.False(parsed.Ordering);
+
+#if IS_CORECLR
+            // Verify the BCL parser also accepts the encoding and reads ordering as false
+            Assert.True(
+                System.Security.Cryptography.Pkcs.Rfc3161TimestampTokenInfo.TryDecode(
+                    new ReadOnlyMemory<byte>(bytes), out System.Security.Cryptography.Pkcs.Rfc3161TimestampTokenInfo? bclTstInfo, out _),
+                "BCL Rfc3161TimestampTokenInfo.TryDecode rejected the encoded TSTInfo.");
+            Assert.False(bclTstInfo!.IsOrdering);
+#endif
+        }
+
         private static void Verify(TestTstInfo expectedTstInfo)
         {
             AsnWriter writer = new(AsnEncodingRules.DER);

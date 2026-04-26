@@ -34,10 +34,6 @@ internal sealed class RemoteHierarchyService(
         }
 
         var hostPathOfFileInProject = _session.ConvertSharedUriToLocalPath(pathOfFileInProject);
-        if (hostPathOfFileInProject is null)
-        {
-            return false;
-        }
 
         await _jtf.SwitchToMainThreadAsync(cancellationToken);
 

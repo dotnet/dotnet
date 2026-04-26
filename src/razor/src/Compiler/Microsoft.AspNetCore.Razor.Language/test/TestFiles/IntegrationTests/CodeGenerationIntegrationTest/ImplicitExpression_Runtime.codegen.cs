@@ -33,10 +33,9 @@ for(int i = 1; i <= 10; i++) {
 #nullable disable
 
             WriteLiteral("    <p>This is item #");
-            Write(
 #nullable restore
-#line (2,23)-(2,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ImplicitExpression.cshtml"
-i
+#line (2,23)-(2,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ImplicitExpression.cshtml"
+Write(i
 
 #line default
 #line hidden

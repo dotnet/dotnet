@@ -437,16 +437,16 @@ namespace NuGet.CommandLine.XPlat
 
         /// <summary>
         /// Add package name and version into the props file.
+        /// Only version metadata belongs on PackageVersion items; asset metadata (PrivateAssets, IncludeAssets)
+        /// belongs on the PackageReference item in the project file.
         /// </summary>
         /// <param name="itemGroup">Item group that needs to be modified in the props file.</param>
         /// <param name="libraryDependency">Package Dependency of the package to be added.</param>
         internal void AddPackageVersionIntoPropsItemGroup(ProjectItemGroupElement itemGroup,
             LibraryDependency libraryDependency)
         {
-            // Add both package reference information and version metadata using the PACKAGE_VERSION_TYPE_TAG.
             var item = itemGroup.AddItem(PACKAGE_VERSION_TYPE_TAG, libraryDependency.Name);
             var packageVersion = AddVersionMetadata(libraryDependency, item);
-            AddExtraMetadataToProjectItemElement(libraryDependency, item);
             Logger.LogInformation(string.Format(CultureInfo.CurrentCulture, Strings.Info_AddPkgAdded, libraryDependency.Name, packageVersion, itemGroup.ContainingProject.FullPath
             ));
         }

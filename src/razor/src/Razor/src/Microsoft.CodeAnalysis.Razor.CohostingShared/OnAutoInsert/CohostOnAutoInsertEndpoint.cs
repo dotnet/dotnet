@@ -85,7 +85,7 @@ internal sealed class CohostOnAutoInsertEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentOnAutoInsertParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected async override Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         _logger.LogDebug($"Resolving auto-insertion for {razorDocument.FilePath}");
 

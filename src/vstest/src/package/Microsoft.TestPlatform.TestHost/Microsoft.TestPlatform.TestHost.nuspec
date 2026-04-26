@@ -7,7 +7,6 @@
     <dependencies>
       <group targetFramework="net8.0">
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
       </group>
 
       <group targetFramework="net462"></group>
@@ -33,6 +32,7 @@
 
     <file src="net8.0\x86\msdia140.dll" target="lib\net8.0\x86\" />
     <file src="net8.0\x64\msdia140.dll" target="lib\net8.0\x64\" />
+    <file src="net8.0\arm64\msdia140.dll" target="lib\net8.0\arm64\" />
 
     <!--
           We move AnyCPU version of testhost.dll, at the moment we don't have native code that needs particular architecture inside testhost.dll.

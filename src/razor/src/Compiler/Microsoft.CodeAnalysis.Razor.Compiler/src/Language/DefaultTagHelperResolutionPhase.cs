@@ -806,8 +806,10 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         var first = a.AbsoluteIndex <= b.AbsoluteIndex ? a : b;
         var last = a.AbsoluteIndex + a.Length >= b.AbsoluteIndex + b.Length ? a : b;
         var lineCount = (last.LineIndex + last.LineCount) - first.LineIndex;
-        return new SourceSpan(first.FilePath, start, first.LineIndex, first.CharacterIndex,
-            end - start, lineCount, last.EndCharacterIndex);
+        return first.WithAbsoluteIndex(start)
+            .WithLength(end - start)
+            .WithLineCount(lineCount)
+            .WithEndCharacterIndex(last.EndCharacterIndex);
     }
 
     /// <summary>
@@ -847,8 +849,8 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         {
             // @
             var atLoc = sourceDocument.Text.Lines.GetLinePosition(exprStart);
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create("@", static s => s),
+            target.Children.Add(IntermediateNodeFactory.CSharpToken(
+                "@",
                 new SourceSpan(filePath, exprStart, atLoc.Line, atLoc.Character, 1, 0, atLoc.Character + 1)));
 
             // (, inner content, )
@@ -858,8 +860,8 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         {
             // Not @() -- emit as single token.
             var loc = sourceDocument.Text.Lines.GetLinePosition(exprStart);
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create(exprText, static s => s),
+            target.Children.Add(IntermediateNodeFactory.CSharpToken(
+                exprText,
                 new SourceSpan(filePath, exprStart, loc.Line, loc.Character, exprLength, 0, loc.Character + exprLength)));
         }
     }
@@ -879,8 +881,8 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
 
         // (
         var openLoc = sourceDocument.Text.Lines.GetLinePosition(parenStart);
-        target.Children.Add(new CSharpIntermediateToken(
-            LazyContent.Create("(", static s => s),
+        target.Children.Add(IntermediateNodeFactory.CSharpToken(
+            "(",
             new SourceSpan(filePath, parenStart, openLoc.Line, openLoc.Character, 1, 0, openLoc.Character + 1)));
 
         // inner content
@@ -891,16 +893,16 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
             var innerText = sourceDocument.Text.ToString(
                 new Microsoft.CodeAnalysis.Text.TextSpan(innerStart, innerLen));
             var innerLoc = sourceDocument.Text.Lines.GetLinePosition(innerStart);
-            target.Children.Add(new CSharpIntermediateToken(
-                LazyContent.Create(innerText, static s => s),
+            target.Children.Add(IntermediateNodeFactory.CSharpToken(
+                innerText,
                 new SourceSpan(filePath, innerStart, innerLoc.Line, innerLoc.Character, innerLen, 0, innerLoc.Character + innerLen)));
         }
 
         // )
         var closePos = parenStart + parenLength - 1;
         var closeLoc = sourceDocument.Text.Lines.GetLinePosition(closePos);
-        target.Children.Add(new CSharpIntermediateToken(
-            LazyContent.Create(")", static s => s),
+        target.Children.Add(IntermediateNodeFactory.CSharpToken(
+            ")",
             new SourceSpan(filePath, closePos, closeLoc.Line, closeLoc.Character, 1, 0, closeLoc.Character + 1)));
     }
 
@@ -918,9 +920,10 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         EmitExplicitExpressionTokens(expr, expressionSource.AbsoluteIndex, expressionSource.Length, sourceDocument);
 
         var exprLoc = sourceDocument.Text.Lines.GetLinePosition(expressionSource.AbsoluteIndex);
-        expr.Source = new SourceSpan(
-            expressionSource.FilePath, expressionSource.AbsoluteIndex,
-            exprLoc.Line, exprLoc.Character, expressionSource.Length, 0, exprLoc.Character + expressionSource.Length);
+        expr.Source = expressionSource.WithLineIndex(exprLoc.Line)
+            .WithCharacterIndex(exprLoc.Character)
+            .WithLineCount(0)
+            .WithEndCharacterIndex(exprLoc.Character + expressionSource.Length);
         target.Children.Add(expr);
     }
 
@@ -950,7 +953,7 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
     private static CSharpIntermediateToken ToCSharpToken(HtmlIntermediateToken htmlToken)
     {
         return htmlToken.IsLazy
-            ? new CSharpIntermediateToken(LazyContent.Create(htmlToken, static t => t.Content), htmlToken.Source)
+            ? IntermediateNodeFactory.CSharpToken(htmlToken, static t => t.Content, htmlToken.Source)
             : new CSharpIntermediateToken(htmlToken.Content, htmlToken.Source);
     }
 
@@ -962,16 +965,16 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         return new HtmlContentIntermediateNode()
         {
             Source = source,
-            Children = { new HtmlIntermediateToken(LazyContent.Create("", static s => s), source) }
+            Children = { IntermediateNodeFactory.HtmlToken("", source) }
         };
     }
 
     /// <summary>
-    /// Creates an empty <see cref="CSharpIntermediateToken"/> with a lazy empty string.
+    /// Creates an empty <see cref="CSharpIntermediateToken"/> with an empty string.
     /// </summary>
     private static CSharpIntermediateToken CreateEmptyCSharpToken(SourceSpan? source)
     {
-        return new CSharpIntermediateToken(LazyContent.Create("", static s => s), source);
+        return IntermediateNodeFactory.CSharpToken("", source);
     }
 
     /// <summary>
@@ -1002,14 +1005,9 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
             return null;
         }
 
-        return new SourceSpan(
-            s.FilePath,
-            s.AbsoluteIndex - prefixLength,
-            s.LineIndex,
-            s.CharacterIndex - prefixLength,
-            s.Length + prefixLength,
-            s.LineCount,
-            s.EndCharacterIndex);
+        return s.WithAbsoluteIndex(s.AbsoluteIndex - prefixLength)
+            .WithCharacterIndex(s.CharacterIndex - prefixLength)
+            .WithLength(s.Length + prefixLength);
     }
 
     /// <summary>
@@ -1102,9 +1100,11 @@ internal partial class DefaultTagHelperResolutionPhase : RazorEnginePhaseBase
         var diagSource = elementNode.Source;
         if (elementNode.EndTagSpan is SourceSpan ets)
         {
-            diagSource = new SourceSpan(
-                ets.FilePath, ets.AbsoluteIndex + 2, ets.LineIndex, ets.CharacterIndex + 2,
-                tagName.Length, 0, ets.CharacterIndex + 2 + tagName.Length);
+            diagSource = ets.WithAbsoluteIndex(ets.AbsoluteIndex + 2)
+                .WithCharacterIndex(ets.CharacterIndex + 2)
+                .WithLength(tagName.Length)
+                .WithLineCount(0)
+                .WithEndCharacterIndex(ets.CharacterIndex + 2 + tagName.Length);
         }
 
         if (diagSource is SourceSpan ds)

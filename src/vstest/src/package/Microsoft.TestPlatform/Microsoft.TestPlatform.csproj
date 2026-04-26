@@ -79,7 +79,6 @@
     <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" GeneratePathProperty="true" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" />
@@ -105,7 +104,6 @@
       <MicrosoftExtensionsFileSystemGlobbingFiles Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbingFiles>
       <PlatformAbstractionsDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PlatformAbstractionsDepsJsonFiles>
       <PackageDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PackageDepsJsonFiles>
-      <NewtonsoftJsonFiles Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*"></NewtonsoftJsonFiles>
       <SystemCollectionsImmutableFiles Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\*"></SystemCollectionsImmutableFiles>
       <SystemReflectionMetadataFiles Include="$(PkgSystem_Reflection_Metadata)\lib\netstandard2.0\*"></SystemReflectionMetadataFiles>
       <MicrosoftInternalDiaFiles Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDiaFiles>
@@ -125,7 +123,6 @@
     <Copy SourceFiles="@(MicrosoftExtensionsDependencyModelFiles)" DestinationFiles="$(OutDir)\Microsoft.Extensions.DependencyModel\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbingFiles)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(PlatformAbstractionsDepsJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(NewtonsoftJsonFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemCollectionsImmutableFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemReflectionMetadataFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalDiaFiles)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />

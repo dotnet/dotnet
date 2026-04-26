@@ -518,8 +518,8 @@ namespace Microsoft.NET.Sdk.BlazorWebAssembly.Tests
                 assetsManifestPath: "custom-service-worker-assets.js");
 
             // Verify assemblies are not trimmed
-            var loggingAssemblyPath = Path.Combine(blazorPublishDirectory, "_framework", "Microsoft.Extensions.Logging.Abstractions.wasm");
-            VerifyAssemblyHasTypes(loggingAssemblyPath, new[] { "Microsoft.Extensions.Logging.Abstractions.NullLogger" });
+            var loggingAssemblyPath = Path.Combine(blazorPublishDirectory, "_framework", "Microsoft.Extensions.Logging.wasm");
+            VerifyAssemblyHasTypes(loggingAssemblyPath, new[] { "Microsoft.Extensions.Logging.LoggerFactory" });
         }
 
         [Fact(Skip = "https://github.com/dotnet/sdk/issues/52429")]

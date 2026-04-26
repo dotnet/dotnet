@@ -382,35 +382,6 @@ Optionally, a list of Visual Studio [workload component ids](https://docs.micros
 }
 ```
 
-If the build runs on a Windows machine that does not have the required Visual Studio version installed the `build.ps1` script attempts to use xcopy-deployable MSBuild package [`RoslynTools.MSBuild`](https://dotnet.myget.org/feed/roslyn-tools/package/nuget/RoslynTools.MSBuild). This package will allow the build to run on desktop msbuild but it may not provide all tools that the repository needs to build all projects and/or run all tests.
-
-The version of `RoslynTools.MSBuild` package can be specified in `global.json` file under `tools` like so:
-
-```json
-{
-  "tools": {
-    "vs": {
-      "version": "16.0"
-    },
-    "xcopy-msbuild": "16.0.0-rc1-alpha"
-  }
-}
-```
-
-If it is not specified the build script attempts to find `RoslynTools.MSBuild` version `{VSMajor}.{VSMinor}.0-alpha` where `VSMajor.VSMinor` is the value of `tools.vs.version`.
-
-If the fallback behavior to use xcopy-deployable MSBuild package is not desirable, then a version of `none` should be indicated in `global.json`, like this: 
-
-```json
-{
-  "tools": {
-    "vs": {
-      "version": "16.4"
-    },
-    "xcopy-msbuild": "none"
-  }
-}
-```
 
 #### Example: Restoring multiple .NET Core Runtimes for running tests
 

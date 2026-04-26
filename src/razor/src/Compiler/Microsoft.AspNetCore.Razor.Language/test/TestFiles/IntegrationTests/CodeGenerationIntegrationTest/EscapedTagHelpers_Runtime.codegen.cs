@@ -49,10 +49,9 @@ namespace AspNetCoreGeneratedDocument
             WriteLiteral("\r\n<");
             WriteLiteral("div class=\"randomNonTagHelperAttribute\">\r\n    <");
             WriteLiteral("p class=\"Hello World\" ");
-            Write(
 #nullable restore
-#line (4,30)-(4,42) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
-DateTime.Now
+#line (4,30)-(4,42) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
+Write(DateTime.Now
 
 #line default
 #line hidden
@@ -70,10 +69,9 @@ DateTime.Now
             __TestNamespace_InputTagHelper2 = CreateTagHelper<global::TestNamespace.InputTagHelper2>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper2);
             BeginWriteTagHelperAttribute();
-            WriteLiteral(
 #nullable restore
-#line (6,52)-(6,64) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
-DateTime.Now
+#line (6,52)-(6,64) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
+WriteLiteral(DateTime.Now
 
 #line default
 #line hidden

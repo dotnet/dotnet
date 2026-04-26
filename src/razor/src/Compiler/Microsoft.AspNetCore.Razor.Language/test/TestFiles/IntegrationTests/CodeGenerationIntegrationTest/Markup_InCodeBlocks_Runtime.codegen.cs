@@ -41,10 +41,9 @@ namespace AspNetCoreGeneratedDocument
 #nullable disable
 
             WriteLiteral("        <div>");
-            Write(
 #nullable restore
-#line (10,15)-(10,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-person.Name
+#line (10,15)-(10,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+Write(person.Name
 
 #line default
 #line hidden
@@ -91,10 +90,9 @@ person.Name
 #nullable disable
 
         WriteLiteral("        <div>\r\n            <h3>Happy birthday ");
-        Write(
 #nullable restore
-#line (22,34)-(22,43) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-formatted
+#line (22,34)-(22,43) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+Write(formatted
 
 #line default
 #line hidden
@@ -112,10 +110,9 @@ for (var i = 0; i < person.Age / 10; i++)
 #nullable disable
 
         WriteLiteral("            <li>");
-        Write(
 #nullable restore
-#line (28,19)-(28,20) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-i
+#line (28,19)-(28,20) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+Write(i
 
 #line default
 #line hidden

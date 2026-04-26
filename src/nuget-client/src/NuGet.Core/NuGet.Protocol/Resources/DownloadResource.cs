@@ -28,7 +28,5 @@ namespace NuGet.Protocol.Core.Types
             string globalPackagesFolder,
             ILogger logger,
             CancellationToken token);
-
-        // public event EventHandler<PackageProgressEventArgs> Progress;
     }
 }

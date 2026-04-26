@@ -47,6 +47,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
         var session = new StrictMock<CollaborationSession>();
         using var disposedServiceGate = new ManualResetEventSlim();
         var disposedService = false;
+        IDisposable? sessionService = null;
         session
             .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>((cancellationToken) => Task.Run(() =>
@@ -60,7 +61,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
                     return Array.Empty<Uri>();
                 }))
             .Verifiable();
-        var sessionService = Assert.IsAssignableFrom<IDisposable>(await service.CreateServiceAsync(session.Object, DisposalToken));
+        sessionService = (IDisposable)await service.CreateServiceAsync(session.Object, DisposalToken);
 
         // Act
         sessionService.Dispose();
@@ -82,6 +83,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
         var serviceAccessor = service.GetTestAccessor();
         var session = new StrictMock<CollaborationSession>();
         using var cts = new CancellationTokenSource();
+        IDisposable? sessionService = null;
         session
             .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>((cancellationToken) => Task.Run(() =>
@@ -92,7 +94,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
                     return Array.Empty<Uri>();
                 }))
             .Verifiable();
-        _ = Assert.IsAssignableFrom<IDisposable>(await service.CreateServiceAsync(session.Object, cts.Token));
+        sessionService = (IDisposable)await service.CreateServiceAsync(session.Object, cts.Token);
 
         // Act
         cts.Cancel();
@@ -112,6 +114,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
         var serviceAcessor = service.GetTestAccessor();
         var session = new StrictMock<CollaborationSession>();
         using var cts = new CancellationTokenSource();
+        IDisposable? sessionService = null;
         session
             .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>((cancellationToken) => Task.Run(() =>
@@ -123,7 +126,7 @@ public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) :
                     return Array.Empty<Uri>();
                 }))
             .Verifiable();
-        _ = Assert.IsAssignableFrom<IDisposable>(await service.CreateServiceAsync(session.Object, cts.Token));
+        sessionService = (IDisposable)await service.CreateServiceAsync(session.Object, cts.Token);
 
         // Act
         cts.Cancel();

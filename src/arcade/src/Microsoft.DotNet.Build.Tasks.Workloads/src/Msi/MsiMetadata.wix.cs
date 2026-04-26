@@ -45,7 +45,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             get;
         }
 
-        public string LicenseUrl
+        public string? LicenseUrl
         {
             get;
         }
@@ -59,7 +59,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             get;
         }
 
-        public MsiMetadata(string id, NuGetVersion packageVersion, Version msiVersion, string authors, string copyright, string description, string title, string licenseUrl, string projectUrl, string swixPackageId)
+        public MsiMetadata(string id, NuGetVersion packageVersion, Version msiVersion, string authors, string copyright, string description, string title, string? licenseUrl, string projectUrl, string swixPackageId)
         {
             Id = id;
             PackageVersion = packageVersion;
