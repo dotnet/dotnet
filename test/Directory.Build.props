@@ -6,4 +6,10 @@
     <VSTestResultsDirectory>$(ArtifactsTestResultsDir)</VSTestResultsDirectory>
   </PropertyGroup>
 
+  <ItemGroup>
+    <NuGetAuditSuppress Include="GHSA-37gx-xxp4-5rgx" />
+    <NuGetAuditSuppress Include="GHSA-w3x6-4m5h-cxqf" />
+    <NuGetAuditSuppress Include="GHSA-g4vj-cjjj-v7hg" />
+  </ItemGroup>
+
 </Project>
