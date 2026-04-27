@@ -1,78 +1,20 @@
-<!-- AUTO-GENERATED — DO NOT EDIT -->
-<!-- Source: devops-health-investigate.md knowledge compilation -->
+<!-- Source: devops-health-investigate.md VMR-specific knowledge -->
+<!-- General investigation methodology is provided by dotnet-dnceng plugin skills -->
 
-# DevOps Investigation — Compiled Knowledge (dotnet/dotnet VMR)
+# DevOps Investigation — VMR-Specific Knowledge (dotnet/dotnet)
 
-This document contains category-specific investigation playbooks, root-cause patterns,
-and remediation templates for the DevOps Health Investigation worker agent.
-Adapted for the dotnet/dotnet VMR which uses Azure DevOps pipelines.
+This document contains VMR-specific investigation context that complements the
+`dotnet-dnceng` plugin skills (pipeline-investigation, helix-investigation,
+ci-analysis, flow-analysis). Use those skills as the primary investigation
+methodology. This file provides VMR-specific root cause patterns and report
+formatting required by the downstream grooming workflow.
 
 ---
 
-## 1. Pipeline Investigation Playbook (Azure DevOps)
+## 1. VMR Pipeline Root Causes
 
-When `finding_type == "pipeline"`:
-
-### Step-by-Step Protocol
-
-1. **Parse pre-collected build data** from `context_json` input:
-   - The orchestrator passes error messages, failed step names, build URLs, and
-     timeline excerpts as dispatch input strings
-   - The worker does NOT have Azure DevOps API access — all ADO data is in the inputs
-
-2. **Extract error details** from the context:
-   - Failed task/step names
-   - Error messages and exit codes
-   - Build duration vs expected duration
-   - Source branch and triggering commit
-
-3. **Check recent commits** via GitHub API:
-   - Correlate with codeflow PRs merged in the last 24h:
-     ```
-     GET /repos/{owner}/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=20
-     ```
-   - Filter to codeflow PRs (title contains "Source code updates from")
-   - Check if the failing build's branch matches a recent merge
-
-4. **Check other branches** from context:
-   - Review whether the same pipeline is failing on other branches
-   - Failing on multiple branches → systemic issue
-   - Failing on one branch → branch-specific regression
-
-5. **Cross-reference operational issues**:
-   ```
-   GET /repos/{owner}/{repo}/issues?state=open&labels=area-unified-build-OperationalIssue&per_page=50
-   ```
-   - Search for existing issues that match the same error pattern
-   - Check if this is a known tracked problem
-
-6. **Check upstream repo** via GitHub API:
-   - If failure is in a constituent repo's build step (e.g., "Build runtime"),
-     check that repo's recent activity:
-     ```
-     GET /repos/dotnet/{repo}/commits?per_page=10
-     ```
-   - Look for recent changes that could cause the failure
-
-7. **Determine root cause** with confidence level:
-   - **High**: Error message explicitly identifies the cause
-   - **Medium**: Strong timing correlation with a specific commit/PR
-   - **Low**: Multiple possibilities, no direct evidence
-
-8. **Generate 1–3 specific remediation steps**:
-   - Include Azure DevOps build links for manual follow-up
-   - Reference specific repos, branches, or config files
-   - Order by recommended priority
-
-9. **Provide Azure DevOps links**:
-   - Include direct links to the failed build from `resource_url`
-   - The worker cannot browse Azure DevOps but can reference URLs for humans
-
-10. **Check for existing tracking**:
-    - Search for operational issues with matching error patterns
-    - Reference any related GitHub issues or PRs
-
-### Common VMR Pipeline Root Causes
+These patterns are specific to the dotnet/dotnet VMR build and complement the
+general failure categorization in the `pipeline-investigation` skill.
 
 | Pattern | Typical Cause | Remediation |
 |---------|---------------|-------------|
@@ -84,57 +26,57 @@ When `finding_type == "pipeline"`:
 | Codeflow merge conflict | Conflicting changes across repos | Manual resolution needed on codeflow PR |
 | Source-build failure | Pre-built package detection or poisoning | Check source-build patches in `src/<repo>/` |
 | Installer test failure | deb/rpm packaging regression | Check installer changes in `src/installer/` |
+| `exit code 57005` (0xDEAD) in `Windows_Pgo_*` legs | crossgen2 fatal crash | Check dotnet/runtime area-crossgen2-coreclr |
+| `Binary Analysis Scan` + `exit code null` | 1ES infra tooling crash | 1ES PT team issue, not code bug |
+| `SB_*_Validation_*` timeout epidemic | Run Tests timeout across source-build legs | Check test timeout config in dotnet/dotnet |
+| Container OOM (`exit code null` on cross-compilation) | Container memory limit hit | Infrastructure — pool/container config |
+
+### VMR Build Topology
+
+- The VMR builds ~20 constituent repos in dependency order (see `repo-projects/`)
+- Some repos build in multiple passes (e.g., runtime pass 2 for cross-OS DACs)
+- Shared components (aspnetcore, runtime, winforms, wpf, efcore) are only built on 1xx feature bands
+- Artifact cascade failures are common: if one repo fails, downstream repos fail with "missing artifacts" — always trace back to the root failure
+
+### Key ADO Pipeline Definitions
+
+| Pipeline | Org | Type | Notes |
+|----------|-----|------|-------|
+| dotnet-dotnet (ID: 278) | dnceng-public | Rolling CI | Public, no auth required |
+| dotnet-dotnet-official (ID: 1330) | dnceng | Official | Internal, requires auth |
+
+### AzDO Public API Access
+
+For `dnceng-public/public` pipelines, query directly without authentication:
+```bash
+# Build timeline for failure analysis
+curl -sf "https://dev.azure.com/dnceng-public/public/_apis/build/builds/{buildId}/timeline?api-version=7.1"
+
+# Recent builds for frequency analysis (use reasonFilter=schedule for rolling builds)
+curl -sf "https://dev.azure.com/dnceng-public/public/_apis/build/builds?definitions=278&branchName=refs/heads/main&resultFilter=failed&minTime={iso8601}&\$top=20&api-version=7.1"
+```
 
 ---
 
-## 2. Infrastructure Investigation Playbook
+## 2. Infrastructure Investigation (VMR-Specific)
 
 When `finding_type == "infra"`:
 
-### Step-by-Step Protocol
-
-1. **Audit the configuration**:
-   - For stale operational issues: review the issue list for patterns
-   - For codeflow backlog: identify which repos are blocked
-   - For NuGet feed issues: check if the feed URL is correct
-
-2. **Check if intentional**:
-   - Search for issues or PRs that discuss the configuration choice
-   - Check commit history of relevant config files
-
-3. **Compare with best practices**:
-   - Reference .NET repo standards for CODEOWNERS, Dependabot
-   - Note any security implications
-
-4. **For source manifest staleness**:
-   - Check if the stale repo has recent commits in its upstream
-   - If upstream has commits but manifest is stale → codeflow issue
-   - If upstream has no recent commits → normal (low-activity repo)
+- **Stale operational issues**: Review the `area-unified-build-OperationalIssue` issue list for patterns
+- **Codeflow backlog**: Use `flow-analysis` skill patterns — check subscription health, forward flow blockers, and whether widespread staleness indicates VMR build failures (not Maestro issues)
+- **Source manifest staleness**: Check `src/source-manifest.json` — if upstream repo has recent commits but manifest is stale, it's a codeflow issue. If upstream has no recent commits, it's normal (low-activity repo)
+- **NuGet feed issues**: Check if the feed URL is correct and reachable
 
 ---
 
-## 3. Resource Investigation Playbook
+## 3. Resource Investigation
 
 When `finding_type == "resource"`:
 
-### Step-by-Step Protocol
-
-1. **Review pre-collected metrics** from `context_json`:
-   - Pipeline run counts and durations from the data artifact
-   - Compare against historical baselines
-
-2. **Identify top consumers**:
-   - Which pipelines/branches use the most compute time?
-   - Has a new branch been added recently (release prep)?
-
-3. **Compare to baseline**:
-   - Is the increase justified (new release branch, preview builds)?
-   - Check if new constituent repos were added
-
-4. **Recommend optimization**:
-   - Can any builds be consolidated?
-   - Are there unnecessary rebuilds?
-   - Can caching reduce build times?
+- Compare pipeline run counts against historical baselines
+- Check if a new release branch was added (expected compute increase)
+- Check if new constituent repos were added to the VMR
+- Identify top compute consumers by pipeline/branch
 
 ---
 
@@ -179,19 +121,11 @@ All investigation results MUST follow this exact template (the groomer depends o
 - `**Executive Summary:**` appears on its own line
 - `**Correlation:**` appears on its own line
 
-### Confidence Level Guidelines
-
-| Level | Criteria | Example |
-|-------|----------|---------|
-| **High** | Direct evidence links cause to effect | Error log says "OOM killed"; build step used 32GB |
-| **Medium** | Strong circumstantial correlation | Pipeline failed right after codeflow merge from runtime |
-| **Low** | Possible but speculative | Multiple recent changes could explain the issue |
-
 ---
 
-## 5. Common Cross-Category Patterns
+## 5. Cross-Category Patterns
 
-These patterns span multiple check categories and may help identify systemic issues:
+These patterns span multiple check categories and help identify systemic issues:
 
 | Pattern | Indicates |
 |---------|-----------|

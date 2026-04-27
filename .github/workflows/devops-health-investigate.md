@@ -93,7 +93,7 @@ imports:
 tools:
   github:
     toolsets: [repos, issues, pull_requests, actions]
-  bash: ["cat", "grep", "head", "tail", "find", "ls", "wc", "jq", "date", "sort", "diff"]
+  bash: ["cat", "grep", "head", "tail", "find", "ls", "wc", "jq", "date", "sort", "diff", "curl"]
 
 safe-outputs:
   add-comment:
@@ -104,6 +104,8 @@ safe-outputs:
 network:
   allowed:
     - defaults
+    - "dev.azure.com"
+    - "helix.dot.net"
 
 timeout-minutes: 60
 ---
@@ -116,16 +118,24 @@ You are a specialized investigation agent for the dotnet/dotnet Virtual Monolith
 > (`dotnet/dotnet` VMR). All GitHub API calls for data collection should use
 > the default owner/repo. The health dashboard issue also lives in this repository.
 
-> **Key constraint:** You do NOT have Azure DevOps API access. All Azure DevOps data
-> (error messages, failed steps, timeline excerpts) is passed to you via the `context_json`
-> dispatch input. Use GitHub API for additional context (PRs, issues, commits).
-
 > **No Python**: Do NOT use `python3`, `python`, or any other interpreter. Use only
 > the bash tools listed in the frontmatter.
 
-## Your Mission
+## Available Skills (dotnet-dnceng plugin)
 
-Investigate the finding identified by the inputs provided to this workflow run. Determine the root cause, assess the blast radius, and generate actionable remediation steps. Report your findings back to the pinned health issue.
+This repository has the `dotnet-dnceng` plugin enabled, which provides specialized
+investigation skills. **Use these skills as your primary investigation methodology**
+instead of inventing your own approach:
+
+| Finding Type | Primary Skill | What It Provides |
+|-------------|---------------|------------------|
+| `pipeline` (build error, infra crash, validation failure) | **pipeline-investigation** | Failure categorization, timeline analysis, frequency trends, artifact cascade detection, fix verification |
+| `pipeline` (Helix test failure, test timeout, device error) | **helix-investigation** | Console log analysis, machine distribution, false failure detection, XHarness patterns, bulk failure aggregation |
+| `pipeline` (general CI red, triage needed) | **ci-analysis** | Build status triage, known issue cross-referencing, failure classification, build progression analysis |
+| `infra` (codeflow blocked, subscription stuck) | **flow-analysis** | Codeflow PR health, subscription diagnostics, forward/backflow analysis, widespread staleness detection |
+
+Follow the **CiInvestigator** agent routing pattern: assess what data you have,
+pick the right skill, and chain to a second skill if needed.
 
 ## Inputs Available
 
@@ -144,7 +154,7 @@ Investigate the finding identified by the inputs provided to this workflow run. 
 
 ### Step 1: Parse Context
 
-First, parse the `context_json` input to extract pre-collected Azure DevOps data:
+Parse the `context_json` input to extract pre-collected Azure DevOps data:
 ```bash
 cat > context.json <<'EOF'
 ${{ inputs.context_json }}
@@ -160,17 +170,58 @@ This may contain:
 - `source_branch` — which branch was being built
 - `related_prs` — codeflow PRs merged recently
 
-### Step 2: Route to Category-Specific Playbook
+### Step 2: Route to Skill-Based Investigation
 
-Based on `finding_type`, follow the appropriate investigation playbook from the compiled knowledge file:
+Based on `finding_type` and the context data, route to the appropriate investigation approach:
 
-- **pipeline** → Pipeline Investigation Playbook (Azure DevOps)
-- **infra** → Infrastructure Investigation Playbook
-- **resource** → Resource Investigation Playbook
+#### For `finding_type == "pipeline"`:
+
+1. **Classify the failure** using the `context_json` error details:
+   - If failed tasks mention Helix, test timeouts, device errors, or exit codes 80/81/143 → follow **helix-investigation** patterns
+   - If failed tasks are build steps, scans, validation, signing → follow **pipeline-investigation** patterns
+   - If unclear → follow **ci-analysis** triage first
+
+2. **For non-Helix pipeline failures** (pipeline-investigation):
+   - Categorize using the failure pattern table (see compiled knowledge)
+   - Query the AzDO REST API for additional build timeline data if the context is insufficient:
+     ```bash
+     curl -sf "https://dev.azure.com/{org}/{project}/_apis/build/builds/{buildId}/timeline?api-version=7.1"
+     ```
+   - Check frequency: is this a one-off or recurring? Query recent builds:
+     ```bash
+     curl -sf "https://dev.azure.com/{org}/{project}/_apis/build/builds?definitions={defId}&resultFilter=failed&minTime={iso8601}&\$top=20&api-version=7.1"
+     ```
+   - Don't investigate cascade failures — trace back to the root failure
+
+3. **For Helix test failures** (helix-investigation):
+   - Download Helix console logs for failing work items:
+     ```bash
+     curl -s "https://helix.dot.net/api/2019-06-17/jobs/{jobId}/workitems/{workItemName}/console" > /tmp/console.log
+     ```
+   - Check for false failures: XHarness can report APP_CRASH (exit 80) even when all tests pass — look for "Detected test end tag" or "Test run completed"
+   - Compare passing vs failing runs to identify machine-specific issues
+   - Check machine distribution to determine if failure is systemic or machine-specific
+
+4. **For codeflow-related failures** (flow-analysis):
+   - Check if forward flow PRs are blocking backflow
+   - Check subscription health for stuck subscriptions
+   - Identify if widespread staleness indicates VMR build failures
+
+#### For `finding_type == "infra"`:
+
+Follow the Infrastructure Investigation Playbook from the compiled knowledge file.
+For codeflow backlog issues, additionally use **flow-analysis** patterns:
+- Check subscription health for the affected repos
+- Look for forward flow PRs that may be blocking backflow
+- Check if VMR builds are healthy (widespread staleness = VMR build problem)
+
+#### For `finding_type == "resource"`:
+
+Follow the Resource Investigation Playbook from the compiled knowledge file.
 
 ### Step 3: Gather Additional Evidence via GitHub API
 
-Since you cannot access Azure DevOps directly, gather context from GitHub:
+Gather cross-cutting context regardless of finding type:
 
 1. **Recent codeflow PRs** — check if a recent merge caused the failure:
    ```
@@ -183,9 +234,14 @@ Since you cannot access Azure DevOps directly, gather context from GitHub:
    list_issues: owner="dotnet", repo="dotnet", labels=["area-unified-build-OperationalIssue"], state="open"
    ```
 
-3. **Upstream repo activity** — if the failure is in a constituent repo:
+3. **Known issues** — search for existing issues matching the error pattern:
+   ```bash
+   gh search issues "{failure_pattern}" --repo dotnet/dotnet --limit 5
    ```
-   get_file_contents: owner="dotnet", repo="{constituent_repo}", path="."
+
+4. **Upstream repo activity** — if the failure is in a constituent repo's build step (e.g., "Build runtime" → check dotnet/runtime):
+   ```
+   list_commits: owner="dotnet", repo="{constituent_repo}", per_page=10
    ```
 
 ### Step 4: Determine Root Cause
@@ -194,10 +250,12 @@ Based on the gathered evidence:
 1. Identify the **most likely root cause**
 2. Assign a **confidence level**: High / Medium / Low
    - **High**: Direct evidence (error message explicitly states the cause)
-   - **Medium**: Strong circumstantial evidence (timing correlates)
-   - **Low**: Inferential (multiple possibilities)
+   - **Medium**: Strong circumstantial evidence (timing correlates with a specific commit/PR)
+   - **Low**: Multiple possibilities, no direct evidence
 3. Identify the **blast radius** — what else is affected?
-4. Check for **related issues**
+   - Same pipeline failing on other branches → systemic
+   - Only one branch → branch-specific regression
+4. Check for **related issues** and cross-reference patterns
 
 ### Step 5: Report Back
 
@@ -243,9 +301,14 @@ add-comment:
 
 ## Guidelines
 
-- **No Azure DevOps access**: All ADO data must come from `context_json`. Use GitHub API for everything else.
+- **Use dnceng skills as primary methodology**: The dotnet-dnceng plugin provides pipeline-investigation, helix-investigation, ci-analysis, and flow-analysis skills. Follow their investigation patterns, failure categorization tables, and anti-patterns rather than improvising.
+- **Direct AzDO API access for public pipelines**: You can query public AzDO REST APIs (dnceng-public) directly via `curl`. Use this for build timelines, task logs, and failure frequency analysis.
+- **Helix log access**: You can download Helix console logs directly via `curl` from `helix.dot.net`. Use this for deep test failure analysis.
 - **VMR awareness**: The dotnet/dotnet repo mirrors ~20 constituent repos. Failures in "Build runtime" mean the `src/runtime/` code is involved. Check the upstream dotnet/runtime repo for context.
 - **Operational issue cross-reference**: Always search for existing `area-unified-build-OperationalIssue` issues — they may already track this problem.
-- **Include Azure DevOps links**: Even though you can't browse them, include the `resource_url` for human follow-up.
+- **Include Azure DevOps links**: Include the `resource_url` and any build/timeline links for human follow-up.
+- **Don't investigate cascades**: "Missing artifacts" means a prior leg failed — find that root failure.
+- **False failure awareness**: XHarness can report APP_CRASH/TIMED_OUT even when tests pass. Always verify exit codes against actual test results.
+- **Rolling vs PR builds**: Use `reasonFilter=schedule` when assessing main branch health. PR builds inflate failure counts with broken branches.
 - **Be concise**: Focus on actionable information. Avoid speculation without evidence.
 - **Codeflow awareness**: Many failures are caused by code flowing from upstream repos. Check recent codeflow PR merges.

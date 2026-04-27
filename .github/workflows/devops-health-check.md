@@ -185,6 +185,13 @@ below as JSON. Your ONLY job is to:
 > - The dashboard issue lives in THIS repository. Use default owner/repo for issue operations
 > - Data was collected from this repository (dotnet/dotnet VMR)
 
+> **Available skills:** The `dotnet-dnceng` plugin is enabled and provides specialized
+> skills for pipeline-investigation, helix-investigation, ci-analysis, and flow-analysis.
+> Use their domain knowledge when classifying findings and writing context for
+> investigation dispatches. The investigation worker has direct access to public
+> AzDO and Helix APIs, so pass structured context (build IDs, definition IDs,
+> org/project info) in `context_json` to enable deep analysis.
+
 ## Pre-Collected Health Data
 
 Save this data to a file for processing:
@@ -235,6 +242,12 @@ jq '{count: (.codeflow_prs | length), prs: [.codeflow_prs[] | {number, title, cr
 - I2: 🟡 Warning if >5 open, 🔴 Critical if any >3 days old
 - P5: 🟡 Warning if codeflow backlog indicates systemic flow issues
 - Fingerprint: `infra:codeflow-backlog:{severity_bucket}`
+
+**Codeflow analysis guidance** (from `flow-analysis` skill):
+- When multiple repos have stale codeflow PRs simultaneously, the root cause is usually **VMR build failures**, not Maestro issues — check build freshness
+- Forward flow PRs (title "Source code updates from dotnet/{repo}") blocking backflow is the #1 cause of backflow staleness
+- Distinguish backflow PRs (VMR → product repo: "[branch] Source code updates from dotnet/dotnet") from forward flow PRs (product repo → VMR: "[branch] Source code updates from dotnet/{repo}")
+- A codeflow PR open >3 days with no activity is a strong signal of a stuck subscription or blocked forward flow
 
 ### Operational Issues (I1)
 
@@ -356,6 +369,20 @@ dispatch-workflow:
     correlation_id: "hc-{date}-{seq}"
     context_json: "{compact JSON with error details}"
 ```
+
+**context_json enrichment**: Include as much pre-collected data as possible so the
+investigation worker can begin analysis immediately:
+- `error_messages`: Error text from failed build timeline tasks
+- `failed_steps`: Names of failed tasks (e.g., "Build runtime", "Binary Analysis Scan")
+- `build_url`: Direct AzDO build URL
+- `build_id`: Numeric build ID for API queries
+- `org` and `project`: AzDO organization and project (e.g., "dnceng-public", "public")
+- `definition_id`: Pipeline definition ID for frequency analysis
+- `source_branch`: Branch that was being built
+- `related_prs`: Recent codeflow PR numbers merged in the last 24h
+
+The investigation worker has direct access to public AzDO APIs and Helix APIs,
+so providing the build ID and pipeline definition ID enables deeper analysis.
 
 ## Key Links
 
