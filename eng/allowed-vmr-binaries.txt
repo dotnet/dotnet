@@ -119,9 +119,6 @@ src/source-build-assets/src/externalPackages/src/application-insights*/WEB/Src/W
 # symreader
 src/symreader/src/PdbTestResources/Resources/*
 
-# templating
-src/templating/test/Microsoft.TemplateEngine.TestTemplates/nupkg_templates/*.nupkg
-
 # vstest
 src/vstest/samples/Microsoft.TestPlatform.*/Adapter/Microsoft.VisualStudio.TestPlatform.*.dll
 src/vstest/temp/cpp/**/*.dll

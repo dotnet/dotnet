@@ -115,12 +115,6 @@
       "commitSha": "5951f7085a5f25b429c4362a3a70a29f549b0e18"
     },
     {
-      "barId": 311491,
-      "path": "templating",
-      "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "4c17ee53e9a86e2980b3077c388ddd1ffa03cd0f"
-    },
-    {
       "barId": 311548,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
