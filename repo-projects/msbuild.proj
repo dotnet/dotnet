@@ -15,10 +15,13 @@
   </ItemGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != '' and '$(EnableIBCOptimization)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:VisualStudioIbcSourceBranchName=vs18.0</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:VisualStudioDropAccessToken=$(IBCDropAccessToken)</BuildArgs>
+    <!-- Disabled to work around missing optprof data for the MSBuild 18.0 and 18.3 branches.
+         That optprof collection should apply only to .NET Framework outputs that don't ship from the VMR. -->
+
+    <!-- <BuildArgs>$(BuildArgs) /p:VisualStudioIbcSourceBranchName=vs18.0</BuildArgs> -->
+    <!-- <BuildArgs>$(BuildArgs) /p:VisualStudioDropAccessToken=$(IBCDropAccessToken)</BuildArgs> -->
     <!-- This is set to the name of the repository that msbuild builds its official build from. -->
-    <BuildArgs>$(BuildArgs) /p:VisualStudioIbcRepositoryName=DotNet-msbuild-Trusted</BuildArgs>
+    <!-- <BuildArgs>$(BuildArgs) /p:VisualStudioIbcRepositoryName=DotNet-msbuild-Trusted</BuildArgs> -->
   </PropertyGroup>
 
 </Project>
