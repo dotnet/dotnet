@@ -15,7 +15,7 @@ Before onboarding a repository to the VMR, ensure the following are met:
 
 ## Onboarding Steps
 
-### Step 1: Configure Source Mappings
+### Step 1: Add the sources locally
 
 Add the repository locally by running `darc vmr add-repo` in your local clone of the VMR.
 For detailed configuration options, see [Repository Source Mappings](./VMR-Full-Code-Flow.md#repository-source-mappings).
@@ -35,7 +35,6 @@ Ensure the correct dependencies are defined within the new and existing projects
 ### Step 4: Build and Validate
 
 [Build](./README.md#building) the VMR with the new repo.
-Push changes to the PR to get complete valdation.
 Resolve any build issues that arise.
 This may require adjusting the [repository project file](#step-6-create-repository-project-file) and utilizing the [VMR controls](./VMR-Controls.md) to adjust how the repo is built within the VMR.
 
