@@ -15,7 +15,7 @@ namespace System.Threading
     /// </summary>
     internal sealed partial class LowLevelLifoSemaphore
     {
-        private const int DefaultSemaphoreSpinCountLimit = 128;
+        private const int DefaultSemaphoreSpinCountLimit = 256;
 
         private CacheLineSeparatedCounts _separated;
 
@@ -132,7 +132,7 @@ namespace System.Threading
             uint collisionCount = 0;
             while (true)
             {
-                // Determine how many waiters to wake.
+                // Determine how many waiters we can wake.
                 // The number of wakes should not be more than the signal count, not more than waiter count and discount any pending wakes.
                 int countOfWaitersToWake = (int)Math.Min(counts.SignalCount, counts.WaiterCount) - counts.CountOfWaitersSignaledToWake;
                 if (countOfWaitersToWake <= 0)
@@ -141,6 +141,11 @@ namespace System.Threading
                     break;
                 }
 
+                // Wake one waiter. If it finds work it will ask for workers and that can wake more waiters if spinners
+                // do not consume the additional signals.
+                // NB: It is rare to have > 1 signal. That only happens when the count of desired workers had a forced change.
+                // We would prefer that extra signals be consumed by spinners thus we release waiters one by one.
+                countOfWaitersToWake = 1;
                 if (counts.CountOfWaitersSignaledToWake > 0)
                 {
                     // A waiter is already waking up.
