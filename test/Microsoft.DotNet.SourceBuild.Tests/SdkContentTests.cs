@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.IO.Enumeration;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Microsoft.Extensions.FileSystemGlobbing;
 using TestUtilities;
 using Xunit;
@@ -118,6 +120,160 @@ public partial class SdkContentTests : SdkTests
         {
             tempDir.Delete(recursive: true);
         }
+    }
+
+    /// <Summary>
+    /// Verifies that PackageReference versions in template nupkgs are consistent between
+    /// the source-built and Microsoft-built SDKs (e.g. https://github.com/dotnet/source-build/issues/5493).
+    /// </Summary>
+    [ConditionalFact(typeof(SdkContentTests), nameof(IncludeSdkContentTests))]
+    public void CompareMsftToSbTemplatePackageVersions()
+    {
+        Assert.NotNull(Config.MsftSdkTarballPath);
+        Assert.NotNull(Config.SdkTarballPath);
+
+        DirectoryInfo tempDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+        try
+        {
+            DirectoryInfo sbSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, SourceBuildSdkType));
+            Utilities.ExtractTarball(Config.SdkTarballPath, sbSdkDir.FullName, OutputHelper);
+
+            DirectoryInfo msftSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, MsftSdkType));
+            Utilities.ExtractTarball(Config.MsftSdkTarballPath, msftSdkDir.FullName, OutputHelper);
+
+            ExclusionsHelper exclusionsHelper = new("SdkTemplateVersionDiffExclusions.txt", Config.LogsDirectory, BaselineSubDir);
+
+            Dictionary<string, string> sbVersions = GetTemplatePackageVersions(sbSdkDir.FullName, exclusionsHelper, SourceBuildSdkType);
+            Dictionary<string, string> msftVersions = GetTemplatePackageVersions(msftSdkDir.FullName, exclusionsHelper, MsftSdkType);
+
+            exclusionsHelper.GenerateNewBaselineFile("TemplateVersions");
+
+            const string MsftVersionsFileName = "msft_templateversions.txt";
+            const string SbVersionsFileName = "sb_templateversions.txt";
+
+            File.WriteAllLines(MsftVersionsFileName, msftVersions.OrderBy(kvp => kvp.Key).Select(kvp => $"{kvp.Key} {kvp.Value}"));
+            File.WriteAllLines(SbVersionsFileName, sbVersions.OrderBy(kvp => kvp.Key).Select(kvp => $"{kvp.Key} {kvp.Value}"));
+
+            string diff = BaselineHelper.DiffFiles(MsftVersionsFileName, SbVersionsFileName, OutputHelper);
+            diff = RemoveDiffMarkers(diff);
+            BaselineHelper.CompareBaselineContents("MsftToSbSdkTemplateVersions.diff", diff, OutputHelper, BaselineSubDir);
+        }
+        finally
+        {
+            tempDir.Delete(recursive: true);
+        }
+    }
+
+    /// <summary>
+    /// Scans all template nupkgs in an extracted SDK and returns a flat dictionary of
+    /// "nupkgName|projPath|PackageName" → version string, with versions in the key normalized.
+    /// </summary>
+    private static Dictionary<string, string> GetTemplatePackageVersions(string sdkRootDir, ExclusionsHelper exclusionsHelper, string sdkType)
+    {
+        Dictionary<string, string> result = [];
+
+        string[] nupkgFiles = Directory.GetFiles(sdkRootDir, "*.nupkg", SearchOption.AllDirectories)
+            .Where(p => Path.GetRelativePath(sdkRootDir, p).StartsWith("templates" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        string[] projectExtensions = [".csproj", ".fsproj"];
+
+        foreach (string nupkgPath in nupkgFiles)
+        {
+            string normalizedNupkgName = GetPackageIdFromFileName(Path.GetFileNameWithoutExtension(nupkgPath));
+
+            using ZipArchive archive = ZipFile.OpenRead(nupkgPath);
+            IEnumerable<ZipArchiveEntry> projectEntries = archive.Entries
+                .Where(e => projectExtensions.Contains(Path.GetExtension(e.FullName), StringComparer.OrdinalIgnoreCase));
+
+            foreach (ZipArchiveEntry entry in projectEntries)
+            {
+                Dictionary<string, string> packageVersions = GetPackageReferencesFromProjectFile(entry);
+                foreach ((string packageName, string version) in packageVersions)
+                {
+                    string sanitizedEntryName = entry.FullName.Replace('/', '-');
+                    string key = $"{normalizedNupkgName},{sanitizedEntryName},{packageName}";
+                    if (!exclusionsHelper.IsFileExcluded(key, sdkType))
+                    {
+                        result[key] = version;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Parses PackageReference elements from a project file (.csproj/.fsproj) zip entry and returns package name to version mappings.
+    /// </summary>
+    private static Dictionary<string, string> GetPackageReferencesFromProjectFile(ZipArchiveEntry entry)
+    {
+        Dictionary<string, string> versions = [];
+
+        using Stream stream = entry.Open();
+        XDocument doc;
+        try
+        {
+            doc = XDocument.Load(stream);
+        }
+        catch
+        {
+            return versions;
+        }
+
+        IEnumerable<XElement> packageRefs = doc.Descendants()
+            .Where(e => e.Name.LocalName == "PackageReference");
+
+        foreach (XElement packageRef in packageRefs)
+        {
+            string? packageName = packageRef.Attribute("Include")?.Value
+                ?? packageRef.Attribute("Update")?.Value;
+
+            if (string.IsNullOrEmpty(packageName))
+            {
+                continue;
+            }
+
+            // Version can be an attribute or a child element
+            string? version = packageRef.Attribute("Version")?.Value
+                ?? packageRef.Elements().FirstOrDefault(e => e.Name.LocalName == "Version")?.Value;
+
+            if (!string.IsNullOrEmpty(version))
+            {
+                versions[packageName] = version;
+            }
+        }
+
+        return versions;
+    }
+
+    /// <summary>
+    /// Extracts the package ID from a nupkg filename (without extension).
+    /// Nupkg filenames follow the pattern "{id}.{version}" where the version starts with a digit.
+    /// </summary>
+    private static string GetPackageIdFromFileName(string fileNameWithoutExtension)
+    {
+        // Walk backwards to find the last segment that starts with a digit — that's where the version begins.
+        // E.g. "Microsoft.DotNet.Web.ProjectTemplates.11.0.11.0.0-preview.5.26226.111"
+        //       ID = "Microsoft.DotNet.Web.ProjectTemplates.11.0", version = "11.0.0-preview.5.26226.111"
+        string[] parts = fileNameWithoutExtension.Split('.');
+        int versionStart = -1;
+        for (int i = parts.Length - 1; i >= 0; i--)
+        {
+            if (parts[i].Length > 0 && char.IsDigit(parts[i][0]))
+            {
+                versionStart = i;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return versionStart > 0
+            ? string.Join('.', parts[0..versionStart])
+            : fileNameWithoutExtension;
     }
 
     private string NormalizeApiDiffSuppressionFileContent(string content)
