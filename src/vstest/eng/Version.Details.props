@@ -10,7 +10,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-core-setup dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26215.121</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.26226.111</MicrosoftDiagnosticsNETCoreClientPackageVersion>
     <!-- dotnet-runtime dependencies -->
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <SystemCollectionsImmutablePackageVersion>9.0.11</SystemCollectionsImmutablePackageVersion>
@@ -18,7 +18,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
     <!-- vs-code-coverage dependencies -->
-    <MicrosoftInternalCodeCoveragePackageVersion>18.7.0-preview.26201.1</MicrosoftInternalCodeCoveragePackageVersion>
+    <MicrosoftInternalCodeCoveragePackageVersion>18.7.0-preview.26223.1</MicrosoftInternalCodeCoveragePackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
