@@ -141,6 +141,12 @@ namespace System.Threading
                     break;
                 }
 
+                if (counts.CountOfWaitersSignaledToWake > 0)
+                {
+                    // A waiter is already waking up.
+                    break;
+                }
+
                 Counts newCounts = counts;
                 newCounts.AddCountOfWaitersSignaledToWake((uint)countOfWaitersToWake);
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
@@ -169,7 +175,11 @@ namespace System.Threading
             while (true)
             {
                 long waitStartTick = Stopwatch.GetTimestamp();
+
+                // Allow anyone who wants to run to go ahead.
+                // (before trying to block and possibly taking a fast wake path)
                 Thread.UninterruptibleSleep0();
+
                 if (timeoutMs == 0 || !Block(timeoutMs))
                 {
                     // Unregister the waiter, but do not decrement wake count, the thread did not observe a wake.
