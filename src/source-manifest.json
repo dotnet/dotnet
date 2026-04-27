@@ -97,10 +97,10 @@
       "commitSha": "6f3485e10f775d77891cb5b9a7fbed479be438a5"
     },
     {
-      "barId": 311387,
+      "barId": 310097,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "2b7a0ed51ba0f4c69e5a751fac603563b90e0000"
+      "commitSha": "c31ae0841e4f3b70775f0e66494015fd34c911d3"
     },
     {
       "barId": 309758,
@@ -139,10 +139,10 @@
       "commitSha": "89c64d27d2d09565cb2cb0aef721e5c0cb139461"
     },
     {
-      "barId": 311535,
+      "barId": 310993,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "e2d332a383310eb11c4ffacbd1ab09fc0dd7b582"
+      "commitSha": "09e72ae8c9b1c5410ca8ad45636c52c45a2a7f29"
     },
     {
       "barId": 291267,
