@@ -22,6 +22,21 @@
         <target state="translated">Die aktive Testermittlung wurde abgebrochen. Grund: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">Der {0}-Prozess konnte nach {1} Sekunden keine Verbindung zum {2}-Prozess herstellen. Der Prozess konnte nicht gestartet werden, was häufig daran liegt, dass ein Antivirenprogramm den Start verhindert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">Der {0}-Prozess konnte nach {1} Sekunden keine Verbindung zum {2}-Prozess herstellen. Der Prozess {3}–{4} wurde mit dem Exit-Code {5} beendet, und die Fehlerausgabe lautet: \n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">Der {0}-Prozess konnte nach {1} Sekunden keine Verbindung zum {2}-Prozess herstellen. Als das Timeout aufgetreten ist, der Prozess {3}–{4} wurde noch ausgeführt. Das passiert meist wegen der Langsamkeit des Computers. Legen Sie die Umgebungsvariable {5} fest, um das Timeout zu verlängern.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">Die Kommunikation mit dem Testhostprozess ist nicht möglich.</target>

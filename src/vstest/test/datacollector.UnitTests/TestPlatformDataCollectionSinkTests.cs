@@ -41,7 +41,7 @@ public class TestPlatformDataCollectionSinkTests
     [TestMethod]
     public void SendFileAsyncShouldThrowExceptionIfFileTransferInformationIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _dataCollectionSink.SendFileAsync(default!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _dataCollectionSink.SendFileAsync(default!));
     }
 
     [TestMethod]

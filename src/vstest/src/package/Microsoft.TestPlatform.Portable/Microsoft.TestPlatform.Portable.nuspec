@@ -2,10 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
   </metadata>
 
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- Add a third party notice file -->
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
@@ -603,6 +605,8 @@
     <file src="net8.0\Microsoft.Internal.Dia\x64\msdia140.dll.manifest"	target="tools\net8.0\TestHostNetFramework\x64\msdia140.dll.manifest" />
     <file src="net8.0\Microsoft.Internal.Dia\x86\msdia140.dll"	target="tools\net8.0\TestHostNetFramework\x86\msdia140.dll" />
     <file src="net8.0\Microsoft.Internal.Dia\x86\msdia140.dll.manifest"	target="tools\net8.0\TestHostNetFramework\x86\msdia140.dll.manifest" />
+    <file src="net8.0\Microsoft.Internal.Dia\arm64\msdia140.dll"	target="tools\net8.0\TestHostNetFramework\arm64\msdia140.dll" />
+    <file src="net8.0\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest"	target="tools\net8.0\TestHostNetFramework\arm64\msdia140.dll.manifest" />
 
     <file src="net8.0\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll"	target="tools\net8.0\TestHostNetFramework\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
     <file src="net8.0\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll"	target="tools\net8.0\TestHostNetFramework\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" />

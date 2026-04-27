@@ -34,14 +34,14 @@ public class DisableAutoFakesArgumentProcessorTests
     [TestMethod]
     public void DisableAutoFakesArgumentProcessorExecutorShouldThrowIfArgumentIsNullOrEmpty()
     {
-        Assert.ThrowsException<CommandLineException>(() => _disableAutoFakesArgumentProcessor.Executor!.Value.Initialize(string.Empty));
-        Assert.ThrowsException<CommandLineException>(() => _disableAutoFakesArgumentProcessor.Executor!.Value.Initialize(" "));
+        Assert.ThrowsExactly<CommandLineException>(() => _disableAutoFakesArgumentProcessor.Executor!.Value.Initialize(string.Empty));
+        Assert.ThrowsExactly<CommandLineException>(() => _disableAutoFakesArgumentProcessor.Executor!.Value.Initialize(" "));
     }
 
     [TestMethod]
     public void DisableAutoFakesArgumentProcessorExecutorShouldThrowIfArgumentIsNotBooleanString()
     {
-        Assert.ThrowsException<CommandLineException>(() => _disableAutoFakesArgumentProcessor.Executor!.Value.Initialize("DisableAutoFakes"));
+        Assert.ThrowsExactly<CommandLineException>(() => _disableAutoFakesArgumentProcessor.Executor!.Value.Initialize("DisableAutoFakes"));
     }
 
     [TestMethod]

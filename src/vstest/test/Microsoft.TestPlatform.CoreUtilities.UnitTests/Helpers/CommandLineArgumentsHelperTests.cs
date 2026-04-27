@@ -29,14 +29,14 @@ public class CommandLineArgumentsHelperTests
         var args = new List<string>() { "port", "12312", "--parentprocessid", "2312", "--testsourcepath", @"C:\temp\1.dll" };
         var argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(args.ToArray());
 
-        Assert.IsTrue(argsDictionary.Count == 2);
+        Assert.HasCount(2, argsDictionary);
         Assert.AreEqual("2312", argsDictionary["--parentprocessid"]);
         Assert.AreEqual(@"C:\temp\1.dll", argsDictionary["--testsourcepath"]);
 
         args = ["--port", "12312", "--parentprocessid", "2312", "testsourcepath", @"C:\temp\1.dll"];
         argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(args.ToArray());
 
-        Assert.IsTrue(argsDictionary.Count == 2);
+        Assert.HasCount(2, argsDictionary);
         Assert.AreEqual("12312", argsDictionary["--port"]);
         Assert.AreEqual("2312", argsDictionary["--parentprocessid"]);
     }
@@ -59,7 +59,7 @@ public class CommandLineArgumentsHelperTests
 
         string? data = CommandLineArgumentsHelper.GetStringArgFromDict(argsDictionary, "--hello");
 
-        Assert.IsTrue(argsDictionary.Count == 2);
+        Assert.HasCount(2, argsDictionary);
         Assert.IsNull(data);
     }
 
@@ -71,7 +71,7 @@ public class CommandLineArgumentsHelperTests
 
         string? data = CommandLineArgumentsHelper.GetStringArgFromDict(argsDictionary, "--port");
 
-        Assert.IsTrue(argsDictionary.Count == 2);
+        Assert.HasCount(2, argsDictionary);
         Assert.AreEqual(string.Empty, data);
     }
 
@@ -79,10 +79,10 @@ public class CommandLineArgumentsHelperTests
     public void GetArgumentsDictionaryShouldReturnEmptyDictionaryIfEmptyArgIsPassed()
     {
         var argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(null);
-        Assert.IsTrue(argsDictionary.Count == 0);
+        Assert.IsEmpty(argsDictionary);
 
         argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary([]);
-        Assert.IsTrue(argsDictionary.Count == 0);
+        Assert.IsEmpty(argsDictionary);
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public class CommandLineArgumentsHelperTests
         var args = new List<string>() { "--hello", "--world" };
         var argsDictionary = CommandLineArgumentsHelper.GetArgumentsDictionary(args.ToArray());
 
-        Assert.IsTrue(argsDictionary.Count == 2);
+        Assert.HasCount(2, argsDictionary);
         Assert.IsNull(argsDictionary["--hello"]);
         Assert.IsNull(argsDictionary["--world"]);
     }

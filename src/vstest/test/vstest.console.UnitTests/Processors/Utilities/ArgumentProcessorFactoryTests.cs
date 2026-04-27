@@ -70,11 +70,8 @@ public class ArgumentProcessorFactoryTests
         var command = "--";
 
         ArgumentProcessorFactory factory = ArgumentProcessorFactory.Create();
-        Action action = () => factory.CreateArgumentProcessor(command, null!);
-
-        ExceptionUtilities.ThrowsException<ArgumentException>(
-            action,
-            "Cannot be null or empty", "argument");
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => factory.CreateArgumentProcessor(command, null!));
+        Assert.Contains("Cannot be null or empty", ex.Message);
     }
 
     [TestMethod]
@@ -168,7 +165,7 @@ public class ArgumentProcessorFactoryTests
         foreach (var processor in allProcessors)
         {
             var instance = Activator.CreateInstance(processor) as IArgumentProcessor;
-            Assert.IsNotNull(instance, "Unable to instantiate processor: {0}", processor);
+            Assert.IsNotNull(instance, $"Unable to instantiate processor: {processor}");
 
             var specialProcessor = instance.Metadata.Value.IsSpecialCommand;
             if ((specialCommandFilter && specialProcessor) || (!specialCommandFilter && !specialProcessor))

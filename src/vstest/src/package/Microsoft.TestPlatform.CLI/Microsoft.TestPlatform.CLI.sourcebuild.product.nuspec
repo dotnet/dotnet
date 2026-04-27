@@ -2,6 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <contentFiles>
       <files include="**/*.*" copyToOutput="true" flatten="false" buildAction="None" />
@@ -9,6 +10,7 @@
   </metadata>
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- Add a third party notice file -->
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
@@ -44,6 +46,8 @@
     <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-9.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-10.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-11.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$SourceBuildTfmCurrent$\testhost.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$SourceBuildTfmCurrent$\testhost.deps.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />

@@ -22,7 +22,7 @@ public class FastFilterTests
         var filterExpressionWrapper = new FilterExpressionWrapper("Name=Test1&(Name=Test2|NameTest3)");
         var fastFilter = filterExpressionWrapper.FastFilter;
 
-        Assert.IsTrue(fastFilter == null);
+        Assert.IsNull(fastFilter);
     }
 
     [TestMethod]
@@ -31,7 +31,7 @@ public class FastFilterTests
         var filterExpressionWrapper = new FilterExpressionWrapper("Name!=TestClass1&Category=Nightly");
         var fastFilter = filterExpressionWrapper.FastFilter;
 
-        Assert.IsTrue(fastFilter == null);
+        Assert.IsNull(fastFilter);
     }
 
     [TestMethod]
@@ -40,7 +40,7 @@ public class FastFilterTests
         var filterExpressionWrapper = new FilterExpressionWrapper("Name~TestClass1");
         var fastFilter = filterExpressionWrapper.FastFilter;
 
-        Assert.IsTrue(fastFilter == null);
+        Assert.IsNull(fastFilter);
     }
 
     [TestMethod]
@@ -49,7 +49,7 @@ public class FastFilterTests
         var filterExpressionWrapper = new FilterExpressionWrapper("Name!~TestClass1");
         var fastFilter = filterExpressionWrapper.FastFilter;
 
-        Assert.IsTrue(fastFilter == null);
+        Assert.IsNull(fastFilter);
     }
 
     [TestMethod]
@@ -58,7 +58,7 @@ public class FastFilterTests
         var filterExpressionWrapper = new FilterExpressionWrapper("Name=Test1&Name=Test2");
         var fastFilter = filterExpressionWrapper.FastFilter;
 
-        Assert.IsTrue(fastFilter == null);
+        Assert.IsNull(fastFilter);
         Assert.IsTrue(string.IsNullOrEmpty(filterExpressionWrapper.ParseError));
     }
 
@@ -68,7 +68,7 @@ public class FastFilterTests
         var filterExpressionWrapper = new FilterExpressionWrapper("Name!=Test1|Name!=Test2");
         var fastFilter = filterExpressionWrapper.FastFilter;
 
-        Assert.IsTrue(fastFilter == null);
+        Assert.IsNull(fastFilter);
         Assert.IsTrue(string.IsNullOrEmpty(filterExpressionWrapper.ParseError));
     }
 
@@ -80,7 +80,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -105,8 +105,8 @@ public class FastFilterTests
         string[]? invalidProperties = filterExpressionWrapper.ValidForProperties(new List<string>() { "FullyQualifiedName" }, null);
 
         Assert.IsNotNull(invalidProperties);
-        Assert.AreEqual(invalidProperties.Length, 1);
-        Assert.AreEqual(invalidProperties[0], "Category");
+        Assert.ContainsSingle(invalidProperties);
+        Assert.AreEqual("Category", invalidProperties[0]);
     }
 
     [TestMethod]
@@ -131,7 +131,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1", "test2", "test3" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -152,7 +152,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1", "test2", "test3" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -173,7 +173,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1", "test2", "test3" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -198,7 +198,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "unittest", "perftest" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("Category", fastFilter.FilterProperties.Keys.Single());
         Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -221,7 +221,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "testclass.test1", "testclass.test2", "testclass.test3" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -261,7 +261,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsTrue(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -280,7 +280,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1", "test2", "test3" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsTrue(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -301,7 +301,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "test1", "test2", "test3" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("FullyQualifiedName", fastFilter.FilterProperties.Keys.Single());
         Assert.IsTrue(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -326,7 +326,7 @@ public class FastFilterTests
 
         var expectedFilterValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "unittest", "perftest" };
 
-        Assert.IsTrue(fastFilter != null);
+        Assert.IsNotNull(fastFilter);
         Assert.AreEqual("Category", fastFilter.FilterProperties.Keys.Single());
         Assert.IsTrue(fastFilter.IsFilteredOutWhenMatched);
         Assert.IsTrue(expectedFilterValues.SetEquals(fastFilter.FilterProperties.Values.Single()));
@@ -354,15 +354,8 @@ public class FastFilterTests
     public void FastFilterShouldThrowExceptionForUnsupportedOperatorOperationCombination()
     {
         ImmutableHashSet<string>.Builder filterHashSetBuilder = ImmutableHashSet.CreateBuilder<string>();
-        try
-        {
-            var filter = new FastFilter(ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, ISet<string>>("dummyName", filterHashSetBuilder.ToImmutableHashSet()) }), Operation.Equal, Operator.And);
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is ArgumentException);
-            Assert.AreEqual("An error occurred while creating Fast filter.", ex.Message);
-        }
+        var ex = Assert.ThrowsExactly<ArgumentException>(() => new FastFilter(ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, ISet<string>>("dummyName", filterHashSetBuilder.ToImmutableHashSet()) }), Operation.Equal, Operator.And));
+        Assert.AreEqual("An error occurred while creating Fast filter.", ex.Message);
     }
 
     [TestMethod]

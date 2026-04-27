@@ -31,16 +31,6 @@ internal class CollectorDataEntry : IXmlTestStore
     private readonly string _agentName;
 
     /// <summary>
-    /// Display name of the agent from which we received the data
-    /// </summary>
-    private readonly string _agentDisplayName;
-
-    /// <summary>
-    /// Flag indicating whether this data is coming from a remote (not hosted) agent
-    /// </summary>
-    private readonly bool _isFromRemoteAgent;
-
-    /// <summary>
     /// URI of the collector.
     /// </summary>
     private readonly Uri _uri;
@@ -63,21 +53,14 @@ internal class CollectorDataEntry : IXmlTestStore
     /// <param name="agentName">
     /// The agent Name.
     /// </param>
-    /// <param name="agentDisplayName">
-    /// The agent Display Name.
-    /// </param>
-    /// <param name="isFromRemoteAgent">
-    /// Is From Remote Agent.
-    /// </param>
     /// <param name="attachments">
     /// The attachments.
     /// </param>
-    public CollectorDataEntry(Uri uri, string collectorDisplayName, string agentName, string agentDisplayName, bool isFromRemoteAgent, IList<IDataAttachment>? attachments)
+    public CollectorDataEntry(Uri uri, string collectorDisplayName, string agentName, IList<IDataAttachment>? attachments)
     {
         EqtAssert.ParameterNotNull(uri, nameof(uri));
         EqtAssert.StringNotNullOrEmpty(collectorDisplayName, nameof(collectorDisplayName));
         EqtAssert.StringNotNullOrEmpty(agentName, nameof(agentName));
-        EqtAssert.StringNotNullOrEmpty(agentDisplayName, nameof(agentDisplayName));
 
         if (null != attachments)
         {
@@ -92,8 +75,6 @@ internal class CollectorDataEntry : IXmlTestStore
         _uri = uri;
         _collectorDisplayName = collectorDisplayName;
         _agentName = agentName.Trim();
-        _agentDisplayName = agentDisplayName.Trim();
-        _isFromRemoteAgent = isFromRemoteAgent;
     }
 
     /// <summary>
@@ -105,7 +86,6 @@ internal class CollectorDataEntry : IXmlTestStore
     internal CollectorDataEntry()
     {
         _agentName = null!;
-        _agentDisplayName = null!;
         _uri = null!;
         _collectorDisplayName = null!;
     }
@@ -135,8 +115,6 @@ internal class CollectorDataEntry : IXmlTestStore
 
         XmlPersistence helper = new();
         helper.SaveSimpleField(element, "@agentName", _agentName, null);
-        helper.SaveSimpleField(element, "@agentDisplayName", _agentDisplayName, _agentName);
-        helper.SaveSimpleField(element, "@isFromRemoteAgent", _isFromRemoteAgent, false);
         helper.SaveSimpleField(element, "@uri", _uri.AbsoluteUri, null);
         helper.SaveSimpleField(element, "@collectorDisplayName", _collectorDisplayName, string.Empty);
 
@@ -164,17 +142,16 @@ internal class CollectorDataEntry : IXmlTestStore
     }
 
     /// <summary>
-    /// Clones the instance and attachments, with file paths in file attachments absolute or relative as specified
+    /// Clones the instance and attachments, with file paths in file attachments relative
     /// </summary>
-    /// <param name="resultsDirectory">The results directory to use to make paths in the data attachments relative or absolute</param>
-    /// <param name="useAbsolutePaths">True to use absolute paths in this instance, false to use relative paths</param>
-    /// <returns>A clone of the instance containing cloned attachments with file paths made absolute or relative</returns>
-    internal CollectorDataEntry Clone(string resultsDirectory, bool useAbsolutePaths)
+    /// <param name="resultsDirectory">The results directory to use to make paths in the data attachments relative</param>
+    /// <returns>A clone of the instance containing cloned attachments with file paths made relative</returns>
+    internal CollectorDataEntry CloneWithRelativePath(string resultsDirectory)
     {
         TPDebug.Assert(!resultsDirectory.IsNullOrEmpty(), "'resultsDirectory' is null or empty");
         TPDebug.Assert(resultsDirectory == resultsDirectory.Trim(), "'resultsDirectory' contains whitespace at the ends");
 
-        var collector = new CollectorDataEntry(_uri, _collectorDisplayName, _agentName, _agentDisplayName, _isFromRemoteAgent, null);
+        var collector = new CollectorDataEntry(_uri, _collectorDisplayName, _agentName, null);
 
         // Clone the attachments
         foreach (IDataAttachment attachment in _attachments)
@@ -183,7 +160,7 @@ internal class CollectorDataEntry : IXmlTestStore
 
             if (attachment is UriDataAttachment uriDataAttachment)
             {
-                collector._attachments.Add(uriDataAttachment.Clone(resultsDirectory, useAbsolutePaths));
+                collector._attachments.Add(uriDataAttachment.CloneWithRelativePath(resultsDirectory));
             }
             else
             {
