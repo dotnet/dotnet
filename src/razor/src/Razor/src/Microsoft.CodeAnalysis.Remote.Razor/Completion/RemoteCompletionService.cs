@@ -2,14 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
@@ -24,6 +23,7 @@ using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Roslyn.LanguageServer.Protocol.RazorVSInternalCompletionList?>;
+using CompletionResponse = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.Completion.CompletionResult>;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -86,13 +86,12 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         return new CompletionPositionInfo(ProvisionalTextEdit: null, positionInfo, shouldIncludeSnippets);
     }
 
-    public ValueTask<Response> GetCompletionAsync(
+    public ValueTask<CompletionResponse> GetCompletionAsync(
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
         CompletionPositionInfo positionInfo,
         VSInternalCompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
-        HashSet<string> existingHtmlCompletions,
         Guid correlationId,
         CancellationToken cancellationToken)
         => RunServiceAsync(
@@ -103,17 +102,15 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 positionInfo,
                 completionContext,
                 razorCompletionOptions,
-                existingHtmlCompletions,
                 correlationId,
                 cancellationToken),
             cancellationToken);
 
-    private async ValueTask<Response> GetCompletionAsync(
+    private async ValueTask<CompletionResponse> GetCompletionAsync(
         RemoteDocumentContext remoteDocumentContext,
         CompletionPositionInfo positionInfo,
         VSInternalCompletionContext completionContext,
         RazorCompletionOptions razorCompletionOptions,
-        HashSet<string> existingDelegatedCompletions,
         Guid correlationId,
         CancellationToken cancellationToken)
     {
@@ -127,7 +124,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         if (!isCSharpTrigger && !isRazorTrigger)
         {
             // We don't have a valid trigger, so we can't provide completions.
-            return Response.CallHtml;
+            return CompletionResults.CallHtml;
         }
 
         var documentSnapshot = remoteDocumentContext.Snapshot;
@@ -153,35 +150,81 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 positionInfo.ProvisionalTextEdit,
                 cancellationToken)
                 .ConfigureAwait(false);
-
-            if (csharpCompletionList is not null)
-            {
-                Debug.Assert(existingDelegatedCompletions.Count == 0, "Delegated completion should be either C# or HTML, not both");
-                existingDelegatedCompletions.UnionWith(csharpCompletionList.Items.Select((item) => item.Label));
-            }
         }
 
         RazorVSInternalCompletionList? razorCompletionList = null;
+        var needsHtmlDependentPhase = false;
 
         if (isRazorTrigger)
         {
-            razorCompletionList = _razorCompletionListProvider.GetCompletionList(
+            (razorCompletionList, needsHtmlDependentPhase) = _razorCompletionListProvider.GetCompletionList(
                 codeDocument,
                 documentPositionInfo.HostDocumentIndex,
                 completionContext,
                 _clientCapabilitiesService.ClientCapabilities,
-                existingCompletions: existingDelegatedCompletions,
                 razorCompletionOptions);
         }
 
-        // Merge won't return anything only if both completion lists passed in are null,
-        // in which case client should just proceed with HTML completion.
-        if (CompletionListMerger.Merge(razorCompletionList, csharpCompletionList) is not { } mergedCompletionList)
+        return CompletionResults.Create(
+            CompletionListMerger.Merge(razorCompletionList, csharpCompletionList),
+            needsHtmlDependentPhase);
+    }
+
+    public ValueTask<Response> GetHtmlDependentCompletionsAsync(
+        JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
+        JsonSerializableDocumentId documentId,
+        CompletionPositionInfo positionInfo,
+        VSInternalCompletionContext completionContext,
+        RazorCompletionOptions razorCompletionOptions,
+        string[] htmlLabels,
+        CancellationToken cancellationToken)
+        => RunServiceAsync(
+            solutionInfo,
+            documentId,
+            context => GetHtmlDependentCompletionsAsync(
+                context,
+                positionInfo,
+                completionContext,
+                razorCompletionOptions,
+                htmlLabels,
+                cancellationToken),
+            cancellationToken);
+
+    private async ValueTask<Response> GetHtmlDependentCompletionsAsync(
+        RemoteDocumentContext remoteDocumentContext,
+        CompletionPositionInfo positionInfo,
+        VSInternalCompletionContext completionContext,
+        RazorCompletionOptions razorCompletionOptions,
+        string[] htmlLabels,
+        CancellationToken cancellationToken)
+    {
+        var documentPositionInfo = positionInfo.DocumentPositionInfo;
+
+        if (!_triggerAndCommitCharacters.IsValidRazorTrigger(completionContext))
         {
             return Response.CallHtml;
         }
 
-        return Response.Results(mergedCompletionList);
+        var documentSnapshot = remoteDocumentContext.Snapshot;
+        var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+
+        using var _ = HashSetPool<string>.GetPooledObject(out var existingCompletions);
+        existingCompletions.UnionWith(htmlLabels);
+
+        var razorCompletionList = _razorCompletionListProvider.GetHtmlDependentCompletionList(
+            codeDocument,
+            documentPositionInfo.HostDocumentIndex,
+            completionContext,
+            _clientCapabilitiesService.ClientCapabilities,
+            razorCompletionOptions,
+            existingCompletions);
+
+        if (razorCompletionList is null)
+        {
+            return Response.CallHtml;
+        }
+
+        return Response.Results(razorCompletionList);
     }
 
     private async ValueTask<RazorVSInternalCompletionList?> GetCSharpCompletionAsync(
