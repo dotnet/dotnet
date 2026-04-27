@@ -28,7 +28,7 @@ This helps ensure that the right team is notified when changes are made to your 
 
 ### Step 3: Create Repository Project File
 
-Create a `/repo-projects/<your-repo-name>.proj` that integrates the repo's build into to the VMR's build.
+Create a `/repo-projects/<your-repo-name>.proj` that integrates the repo's build into the VMR build.
 Browse the existing [`repo-projects`](https://github.com/dotnet/dotnet/tree/main/repo-projects) for examples.
 Ensure the correct dependencies are defined within the new and existing projects.
 
@@ -54,19 +54,16 @@ Validate the assets produced from the build by checking the `/artifacts` directo
 
 ### Step 6: Merge PR
 
-Once your PR is green and the artifacts have been validated, remove the `NO-MERGE` label from the PR.
-Get approval from the repo experts and [@dotnet/product-construction](https://github.com/orgs/dotnet/teams/product-construction) before merging the PR.
+Once your PR is green and the artifacts have been validated, get approval from the repo experts and [@dotnet/product-construction](https://github.com/orgs/dotnet/teams/product-construction) before merging the PR.
 
 ### Step 7: Post Merge Validation
 
-After your PR has been merged validate the following:
-
-1. Validate the [CI builds](https://dev.azure.com/dnceng/internal/_build?definitionId=1330) are passing.
-1. Ensure the [forward and back code flows](https://maestro.dot.net) work correctly
+After your PR has been merged validate the following validate the [CI builds](https://dev.azure.com/dnceng/internal/_build?definitionId=1330) are passing.
 
 ### Step 8: Define the Darc Code Flow Subscriptions
 
 Define the appropriate Darc [code flow subscriptions](./Codeflow-PRs.md).
+Ensure the [forward and back code flows](https://maestro.dot.net) work correctly by triggering the subscriptions and checking PRs open.
 
 ### Step 9: Enable Repo Level VMR PR Validation
 
