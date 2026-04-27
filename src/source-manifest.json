@@ -13,10 +13,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 311256,
+      "barId": 311569,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "92fd65af696e38969fbeb628ca34912a357cee0c"
+      "commitSha": "a5df95f9fdc611690273c3495b613ba302bd4108"
     },
     {
       "barId": 311300,
@@ -37,10 +37,10 @@
       "commitSha": "7d4d0ba16dc3f32945604426a8a72d3f0a82d4f9"
     },
     {
-      "barId": 311182,
+      "barId": 311934,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "538ae5e66f82b114e58a5deb6472649e687143db"
+      "commitSha": "d65103187e7b50f152fd8b844f94795d5dbbe8d8"
     },
     {
       "barId": 309003,
@@ -67,10 +67,10 @@
       "commitSha": "067d8ae3e33ed0630e6cadc97be21c6ae39f9941"
     },
     {
-      "barId": 311024,
+      "barId": 311523,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "897bdda81fa5b119acb5b2d647e56249389cda16"
+      "commitSha": "a397da1b5747f31a7d91d024609c6e529679b694"
     },
     {
       "barId": 310166,
