@@ -428,6 +428,81 @@ public partial class CohostDocumentCompletionEndpointTest(ITestOutputHelper test
     }
 
     [Fact]
+    public async Task OutputElementHintTagHelper_ShownWhenHintElementIsPresent()
+    {
+        // A tag helper with [OutputElementHint("strong")] should appear in completions
+        // when HTML completions include "strong".
+        await VerifyCompletionListAsync(
+            input: """
+                @addTagHelper *, SomeProject
+                <$$
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["my-bold", "strong"],
+            htmlItemLabels: ["strong"],
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles: [("TestTagHelper.cs", """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                namespace SomeProject
+                {
+                    [OutputElementHint("strong")]
+                    [HtmlTargetElement("my-bold")]
+                    public class BoldTagHelper : TagHelper
+                    {
+                        public override void Process(TagHelperContext context, TagHelperOutput output)
+                        {
+                            output.TagName = "strong";
+                        }
+                    }
+                }
+                """)]);
+    }
+
+    [Fact]
+    public async Task OutputElementHintTagHelper_NotShownWhenHintElementIsAbsent()
+    {
+        // A tag helper with [OutputElementHint("strong")] should NOT appear in completions
+        // when HTML completions do not include "strong".
+        await VerifyCompletionListAsync(
+            input: """
+                @addTagHelper *, SomeProject
+                <$$
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["div"],
+            unexpectedItemLabels: ["my-bold"],
+            htmlItemLabels: ["div"],
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles: [("TestTagHelper.cs", """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                namespace SomeProject
+                {
+                    [OutputElementHint("strong")]
+                    [HtmlTargetElement("my-bold")]
+                    public class BoldTagHelper : TagHelper
+                    {
+                        public override void Process(TagHelperContext context, TagHelperOutput output)
+                        {
+                            output.TagName = "strong";
+                        }
+                    }
+                }
+                """)]);
+    }
+
+    [Fact]
     public async Task HtmlCompletionFailure_ReturnsIncompleteEmptyList()
     {
         // When the HTML language server fails to respond (e.g., not yet initialized on first document open),
@@ -1216,9 +1291,10 @@ public partial class CohostDocumentCompletionEndpointTest(ITestOutputHelper test
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true,
         RazorFileKind? fileKind = null,
-        TimeSpan? retryTimeout = null)
+        TimeSpan? retryTimeout = null,
+        (string fileName, string contents)[]? additionalFiles = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         ClientSettingsManager.Update(ClientAdvancedSettings.Default with { AutoInsertAttributeQuotes = autoInsertAttributeQuotes, CommitElementsWithSpace = commitElementsWithSpace });

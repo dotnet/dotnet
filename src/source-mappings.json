@@ -155,10 +155,6 @@
             "defaultRemote": "https://github.com/dotnet/symreader"
         },
         {
-            "name": "templating",
-            "defaultRemote": "https://github.com/dotnet/templating"
-        },
-        {
             "name": "vstest",
             "defaultRemote": "https://github.com/microsoft/vstest",
             "exclude": [

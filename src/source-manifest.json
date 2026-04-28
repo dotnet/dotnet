@@ -37,16 +37,16 @@
       "commitSha": "970c803abb1ed5657b056cdaf01f1693f437c242"
     },
     {
-      "barId": 311774,
+      "barId": 311938,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "c0e491bccd12738402b46adeb17c26f19bd099db"
+      "commitSha": "3556256b956c27a85c309804a587b4db8af76ef5"
     },
     {
-      "barId": 310358,
+      "barId": 311268,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "5258a0e5615530324086e097f3bbc8cd58a01ca9"
+      "commitSha": "267c6beef3adadd9bef0c09f81b663f033bb6e6d"
     },
     {
       "barId": 311569,
@@ -67,10 +67,10 @@
       "commitSha": "de3b92c2768037cceac21a7bcc53318d42554428"
     },
     {
-      "barId": 311834,
+      "barId": 311932,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "83a704a594ba34aabb3f53549d40a57ff8ab5c66"
+      "commitSha": "0f6925db833176ee2df811cd2b2280144a378039"
     },
     {
       "barId": 312122,
@@ -79,10 +79,10 @@
       "commitSha": "2428f0c72de5d2eed863b9c420f840b78080f5cb"
     },
     {
-      "barId": 311882,
+      "barId": 311954,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "7e176920717f4805bd7c81dd91809292324da6c6"
+      "commitSha": "5ef1257b9b3042bd577bc93003bac71432830fbb"
     },
     {
       "barId": 309005,
@@ -113,12 +113,6 @@
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
       "commitSha": "5951f7085a5f25b429c4362a3a70a29f549b0e18"
-    },
-    {
-      "barId": 311491,
-      "path": "templating",
-      "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "4c17ee53e9a86e2980b3077c388ddd1ffa03cd0f"
     },
     {
       "barId": 311548,

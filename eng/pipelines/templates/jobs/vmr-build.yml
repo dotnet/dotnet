@@ -554,10 +554,12 @@ jobs:
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     # Node is a toolset dependency to build aspnetcore
     # Keep in sync with aspnetcore: https://github.com/dotnet/aspnetcore/blob/7d5309210d8f7bae8fa074da495e9d009d67f1b4/.azure/pipelines/ci.yml#L719-L722
+    # Pinned to 24.14.1 to work around npm ci exit code 57005 bug in Node 24.15.
+    # Tracking issue to revert: https://github.com/dotnet/aspnetcore/issues/66501
     - task: UseNode@1
-      displayName: Install Node 24.x
+      displayName: Install Node 24.14.1
       inputs:
-        version: 24.x
+        version: 24.14.1
 
     - ${{ if eq(parameters.signDac, 'true') }}:
       # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.

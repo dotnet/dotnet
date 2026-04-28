@@ -1,1 +1,0 @@
-The source code for common item and common project templates is moved to [dotnet/sdk](https://github.com/dotnet/sdk/tree/main/template_feed).
