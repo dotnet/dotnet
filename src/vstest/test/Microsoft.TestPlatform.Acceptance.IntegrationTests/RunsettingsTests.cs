@@ -1,9 +1,8 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 
 using Microsoft.TestPlatform.TestUtilities;
@@ -273,193 +272,6 @@ public class RunsettingsTests : AcceptanceTestBase
         ValidateSummaryStatus(1, 1, 1);
     }
 
-    #region LegacySettings Tests
-
-    [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
-    public void LegacySettingsWithPlatform(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var testAssemblyPath = GetAssetFullPath("LegacySettingsUnitTestProject.dll");
-        _ = Path.GetDirectoryName(testAssemblyPath);
-
-        var runsettingsXml = @"<RunSettings>
-                                    <MSTest>
-                                    <ForcedLegacyMode>true</ForcedLegacyMode>
-                                    </MSTest>
-                                    <LegacySettings>
-                                      <Execution hostProcessPlatform=""x64"">
-                                      </Execution>
-                                    </LegacySettings>
-                                   </RunSettings>";
-
-        var runsettingsFilePath = GetRunsettingsFilePath(null, TempDirectory);
-        File.WriteAllText(runsettingsFilePath, runsettingsXml);
-
-        var arguments = PrepareArguments(
-           testAssemblyPath,
-           string.Empty,
-           runsettingsFilePath, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        InvokeVsTest(arguments);
-        ValidateSummaryStatus(0, 0, 0);
-    }
-
-    [TestMethod]
-    [Ignore("Ignore until we have new host available with CUIT removed.")]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
-    public void LegacySettingsWithScripts(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var testAssemblyPath = GetAssetFullPath("LegacySettingsUnitTestProject.dll");
-
-        // Create the script files
-        var guid = Guid.NewGuid();
-        var setupScriptName = "setupScript_" + guid + ".bat";
-        var setupScriptPath = Path.Combine(TempDirectory.Path, setupScriptName);
-        File.WriteAllText(setupScriptPath, @"echo > %temp%\ScriptTestingFile.txt");
-
-        var cleanupScriptName = "cleanupScript_" + guid + ".bat";
-        var cleanupScriptPath = Path.Combine(TempDirectory.Path, cleanupScriptName);
-        File.WriteAllText(cleanupScriptPath, @"del %temp%\ScriptTestingFile.txt");
-
-        var runsettingsFormat = @"<RunSettings>
-                                    <MSTest>
-                                    <ForcedLegacyMode>true</ForcedLegacyMode>
-                                    </MSTest>
-                                    <LegacySettings>
-                                         <Scripts setupScript=""{0}"" cleanupScript=""{1}"" />
-                                    </LegacySettings>
-                                   </RunSettings>";
-
-        // Scripts have relative paths to temp directory where the runsettings is created.
-        var runsettingsXml = string.Format(CultureInfo.CurrentCulture, runsettingsFormat, setupScriptName, cleanupScriptName);
-        var runsettingsPath = GetRunsettingsFilePath(null, TempDirectory);
-        File.WriteAllText(runsettingsPath, runsettingsXml);
-
-        var arguments = PrepareArguments(
-           testAssemblyPath,
-           string.Empty,
-           runsettingsPath, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments = string.Concat(arguments, " /testcasefilter:Name=ScriptsTest");
-        InvokeVsTest(arguments);
-        ValidateSummaryStatus(1, 0, 0);
-
-        // Validate cleanup script ran
-        var scriptPath = Path.Combine(TempDirectory.Path, "ScriptTestingFile.txt");
-        Assert.IsFalse(File.Exists(scriptPath));
-    }
-
-    [TestMethod]
-    [Ignore("Ignore until we have new host available with CUIT removed.")]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
-    public void LegacySettingsWithDeploymentItem(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var testAssemblyPath = GetAssetFullPath("LegacySettingsUnitTestProject.dll");
-        var testAssemblyDirectory = Path.GetDirectoryName(testAssemblyPath);
-        Assert.IsNotNull(testAssemblyDirectory);
-
-        var deploymentItem = Path.Combine(testAssemblyDirectory, "Deployment", "DeploymentFile.xml");
-
-        var runsettingsFormat = @"<RunSettings>
-                                    <MSTest>
-                                    <ForcedLegacyMode>true</ForcedLegacyMode>
-                                    </MSTest>
-                                    <LegacySettings>
-                                         <Deployment>
-                                            <DeploymentItem filename=""{0}"" />
-                                         </Deployment>
-                                    </LegacySettings>
-                                   </RunSettings>";
-
-        var runsettingsXml = string.Format(CultureInfo.CurrentCulture, runsettingsFormat, deploymentItem);
-        var runsettingsPath = GetRunsettingsFilePath(null, TempDirectory);
-        File.WriteAllText(runsettingsPath, runsettingsXml);
-
-        var arguments = PrepareArguments(
-           testAssemblyPath,
-           string.Empty,
-           runsettingsPath, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments = string.Concat(arguments, " /testcasefilter:Name=DeploymentItemTest");
-        InvokeVsTest(arguments);
-        ValidateSummaryStatus(1, 0, 0);
-    }
-
-    [TestMethod]
-    [Ignore("Ignore until we have new host available with CUIT removed.")]
-    [TestCategory("Windows")]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
-    public void LegacySettingsTestTimeout(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var testAssemblyPath = GetAssetFullPath("LegacySettingsUnitTestProject.dll");
-        var runsettingsXml = @"<RunSettings>
-                                    <MSTest>
-                                    <ForcedLegacyMode>true</ForcedLegacyMode>
-                                    </MSTest>
-                                    <LegacySettings>
-                                        <Execution><Timeouts testTimeout=""2000"" />
-                                        </Execution>
-                                    </LegacySettings>
-                                   </RunSettings>";
-        var runsettingsPath = GetRunsettingsFilePath(null, TempDirectory);
-        File.WriteAllText(runsettingsPath, runsettingsXml);
-        var arguments = PrepareArguments(testAssemblyPath, string.Empty, runsettingsPath, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments = string.Concat(arguments, " /testcasefilter:Name~TimeTest");
-
-        InvokeVsTest(arguments);
-
-        ValidateSummaryStatus(1, 1, 0);
-    }
-
-    [TestMethod]
-    [Ignore("Ignore until we have new host available with CUIT removed.")]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, useCoreRunner: false)]
-    public void LegacySettingsAssemblyResolution(RunnerInfo runnerInfo)
-    {
-        SetTestEnvironment(_testEnvironment, runnerInfo);
-
-        var testAssemblyPath = GetAssetFullPath("LegacySettingsUnitTestProject.dll");
-        var runsettingsFormat = @"<RunSettings>
-                                    <MSTest><ForcedLegacyMode>true</ForcedLegacyMode></MSTest>
-                                    <LegacySettings>
-                                        <Execution>
-                                         <TestTypeSpecific>
-                                          <UnitTestRunConfig testTypeId=""13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b"">
-                                           <AssemblyResolution>
-                                              <TestDirectory useLoadContext=""true"" />
-                                              <RuntimeResolution>
-                                                  <Directory path=""{0}"" includeSubDirectories=""true"" />
-                                              </RuntimeResolution>
-                                           </AssemblyResolution>
-                                          </UnitTestRunConfig>
-                                         </TestTypeSpecific>
-                                        </Execution>
-                                    </LegacySettings>
-                                   </RunSettings>";
-
-        var testAssemblyDirectory = Path.Combine(_testEnvironment.TestAssetsPath, "LegacySettingsUnitTestProject", "DependencyAssembly");
-        var runsettingsXml = string.Format(CultureInfo.CurrentCulture, runsettingsFormat, testAssemblyDirectory);
-        var runsettingsPath = GetRunsettingsFilePath(null, TempDirectory);
-        File.WriteAllText(runsettingsPath, runsettingsXml);
-        var arguments = PrepareArguments(testAssemblyPath, string.Empty, runsettingsPath, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments = string.Concat(arguments, " /testcasefilter:Name=DependencyTest");
-
-        InvokeVsTest(arguments);
-
-        ValidateSummaryStatus(1, 0, 0);
-    }
-
-    #endregion
-
     #region RunSettings With EnvironmentVariables Settings Tests
 
     [TestMethod]
@@ -510,7 +322,7 @@ public class RunsettingsTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var projectName = "ProjectFileRunSettingsTestProject.csproj";
-        var projectPath = GetIsolatedTestAsset(projectName);
+        var projectPath = GetIsolatedTestAsset(projectName, runnerInfo.TargetFramework);
         InvokeDotnetTest($@"{projectPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
         ValidateSummaryStatus(0, 1, 0);
 

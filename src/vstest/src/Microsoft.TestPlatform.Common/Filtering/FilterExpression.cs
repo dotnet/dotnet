@@ -23,7 +23,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Filtering;
 ///     Equality Operators: =, !=
 ///     Parenthesis (, ) for grouping.
 /// </summary>
-internal class FilterExpression
+internal sealed class FilterExpression
 {
     /// <summary>
     /// Condition, if expression is conditional expression.
@@ -60,17 +60,13 @@ internal class FilterExpression
     /// Create a new filter expression 'And'ing 'this' with 'filter'.
     /// </summary>
     private FilterExpression And(FilterExpression filter)
-    {
-        return new FilterExpression(this, filter, true);
-    }
+        => new FilterExpression(this, filter, true);
 
     /// <summary>
     /// Create a new filter expression 'Or'ing 'this' with 'filter'.
     /// </summary>
     private FilterExpression Or(FilterExpression filter)
-    {
-        return new FilterExpression(this, filter, false);
-    }
+        => new FilterExpression(this, filter, false);
 
     /// <summary>
     /// Process the given operator from the filterStack.
@@ -119,11 +115,7 @@ internal class FilterExpression
     /// </summary>
     internal string[]? ValidForProperties(IEnumerable<string>? properties, Func<string, TestProperty?>? propertyProvider)
     {
-        if (null == properties)
-        {
-            // if null, initialize to empty list so that invalid properties can be found.
-            properties = [];
-        }
+        properties ??= [];
 
         return IterateFilterExpression<string[]?>((current, result) =>
         {
@@ -139,11 +131,11 @@ internal class FilterExpression
             var invalidRight = current._right != null ? result.Pop() : null;
             var invalidProperties = current._left != null ? result.Pop() : null;
 
-            if (null == invalidProperties)
+            if (invalidProperties == null)
             {
                 invalidProperties = invalidRight;
             }
-            else if (null != invalidRight)
+            else if (invalidRight != null)
             {
                 invalidProperties = invalidProperties.Concat(invalidRight).ToArray();
             }
@@ -190,7 +182,7 @@ internal class FilterExpression
                 case "|":
 
                     Operator currentOperator = Operator.And;
-                    if (string.Equals("|", token))
+                    if (string.Equals("|", token, StringComparison.Ordinal))
                     {
                         currentOperator = Operator.Or;
                     }
@@ -210,9 +202,11 @@ internal class FilterExpression
                             operatorStack.Push(currentOperator);
                             break;
                         }
+
                         stackTopOperator = operatorStack.Pop();
                         ProcessOperator(filterStack, stackTopOperator);
                     }
+
                     break;
 
                 case "(":
@@ -250,6 +244,7 @@ internal class FilterExpression
                     break;
             }
         }
+
         while (operatorStack.Count != 0)
         {
             Operator temp = operatorStack.Pop();
@@ -265,12 +260,13 @@ internal class FilterExpression
 
         return filterStack.Pop();
     }
+
     private T IterateFilterExpression<T>(Func<FilterExpression, Stack<T>, T> getNodeValue)
     {
         FilterExpression? current = this;
         // Will have the nodes.
         Stack<FilterExpression> filterStack = new();
-        // Will contain the nodes results to use them in thier parent result's calculation
+        // Will contain the nodes results to use them in their parent result's calculation
         // and at the end will have the root result.
         Stack<T> result = new();
 
@@ -283,6 +279,7 @@ internal class FilterExpression
                 {
                     filterStack.Push(current._right);
                 }
+
                 filterStack.Push(current);
                 current = current._left;
             }
@@ -300,7 +297,8 @@ internal class FilterExpression
 
             result.Push(getNodeValue(current, result));
             current = null;
-        } while (filterStack.Count > 0);
+        }
+        while (filterStack.Count > 0);
 
         TPDebug.Assert(result.Count == 1, "Result stack should have one element at the end.");
         return result.Peek();
@@ -316,21 +314,19 @@ internal class FilterExpression
 
         return IterateFilterExpression<bool>((current, result) =>
         {
-            bool filterResult = false;
             // Only the leaves have a condition value.
-            if (null != current._condition)
+            if (current._condition != null)
             {
-                filterResult = current._condition.Evaluate(propertyValueProvider);
+                return current._condition.Evaluate(propertyValueProvider);
             }
             else
             {
                 // & or | operator
-                bool rightResult = current._right != null ? result.Pop() : false;
-                bool leftResult = current._left != null ? result.Pop() : false;
+                bool rightResult = current._right != null && result.Pop();
+                bool leftResult = current._left != null && result.Pop();
                 // Concatenate the children node's result to get their parent result.
-                filterResult = current._areJoinedByAnd ? leftResult && rightResult : leftResult || rightResult;
+                return current._areJoinedByAnd ? leftResult && rightResult : leftResult || rightResult;
             }
-            return filterResult;
         });
     }
 

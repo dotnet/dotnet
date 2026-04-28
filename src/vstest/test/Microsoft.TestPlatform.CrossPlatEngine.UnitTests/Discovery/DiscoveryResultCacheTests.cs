@@ -15,13 +15,15 @@ namespace TestPlatform.CrossPlatEngine.UnitTests.Discovery;
 [TestClass]
 public class DiscoveryResultCacheTests
 {
+    public TestContext TestContext { get; set; }
+
     [TestMethod]
     public void DiscoveryResultCacheConstructorShouldInitializeDiscoveredTestsList()
     {
         var cache = new DiscoveryResultCache(1000, TimeSpan.FromHours(1), (tests) => { });
 
         Assert.IsNotNull(cache.Tests);
-        Assert.AreEqual(0, cache.Tests.Count);
+        Assert.IsEmpty(cache.Tests);
     }
 
     [TestMethod]
@@ -40,7 +42,7 @@ public class DiscoveryResultCacheTests
         var testCase = new TestCase("A.C.M", new Uri("executor://unittest"), "A");
         cache.AddTest(testCase);
 
-        Assert.AreEqual(1, cache.Tests.Count);
+        Assert.ContainsSingle(cache.Tests);
         Assert.AreEqual(testCase, cache.Tests[0]);
     }
 
@@ -67,7 +69,7 @@ public class DiscoveryResultCacheTests
         cache.AddTest(testCase2);
 
         Assert.IsNotNull(reportedTestCases);
-        Assert.AreEqual(2, reportedTestCases.Count);
+        Assert.HasCount(2, reportedTestCases);
         CollectionAssert.AreEqual(new List<TestCase> { testCase1, testCase2 }, reportedTestCases.ToList());
     }
 
@@ -82,7 +84,7 @@ public class DiscoveryResultCacheTests
         cache.AddTest(testCase2);
 
         Assert.IsNotNull(cache.Tests);
-        Assert.AreEqual(0, cache.Tests.Count);
+        Assert.IsEmpty(cache.Tests);
 
         // Validate that total tests is no reset though.
         Assert.AreEqual(2, cache.TotalDiscoveredTests);
@@ -95,11 +97,11 @@ public class DiscoveryResultCacheTests
         var cache = new DiscoveryResultCache(100, TimeSpan.FromMilliseconds(10), (tests) => reportedTestCases = tests);
 
         var testCase = new TestCase("A.C.M", new Uri("executor://unittest"), "A");
-        Task.Delay(20).Wait();
+        Task.Delay(20, TestContext.CancellationToken).Wait(TestContext.CancellationToken);
         cache.AddTest(testCase);
 
         Assert.IsNotNull(reportedTestCases);
-        Assert.AreEqual(1, reportedTestCases.Count);
+        Assert.ContainsSingle(reportedTestCases);
         Assert.AreEqual(testCase, reportedTestCases.ToArray()[0]);
     }
 
@@ -110,11 +112,11 @@ public class DiscoveryResultCacheTests
         var cache = new DiscoveryResultCache(100, TimeSpan.FromMilliseconds(10), (tests) => reportedTestCases = tests);
 
         var testCase = new TestCase("A.C.M", new Uri("executor://unittest"), "A");
-        Task.Delay(20).Wait();
+        Task.Delay(20, TestContext.CancellationToken).Wait(TestContext.CancellationToken);
         cache.AddTest(testCase);
 
         Assert.IsNotNull(cache.Tests);
-        Assert.AreEqual(0, cache.Tests.Count);
+        Assert.IsEmpty(cache.Tests);
 
         // Validate that total tests is no reset though.
         Assert.AreEqual(1, cache.TotalDiscoveredTests);

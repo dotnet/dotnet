@@ -101,7 +101,7 @@ public class EnableCodeCoverageArgumentProcessorTests
         var dataCollectorsFriendlyNames =
             XmlRunSettingsUtilities.GetDataCollectorsFriendlyName(_settingsProvider.ActiveRunSettings
                 .SettingsXml!);
-        Assert.IsTrue(dataCollectorsFriendlyNames.Contains("Code Coverage"),
+        Assert.Contains("Code Coverage", dataCollectorsFriendlyNames,
             "Code coverage setting in not available in runsettings");
     }
 

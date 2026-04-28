@@ -96,6 +96,7 @@ public class RunConfiguration : TestRunSettings
         CaptureStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_CAPTURING);
         ForwardStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
         DisableSharedTestHost = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
+        CreateNoNewWindow = true;
     }
 
     /// <summary>
@@ -457,6 +458,13 @@ public class RunConfiguration : TestRunSettings
     public bool ForwardStandardOutput { get; private set; }
 
     /// <summary>
+    /// When true, the testhost process is started with CreateNoNewWindow, preventing it from opening a new console window.
+    /// When false, the testhost process is allowed to create a new window, which enables child processes and native applications
+    /// to propagate their console output. Default is true (preserving existing behavior).
+    /// </summary>
+    public bool CreateNoNewWindow { get; private set; }
+
+    /// <summary>
     /// Disables sharing of .NET Framework testhosts.
     /// </summary>
     public bool DisableSharedTestHost { get; private set; }
@@ -588,6 +596,10 @@ public class RunConfiguration : TestRunSettings
         XmlElement forwardStandardOutput = doc.CreateElement(nameof(ForwardStandardOutput));
         forwardStandardOutput.InnerXml = ForwardStandardOutput.ToString();
         root.AppendChild(forwardStandardOutput);
+
+        XmlElement createNoNewWindow = doc.CreateElement(nameof(CreateNoNewWindow));
+        createNoNewWindow.InnerXml = CreateNoNewWindow.ToString();
+        root.AppendChild(createNoNewWindow);
 
         XmlElement disableSharedTesthost = doc.CreateElement(nameof(DisableSharedTestHost));
         disableSharedTesthost.InnerXml = DisableSharedTestHost.ToString();
@@ -982,6 +994,22 @@ public class RunConfiguration : TestRunSettings
 
                         runConfiguration.ForwardStandardOutput = bForwardStandardOutput;
                         break;
+
+                    case nameof(CreateNoNewWindow):
+                        {
+                            XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                            string element = reader.ReadElementContentAsString();
+
+                            bool boolValue;
+                            if (!bool.TryParse(element, out boolValue))
+                            {
+                                throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                    Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, element, elementName));
+                            }
+
+                            runConfiguration.CreateNoNewWindow = boolValue;
+                            break;
+                        }
 
                     case nameof(DisableSharedTestHost):
                         {

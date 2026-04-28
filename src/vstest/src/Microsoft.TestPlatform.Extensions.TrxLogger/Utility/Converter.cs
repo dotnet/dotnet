@@ -488,8 +488,6 @@ internal class Converter
             attachmentSet.Uri,
             attachmentSet.DisplayName,
             Environment.MachineName,
-            Environment.MachineName,
-            false,
             uriDataAttachments);
     }
 

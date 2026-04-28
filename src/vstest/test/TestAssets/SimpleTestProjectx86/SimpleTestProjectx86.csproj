@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <AssemblyName>SimpleTestProjectx86</AssemblyName>
-    <TargetFrameworks>$(NetFrameworkMinimum);$(NetCoreAppMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
     <OutputType Condition="$(NetCoreAppTargetFrameWork) == 'true' ">Exe</OutputType>
   </PropertyGroup>
 

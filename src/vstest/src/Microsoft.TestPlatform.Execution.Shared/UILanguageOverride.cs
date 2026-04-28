@@ -55,7 +55,7 @@ internal class UiLanguageOverride
             {
                 return new CultureInfo(dotnetCliLanguage);
             }
-            catch (CultureNotFoundException) { }
+            catch (CultureNotFoundException) { /* Culture not available on this system — fall back to default. */ }
         }
 
         // VSLANG=<lcid> is set by VS and we respect that as well so that we will respect the VS
@@ -67,8 +67,8 @@ internal class UiLanguageOverride
             {
                 return new CultureInfo(vsLcid);
             }
-            catch (ArgumentOutOfRangeException) { }
-            catch (CultureNotFoundException) { }
+            catch (ArgumentOutOfRangeException) { /* Invalid culture value — fall back to default. */ }
+            catch (CultureNotFoundException) { /* Culture not available on this system — fall back to default. */ }
         }
 
         return null;

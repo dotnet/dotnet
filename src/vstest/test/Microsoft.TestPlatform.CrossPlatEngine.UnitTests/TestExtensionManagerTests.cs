@@ -47,6 +47,6 @@ public class TestExtensionManagerTests
 
         _testExtensionManager.ClearExtensions();
 
-        Assert.AreEqual(0, TestPluginCache.Instance.GetExtensionPaths(string.Empty).Count);
+        Assert.IsEmpty(TestPluginCache.Instance.GetExtensionPaths(string.Empty));
     }
 }

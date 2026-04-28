@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -16,7 +16,7 @@ public class FilterExpressionTests
     [TestMethod]
     public void TokenizeNullThrowsArgumentNullException()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => FilterExpression.TokenizeFilterExpressionString(null!), "str");
+        Assert.ThrowsExactly<ArgumentNullException>(() => FilterExpression.TokenizeFilterExpressionString(null!), "str");
     }
 
     [TestMethod]
@@ -26,7 +26,7 @@ public class FilterExpressionTests
 
         var tokens = FilterExpression.TokenizeFilterExpressionString(conditionString).ToArray();
 
-        Assert.AreEqual(5, tokens.Length);
+        Assert.HasCount(5, tokens);
         Assert.AreEqual("(", tokens[0]);
         Assert.AreEqual(@"T1\(\) ", tokens[1]);
         Assert.AreEqual(@"|", tokens[2]);
@@ -41,7 +41,7 @@ public class FilterExpressionTests
 
         var tokens = FilterExpression.TokenizeFilterExpressionString(conditionString).ToArray();
 
-        Assert.AreEqual(5, tokens.Length);
+        Assert.HasCount(5, tokens);
         Assert.AreEqual("  ", tokens[0]);
         Assert.AreEqual("(", tokens[1]);
         Assert.AreEqual("  ", tokens[2]);
@@ -56,7 +56,7 @@ public class FilterExpressionTests
 
         var tokens = FilterExpression.TokenizeFilterExpressionString(conditionString).ToArray();
 
-        Assert.AreEqual(5, tokens.Length);
+        Assert.HasCount(5, tokens);
         Assert.AreEqual("(", tokens[0]);
         Assert.AreEqual(@"FQN!=T1\(""\\""\) ", tokens[1]);
         Assert.AreEqual(@"|", tokens[2]);
@@ -71,7 +71,7 @@ public class FilterExpressionTests
 
         var tokens = FilterExpression.TokenizeFilterExpressionString(conditionString).ToArray();
 
-        Assert.AreEqual(11, tokens.Length);
+        Assert.HasCount(11, tokens);
         Assert.AreEqual("(", tokens[0]);
         Assert.AreEqual("(", tokens[1]);
         Assert.AreEqual(@"FQN!=T1", tokens[2]);
@@ -92,7 +92,7 @@ public class FilterExpressionTests
 
         var tokens = FilterExpression.TokenizeFilterExpressionString(conditionString).ToArray();
 
-        Assert.AreEqual(5, tokens.Length);
+        Assert.HasCount(5, tokens);
         Assert.AreEqual("(", tokens[0]);
         Assert.AreEqual(@"T1\#\#", tokens[1]);
         Assert.AreEqual(@")", tokens[2]);

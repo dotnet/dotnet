@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -38,13 +39,12 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
     private DataCollectionEvents? _events;
     private DataCollectionLogger? _logger;
     private readonly IProcessDumpUtility _processDumpUtility;
-    private List<Guid>? _testSequence;
-    private Dictionary<Guid, BlameTestObject>? _testObjectDictionary;
+    private ConcurrentQueue<Guid>? _testSequence;
+    private ConcurrentDictionary<Guid, BlameTestObject>? _testObjectDictionary;
     private readonly IBlameReaderWriter _blameReaderWriter;
     private readonly IFileHelper _fileHelper;
     private readonly IProcessHelper _processHelper;
     private XmlElement? _configurationElement;
-    private int _testStartCount;
     private int _testEndCount;
     private bool _collectProcessDumpOnCrash;
     private bool _collectProcessDumpOnHang;
@@ -137,8 +137,8 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
         _dataCollectionSink = dataSink;
         _context = environmentContext;
         _configurationElement = configurationElement;
-        _testSequence = new List<Guid>();
-        _testObjectDictionary = new Dictionary<Guid, BlameTestObject>();
+        _testSequence = new ConcurrentQueue<Guid>();
+        _testObjectDictionary = new ConcurrentDictionary<Guid, BlameTestObject>();
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         // Subscribing to events
@@ -318,6 +318,7 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
             }
             catch (InvalidOperationException)
             {
+                // Process may have already exited — safe to ignore.
             }
         }
         catch (Exception ex)
@@ -461,14 +462,11 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
         TPDebug.Assert(e.TestElement is not null, "e.TestElement is null");
         var blameTestObject = new BlameTestObject(e.TestElement);
 
-        // Add guid to list of test sequence to maintain the order.
-        _testSequence.Add(blameTestObject.Id);
+        // Add guid to ordered collection of test sequence to maintain the order.
+        _testSequence.Enqueue(blameTestObject.Id);
 
         // Add the test object to the dictionary.
-        _testObjectDictionary.Add(blameTestObject.Id, blameTestObject);
-
-        // Increment test start count.
-        _testStartCount++;
+        _testObjectDictionary.TryAdd(blameTestObject.Id, blameTestObject);
     }
 
     /// <summary>
@@ -483,14 +481,11 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
 
         EqtTrace.Info("BlameCollector.EventsTestCaseEnd: Test Case End");
 
-        _testEndCount++;
+        Interlocked.Increment(ref _testEndCount);
 
         // Update the test object in the dictionary as the test has completed.
         TPDebug.Assert(e.TestElement is not null, "e.TestElement is null");
-        if (_testObjectDictionary.ContainsKey(e.TestElement.Id))
-        {
-            _testObjectDictionary[e.TestElement.Id].IsCompleted = true;
-        }
+        _testObjectDictionary[e.TestElement.Id].IsCompleted = true;
     }
 
     /// <summary>
@@ -510,12 +505,17 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
             // If the last test crashes, it will not invoke a test case end and therefore
             // In case of crash testStartCount will be greater than testEndCount and we need to write the sequence
             // And send the attachment. This won't indicate failure if there are 0 tests in the assembly, or when it fails in setup.
-            var processCrashedWhenRunningTests = _testStartCount > _testEndCount;
+            var processCrashedWhenRunningTests = _testSequence.Count > _testEndCount;
             if (processCrashedWhenRunningTests)
             {
                 var filepath = Path.Combine(GetTempDirectory(), Constants.AttachmentFileName + "_" + _attachmentGuid);
 
-                filepath = _blameReaderWriter.WriteTestSequence(_testSequence, _testObjectDictionary, filepath);
+                List<Guid> testSequenceCopy;
+                Dictionary<Guid, BlameTestObject> testObjectDictionaryCopy;
+
+                testSequenceCopy = [.. _testSequence];
+                testObjectDictionaryCopy = new Dictionary<Guid, BlameTestObject>(_testObjectDictionary);
+                filepath = _blameReaderWriter.WriteTestSequence(testSequenceCopy, testObjectDictionaryCopy, filepath);
                 var fti = new FileTransferInformation(_context.SessionDataCollectionContext, filepath, true);
                 _dataCollectionSink.SendFileAsync(fti);
             }

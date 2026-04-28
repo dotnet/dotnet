@@ -101,13 +101,13 @@ public class TestSessionPool
         lock (_lockObject)
         {
             // Check if the session info exists.
-            if (!_sessionPool.ContainsKey(testSessionInfo))
+            if (!_sessionPool.TryGetValue(testSessionInfo, out var proxyManagerFromPool))
             {
                 return false;
             }
 
             // Remove the session from the pool.
-            proxyManager = _sessionPool[testSessionInfo];
+            proxyManager = proxyManagerFromPool;
             _sessionPool.Remove(testSessionInfo);
         }
 
@@ -136,13 +136,10 @@ public class TestSessionPool
         ProxyTestSessionManager? sessionManager;
         lock (_lockObject)
         {
-            if (!_sessionPool.ContainsKey(testSessionInfo))
+            if (!_sessionPool.TryGetValue(testSessionInfo, out sessionManager))
             {
                 return null;
             }
-
-            // Gets the session manager reference from the pool.
-            sessionManager = _sessionPool[testSessionInfo];
         }
 
         try
@@ -184,13 +181,10 @@ public class TestSessionPool
         ProxyTestSessionManager? sessionManager;
         lock (_lockObject)
         {
-            if (!_sessionPool.ContainsKey(testSessionInfo))
+            if (!_sessionPool.TryGetValue(testSessionInfo, out sessionManager))
             {
                 return false;
             }
-
-            // Gets the session manager reference from the pool.
-            sessionManager = _sessionPool[testSessionInfo];
         }
 
         try
