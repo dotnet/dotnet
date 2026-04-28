@@ -148,7 +148,11 @@ function InitializeDotNetCli {
   if [[ $global_json_has_runtimes == false && -n "${DOTNET_INSTALL_DIR:-}" && -d "$DOTNET_INSTALL_DIR/sdk/$dotnet_sdk_version" ]]; then
     dotnet_root="$DOTNET_INSTALL_DIR"
   else
-    dotnet_root="${repo_root}.dotnet"
+    if [[ -n "${DOTNET_GLOBAL_INSTALL_DIR:-}" ]]; then
+      dotnet_root="$DOTNET_GLOBAL_INSTALL_DIR"
+    else
+      dotnet_root="${repo_root}.dotnet"
+    fi
 
     export DOTNET_INSTALL_DIR="$dotnet_root"
 
@@ -445,13 +449,21 @@ function InitializeToolset {
 
   local package_dir="$_GetNuGetPackageCachePath/microsoft.dotnet.arcade.sdk/$toolset_version"
 
-  if [[ ! -d "$package_dir/toolset" ]]; then
-    Write-PipelineTelemetryError -category 'InitializeToolset' "Arcade SDK package does not contain a toolset folder: $package_dir"
+  # TODO: Remove the tools/ check once all supported versions have the toolset folder.
+  if [[ ! -d "$package_dir/toolset" && ! -d "$package_dir/tools" ]]; then
+    Write-PipelineTelemetryError -category 'InitializeToolset' "Arcade SDK package does not contain a toolset or tools folder: $package_dir"
     ExitWithExitCode 3
   fi
 
   mkdir -p "$toolset_tools_dir"
-  cp -r "$package_dir/toolset/." "$toolset_tools_dir"
+
+  # Copy toolset if present at the package root (new layout), otherwise fall back to tools
+  if [[ -d "$package_dir/toolset" ]]; then
+    cp -r "$package_dir/toolset/." "$toolset_tools_dir"
+  else
+    # TODO: Remove this fallback once all supported versions have the toolset folder.
+    cp -r "$package_dir/tools/." "$toolset_tools_dir"
+  fi
 
   if [[ -a "$toolset_tools_dir/Build.proj" ]]; then
     toolset_build_proj="$toolset_tools_dir/Build.proj"
@@ -601,6 +613,12 @@ function GetSdkTaskProject {
   local proj="$toolsetDir/$taskName.proj"
   if [[ -a "$proj" ]]; then
     echo "$proj"
+    return
+  fi
+  # TODO: Remove this fallback once all supported versions use the new layout.
+  local legacyProj="$toolsetDir/SdkTasks/$taskName.proj"
+  if [[ -a "$legacyProj" ]]; then
+    echo "$legacyProj"
     return
   fi
   Write-PipelineTelemetryError -category 'Build' "Unable to find $taskName.proj in toolset at: $toolsetDir"
