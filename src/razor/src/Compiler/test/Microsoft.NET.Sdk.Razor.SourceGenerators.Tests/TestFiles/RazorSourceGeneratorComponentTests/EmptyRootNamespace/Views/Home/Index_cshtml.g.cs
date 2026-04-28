@@ -23,20 +23,18 @@ namespace AspNetCoreGeneratedDocument
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
-            Write(
 #nullable restore
-#line (1,3)-(1,72) "Views/Home/Index.cshtml"
-await Html.RenderComponentAsync<Shared.Component1>(RenderMode.Static)
+#line (1,3)-(1,72) 6 "Views/Home/Index.cshtml"
+Write(await Html.RenderComponentAsync<Shared.Component1>(RenderMode.Static)
 
 #line default
 #line hidden
 #nullable disable
             );
             WriteLiteral("\r\n");
-            Write(
 #nullable restore
-#line (2,3)-(2,65) "Views/Home/Index.cshtml"
-await Html.RenderComponentAsync<Component3>(RenderMode.Static)
+#line (2,3)-(2,65) 6 "Views/Home/Index.cshtml"
+Write(await Html.RenderComponentAsync<Component3>(RenderMode.Static)
 
 #line default
 #line hidden

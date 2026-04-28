@@ -17,7 +17,7 @@
                 Component - (0:0,0 [33] x:\dir\subdir\Test\TestComponent.cshtml) - int
                     ComponentAttribute - (18:0,18 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (18:0,18 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            IntermediateToken - (18:0,18 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (18:0,18 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - __value => ParentValue = __value

@@ -182,7 +182,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         }
         else
         {
-            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+            var syntaxTree = codeDocument.GetTagHelperRewrittenSyntaxTree() ?? codeDocument.GetRequiredSyntaxTree();
             var sourceContent = syntaxTree.Source.Text.ToString();
             var classifiedSpans = syntaxTree.GetClassifiedSpans();
             foreach (var classifiedSpan in classifiedSpans)

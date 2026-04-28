@@ -10,7 +10,7 @@
                 Component - (0:0,0 [37] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - PlaceHolder - Placeholder - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - s
+                            IntermediateToken - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - s
                     ComponentAttribute - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - PlaceHolderChanged - PlaceholderChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 

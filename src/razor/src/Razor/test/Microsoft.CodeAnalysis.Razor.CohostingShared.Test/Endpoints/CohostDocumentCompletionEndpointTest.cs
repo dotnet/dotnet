@@ -428,6 +428,141 @@ public partial class CohostDocumentCompletionEndpointTest(ITestOutputHelper test
     }
 
     [Fact]
+    public async Task OutputElementHintTagHelper_ShownWhenHintElementIsPresent()
+    {
+        // A tag helper with [OutputElementHint("strong")] should appear in completions
+        // when HTML completions include "strong".
+        await VerifyCompletionListAsync(
+            input: """
+                @addTagHelper *, SomeProject
+                <$$
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["my-bold", "strong"],
+            htmlItemLabels: ["strong"],
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles: [("TestTagHelper.cs", """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                namespace SomeProject
+                {
+                    [OutputElementHint("strong")]
+                    [HtmlTargetElement("my-bold")]
+                    public class BoldTagHelper : TagHelper
+                    {
+                        public override void Process(TagHelperContext context, TagHelperOutput output)
+                        {
+                            output.TagName = "strong";
+                        }
+                    }
+                }
+                """)]);
+    }
+
+    [Fact]
+    public async Task OutputElementHintTagHelper_NotShownWhenHintElementIsAbsent()
+    {
+        // A tag helper with [OutputElementHint("strong")] should NOT appear in completions
+        // when HTML completions do not include "strong".
+        await VerifyCompletionListAsync(
+            input: """
+                @addTagHelper *, SomeProject
+                <$$
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["div"],
+            unexpectedItemLabels: ["my-bold"],
+            htmlItemLabels: ["div"],
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles: [("TestTagHelper.cs", """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                namespace SomeProject
+                {
+                    [OutputElementHint("strong")]
+                    [HtmlTargetElement("my-bold")]
+                    public class BoldTagHelper : TagHelper
+                    {
+                        public override void Process(TagHelperContext context, TagHelperOutput output)
+                        {
+                            output.TagName = "strong";
+                        }
+                    }
+                }
+                """)]);
+    }
+
+    [Fact]
+    public async Task HtmlCompletionFailure_ReturnsIncompleteEmptyList()
+    {
+        // When the HTML language server fails to respond (e.g., not yet initialized on first document open),
+        // we should return an empty IsIncomplete list so the client retries, rather than showing partial
+        // Razor-only results that could cause the user to accidentally commit a wrong item.
+        var input = new TestCode("""
+            This is a Razor document.
+
+            <$$
+
+            The end.
+            """);
+
+        var document = CreateProjectAndRazorDocument(input.Text);
+        var sourceText = await document.GetTextAsync(DisposalToken);
+
+        // Use a TestHtmlRequestInvoker that returns null (simulating HTML server not ready)
+        var requestInvoker = new TestHtmlRequestInvoker((Methods.TextDocumentCompletionName, (object?)null));
+
+#if VSCODE
+        ISnippetCompletionItemProvider? snippetCompletionItemProvider = null;
+#else
+        var snippetCompletionItemProvider = new SnippetCompletionItemProvider(new SnippetCache());
+#endif
+
+        var completionListCache = new CompletionListCache();
+        var endpoint = new CohostDocumentCompletionEndpoint(
+            IncompatibleProjectService,
+            RemoteServiceInvoker,
+            ClientSettingsManager,
+            ClientCapabilitiesService,
+            snippetCompletionItemProvider,
+            requestInvoker,
+            completionListCache,
+            NoOpTelemetryReporter.Instance,
+            LoggerFactory);
+
+        var request = new RazorVSInternalCompletionParams()
+        {
+            TextDocument = new TextDocumentIdentifier()
+            {
+                DocumentUri = document.CreateDocumentUri()
+            },
+            Position = sourceText.GetPosition(input.Position),
+            Context = new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            }
+        };
+
+        var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
+
+        Assert.NotNull(result);
+        Assert.True(result.IsIncomplete);
+        Assert.Empty(result.Items);
+    }
+
+    [Fact]
     public async Task Component_FullyQualified()
     {
         await VerifyCompletionListAsync(
@@ -1156,9 +1291,10 @@ public partial class CohostDocumentCompletionEndpointTest(ITestOutputHelper test
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true,
         RazorFileKind? fileKind = null,
-        TimeSpan? retryTimeout = null)
+        TimeSpan? retryTimeout = null,
+        (string fileName, string contents)[]? additionalFiles = null)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles: additionalFiles);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         ClientSettingsManager.Update(ClientAdvancedSettings.Default with { AutoInsertAttributeQuotes = autoInsertAttributeQuotes, CommitElementsWithSpace = commitElementsWithSpace });

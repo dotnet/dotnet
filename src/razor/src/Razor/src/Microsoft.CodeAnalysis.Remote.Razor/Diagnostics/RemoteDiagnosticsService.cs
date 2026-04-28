@@ -65,7 +65,7 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
         // spans of the unused directives here so we can use that information for code fixes, without having to compute
         // it on demand every time.
         var sourceText = codeDocument.Source.Text;
-        var tree = codeDocument.GetRequiredSyntaxTree();
+        var tree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         using var unusedDirectiveSpans = new PooledArrayBuilder<TextSpan>();
 
         // In VS, we use Warning so we get an error list entry, and the tags mean we won't get squiggles in the editor.
@@ -119,7 +119,7 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
         // them out in the RazorTranslateDiagnosticsService.
         if (codeDocument.FileKind.IsLegacy() && !codeDocument.IsImportsFile())
         {
-            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+            var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
             var sourceText = codeDocument.Source.Text;
 
             foreach (var directive in syntaxTree.EnumerateAddTagHelperDirectives())

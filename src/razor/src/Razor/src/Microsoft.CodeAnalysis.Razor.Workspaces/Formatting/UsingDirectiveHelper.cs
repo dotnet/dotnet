@@ -215,7 +215,7 @@ internal static class UsingDirectiveHelper
     /// </summary>
     public static bool NeedsSortOrConsolidate(RazorCodeDocument codeDocument)
     {
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
 
         var usingDirectives = syntaxTree.GetUsingDirectives();
         if (usingDirectives.Length <= 1)
@@ -267,7 +267,7 @@ internal static class UsingDirectiveHelper
         RazorCodeDocument codeDocument,
         ImmutableArray<RazorUsingDirectiveSyntax>? directivesToKeep = null)
     {
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var usingDirectives = syntaxTree.GetUsingDirectives();
         var sourceText = codeDocument.Source.Text;
 

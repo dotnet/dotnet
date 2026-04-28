@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.Language;
@@ -58,8 +58,8 @@ internal sealed class SourceGeneratorProjectEngine
 
         codeDocument = ExecutePhases(Phases[.._discoveryPhaseIndex], codeDocument, cancellationToken);
 
-        // record the syntax tree, before the tag helper re-writing occurs
-        codeDocument = codeDocument.WithPreTagHelperSyntaxTree(codeDocument.GetSyntaxTree());
+        // By this point, DefaultRazorParsingPhase has set the canonical syntax tree (_syntaxTree)
+        // so that discovery and subsequent phases can read it via GetSyntaxTree().
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }
 
@@ -69,7 +69,7 @@ internal sealed class SourceGeneratorProjectEngine
         bool checkForIdempotency, 
         CancellationToken cancellationToken)
     {
-        Debug.Assert(sgDocument.CodeDocument.GetPreTagHelperSyntaxTree() is not null);
+        Debug.Assert(sgDocument.CodeDocument.GetSyntaxTree() is not null);
 
         int startIndex = _discoveryPhaseIndex;
         var codeDocument = sgDocument.CodeDocument;
@@ -100,8 +100,10 @@ internal sealed class SourceGeneratorProjectEngine
                 return sgDocument;
             }
 
-            // We need to re-write the document, but can skip the scoping as we just performed it
-            startIndex = _rewritePhaseIndex;
+            // We need to re-process the document with the updated tag helpers, but can skip discovery
+            // as we just performed it. We must re-run lowering (not just rewrite) because the resolution
+            // phase resolves unresolved nodes based on tag helpers and mutates the IR in place.
+            startIndex = _discoveryPhaseIndex + 1;
         }
         else
         {
@@ -168,7 +170,7 @@ internal sealed class SourceGeneratorProjectEngine
         var codeDocument = sgDocument.CodeDocument;
         Debug.Assert(codeDocument.GetReferencedTagHelpers() is not null);
 
-        codeDocument = ExecutePhases(Phases[_rewritePhaseIndex..], codeDocument, cancellationToken);
+        codeDocument = ExecutePhases(Phases[(_rewritePhaseIndex + 1)..], codeDocument, cancellationToken);
 
         return new SourceGeneratorRazorCodeDocument(codeDocument);
     }

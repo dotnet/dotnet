@@ -41,7 +41,7 @@ internal sealed class RemoteRemoveAndSortUsingsService(in ServiceArgs args) : Ra
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var sourceText = codeDocument.Source.Text;
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var allUsingDirectives = syntaxTree.GetUsingDirectives();
 
         if (allUsingDirectives.Length == 0)

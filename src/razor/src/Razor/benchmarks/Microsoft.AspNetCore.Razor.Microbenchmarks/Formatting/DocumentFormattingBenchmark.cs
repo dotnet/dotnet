@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
-using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -74,14 +73,14 @@ public class DocumentFormattingBenchmark
         var filePathService = new RemoteFilePathService();
         var snapshotManager = new RemoteSnapshotManager(filePathService, NoOpTelemetryReporter.Instance);
         var documentSnapshot = snapshotManager.GetSnapshot(document);
-        _documentContext = new DocumentContext(s_documentUri, documentSnapshot, projectContext: null);
+        _documentContext = new DocumentContext(s_documentUri, documentSnapshot);
 
         var hostServicesProvider = new RemoteHostServicesProvider();
         hostServicesProvider.SetWorkspaceProvider(new WorkspaceProvider(_workspace));
 
         var clientSettingsManager = new RemoteClientSettingsManager();
         var documentMappingService = new RemoteDocumentMappingService(filePathService, snapshotManager, EmptyLoggerFactory.Instance);
-        var razorEditService = new RemoteRazorEditService(documentMappingService, clientSettingsManager, NoOpTelemetryReporter.Instance);
+        var razorEditService = new RemoteRazorEditService(documentMappingService, clientSettingsManager, filePathService, snapshotManager, NoOpTelemetryReporter.Instance);
 
         _formattingService = new RemoteRazorFormattingService(
             documentMappingService,

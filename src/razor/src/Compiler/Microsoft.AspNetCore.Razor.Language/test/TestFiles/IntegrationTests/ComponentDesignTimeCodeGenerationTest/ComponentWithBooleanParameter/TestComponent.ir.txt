@@ -21,7 +21,7 @@
                     LazyIntermediateToken - (26:0,26 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
                 Component - (30:2,0 [33] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     ComponentAttribute - (55:2,25 [4] x:\dir\subdir\Test\TestComponent.cshtml) - TestBool - TestBool - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (55:2,25 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true
+                        IntermediateToken - (55:2,25 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true
                 HtmlContent - (63:2,33 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (63:2,33 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (74:4,7 [59] x:\dir\subdir\Test\TestComponent.cshtml)

@@ -22,7 +22,7 @@
                     DefaultTagHelperCreate -  - InputTagHelper
                     DefaultTagHelperProperty - (47:2,12 [19] EscapedExpression.cshtml) - tag - object InputTagHelper.TagProp - HtmlAttributeValueStyle.SingleQuotes
                         CSharpExpression - (48:2,13 [18] EscapedExpression.cshtml)
-                            LazyIntermediateToken - (48:2,13 [18] EscapedExpression.cshtml) - CSharp - new string("1, 2")
+                            IntermediateToken - (48:2,13 [18] EscapedExpression.cshtml) - CSharp - new string("1, 2")
                     DefaultTagHelperExecute - 
                 HtmlContent - (70:2,35 [2] EscapedExpression.cshtml)
                     LazyIntermediateToken - (70:2,35 [2] EscapedExpression.cshtml) - Html - \n
@@ -30,7 +30,7 @@
                     DefaultTagHelperBody - 
                     DefaultTagHelperCreate -  - InputTagHelper
                     DefaultTagHelperProperty - (84:3,12 [18] EscapedExpression.cshtml) - tag - object InputTagHelper.TagProp - HtmlAttributeValueStyle.SingleQuotes
-                        LazyIntermediateToken - (84:3,12 [18] EscapedExpression.cshtml) - CSharp - new string("1, 2")
+                        IntermediateToken - (84:3,12 [18] EscapedExpression.cshtml) - CSharp - new string("1, 2")
                     DefaultTagHelperExecute - 
                 HtmlContent - (106:3,34 [2] EscapedExpression.cshtml)
                     LazyIntermediateToken - (106:3,34 [2] EscapedExpression.cshtml) - Html - \n
@@ -38,7 +38,7 @@
                     DefaultTagHelperBody - 
                     DefaultTagHelperCreate -  - InputTagHelper
                     DefaultTagHelperProperty - (120:4,12 [24] EscapedExpression.cshtml) - tag - object InputTagHelper.TagProp - HtmlAttributeValueStyle.SingleQuotes
-                        LazyIntermediateToken - (120:4,12 [24] EscapedExpression.cshtml) - CSharp - "0" + new @String("1 2")
+                        IntermediateToken - (120:4,12 [24] EscapedExpression.cshtml) - CSharp - "0" + new @String("1 2")
                     DefaultTagHelperExecute - 
                 HtmlContent - (148:4,40 [2] EscapedExpression.cshtml)
                     LazyIntermediateToken - (148:4,40 [2] EscapedExpression.cshtml) - Html - \n

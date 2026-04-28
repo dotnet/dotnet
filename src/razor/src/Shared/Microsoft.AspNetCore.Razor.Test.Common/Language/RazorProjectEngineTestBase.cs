@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -112,4 +113,28 @@ public abstract class RazorProjectEngineTestBase
             ConfigureProjectEngine(builder);
             configure.Invoke(builder);
         });
+
+    /// <summary>
+    ///  Finds the first descendant node of the specified type using a depth-first search.
+    /// </summary>
+    protected static T FindDescendant<T>(IntermediateNode root) where T : IntermediateNode
+    {
+        var stack = new System.Collections.Generic.Stack<IntermediateNode>();
+        stack.Push(root);
+        while (stack.Count > 0)
+        {
+            var current = stack.Pop();
+            if (current is T match)
+            {
+                return match;
+            }
+
+            for (var i = current.Children.Count - 1; i >= 0; i--)
+            {
+                stack.Push(current.Children[i]);
+            }
+        }
+
+        throw new InvalidOperationException("Not found: " + typeof(T).Name);
+    }
 }

@@ -56,10 +56,9 @@ using System.Text
 
             WriteLiteral("\r\n");
             WriteLiteral("    <p>");
-            Write(
 #nullable restore
-#line (23,9)-(23,42) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Utf8StringLiterals.cshtml"
-Encoding.UTF8.GetString("test"u8)
+#line (23,9)-(23,42) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Utf8StringLiterals.cshtml"
+Write(Encoding.UTF8.GetString("test"u8)
 
 #line default
 #line hidden

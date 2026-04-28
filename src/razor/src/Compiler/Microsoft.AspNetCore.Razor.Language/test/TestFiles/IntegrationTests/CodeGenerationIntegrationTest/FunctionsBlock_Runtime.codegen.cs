@@ -26,10 +26,9 @@ namespace AspNetCoreGeneratedDocument
         {
             WriteLiteral("\r\n");
             WriteLiteral("\r\nHere\'s a random number: ");
-            Write(
 #nullable restore
-#line (12,26)-(12,37) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml"
-RandomInt()
+#line (12,26)-(12,37) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml"
+Write(RandomInt()
 
 #line default
 #line hidden

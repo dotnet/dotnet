@@ -16,7 +16,7 @@
                         HtmlAttribute - (130:2,79 [8] x:\dir\subdir\Test\TestComponent.cshtml) - oninput=" - "
                             CSharpExpressionAttributeValue -  - 
                                 IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.ChangeEventArgs>(this, 
-                                LazyIntermediateToken - (130:2,79 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => {}
+                                IntermediateToken - (130:2,79 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => {}
                                 IntermediateToken -  - CSharp - )
                         HtmlAttribute - (85:2,34 [5] x:\dir\subdir\Test\TestComponent.cshtml) - value=" - "
                             CSharpExpressionAttributeValue -  - 
