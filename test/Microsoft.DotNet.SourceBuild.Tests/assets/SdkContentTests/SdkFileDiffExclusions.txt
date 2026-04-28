@@ -1,4 +1,4 @@
-# This list is processed using FileSystemName.MatchesSimpleExpression
+# This list is processed using Microsoft.Extensions.FileSystemGlobbing.Matcher
 #
 # Format
 #   Exclude the path entirely:

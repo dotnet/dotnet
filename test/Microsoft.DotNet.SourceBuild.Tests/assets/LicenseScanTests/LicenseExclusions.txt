@@ -1,6 +1,6 @@
 # Contains the list of files to be excluded from license scanning.
 #
-# This list is processed using FileSystemName.MatchesSimpleExpression
+# This list is processed using Microsoft.Extensions.FileSystemGlobbing.Matcher
 #
 # Format:
 #   Exclude the file entirely from license scanning:
