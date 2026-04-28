@@ -57,10 +57,10 @@
     <!-- roslyn dependencies -->
     <MicrosoftCodeAnalysisVersion>4.4.0</MicrosoftCodeAnalysisVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.2</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>10.0.2</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>10.0.2</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftExtensionsHostingVersion>10.0.2</MicrosoftExtensionsHostingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.3</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.3</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.3</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.3</MicrosoftExtensionsHostingVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
   </PropertyGroup>
