@@ -35,7 +35,7 @@ internal static partial class RazorCodeDocumentExtensions
 
             using (_stateLock.DisposableWait(cancellationToken))
             {
-                return _classifiedSpans ??= ClassifiedSpanVisitor.VisitRoot(_codeDocument.GetRequiredSyntaxTree());
+                return _classifiedSpans ??= ClassifiedSpanVisitor.VisitRoot(_codeDocument.GetRequiredTagHelperRewrittenSyntaxTree());
             }
         }
 
@@ -48,7 +48,7 @@ internal static partial class RazorCodeDocumentExtensions
 
             using (_stateLock.DisposableWait(cancellationToken))
             {
-                return _tagHelperSpans ??= ComputeTagHelperSpans(_codeDocument.GetRequiredSyntaxTree());
+                return _tagHelperSpans ??= ComputeTagHelperSpans(_codeDocument.GetRequiredTagHelperRewrittenSyntaxTree());
             }
 
             static ImmutableArray<SourceSpan> ComputeTagHelperSpans(RazorSyntaxTree syntaxTree)

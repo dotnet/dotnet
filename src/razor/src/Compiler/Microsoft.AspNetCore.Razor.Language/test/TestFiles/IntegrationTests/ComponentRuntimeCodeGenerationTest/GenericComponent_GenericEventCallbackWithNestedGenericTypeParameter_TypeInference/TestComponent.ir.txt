@@ -10,9 +10,9 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (48:2,0 [61] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (67:2,19 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Item - Item - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (67:2,19 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 3
+                        IntermediateToken - (67:2,19 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 3
                     ComponentAttribute - (79:2,31 [26] x:\dir\subdir\Test\TestComponent.cshtml) - MyEvent - MyEvent - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (79:2,31 [26] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (IEnumerable<int> x) => {}
+                        IntermediateToken - (79:2,31 [26] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (IEnumerable<int> x) => {}
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateMyComponent_0

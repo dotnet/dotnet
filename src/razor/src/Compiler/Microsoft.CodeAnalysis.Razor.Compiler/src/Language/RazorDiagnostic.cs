@@ -14,6 +14,7 @@ public sealed class RazorDiagnostic : IEquatable<RazorDiagnostic>, IFormattable
 
     public string Id => _descriptor.Id;
     public RazorDiagnosticSeverity Severity => _descriptor.Severity;
+    public int WarningLevel => _descriptor.WarningLevel;
     public SourceSpan Span { get; }
 
     private Checksum? _checksum;

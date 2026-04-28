@@ -37,14 +37,14 @@
                             LazyIntermediateToken - (168:6,14 [12] BasicTagHelpers_Prefixed.cshtml) - Html -  type="text"
                             LazyIntermediateToken - (180:6,26 [1] BasicTagHelpers_Prefixed.cshtml) - Html - >
                             LazyIntermediateToken - (181:6,27 [10] BasicTagHelpers_Prefixed.cshtml) - Html - \n        
-                        TagHelper - (191:7,8 [41] BasicTagHelpers_Prefixed.cshtml) - input - TagMode.StartTagOnly
+                        TagHelper - (191:7,8 [47] BasicTagHelpers_Prefixed.cshtml) - input - TagMode.StartTagOnly
                             DefaultTagHelperBody - 
                             DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                             DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
                             PreallocatedTagHelperProperty - (207:7,24 [8] BasicTagHelpers_Prefixed.cshtml) - __tagHelperAttribute_0 - type - Type
                             PreallocatedTagHelperProperty - (207:7,24 [8] BasicTagHelpers_Prefixed.cshtml) - __tagHelperAttribute_0 - type - Type
                             DefaultTagHelperProperty - (226:7,43 [4] BasicTagHelpers_Prefixed.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (226:7,43 [4] BasicTagHelpers_Prefixed.cshtml) - CSharp - true
+                                IntermediateToken - (226:7,43 [4] BasicTagHelpers_Prefixed.cshtml) - CSharp - true
                             DefaultTagHelperExecute - 
                         HtmlContent - (232:7,49 [6] BasicTagHelpers_Prefixed.cshtml)
                             LazyIntermediateToken - (232:7,49 [6] BasicTagHelpers_Prefixed.cshtml) - Html - \n    

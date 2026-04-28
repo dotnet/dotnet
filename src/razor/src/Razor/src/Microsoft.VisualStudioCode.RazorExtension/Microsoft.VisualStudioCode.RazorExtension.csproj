@@ -42,9 +42,16 @@
     <InternalsVisibleTo Include="Microsoft.VisualStudioCode.RazorExtension.Test" Key="$(RazorKey)" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <_ObjectPoolLibTfm>$(TargetFramework)</_ObjectPoolLibTfm>
+    <!-- When building from the VMR, the ObjectPool package version targets NetCurrent (e.g. net11.0)
+         which may be newer than this project's TFM (e.g. net10.0). -->
+    <_ObjectPoolLibTfm Condition="'$(DotNetBuildFromVMR)' == 'true'">$(NetCurrent)</_ObjectPoolLibTfm>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Need to make sure ObjectPool is in the bin folder for local development scenarios -->
-    <None Include="$(PkgMicrosoft_Extensions_ObjectPool)\lib\net10.0\Microsoft.Extensions.ObjectPool.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="$(PkgMicrosoft_Extensions_ObjectPool)\lib\$(_ObjectPoolLibTfm)\Microsoft.Extensions.ObjectPool.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
 
     <Content Include=".\Targets\**\*.*">
       <Pack>true</Pack>

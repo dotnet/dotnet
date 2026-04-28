@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -21,24 +20,46 @@ internal abstract class AbstractRazorCompletionFactsService(ImmutableArray<IRazo
 {
     private readonly ImmutableArray<IRazorCompletionItemProvider> _providers = providers;
 
-    public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
+    public CompletionItemsResult GetCompletionItems(RazorCompletionContext context)
     {
-        if (context is null)
+        ArgHelper.ThrowIfNull(context);
+        ArgHelper.ThrowIfNull(context.TagHelperDocumentContext);
+
+        var needsHtmlDependentCompletionItems = false;
+        using var completions = new PooledArrayBuilder<RazorCompletionItem>();
+
+        foreach (var provider in _providers)
         {
-            throw new ArgumentNullException(nameof(context));
+            if (provider is IHtmlDependentCompletionItemProvider htmlDependent
+                && htmlDependent.NeedsHtmlCompletions(context))
+            {
+                needsHtmlDependentCompletionItems = true;
+            }
+            else
+            {
+                var items = provider.GetCompletionItems(context);
+                completions.AddRange(items);
+            }
         }
 
-        if (context.TagHelperDocumentContext is null)
-        {
-            throw new ArgumentNullException(nameof(context.TagHelperDocumentContext));
-        }
+        return new CompletionItemsResult(completions.ToImmutableAndClear(), needsHtmlDependentCompletionItems);
+    }
+
+    public ImmutableArray<RazorCompletionItem> GetHtmlDependentCompletionItems(RazorHtmlDependentCompletionContext context)
+    {
+        ArgHelper.ThrowIfNull(context);
+        ArgHelper.ThrowIfNull(context.TagHelperDocumentContext);
 
         using var completions = new PooledArrayBuilder<RazorCompletionItem>();
 
         foreach (var provider in _providers)
         {
-            var items = provider.GetCompletionItems(context);
-            completions.AddRange(items);
+            if (provider is IHtmlDependentCompletionItemProvider htmlDependent
+                && htmlDependent.NeedsHtmlCompletions(context))
+            {
+                var items = htmlDependent.GetHtmlDependentCompletionItems(context);
+                completions.AddRange(items);
+            }
         }
 
         return completions.ToImmutableAndClear();

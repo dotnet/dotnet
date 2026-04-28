@@ -10,7 +10,7 @@
                 Component - (0:0,0 [23] x:\dir\subdir\Test\TestComponent.cshtml) - Counter
                     ComponentAttribute - (18:0,18 [1] x:\dir\subdir\Test\TestComponent.cshtml) - v -  - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (18:0,18 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - y
+                            IntermediateToken - (18:0,18 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - y
                     ComponentAttribute - (18:0,18 [1] x:\dir\subdir\Test\TestComponent.cshtml) - vChanged -  - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 

@@ -80,7 +80,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         LspDiagnostic[] unmappedDiagnostics,
         RazorCodeDocument codeDocument)
     {
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var sourceText = codeDocument.Source.Text;
 
         using var _ = DictionaryPool<TextSpan, bool>.GetPooledObject(out var processedAttributes);
@@ -539,7 +539,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         // have to check if the using was actually used by component binding, if so, we need to keep the
         // diagnostic. Conveniently, this means we don't need to worry about actually reporting our own
         // unused diagnostics, so it's worth it.
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         if (TryGetOriginalDiagnosticRange(diagnostic, codeDocument, out var originalRange) &&
             syntaxTree.FindInnermostNode(codeDocument.Source.Text, originalRange.Start) is { Parent.Parent: RazorUsingDirectiveSyntax usingDirectiveSyntax })
         {
@@ -551,7 +551,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private static bool CheckIfDocumentHasRazorDiagnostic(RazorCodeDocument codeDocument, string razorDiagnosticCode)
     {
-        return codeDocument.GetRequiredSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
+        return codeDocument.GetRequiredTagHelperRewrittenSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
     }
 
     private bool TryGetOriginalDiagnosticRange(LspDiagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? originalRange)

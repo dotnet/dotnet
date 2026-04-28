@@ -17,12 +17,12 @@
                 Component - (0:0,0 [114] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
                     ComponentAttribute - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml) - P2 - P2 - AttributeStructure.DoubleQuotes
                         HtmlContent - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc
+                            IntermediateToken - (19:0,19 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - abc
                     RenderMode - (37:0,37 [64] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (37:0,37 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
+                        IntermediateToken - (37:0,37 [64] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer
                     ComponentAttribute - (107:0,107 [3] x:\dir\subdir\Test\TestComponent.cshtml) - P1 - P1 - AttributeStructure.DoubleQuotes
                         HtmlContent - (107:0,107 [3] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (107:0,107 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - def
+                            IntermediateToken - (107:0,107 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - def
                 HtmlContent - (114:0,114 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (114:0,114 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (126:3,1 [94] x:\dir\subdir\Test\TestComponent.cshtml)

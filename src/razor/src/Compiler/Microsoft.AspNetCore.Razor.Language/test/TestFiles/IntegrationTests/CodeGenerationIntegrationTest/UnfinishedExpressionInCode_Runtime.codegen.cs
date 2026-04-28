@@ -24,10 +24,9 @@ namespace AspNetCoreGeneratedDocument
         #pragma warning disable 1998
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
-            Write(
 #nullable restore
-#line (2,2)-(2,11) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml"
-DateTime.
+#line (2,2)-(2,11) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml"
+Write(DateTime.
 
 #line default
 #line hidden

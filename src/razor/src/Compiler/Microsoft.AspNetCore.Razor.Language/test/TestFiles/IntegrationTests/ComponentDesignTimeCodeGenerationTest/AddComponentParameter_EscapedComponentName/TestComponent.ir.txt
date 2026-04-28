@@ -17,4 +17,4 @@
                 Component - (0:0,0 [21] x:\dir\subdir\Test\TestComponent.cshtml) - int
                     ComponentAttribute - (12:0,12 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         HtmlContent - (12:0,12 [5] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (12:0,12 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Hello
+                            IntermediateToken - (12:0,12 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Hello

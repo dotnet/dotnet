@@ -11,11 +11,9 @@
                     ComponentChildContent -  - ChildContent - context
                         Component - (41:0,41 [43] x:\dir\subdir\Test\TestComponent.cshtml) - Column
                             ComponentAttribute - (64:0,64 [16] x:\dir\subdir\Test\TestComponent.cshtml) - OverrideParam - OverrideParam - AttributeStructure.DoubleQuotes
-                                CSharpExpression - (65:0,65 [15] x:\dir\subdir\Test\TestComponent.cshtml)
-                                    LazyIntermediateToken - (66:0,66 [13] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "Some string"
+                                LazyIntermediateToken - (66:0,66 [13] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "Some string"
                     ComponentAttribute - (13:0,13 [26] x:\dir\subdir\Test\TestComponent.cshtml) - Items - Items - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (14:0,14 [25] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (15:0,15 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
+                        LazyIntermediateToken - (15:0,15 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateGrid_0

@@ -7,7 +7,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
@@ -16,112 +15,6 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal static class FormattingUtilities
 {
-    public const string Indent = "$$Indent$$";
-    public const string InitialIndent = "$$InitialIndent$$";
-
-    /// <summary>
-    ///  Adds indenting to the method.
-    /// </summary>
-    /// <param name="method">
-    ///  The method to add indenting to. The method should be marked with <see cref="Indent"/> where an indent is wanted
-    /// </param>
-    /// <param name="tabSize">
-    ///  The indentation size
-    /// </param>
-    /// <param name="insertSpaces">
-    ///  Use spaces for indentation.
-    /// </param>
-    /// <param name="startingIndent">
-    ///  The size of the any existing indent.
-    /// </param>
-    /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startingIndent)
-    {
-        var initialIndent = GetIndentationString(startingIndent, insertSpaces, tabSize);
-        var indent = GetIndentationString(tabSize, insertSpaces, tabSize);
-        return method.Replace(InitialIndent, initialIndent).Replace(Indent, indent);
-    }
-
-    /// <summary>
-    ///  Adds indenting to the method.
-    /// </summary>
-    /// <param name="method">
-    ///  The method to add indenting to. The method should be marked with <see cref="Indent"/> where an indent is wanted
-    ///  and <see cref="InitialIndent"/> where some initial indent is needed.
-    /// </param>
-    /// <param name="tabSize">
-    ///  The indentation size
-    /// </param>
-    /// <param name="insertSpaces">
-    /// Use spaces for indentation.
-    /// </param>
-    /// <param name="startAbsoluteIndex">
-    ///  The absolute index of the beginning of the class in the C# file the method will be added to.
-    /// </param>
-    /// <param name="numCharacterBefore">
-    ///  The number of characters on the line before where startAbsoluteIndex is in the source.
-    /// </param>
-    /// <param name="source">
-    ///  The contents of the C# file.
-    /// </param>
-    /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startAbsoluteIndex, int numCharacterBefore, SourceText source)
-    {
-        var startingIndent = 0;
-        for (var i = 1; i <= numCharacterBefore; i++)
-        {
-            if (source[startAbsoluteIndex - i] == '\t')
-            {
-                startingIndent += tabSize;
-            }
-            else
-            {
-                startingIndent++;
-            }
-        }
-
-        return AddIndentationToMethod(method, tabSize, insertSpaces, startingIndent);
-    }
-
-    /// <summary>
-    ///  Adds indenting to the method.
-    /// </summary>
-    /// <param name="method">
-    ///  The method to add indenting to. The method should be marked with <see cref="Indent"/> where an indent is wanted
-    ///  and <see cref="InitialIndent"/> where some initial indent is needed.
-    /// </param>
-    /// <param name="tabSize">
-    ///  The indentation size
-    /// </param>
-    /// <param name="insertSpaces"></param>
-    /// <param name="startAbsoluteIndex">
-    ///  The absolute index of the beginning of the code block in the Razor file where the method will be added to.
-    /// </param>
-    /// <param name="numCharacterBefore">
-    ///  The number of characters on the line before where startAbsoluteIndex is in the source.
-    /// </param>
-    /// <param name="source">
-    ///  The <see cref="RazorSourceDocument"/> of the razor file the method is being added to.
-    /// </param>
-    /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startAbsoluteIndex, int numCharacterBefore, RazorSourceDocument source)
-    {
-        var startingIndent = 0;
-        for (var i = 1; i <= numCharacterBefore; i++)
-        {
-            if (source.Text[startAbsoluteIndex - i] == '\t')
-            {
-                startingIndent += tabSize;
-            }
-            else
-            {
-                startingIndent++;
-            }
-        }
-
-        return AddIndentationToMethod(method, tabSize, insertSpaces, startingIndent);
-    }
-
     /// <summary>
     /// Counts the number of non-whitespace characters in a given span of text.
     /// </summary>
@@ -235,7 +128,7 @@ internal static class FormattingUtilities
         static ReadOnlySpan<char> UnindentLine(ReadOnlySpan<char> line, int indentation)
         {
             var startCharacter = 0;
-            while (startCharacter < indentation && IsWhitespace(line[startCharacter]))
+            while (startCharacter < indentation && IsTabOrSpace(line[startCharacter]))
             {
                 startCharacter++;
             }
@@ -271,7 +164,7 @@ internal static class FormattingUtilities
             for (var position = line.Span.Start; position < line.Span.End; position++)
             {
                 var c = line.Text[position];
-                if (!IsWhitespace(c))
+                if (!IsTabOrSpace(c))
                 {
                     break;
                 }
@@ -282,8 +175,10 @@ internal static class FormattingUtilities
             return indentation;
         }
 
-        static bool IsWhitespace(char c)
-            => c == ' ' || c == '\t';
+        static bool IsTabOrSpace(char c)
+        {
+            return c == ' ' || c == '\t';
+        }
 
         static ImmutableArray<Range> GetLineRanges(string text)
         {
@@ -774,7 +669,7 @@ internal static class FormattingUtilities
         {
             // The formatter re-wrapped content at a different point, consuming lines from both sides.
             // Update the formatting change to cover the full range of consumed original and formatted lines.
-            formattingChanges[formattingChanges.Count - 1] = new TextChange(
+            formattingChanges[^1] = new TextChange(
                 TextSpan.FromBounds(originalStart, originalLine.End),
                 formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedLine.End)));
         }

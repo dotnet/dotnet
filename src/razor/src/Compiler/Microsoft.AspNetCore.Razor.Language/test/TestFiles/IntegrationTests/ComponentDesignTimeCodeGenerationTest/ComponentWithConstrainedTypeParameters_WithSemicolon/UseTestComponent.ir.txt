@@ -27,14 +27,11 @@
                         HtmlContent - (89:2,19 [2] x:\dir\subdir\Test\UseTestComponent.cshtml)
                             LazyIntermediateToken - (89:2,19 [2] x:\dir\subdir\Test\UseTestComponent.cshtml) - Html - \n
                     ComponentAttribute - (34:1,21 [6] x:\dir\subdir\Test\UseTestComponent.cshtml) - Item1 - Item1 - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
-                            LazyIntermediateToken - (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
+                        LazyIntermediateToken - (35:1,22 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
                     ComponentAttribute - (48:1,35 [6] x:\dir\subdir\Test\UseTestComponent.cshtml) - Items2 - Items2 - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
-                            LazyIntermediateToken - (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - items
+                        LazyIntermediateToken - (49:1,36 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - items
                     ComponentAttribute - (61:1,48 [6] x:\dir\subdir\Test\UseTestComponent.cshtml) - Item3 - Item3 - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml)
-                            LazyIntermediateToken - (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
+                        LazyIntermediateToken - (62:1,49 [5] x:\dir\subdir\Test\UseTestComponent.cshtml) - CSharp - item1
                 HtmlContent - (107:3,16 [4] x:\dir\subdir\Test\UseTestComponent.cshtml)
                     LazyIntermediateToken - (107:3,16 [4] x:\dir\subdir\Test\UseTestComponent.cshtml) - Html - \n\n
             CSharpCode - (118:5,7 [268] x:\dir\subdir\Test\UseTestComponent.cshtml)

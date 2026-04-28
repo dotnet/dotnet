@@ -37,9 +37,8 @@ this.ToString()
             WriteLiteral(">\r\n    Hello world\r\n    ");
             EndContext();
             BeginContext(54, 29, false);
-            Write(
-#line (3,6)-(3,35) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Basic.cshtml"
-string.Format("{0}", "Hello")
+#line (3,6)-(3,35) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Basic.cshtml"
+Write(string.Format("{0}", "Hello")
 
 #line default
 #line hidden
@@ -67,9 +66,8 @@ if(cls != null) {
 #line default
 #line hidden
                 BeginContext(153, 3, false);
-                Write(
-#line (8,31)-(8,34) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Basic.cshtml"
-cls
+#line (8,31)-(8,34) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Basic.cshtml"
+Write(cls
 
 #line default
 #line hidden

@@ -19,7 +19,7 @@
                         HtmlContent - (30:0,30 [6] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (30:0,30 [6] x:\dir\subdir\Test\TestComponent.cshtml) - Html - before
                     Splat - (51:0,51 [14] x:\dir\subdir\Test\TestComponent.cshtml)
-                        LazyIntermediateToken - (51:0,51 [14] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - someAttributes
+                        IntermediateToken - (51:0,51 [14] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - someAttributes
                     ComponentAttribute -  - AttributeAfter -  - AttributeStructure.DoubleQuotes
                         HtmlContent - (83:0,83 [5] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (83:0,83 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - after

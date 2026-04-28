@@ -17,7 +17,7 @@
                 Component - (0:0,0 [38] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (26:0,26 [8] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (26:0,26 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Selected
+                            IntermediateToken - (26:0,26 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Selected
                     ComponentAttribute - (26:0,26 [8] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 

@@ -23,7 +23,7 @@
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
                             LazyIntermediateToken - (48:1,19 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                             IntermediateToken -  - CSharp - , culture: 
-                            LazyIntermediateToken - (111:1,82 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - CultureInfo.InvariantCulture
+                            IntermediateToken - (111:1,82 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - CultureInfo.InvariantCulture
                             IntermediateToken -  - CSharp - )
                     HtmlAttribute - (47:1,18 [12] x:\dir\subdir\Test\TestComponent.cshtml) - onchange=" - "
                         CSharpExpressionAttributeValue -  - 
