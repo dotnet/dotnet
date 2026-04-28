@@ -52,8 +52,9 @@
     <!-- msbuild dependencies -->
     <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
-    <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
-    <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>
+    <NuGetPackagingVersion>6.14.0</NuGetPackagingVersion>
+    <NuGetProtocolVersion>6.14.0</NuGetProtocolVersion>
+    <NuGetProjectModelVersion>6.14.0</NuGetProjectModelVersion>
     <!-- roslyn dependencies -->
     <MicrosoftCodeAnalysisVersion>4.4.0</MicrosoftCodeAnalysisVersion>
     <!-- runtime dependencies -->
