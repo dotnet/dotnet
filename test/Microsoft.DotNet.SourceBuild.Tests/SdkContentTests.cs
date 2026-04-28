@@ -223,9 +223,9 @@ public partial class SdkContentTests : SdkTests
         {
             doc = XDocument.Load(stream);
         }
-        catch
+        catch (XmlException ex)
         {
-            return versions;
+            throw new Exception($"Failed to parse project file '{entry.FullName}' from package archive.", ex);
         }
 
         IEnumerable<XElement> packageRefs = doc.Descendants()
