@@ -22,7 +22,7 @@ public class DataCollectorExtensionManagerTests
     [TestMethod]
     public void CreateShouldThrowExceptionIfMessageLoggerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
         {
             var dataCollectionExtensionManager = DataCollectorExtensionManager.Create(null!);
         });

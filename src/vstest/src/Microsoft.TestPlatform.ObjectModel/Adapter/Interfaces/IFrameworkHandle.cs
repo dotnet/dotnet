@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -17,6 +18,7 @@ public interface IFrameworkHandle : ITestExecutionRecorder, IMessageLogger
     /// and should be used only when absolutely required as using it degrades the performance of the subsequent run.
     /// It throws InvalidOperationException when it is attempted to be enabled when keepAlive is false.
     /// </summary>
+    [Obsolete("This property has no effect", error: false)]
     bool EnableShutdownAfterTestRun { get; set; }
 
     /// <summary>

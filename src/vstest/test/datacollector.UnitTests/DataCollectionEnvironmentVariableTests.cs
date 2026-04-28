@@ -14,7 +14,7 @@ public class DataCollectionEnvironmentVariableTests
     [TestMethod]
     public void ConstructorShouldThrowExceptionIfKeyValueIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(
+        Assert.ThrowsExactly<ArgumentNullException>(
             () =>
             {
                 var envvariable = new DataCollectionEnvironmentVariable(default, null!);

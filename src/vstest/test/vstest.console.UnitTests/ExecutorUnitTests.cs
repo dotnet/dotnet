@@ -24,6 +24,8 @@ using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Res
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests;
 
 [TestClass]
+// Because runsettings tests use the instance of RunSettingsManager which is static.
+[DoNotParallelize]
 public class ExecutorUnitTests
 {
     private readonly Mock<ITestPlatformEventSource> _mockTestPlatformEventSource;
@@ -46,16 +48,16 @@ public class ExecutorUnitTests
         Assert.AreEqual(1, exitCode, "Exit code must be One for bad arguments");
 
         // Verify that messages exist
-        Assert.IsTrue(mockOutput.Messages.Count > 0, "Executor must print at least copyright info");
+        Assert.IsNotEmpty(mockOutput.Messages, "Executor must print at least copyright info");
         Assert.IsNotNull(mockOutput.Messages.First().Message, "First Printed Message cannot be null or empty");
 
-        StringAssert.Contains(mockOutput.Messages.First().Message,
-            CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0]);
+        Assert.Contains(CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0],
+            mockOutput.Messages.First().Message!);
 
         var suffixIndex = assemblyVersion.IndexOf("-");
         var version = suffixIndex == -1 ? assemblyVersion : assemblyVersion.Substring(0, suffixIndex);
-        StringAssert.Contains(mockOutput.Messages.First().Message,
-            version);
+        Assert.Contains(version,
+            mockOutput.Messages.First().Message!);
     }
 
     [TestMethod]
@@ -67,12 +69,13 @@ public class ExecutorUnitTests
         Assert.AreEqual(1, exitCode, "Exit code must be One for bad arguments");
 
         // Verify that messages exist
-        Assert.IsTrue(mockOutput.Messages.Count == 1, "Executor should not print no valid arguments provided");
+        Assert.HasCount(1, mockOutput.Messages);
 
         // Check the part of message before the actual version because that is variable.
-        Assert.IsFalse(
+        Assert.DoesNotContain(
+            CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0],
             mockOutput.Messages.First()
-                .Message!.Contains(CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0]));
+                .Message!);
     }
 
     [TestMethod]
@@ -83,7 +86,7 @@ public class ExecutorUnitTests
 
         Assert.AreEqual(1, exitCode, "Exit code must be One when no arguments are provided.");
 
-        Assert.IsTrue(mockOutput.Messages.Any(message => message.Message!.Contains(CommandLineResources.NoArgumentsProvided)));
+        Assert.Contains(message => message.Message!.Contains(CommandLineResources.NoArgumentsProvided), mockOutput.Messages);
     }
 
     /// <summary>
@@ -97,7 +100,7 @@ public class ExecutorUnitTests
 
         Assert.AreEqual(1, exitCode, "Exit code must be One when no arguments are provided.");
 
-        Assert.IsTrue(mockOutput.Messages.Any(message => message.Message!.Contains(CommandLineResources.NoArgumentsProvided)));
+        Assert.Contains(message => message.Message!.Contains(CommandLineResources.NoArgumentsProvided), mockOutput.Messages);
     }
 
     [TestMethod]
@@ -109,7 +112,7 @@ public class ExecutorUnitTests
 
         Assert.AreEqual(1, exitCode, "Exit code must be One when no arguments are provided.");
 
-        Assert.IsTrue(mockOutput.Messages.Any(message => message.Message!.Contains(string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, badArg))));
+        Assert.Contains(message => message.Message!.Contains(string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, badArg)), mockOutput.Messages);
     }
 
     [TestMethod]
@@ -121,7 +124,7 @@ public class ExecutorUnitTests
 
         Assert.AreEqual(1, exitCode, "Exit code must be One when no arguments are provided.");
 
-        Assert.IsTrue(mockOutput.Messages.Any(message => message.Message!.Contains(string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, badArg))));
+        Assert.Contains(message => message.Message!.Contains(string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, badArg)), mockOutput.Messages);
     }
 
     [TestMethod]
@@ -133,7 +136,7 @@ public class ExecutorUnitTests
 
         Assert.AreEqual(1, exitCode, "Exit code must be One when no arguments are provided.");
 
-        Assert.IsTrue(mockOutput.Messages.Any(message => message.Message!.Contains(string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, badArg))));
+        Assert.Contains(message => message.Message!.Contains(string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, badArg)), mockOutput.Messages);
     }
 
     /// <summary>
@@ -197,7 +200,7 @@ public class ExecutorUnitTests
 
         new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute(commandLine);
 
-        Assert.AreEqual(5, mockOutput.Messages.Count);
+        Assert.HasCount(5, mockOutput.Messages);
         Assert.AreEqual(OutputLevel.Warning, mockOutput.Messages[2].Level);
         Assert.AreEqual("The dotnet vstest command is superseded by dotnet test, which can now be used to run assemblies. See https://aka.ms/dotnet-test.", mockOutput.Messages[2].Message);
     }
@@ -330,7 +333,7 @@ public class ExecutorUnitTests
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute();
         var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
-        Assert.AreEqual(4, mockOutput.Messages.Count);
+        Assert.HasCount(4, mockOutput.Messages);
         Assert.AreEqual("vstest.console.exe is running in emulated mode as x64. For better performance, please consider using the native runner vstest.console.arm64.exe.",
             mockOutput.Messages[1].Message);
         Assert.AreEqual(OutputLevel.Warning,
@@ -350,9 +353,9 @@ public class ExecutorUnitTests
         var exitCode = new Executor(mockOutput, _mockTestPlatformEventSource.Object, processHelper.Object, environment.Object).Execute();
         var assemblyVersion = typeof(Executor).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
-        Assert.AreEqual(3, mockOutput.Messages.Count);
-        Assert.IsTrue(Regex.IsMatch(mockOutput.Messages[0].Message!, @"VSTest version .* \(x64\)"));
-        Assert.IsFalse(mockOutput.Messages.Any(message => message.Message!.Contains("vstest.console.exe is running in emulated mode")));
+        Assert.HasCount(3, mockOutput.Messages);
+        Assert.MatchesRegex(@"VSTest version .* \(x64\)", mockOutput.Messages[0].Message!);
+        Assert.DoesNotContain(message => message.Message!.Contains("vstest.console.exe is running in emulated mode"), mockOutput.Messages);
     }
 
     private class MockOutput : IOutput

@@ -36,7 +36,6 @@
     <VSQualityToolsFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.QualityTools\</VSQualityToolsFolder>
     <DependencyModelFolder>$(TestPlatformBinFolder)Microsoft.Extensions.DependencyModel\</DependencyModelFolder>
     <FileSystemGlobbingFolder>$(TestPlatformBinFolder)Microsoft.Extensions.FileSystemGlobbing\</FileSystemGlobbingFolder>
-    <VSSDKBuildToolsFolder>$(TestPlatformBinFolder)Microsoft.VSSDK.BuildTools\</VSSDKBuildToolsFolder>
     <InternalTestPlatformExtensionsFolder>$(TestPlatformBinFolder)Microsoft.Internal.TestPlatform.Extensions\</InternalTestPlatformExtensionsFolder>
   </PropertyGroup>
 
@@ -83,121 +82,15 @@
     </VsixSourceItem>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourceVersion)" PrivateAssets="All" GeneratePathProperty="true" ExcludeAssets="all" />
+  </ItemGroup>
+
   <!--
     We cannot use the VSIXSourceItems for wildcard as the evaluation is not done at the correct time. This is causing wildcard items to be missed.
     Instead use a target that runs before 'GenerateFileManifest' since that's when the VSIX files are collected.
   -->
   <Target Name="AddDependencyItems" BeforeTargets="GenerateFileManifest">
-
-    <!-- Test host dependencies -->
-    <ItemGroup>
-      <!-- We still need to manually include artifacts from the other tfms -->
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\testhost.exe;$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\testhost.net4*.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net47\win*\testhost.net47.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net471\win*\testhost.net471.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net472\win*\testhost.net472.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net48\win*\testhost.net48.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net481\win*\testhost.net481.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.exe" />
-
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.x86.exe;$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.net4*.x86.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.x86.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net47\win*\testhost.net47.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.x86.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net471\win*\testhost.net471.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.x86.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net472\win*\testhost.net472.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.x86.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net48\win*\testhost.net48.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.x86.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net481\win*\testhost.net481.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.x86.exe" />
-
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.arm64.exe;$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.net4*.arm64.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.arm64.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net47\win*\testhost.net47.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.arm64.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net471\win*\testhost.net471.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.arm64.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net472\win*\testhost.net472.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.arm64.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net48\win*\testhost.net48.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.arm64.exe" />
-      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net481\win*\testhost.net481.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.arm64.exe" />
-    </ItemGroup>
-
-    <!-- Cpp Extensions -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\*" Exclude="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\*.pdb">
-        <VSIXSubPath>Extensions\Cpp</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\arm64\dbghelp.dll">
-        <VSIXSubPath>Extensions\Cpp\arm64</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\x64\dbghelp.dll">
-        <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
-      </VsixSourceItem>
-    </ItemGroup>
-
-    <!-- msdia -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(MsDiaFolder)x64\*">
-        <VSIXSubPath>x64</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(MsDiaFolder)x86\*">
-        <VSIXSubPath>x86</VSIXSubPath>
-      </VsixSourceItem>
-    </ItemGroup>
-
-    <!-- Code Coverage -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)Microsoft.CodeCoverage.IO.dll" />
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\cs\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>cs</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\de\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>de</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\es\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>es</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\fr\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>fr</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\it\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>it</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ja\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>ja</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ko\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>ko</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\pl\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>pl</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\pt-BR\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>pt-BR</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ru\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>ru</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\tr\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>tr</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>zh-Hans</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll">
-        <VSIXSubPath>zh-Hant</VSIXSubPath>
-      </VsixSourceItem>
-    </ItemGroup>
-
-    <!-- Microsoft.Internal.TestPlatform.Extensions -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.DiaSymReader.dll" />
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.IntelliTrace.Core.dll" />
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Media*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Video*.dll;">
-        <VSIXSubPath>Extensions</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.*.dll">
-        <VSIXSubPath>Extensions</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Web*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Tmi*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Video*.dll;">
-        <VSIXSubPath>Extensions</VSIXSubPath>
-      </VsixSourceItem>
-    </ItemGroup>
 
     <!-- Microsoft.TestPlatform -->
     <ItemGroup>
@@ -262,12 +155,127 @@
         <VSIXSubPath>Extensions\dump</VSIXSubPath>
       </VsixSourceItem>
     </ItemGroup>
+    
+    <!-- Test host dependencies -->
+    <ItemGroup>
+      <!-- We still need to manually include artifacts from the other tfms -->
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\testhost.exe;$(ArtifactsBinDir)\testhost\$(Configuration)\net4*\win*\testhost.net4*.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net47\win*\testhost.net47.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net471\win*\testhost.net471.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net472\win*\testhost.net472.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net48\win*\testhost.net48.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost\$(Configuration)\net481\win*\testhost.net481.exe" Ngen="true" NgenArchitecture="X64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.exe" />
+
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.x86.exe;$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net4*\win*\testhost.net4*.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net47\win*\testhost.net47.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net471\win*\testhost.net471.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net472\win*\testhost.net472.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net48\win*\testhost.net48.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.x86.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.x86\$(Configuration)\net481\win*\testhost.net481.x86.exe" Ngen="true" NgenArchitecture="X86" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.x86.exe" />
+
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\*.*" Exclude="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.arm64.exe;$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net4*\win*\testhost.net4*.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\$(NetFrameworkMinimum)\win*\testhost.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net47\win*\testhost.net47.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net47.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net471\win*\testhost.net471.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net471.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net472\win*\testhost.net472.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net472.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net48\win*\testhost.net48.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net48.arm64.exe" />
+      <VsixSourceItem Include="$(ArtifactsBinDir)\testhost.arm64\$(Configuration)\net481\win*\testhost.net481.arm64.exe" Ngen="true" NgenArchitecture="Arm64" NgenPriority="2" NgenApplication="$(ExtensionInstallationRelativeToVS)\testhost.net481.arm64.exe" />
+    </ItemGroup>
+
+    <!-- Cpp Extensions -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\*" Exclude="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\*.pdb">
+        <VSIXSubPath>Extensions\Cpp</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\arm64\dbghelp.dll">
+        <VSIXSubPath>Extensions\Cpp\arm64</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)\Extensions\Cpp\x64\dbghelp.dll">
+        <VSIXSubPath>Extensions\Cpp\x64</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
+
+    <!-- msdia -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(MsDiaFolder)x64\*">
+        <VSIXSubPath>x64</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(MsDiaFolder)x86\*">
+        <VSIXSubPath>x86</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(MsDiaFolder)arm64\*">
+        <VSIXSubPath>arm64</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
+
+    <!-- Code Coverage -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)Microsoft.CodeCoverage.IO.dll" />
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\cs\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>cs</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\de\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>de</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\es\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>es</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\fr\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>fr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\it\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>it</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ja\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>ja</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ko\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>ko</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\pl\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>pl</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\pt-BR\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>pt-BR</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\ru\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>ru</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\tr\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>tr</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>zh-Hans</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(CodeCoverageIOFolder)\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll">
+        <VSIXSubPath>zh-Hant</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
+
+    <!-- Microsoft.Internal.TestPlatform.Extensions -->
+    <ItemGroup>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.DiaSymReader.dll" />
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Microsoft.IntelliTrace.Core.dll" />
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\VideoRecorder\*">
+        <VSIXSubPath>Extensions\VideoRecorder</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.DataCollection.*.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.*.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+      <VsixSourceItem Include="$(InternalTestPlatformExtensionsFolder)Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.*.dll" Exclude="$(InternalTestPlatformExtensionsFolder)\**\*Web*.dll;$(InternalTestPlatformExtensionsFolder)\**\*Tmi*.dll">
+        <VSIXSubPath>Extensions</VSIXSubPath>
+      </VsixSourceItem>
+    </ItemGroup>
 
     <ItemGroup>
       <VsixSourceItem Include="$(DependencyModelFolder)Microsoft.Extensions.DependencyModel.dll" />
       <VsixSourceItem Include="$(FileSystemGlobbingFolder)Microsoft.Extensions.FileSystemGlobbing.dll" />
-      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Diagnostics.DiagnosticSource.dll" />
-      <VsixSourceItem Include="$(VSSDKBuildToolsFolder)System.Runtime.CompilerServices.Unsafe.dll" />
+      <VsixSourceItem Include="$(PkgSystem_Diagnostics_DiagnosticSource)\lib\netstandard2.0\System.Diagnostics.DiagnosticSource.dll" />
       <VsixSourceItem Include="$(VSQualityToolsFolder)Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
     </ItemGroup>
 

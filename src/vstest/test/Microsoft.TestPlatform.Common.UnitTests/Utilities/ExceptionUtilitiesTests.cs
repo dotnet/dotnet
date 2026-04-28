@@ -32,18 +32,18 @@ public class ExceptionUtilitiesTests
         var exception = new ArgumentException("Some bad stuff", innerException2);
 
         var message = ExceptionUtilities.GetExceptionMessage(exception);
-        StringAssert.Contains(message, exception.Message);
-        StringAssert.Contains(message, innerException.Message);
-        StringAssert.Contains(message, innerException.Message);
+        Assert.Contains(exception.Message, message);
+        Assert.Contains(innerException.Message, message);
+        Assert.Contains(innerException.Message, message);
     }
 
     [TestMethod]
     public void GetExceptionMessageShouldReturnExceptionMessageContainingStackTrace()
     {
         var message = ExceptionUtilities.GetExceptionMessage(GetExceptionWithStackTrace());
-        StringAssert.Contains(message, "Stack trace:");
+        Assert.Contains("Stack trace:", message);
         // this test is where it or
-        StringAssert.Contains(message, "ExceptionUtilitiesTests.GetExceptionWithStackTrace");
+        Assert.Contains("ExceptionUtilitiesTests.GetExceptionWithStackTrace", message);
     }
 
     private static Exception GetExceptionWithStackTrace()

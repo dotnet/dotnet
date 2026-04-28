@@ -50,7 +50,7 @@ public class FrameworkTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var arguments = PrepareArguments(GetSampleTestAssembly(), string.Empty, string.Empty, string.Empty, resultsDirectory: TempDirectory.Path);
-        if (runnerInfo.TargetFramework.Contains("netcore"))
+        if (runnerInfo.IsNetTarget)
         {
             arguments = string.Concat(arguments, " ", "/Framework:Framework45");
         }
@@ -60,7 +60,7 @@ public class FrameworkTests : AcceptanceTestBase
         }
         InvokeVsTest(arguments);
 
-        if (runnerInfo.TargetFramework.Contains("netcore"))
+        if (runnerInfo.IsNetTarget)
         {
             StdOutputContains("No test is available");
         }

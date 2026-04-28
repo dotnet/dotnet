@@ -82,7 +82,7 @@ public class SettingsProviderExtensionManagerTests
         var extensionManager = SettingsProviderExtensionManager.Create();
 
         Assert.IsNotNull(extensionManager.SettingsProvidersMap);
-        Assert.IsTrue(extensionManager.SettingsProvidersMap.Count > 0);
+        Assert.IsNotEmpty(extensionManager.SettingsProvidersMap);
     }
 
     [TestMethod]
@@ -94,7 +94,7 @@ public class SettingsProviderExtensionManagerTests
         SettingsProviderExtensionManager.Create();
 
         Assert.IsNotNull(extensionManager.SettingsProvidersMap);
-        Assert.IsTrue(extensionManager.SettingsProvidersMap.Count > 0);
+        Assert.IsNotEmpty(extensionManager.SettingsProvidersMap);
     }
 
     #endregion
@@ -132,8 +132,8 @@ public class SettingsProviderExtensionManagerTests
         };
         var spm = new TestableSettingsProviderManager(extensions, unfilteredExtensions, new Mock<IMessageLogger>().Object);
 
-        Assert.ThrowsException<ArgumentException>(() => spm.GetSettingsProvider(null!));
-        Assert.ThrowsException<ArgumentException>(() => spm.GetSettingsProvider(string.Empty));
+        Assert.ThrowsExactly<ArgumentException>(() => spm.GetSettingsProvider(null!));
+        Assert.ThrowsExactly<ArgumentException>(() => spm.GetSettingsProvider(string.Empty));
     }
 
     [TestMethod]

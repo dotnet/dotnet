@@ -15,7 +15,7 @@ namespace timeout
         [TestMethod]
         public void TestMethod1()
         {
-            Thread.Sleep(10_000);
+            Thread.Sleep(30_000);
         }
     }
 }

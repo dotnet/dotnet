@@ -129,4 +129,7 @@
   <data name="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive" xml:space="preserve">
     <value>Wait for completion operation is not allowed when there is no active test run. </value>
   </data>
+  <data name="ProvidedDependenciesWarning" xml:space="preserve">
+    <value>The test platform provided the following assemblies to resolve dependencies of test extensions that did not ship their own copy: {0}. Test extensions should ship all their dependencies.</value>
+  </data>
 </root>

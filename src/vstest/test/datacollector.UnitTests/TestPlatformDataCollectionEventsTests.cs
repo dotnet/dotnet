@@ -26,7 +26,7 @@ public class TestPlatformDataCollectionEventsTests
     [TestMethod]
     public void RaiseEventsShouldThrowExceptionIfEventArgsIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => _events.RaiseEvent(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => _events.RaiseEvent(null!));
     }
 
     [TestMethod]

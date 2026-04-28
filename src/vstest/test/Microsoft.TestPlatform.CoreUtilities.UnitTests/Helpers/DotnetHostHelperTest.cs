@@ -44,7 +44,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.AreEqual(finalMuxerPath, muxerPath);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)")]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT")]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, PlatformOperatingSystem.Windows, "DOTNET_ROOT(x86)", true, DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
@@ -112,7 +112,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.AreEqual(found ? envVars[envVar] : null, muxerPath);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("DOTNET_ROOT_ARM64", "DOTNET_ROOT", PlatformArchitecture.ARM64, PlatformArchitecture.X64)]
     [DataRow("DOTNET_ROOT(x86)", "DOTNET_ROOT", PlatformArchitecture.X86, PlatformArchitecture.X64)]
     [DataRow("DOTNET_ROOT_ARM64", "DOTNET_ROOT", PlatformArchitecture.ARM64, PlatformArchitecture.X64, DotnetMuxerResolutionStrategy.DotnetRootArchitecture | DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess)]
@@ -151,7 +151,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.AreEqual(envVars[nextEnv], muxerPath);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, true)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X86, false)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, true, DotnetMuxerResolutionStrategy.GlobalInstallationLocation)]
@@ -180,7 +180,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.AreEqual(found ? dotnetMuxer : null, muxerPath);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true, false, false, false)]
     [DataRow(false, true, false, false)]
     [DataRow(false, false, true, false)]
@@ -215,7 +215,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.IsFalse(dotnetHostHelper.TryGetDotnetPathByArchitecture(PlatformArchitecture.X64, strategy, out string? muxerPath));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location_arm64", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.X64, "/etc/dotnet/install_location_x64", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.ARM64, "/etc/dotnet/install_location", true, PlatformOperatingSystem.OSX)]
@@ -261,7 +261,7 @@ public sealed class DotnetHostHelperTest : IDisposable
         Assert.AreEqual(found ? dotnetMuxer : null, muxerPath);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PlatformArchitecture.X86, PlatformArchitecture.X64, "ProgramFiles(x86)", "dotnet", true)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "ProgramFiles", @"dotnet\x64", true)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "ProgramFiles", "dotnet", true)]
@@ -299,7 +299,7 @@ public sealed class DotnetHostHelperTest : IDisposable
     }
 
 #pragma warning disable MSTEST0042 // duplicate data row - TODO: Look more into it
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.X64, PlatformArchitecture.ARM64, "/usr/local/share/dotnet/x64", "", true, PlatformOperatingSystem.OSX)]
     [DataRow(PlatformArchitecture.ARM64, PlatformArchitecture.X64, "/usr/local/share/dotnet", "", true, PlatformOperatingSystem.OSX)]

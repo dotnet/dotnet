@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Xml;
 
 using Microsoft.VisualStudio.TestPlatform.Common;
@@ -29,6 +30,7 @@ public class IntegrationTestEnvironment
     public static string ArtifactsTempDirectory { get; } = Path.Combine(RepoRootDirectory, "artifacts", "tmp", BuildConfiguration);
 
     public static string LocalPackageSource { get; } = Path.Combine(RepoRootDirectory, "artifacts", "packages", BuildConfiguration, "Shipping").TrimEnd(Path.DirectorySeparatorChar);
+    public static string LocalVsixInsertion { get; } = Path.Combine(RepoRootDirectory, "artifacts", "VSSetup", BuildConfiguration, "Insertion", "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.vsix");
     public static string LatestLocallyBuiltNugetVersion { get; } = GetLatestLocallyBuiltPackageVersion();
 
     /// <summary>
@@ -44,6 +46,12 @@ public class IntegrationTestEnvironment
     /// Gets the extensions directory for <c>vstest.console</c> package.
     /// </summary>
     public static string ExtensionsDirectory { get; } = Path.Combine(PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "tools", "net462", "Common7", "IDE", "Extensions", "TestPlatform", "Extensions");
+
+    /// <summary>
+    /// Gets the local NuGet cache directory used by test assets.
+    /// Test assets are restored into this directory by *Build.cs via <c>dotnet restore --packages</c>.
+    /// </summary>
+    public static string TestAssetsNuGetCacheDirectory { get; } = Path.Combine(RepoRootDirectory, "artifacts", ".packages");
 
     private static Dictionary<string, string>? s_dependencyVersions;
 
@@ -62,9 +70,13 @@ public class IntegrationTestEnvironment
 
         // There is an assumption that integration tests will always run from a source enlistment.
         // Need to remove this assumption when we move to a CDP.
-        PackageDirectory = Path.Combine(RepoRootDirectory, @".packages");
+        LocalPackageDirectory = TestAssetsNuGetCacheDirectory;
+        GlobalPackageDirectory = Environment.GetEnvironmentVariable("NUGET_PACKAGES")
+            ?? (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages")
+            : Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", ".nuget", "packages"));
         TestArtifactsDirectory = Path.Combine(RepoRootDirectory, "artifacts", "testArtifacts");
-        RunnerFramework = "net462";
+        RunnerFramework = "net48";
     }
 
     /// <summary>
@@ -86,9 +98,14 @@ public class IntegrationTestEnvironment
         => s_dependencyVersions ??= GetDependencies(RepoRootDirectory);
 
     /// <summary>
-    /// Gets the nuget packages directory for enlistment.
+    /// Gets the local nuget packages directory for integration tests.
     /// </summary>
-    public string PackageDirectory { get; }
+    public string LocalPackageDirectory { get; }
+
+    /// <summary>
+    /// Gets the global nuget packages directory.
+    /// </summary>
+    public string GlobalPackageDirectory { get; }
 
     /// <summary>
     /// Gets the target framework.
@@ -96,6 +113,11 @@ public class IntegrationTestEnvironment
     /// </summary>
     [NotNull]
     public string? TargetFramework { get; set; }
+
+    /// <summary>
+    /// Is targeting .NET Framework testhost?
+    /// </summary>
+    public bool IsNetFrameworkTarget => TargetFramework!.StartsWith("net4", StringComparison.InvariantCultureIgnoreCase);
 
     /// <summary>
     /// Gets the target runtime.
@@ -143,7 +165,7 @@ public class IntegrationTestEnvironment
 
     /// <summary>
     /// Gets the application type.
-    /// Supported values = <c>net462</c>, <c>net8.0</c>.
+    /// Supported values = <c>net48</c>, <c>net10.0</c>.
     /// </summary>
     public string RunnerFramework { get; set; }
 
@@ -175,6 +197,7 @@ public class IntegrationTestEnvironment
     /// </summary>
     /// <param name="assetName">Name of the asset with extension. E.g. <c>SimpleUnitTest.dll</c></param>
     /// <param name="targetFramework">asset project target framework. E.g <c>net462</c></param>
+    /// <param name="automaticallyResolveCompatibilityTestAsset">Whether to automatically resolve the test asset from the compatibility matrix based on the DllInfos. This should be set to false only if you want to get a test asset that is not built from the compatibility matrix, e.g. a test project.</param>
     /// <returns>Full path to the test asset.</returns>
     /// <remarks>
     /// Test assets follow several conventions:
@@ -183,7 +206,7 @@ public class IntegrationTestEnvironment
     /// (c) Name of the test asset matches the parent directory name. E.g. <c>TestAssets\SimpleUnitTest\SimpleUnitTest.csproj</c> must
     /// produce <c>TestAssets\SimpleUnitTest\bin\Debug\net462\SimpleUnitTest.dll</c>
     /// </remarks>
-    public string GetTestAsset(string assetName, string targetFramework)
+    public string GetTestAsset(string assetName, string targetFramework, bool automaticallyResolveCompatibilityTestAsset = true)
     {
         var simpleAssetName = Path.GetFileNameWithoutExtension(assetName);
         var assetPath = Path.Combine(
@@ -197,16 +220,16 @@ public class IntegrationTestEnvironment
             assetName);
 
         // Update the path to be taken from the compatibility matrix instead of from the root folder.
-        if (DllInfos.Count > 0)
+        if (automaticallyResolveCompatibilityTestAsset && DllInfos.Count > 0)
         {
             // The path is really ugly: S:\p\vstest3\test\GeneratedTestAssets\NETTestSdkLegacyStable-15.9.2--MSTestMostDownloaded-2.1.0--MSTestProject2\bin\Debug\net462\MSTestProject2-NETTestSdkLegacyStable-15.9.2--MSTestMostDownloaded-2.1.0.dll
             // And we need to hash the versions in it to get shorter path as well.
             var versions = string.Join("--", DllInfos.Select(d => d.Path));
             var versionsHash = GetPathHash(versions);
             assetPath = Path.Combine(RepoRootDirectory, "artifacts", "bin", "TestAssets", $"{simpleAssetName}--{versionsHash}", BuildConfiguration, targetFramework, $"{simpleAssetName}--{versionsHash}.dll");
+            Assert.IsTrue(File.Exists(assetPath), $"GetTestAsset: Path not found: '{assetPath}'. Compatibility test assets are not built automatically anymore in AssemblyInitialize.");
+            return assetPath;
         }
-
-        Assert.IsTrue(File.Exists(assetPath), "GetTestAsset: Path not found: \"{0}\". Most likely you need to build using build.cmd -s PrepareAcceptanceTests.", assetPath);
 
         // If you are thinking about wrapping the path in double quotes here,
         // then don't. File.Exist cannot handle quoted paths, and we use it in a lot of places.
@@ -235,7 +258,7 @@ public class IntegrationTestEnvironment
     /// <remarks>GetNugetPackage("foobar") will return a path to packages\foobar.</remarks>
     public string GetNugetPackage(string packageSuffix)
     {
-        var packagePath = Path.Combine(PackageDirectory, packageSuffix);
+        var packagePath = Path.Combine(LocalPackageDirectory, packageSuffix);
 
         Assert.IsTrue(Directory.Exists(packagePath), "GetNugetPackage: Directory not found: {0}.", packagePath);
 
