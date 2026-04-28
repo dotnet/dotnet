@@ -174,9 +174,13 @@ public partial class SdkContentTests : SdkTests
     {
         Dictionary<string, string> result = [];
 
-        string[] nupkgFiles = Directory.GetFiles(sdkRootDir, "*.nupkg", SearchOption.AllDirectories)
-            .Where(p => Path.GetRelativePath(sdkRootDir, p).StartsWith("templates" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-            .ToArray();
+        string templatesDir = Path.Combine(sdkRootDir, "templates");
+        if (!Directory.Exists(templatesDir))
+        {
+            return result;
+        }
+
+        string[] nupkgFiles = Directory.GetFiles(templatesDir, "*.nupkg", SearchOption.AllDirectories);
 
         string[] projectExtensions = [".csproj", ".fsproj"];
 
