@@ -11,8 +11,10 @@ using System.IO.Enumeration;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Extensions.FileSystemGlobbing;
+using NuGet.Packaging;
 using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -166,7 +168,7 @@ public partial class SdkContentTests : SdkTests
 
     /// <summary>
     /// Scans all template nupkgs in an extracted SDK and returns a flat dictionary of
-    /// "nupkgName|projPath|PackageName" → version string, with versions in the key normalized.
+    /// "nupkgId,projPath,PackageName" → version string, with versions in the key normalized.
     /// </summary>
     private static Dictionary<string, string> GetTemplatePackageVersions(string sdkRootDir, ExclusionsHelper exclusionsHelper, string sdkType)
     {
@@ -180,18 +182,18 @@ public partial class SdkContentTests : SdkTests
 
         foreach (string nupkgPath in nupkgFiles)
         {
-            string normalizedNupkgName = GetPackageIdFromFileName(Path.GetFileNameWithoutExtension(nupkgPath));
+            using PackageArchiveReader packageReader = new(nupkgPath);
+            string normalizedNupkgName = BaselineHelper.RemoveVersions(packageReader.GetIdentity().Id);
 
-            using ZipArchive archive = ZipFile.OpenRead(nupkgPath);
-            IEnumerable<ZipArchiveEntry> projectEntries = archive.Entries
-                .Where(e => projectExtensions.Contains(Path.GetExtension(e.FullName), StringComparer.OrdinalIgnoreCase));
+            IEnumerable<string> projectFiles = packageReader.GetFiles()
+                .Where(f => projectExtensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase));
 
-            foreach (ZipArchiveEntry entry in projectEntries)
+            foreach (string projectFile in projectFiles)
             {
-                Dictionary<string, string> packageVersions = GetPackageReferencesFromProjectFile(entry);
+                Dictionary<string, string> packageVersions = GetPackageReferencesFromProjectFile(packageReader.GetEntry(projectFile));
                 foreach ((string packageName, string version) in packageVersions)
                 {
-                    string sanitizedEntryName = entry.FullName.Replace('/', '-');
+                    string sanitizedEntryName = projectFile.Replace('/', '-');
                     string key = $"{normalizedNupkgName},{sanitizedEntryName},{packageName}";
                     if (!exclusionsHelper.IsFileExcluded(key, sdkType))
                     {
@@ -246,34 +248,6 @@ public partial class SdkContentTests : SdkTests
         }
 
         return versions;
-    }
-
-    /// <summary>
-    /// Extracts the package ID from a nupkg filename (without extension).
-    /// Nupkg filenames follow the pattern "{id}.{version}" where the version starts with a digit.
-    /// </summary>
-    private static string GetPackageIdFromFileName(string fileNameWithoutExtension)
-    {
-        // Walk backwards to find the last segment that starts with a digit — that's where the version begins.
-        // E.g. "Microsoft.DotNet.Web.ProjectTemplates.11.0.11.0.0-preview.5.26226.111"
-        //       ID = "Microsoft.DotNet.Web.ProjectTemplates.11.0", version = "11.0.0-preview.5.26226.111"
-        string[] parts = fileNameWithoutExtension.Split('.');
-        int versionStart = -1;
-        for (int i = parts.Length - 1; i >= 0; i--)
-        {
-            if (parts[i].Length > 0 && char.IsDigit(parts[i][0]))
-            {
-                versionStart = i;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return versionStart > 0
-            ? string.Join('.', parts[0..versionStart])
-            : fileNameWithoutExtension;
     }
 
     private string NormalizeApiDiffSuppressionFileContent(string content)
