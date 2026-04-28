@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) /p:EnableNgenOptimization=false</BuildArgs>
+    <!-- Disable optprof always to work around missing optprof data for the MSBuild 18.0 and 18.3 branches.
+         That optprof collection should apply only to .NET Framework outputs that don't ship from the VMR. -->
+    <BuildArgs>$(BuildArgs) /p:EnableNgenOptimization=false</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
