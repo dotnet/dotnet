@@ -223,7 +223,7 @@ public partial class SdkContentTests : SdkTests
         {
             doc = XDocument.Load(stream);
         }
-        catch (XmlException)
+        catch
         {
             return versions;
         }
