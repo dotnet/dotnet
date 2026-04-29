@@ -85,11 +85,11 @@ internal abstract partial class RazorEditService(
 
         AddUsingsChanges(ref edits, codeDocument, addedUsings, removedUsings, cancellationToken);
 
-        var oldMethods = FindMethods(originalCSharpSyntaxRoot, originalCSharpSourceText);
-        var newMethods = FindMethods(newCSharpSyntaxRoot, newCSharpSourceText);
-        var addedMethods = Delta.Compute(oldMethods, newMethods);
+        var oldMembers = FindMembers(originalCSharpSyntaxRoot, originalCSharpSourceText);
+        var newMembers = FindMembers(newCSharpSyntaxRoot, newCSharpSourceText);
+        var addedMembers = Delta.Compute(oldMembers, newMembers);
 
-        AddMethodChanges(ref edits, codeDocument, addedMethods, options);
+        AddMemberChanges(ref edits, codeDocument, addedMembers, options);
     }
 
     /// <summary>

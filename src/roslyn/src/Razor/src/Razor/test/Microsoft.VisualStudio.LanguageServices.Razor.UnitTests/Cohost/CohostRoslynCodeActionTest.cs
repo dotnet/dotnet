@@ -201,6 +201,163 @@ public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : Co
             codeActionName: RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
+    [Fact]
+    public Task GenerateProperty_NoCodeBlock()
+        => VerifyCodeActionAsync(
+            csharpFile: """
+                using SomeProject;
+                using Microsoft.AspNetCore.Components;
+
+                public class C
+                {
+                    private object M()
+                    {
+                        return new Component().$$NewProperty;
+                    }
+                }
+                """,
+            razorFile: """
+                This is a Razor document.
+
+                <Component></Component>
+
+                The end.
+                """,
+            expectedRazorFile: """
+                This is a Razor document.
+                
+                <Component></Component>
+                
+                The end.
+                @code {
+                    public object NewProperty { get; internal set; }
+                }
+                """,
+            codeActionName: RazorPredefinedCodeFixProviderNames.GenerateVariable,
+            childActionIndex: 2);
+
+    [Fact]
+    public Task GenerateProperty_ExistingCodeBlock()
+        => VerifyCodeActionAsync(
+            csharpFile: """
+                using SomeProject;
+                using Microsoft.AspNetCore.Components;
+
+                public class C
+                {
+                    private object M()
+                    {
+                        return new Component().$$NewProperty;
+                    }
+                }
+                """,
+            razorFile: """
+                This is a Razor document.
+
+                <Component></Component>
+
+                @code
+                {
+                    private string componentName = nameof(Component);
+                }
+
+                The end.
+                """,
+            expectedRazorFile: """
+                This is a Razor document.
+                
+                <Component></Component>
+                
+                @code
+                {
+                    private string componentName = nameof(Component);
+
+                    public object NewProperty { get; internal set; }
+                }
+
+                The end.
+                """,
+            codeActionName: RazorPredefinedCodeFixProviderNames.GenerateVariable,
+            childActionIndex: 2);
+
+    [Fact]
+    public Task GenerateField_NoCodeBlock()
+        => VerifyCodeActionAsync(
+            csharpFile: """
+                using SomeProject;
+                using Microsoft.AspNetCore.Components;
+
+                public class C
+                {
+                    private object M()
+                    {
+                        return new Component().$$newField;
+                    }
+                }
+                """,
+            razorFile: """
+                This is a Razor document.
+
+                <Component></Component>
+
+                The end.
+                """,
+            expectedRazorFile: """
+                This is a Razor document.
+                
+                <Component></Component>
+                
+                The end.
+                @code {
+                    internal object newField;
+                }
+                """,
+            codeActionName: RazorPredefinedCodeFixProviderNames.GenerateVariable,
+            childActionIndex: 0);
+
+    [Fact]
+    public Task GenerateField_ExistingCodeBlock()
+        => VerifyCodeActionAsync(
+            csharpFile: """
+                using SomeProject;
+                using Microsoft.AspNetCore.Components;
+
+                public class C
+                {
+                    private object M()
+                    {
+                        return new Component().$$newField;
+                    }
+                }
+                """,
+            razorFile: """
+                This is a Razor document.
+
+                <Component></Component>
+
+                @code
+                {
+                    private string componentName = nameof(Component);
+                }
+
+                The end.
+                """,
+             expectedRazorFile: """
+                 This is a Razor document.
+                 
+                 <Component></Component>
+                 
+                 @code
+                 {
+                     private string componentName = nameof(Component);
+                         internal object newField;
+                 }
+ 
+                 The end.
+                 """,
+            codeActionName: RazorPredefinedCodeFixProviderNames.GenerateVariable,
+            childActionIndex: 0);
+
     private protected override TestComposition ConfigureLocalComposition(TestComposition composition)
     {
         return composition
@@ -212,7 +369,8 @@ public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : Co
         TestCode csharpFile,
         TestCode razorFile,
         TestCode expectedRazorFile,
-        string codeActionName)
+        string codeActionName,
+        int childActionIndex = 0)
     {
         var razorDocument = CreateProjectAndRazorDocument(razorFile.Text, documentFilePath: FilePath("Component.razor"), additionalFiles: [(FilePath("File.cs"), csharpFile.Text)]);
         var project = razorDocument.Project;
@@ -256,6 +414,14 @@ public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : Co
         var codeAction = codeActions.First(a => ((JsonElement)a.Data.AssumeNotNull()).TryGetProperty("CustomTags", out var value) &&
                 value.Deserialize<string[]>() is [..] tags &&
                 tags.Any(t => t == codeActionName));
+
+        if (codeAction.Command is { CommandIdentifier: "roslyn.client.nestedCodeAction", Arguments: [var nestedArgument] })
+        {
+            var nestedActions = (nestedArgument is JsonElement nestedElement
+                ? nestedElement
+                : JsonSerializer.SerializeToElement(nestedArgument)).GetProperty("NestedCodeActions");
+            codeAction = JsonSerializer.Deserialize<CodeAction>(nestedActions[childActionIndex]).AssumeNotNull();
+        }
 
         var resolvedCodeAction = await ExternalHandlers.CodeActions.ResolveCodeActionAsync(csharpDocument, codeAction, [], DisposalToken);
 

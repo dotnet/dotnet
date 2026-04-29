@@ -14,6 +14,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)AutoInsert\PreferHtmlInAttributeValuesDocumentPositionInfoStrategyTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AutoInsert\RazorOnAutoInsertProviderTestBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\GenerateMethodTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeActions\GenerateFieldTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CodeActions\GeneratePropertyTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\AddUsingTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsEndpointTestBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CreateComponentFromTagTests.cs" />
