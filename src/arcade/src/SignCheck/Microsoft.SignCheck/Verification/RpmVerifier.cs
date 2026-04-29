@@ -11,7 +11,7 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public class RpmVerifier : LinuxPackageVerifier
+    public class RpmVerifier : PgpVerifier
     {
         public RpmVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".rpm") { }
 
@@ -24,11 +24,18 @@ namespace Microsoft.SignCheck.Verification
 
             using var stream = File.Open(archivePath, FileMode.Open);
             using RpmPackage rpmPackage = RpmPackage.Read(stream);
-            using var dataStream = File.Create(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
             using var archive = new CpioReader(rpmPackage.ArchiveStream, leaveOpen: false);
 
             while (archive.GetNextEntry() is CpioEntry entry)
             {
+                // Only yield regular files. Symlink entries contain just the target
+                // path string as data (not actual file content), which would be
+                // written to disk as a tiny file and break PE verification.
+                if ((entry.Mode & CpioEntry.FileKindMask) != CpioEntry.RegularFile)
+                {
+                    continue;
+                }
+
                 yield return new ArchiveEntry()
                 {
                     RelativePath = entry.Name,
