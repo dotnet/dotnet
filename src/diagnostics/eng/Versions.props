@@ -3,12 +3,11 @@
   <Import Project="Version.Details.props" />
 
   <PropertyGroup>
-    <VersionPrefix>9.0.0</VersionPrefix>
+    <RepositoryUrl>https://github.com/dotnet/diagnostics</RepositoryUrl>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration></PreReleaseVersionIteration>
+    <VersionPrefix>10.0.0</VersionPrefix>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
     <DotNetFinalVersionKind></DotNetFinalVersionKind>
-
     <DotNetUseShippingVersions>true</DotNetUseShippingVersions>
     <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
     <!--
@@ -44,7 +43,7 @@
     <MicrosoftExtensionsConfigurationVersion>8.0.0</MicrosoftExtensionsConfigurationVersion>
     <MicrosoftExtensionsConfigurationJsonVersion>8.0.1</MicrosoftExtensionsConfigurationJsonVersion>
     <MicrosoftExtensionsLoggingConfigurationVersion>8.0.1</MicrosoftExtensionsLoggingConfigurationVersion>
-    <MicrosoftOneCollectRecordTraceVersions>0.1.32221</MicrosoftOneCollectRecordTraceVersions>
+    <MicrosoftOneCollectRecordTraceVersions>0.1.33551</MicrosoftOneCollectRecordTraceVersions>
     <!-- Need version that understands UseAppFilters sentinel. -->
     <MicrosoftExtensionsLoggingEventSourceVersion>5.0.1</MicrosoftExtensionsLoggingEventSourceVersion>
     <SystemComponentModelAnnotationsVersion>5.0.0</SystemComponentModelAnnotationsVersion>
@@ -96,8 +95,8 @@
 
   -->
   <PropertyGroup>
-    <MicrosoftNETCoreApp90Version>9.0.10</MicrosoftNETCoreApp90Version>
-    <MicrosoftNETCoreApp80Version>8.0.21</MicrosoftNETCoreApp80Version>
+    <MicrosoftNETCoreApp90Version>9.0.14</MicrosoftNETCoreApp90Version>
+    <MicrosoftNETCoreApp80Version>8.0.25</MicrosoftNETCoreApp80Version>
   </PropertyGroup>
 
   <PropertyGroup>
