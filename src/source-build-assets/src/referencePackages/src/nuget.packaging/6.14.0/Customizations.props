@@ -2,5 +2,7 @@
   <ItemGroup>
     <Compile Include="$(CommonSrc)IsExternalInit.cs" />
     <Compile Include="$(CommonSrc)RequiredModifierAttributes.cs" />
+    <!-- SBA produces Newtonsoft.Json 13.0.4; align to avoid prebuilt on 13.0.3 -->
+    <PackageReference Update="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 </Project>
