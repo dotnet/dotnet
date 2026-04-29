@@ -17,7 +17,8 @@
       <group targetFramework="net8.0">
         <dependency id="NuGet.Configuration" version="7.0.1" exclude="Build,Analyzers" />
         <dependency id="NuGet.Versioning" version="7.0.1" exclude="Build,Analyzers" />
-        <dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
+        <!-- Upgraded from 13.0.3 to 13.0.4 to align with the version built by source-build-assets -->
+        <dependency id="Newtonsoft.Json" version="13.0.4" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Pkcs" version="9.0.6" exclude="Build,Analyzers" />
       </group>
     </dependencies>
