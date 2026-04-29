@@ -80,6 +80,21 @@
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisSourceGeneratorVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+
+    <!--
+      In the Microsoft build, efcore is a RepositoryReference of aspnetcore, so efcore's package versions
+      flow automatically via WritePackageVersionsProps. In source-build, efcore can't be built as a dependency
+      because it requires Windows runtime packages. Instead, override the EF Core version properties to use
+      the VMR build version (same as runtime) so that web templates get the correct versions.
+      See https://github.com/dotnet/source-build/issues/5493
+    -->
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreDesignVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreInMemoryVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreRelationalVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreSqliteVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreSqlServerVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftEntityFrameworkCoreToolsVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
   </ItemGroup>
 
 </Project>

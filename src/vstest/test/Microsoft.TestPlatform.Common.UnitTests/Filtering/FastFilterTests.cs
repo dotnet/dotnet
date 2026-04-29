@@ -442,4 +442,71 @@ public class FastFilterTests
                 _ => null,
             }));
     }
+
+    #region None filter value tests (uncategorized tests support)
+
+    [TestMethod]
+    public void FastFilterWithNoneEqualShouldMatchNullProperty()
+    {
+        var filterExpressionWrapper = new FilterExpressionWrapper("TestCategory=None");
+        var fastFilter = filterExpressionWrapper.FastFilter;
+
+        Assert.IsNotNull(fastFilter);
+        Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
+
+        // Null property value means uncategorized - should match.
+        Assert.IsTrue(fastFilter.Evaluate(s => null));
+        // Empty array means uncategorized - should match.
+        Assert.IsTrue(fastFilter.Evaluate(s => Array.Empty<string>()));
+        // Non-empty category - should not match.
+        Assert.IsFalse(fastFilter.Evaluate(s => new[] { "CategoryA" }));
+    }
+
+    [TestMethod]
+    public void FastFilterWithNoneEqualOrSpecificCategoryShouldMatchBoth()
+    {
+        var filterExpressionWrapper = new FilterExpressionWrapper("TestCategory=None|TestCategory=CategoryA");
+        var fastFilter = filterExpressionWrapper.FastFilter;
+
+        Assert.IsNotNull(fastFilter);
+        Assert.IsFalse(fastFilter.IsFilteredOutWhenMatched);
+
+        // Null property value means uncategorized - should match.
+        Assert.IsTrue(fastFilter.Evaluate(s => null));
+        // CategoryA - should match.
+        Assert.IsTrue(fastFilter.Evaluate(s => new[] { "CategoryA" }));
+        // CategoryB - should not match.
+        Assert.IsFalse(fastFilter.Evaluate(s => new[] { "CategoryB" }));
+    }
+
+    [TestMethod]
+    public void FastFilterWithNoneNotEqualShouldMatchCategorizedTests()
+    {
+        var filterExpressionWrapper = new FilterExpressionWrapper("TestCategory!=None");
+        var fastFilter = filterExpressionWrapper.FastFilter;
+
+        Assert.IsNotNull(fastFilter);
+        Assert.IsTrue(fastFilter.IsFilteredOutWhenMatched);
+
+        // Null property value means uncategorized - should NOT match (filtered out).
+        Assert.IsFalse(fastFilter.Evaluate(s => null));
+        // Non-empty category - should match (not filtered out).
+        Assert.IsTrue(fastFilter.Evaluate(s => new[] { "CategoryA" }));
+    }
+
+    [TestMethod]
+    public void FastFilterWithNoneEqualShouldAlsoMatchExplicitNoneCategory()
+    {
+        var filterExpressionWrapper = new FilterExpressionWrapper("TestCategory=None");
+        var fastFilter = filterExpressionWrapper.FastFilter;
+
+        Assert.IsNotNull(fastFilter);
+
+        // A test with [TestCategory("None")] should also match, since "None" is in the filter set.
+        Assert.IsTrue(fastFilter.Evaluate(s => new[] { "None" }));
+        // Case-insensitive: "none" should also match.
+        Assert.IsTrue(fastFilter.Evaluate(s => new[] { "none" }));
+    }
+
+    #endregion
 }
