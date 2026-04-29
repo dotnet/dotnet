@@ -51,6 +51,7 @@
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
     <!-- Pass through the C++ standard library to use (e.g., libc++ or (the default) libstdc++). -->
     <BuildArgs Condition="'$(TargetCxxStandardLibrary)' != ''">$(BuildArgs) /p:TargetCxxStandardLibrary=$(TargetCxxStandardLibrary)</BuildArgs>
+    <BuildArgs Condition="'$(CppCompilerAndLinker)' != ''">$(BuildArgs) /p:CppCompilerAndLinker=$(CppCompilerAndLinker)</BuildArgs>
 
     <!-- Handle system libraries -->
     <BuildArgs Condition="$(UseSystemLibs.Contains('+brotli')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</BuildArgs>
