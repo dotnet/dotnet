@@ -86,7 +86,7 @@ steps:
   displayName: Download Microsoft.DotNet.SignCheckTask Package
   inputs:
     artifactName: Windows_x64_Artifacts
-    itemPattern: packages/NonShipping/arcade/Microsoft.DotNet.SignCheckTask.*.nupkg
+    itemPattern: packages/Release/NonShipping/arcade/Microsoft.DotNet.SignCheckTask.*.nupkg
     targetPath: '${{ parameters.signCheckNuGetPackagesDirectory }}'
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed
@@ -96,7 +96,7 @@ steps:
   displayName: 'Authenticate to AzDO Feeds'
 
 - pwsh: |
-    $nupkg = Get-Item "${{ parameters.signCheckNuGetPackagesDirectory }}/packages/NonShipping/arcade/Microsoft.DotNet.SignCheckTask.*.nupkg"
+    $nupkg = Get-Item "${{ parameters.signCheckNuGetPackagesDirectory }}/packages/Release/NonShipping/arcade/Microsoft.DotNet.SignCheckTask.*.nupkg"
     $version = $nupkg.BaseName -replace '^Microsoft\.DotNet\.SignCheckTask\.'
 
     $dotnetExt = if ($IsWindows) { 'cmd' } else { 'sh' }
@@ -105,7 +105,7 @@ steps:
       /p:ArtifactDownloadDirectory="${{ parameters.signCheckFilesDirectory }}" `
       /p:SourceBranch="$(Build.SourceBranch)" `
       /p:OutputLogsDirectory="${{ parameters.outputDirectory }}" `
-      /p:RestoreAdditionalProjectSources="${{ parameters.signCheckNuGetPackagesDirectory }}/packages/NonShipping/arcade" `
+      /p:RestoreAdditionalProjectSources="${{ parameters.signCheckNuGetPackagesDirectory }}/packages/Release/NonShipping/arcade" `
       /p:MicrosoftDotNetSignCheckTaskVersion="$version" `
       /bl:"${{ parameters.outputDirectory }}/signing-validation.binlog"
   displayName: Validate Signing
