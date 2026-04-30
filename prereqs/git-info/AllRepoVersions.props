@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>8.0.0-beta.26168.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>48e42f59d64d84b404e904996a9ed61f2a17a569</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.0.0-preview.1.23557.2</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>17022fc6266e6516e4b9e02e518347bec0cadfa6</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>8.0.27-servicing.26229.4</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>be2530c3035e4bfa7670c6b18f5a64ef89e0e80d</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>8.0.27-servicing.26230.8</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>dc12f3e6ccb3fd7b76c0d5ee3365e6b58d796de0</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.26158.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>02fe27cd6a9b001c8feb7938e6ef4b3799745759</commandlineapiGitCommitHash>
@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.1.657407</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>21df7f5d1a9d4dea39f3f305603c57b38aff25e5</installerGitCommitHash>
+    <installerGitCommitHash>258a4bb542d4f1300f677828d02646547bd14cf9</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>7806cbf7b0fd91ea6ab55c2e42d8ed973114e197</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.49-servicing-25616-08</msbuildOutputPackageVersion>
@@ -33,10 +33,10 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.26173.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>38896ab4e7cee896fcde8a4e26914a777c794e3b</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.8.0-7.25569.25</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>81020d99b8f723bf453ffabc50bcc871c2f4415d</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>8.0.27-servicing.26228.15</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>4871a7fa12c46e52ca479f0006541330f125f612</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.127-servicing.26229.3</sdkOutputPackageVersion>
+    <runtimeGitCommitHash>a6bde67c455f2ac219988c7a66171631090b6f65</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.27-servicing.26229.22</runtimeOutputPackageVersion>
+    <sdkGitCommitHash>5f6075016c80a0954f98c6c3814607277737b09d</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.127-servicing.26230.7</sdkOutputPackageVersion>
     <sourcebuildassetsGitCommitHash>e911a8db53ca72e45e66bb84376e68fe5c5999b9</sourcebuildassetsGitCommitHash>
     <sourcebuildassetsOutputPackageVersion>8.0.0-alpha.1.26208.3</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>7abd7043b258fe69233070da30f6a88438f4b293</sourcebuildexternalsGitCommitHash>
