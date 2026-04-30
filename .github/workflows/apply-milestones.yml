@@ -98,6 +98,11 @@ jobs:
               return null;
             }
 
+            // "alpha" always maps to preview1
+            if (label === 'alpha') {
+              return { name: `${major}.${minor}-preview1`, deferred: false };
+            }
+
             // Combine label + iteration: "preview" + "5" → "preview5"
             const fullLabel = `${label}${iteration}`;
 
