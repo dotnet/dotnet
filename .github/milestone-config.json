@@ -1,5 +1,10 @@
 {
   "optedOutRepos": [
+    "dotnet/fsharp",
+    "dotnet/msbuild",
+    "dotnet/razor",
+    "dotnet/roslyn",
+    "microsoft/vstest",
     "nuget/nuget.client"
   ]
 }
