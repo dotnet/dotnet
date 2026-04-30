@@ -28,17 +28,17 @@ public class OmniSharpTests : SdkTests
     public OmniSharpTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
     [ConditionalTheoryAttribute(typeof(OmniSharpTests), nameof(IncludeOmniSharpTests))]
-    //[InlineData(DotNetTemplate.BlazorWasm)] https://github.com/dotnet/source-build/issues/5514
+    [InlineData(DotNetTemplate.BlazorWasm)]
     [InlineData(DotNetTemplate.ClassLib)]
     [InlineData(DotNetTemplate.Console)]
-    //[InlineData(DotNetTemplate.MSTest)] https://github.com/dotnet/source-build/issues/5514
+    [InlineData(DotNetTemplate.MSTest)]
     [InlineData(DotNetTemplate.Mvc)]
-    //[InlineData(DotNetTemplate.NUnit)] https://github.com/dotnet/source-build/issues/5514
+    [InlineData(DotNetTemplate.NUnit)]
     [InlineData(DotNetTemplate.Web)]
     [InlineData(DotNetTemplate.WebApp)]
     [InlineData(DotNetTemplate.WebApi)]
     [InlineData(DotNetTemplate.Worker)]
-    //[InlineData(DotNetTemplate.XUnit)] https://github.com/dotnet/source-build/issues/5514
+    [InlineData(DotNetTemplate.XUnit)]
     public async Task VerifyScenario(DotNetTemplate template)
     {
         await InitializeOmniSharp();
