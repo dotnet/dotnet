@@ -119,13 +119,19 @@ public class PRCreator
 
     private async Task<List<NewTreeItem>> UpdateAllFilesAsync(Dictionary<string, HashSet<string>> updatedFiles, List<NewTreeItem> tree, Pipelines pipeline)
     {
-        bool isSdkPipeline = pipeline == Pipelines.Sdk;
+        bool unionExclusions = pipeline switch
+        {
+            Pipelines.Sdk => true,
+            Pipelines.Reproducibility => true,
+            Pipelines.License => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(pipeline))
+        };
         string? defaultContent = pipeline == Pipelines.License ? DefaultLicenseBaselineContent : null;
         foreach (var updatedFile in updatedFiles)
         {
             if (updatedFile.Key.Contains("Exclusions"))
             {
-                tree = await UpdateExclusionFileAsync(updatedFile.Key, updatedFile.Value, tree, union: isSdkPipeline);
+                tree = await UpdateExclusionFileAsync(updatedFile.Key, updatedFile.Value, tree, union: unionExclusions);
             }
             else
             {

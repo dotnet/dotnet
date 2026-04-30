@@ -1,0 +1,70 @@
+# This pipeline builds the VMR twice within a single run and compares the two SDK
+# tarballs to validate byte-level reproducibility.
+
+schedules:
+- cron: "0 12 * * 1-5"
+  displayName: Run on weekdays at 12pm UTC
+  branches:
+    include:
+    - main
+    - release/*.0.4xx*
+
+# Relies on dotnet-unified-build being in the same repo as this pipeline
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops#branch-considerations
+resources:
+  pipelines:
+  - pipeline: dotnet-unified-build
+    source: dotnet-unified-build
+    # For releases branches only run on internal/release branches because that's where dependencies flow.
+    # Previews don't have internal/release branches so they must be run from non-internal release branches.
+    trigger:
+      branches:
+        include:
+        - refs/heads/release/*.0.1xx-preview*
+        - refs/heads/internal/release/*.0.?xx*
+        - refs/heads/internal/release/*.0.???
+      # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
+      # publish/validation failures.
+      stages:
+        - VMR_Vertical_Build
+        - VMR_SourceOnly_Build
+
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+pr: none
+trigger: none
+
+variables:
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
+  parameters:
+    buildSourceOnly: true
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
+    pool:
+      name: NetCore1ESPool-Svc-Internal
+      image: 1es-ubuntu-2204
+      os: linux
+    sdl:
+      sourceAnalysisPool:
+          name: NetCore1ESPool-Svc-Internal
+          image: 1es-windows-2022
+          os: windows
+
+    containers:
+      ${{ variables.centOSStreamContainerName }}:
+        image: ${{ variables.centOSStreamContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxX64CrossContainerName }}:
+        image: ${{ variables.azurelinuxX64CrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+
+    stages:
+    - template: /eng/pipelines/templates/stages/reproducibility-tests.yml@self

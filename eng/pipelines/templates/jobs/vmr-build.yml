@@ -163,6 +163,11 @@ parameters:
   type: boolean
   default: false
 
+# Additional job dependencies beyond reuseBuildArtifactsFrom
+- name: dependsOn
+  type: object
+  default: []
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -183,9 +188,11 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
+  ${{ if or(gt(length(parameters.reuseBuildArtifactsFrom), 0), gt(length(parameters.dependsOn), 0)) }}:
     dependsOn:
     - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ each dep in parameters.dependsOn }}:
+      - ${{ dep }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -198,7 +205,7 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
-  
+
   - ${{ if parameters.buildSourceOnly }}:
     - name: sharedComponentsDir
       value: $(Agent.TempDirectory)/shared-components
@@ -411,7 +418,6 @@ jobs:
   - checkout: self
     fetchDepth: 1
     retryCountOnTaskFailure: 5
-
 
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
   # These directories are referenced in templateContext.outputs which validates paths at job start

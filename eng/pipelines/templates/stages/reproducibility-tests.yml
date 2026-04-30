@@ -1,0 +1,132 @@
+parameters:
+# This is not expected to be passed in but rather just an object variable reused below
+- name: pool_Linux
+  type: object
+  default:
+    name: NetCore1ESPool-Svc-Internal
+    image: $(poolImage_Linux)
+    demands: ImageOverride -equals $(poolImage_Linux)
+    os: linux
+
+stages:
+
+# Two parallel build stages, each producing a full set of SDK tarballs from the same
+# pipeline-resolved commit and the same pipeline-resolved container image digest.
+# Same-pipeline-run guarantees the same toolchain (clang/LLD, etc.) for both stages,
+# so any byte-level difference between their outputs is real non-determinism, not
+# toolchain drift.
+
+- stage: Build1
+  variables:
+  - template: /eng/pipelines/templates/variables/vmr-build.yml@self
+    parameters:
+      buildSourceOnly: true
+  jobs:
+  # Source-build (CentOS, offline, MsftSdk bootstrap)
+  - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
+    parameters:
+      buildName: ${{ format('Build1_SB_{0}_Offline_MsftSdk', variables.centOSStreamName) }}
+      isBuiltFromVmr: true
+      pool: ${{ parameters.pool_Linux }}
+      container:
+        name: ${{ variables.centOSStreamContainerName }}
+        image: ${{ variables.centOSStreamContainerImage }}
+      artifactsRid: ${{ variables.centOSStreamX64Rid }}
+      targetArchitecture: x64
+      buildSourceOnly: true
+      enablePoison: false
+      buildFromArchive: false
+      runOnline: false
+      runTests: false
+      withPreviousSDK: false
+      createSourceArtifact: false
+      brandingType: ${{ variables.brandingType }}
+
+  # Microsoft build (Linux x64, cross-build, unsigned). Both Build1 and Build2 stages
+  # produce delay-signed (zero-filled signature) outputs; they should be byte-identical
+  # to one another.
+  - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
+    parameters:
+      buildName: Build1_Linux
+      isBuiltFromVmr: true
+      pool: ${{ parameters.pool_Linux }}
+      container:
+        name: ${{ variables.azurelinuxX64CrossContainerName }}
+        image: ${{ variables.azurelinuxX64CrossContainerImage }}
+      crossRootFs: '/crossrootfs/x64'
+      targetOS: linux
+      targetArchitecture: x64
+      runTests: false
+      brandingType: ${{ variables.brandingType }}
+
+- stage: Build2
+  dependsOn: []
+  variables:
+  - template: /eng/pipelines/templates/variables/vmr-build.yml@self
+    parameters:
+      buildSourceOnly: true
+  jobs:
+  - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
+    parameters:
+      buildName: ${{ format('Build2_SB_{0}_Offline_MsftSdk', variables.centOSStreamName) }}
+      isBuiltFromVmr: true
+      pool: ${{ parameters.pool_Linux }}
+      container:
+        name: ${{ variables.centOSStreamContainerName }}
+        image: ${{ variables.centOSStreamContainerImage }}
+      artifactsRid: ${{ variables.centOSStreamX64Rid }}
+      targetArchitecture: x64
+      buildSourceOnly: true
+      enablePoison: false
+      buildFromArchive: false
+      runOnline: false
+      runTests: false
+      withPreviousSDK: false
+      createSourceArtifact: false
+      brandingType: ${{ variables.brandingType }}
+
+  - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
+    parameters:
+      buildName: Build2_Linux
+      isBuiltFromVmr: true
+      pool: ${{ parameters.pool_Linux }}
+      container:
+        name: ${{ variables.azurelinuxX64CrossContainerName }}
+        image: ${{ variables.azurelinuxX64CrossContainerImage }}
+      crossRootFs: '/crossrootfs/x64'
+      targetOS: linux
+      targetArchitecture: x64
+      runTests: false
+      brandingType: ${{ variables.brandingType }}
+
+# Compare stage: download both stages' SDK tarballs and run the reproducibility tests.
+- stage: Compare
+  dependsOn:
+  - Build1
+  - Build2
+  variables:
+  - template: /eng/pipelines/templates/variables/vmr-build.yml@self
+    parameters:
+      buildSourceOnly: true
+  # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
+  - group: Dotnet-SourceBuild-Secrets
+  jobs:
+  - template: /eng/pipelines/templates/jobs/reproducibility-test.yml@self
+    parameters:
+      build1JobName: ${{ format('Build1_SB_{0}_Offline_MsftSdk_x64', variables.centOSStreamName) }}
+      build2JobName: ${{ format('Build2_SB_{0}_Offline_MsftSdk_x64', variables.centOSStreamName) }}
+      targetRid: ${{ variables.centOSStreamX64Rid }}
+      architecture: x64
+      buildType: SourceBuilt
+      publishTestResultsPr: true
+      pullRequestTitle: 'Update Source-Built Reproducibility Exclusions'
+
+  - template: /eng/pipelines/templates/jobs/reproducibility-test.yml@self
+    parameters:
+      build1JobName: Build1_Linux_x64
+      build2JobName: Build2_Linux_x64
+      targetRid: ${{ variables.linuxX64Rid }}
+      architecture: x64
+      buildType: Msft
+      publishTestResultsPr: true
+      pullRequestTitle: 'Update Microsoft Reproducibility Exclusions'
