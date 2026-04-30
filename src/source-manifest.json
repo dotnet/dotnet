@@ -7,10 +7,10 @@
       "commitSha": "a08169b890573cfd7f949ea9062c86a4db1aab1b"
     },
     {
-      "barId": 311178,
+      "barId": 312335,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "11a9d22aa163093c31bd70c7caafadeb5f656db8"
+      "commitSha": "5a0718fe4b75003ac136d3235dbc9a171700b3f4"
     },
     {
       "barId": 310153,
@@ -25,10 +25,10 @@
       "commitSha": "99db1e31826f24ec672efe70b36074a59464c29a"
     },
     {
-      "barId": 311206,
+      "barId": 311604,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "84df736229b2b8352af19ce09769728512a03c66"
+      "commitSha": "87b9cb458b22091afbb55e246d7851eb623e516a"
     },
     {
       "barId": 298531,
@@ -91,10 +91,10 @@
       "commitSha": "7bc6a69bc6daf9f820cfa776f9c9066aa013584c"
     },
     {
-      "barId": 311635,
+      "barId": 311891,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a1f2c13671e73fd0dc0864d374968bc0342c63c2"
+      "commitSha": "50044437f4d10f44c1e8925218955edf39f1f657"
     },
     {
       "barId": 309145,
