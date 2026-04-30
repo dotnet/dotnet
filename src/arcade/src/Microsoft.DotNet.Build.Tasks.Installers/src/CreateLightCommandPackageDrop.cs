@@ -22,6 +22,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         public string OutputsFile { get; set; }
         public string BuiltOutputsFile { get; set; }
         public ITaskItem [] Sice { get; set; }
+        public bool SuppressValidation { get;set; }
 
         // The light command that was originally used to generate the MSI.  This is purely used for informational purposes
         // and to validate that the light command being created by this task is correct (assist with debugging).
@@ -73,6 +74,10 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 {
                     commandString.Append($" -sice:{siceItem.ItemSpec}");
                 }
+            }
+            if (SuppressValidation)
+            {
+                commandString.Append(" -sval");
             }
         }
     }
