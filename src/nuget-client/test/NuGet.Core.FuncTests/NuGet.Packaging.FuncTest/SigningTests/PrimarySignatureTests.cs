@@ -33,7 +33,7 @@ namespace NuGet.Packaging.FuncTest
             _trustedTestCert = _testFixture.TrustedTestCertificate;
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Signature_HasTimestampAsync()
         {
             // Arrange
@@ -62,7 +62,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Signature_HasNoTimestampAsync()
         {
             // Arrange
@@ -86,7 +86,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Load_WithPrimarySignatureWithNoCertificates_ThrowsAsync()
         {
             var packageContext = new SimpleTestPackageContext();
@@ -116,7 +116,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Load_WithReissuedSigningCertificate_ThrowsAsync()
         {
             var certificates = _testFixture.TrustedTestCertificateWithReissuedCertificate;

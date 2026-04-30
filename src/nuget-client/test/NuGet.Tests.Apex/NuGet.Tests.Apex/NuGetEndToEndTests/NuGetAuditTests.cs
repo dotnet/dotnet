@@ -27,18 +27,19 @@ namespace NuGet.Tests.Apex.NuGetEndToEndTests
         [Timeout(DefaultTimeout)]
         public async Task PackagesConfig_SuppressAdvisory()
         {
-            // 1. Create Directory.Build.props with suppression for package.A cve1
-            // 2. Create mock server with package.A with cve1 and cve2
+            // 1. Create Directory.Build.props with suppression for package.A cve1 and cve2
+            // 2. Create mock server with package.A with cve1, cve2, and cve3
             // 3. Add mock server to nuget.config
-            // 3. Create packages.config project
-            // 4. Install package.A
-            // 5. check error list to see if only cve2 is listed
+            // 4. Create packages.config project
+            // 5. Install package.A
+            // 6. check error list to see if only cve3 is listed
 
             // Arrange
             SimpleTestPathContext testPathContext = new();
             var dbpContents = @"<Project>
     <ItemGroup>
         <NuGetAuditSuppress Include=""https://cve.test/1"" />
+        <NuGetAuditSuppress Include=""https://cve.test/2"" />
     </ItemGroup>
 </Project>";
             File.WriteAllText(Path.Combine(testPathContext.SolutionRoot, "Directory.Build.props"), dbpContents);
@@ -48,6 +49,7 @@ namespace NuGet.Tests.Apex.NuGetEndToEndTests
             {
                 (new Uri("https://cve.test/1"), PackageVulnerabilitySeverity.High, VersionRange.Parse("(, 2.0.0)")),
                 (new Uri("https://cve.test/2"), PackageVulnerabilitySeverity.High, VersionRange.Parse("(, 2.0.0)")),
+                (new Uri("https://cve.test/3"), PackageVulnerabilitySeverity.High, VersionRange.Parse("(, 2.0.0)")),
             });
 
             await CommonUtility.CreatePackageInSourceAsync(testPathContext.PackageSource, TestPackageName, TestPackageVersionV1);
@@ -71,7 +73,7 @@ namespace NuGet.Tests.Apex.NuGetEndToEndTests
 
             var errors = VisualStudio.ObjectModel.Shell.ToolWindows.ErrorList.AllItems.Select(i => i.Description).ToList();
             errors.Where(msg => msg.Contains(TestPackageName)).Should().ContainSingle();
-            errors.Single(msg => msg.Contains(TestPackageName)).Should().Contain("https://cve.test/2");
+            errors.Single(msg => msg.Contains(TestPackageName)).Should().Contain("https://cve.test/3");
         }
     }
 }

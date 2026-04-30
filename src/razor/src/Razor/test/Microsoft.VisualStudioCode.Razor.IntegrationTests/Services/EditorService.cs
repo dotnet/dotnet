@@ -80,6 +80,7 @@ public class EditorService(IntegrationTestServices testServices) : ServiceBase(t
             {
                 // Use original if we can't read
             }
+
             TestServices.Logger.Log($"WaitForEditorTextChangeAsync: AFTER contents (fallback, {currentContents.Length} chars):\n{currentContents}");
             return currentContents;
         }

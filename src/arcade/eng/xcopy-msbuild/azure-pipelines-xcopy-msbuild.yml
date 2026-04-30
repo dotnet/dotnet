@@ -22,7 +22,7 @@ jobs:
   displayName: Build xcopy-msbuild package
   pool: 
     name: NetCore1ESPool-Internal
-    demands: ImageOverride -equals 1es-windows-2022
+    demands: ImageOverride -equals windows.vs2026.amd64
   steps:
     - task: PowerShell@2
       displayName: Download Visual Studio Build Tools
@@ -43,8 +43,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)\publish'
         OverWrite: true
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\publish'
-        ArtifactName: 'package'
-        publishLocation: 'Container'
+        targetPath: '$(Build.ArtifactStagingDirectory)\publish'
+        artifactName: 'package'

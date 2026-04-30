@@ -42,31 +42,27 @@ public class TestHostTraceListenerTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(DebugAssertException))]
     public void DebugAssertThrowsDebugAssertException()
     {
-        Debug.Assert(false);
+        Assert.ThrowsExactly<DebugAssertException>(() => Debug.Assert(false));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(DebugAssertException))]
     public void DebugFailThrowsDebugAssertException()
     {
-        Debug.Fail("fail");
+        Assert.ThrowsExactly<DebugAssertException>(() => Debug.Fail("fail"));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(DebugAssertException))]
     public void TraceAssertThrowsDebugAssertException()
     {
-        Trace.Assert(false);
+        Assert.ThrowsExactly<DebugAssertException>(() => Trace.Assert(false));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(DebugAssertException))]
     public void TraceFailThrowsDebugAssertException()
     {
-        Trace.Fail("fail");
+        Assert.ThrowsExactly<DebugAssertException>(() => Trace.Fail("fail"));
     }
 
     [TestMethod]

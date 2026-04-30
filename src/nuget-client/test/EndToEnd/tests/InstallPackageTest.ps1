@@ -1,111 +1,3 @@
-# Verify Xunit 2.1.0 can be installed into a net45 project.
-# https://github.com/NuGet/Home/issues/1711
-
-function Test-InstallPackageWithInvalidAbsoluteLocalSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "c:\temp\data"
-    $message = "Unable to find package '$package' at source '$source'. Source not found."
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithValidAbsoluteLocalSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = pwd
-    $message = "Unable to find package '$package'"
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithInvalidRelativeLocalSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "..\invalid_folder"
-    $message = "Unable to find package '$package' at source '$source'. Source not found."
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithValidRelativeLocalSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "..\"
-    $message = "Unable to find package '$package'"
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithInvalidHttpSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "http://example.com"
-    $message = "Unable to find package '$package' at source '$source'."
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithInvalidHttpSourceVerbose {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "http://example.com"
-    $escapedSource = [regex]::Escape($source)
-    $escapedUrl = [regex]::Escape($source+"/FindPackagesById()?id='$package'&semVerLevel=2.0.0")
-    $message = "\ \ GET\ $escapedUrl\ \ \ NotFound\ $escapedUrl\ [\w]+\ An\ error\ occurred\ while\ retrieving\ package\ metadata\ for\ '$package'\ from\ source\ '$escapedSource'\."
-    # Act
-    $result = Install-Package $package -ProjectName $project.Name -source $source -Verbose *>&1
-    $resultString = [string]::Join(" ", $result)
-    $compare = $resultString -Match $message
-    $messageToPrint = "Result string is `n$resultString but expected message was `n$message"
-    # Assert
-    Assert-True $compare $messageToPrint
-}
-
-function Test-InstallPackageWithIncompleteHttpSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "http://"
-    $message = "Unable to find package 'Rules' at source '$source'. Source not found."
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithInvalidKnownSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "nuget.random"
-    $message = "Unable to find package 'Rules' at source '$source'. Source not found."
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
-function Test-InstallPackageWithValidKnownSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "nuget.org"
-    $message = "Unable to find package '$package'"
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
 function Test-InstallPackageWithFtpProtocolSource {
     # Arrange
     $package = "Rules"
@@ -117,6 +9,8 @@ function Test-InstallPackageWithFtpProtocolSource {
     Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
 }
 
+# Verify Xunit 2.1.0 can be installed into a net45 project.
+# https://github.com/NuGet/Home/issues/1711
 function Test-InstallXunit210WithEmptyBuildFolderSucceeds
 {
     param($context)
@@ -136,22 +30,6 @@ function Test-InstallXunit210WithEmptyBuildFolderSucceeds
     Assert-Package $p xunit.abstractions 2.0.0
 }
 
-function Test-SinglePackageInstallIntoSingleProject {
-    # Arrange
-    $project = New-ConsoleApplication
-
-    # Act
-    Install-Package FakeItEasy -ProjectName $project.Name -version 1.8.0
-
-    # Assert
-    Assert-Reference $project Castle.Core
-    Assert-Reference $project FakeItEasy
-    Assert-Package $project FakeItEasy
-    Assert-Package $project Castle.Core
-    Assert-SolutionPackage FakeItEasy
-    Assert-SolutionPackage Castle.Core
-}
-
 # Test install-package -WhatIf to downgrade an installed package.
 function Test-PackageInstallWithFileUri {
     # Arrange
@@ -167,17 +45,6 @@ function Test-PackageInstallWithFileUri {
     # Assert
     # that the installed package is not touched.
     Assert-Package $project TestUpdatePackage '2.0.0.0'
-}
-
-function Test-PackageInstallWhatIf {
-    # Arrange
-    $project = New-ConsoleApplication
-
-    # Act
-    Install-Package FakeItEasy -Project $project.Name -version 1.8.0 -WhatIf
-
-    # Assert: no packages are installed
-    Assert-Null (Get-ProjectPackage $project FakeItEasy)
 }
 
 # Test install-package -WhatIf to downgrade an installed package.
@@ -1487,14 +1354,6 @@ function Test-InstallWithFailingInitPs1RollsBack {
     # Assert
     Assert-Null (Get-ProjectPackage $p PackageWithFailingInitPs1)
     Assert-Null (Get-SolutionPackage PackageWithFailingInitPs1)
-}
-
-function Test-InstallPackageThrowsWhenSourceIsInvalid {
-    # Arrange
-    $p = New-ConsoleApplication
-
-    # Act & Assert
-    Assert-Throws { Install-Package jQuery -source "d:package" } "Unsupported type of source 'd:package'. Please provide an HTTP or local source."
 }
 
 function Test-InstallPackageInvokeInstallScriptWhenProjectNameHasApostrophe {

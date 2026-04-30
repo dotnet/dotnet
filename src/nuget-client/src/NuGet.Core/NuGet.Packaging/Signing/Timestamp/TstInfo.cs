@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -41,11 +39,11 @@ namespace NuGet.Packaging.Signing
         public MessageImprint MessageImprint { get; }
         public byte[] SerialNumber { get; }
         public DateTimeOffset GenTime { get; }
-        public Accuracy Accuracy { get; }
+        public Accuracy? Accuracy { get; }
         public bool Ordering { get; }
-        public byte[] Nonce { get; } // big endian!
-        public byte[] Tsa { get; }
-        public X509ExtensionCollection Extensions { get; }
+        public byte[]? Nonce { get; } // big endian!
+        public byte[]? Tsa { get; }
+        public X509ExtensionCollection? Extensions { get; }
 
         private TstInfo(
             int version,
@@ -53,11 +51,11 @@ namespace NuGet.Packaging.Signing
             MessageImprint messageImprint,
             byte[] serialNumber,
             DateTimeOffset genTime,
-            Accuracy accuracy,
+            Accuracy? accuracy,
             bool ordering,
-            byte[] nonce,
-            byte[] tsa,
-            X509ExtensionCollection extensions)
+            byte[]? nonce,
+            byte[]? tsa,
+            X509ExtensionCollection? extensions)
         {
             Version = version;
             Policy = policy;
@@ -93,7 +91,7 @@ namespace NuGet.Packaging.Signing
 
             var genTime = tstInfoReader.ReadGeneralizedTime();
 
-            Accuracy accuracy = null;
+            Accuracy? accuracy = null;
 
             if (tstInfoReader.HasTag(DerSequenceReader.ConstructedSequence))
             {
@@ -107,21 +105,21 @@ namespace NuGet.Packaging.Signing
                 ordering = tstInfoReader.ReadBoolean();
             }
 
-            byte[] nonce = null;
+            byte[]? nonce = null;
 
             if (tstInfoReader.HasTag(DerSequenceReader.DerTag.Integer))
             {
                 nonce = tstInfoReader.ReadIntegerBytes();
             }
 
-            byte[] tsa = null;
+            byte[]? tsa = null;
 
             if (tstInfoReader.HasData && tstInfoReader.HasTag(DerSequenceReader.ContextSpecificConstructedTag0))
             {
                 tsa = tstInfoReader.ReadValue((DerSequenceReader.DerTag)DerSequenceReader.ContextSpecificConstructedTag0);
             }
 
-            X509ExtensionCollection extensions = null;
+            X509ExtensionCollection? extensions = null;
 
             if (tstInfoReader.HasData && tstInfoReader.HasTag(DerSequenceReader.ContextSpecificConstructedTag1))
             {

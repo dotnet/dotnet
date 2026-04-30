@@ -5,14 +5,13 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace RazorSyntaxGenerator;
 
-public class Program
+public static class Program
 {
     public static int Main(string[] args)
     {

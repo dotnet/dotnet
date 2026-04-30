@@ -22,7 +22,7 @@ public class GetNonVulnerableAsyncTests
 {
     private static PackageUpdateIO CreatePackageUpdateIO(string solutionRoot)
     {
-        var msbuildUtility = new MSBuildAPIUtility(NullLogger.Instance);
+        var msbuildUtility = new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null);
         var packageUpdateIO = new PackageUpdateIO(solutionRoot, msbuildUtility, TestEnvironmentVariableReader.EmptyInstance);
         return packageUpdateIO;
     }

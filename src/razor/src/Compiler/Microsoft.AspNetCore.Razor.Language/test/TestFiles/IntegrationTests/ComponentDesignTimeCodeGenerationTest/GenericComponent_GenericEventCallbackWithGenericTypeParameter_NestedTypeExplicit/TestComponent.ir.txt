@@ -20,8 +20,8 @@
                     LazyIntermediateToken - (30:1,11 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 Component - (32:2,0 [57] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentTypeArgument - (52:2,20 [6] x:\dir\subdir\Test\TestComponent.cshtml) - TItem
-                        LazyIntermediateToken - (52:2,20 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - TChild
+                        IntermediateToken - (52:2,20 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - TChild
                     ComponentAttribute - (69:2,37 [16] x:\dir\subdir\Test\TestComponent.cshtml) - MyEvent - MyEvent - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (69:2,37 [16] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (TChild x) => {}
+                        IntermediateToken - (69:2,37 [16] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (TChild x) => {}
                 HtmlContent - (89:2,57 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (89:2,57 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n

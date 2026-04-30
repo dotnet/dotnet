@@ -59,13 +59,21 @@ namespace NuGet.Test
                 ResolutionContext = new ResolutionContext()
             };
 
-            var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
+            using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
 
             // Act and Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            // Under CPU contention, cancellation checks in the main loop may fire
+            // before worker tasks convert OperationCanceledException to
+            // InvalidOperationException.  Both outcomes correctly indicate failure.
+            Exception exception = await Record.ExceptionAsync(async () =>
             {
                 await ResolverGather.GatherAsync(context, cts.Token);
             });
+
+            Assert.NotNull(exception);
+            Assert.True(
+                exception is InvalidOperationException || exception is OperationCanceledException,
+                $"Expected InvalidOperationException or OperationCanceledException but got {exception.GetType().Name}: {exception.Message}");
         }
 
         [Fact]
@@ -108,7 +116,7 @@ namespace NuGet.Test
                 ResolutionContext = new ResolutionContext()
             };
 
-            var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(5000));
+            using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(5000));
 
             // Act
             var results = await ResolverGather.GatherAsync(context, cts.Token);

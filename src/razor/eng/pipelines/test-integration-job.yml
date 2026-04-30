@@ -10,11 +10,6 @@ steps:
   - ${{ if eq(parameters.shallowCheckout, true) }}:
     - template: checkout-windows-task.yml
 
-  - task: NodeTool@0
-    displayName: Install Node 10.x
-    inputs:
-      versionSpec: 10.x
-
   # We explicitly pass the VS install directory in azure-pipelines-integration-dartlab.yml
   # We manually create the Hive before deployment to avoid a race condition
   - powershell: eng\scripts\CreateVSHive.ps1

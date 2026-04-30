@@ -941,8 +941,13 @@ namespace NuGet.Packaging.Test
             var reader = GetReader(LicenseExpressionBasic);
 
             // Act
-            var licenseMetadata = reader.GetLicenseMetadata();
+            //var licenseMetadata = reader.GetLicenseMetadata();
 
+#nullable enable
+            LicenseMetadata? licenseMetadata = reader.GetLicenseMetadata();
+            var value = licenseMetadata?.LicenseExpression?.ToString();
+
+#nullable disable
             // Assert
             licenseMetadata.Type.Should().Be(LicenseType.Expression);
             licenseMetadata.LicenseExpression.Should().BeAssignableTo<NuGetLicense>("Because it is a simple license expression");

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,11 +136,11 @@ namespace NuGet.Packaging.Xml
             return elem;
         }
 
-        private static XElement GetXElementFromGroupableItemSets<TSet, TItem>(
+        private static XElement? GetXElementFromGroupableItemSets<TSet, TItem>(
             XNamespace ns,
             IEnumerable<TSet> objectSets,
             Func<TSet, bool> isGroupable,
-            Func<TSet, string> getGroupIdentifer,
+            Func<TSet, string?> getGroupIdentifer,
             Func<TSet, IEnumerable<TItem>> getItems,
             Func<XNamespace, TItem, XElement> getXElementFromItem,
             string parentName,
@@ -233,7 +231,7 @@ namespace NuGet.Packaging.Xml
             return new XElement(ns + "dependency", attributes);
         }
 
-        private static XElement GetXElementFromFrameworkAssemblies(XNamespace ns, IEnumerable<FrameworkAssemblyReference> references)
+        private static XElement? GetXElementFromFrameworkAssemblies(XNamespace ns, IEnumerable<FrameworkAssemblyReference> references)
         {
             if (references == null || !references.Any())
             {
@@ -250,7 +248,7 @@ namespace NuGet.Packaging.Xml
                             null)));
         }
 
-        private static XElement GetXElementFromManifestContentFiles(XNamespace ns, IEnumerable<ManifestContentFiles> contentFiles)
+        private static XElement? GetXElementFromManifestContentFiles(XNamespace ns, IEnumerable<ManifestContentFiles> contentFiles)
         {
             if (contentFiles == null || !contentFiles.Any())
             {
@@ -263,34 +261,32 @@ namespace NuGet.Packaging.Xml
 
         private static XElement GetXElementFromManifestContentFile(XNamespace ns, ManifestContentFiles file)
         {
-            var attributes = new List<XAttribute>();
+            var attributes = new List<XAttribute?>
+            {
+                GetXAttributeFromNameAndValue("include", file.Include),
+                GetXAttributeFromNameAndValue("exclude", file.Exclude),
+                GetXAttributeFromNameAndValue("buildAction", file.BuildAction),
+                GetXAttributeFromNameAndValue("copyToOutput", file.CopyToOutput),
+                GetXAttributeFromNameAndValue("flatten", file.Flatten)
+            };
 
-            attributes.Add(GetXAttributeFromNameAndValue("include", file.Include));
-            attributes.Add(GetXAttributeFromNameAndValue("exclude", file.Exclude));
-            attributes.Add(GetXAttributeFromNameAndValue("buildAction", file.BuildAction));
-            attributes.Add(GetXAttributeFromNameAndValue("copyToOutput", file.CopyToOutput));
-            attributes.Add(GetXAttributeFromNameAndValue("flatten", file.Flatten));
-
-            attributes = attributes.Where(xAtt => xAtt != null).ToList();
-
-            return new XElement(ns + Files, attributes);
+            return new XElement(ns + Files, attributes.Where(xAtt => xAtt != null));
         }
 
         private static XElement GetXElementFromLicenseMetadata(XNamespace ns, LicenseMetadata metadata)
         {
-            var attributes = new List<XAttribute>();
+            var attributes = new List<XAttribute?>();
 
             attributes.Add(GetXAttributeFromNameAndValue(NuspecUtility.Type, metadata.Type.ToString().ToLowerInvariant()));
             if (!metadata.Version.Equals(LicenseMetadata.EmptyVersion))
             {
                 attributes.Add(GetXAttributeFromNameAndValue(NuspecUtility.Version, metadata.Version));
             }
-            attributes = attributes.Where(xAtt => xAtt != null).ToList();
 
-            return new XElement(ns + NuspecUtility.License, metadata.License, attributes);
+            return new XElement(ns + NuspecUtility.License, metadata.License, attributes.Where(xAtt => xAtt != null));
         }
 
-        private static XElement GetXElementFromManifestRepository(XNamespace ns, RepositoryMetadata repository)
+        private static XElement? GetXElementFromManifestRepository(XNamespace ns, RepositoryMetadata repository)
         {
             var attributeList = new List<XAttribute>();
             if (repository != null && !string.IsNullOrEmpty(repository.Type))
@@ -305,12 +301,12 @@ namespace NuGet.Packaging.Xml
 
             if (!string.IsNullOrEmpty(repository?.Branch))
             {
-                attributeList.Add(new XAttribute(NuspecUtility.RepositoryBranch, repository.Branch));
+                attributeList.Add(new XAttribute(NuspecUtility.RepositoryBranch, repository!.Branch!));
             }
 
             if (!string.IsNullOrEmpty(repository?.Commit))
             {
-                attributeList.Add(new XAttribute(NuspecUtility.RepositoryCommit, repository.Commit));
+                attributeList.Add(new XAttribute(NuspecUtility.RepositoryCommit, repository!.Commit!));
             }
 
             if (attributeList.Count > 0)
@@ -335,7 +331,7 @@ namespace NuGet.Packaging.Xml
 
         private static XElement GetXElementFromManifestPackageType(XNamespace ns, PackageType packageType)
         {
-            var attributes = new List<XAttribute>();
+            var attributes = new List<XAttribute?>();
 
             attributes.Add(GetXAttributeFromNameAndValue(NuspecUtility.Name, packageType.Name));
             if (packageType.Version != PackageType.EmptyVersion)
@@ -343,12 +339,10 @@ namespace NuGet.Packaging.Xml
                 attributes.Add(GetXAttributeFromNameAndValue(NuspecUtility.Version, packageType.Version));
             }
 
-            attributes = attributes.Where(xAtt => xAtt != null).ToList();
-
-            return new XElement(ns + NuspecUtility.PackageType, attributes);
+            return new XElement(ns + NuspecUtility.PackageType, attributes.Where(xAtt => xAtt != null));
         }
 
-        private static XAttribute GetXAttributeFromNameAndValue(string name, object value)
+        private static XAttribute? GetXAttributeFromNameAndValue(string name, object? value)
         {
             if (name == null || value == null)
             {
@@ -358,7 +352,7 @@ namespace NuGet.Packaging.Xml
             return new XAttribute(name, value);
         }
 
-        private static void AddElementIfNotNull<T>(XElement parent, XNamespace ns, string name, T value)
+        private static void AddElementIfNotNull<T>(XElement parent, XNamespace ns, string name, T? value)
             where T : class
         {
             if (value != null)
@@ -367,7 +361,7 @@ namespace NuGet.Packaging.Xml
             }
         }
 
-        private static void AddElementIfNotNull<T>(XElement parent, XNamespace ns, string name, T value, Func<T, object> process)
+        private static void AddElementIfNotNull<T>(XElement parent, XNamespace ns, string name, T? value, Func<T, object> process)
             where T : class
         {
             if (value != null)

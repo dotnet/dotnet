@@ -350,12 +350,20 @@ namespace NuGet.ProjectModel
         public string GetHash()
         {
             // Use the faster FNV hash function for hashing unless the user has specified to use the legacy SHA512 hash function
-            using (IHashFunction hashFunc = UseLegacyHashFunction == true ? new Sha512HashFunction() : new FnvHash64Function())
-            using (var writer = new HashObjectWriter(hashFunc))
+            return GetHash(() => UseLegacyHashFunction == true ? new Sha512HashFunction() : new FnvHash64Function());
+        }
+
+        internal string GetHash(Func<IHashFunction> getHashFunction)
+        {
+            if (getHashFunction == null)
             {
-                Write(writer, hashing: true, PackageSpecWriter.Write);
-                return writer.GetHash();
+                throw new ArgumentNullException(nameof(getHashFunction));
             }
+
+            using IHashFunction hashFunc = getHashFunction();
+            using var writer = new HashObjectWriter(hashFunc);
+            Write(writer, hashing: true, PackageSpecWriter.Write);
+            return writer.GetHash();
         }
 
         private void Write(RuntimeModel.IObjectWriter writer, bool hashing, Action<PackageSpec, RuntimeModel.IObjectWriter, bool, IEnvironmentVariableReader> writeAction)

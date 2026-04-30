@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -33,7 +31,7 @@ namespace NuGet.Packaging.Signing.DerEncoding
         internal const byte TagClassMask = 0xC0;
         internal const byte TagNumberMask = 0x1F;
 
-        internal static DateTimeFormatInfo s_validityDateTimeFormatInfo;
+        internal static DateTimeFormatInfo? s_validityDateTimeFormatInfo;
 
         private readonly byte[] _data;
         private readonly int _end;
@@ -47,7 +45,7 @@ namespace NuGet.Packaging.Signing.DerEncoding
             Debug.Assert(data != null, "Data is null");
             Debug.Assert(offset >= 0, "Offset is negative");
 
-            _data = data;
+            _data = data!;
             _position = offset;
             _end = offset + length;
 
@@ -66,8 +64,6 @@ namespace NuGet.Packaging.Signing.DerEncoding
 
         private DerSequenceReader(DerTag tagToEat, byte[] data, int offset, int length)
         {
-            Debug.Assert(data != null, "Data is null");
-
             if (offset < 0 || length < 2 || length > data.Length - offset)
                 throw new CryptographicException(SR.Cryptography_Der_Invalid_Encoding);
 
@@ -458,7 +454,7 @@ namespace NuGet.Packaging.Signing.DerEncoding
             // .NET's string comparisons start by checking the length, so a trailing
             // NULL character which was literally embedded in the DER would cause a
             // failure in .NET whereas it wouldn't have with strcmp.
-            if (value?.Length > 0)
+            if (value.Length > 0)
             {
                 int newLength = value.Length;
 
@@ -498,7 +494,7 @@ namespace NuGet.Packaging.Signing.DerEncoding
                     clone.Calendar.TwoDigitYearMax = 2049;
 
                     return clone;
-                });
+                })!;
 
             if (!DateTime.TryParseExact(
                     decodedTime,

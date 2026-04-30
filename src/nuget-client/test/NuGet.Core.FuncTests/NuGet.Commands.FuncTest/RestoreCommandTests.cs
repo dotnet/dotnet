@@ -4365,6 +4365,66 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.LogMessages.Should().HaveCount(0);
         }
 
+        // P (net10.0)  -> Net472 package
+        // P (net9.0) -> Net472 package
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/14815")]
+        public async Task RestoreCommand_WithAssetTargetFallbackFromProject_WarningsRaisedWhenApplicable()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            var net472pkg = new SimpleTestPackageContext("net472pkg", "1.0.0");
+            net472pkg.AddFile("lib/net472/a.dll");
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, net472pkg);
+
+            var project1Spec = @"
+            {
+              ""frameworks"": {
+                ""net10.0"": {
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                            ""net472pkg"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                },
+                ""net9.0"": {
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                            ""net472pkg"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+            var project1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1Spec);
+
+            // Act
+            var result = await RunRestoreAsync(pathContext, project1);
+
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(2);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be(net472pkg.Id);
+            result.LockFile.Targets[1].Libraries.Should().HaveCount(1);
+            result.LockFile.Targets[1].Libraries[0].Name.Should().Be(net472pkg.Id);
+
+            // Verify log messages
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Level.Should().Be(LogLevel.Warning);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1701);
+            result.LockFile.LogMessages[0].LibraryId.Should().Be(net472pkg.Id);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().HaveCount(2);
+        }
+
         private static void CreateFakeProjectFile(PackageSpec project2spec)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(project2spec.RestoreMetadata.ProjectUniqueName));

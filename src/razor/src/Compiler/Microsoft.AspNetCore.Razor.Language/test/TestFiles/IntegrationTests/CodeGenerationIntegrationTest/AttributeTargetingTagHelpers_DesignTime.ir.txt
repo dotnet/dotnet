@@ -78,7 +78,7 @@
                                 HtmlContent - (168:5,17 [8] AttributeTargetingTagHelpers.cshtml)
                                     LazyIntermediateToken - (168:5,17 [8] AttributeTargetingTagHelpers.cshtml) - Html - checkbox
                             DefaultTagHelperProperty - (187:5,36 [4] AttributeTargetingTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (187:5,36 [4] AttributeTargetingTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (187:5,36 [4] AttributeTargetingTagHelpers.cshtml) - CSharp - true
                             DefaultTagHelperExecute - 
                         HtmlContent - (195:5,44 [6] AttributeTargetingTagHelpers.cshtml)
                             LazyIntermediateToken - (195:5,44 [6] AttributeTargetingTagHelpers.cshtml) - Html - \n    
@@ -94,7 +94,7 @@
                                 HtmlContent - (214:6,17 [8] AttributeTargetingTagHelpers.cshtml)
                                     LazyIntermediateToken - (214:6,17 [8] AttributeTargetingTagHelpers.cshtml) - Html - checkbox
                             DefaultTagHelperProperty - (233:6,36 [4] AttributeTargetingTagHelpers.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                                LazyIntermediateToken - (233:6,36 [4] AttributeTargetingTagHelpers.cshtml) - CSharp - true
+                                IntermediateToken - (233:6,36 [4] AttributeTargetingTagHelpers.cshtml) - CSharp - true
                             DefaultTagHelperHtmlAttribute -  - catchAll - HtmlAttributeValueStyle.DoubleQuotes
                                 HtmlContent - (249:6,52 [2] AttributeTargetingTagHelpers.cshtml)
                                     LazyIntermediateToken - (249:6,52 [2] AttributeTargetingTagHelpers.cshtml) - Html - hi

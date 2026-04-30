@@ -11,7 +11,7 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public class RpmVerifier : LinuxPackageVerifier
+    public class RpmVerifier : PgpVerifier
     {
         public RpmVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".rpm") { }
 

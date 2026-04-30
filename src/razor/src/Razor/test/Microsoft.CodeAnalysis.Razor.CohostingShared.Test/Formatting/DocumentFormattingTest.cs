@@ -1102,6 +1102,47 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
             fileKind: RazorFileKind.Legacy);
     }
 
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/10796")]
+    public async Task Section_BraceOnNextLine_AtColumnZero()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @section Controls
+                {
+                <label>
+                <span>Office</span>
+                </label>
+                <label>
+                <span>Department</span>
+                </label>
+                }
+                """,
+            htmlFormatted: """
+                @section Controls
+                {
+                <label>
+                    <span>Office</span>
+                </label>
+                <label>
+                    <span>Department</span>
+                </label>
+                }
+                """,
+            expected: """
+                @section Controls
+                {
+                    <label>
+                        <span>Office</span>
+                    </label>
+                    <label>
+                        <span>Department</span>
+                    </label>
+                }
+                """,
+            fileKind: RazorFileKind.Legacy);
+    }
+
     [Theory, CombinatorialData]
     public async Task CodeBlock_SpansMultipleLines(bool inGlobalNamespace)
     {
@@ -3382,6 +3423,266 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <em href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                </em>
+                """,
+            htmlFormatted: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                </em>
+                """,
+            expected: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                </em>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag_WithContent()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <em href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                    Hello World
+                </em>
+                """,
+            htmlFormatted: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                    Hello World
+                </em>
+                """,
+            expected: $$"""
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                    Hello World
+                </em>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag_NestedInHtml()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <div>
+                    <em href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </em>
+                </div>
+                """,
+            htmlFormatted: $$"""
+                <div>
+                    <em href="#"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    </em>
+                </div>
+                """,
+            expected: $$"""
+                <div>
+                    <em href="#"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    </em>
+                </div>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortTag_InIfBlock()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                @if (true)
+                {
+                    <em href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </em>
+                }
+                """,
+            htmlFormatted: $$"""
+                @if (true)
+                {
+                <em href="#"
+                    disabled
+                    style="hello"
+                    @onclick="foo()">
+                </em>
+                }
+                """,
+            expected: $$"""
+                @if (true)
+                {
+                    <em href="#"
+                        disabled
+                        style="hello"
+                        @onclick="foo()">
+                    </em>
+                }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <a href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                </a>
+                """,
+            htmlFormatted: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                </a>
+                """,
+            expected: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                </a>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag_WithContent()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <a href="#"
+                            disabled
+                        style="hello"
+                  @onclick="foo()">
+                    Hello World
+                </a>
+                """,
+            htmlFormatted: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                    Hello World
+                </a>
+                """,
+            expected: $$"""
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                    Hello World
+                </a>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag_NestedInHtml()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                <div>
+                    <a href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </a>
+                </div>
+                """,
+            htmlFormatted: $$"""
+                <div>
+                    <a href="#"
+                       disabled
+                       style="hello"
+                       @onclick="foo()">
+                    </a>
+                </div>
+                """,
+            expected: $$"""
+                <div>
+                    <a href="#"
+                       disabled
+                       style="hello"
+                       @onclick="foo()">
+                    </a>
+                </div>
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12938")]
+    public async Task FormatWrappedAttributesOnShortestTag_InIfBlock()
+    {
+        await RunFormattingTestAsync(
+            input: $$"""
+                @if (true)
+                {
+                    <a href="#"
+                                disabled
+                            style="hello"
+                      @onclick="foo()">
+                    </a>
+                }
+                """,
+            htmlFormatted: $$"""
+                @if (true)
+                {
+                <a href="#"
+                   disabled
+                   style="hello"
+                   @onclick="foo()">
+                </a>
+                }
+                """,
+            expected: $$"""
+                @if (true)
+                {
+                    <a href="#"
+                       disabled
+                       style="hello"
+                       @onclick="foo()">
+                    </a>
+                }
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2471065")]
     public Task MultipleHtmlElementsInCSharpCode()
         => RunFormattingTestAsync(
@@ -4755,6 +5056,475 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                     }
                 }
                 """,
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() =>
+                        {
+                            StateHasChanged();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => {
+                            StateHasChanged();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda2()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button foo="bar"
+                        @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button foo="bar"
+                        @onclick="() =>
+                        {
+                            StateHasChanged();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda2_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button foo="bar"
+                        @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button foo="bar"
+                        @onclick="() => {
+                            StateHasChanged();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda3()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                            {
+                                StateHasChanged();
+                            }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda3_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="()=>{
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() => {
+                                StateHasChanged();
+                            }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda4()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                            <button foo="bar"
+                                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                            </button>
+                    </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                            {
+                                StateHasChanged();
+                            }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda4_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                            <button foo="bar"
+                                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                            </button>
+                    </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="()=>{
+                                                             StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() => {
+                                StateHasChanged();
+                            }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() =>
+                        {
+                            StateHasChanged();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => {
+                            StateHasChanged();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine_NestedAttribute()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                {
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                            {
+                                StateHasChanged();
+                            }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_BraceOnNextLine_NestedAttribute_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                <button foo="bar"
+                @onclick="() =>
+                {
+                StateHasChanged();}">
+                </button>
+                </div>
+                """,
+            htmlFormatted: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() =>
+                {
+                StateHasChanged();}">
+                    </button>
+                </div>
+                """,
+            expected: """
+                <div>
+                    <button foo="bar"
+                            @onclick="() => {
+                                StateHasChanged();
+                            }">
+                    </button>
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_ContentAfterOpenBrace()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() =>
+                        {
+                            foo();
+                            bar();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_ContentAfterOpenBrace_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="() => { foo();
+                bar(); }">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => {
+                            foo();
+                            bar();
+                        }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_SingleLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => { foo(); }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: true),
+            fileKind: RazorFileKind.Component);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12785")]
+    public async Task FormatEventHandlerAttributes_BlockBodiedLambda_SingleLine_NoNewLineBeforeOpenBraceInLambdaExpressionBody()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            htmlFormatted: """
+                <button @onclick="()=>{foo();}">
+                </button>
+                """,
+            expected: """
+                <button @onclick="() => { foo(); }">
+                </button>
+                """,
+            csharpSyntaxFormattingOptions: GetNewLineBeforeBraceInLambdaExpressionOptions(newLineBeforeBraceInLambda: false),
             fileKind: RazorFileKind.Component);
     }
 
@@ -7677,6 +8447,54 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9826")]
+    public async Task CodeBlock_ArrayInitializers_InsideHtmlElement()
+    {
+        // The C# Formatter doesn't touch these types of initializers, so nor do we. This test
+        // just verifies we don't regress things and start moving code around.
+        await RunFormattingTestAsync(
+            input: """
+                <table>
+                    @{
+                        var minimum = "";
+                        var maximum = "";
+                        var dateOptions = new[,]
+                        {
+                            {$"Set to minimum ({minimum})", minimum},
+                            {$"Set to maximum ({maximum})", maximum},
+                        };
+                    }
+                </table>
+                """,
+            htmlFormatted: """
+                <table>
+                    @{
+                    var minimum = "";
+                    var maximum = "";
+                    var dateOptions = new[,]
+                    {
+                    {$"Set to minimum ({minimum})", minimum},
+                    {$"Set to maximum ({maximum})", maximum},
+                    };
+                    }
+                </table>
+                """,
+            expected: """
+                <table>
+                    @{
+                        var minimum = "";
+                        var maximum = "";
+                        var dateOptions = new[,]
+                        {
+                            {$"Set to minimum ({minimum})", minimum},
+                            {$"Set to maximum ({maximum})", maximum},
+                        };
+                    }
+                </table>
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/6092")]
     public async Task CodeBlock_CollectionArrayInitializers()
     {
@@ -9717,6 +10535,273 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_ComponentAttributesWithExplicitExpression()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                TValue="string"
+                                              Multiple="false"
+                                   Items="@Digits"
+                                              SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@
+                <FluentAutocomplete Id="my-list"
+                                    TOption="string"
+                                    TValue="string"
+                                    Multiple="false"
+                                    Items="@Digits"
+                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                                    TOption="string"
+                                                    TValue="string"
+                                                    Multiple="false"
+                                                    Items="@Digits"
+                                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_ComponentAttributesWithExplicitExpression_IndentByOne()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                TValue="string"
+                                              Multiple="false"
+                                   Items="@Digits"
+                                              SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@
+                <FluentAutocomplete Id="my-list"
+                                    TOption="string"
+                                    TValue="string"
+                                    Multiple="false"
+                                    Items="@Digits"
+                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                            TOption="string"
+                            TValue="string"
+                            Multiple="false"
+                            Items="@Digits"
+                            SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByOne);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_ComponentAttributesWithExplicitExpression_IndentByTwo()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                TValue="string"
+                                              Multiple="false"
+                                   Items="@Digits"
+                                              SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@
+                <FluentAutocomplete Id="my-list"
+                                    TOption="string"
+                                    TValue="string"
+                                    Multiple="false"
+                                    Items="@Digits"
+                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                TOption="string"
+                                TValue="string"
+                                Multiple="false"
+                                Items="@Digits"
+                                SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByTwo);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_NestedComponentAttributesWithExplicitExpression()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<div>
+                                <FluentAutocomplete Id="my-list"
+                                                TOption="string"
+                                        TValue="string"
+                                                      Multiple="false"
+                                           Items="@Digits"
+                                                      SelectedItem="@("Three")" />
+                        </div>);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<div>
+                    <FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                        TValue="string"
+                                        Multiple="false"
+                                        Items="@Digits"
+                                        SelectedItem="@("Three")" />
+                </div>);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<div>
+                            <FluentAutocomplete Id="my-list"
+                                                TOption="string"
+                                                TValue="string"
+                                                Multiple="false"
+                                                Items="@Digits"
+                                                SelectedItem="@("Three")" />
+                        </div>);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/9119")]
     public async Task CollectionInitializers()
     {
@@ -10038,11 +11123,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="new DefaultTitleContentAreaViewModel
-                        {
-                            Title = Model.CurrentPage.TestimonialsTitle,
-                            ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                            ChildCssClass = string.Empty
-                        }" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             }" />
                 </div>
                 """,
             fileKind: RazorFileKind.Legacy);
@@ -10113,11 +11198,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
 
                 <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                          model="@(new DefaultTitleContentAreaViewModel
-                    {
-                        Title = Model.CurrentPage.TestimonialsTitle,
-                        ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                        ChildCssClass = string.Empty
-                    })" />
+                         {
+                             Title = Model.CurrentPage.TestimonialsTitle,
+                             ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                             ChildCssClass = string.Empty
+                         })" />
 
                 <partial model="@(new DefaultTitleContentAreaViewModel
                          {
@@ -10129,11 +11214,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                        {
-                            Title = Model.CurrentPage.TestimonialsTitle,
-                            ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                            ChildCssClass = string.Empty
-                        })" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
                 </div>
                 """);
     }
@@ -10163,11 +11248,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                                 {
-                                     Title = Model.CurrentPage.TestimonialsTitle,
-                                     ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                     ChildCssClass = string.Empty
-                                 })" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
                 </div>
                 """;
         await RunFormattingTestAsync(
@@ -10193,11 +11278,11 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 <div>
                     <partial name="~/Views/Shared/_TestimonialRow.cshtml"
                              model="@(new DefaultTitleContentAreaViewModel
-                                 {
-                                     Title = Model.CurrentPage.TestimonialsTitle,
-                                     ContentArea = Model.CurrentPage.TestimonialsContentArea,
-                                     ChildCssClass = string.Empty
-                                 })" />
+                             {
+                                 Title = Model.CurrentPage.TestimonialsTitle,
+                                 ContentArea = Model.CurrentPage.TestimonialsContentArea,
+                                 ChildCssClass = string.Empty
+                             })" />
                 </div>
                 """,
             expected: code);
@@ -11772,4 +12857,211 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
                 </style>
                 """,
             validateHtmlFormattedMatchesWebTools: false);
+
+    [Theory]
+    [CombinatorialData]
+    public Task ScriptTagTagHelper(bool scriptTagHelper)
+    {
+        var directive = scriptTagHelper
+            ? "@addTagHelper *, SomeProject"
+            : "";
+        return RunFormattingTestAsync(
+                input: $$"""
+                    {{directive}}
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropdown-item').click(function (e) {
+                                e.preventDefault();
+                                var url = $(this).attr('href');
+                                $.ajax({
+                                    url: url,
+                                                method: 'POST',
+                                    success: function (response) {
+                                        alert('Content published successfully!');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error publishing content: ' + error);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    """,
+                htmlFormatted: $$"""
+                    {{directive}}
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropdown-item').click(function (e) {
+                                e.preventDefault();
+                                var url = $(this).attr('href');
+                                $.ajax({
+                                    url: url,
+                                    method: 'POST',
+                                    success: function (response) {
+                                        alert('Content published successfully!');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error publishing content: ' + error);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    """,
+                expected: $$"""
+                    {{directive}}
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('.dropdown-item').click(function (e) {
+                                e.preventDefault();
+                                var url = $(this).attr('href');
+                                $.ajax({
+                                    url: url,
+                                    method: 'POST',
+                                    success: function (response) {
+                                        alert('Content published successfully!');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error publishing content: ' + error);
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    """,
+                validateHtmlFormattedMatchesWebTools: false, // We don't have JS formatting in tests, so the method param wouldn't really move
+                fileKind: RazorFileKind.Legacy,
+                additionalFiles:
+                [
+                    (FilePath("ScriptTagHelper.cs"), """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("script")]
+                        public class ScriptTagHelper : TagHelper
+                        {
+                        }
+                        """)
+                ]);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public Task VoidTagTagHelper(bool useTagHelper)
+    {
+        var directive = useTagHelper
+            ? "@addTagHelper *, SomeProject"
+            : "";
+        return RunFormattingTestAsync(
+                input: $$"""
+                    {{directive}}
+
+                    <div>
+                        <input type="text">
+                        This shouldn't be indented.
+
+                        <input type="text" @bind="Value">
+                        Neither should this
+                    </div>
+                    """,
+                htmlFormatted: $$"""
+                    {{directive}}
+
+                    <div>
+                        <input type="text">
+                        This shouldn't be indented.
+                    
+                        <input type="text" @bind="Value">
+                        Neither should this
+                    </div>
+                    """,
+                expected: $$"""
+                    {{directive}}
+
+                    <div>
+                        <input type="text">
+                        This shouldn't be indented.
+                    
+                        <input type="text" @bind="Value">
+                        Neither should this
+                    </div>
+                    """,
+                validateHtmlFormattedMatchesWebTools: false,
+                fileKind: RazorFileKind.Legacy,
+                additionalFiles:
+                [
+                    (FilePath("InputTagHelper.cs"), """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("input")]
+                        public class InputTagHelper : TagHelper
+                        {
+                        }
+                        """)
+                ]);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/12952")]
+    public async Task RazorCommentClosingWithHtmlOnSameLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div class="table-container">
+                    <table>
+                        <thead>
+                @*
+                            <tr class="row-1">
+                                <th>Group A</th>
+                            </tr>
+                 *@         <tr>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                """,
+            htmlFormatted: """
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            @*
+                            <tr class="row-1">
+                            <th>Group A</th>
+                            </tr>
+                            *@
+                            <tr>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                """,
+            expected: """
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            @*
+                            <tr class="row-1">
+                                <th>Group A</th>
+                            </tr>
+                 *@
+                            <tr>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                """);
+    }
+
+    private static RazorCSharpSyntaxFormattingOptions GetNewLineBeforeBraceInLambdaExpressionOptions(bool newLineBeforeBraceInLambda)
+        => RazorCSharpSyntaxFormattingOptions.Default with
+        {
+            NewLines = newLineBeforeBraceInLambda
+                ? RazorCSharpSyntaxFormattingOptions.Default.NewLines | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+                : RazorCSharpSyntaxFormattingOptions.Default.NewLines & ~RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody
+        };
 }

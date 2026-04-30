@@ -75,6 +75,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private bool _isVersionCheckRequired = true;
     private string? _dotnetHostPath;
     private bool _captureOutput;
+    private bool _createNoNewWindow;
     private protected TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
@@ -192,6 +193,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         _hostExitedEventRaised = false;
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
         _captureOutput = runConfiguration.CaptureStandardOutput;
+        _createNoNewWindow = runConfiguration.CreateNoNewWindow;
         var forwardOutput = runConfiguration.ForwardStandardOutput;
         _testHostManagerCallbacks = new TestHostManagerCallbacks(forwardOutput, logger);
 
@@ -648,6 +650,8 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                     return PlatformArchitecture.Ppc64le;
                 case Architecture.RiscV64:
                     return PlatformArchitecture.RiscV64;
+                case Architecture.LoongArch64:
+                    return PlatformArchitecture.LoongArch64;
                 case Architecture.AnyCPU:
                 case Architecture.Default:
                 default:
@@ -667,6 +671,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 Architecture.S390x => platformAchitecture == PlatformArchitecture.S390x,
                 Architecture.Ppc64le => platformAchitecture == PlatformArchitecture.Ppc64le,
                 Architecture.RiscV64 => platformAchitecture == PlatformArchitecture.RiscV64,
+                Architecture.LoongArch64 => platformAchitecture == PlatformArchitecture.LoongArch64,
                 _ => throw new TestPlatformException($"Invalid target architecture '{targetArchitecture}'"),
             };
 
@@ -844,6 +849,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            EqtTrace.Verbose("DotnetTestHostManager: Launching testhost with CreateNoWindow={0}", _createNoNewWindow);
 
             var outputCallback = _captureOutput ? OutputReceivedCallback : null;
             _testHostProcess = _processHelper.LaunchProcess(
@@ -853,7 +859,8 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 testHostStartInfo.EnvironmentVariables,
                 ErrorReceivedCallback,
                 ExitCallBack,
-                outputCallback) as Process;
+                outputCallback,
+                _createNoNewWindow) as Process;
         }
         else
         {

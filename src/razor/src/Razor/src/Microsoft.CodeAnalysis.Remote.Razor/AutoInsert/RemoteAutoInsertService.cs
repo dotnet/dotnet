@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Response = Microsoft.CodeAnalysis.Razor.Remote.RemoteResponse<Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert.RemoteAutoInsertTextEdit?>;
@@ -30,6 +31,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
 
     private readonly IAutoInsertService _autoInsertService = args.ExportProvider.GetExportedValue<IAutoInsertService>();
     private readonly IRazorFormattingService _razorFormattingService = args.ExportProvider.GetExportedValue<IRazorFormattingService>();
+    private readonly IClientSettingsManager _clientSettingsManager = args.ExportProvider.GetExportedValue<IClientSettingsManager>();
 
     protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferHtmlInAttributeValuesDocumentPositionInfoStrategy.Instance;
 
@@ -38,7 +40,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         DocumentId documentId,
         LinePosition linePosition,
         string character,
-        RemoteAutoInsertOptions options,
+        RazorFormattingOptions options,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
@@ -55,7 +57,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         RemoteDocumentContext remoteDocumentContext,
         LinePosition linePosition,
         string character,
-        RemoteAutoInsertOptions options,
+        RazorFormattingOptions options,
         CancellationToken cancellationToken)
     {
         var sourceText = await remoteDocumentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
@@ -66,6 +68,8 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
 
         var codeDocument = await remoteDocumentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
+        var clientSettings = _clientSettingsManager.GetClientSettings();
+
         // Always try our own service first, regardless of language
         // E.g. if ">" is typed for html tag, it's actually our auto-insert provider
         // that adds closing tag instead of HTML even though we are in HTML
@@ -73,7 +77,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
                 codeDocument,
                 linePosition.ToPosition(),
                 character,
-                options.EnableAutoClosingTags,
+                clientSettings.AdvancedSettings.AutoClosingTags,
                 out var insertTextEdit))
         {
             return Response.Results(RemoteAutoInsertTextEdit.FromLspInsertTextEdit(insertTextEdit));
@@ -110,7 +114,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         RemoteDocumentContext remoteDocumentContext,
         LinePosition mappedPosition,
         string character,
-        RemoteAutoInsertOptions options,
+        RazorFormattingOptions options,
         CancellationToken cancellationToken)
     {
         // Special case for C# where we use AutoInsert for two purposes:
@@ -124,7 +128,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
         // Therefore we are just going to no-op if the user has turned off on type formatting. Maybe one day we can make this
         // smarter, but at least the user can always turn the setting back on, type their "///", and turn it back off, without
         // having to restart VS. Not the worst compromise (hopefully!)
-        if (!options.FormatOnType)
+        if (!_clientSettingsManager.GetClientSettings().AdvancedSettings.FormatOnType)
         {
             return Response.NoFurtherHandling;
         }
@@ -142,7 +146,7 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
             generatedDocument,
             mappedPosition,
             character,
-            options.FormattingOptions.ToLspFormattingOptions(),
+            options.ToLspFormattingOptions(),
             cancellationToken
         ).ConfigureAwait(false);
 
@@ -151,21 +155,19 @@ internal sealed class RemoteAutoInsertService(in ServiceArgs args)
             return Response.NoFurtherHandling;
         }
 
-        var razorFormattingOptions = options.FormattingOptions;
-
         var csharpSourceText = await remoteDocumentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
         var csharpTextChange = new TextChange(csharpSourceText.GetTextSpan(autoInsertResponseItem.TextEdit.Range), autoInsertResponseItem.TextEdit.NewText);
         var mappedChange = autoInsertResponseItem.TextEditFormat == InsertTextFormat.Snippet
             ? await _razorFormattingService.TryGetCSharpSnippetFormattingEditAsync(
                 remoteDocumentContext,
                 [csharpTextChange],
-                razorFormattingOptions,
+                options,
                 cancellationToken)
             .ConfigureAwait(false)
             : await _razorFormattingService.TryGetSingleCSharpEditAsync(
                 remoteDocumentContext,
                 csharpTextChange,
-                razorFormattingOptions,
+                options,
                 cancellationToken)
             .ConfigureAwait(false);
 

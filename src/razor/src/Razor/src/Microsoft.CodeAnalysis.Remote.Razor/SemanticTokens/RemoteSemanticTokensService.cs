@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
@@ -21,29 +22,28 @@ internal sealed partial class RemoteSemanticTokensService(in ServiceArgs args) :
     }
 
     private readonly IRazorSemanticTokensInfoService _semanticTokensInfoService = args.ExportProvider.GetExportedValue<IRazorSemanticTokensInfoService>();
+    private readonly IClientSettingsManager _clientSettingsManager = args.ExportProvider.GetExportedValue<IClientSettingsManager>();
 
     public ValueTask<int[]?> GetSemanticTokensDataAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         DocumentId razorDocumentId,
         LinePositionSpan span,
-        bool colorBackground,
         Guid correlationId,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
             razorDocumentId,
-            context => GetSemanticTokensDataAsync(context, span, colorBackground, correlationId, cancellationToken),
+            context => GetSemanticTokensDataAsync(context, span, correlationId, cancellationToken),
             cancellationToken);
 
     private async ValueTask<int[]?> GetSemanticTokensDataAsync(
         RemoteDocumentContext context,
         LinePositionSpan span,
-        bool colorBackground,
         Guid correlationId,
         CancellationToken cancellationToken)
     {
         return await _semanticTokensInfoService
-            .GetSemanticTokensAsync(context, span, colorBackground, correlationId, cancellationToken)
+            .GetSemanticTokensAsync(context, span, _clientSettingsManager.GetClientSettings().AdvancedSettings.ColorBackground, correlationId, cancellationToken)
             .ConfigureAwait(false);
     }
 }

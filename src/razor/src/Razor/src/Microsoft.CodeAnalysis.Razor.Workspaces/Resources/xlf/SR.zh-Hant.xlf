@@ -79,6 +79,11 @@
         <target state="translated">將放棄格式化作業，因為它將新增或删除非空白內容。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">格式錯誤。為避免檔案損壞，已停止後續作業，請回報此問題。詳情請參閱: https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">產生非同步事件處理常式 '{0}'</target>

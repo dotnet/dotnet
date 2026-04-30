@@ -12,93 +12,82 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     internal static class RazorDiagnostics
     {
-        public static readonly DiagnosticDescriptor InvalidRazorLangVersionDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.InvalidRazorLangVersionRuleId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.InvalidRazorLangTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.InvalidRazorLangMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor InvalidRazorLangVersionDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.InvalidRazorLangVersionRuleId,
+                nameof(RazorSourceGeneratorResources.InvalidRazorLangTitle),
+                nameof(RazorSourceGeneratorResources.InvalidRazorLangMessage),
+                DiagnosticSeverity.Error);
 
-        public static readonly DiagnosticDescriptor ReComputingTagHelpersDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.ReComputingTagHelpersRuleId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.RecomputingTagHelpersTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.RecomputingTagHelpersMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Info,
-            isEnabledByDefault: true);
+        public static readonly DiagnosticDescriptor InvalidRazorWarningLevelDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.InvalidRazorWarningLevelRuleId,
+                nameof(RazorSourceGeneratorResources.InvalidRazorWarningLevelTitle),
+                nameof(RazorSourceGeneratorResources.InvalidRazorWarningLevelMessage),
+                DiagnosticSeverity.Error);
 
-        public static readonly DiagnosticDescriptor TargetPathNotProvided = new DiagnosticDescriptor(
-            DiagnosticIds.TargetPathNotProvidedRuleId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.TargetPathNotProvidedTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.TargetPathNotProvidedMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor ReComputingTagHelpersDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.ReComputingTagHelpersRuleId,
+                nameof(RazorSourceGeneratorResources.RecomputingTagHelpersTitle),
+                nameof(RazorSourceGeneratorResources.RecomputingTagHelpersMessage),
+                DiagnosticSeverity.Info);
 
-        public static readonly DiagnosticDescriptor GeneratedOutputFullPathNotProvided = new DiagnosticDescriptor(
-            DiagnosticIds.GeneratedOutputFullPathNotProvidedRuleId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.GeneratedOutputFullPathNotProvidedTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.GeneratedOutputFullPathNotProvidedMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor TargetPathNotProvided =
+            CreateDescriptor(
+                DiagnosticIds.TargetPathNotProvidedRuleId,
+                nameof(RazorSourceGeneratorResources.TargetPathNotProvidedTitle),
+                nameof(RazorSourceGeneratorResources.TargetPathNotProvidedMessage),
+                DiagnosticSeverity.Warning);
 
-        public static readonly DiagnosticDescriptor CurrentCompilationReferenceNotFoundDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.CurrentCompilationReferenceNotFoundId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.CurrentCompilationReferenceNotFoundTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.CurrentCompilationReferenceNotFoundMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor GeneratedOutputFullPathNotProvided =
+            CreateDescriptor(
+                DiagnosticIds.GeneratedOutputFullPathNotProvidedRuleId,
+                nameof(RazorSourceGeneratorResources.GeneratedOutputFullPathNotProvidedTitle),
+                nameof(RazorSourceGeneratorResources.GeneratedOutputFullPathNotProvidedMessage),
+                DiagnosticSeverity.Warning);
 
-        public static readonly DiagnosticDescriptor SkippingGeneratedFileWriteDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.SkippingGeneratedFileWriteId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.SkippingGeneratedFileWriteTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.SkippingGeneratedFileWriteMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor CurrentCompilationReferenceNotFoundDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.CurrentCompilationReferenceNotFoundId,
+                nameof(RazorSourceGeneratorResources.CurrentCompilationReferenceNotFoundTitle),
+                nameof(RazorSourceGeneratorResources.CurrentCompilationReferenceNotFoundMessage),
+                DiagnosticSeverity.Warning);
 
-        public static readonly DiagnosticDescriptor SourceTextNotFoundDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.SourceTextNotFoundId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.SourceTextNotFoundTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.SourceTextNotFoundMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Error,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor SkippingGeneratedFileWriteDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.SkippingGeneratedFileWriteId,
+                nameof(RazorSourceGeneratorResources.SkippingGeneratedFileWriteTitle),
+                nameof(RazorSourceGeneratorResources.SkippingGeneratedFileWriteMessage),
+                DiagnosticSeverity.Warning);
 
-        public static readonly DiagnosticDescriptor UnexpectedProjectItemReadCallDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.UnexpectedProjectItemReadCallId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.UnexpectedProjectItemReadCallTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.UnexpectedProjectItemReadCallMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Error,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor SourceTextNotFoundDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.SourceTextNotFoundId,
+                nameof(RazorSourceGeneratorResources.SourceTextNotFoundTitle),
+                nameof(RazorSourceGeneratorResources.SourceTextNotFoundMessage),
+                DiagnosticSeverity.Error);
 
-        public static readonly DiagnosticDescriptor InvalidRazorContextComputedDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.InvalidRazorContextComputedId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.InvalidRazorContextComputedTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.InvalidRazorContextComputedMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Info,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor UnexpectedProjectItemReadCallDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.UnexpectedProjectItemReadCallId,
+                nameof(RazorSourceGeneratorResources.UnexpectedProjectItemReadCallTitle),
+                nameof(RazorSourceGeneratorResources.UnexpectedProjectItemReadCallMessage),
+                DiagnosticSeverity.Error);
 
-        public static readonly DiagnosticDescriptor MetadataReferenceNotProvidedDescriptor = new DiagnosticDescriptor(
-            DiagnosticIds.MetadataReferenceNotProvidedId,
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.MetadataReferenceNotProvidedTitle), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            new LocalizableResourceString(nameof(RazorSourceGeneratorResources.MetadataReferenceNotProvidedMessage), RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
-            "RazorSourceGenerator",
-            DiagnosticSeverity.Info,
-            isEnabledByDefault: true
-        );
+        public static readonly DiagnosticDescriptor InvalidRazorContextComputedDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.InvalidRazorContextComputedId,
+                nameof(RazorSourceGeneratorResources.InvalidRazorContextComputedTitle),
+                nameof(RazorSourceGeneratorResources.InvalidRazorContextComputedMessage),
+                DiagnosticSeverity.Info);
+
+        public static readonly DiagnosticDescriptor MetadataReferenceNotProvidedDescriptor =
+            CreateDescriptor(
+                DiagnosticIds.MetadataReferenceNotProvidedId,
+                nameof(RazorSourceGeneratorResources.MetadataReferenceNotProvidedTitle),
+                nameof(RazorSourceGeneratorResources.MetadataReferenceNotProvidedMessage),
+                DiagnosticSeverity.Info);
 
         public static Diagnostic AsDiagnostic(this RazorDiagnostic razorDiagnostic)
         {
@@ -136,6 +125,17 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             }
 
             return Diagnostic.Create(descriptor, location);
+        }
+
+        private static DiagnosticDescriptor CreateDescriptor(string id, string titleResourceName, string messageResourceName, DiagnosticSeverity defaultSeverity)
+        {
+            return new DiagnosticDescriptor(
+                id,
+                new LocalizableResourceString(titleResourceName, RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
+                new LocalizableResourceString(messageResourceName, RazorSourceGeneratorResources.ResourceManager, typeof(RazorSourceGeneratorResources)),
+                "RazorSourceGenerator",
+                defaultSeverity,
+                isEnabledByDefault: true);
         }
     }
 }

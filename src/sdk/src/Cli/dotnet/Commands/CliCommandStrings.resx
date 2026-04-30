@@ -651,11 +651,6 @@ Tool '{1}' (version '{2}') was successfully installed. Entry is added to the man
   <data name="PackageRemoveSpecifyExactlyOnePackageReference" xml:space="preserve">
     <value>Specify only one package reference to remove.</value>
   </data>
-  <data name="DirectivesRemoved" xml:space="preserve">
-    <value>Removed '{0}' directives ({1}) for '{2}' from: {3}</value>
-    <comment>{0} is a directive kind (like '#:package'). {1} is number of removed directives.
-    {2} is directive key (e.g., package name). {3} is file path from which directives were removed.</comment>
-  </data>
   <data name="PackagesCommandNameCollisionConclusion" xml:space="preserve">
     <value>Command names conflict. Command names are case insensitive.
 {0}</value>
@@ -849,6 +844,28 @@ Tool '{1}' (version '{2}') was successfully installed. Entry is added to the man
     <value>Dry run: would create file: {0}</value>
     <comment>{0} is the file full path.</comment>
   </data>
+  <data name="ProjectConvertAskDeleteSource" xml:space="preserve">
+    <value>Delete all source files after conversion?</value>
+    <comment>Asking whether to irreversibly delete the entry point file and all files included via #:include directives and default item globbing.</comment>
+  </data>
+  <data name="ProjectConvertDeletedSourceFile" xml:space="preserve">
+    <value>Deleted source file: {0}</value>
+    <comment>{0} is the source file path.</comment>
+  </data>
+  <data name="ProjectConvertWouldDeleteSourceFile" xml:space="preserve">
+    <value>Dry run: would delete source file: {0}</value>
+    <comment>{0} is the source file path.</comment>
+  </data>
+  <data name="ProjectConvertDeleteSourceChoiceYes" xml:space="preserve">
+    <value>Yes - delete all source files</value>
+  </data>
+  <data name="ProjectConvertDeleteSourceChoiceNo" xml:space="preserve">
+    <value>No - keep all source files</value>
+  </data>
+  <data name="ProjectConvertDuplicateRefFolderName" xml:space="preserve">
+    <value>Multiple referenced files would be converted into the same directory: '{0}'</value>
+    <comment>{0} is the target directory path.</comment>
+  </data>
   <data name="ProjectsHeader" xml:space="preserve">
     <value>Project(s)</value>
   </data>
@@ -901,6 +918,9 @@ Tool '{1}' (version '{2}') was successfully installed. Entry is added to the man
   <data name="RestoreSuccessful" xml:space="preserve">
     <value>Tool '{0}' (version '{1}') was restored. Available commands: {2}</value>
   </data>
+  <data name="RestoreNewVersionAvailable" xml:space="preserve">
+    <value>A newer version of tool '{0}' is available (version '{1}'). Consider updating your manifest file.</value>
+  </data>
   <data name="RollbackDefinitionContainsExtraneousManifestIds" xml:space="preserve">
     <value>Invalid rollback definition. The manifest IDs in rollback definition {0} do not match installed manifest IDs {1}.</value>
   </data>
@@ -943,6 +963,22 @@ Tool '{1}' (version '{2}') was successfully installed. Entry is added to the man
   </data>
   <data name="RunCommandExceptionNoProjects" xml:space="preserve">
     <value>Couldn't find a project to run. Ensure a project exists in {0}, or pass the path to the project using {1}.</value>
+  </data>
+  <data name="RunCommandWarningFileArgumentPassedToProject" xml:space="preserve">
+    <value>Warning: '{0}' appears to be a file-based app but was passed as an argument to the project '{1}'. To run it as a file-based app, use 'dotnet run --file {0}'. To pass it as an application argument, use 'dotnet run -- {0}' to suppress this warning.</value>
+    <comment>{0} is the file path argument. {1} is the project file path.{Locked="dotnet run --file"}{Locked="dotnet run --"}</comment>
+  </data>
+  <data name="WarningFileArgumentPassedToMSBuild" xml:space="preserve">
+    <value>Warning: '{0}' appears to be a file-based app but was treated as an MSBuild argument. To treat it as a file-based app, use 'dotnet {1} {0}'.</value>
+    <comment>{0} is the file path argument. {1} is the command name (e.g. build, clean, publish).{Locked="dotnet"}</comment>
+  </data>
+  <data name="WarningCsFileArgumentPassedToMSBuild" xml:space="preserve">
+    <value>Warning: '{0}' looks like a file-based app but the file was not found, and it was treated as an MSBuild argument.</value>
+    <comment>{0} is the .cs file path argument.</comment>
+  </data>
+  <data name="RunCommandWarningCsFileArgumentPassedToProject" xml:space="preserve">
+    <value>Warning: '{0}' looks like a file-based app but the file was not found, and it was passed as an argument to the project '{1}'. To pass it as an application argument, use 'dotnet run -- {0}' to suppress this warning.</value>
+    <comment>{0} is the .cs file path argument. {1} is the project file path.{Locked="dotnet run --"}</comment>
   </data>
   <data name="RunCommandExceptionUnableToRun" xml:space="preserve">
     <value>Unable to proceed with project '{0}'.
@@ -1473,10 +1509,6 @@ and the corresponding package Ids for installed tools using the command
   <data name="ZeroTestsRan" xml:space="preserve">
     <value>Zero tests ran</value>
   </data>
-  <data name="ToolDownloadConfirmationPrompt" xml:space="preserve">
-    <value>Tool package {0}@{1} will be downloaded from source {2}.
-Proceed?</value>
-  </data>
   <data name="ConfirmationPromptYesValue" xml:space="preserve">
     <value>y</value>
     <comment>For a command line connfirmation prompt, this is the key that should be pressed for "yes", ie to agree.</comment>
@@ -1487,13 +1519,6 @@ Proceed?</value>
   </data>
   <data name="ConfirmationPromptInvalidChoiceMessage" xml:space="preserve">
     <value>Please type '{0}' for yes or '{1}' for no.</value>
-  </data>
-  <data name="ToolDownloadCanceled" xml:space="preserve">
-    <value>Tool package download canceled</value>
-  </data>
-  <data name="ToolDownloadNeedsConfirmation" xml:space="preserve">
-    <value>Tool package download needs confirmation. Run in interactive mode or use the "--yes" command-line option to confirm.</value>
-    <comment>{Locked="--yes"}</comment>
   </data>
   <data name="TestCommandUseSolution" xml:space="preserve">
     <value>Specifying a solution for 'dotnet test' should be via '--solution'.</value>

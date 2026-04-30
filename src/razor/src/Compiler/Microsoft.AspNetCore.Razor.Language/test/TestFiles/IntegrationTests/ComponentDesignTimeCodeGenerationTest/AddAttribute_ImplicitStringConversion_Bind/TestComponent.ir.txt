@@ -16,17 +16,17 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [150] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (55:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml) - BoolParameter - BoolParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (55:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true
+                        IntermediateToken - (55:1,19 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - true
                     ComponentAttribute - (83:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - StringParameter - StringParameter - AttributeStructure.DoubleQuotes
                         HtmlContent - (83:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (83:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - str
+                            IntermediateToken - (83:2,21 [3] x:\dir\subdir\Test\TestComponent.cshtml) - Html - str
                     ComponentAttribute - (112:3,23 [9] x:\dir\subdir\Test\TestComponent.cshtml) - DelegateParameter - DelegateParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (112:3,23 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                        IntermediateToken - (112:3,23 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                     ComponentAttribute - (145:4,21 [1] x:\dir\subdir\Test\TestComponent.cshtml) - ObjectParameter - ObjectParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (145:4,21 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
+                        IntermediateToken - (145:4,21 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
                     ComponentAttribute - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - MyParameter - MyParameter - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
+                            IntermediateToken - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
                     ComponentAttribute - (32:0,32 [1] x:\dir\subdir\Test\TestComponent.cshtml) - MyParameterChanged - MyParameterChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 

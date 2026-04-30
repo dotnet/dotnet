@@ -60,5 +60,10 @@ namespace NuGet.Commands
         /// </summary>
         public CancellationToken Token { get; set; }
 
+        /// <summary>
+        /// When true, allow certificates with untrusted roots through store discovery.
+        /// </summary>
+        public bool AllowUntrustedRoot { get; set; }
+
     }
 }

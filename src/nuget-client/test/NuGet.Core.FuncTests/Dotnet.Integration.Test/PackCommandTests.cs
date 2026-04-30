@@ -6396,5 +6396,168 @@ namespace ClassLibrary
             dependencyGroups[1].Packages.First().Id.Should().Be("X");
             dependencyGroups[1].Packages.Last().Id.Should().Be("Z");
         }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_AliasedFrameworks_NoMitigation_FailsWithNU5051()
+        {
+            // Two aliases (apple, banana) both resolve to the same framework.
+            // Without IncludeBuildOutput=false or SuppressDependenciesWhenPacking=true, pack should fail with NU5051.
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            SetupAliasedFrameworkProject(workingDirectory, projectName);
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.PackProjectExpectFailure(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+            result.AllOutput.Should().Contain("NU5051");
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_AliasedFrameworks_OnlyIncludeBuildOutputFalse_FailsWithNU5051()
+        {
+            // IncludeBuildOutput=false on banana removes the build output ambiguity,
+            // but dependencies are still ambiguous without SuppressDependenciesWhenPacking=true.
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            SetupAliasedFrameworkProject(workingDirectory, projectName,
+                bananaIncludeBuildOutput: "false");
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.PackProjectExpectFailure(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+            result.AllOutput.Should().Contain("NU5051");
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_AliasedFrameworks_OnlySuppressDependencies_FailsWithNU5051()
+        {
+            // SuppressDependenciesWhenPacking=true on banana removes the dependency ambiguity,
+            // but build output is still ambiguous without IncludeBuildOutput=false.
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            SetupAliasedFrameworkProject(workingDirectory, projectName,
+                bananaSuppressDependencies: "true");
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.PackProjectExpectFailure(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+            result.AllOutput.Should().Contain("NU5051");
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_AliasedFrameworks_IncludeBuildOutputFalseAndSuppressDependencies_Succeeds()
+        {
+            // Setting both IncludeBuildOutput=false and SuppressDependenciesWhenPacking=true on banana
+            // resolves all ambiguity. Pack should succeed with a single lib and a single dependency group.
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            SetupAliasedFrameworkProject(workingDirectory, projectName,
+                bananaIncludeBuildOutput: "false",
+                bananaSuppressDependencies: "true");
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+            var nupkgPath = Path.Combine(workingDirectory, $"{projectName}.1.0.0.nupkg");
+            Assert.True(File.Exists(nupkgPath), "The output .nupkg is not in the expected place");
+
+            using var nupkgReader = new PackageArchiveReader(nupkgPath);
+            var libItems = nupkgReader.GetLibItems().ToList();
+            libItems.Should().HaveCount(1);
+            libItems[0].TargetFramework.Should().Be(TestConstants.DefaultTargetFramework);
+            libItems[0].Items.Should().ContainSingle(f => f.Contains($"{projectName}.dll"));
+
+            var dependencyGroups = nupkgReader.NuspecReader.GetDependencyGroups().ToList();
+            dependencyGroups.Should().HaveCount(1);
+            dependencyGroups[0].TargetFramework.Should().Be(TestConstants.DefaultTargetFramework);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_AliasedFrameworks_DifferentFrameworkReferences_FailsWithNU5051()
+        {
+            // Even with IncludeBuildOutput=false and SuppressDependenciesWhenPacking=true on banana,
+            // if the two aliases declare different FrameworkReference items, pack should fail with NU5051.
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            SetupAliasedFrameworkProject(workingDirectory, projectName,
+                bananaIncludeBuildOutput: "false",
+                bananaSuppressDependencies: "true");
+
+            // Add different FrameworkReference items per alias so the framework ref groups diverge.
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(xml, "FrameworkReference", "Microsoft.AspNetCore.App", "apple",
+                    new Dictionary<string, string>(), new Dictionary<string, string>());
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.PackProjectExpectFailure(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+            result.AllOutput.Should().Contain("NU5051");
+        }
+
+        /// <summary>
+        /// Modifies an existing classlib project to use two aliased TFMs (apple, banana) that both resolve
+        /// to the current test framework. Per-alias IncludeBuildOutput and SuppressDependenciesWhenPacking
+        /// can be set; null means the property is not set (defaults apply).
+        /// </summary>
+        private void SetupAliasedFrameworkProject(
+            string workingDirectory,
+            string projectName,
+            string appleIncludeBuildOutput = null,
+            string appleSuppressDependencies = null,
+            string bananaIncludeBuildOutput = null,
+            string bananaSuppressDependencies = null)
+        {
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            string tfmIdentifier = ".NETCoreApp";
+            string tfmVersion = $"v{TestConstants.DefaultTargetFramework.Version.Major}.{TestConstants.DefaultTargetFramework.Version.Minor}";
+            string tfmMoniker = $"{tfmIdentifier},Version={tfmVersion}";
+
+            using var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite);
+            var xml = XDocument.Load(stream);
+
+            ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", "apple;banana");
+
+            var appleProps = new Dictionary<string, string>
+            {
+                ["TargetFrameworkIdentifier"] = tfmIdentifier,
+                ["TargetFrameworkVersion"] = tfmVersion,
+                ["TargetFrameworkMoniker"] = tfmMoniker,
+            };
+            if (appleIncludeBuildOutput != null) appleProps["IncludeBuildOutput"] = appleIncludeBuildOutput;
+            if (appleSuppressDependencies != null) appleProps["SuppressDependenciesWhenPacking"] = appleSuppressDependencies;
+            ProjectFileUtils.AddProperties(xml, appleProps, " '$(TargetFramework)' == 'apple' ");
+
+            var bananaProps = new Dictionary<string, string>
+            {
+                ["TargetFrameworkIdentifier"] = tfmIdentifier,
+                ["TargetFrameworkVersion"] = tfmVersion,
+                ["TargetFrameworkMoniker"] = tfmMoniker,
+            };
+            if (bananaIncludeBuildOutput != null) bananaProps["IncludeBuildOutput"] = bananaIncludeBuildOutput;
+            if (bananaSuppressDependencies != null) bananaProps["SuppressDependenciesWhenPacking"] = bananaSuppressDependencies;
+            ProjectFileUtils.AddProperties(xml, bananaProps, " '$(TargetFramework)' == 'banana' ");
+
+            ProjectFileUtils.WriteXmlToFile(xml, stream);
+        }
     }
 }

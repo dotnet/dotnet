@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
@@ -49,7 +50,7 @@ internal sealed class TestDocumentSnapshot : IDocumentSnapshot
 
     public ValueTask<SyntaxTree> GetCSharpSyntaxTreeAsync(CancellationToken cancellationToken)
     {
-        return new(_codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken));
+        return new(CSharpSyntaxTree.ParseText(_codeDocument.GetCSharpSourceText(), cancellationToken: cancellationToken));
     }
 
     public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)

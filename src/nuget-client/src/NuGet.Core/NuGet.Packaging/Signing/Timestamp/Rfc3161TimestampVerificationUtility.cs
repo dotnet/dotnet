@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
@@ -28,10 +27,10 @@ namespace NuGet.Packaging.Signing
 
         internal static bool TryReadTSTInfoFromSignedCms(
             SignedCms timestampCms,
-            out IRfc3161TimestampTokenInfo tstInfo)
+            [NotNullWhen(returnValue: true)] out IRfc3161TimestampTokenInfo? tstInfo)
         {
             tstInfo = null;
-            if (timestampCms.ContentInfo.ContentType.Value.Equals(Oids.TSTInfoContentType, StringComparison.Ordinal))
+            if (timestampCms.ContentInfo.ContentType.Value!.Equals(Oids.TSTInfoContentType, StringComparison.Ordinal))
             {
                 tstInfo = Rfc3161TimestampTokenInfoFactory.Create(timestampCms.ContentInfo.Content);
                 return true;

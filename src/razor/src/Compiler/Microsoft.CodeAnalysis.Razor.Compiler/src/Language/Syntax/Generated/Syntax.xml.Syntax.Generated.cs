@@ -795,47 +795,63 @@ internal abstract partial class BaseMarkupEndTagSyntax : MarkupSyntaxNode
     public abstract SpanEditHandler EditHandler { get; }
 }
 
-internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
+internal abstract partial class BaseMarkupElementSyntax : MarkupSyntaxNode
 {
-    private MarkupStartTagSyntax _startTag;
+    internal BaseMarkupElementSyntax(GreenNode green, SyntaxNode parent, int position)
+        : base(green, parent, position)
+    {
+    }
+
+    public abstract BaseMarkupStartTagSyntax StartTag { get; }
+    public BaseMarkupElementSyntax WithStartTag(BaseMarkupStartTagSyntax startTag) => WithStartTagCore(startTag);
+    internal abstract BaseMarkupElementSyntax WithStartTagCore(BaseMarkupStartTagSyntax startTag);
+
+    public abstract BaseMarkupEndTagSyntax EndTag { get; }
+    public BaseMarkupElementSyntax WithEndTag(BaseMarkupEndTagSyntax endTag) => WithEndTagCore(endTag);
+    internal abstract BaseMarkupElementSyntax WithEndTagCore(BaseMarkupEndTagSyntax endTag);
+}
+
+internal sealed partial class MarkupElementSyntax : BaseMarkupElementSyntax
+{
+    private MarkupStartTagSyntax _markupStartTag;
     private SyntaxNode _body;
-    private MarkupEndTagSyntax _endTag;
+    private MarkupEndTagSyntax _markupEndTag;
 
     internal MarkupElementSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public MarkupStartTagSyntax StartTag  => GetRedAtZero(ref _startTag);
+    public MarkupStartTagSyntax MarkupStartTag  => GetRedAtZero(ref _markupStartTag);
     public SyntaxList<RazorSyntaxNode> Body  => new SyntaxList<RazorSyntaxNode>(GetRed(ref _body, 1));
-    public MarkupEndTagSyntax EndTag  => GetRed(ref _endTag, 2);
+    public MarkupEndTagSyntax MarkupEndTag  => GetRed(ref _markupEndTag, 2);
 
     internal override SyntaxNode GetNodeSlot(int index)
         => index switch
         {
-            0 => GetRedAtZero(ref _startTag),
+            0 => GetRedAtZero(ref _markupStartTag),
             1 => GetRed(ref _body, 1),
-            2 => GetRed(ref _endTag, 2),
+            2 => GetRed(ref _markupEndTag, 2),
             _ => null
         };
 
     internal override SyntaxNode GetCachedSlot(int index)
         => index switch
         {
-            0 => this._startTag,
+            0 => this._markupStartTag,
             1 => this._body,
-            2 => this._endTag,
+            2 => this._markupEndTag,
             _ => null
         };
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupElement(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupElement(this);
 
-    public MarkupElementSyntax Update(MarkupStartTagSyntax startTag, SyntaxList<RazorSyntaxNode> body, MarkupEndTagSyntax endTag)
+    public MarkupElementSyntax Update(MarkupStartTagSyntax markupStartTag, SyntaxList<RazorSyntaxNode> body, MarkupEndTagSyntax markupEndTag)
     {
-        if (startTag != StartTag || body != Body || endTag != EndTag)
+        if (markupStartTag != MarkupStartTag || body != Body || markupEndTag != MarkupEndTag)
         {
-            var newNode = SyntaxFactory.MarkupElement(startTag, body, endTag);
+            var newNode = SyntaxFactory.MarkupElement(markupStartTag, body, markupEndTag);
             var diagnostics = GetDiagnostics();
             if (diagnostics != null && diagnostics.Length > 0)
                 newNode = newNode.WithDiagnostics(diagnostics);
@@ -845,9 +861,9 @@ internal sealed partial class MarkupElementSyntax : MarkupSyntaxNode
         return this;
     }
 
-    public MarkupElementSyntax WithStartTag(MarkupStartTagSyntax startTag) => Update(startTag, Body, EndTag);
-    public MarkupElementSyntax WithBody(SyntaxList<RazorSyntaxNode> body) => Update(StartTag, body, EndTag);
-    public MarkupElementSyntax WithEndTag(MarkupEndTagSyntax endTag) => Update(StartTag, Body, endTag);
+    public MarkupElementSyntax WithMarkupStartTag(MarkupStartTagSyntax markupStartTag) => Update(markupStartTag, Body, MarkupEndTag);
+    public MarkupElementSyntax WithBody(SyntaxList<RazorSyntaxNode> body) => Update(MarkupStartTag, body, MarkupEndTag);
+    public MarkupElementSyntax WithMarkupEndTag(MarkupEndTagSyntax markupEndTag) => Update(MarkupStartTag, Body, markupEndTag);
 
     public MarkupElementSyntax AddBody(params RazorSyntaxNode[] items) => WithBody(this.Body.AddRange(items));
 }
@@ -997,48 +1013,48 @@ internal sealed partial class MarkupEndTagSyntax : BaseMarkupEndTagSyntax
     }
 }
 
-internal sealed partial class MarkupTagHelperElementSyntax : MarkupSyntaxNode
+internal sealed partial class MarkupTagHelperElementSyntax : BaseMarkupElementSyntax
 {
-    private MarkupTagHelperStartTagSyntax _startTag;
+    private MarkupTagHelperStartTagSyntax _tagHelperStartTag;
     private SyntaxNode _body;
-    private MarkupTagHelperEndTagSyntax _endTag;
+    private MarkupTagHelperEndTagSyntax _tagHelperEndTag;
 
     internal MarkupTagHelperElementSyntax(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
     }
 
-    public MarkupTagHelperStartTagSyntax StartTag  => GetRedAtZero(ref _startTag);
+    public MarkupTagHelperStartTagSyntax TagHelperStartTag  => GetRedAtZero(ref _tagHelperStartTag);
     public SyntaxList<RazorSyntaxNode> Body  => new SyntaxList<RazorSyntaxNode>(GetRed(ref _body, 1));
-    public MarkupTagHelperEndTagSyntax EndTag  => GetRed(ref _endTag, 2);
+    public MarkupTagHelperEndTagSyntax TagHelperEndTag  => GetRed(ref _tagHelperEndTag, 2);
     public TagHelperInfo TagHelperInfo => ((InternalSyntax.MarkupTagHelperElementSyntax)Green).TagHelperInfo;
 
     internal override SyntaxNode GetNodeSlot(int index)
         => index switch
         {
-            0 => GetRedAtZero(ref _startTag),
+            0 => GetRedAtZero(ref _tagHelperStartTag),
             1 => GetRed(ref _body, 1),
-            2 => GetRed(ref _endTag, 2),
+            2 => GetRed(ref _tagHelperEndTag, 2),
             _ => null
         };
 
     internal override SyntaxNode GetCachedSlot(int index)
         => index switch
         {
-            0 => this._startTag,
+            0 => this._tagHelperStartTag,
             1 => this._body,
-            2 => this._endTag,
+            2 => this._tagHelperEndTag,
             _ => null
         };
 
     public override TResult Accept<TResult>(SyntaxVisitor<TResult> visitor) => visitor.VisitMarkupTagHelperElement(this);
     public override void Accept(SyntaxVisitor visitor) => visitor.VisitMarkupTagHelperElement(this);
 
-    public MarkupTagHelperElementSyntax Update(MarkupTagHelperStartTagSyntax startTag, SyntaxList<RazorSyntaxNode> body, MarkupTagHelperEndTagSyntax endTag, TagHelperInfo tagHelperInfo)
+    public MarkupTagHelperElementSyntax Update(MarkupTagHelperStartTagSyntax tagHelperStartTag, SyntaxList<RazorSyntaxNode> body, MarkupTagHelperEndTagSyntax tagHelperEndTag, TagHelperInfo tagHelperInfo)
     {
-        if (startTag != StartTag || body != Body || endTag != EndTag)
+        if (tagHelperStartTag != TagHelperStartTag || body != Body || tagHelperEndTag != TagHelperEndTag)
         {
-            var newNode = SyntaxFactory.MarkupTagHelperElement(startTag, body, endTag, tagHelperInfo);
+            var newNode = SyntaxFactory.MarkupTagHelperElement(tagHelperStartTag, body, tagHelperEndTag, tagHelperInfo);
             var diagnostics = GetDiagnostics();
             if (diagnostics != null && diagnostics.Length > 0)
                 newNode = newNode.WithDiagnostics(diagnostics);
@@ -1048,12 +1064,10 @@ internal sealed partial class MarkupTagHelperElementSyntax : MarkupSyntaxNode
         return this;
     }
 
-    public MarkupTagHelperElementSyntax WithStartTag(MarkupTagHelperStartTagSyntax startTag) => Update(startTag, Body, EndTag, TagHelperInfo);
-    public MarkupTagHelperElementSyntax WithBody(SyntaxList<RazorSyntaxNode> body) => Update(StartTag, body, EndTag, TagHelperInfo);
-    public MarkupTagHelperElementSyntax WithEndTag(MarkupTagHelperEndTagSyntax endTag) => Update(StartTag, Body, endTag, TagHelperInfo);
-    public MarkupTagHelperElementSyntax WithTagHelperInfo(TagHelperInfo tagHelperInfo) => Update(StartTag, Body, EndTag, tagHelperInfo);
-
-    public MarkupTagHelperElementSyntax AddStartTagAttributes(params RazorSyntaxNode[] items) => WithStartTag(this.StartTag.WithAttributes(this.StartTag.Attributes.AddRange(items)));
+    public MarkupTagHelperElementSyntax WithTagHelperStartTag(MarkupTagHelperStartTagSyntax tagHelperStartTag) => Update(tagHelperStartTag, Body, TagHelperEndTag, TagHelperInfo);
+    public MarkupTagHelperElementSyntax WithBody(SyntaxList<RazorSyntaxNode> body) => Update(TagHelperStartTag, body, TagHelperEndTag, TagHelperInfo);
+    public MarkupTagHelperElementSyntax WithTagHelperEndTag(MarkupTagHelperEndTagSyntax tagHelperEndTag) => Update(TagHelperStartTag, Body, tagHelperEndTag, TagHelperInfo);
+    public MarkupTagHelperElementSyntax WithTagHelperInfo(TagHelperInfo tagHelperInfo) => Update(TagHelperStartTag, Body, TagHelperEndTag, tagHelperInfo);
 
     public MarkupTagHelperElementSyntax AddBody(params RazorSyntaxNode[] items) => WithBody(this.Body.AddRange(items));
 }

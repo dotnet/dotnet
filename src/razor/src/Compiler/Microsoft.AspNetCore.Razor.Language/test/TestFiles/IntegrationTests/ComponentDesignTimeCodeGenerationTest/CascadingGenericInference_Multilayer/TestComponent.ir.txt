@@ -20,8 +20,7 @@
                             ComponentChildContent -  - ChildContent - context
                                 Component - (58:0,58 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Child
                     ComponentAttribute - (17:0,17 [26] x:\dir\subdir\Test\TestComponent.cshtml) - Items - Items - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (18:0,18 [25] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (19:0,19 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
+                        LazyIntermediateToken - (19:0,19 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateAncestor_0

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -74,6 +74,30 @@ public class ViewCodeCommandHandlerTests(ITestOutputHelper testOutput) : Tooling
     public void RazorFile_NoCSharpFile_NotAvailable()
     {
         var razorFilePath = "nonexistent.razor";
+
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
+
+        var result = handler.GetCommandState(args);
+
+        Assert.False(result.IsAvailable);
+    }
+
+    [UIFact]
+    public void ImportsRazorFile_NotAvailable()
+    {
+        using var _ = CreateTestFiles("_Imports.razor", out var razorFilePath);
+
+        var (handler, args) = CreateHandlerAndArgs(razorFilePath);
+
+        var result = handler.GetCommandState(args);
+
+        Assert.False(result.IsAvailable);
+    }
+
+    [UIFact]
+    public void ViewImportsCshtmlFile_NotAvailable()
+    {
+        using var _ = CreateTestFiles("_ViewImports.cshtml", out var razorFilePath);
 
         var (handler, args) = CreateHandlerAndArgs(razorFilePath);
 

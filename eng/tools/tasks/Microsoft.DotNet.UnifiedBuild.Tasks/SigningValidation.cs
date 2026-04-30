@@ -353,17 +353,17 @@ public class SigningValidation : BuildTask
     {
         string exclusionsFile = Path.Combine(DotNetRootDirectory, "eng", _signCheckExclusionsFileName);
         
-        var releaseBranchRegex = new Regex(@"^refs/heads/(internal/)?release/.*$");
-        if (!releaseBranchRegex.IsMatch(SourceBranch))
+        var dacSigningBranchRegex = new Regex(@"^refs/heads/(internal/)?release/\d+\.0\.1\d*$");
+        if (!dacSigningBranchRegex.IsMatch(SourceBranch))
         {
-            // We need to exclude DAC signed files from SignCheck on non-release branches
-            // because DAC signing is done only on release branches.
+            // We need to exclude DAC signed files from SignCheck on non-1xx-band release branches
+            // because DAC signing is done only on 1xx feature band release branches.
 
             // Write the updated exclusions file to the log directory for debugging purposes.
             string updatedExclusionsFile = GetLogPath(_signCheckExclusionsFileName);
             File.Copy(exclusionsFile, updatedExclusionsFile, true);
 
-            string dacExclusionTemplate = "{0};;DAC_SIGNED_FILE, DAC signing is done only on release branches";
+            string dacExclusionTemplate = "{0};;DAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches";
             foreach (string file in _dacSignedFiles)
             {
                 string exclusion = string.Format(dacExclusionTemplate, file);

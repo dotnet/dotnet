@@ -50,15 +50,9 @@
       <InstallRoot>MSBuild</InstallRoot>
       <VSIXSubPath>Microsoft\VisualStudio\Razor\Rules\</VSIXSubPath>
     </Content>
-    <VSCTCompile Include="SyntaxVisualizerMenu.vsct">
-      <ResourceName>SyntaxVisualizerMenu.ctmenu</ResourceName>
-      <SubType>Designer</SubType>
-    </VSCTCompile>
-  </ItemGroup>
-
-  <ItemGroup>
     <VSCTCompile Include="RazorContextMenu.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
 
@@ -189,7 +183,7 @@
       <IncludeOutputGroupsInVSIX>PublishProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly></IncludeOutputGroupsInVSIXLocalOnly>
       <Private>false</Private>
-      <AdditionalProperties>PublishReadyToRun=false;TargetFramework=$(NetVS)</AdditionalProperties>
+      <AdditionalProperties>TargetFramework=$(NetVS)</AdditionalProperties>
       <VSIXSubPath>ServiceHubCore</VSIXSubPath>
 
     </ProjectReference>

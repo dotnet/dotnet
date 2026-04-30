@@ -468,9 +468,52 @@ internal class NuGetPackageDownloader : INuGetPackageDownloader
 
     public IEnumerable<PackageSource> LoadNuGetSources(PackageId packageId, PackageSourceLocation packageSourceLocation = null, PackageSourceMapping packageSourceMapping = null)
     {
+        if (packageSourceLocation?.PackageSourceOverrides?.Any() ?? false)
+        {
+            return packageSourceLocation.PackageSourceOverrides;
+        }
+
         var sources = (packageSourceLocation?.SourceFeedOverrides.Any() ?? false) ?
             LoadOverrideSources(packageSourceLocation) :
             LoadDefaultSources(packageId, packageSourceLocation, packageSourceMapping);
+
+        // When using override sources, additional sources should still be appended
+        if ((packageSourceLocation?.SourceFeedOverrides.Any() ?? false) && 
+            (packageSourceLocation?.AdditionalSourceFeed?.Any() ?? false))
+        {
+            var sourceList = sources.ToList();
+            var existingUris = new HashSet<Uri>(sourceList.Where(s => s.SourceUri != null).Select(s => s.SourceUri));
+            
+            foreach (string additionalSource in packageSourceLocation.AdditionalSourceFeed)
+            {
+                if (string.IsNullOrWhiteSpace(additionalSource))
+                {
+                    continue;
+                }
+
+                PackageSource newSource = new(additionalSource);
+                if (newSource.TrySourceAsUri == null)
+                {
+                    _verboseLogger.LogWarning(string.Format(
+                        CliStrings.FailedToLoadNuGetSource,
+                        additionalSource));
+                    continue;
+                }
+
+                // Skip if already present (matches existing pattern in LoadDefaultSources)
+                if (newSource.SourceUri != null && existingUris.Contains(newSource.SourceUri))
+                {
+                    continue;
+                }
+
+                sourceList.Add(newSource);
+                if (newSource.SourceUri != null)
+                {
+                    existingUris.Add(newSource.SourceUri);
+                }
+            }
+            sources = sourceList;
+        }
 
         if (!sources.Any())
         {

@@ -25,10 +25,10 @@ public class LiteralRuntimeNodeWriterTest
         // Assert
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
-@"WriteLiteral(
+@"
 #nullable restore
-#line (1,1)-(1,4) ""test.cshtml""
-i++
+#line (1,1)-(1,4) 13 ""test.cshtml""
+WriteLiteral(i++
 
 #line default
 #line hidden
@@ -58,10 +58,10 @@ i++
         // Assert
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
-@"WriteLiteral(
+@"
 #nullable restore
-#line (1,1)-(1,5) ""test.cshtml""
-i++;
+#line (1,1)-(1,5) 13 ""test.cshtml""
+WriteLiteral(i++;
 
 #line default
 #line hidden

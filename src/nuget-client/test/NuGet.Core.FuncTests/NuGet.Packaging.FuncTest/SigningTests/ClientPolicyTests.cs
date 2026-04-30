@@ -36,7 +36,7 @@ namespace NuGet.Packaging.FuncTest
             _trustedRepoTestCert.Dispose();
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData(SigningTestType.Author, "accept", true, 0)]
         [InlineData(SigningTestType.Author, "require", false, 1)]
         [InlineData(SigningTestType.RepositoryPrimary, "accept", true, 0)]
@@ -91,7 +91,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData(SigningTestType.Author, "accept", true, 0, 1)]
         [InlineData(SigningTestType.Author, "require", false, 1, 0)]
         [InlineData(SigningTestType.RepositoryPrimary, "accept", true, 0, 1)]
@@ -152,7 +152,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData(SigningTestType.Author, SignaturePlacement.PrimarySignature, "accept")]
         [InlineData(SigningTestType.Author, SignaturePlacement.PrimarySignature, "require")]
         [InlineData(SigningTestType.RepositoryPrimary, SignaturePlacement.PrimarySignature, "accept")]
@@ -223,7 +223,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData(SigningTestType.RepositoryPrimary, "accept")]
         [InlineData(SigningTestType.RepositoryPrimary, "require")]
         [InlineData(SigningTestType.RepositoryCountersigned, "accept")]
@@ -283,7 +283,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData(SigningTestType.RepositoryPrimary, "accept", true, 0, 1)]
         [InlineData(SigningTestType.RepositoryPrimary, "require", false, 1, 0)]
         [InlineData(SigningTestType.RepositoryCountersigned, "accept", true, 0, 1)]
@@ -343,7 +343,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [CIOnlyTheory]
+        [Theory]
         [InlineData(SigningTestType.RepositoryPrimary, "accept", true, 0, 1)]
         [InlineData(SigningTestType.RepositoryPrimary, "require", false, 1, 0)]
         [InlineData(SigningTestType.RepositoryCountersigned, "accept", true, 0, 1)]

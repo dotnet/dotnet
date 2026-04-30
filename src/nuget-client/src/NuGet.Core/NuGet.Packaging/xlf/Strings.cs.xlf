@@ -44,16 +44,6 @@
         <note>0 -  start date
 1 - end date</note>
       </trans-unit>
-      <trans-unit id="CertUtilityCertificateCrlUrl">
-        <source>CRL URL: {0}</source>
-        <target state="new">CRL URL: {0}</target>
-        <note>0 - CRL distribution point URL</note>
-      </trans-unit>
-      <trans-unit id="CertUtilityCertificateOcspUrl">
-        <source>OCSP URL: {0}</source>
-        <target state="new">OCSP URL: {0}</target>
-        <note>0 - OCSP responder URL</note>
-      </trans-unit>
       <trans-unit id="CertUtilityMultipleCertificatesFooter">
         <source>... {0} more.</source>
         <target state="translated">... dalších {0}.</target>
@@ -192,6 +182,11 @@
         <source>Null or empty package id</source>
         <target state="translated">ID balíčku má prázdnou hodnotu nebo hodnotu null.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageIdentityDoesNotMatch">
+        <source>Expected package {0} {1}, but got package {2} {3}</source>
+        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <note>0 and 2 are package names, and 1 and 3 are versions numbers.</note>
       </trans-unit>
       <trans-unit id="ErrorPackageNotSigned">
         <source>The package is not signed.</source>

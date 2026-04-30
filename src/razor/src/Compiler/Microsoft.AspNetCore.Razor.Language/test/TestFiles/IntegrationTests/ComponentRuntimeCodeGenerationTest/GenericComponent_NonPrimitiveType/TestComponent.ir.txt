@@ -9,6 +9,6 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [57] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentTypeArgument - (20:0,20 [10] x:\dir\subdir\Test\TestComponent.cshtml) - TItem
-                        LazyIntermediateToken - (20:0,20 [10] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - CustomType
+                        IntermediateToken - (20:0,20 [10] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - CustomType
                     ComponentAttribute - (38:0,38 [16] x:\dir\subdir\Test\TestComponent.cshtml) - Item - Item - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (38:0,38 [16] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new CustomType()
+                        IntermediateToken - (38:0,38 [16] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new CustomType()

@@ -123,7 +123,7 @@ public class DataCollectionTestRunEventsHandlerTests
         {
             var testRunCompleteArgs = o as TestRunCompletePayload;
             Assert.IsNotNull(testRunCompleteArgs);
-            Assert.AreEqual(1, testRunCompleteArgs.TestRunCompleteArgs!.InvokedDataCollectors.Count);
+            Assert.ContainsSingle(testRunCompleteArgs.TestRunCompleteArgs!.InvokedDataCollectors);
             Assert.AreEqual(invokedDataCollectors[0], testRunCompleteArgs.TestRunCompleteArgs.InvokedDataCollectors[0]);
         });
 
@@ -132,7 +132,7 @@ public class DataCollectionTestRunEventsHandlerTests
 
         var testRunCompleteEventArgs2 = new TestRunCompleteEventArgs(null, false, false, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), new TimeSpan());
         _testRunEventHandler.HandleTestRunComplete(testRunCompleteEventArgs2, null, null, null);
-        Assert.AreEqual(1, testRunCompleteEventArgs2.InvokedDataCollectors.Count);
+        Assert.ContainsSingle(testRunCompleteEventArgs2.InvokedDataCollectors);
         Assert.AreEqual(invokedDataCollectors[0], testRunCompleteEventArgs2.InvokedDataCollectors[0]);
 
         _proxyDataCollectionManager.Verify(
@@ -157,8 +157,8 @@ public class DataCollectionTestRunEventsHandlerTests
 
         var result = DataCollectionTestRunEventsHandler.GetCombinedAttachmentSets(attachments1, attachments2);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(2, result.First().Attachments.Count);
+        Assert.ContainsSingle(result);
+        Assert.HasCount(2, result.First().Attachments);
     }
 
     [TestMethod]
@@ -171,8 +171,8 @@ public class DataCollectionTestRunEventsHandlerTests
 
         var result = DataCollectionTestRunEventsHandler.GetCombinedAttachmentSets(attachments1, null);
 
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual(1, result.First().Attachments.Count);
+        Assert.ContainsSingle(result);
+        Assert.ContainsSingle(result.First().Attachments);
     }
 
     [TestMethod]

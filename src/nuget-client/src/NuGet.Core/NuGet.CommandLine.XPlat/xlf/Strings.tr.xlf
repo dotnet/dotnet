@@ -410,8 +410,8 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
-        <target state="translated">'{0}' yolu eksik veya geçersiz. Bir projeye, çözüm dosyasına veya dizine giden yolu sağlayın.</target>
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <target state="translated">'{0}' yolu eksik veya geçersiz. Lütfen projeye, çözüm dosyasına, dosya tabanlı uygulamaya veya proje dizinine giden yolu sağlayın.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -583,9 +583,9 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidFramework">
-        <source>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</source>
-        <target state="translated">Verilen çerçevelerden biri ayrıştırılamadı. Lütfen verilen çerçevelerin geçerli olduğundan emin olun.</target>
-        <note />
+        <source>The specified TargetFramework '{0}' is not found in the project '{1}'.</source>
+        <target state="translated">Belirtilen '{0}' TargetFramework, '{1}' projesinde bulunamadı.</target>
+        <note>0 - alias, 1 - project path, {Locked="TargetFramework"}</note>
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
@@ -973,8 +973,8 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
-        <source>Path to a project or solution file, or a directory.</source>
-        <target state="translated">Bir proje veya çözüm dosyasına ya da dizine giden yol.</target>
+        <source>Path to a project or solution file or file-based app, or a project directory.</source>
+        <target state="translated">Proje veya çözüm dosyasına, dosya tabanlı uygulamaya veya proje dizinine giden yol.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
@@ -1133,6 +1133,11 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
       <trans-unit id="Remove_Description">
         <source>Remove a NuGet source.</source>
         <target state="translated">NuGet kaynağını kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandAllowUntrustedRootDescription">
+        <source>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</source>
+        <target state="translated">Kök sertifikası güvenilen bir kök deposunda yer almayan sertifikalarla imzalamaya izin ver. Sertifika zinciri yapısı yine de oluşturulur ve doğrulanır, ancak UntrustedRoot durumu uyarı olarak değerlendirilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFingerprintDescription">
@@ -1482,11 +1487,6 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <target state="translated">'Dotnet nuget why' çalıştırılamıyor. {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
-      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
-        <source>Internal error: Assets file is inconsistent</source>
-        <target state="translated">İç hata: Varlıklar dosyası tutarsız</target>
-        <note />
-      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
         <target state="translated">'{0}' dosyası NuGet varlıkları dosyası gibi görünmüyor. Lütfen bu komutu çalıştırmadan önce '{1}' projesi için geri yüklemeyi çalıştırın.</target>
@@ -1528,8 +1528,8 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_PathArgument_Description">
-        <source>A path to a project, solution file, or directory.</source>
-        <target state="translated">Bir projeye, çözüm dosyasına veya dizine giden yol.</target>
+        <source>A path to a project, solution file, file-based app, or project directory.</source>
+        <target state="translated">Projeye, çözüm dosyasına, dosya tabanlı uygulamaya veya proje dizinine giden yol.</target>
         <note />
       </trans-unit>
       <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">

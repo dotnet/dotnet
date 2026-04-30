@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,10 +35,10 @@ namespace NuGet.Packaging.Rules
             var nuspec = packageNuspec.Xml;
             if (nuspec != null)
             {
-                XNamespace name = nuspec.Root.Name.Namespace;
+                XNamespace name = nuspec.Root!.Name.Namespace;
                 var targetFrameworks = nuspec.Descendants(XName.Get("{" + name.NamespaceName + "}references")).Elements().Attributes("targetFramework");
                 nuspecReferences = targetFrameworks.ToDictionary(k => NuGetFramework.Parse(k.Value).GetShortFolderName(),
-                                                                k => k.Parent.Elements().Attributes("file").Select(f => f.Value));
+                                                                k => k.Parent!.Elements().Attributes("file").Select(f => f.Value));
                 var filesWithoutTFM = nuspec.Descendants(XName.Get("{" + name.NamespaceName + "}references"))
                     .Elements().Attributes("file").Select(f => f.Value);
                 nuspecReferences.Add("any", filesWithoutTFM);
@@ -79,7 +77,7 @@ namespace NuGet.Packaging.Rules
 
                         string[] missingNuspecReferences;
                         string[] missingFiles;
-                        IEnumerable<string> anyReferences = null;
+                        IEnumerable<string>? anyReferences = null;
                         if (nuspecReferences.TryGetValue(files.Key, out var currentReferences) ||
                             nuspecReferences.TryGetValue("any", out anyReferences))
                         {
@@ -90,8 +88,8 @@ namespace NuGet.Packaging.Rules
                             }
                             else
                             {
-                                missingNuspecReferences = files.Where(m => !currentReferences.Contains(m)).ToArray();
-                                missingFiles = currentReferences.Where(t => !files.Contains(t)).ToArray();
+                                missingNuspecReferences = files.Where(m => !currentReferences!.Contains(m)).ToArray();
+                                missingFiles = currentReferences!.Where(t => !files.Contains(t)).ToArray();
                             }
                         }
                         else

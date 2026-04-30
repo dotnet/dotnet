@@ -5,12 +5,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using NuGet.Common;
 using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {
+    [DebuggerDisplay("{Code} {Message}")]
     public partial class AssetsLogMessage : IAssetsLogMessage, IEquatable<IAssetsLogMessage>
     {
         [JsonConverter(typeof(JsonStringEnumConverter<NuGetLogCode>))]

@@ -24,7 +24,7 @@ namespace Test.Utility.Signing
     {
         /// <summary>
         /// Generates an author signed copy of a package and returns the path to that package
-        /// This method can timestamp a package and should only be used with tests marked with [CIOnlyFact]
+        /// This method can timestamp a package and should only be used with tests marked with [Fact]
         /// </summary>
         /// <param name="certificate">Certificate to be used while signing the package</param>
         /// <param name="nupkg">Package to be signed</param>
@@ -54,7 +54,7 @@ namespace Test.Utility.Signing
         }
         /// <summary>
         /// Generates an author signed copy of a package and returns the path to that package
-        /// This method can timestamp a package and should only be used with tests marked with [CIOnlyFact]
+        /// This method can timestamp a package and should only be used with tests marked with [Fact]
         /// </summary>
         /// <param name="certificate">Certificate to be used while signing the package</param>
         /// <param name="packageStream">Stream of package to be signed</param>
@@ -113,7 +113,7 @@ namespace Test.Utility.Signing
 
         /// <summary>
         /// Generates an repository signed copy of a package and returns the path to that package
-        /// This method can timestamp a package and should only be used with tests marked with [CIOnlyFact]
+        /// This method can timestamp a package and should only be used with tests marked with [Fact]
         /// </summary>
         /// <param name="certificate">Certificate to be used while signing the package</param>
         /// <param name="nupkg">Package to be signed</param>
@@ -162,7 +162,7 @@ namespace Test.Utility.Signing
 
         /// <summary>
         /// Generates an repository signed copy of a package and returns the path to that package
-        /// This method can timestamp a package and should only be used with tests marked with [CIOnlyFact]
+        /// This method can timestamp a package and should only be used with tests marked with [Fact]
         /// </summary>
         /// <remarks>If the package is already author signed this method will repository countersign it</remarks>
         /// <param name="certificate">Certificate to be used while signing the package</param>

@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
     <body>
+      <trans-unit id="AmbigiousFrameworkReferences">
+        <source>Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</source>
+        <target state="translated">Niejednoznaczne odwołania do platformy. Poniższe platformy docelowe deklarują odwołania do platformy na potrzeby pakowania: {0}</target>
+        <note>0 - List of TargetFramework with framework refs</note>
+      </trans-unit>
+      <trans-unit id="AmbigiousPackageAssemblies">
+        <source>Ambiguous packaging content. The above frameworks have the same target path for {0}.</source>
+        <target state="translated">Niejednoznaczna zawartość pakowania. Powyższe platformy mają tę samą ścieżkę docelową dla {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbigiousPackageDependencies">
+        <source>Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</source>
+        <target state="translated">Niejednoznaczne zależności pakietów. Następujące platformy docelowe deklarują zależności pakietów na potrzeby pakowania: {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
         <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
         <target state="translated">Znaleziony plik zasobów nie zawiera prawidłowego elementu spec pakietu. Spróbuj ponownie przywrócić projekt. Lokalizacja pliku zasobów to {0}.</target>
@@ -11,6 +26,12 @@
         <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
         <target state="translated">Plik zasobów utworzony w wyniku przywracania nie istnieje. Spróbuj ponownie przywrócić projekt. Oczekiwana lokalizacja pliku zasobów to {0}.</target>
         <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateFrameworks">
+        <source>This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</source>
+        <target state="translated">W tym projekcie są używane platformy z aliasami, a następujące właściwości TargetFramework są mapowane z tymi samymi faktycznymi platformami „{0}” i pakiet nie może rozróżnić i utworzyć pojedynczego pakietu. {1}</target>
+        <note>0 - details about which framework 
+1 - Additional details</note>
       </trans-unit>
       <trans-unit id="Error_FileNotFound">
         <source>The file '{0}' to be packed was not found on disk.</source>

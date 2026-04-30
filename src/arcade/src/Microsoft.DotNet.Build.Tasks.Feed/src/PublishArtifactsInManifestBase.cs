@@ -754,7 +754,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     // These files tend to be short - load it all at once.
                     string[] files = File.ReadAllLines(symbolPublishingExclusionsFile);
 
-                    FrozenSet<string> excludeFiles = files.Where(x => x is not null or "").ToFrozenSet();
+                    FrozenSet<string> excludeFiles = files.Where(x => !string.IsNullOrEmpty(x)).ToFrozenSet();
 
                     if (excludeFiles.Count > 0)
                     {

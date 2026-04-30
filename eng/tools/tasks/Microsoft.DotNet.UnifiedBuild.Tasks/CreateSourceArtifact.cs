@@ -52,10 +52,17 @@ public class CreateSourceArtifact : BuildTask
     [Required]
     public required string OutputDirectory { get; init; }
 
+    /// <summary>
+    /// Create an empty detached signature file alongside the source artifact
+    /// Ensures the signature is published via darc when signing occurs post-build
+    /// </summary>
+    public bool CreateEmptyDetachedSignature { get; init; } = false;
+
     private const string GitHubRepoName = "dotnet";
     private const string GitHubTimezone = "America/Los_Angeles"; // GitHub uses this timezone for commit timestamps in zip metadata
     private const int GitArchiveTimeout = 5 * 60 * 1000; // 5 minutes
     private const string TarExtension = "tar.gz";
+    private const string SignatureExtension = "sig";
 
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
 
@@ -87,6 +94,26 @@ public class CreateSourceArtifact : BuildTask
             Log.LogError($"[{TarExtension}] Exception during artifact creation: {ex.Message}");
             return false;
         }
+
+        if (CreateEmptyDetachedSignature)
+        {
+            string signatureFilePath = $"{artifactFilePath}.{SignatureExtension}";
+            Log.LogMessage(MessageImportance.High, $"Creating empty detached signature at: {signatureFilePath}");
+
+            try
+            {
+                using (FileStream fs = File.Create(signatureFilePath))
+                {
+                    // Create an empty file
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[{SignatureExtension}] Exception during signature file creation: {ex.Message}");
+                return false;
+            }
+        }
+
         return true;
     }
 }

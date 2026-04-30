@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -65,11 +65,11 @@ public class InProcDataCollectionExtensionManagerTests
 
         var inProcDataCollectionExtensionManager = new TestableInProcDataCollectionExtensionManager(_settingsXml, _mockTestEventsPublisher.Object, null, testPluginCache, _mockFileHelper.Object);
 
-        Assert.AreEqual(3, inProcDataCollectionExtensionManager.CodeBasePaths.Count); // "CodeBasePaths" contains the two extensions(after removing duplicates) and the "_defaultCodebase"
+        Assert.HasCount(3, inProcDataCollectionExtensionManager.CodeBasePaths); // "CodeBasePaths" contains the two extensions(after removing duplicates) and the "_defaultCodebase"
 
-        Assert.IsTrue(inProcDataCollectionExtensionManager.CodeBasePaths.Contains(null));
-        Assert.IsTrue(inProcDataCollectionExtensionManager.CodeBasePaths.Contains(directory1));
-        Assert.IsTrue(inProcDataCollectionExtensionManager.CodeBasePaths.Contains(directory2));
+        Assert.Contains((string?)null, inProcDataCollectionExtensionManager.CodeBasePaths);
+        Assert.Contains(directory1, inProcDataCollectionExtensionManager.CodeBasePaths);
+        Assert.Contains(directory2, inProcDataCollectionExtensionManager.CodeBasePaths);
     }
 
 
@@ -79,7 +79,7 @@ public class InProcDataCollectionExtensionManagerTests
         var dataCollector = (MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.First().Value;
 
         Assert.IsTrue(_inProcDataCollectionManager.IsInProcDataCollectionEnabled, "InProcDataCollection must be enabled if runsettings contains inproc datacollectors.");
-        Assert.AreEqual(1, _inProcDataCollectionManager.InProcDataCollectors.Count, "One Datacollector must be registered");
+        Assert.ContainsSingle(_inProcDataCollectionManager.InProcDataCollectors, "One Datacollector must be registered");
 
         Equals(dataCollector.AssemblyQualifiedName, "TestImpactListener.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7ccb7239ffde675a");
         Equals(dataCollector.CodeBase, Path.Combine(Temp, "repos", "MSTest", "src", "managed", "TestPlatform", "TestImpactListener.Tests", "bin", "Debug", "TestImpactListener.Tests.dll"));
@@ -231,11 +231,11 @@ public class InProcDataCollectionExtensionManagerTests
         var mockDataCollector = (MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.Values.First();
 
         _mockTestEventsPublisher.Raise(x => x.SessionStart += null, new SessionStartEventArgs(properties));
-        Assert.IsTrue((mockDataCollector.TestSessionStartCalled == 1), "TestSessionStart must be called on datacollector");
+        Assert.AreEqual(1, mockDataCollector.TestSessionStartCalled, "TestSessionStart must be called on datacollector");
 
         Assert.IsNotNull(mockDataCollector.TestSources);
-        Assert.IsTrue(mockDataCollector.TestSources.Contains("testsource1.dll"));
-        Assert.IsTrue(mockDataCollector.TestSources.Contains("testsource2.dll"));
+        Assert.Contains("testsource1.dll", mockDataCollector.TestSources);
+        Assert.Contains("testsource2.dll", mockDataCollector.TestSources);
     }
 
 
@@ -245,10 +245,10 @@ public class InProcDataCollectionExtensionManagerTests
         _mockTestEventsPublisher.Raise(x => x.SessionStart += null, new SessionStartEventArgs());
 
         var mockDataCollector = (MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.Values.First();
-        Assert.IsTrue((mockDataCollector.TestSessionStartCalled == 1), "TestSessionStart must be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestSessionEndCalled == 0), "TestSessionEnd must NOT be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestCaseStartCalled == 0), "TestCaseStart must NOT be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestCaseEndCalled == 0), "TestCaseEnd must NOT be called on datacollector");
+        Assert.AreEqual(1, mockDataCollector.TestSessionStartCalled, "TestSessionStart must be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestSessionEndCalled, "TestSessionEnd must NOT be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestCaseStartCalled, "TestCaseStart must NOT be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestCaseEndCalled, "TestCaseEnd must NOT be called on datacollector");
     }
 
     [TestMethod]
@@ -257,10 +257,10 @@ public class InProcDataCollectionExtensionManagerTests
         _mockTestEventsPublisher.Raise(x => x.SessionEnd += null, new SessionEndEventArgs());
 
         var mockDataCollector = (MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.Values.First();
-        Assert.IsTrue((mockDataCollector.TestSessionStartCalled == 0), "TestSessionEnd must NOT be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestSessionEndCalled == 1), "TestSessionStart must be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestCaseStartCalled == 0), "TestCaseStart must NOT be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestCaseEndCalled == 0), "TestCaseEnd must NOT be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestSessionStartCalled, "TestSessionEnd must NOT be called on datacollector");
+        Assert.AreEqual(1, mockDataCollector.TestSessionEndCalled, "TestSessionStart must be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestCaseStartCalled, "TestCaseStart must NOT be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestCaseEndCalled, "TestCaseEnd must NOT be called on datacollector");
     }
 
     [TestMethod]
@@ -273,8 +273,8 @@ public class InProcDataCollectionExtensionManagerTests
 
         var mockDataCollector = (MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.Values.First();
 
-        Assert.IsTrue((mockDataCollector.TestCaseStartCalled == 1), "TestCaseStart must be called on datacollector");
-        Assert.IsTrue((mockDataCollector.TestCaseEndCalled == 0), "TestCaseEnd must NOT be called on datacollector");
+        Assert.AreEqual(1, mockDataCollector.TestCaseStartCalled, "TestCaseStart must be called on datacollector");
+        Assert.AreEqual(0, mockDataCollector.TestCaseEndCalled, "TestCaseEnd must NOT be called on datacollector");
     }
 
     [TestMethod]
@@ -289,8 +289,8 @@ public class InProcDataCollectionExtensionManagerTests
         _mockTestEventsPublisher.Raise(x => x.TestCaseEnd += null, new TestCaseEndEventArgs(testCase, TestOutcome.Failed));
 
         var mockDataCollector = (MockDataCollector)_inProcDataCollectionManager.InProcDataCollectors.Values.First();
-        Assert.IsTrue((mockDataCollector.TestCaseStartCalled == 2), "TestCaseStart must only be called once");
-        Assert.IsTrue((mockDataCollector.TestCaseEndCalled == 2), "TestCaseEnd must only be called once");
+        Assert.AreEqual(2, mockDataCollector.TestCaseStartCalled, "TestCaseStart must only be called once");
+        Assert.AreEqual(2, mockDataCollector.TestCaseEndCalled, "TestCaseEnd must only be called once");
     }
 
     internal class TestableInProcDataCollectionExtensionManager : InProcDataCollectionExtensionManager

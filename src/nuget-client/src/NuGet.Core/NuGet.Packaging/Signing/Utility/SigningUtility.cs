@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -181,12 +179,12 @@ namespace NuGet.Packaging.Signing
             Verify(signRequest, options.Logger);
 
             var tempPackageFile = new FileInfo(Path.GetTempFileName());
-            Stream unsignedPackageStream = null;
+            Stream? unsignedPackageStream = null;
             var signaturePlacement = SignaturePlacement.PrimarySignature;
 
             try
             {
-                PrimarySignature primarySignature;
+                PrimarySignature? primarySignature;
                 var isSigned = false;
 
                 using (var package = new SignedPackageArchive(options.InputPackageStream, Stream.Null))
@@ -247,8 +245,8 @@ namespace NuGet.Packaging.Signing
                     if (signaturePlacement == SignaturePlacement.Countersignature)
                     {
                         signature = await options.SignatureProvider.CreateRepositoryCountersignatureAsync(
-                            signRequest as RepositorySignPackageRequest,
-                            primarySignature,
+                            (RepositorySignPackageRequest)signRequest,
+                            primarySignature!,
                             options.Logger,
                             token);
                     }

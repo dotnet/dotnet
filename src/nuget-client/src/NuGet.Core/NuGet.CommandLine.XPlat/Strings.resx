@@ -401,7 +401,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</value>
   </data>
   <data name="ListPkg_InvalidFramework" xml:space="preserve">
-    <value>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</value>
+    <value>The specified TargetFramework '{0}' is not found in the project '{1}'.</value>
+    <comment>0 - alias, 1 - project path, {Locked="TargetFramework"}</comment>
   </data>
   <data name="ListPkg_Latest" xml:space="preserve">
     <value>Latest</value>
@@ -659,6 +660,9 @@ The search is a case-insensitive string comparison using the supplied value, whi
   </data>
   <data name="SignCommandOverwriteDescription" xml:space="preserve">
     <value>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</value>
+  </data>
+  <data name="SignCommandAllowUntrustedRootDescription" xml:space="preserve">
+    <value>Allow signing with certificates whose root certificate is not in a trusted root store. The certificate chain is still built and validated for structure, but UntrustedRoot status is treated as a warning.</value>
   </data>
   <data name="SignCommandPackagePathDescription" xml:space="preserve">
     <value>Signs NuGet packages at &lt;package-paths&gt; with the specified certificate.</value>
@@ -921,7 +925,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <value>Shows the dependency graph for a particular package for a given project or solution.</value>
   </data>
   <data name="WhyCommand_PathArgument_Description" xml:space="preserve">
-    <value>A path to a project, solution file, or directory.</value>
+    <value>A path to a project, solution file, file-based app, or project directory.</value>
   </data>
   <data name="WhyCommand_PackageArgument_Description" xml:space="preserve">
     <value>The package name to lookup in the dependency graph.</value>
@@ -934,7 +938,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <comment>{0} - Argument that was not provided</comment>
   </data>
   <data name="Error_PathIsMissingOrInvalid" xml:space="preserve">
-    <value>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</value>
+    <value>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</value>
     <comment>{0} - Input path argument</comment>
   </data>
   <data name="WhyCommand_Error_ArgumentExceptionThrown" xml:space="preserve">
@@ -1002,7 +1006,7 @@ Do not translate "PackageVersion"</comment>
     <value>Update referenced packages in a project or solution.</value>
   </data>
   <data name="PackageUpdateCommand_ProjectOptionDescription" xml:space="preserve">
-    <value>Path to a project or solution file, or a directory.</value>
+    <value>Path to a project or solution file or file-based app, or a project directory.</value>
   </data>
   <data name="Warning_AlreadyHighestVersion" xml:space="preserve">
     <value>The package {0} is already referencing the highest version {1} in project {2}</value>
@@ -1166,8 +1170,5 @@ Do not translate "PackageVersion"</comment>
     <value>Unable to download package '{0}'. PackageSourceMapping is enabled, but no mapped sources were found for this package. The following source(s) were not considered: {1}.</value>
     <comment>{0} = package ID 
 {1} = comma-separated list of all configured sources </comment>
-  </data>
-  <data name="WhyCommand_Error_InconsistentAssetsFile" xml:space="preserve">
-    <value>Internal error: Assets file is inconsistent</value>
   </data>
 </root>

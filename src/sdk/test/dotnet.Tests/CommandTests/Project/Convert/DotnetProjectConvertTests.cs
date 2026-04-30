@@ -204,6 +204,457 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     }
 
     [Fact]
+    public void RefDirective()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "lib.cs"), """
+            #:property OutputType=Library
+            namespace MyLib;
+            public static class Greeter
+            {
+                public static string Greet(string name) => $"Hello, {name}!";
+            }
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref lib.cs
+            Console.WriteLine(MyLib.Greeter.Greet("World"));
+            """);
+
+        var expectedOutput = "Hello, World!";
+
+        new DotnetCommand(Log, "run", "app.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut(expectedOutput);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // #:ref lib.cs should become a ProjectReference to ../lib/lib.csproj
+        File.ReadAllText(Path.Join(outputDirFullPath, "app", "app.csproj"))
+            .Should().Contain($"""
+                <ProjectReference Include="..{Path.DirectorySeparatorChar}lib{Path.DirectorySeparatorChar}lib.csproj" />
+                """);
+
+        // The referenced library should have been converted too.
+        var libProjectDir = Path.Join(outputDirFullPath, "lib");
+        File.Exists(Path.Join(libProjectDir, "lib.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(libProjectDir, "lib.cs")).Should().BeTrue();
+        File.ReadAllText(Path.Join(libProjectDir, "lib.csproj"))
+            .Should().Contain("<OutputType>Library</OutputType>");
+
+        // The converted project should build and produce the same output.
+        new DotnetCommand(Log, "run")
+            .WithWorkingDirectory(Path.Join(outputDirFullPath, "app"))
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut(expectedOutput);
+    }
+
+    [Fact]
+    public void RefDirective_Transitive_Convert()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "lib2.cs"), """
+            #:property OutputType=Library
+            namespace Lib2;
+            public static class Helper
+            {
+                public static string Get() => "from lib2";
+            }
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "lib1.cs"), """
+            #:property OutputType=Library
+            #:ref lib2.cs
+            namespace Lib1;
+            public static class Facade
+            {
+                public static string Get() => $"from lib1 and {Lib2.Helper.Get()}";
+            }
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref lib1.cs
+            Console.WriteLine(Lib1.Facade.Get());
+            """);
+
+        var expectedOutput = "from lib1 and from lib2";
+
+        new DotnetCommand(Log, "run", "app.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut(expectedOutput);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // All three projects should exist.
+        File.Exists(Path.Join(outputDirFullPath, "app", "app.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(outputDirFullPath, "lib1", "lib1.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(outputDirFullPath, "lib2", "lib2.csproj")).Should().BeTrue();
+
+        // lib1.csproj should reference lib2.
+        File.ReadAllText(Path.Join(outputDirFullPath, "lib1", "lib1.csproj"))
+            .Should().Contain($"""
+                <ProjectReference Include="..{Path.DirectorySeparatorChar}lib2{Path.DirectorySeparatorChar}lib2.csproj" />
+                """);
+
+        // The converted project should build and produce the same output.
+        new DotnetCommand(Log, "run")
+            .WithWorkingDirectory(Path.Join(outputDirFullPath, "app"))
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut(expectedOutput);
+    }
+
+    [Fact]
+    public void RefDirective_DuplicateFolderName()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        Directory.CreateDirectory(Path.Join(testInstance.Path, "a"));
+        File.WriteAllText(Path.Join(testInstance.Path, "a", "lib.cs"), """
+            #:property OutputType=Library
+            namespace A;
+            public static class Lib { public static string Get() => "a"; }
+            """);
+
+        Directory.CreateDirectory(Path.Join(testInstance.Path, "b"));
+        File.WriteAllText(Path.Join(testInstance.Path, "b", "lib.cs"), """
+            #:property OutputType=Library
+            namespace B;
+            public static class Lib { public static string Get() => "b"; }
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref a/lib.cs
+            #:ref b/lib.cs
+            Console.WriteLine(A.Lib.Get() + B.Lib.Get());
+            """);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        var duplicateTargetDirectory = Path.Join(outputDirFullPath, "lib");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(string.Format(CliCommandStrings.ProjectConvertDuplicateRefFolderName, duplicateTargetDirectory));
+
+        // Nothing should have been converted.
+        Directory.Exists(outputDirFullPath).Should().BeFalse();
+
+        new DirectoryInfo(testInstance.Path)
+            .EnumerateFileSystemInfos().Select(d => d.Name).Order()
+            .Should().BeEquivalentTo(["a", "app.cs", "b", "Directory.Build.props"]);
+    }
+
+    [Fact]
+    public void RefDirective_DuplicateFolderName_Transitive()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        // a/lib.cs is referenced by mid.cs
+        Directory.CreateDirectory(Path.Join(testInstance.Path, "a"));
+        File.WriteAllText(Path.Join(testInstance.Path, "a", "lib.cs"), """
+            #:property OutputType=Library
+            namespace A;
+            public static class Lib { public static string Get() => "a"; }
+            """);
+
+        // mid.cs references a/lib.cs
+        File.WriteAllText(Path.Join(testInstance.Path, "mid.cs"), """
+            #:property OutputType=Library
+            #:ref a/lib.cs
+            namespace Mid;
+            public static class Mid { public static string Get() => A.Lib.Get(); }
+            """);
+
+        // b/lib.cs would conflict with a/lib.cs (both "lib")
+        Directory.CreateDirectory(Path.Join(testInstance.Path, "b"));
+        File.WriteAllText(Path.Join(testInstance.Path, "b", "lib.cs"), """
+            #:property OutputType=Library
+            namespace B;
+            public static class Lib { public static string Get() => "b"; }
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref mid.cs
+            #:ref b/lib.cs
+            Console.WriteLine(Mid.Mid.Get() + B.Lib.Get());
+            """);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        var duplicateTargetDirectory = Path.Join(outputDirFullPath, "lib");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(string.Format(CliCommandStrings.ProjectConvertDuplicateRefFolderName, duplicateTargetDirectory));
+
+        // Nothing should have been converted.
+        Directory.Exists(outputDirFullPath).Should().BeFalse();
+    }
+
+    [Fact]
+    public void RefDirective_DuplicateFolderName_ViaInclude()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+                <{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>true</{CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        // a/lib.cs is referenced by the app directly
+        Directory.CreateDirectory(Path.Join(testInstance.Path, "a"));
+        File.WriteAllText(Path.Join(testInstance.Path, "a", "lib.cs"), """
+            #:property OutputType=Library
+            namespace A;
+            public static class Lib { public static string Get() => "a"; }
+            """);
+
+        // b/lib.cs would conflict (same name "lib") - referenced via #:include-d file
+        Directory.CreateDirectory(Path.Join(testInstance.Path, "b"));
+        File.WriteAllText(Path.Join(testInstance.Path, "b", "lib.cs"), """
+            #:property OutputType=Library
+            namespace B;
+            public static class Lib { public static string Get() => "b"; }
+            """);
+
+        // extra.cs is included and references b/lib.cs
+        File.WriteAllText(Path.Join(testInstance.Path, "extra.cs"), """
+            #:ref b/lib.cs
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref a/lib.cs
+            #:include extra.cs
+            Console.WriteLine(A.Lib.Get() + B.Lib.Get());
+            """);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        var duplicateTargetDirectory = Path.Join(outputDirFullPath, "lib");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdErrContaining(string.Format(CliCommandStrings.ProjectConvertDuplicateRefFolderName, duplicateTargetDirectory));
+
+        // Nothing should have been converted.
+        Directory.Exists(outputDirFullPath).Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Verifies that default items (e.g., <c>appsettings.json</c>) in a <c>#:ref</c>'d file's directory
+    /// are copied to the converted project output directory.
+    /// </summary>
+    [Fact]
+    public void RefDirective_IncludedItemsCopied()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        var libDir = Path.Join(testInstance.Path, "lib");
+        Directory.CreateDirectory(libDir);
+
+        File.WriteAllText(Path.Join(libDir, "mylib.cs"), """
+            #:property OutputType=Library
+            #:property EnableDefaultNoneItems=true
+            namespace MyLib;
+            public static class Greeter
+            {
+                public static string Greet() => "Hello!";
+            }
+            """);
+
+        // A non-code file next to the library that should be picked up as a default item.
+        File.WriteAllText(Path.Join(libDir, "data.json"), """{ "key": "value" }""");
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref lib/mylib.cs
+            Console.WriteLine(MyLib.Greeter.Greet());
+            """);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // The library's included item (data.json) should be copied to the ref output directory.
+        var libOutputDir = Path.Join(outputDirFullPath, "mylib");
+        File.Exists(Path.Join(libOutputDir, "mylib.cs")).Should().BeTrue();
+        File.Exists(Path.Join(libOutputDir, "mylib.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(libOutputDir, "data.json")).Should().BeTrue();
+    }
+
+    /// <summary>
+    /// Verifies that <c>--delete-source</c> also deletes included items of <c>#:ref</c>'d files.
+    /// </summary>
+    [Fact]
+    public void RefDirective_IncludedItemsDeleted()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        var libDir = Path.Join(testInstance.Path, "lib");
+        Directory.CreateDirectory(libDir);
+
+        File.WriteAllText(Path.Join(libDir, "mylib.cs"), """
+            #:property OutputType=Library
+            #:property EnableDefaultNoneItems=true
+            namespace MyLib;
+            public static class Greeter
+            {
+                public static string Greet() => "Hello!";
+            }
+            """);
+
+        File.WriteAllText(Path.Join(libDir, "config.json"), """{ "setting": true }""");
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app.cs"), """
+            #:ref lib/mylib.cs
+            Console.WriteLine(MyLib.Greeter.Greet());
+            """);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        new DotnetCommand(Log, "project", "convert", "app.cs", "-o", outputDirFullPath, "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // Source files should be deleted.
+        File.Exists(Path.Join(testInstance.Path, "app.cs")).Should().BeFalse();
+        File.Exists(Path.Join(libDir, "mylib.cs")).Should().BeFalse();
+        File.Exists(Path.Join(libDir, "config.json")).Should().BeFalse();
+
+        // Converted files should exist.
+        var libOutputDir = Path.Join(outputDirFullPath, "mylib");
+        File.Exists(Path.Join(libOutputDir, "mylib.cs")).Should().BeTrue();
+        File.Exists(Path.Join(libOutputDir, "mylib.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(libOutputDir, "config.json")).Should().BeTrue();
+    }
+
+    /// <summary>
+    /// Converting one app that <c>#:ref</c>s a library does not affect other apps that also reference the same library.
+    /// </summary>
+    [Fact]
+    public void RefDirective_ConvertScope()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+            <Project>
+              <PropertyGroup>
+                <{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>true</{CSharpDirective.Ref.ExperimentalFileBasedProgramEnableRefDirective}>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "lib.cs"), """
+            #:property OutputType=Library
+            namespace MyLib;
+            public static class Greeter
+            {
+                public static string Greet() => "Hello!";
+            }
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app1.cs"), """
+            #:ref lib.cs
+            Console.WriteLine(MyLib.Greeter.Greet());
+            """);
+
+        File.WriteAllText(Path.Join(testInstance.Path, "app2.cs"), """
+            #:ref lib.cs
+            Console.WriteLine(MyLib.Greeter.Greet());
+            """);
+
+        var unrelatedDir = Path.Join(testInstance.Path, "unrelated");
+        Directory.CreateDirectory(unrelatedDir);
+        File.WriteAllText(Path.Join(unrelatedDir, "app3.cs"), """
+            #:ref ../lib.cs
+            Console.WriteLine(MyLib.Greeter.Greet());
+            """);
+
+        var outputDirFullPath = Path.Join(testInstance.Path, "Project");
+        new DotnetCommand(Log, "project", "convert", "app1.cs", "-o", outputDirFullPath)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // app1 should be converted.
+        File.Exists(Path.Join(outputDirFullPath, "app1", "app1.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(outputDirFullPath, "lib", "lib.csproj")).Should().BeTrue();
+
+        // app2 and app3 should be unaffected (still exist as .cs files with their directives intact).
+        File.ReadAllText(Path.Join(testInstance.Path, "app2.cs")).Should().Contain("#:ref lib.cs");
+        File.ReadAllText(Path.Join(unrelatedDir, "app3.cs")).Should().Contain("#:ref ../lib.cs");
+    }
+
+    [Fact]
     public void ProjectReference_FullPath_WithVars()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
@@ -600,6 +1051,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
         Directory.CreateDirectory(srcDir);
 
         File.WriteAllText(Path.Join(srcDir, "Program.cs"), """
+            #!/usr/bin/env dotnet
             #:sdk Microsoft.NET.Sdk.Web
             Console.WriteLine(Util.GetText());
             """);
@@ -664,6 +1116,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
         var subdir = Path.Join(srcDir, "subdir");
         Directory.CreateDirectory(subdir);
         File.WriteAllText(Path.Join(subdir, "Program.cs"), """
+            #!/usr/bin/env dotnet
             Console.WriteLine(Util.GetText());
             """);
         File.WriteAllText(Path.Join(subdir, "Util.cs"), """
@@ -717,6 +1170,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
         var subdir = Path.Join(srcDir, "subdir");
         Directory.CreateDirectory(subdir);
         File.WriteAllText(Path.Join(subdir, "Program.cs"), """
+            #!/usr/bin/env dotnet
             Console.WriteLine(Util.GetText());
             """);
         File.WriteAllText(Path.Join(srcDir, "Util.cs"), """
@@ -982,7 +1436,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     [Theory, CombinatorialData]
     public void UserSecretsId_Overridden_SameAsImplicit(bool hasDirective, bool hasDirectiveBuildProps)
     {
-        const string implicitValue = "$(MSBuildProjectName)-$([MSBuild]::StableStringHash($(MSBuildProjectFullPath.ToLowerInvariant()), 'Sha256'))";
+        const string implicitValue = "$(AssemblyName)-$([MSBuild]::StableStringHash($(MSBuildProjectFullPath.ToLowerInvariant()), 'Sha256'))";
 
         var testInstance = _testAssetsManager.CreateTestDirectory();
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
@@ -1234,15 +1688,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
 
-        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
-            <Project>
-              <PropertyGroup>
-                <ExperimentalFileBasedProgramEnableIncludeDirective>true</ExperimentalFileBasedProgramEnableIncludeDirective>
-                <ExperimentalFileBasedProgramEnableExcludeDirective>true</ExperimentalFileBasedProgramEnableExcludeDirective>
-              </PropertyGroup>
-            </Project>
-            """);
-
         VerifyConversion(
             baseDirectory: testInstance.Path,
             evaluateDirectives: true,
@@ -1287,8 +1732,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
-            #:property ExperimentalFileBasedProgramEnableIncludeDirective=true
-            #:property ExperimentalFileBasedProgramEnableExcludeDirective=true
             #:include **/*.cs
             #:include *.json
             #:exclude my.json
@@ -1645,7 +2088,6 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 """,
             expectedProject: expectedProject,
             expectedCSharp: """
-
                 Console.WriteLine();
                 """);
 
@@ -1948,7 +2390,8 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             builder.CreateProjectInstance(
                 new ProjectCollection(),
                 errorReporter,
-                out _,
+                project: out _,
+                projectRootElement: out _,
                 out directives);
         }
         else
@@ -1968,7 +2411,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         actualProject = projectWriter.ToString();
 
-        var convertedFile = VirtualProjectBuilder.RemoveDirectivesFromFile(directives, builder.EntryPointSourceFile);
+        var convertedFile = VirtualProjectBuildingCommand.RemoveDirectivesFromFile(builder.EntryPointSourceFile);
         actualCSharp = convertedFile.Text != builder.EntryPointSourceFile.Text ? convertedFile.Text.ToString() : null;
     }
 
@@ -2013,5 +2456,294 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             Assert.All(actualDiagnostics, d => { Assert.Equal(filePath, d.Location.Path); });
             actualDiagnostics.Select(d => (d.Location.Span.Start.Line + 1, d.Message)).Should().BeEquivalentTo(expectedErrors);
         }
+    }
+
+    [Fact]
+    public void DeleteSource_WithFlag()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        
+        var csFile = Path.Combine(testInstance.Path, "Program.cs");
+        File.WriteAllText(csFile, """Console.WriteLine("Test");""");
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs", "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // Source file should be deleted
+        File.Exists(csFile).Should().BeFalse();
+        
+        // Converted files should exist
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithoutFlag_NonInteractive()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        
+        var csFile = Path.Combine(testInstance.Path, "Program.cs");
+        File.WriteAllText(csFile, """Console.WriteLine("Test");""");
+
+        // Without --delete-source and without --interactive, source file should remain
+        new DotnetCommand(Log, "project", "convert", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // Source file should still exist
+        File.Exists(csFile).Should().BeTrue();
+        
+        // Converted files should also exist
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_DryRun()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        
+        var csFile = Path.Combine(testInstance.Path, "Program.cs");
+        File.WriteAllText(csFile, """Console.WriteLine("Test");""");
+
+        var result = new DotnetCommand(Log, "project", "convert", "Program.cs", "--delete-source", "--dry-run")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute();
+
+        result.Should().Pass();
+        result.StdOut.Should().Contain("Dry run: would delete source file: " + csFile);
+
+        // Source file should still exist in dry-run mode
+        File.Exists(csFile).Should().BeTrue();
+        
+        // No files should be created in dry-run mode
+        Directory.Exists(Path.Join(testInstance.Path, "Program")).Should().BeFalse();
+    }
+
+    [Fact]
+    public void DeleteSource_WithCustomOutput()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        
+        var csFile = Path.Combine(testInstance.Path, "Program.cs");
+        File.WriteAllText(csFile, """Console.WriteLine("Test");""");
+
+        var outputDir = Path.Combine(testInstance.Path, "CustomOutput");
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs", "-o", outputDir, "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // Source file should be deleted
+        File.Exists(csFile).Should().BeFalse();
+        
+        // Converted files should exist in custom output directory
+        File.Exists(Path.Join(outputDir, "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(outputDir, "Program.csproj")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithDefaultFiles()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        // Create entry point file with default items enabled
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:property EnableDefaultNoneItems=true
+            #:property EnableDefaultCompileItems=true
+            Console.WriteLine("Test");
+            """);
+
+        // Create additional default files
+        File.WriteAllText(Path.Join(testInstance.Path, "appsettings.json"), "{}");
+        File.WriteAllText(Path.Join(testInstance.Path, "Util.cs"), "class Util { }");
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs", "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // ALL included files should be deleted (both Compile and None items)
+        File.Exists(Path.Join(testInstance.Path, "Program.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "Util.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "appsettings.json")).Should().BeFalse();
+
+        // All files should be copied to the output directory
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "appsettings.json")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Util.cs")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithDefaultFiles_NotDeleted()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        
+        // Create entry point file with default items enabled
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:property EnableDefaultNoneItems=true
+            #:property EnableDefaultCompileItems=true
+            Console.WriteLine("Test");
+            """);
+        
+        // Create additional default files
+        File.WriteAllText(Path.Join(testInstance.Path, "appsettings.json"), "{}");
+        File.WriteAllText(Path.Join(testInstance.Path, "Util.cs"), "class Util { }");
+
+        // Without --delete-source, all files should remain
+        new DotnetCommand(Log, "project", "convert", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // All source files should still exist
+        File.Exists(Path.Join(testInstance.Path, "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "appsettings.json")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Util.cs")).Should().BeTrue();
+        
+        // All files should be copied to the output directory
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "appsettings.json")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Util.cs")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithIncludeDirective()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        // Create entry point file with #:include directive
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:include Util.cs
+            Console.WriteLine("Test");
+            """);
+
+        // Create included file
+        File.WriteAllText(Path.Join(testInstance.Path, "Util.cs"), "class Util { }");
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs", "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // ALL source files should be deleted (entry point AND included files)
+        File.Exists(Path.Join(testInstance.Path, "Program.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "Util.cs")).Should().BeFalse();
+
+        // Both files should be copied to the output directory
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Util.cs")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithIncludeDirective_NotDeleted()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        // Create entry point file with #:include directive
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:include Util.cs
+            Console.WriteLine("Test");
+            """);
+
+        // Create included file
+        File.WriteAllText(Path.Join(testInstance.Path, "Util.cs"), "class Util { }");
+
+        // Without --delete-source, all files should remain
+        new DotnetCommand(Log, "project", "convert", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // All source files should still exist
+        File.Exists(Path.Join(testInstance.Path, "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Util.cs")).Should().BeTrue();
+
+        // Both files should be copied to the output directory
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Util.cs")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithIncludeDirective_MultipleFiles()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        // Create entry point file with multiple #:include directives
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:include Util.cs
+            #:include Helper.cs
+            #:include config.json
+            Console.WriteLine("Test");
+            """);
+
+        // Create included files
+        File.WriteAllText(Path.Join(testInstance.Path, "Util.cs"), "class Util { }");
+        File.WriteAllText(Path.Join(testInstance.Path, "Helper.cs"), "class Helper { }");
+        File.WriteAllText(Path.Join(testInstance.Path, "config.json"), "{}");
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs", "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // ALL included files should be deleted (Compile and non-Compile)
+        File.Exists(Path.Join(testInstance.Path, "Program.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "Util.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "Helper.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "config.json")).Should().BeFalse();
+
+        // All files should be copied to the output directory
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Util.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Helper.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "config.json")).Should().BeTrue();
+    }
+
+    [Fact]
+    public void DeleteSource_WithIncludeDirective_Transitive()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        // Create entry point file with #:include directive
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
+            #:property {CSharpDirective.IncludeOrExclude.ExperimentalFileBasedProgramEnableTransitiveDirectives}=true
+            #:include Util.cs
+            Console.WriteLine("Test");
+            """);
+
+        // Create included file that itself has #:include directive (transitive)
+        File.WriteAllText(Path.Join(testInstance.Path, "Util.cs"), """
+            #:include Helper.cs
+            class Util { }
+            """);
+
+        // Create transitively included file
+        File.WriteAllText(Path.Join(testInstance.Path, "Helper.cs"), "class Helper { }");
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs", "--delete-source")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        // ALL Compile (source) files should be deleted (entry point, direct, and transitive)
+        File.Exists(Path.Join(testInstance.Path, "Program.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "Util.cs")).Should().BeFalse();
+        File.Exists(Path.Join(testInstance.Path, "Helper.cs")).Should().BeFalse();
+
+        // All files should be copied to the output directory
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Program.csproj")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Util.cs")).Should().BeTrue();
+        File.Exists(Path.Join(testInstance.Path, "Program", "Helper.cs")).Should().BeTrue();
     }
 }

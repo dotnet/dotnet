@@ -4,7 +4,6 @@
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using NuGet.Common;
 using NuGet.Packaging.Signing;
 using Xunit;
 
@@ -43,27 +42,16 @@ namespace Dotnet.Integration.Test
 
         private void Verify(X509ChainPolicy policy, string expectedFingerprint)
         {
-            if (RuntimeEnvironmentHelper.IsWindows)
-            {
-                Assert.Equal(X509ChainTrustMode.System, policy.TrustMode);
-            }
-            else if (RuntimeEnvironmentHelper.IsLinux || RuntimeEnvironmentHelper.IsMacOSX)
-            {
-                Assert.Equal(X509ChainTrustMode.CustomRootTrust, policy.TrustMode);
+            Assert.Equal(X509ChainTrustMode.CustomRootTrust, policy.TrustMode);
 
-                using (SHA256 hashAlgorithm = SHA256.Create())
+            using (SHA256 hashAlgorithm = SHA256.Create())
+            {
+                Assert.Contains(policy.CustomTrustStore, certificate =>
                 {
-                    Assert.Contains(policy.CustomTrustStore, certificate =>
-                    {
-                        string actualFingerprint = certificate.GetCertHashString(HashAlgorithmName.SHA256);
+                    string actualFingerprint = certificate.GetCertHashString(HashAlgorithmName.SHA256);
 
-                        return string.Equals(expectedFingerprint, actualFingerprint, StringComparison.OrdinalIgnoreCase);
-                    });
-                }
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
+                    return string.Equals(expectedFingerprint, actualFingerprint, StringComparison.OrdinalIgnoreCase);
+                });
             }
         }
     }

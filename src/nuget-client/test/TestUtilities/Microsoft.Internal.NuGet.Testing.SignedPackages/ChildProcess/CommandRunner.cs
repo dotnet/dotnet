@@ -59,8 +59,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess
                         RedirectStandardOutput = true,
                         RedirectStandardInput = true,
                         CreateNoWindow = true,
-                        StandardOutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
-                        StandardErrorEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
                     },
                 })
                 {

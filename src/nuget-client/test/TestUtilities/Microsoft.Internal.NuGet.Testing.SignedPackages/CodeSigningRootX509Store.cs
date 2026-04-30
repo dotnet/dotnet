@@ -1,11 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Security.Cryptography.X509Certificates;
-
-#if !NET5_0_OR_GREATER
 using System;
-#endif
+using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 {
@@ -30,7 +27,15 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
         public void Remove(StoreLocation storeLocation, X509Certificate2 certificate)
         {
 #if NET5_0_OR_GREATER
-            TestFallbackCertificateBundleX509ChainFactories.Instance.CodeSigningX509ChainFactory.Certificates.Remove(certificate);
+            // X509Certificate2Collection.Remove() throws if the certificate is not found.
+            // Another thread or a prior call for a different purpose may have already removed it.
+            try
+            {
+                TestFallbackCertificateBundleX509ChainFactories.Instance.CodeSigningX509ChainFactory.Certificates.Remove(certificate);
+            }
+            catch (ArgumentException)
+            {
+            }
 #else
             throw new NotSupportedException();
 #endif

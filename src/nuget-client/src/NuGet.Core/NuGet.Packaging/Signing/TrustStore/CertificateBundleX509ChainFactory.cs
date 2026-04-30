@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 #if NET5_0_OR_GREATER
 
 using System;
@@ -18,9 +16,9 @@ namespace NuGet.Packaging.Signing
     internal abstract class CertificateBundleX509ChainFactory : IX509ChainFactory
     {
         public X509Certificate2Collection Certificates { get; }
-        public string FilePath { get; }
+        public string? FilePath { get; }
 
-        protected CertificateBundleX509ChainFactory(X509Certificate2Collection certificates, string filePath = null)
+        protected CertificateBundleX509ChainFactory(X509Certificate2Collection certificates, string? filePath = null)
         {
             Certificates = certificates;
             FilePath = filePath;
@@ -63,14 +61,14 @@ namespace NuGet.Packaging.Signing
             return false;
         }
 
-        private ILogMessage GetAdditionalContext(X509Chain chain)
+        private ILogMessage? GetAdditionalContext(X509Chain chain)
         {
             if (chain is null)
             {
                 throw new ArgumentNullException(nameof(chain));
             }
 
-            ILogMessage logMessage = null;
+            ILogMessage? logMessage = null;
             int lastIndex = chain.ChainElements.Count - 1;
 
             if (lastIndex < 0)

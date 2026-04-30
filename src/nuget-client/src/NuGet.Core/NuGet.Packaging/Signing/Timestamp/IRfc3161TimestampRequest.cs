@@ -14,6 +14,6 @@ namespace NuGet.Packaging.Signing
         /// Gets the nonce for this timestamp request.
         /// </summary>
         /// <returns>The nonce for this timestamp request as byte[], if one was present; otherwise, null</returns>
-        byte[] GetNonce();
+        byte[]? GetNonce();
     }
 }

@@ -10,13 +10,13 @@
                 Component - (0:0,0 [72] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            IntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - async  __value => { ParentValue = __value; await global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(
-                            LazyIntermediateToken - (62:0,62 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
+                            IntermediateToken - (62:0,62 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
                             IntermediateToken -  - CSharp - ); }
                     ComponentAttribute - (62:0,62 [6] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (62:0,62 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
+                        IntermediateToken - (62:0,62 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
             CSharpCode - (81:1,7 [101] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (81:1,7 [101] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public int ParentValue { get; set; } = 42;\n\n    public Task Update() => Task.CompletedTask;\n

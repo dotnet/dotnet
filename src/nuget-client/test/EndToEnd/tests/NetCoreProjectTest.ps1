@@ -66,7 +66,6 @@ function Test-NetCoreConsoleAppRebuildDoesNotDeleteCacheFile {
 }
 
 function Test-NetCoreVSandMSBuildNoOp {
-    [SkipTest('https://github.com/NuGet/Home/issues/13003')]
     param ()
 
     # Arrange
@@ -92,7 +91,6 @@ function Test-NetCoreVSandMSBuildNoOp {
 }
 
 function Test-NetCoreTargetFrameworksVSandMSBuildNoOp {
-    [SkipTest('https://github.com/NuGet/Home/issues/13003')]
     param ()
 
     # Arrange
@@ -118,7 +116,6 @@ function Test-NetCoreTargetFrameworksVSandMSBuildNoOp {
 }
 
 function Test-NetCoreMultipleTargetFrameworksVSandMSBuildNoOp {
-    [SkipTest('https://github.com/NuGet/Home/issues/11231')]
     param ()
 
     # Arrange
@@ -144,7 +141,6 @@ function Test-NetCoreMultipleTargetFrameworksVSandMSBuildNoOp {
 }
 
 function Test-NetCoreToolsVSandMSBuildNoOp {
-    [SkipTest('https://github.com/NuGet/Home/issues/11231')]
     param ()
 
     # Arrange

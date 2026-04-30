@@ -110,7 +110,8 @@ namespace NuGet.XPlat.FuncTest
 
         public static SimpleTestProjectContext CreateProject(string projectName,
             SimpleTestPathContext pathContext,
-            string projectFrameworks)
+            string projectFrameworks,
+            bool fileBasedApp = false)
         {
             var settings = Settings.LoadDefaultSettings(Path.GetDirectoryName(pathContext.NuGetConfig), Path.GetFileName(pathContext.NuGetConfig), null);
             var project = SimpleTestProjectContext.CreateNETCoreWithSDK(
@@ -123,7 +124,16 @@ namespace NuGet.XPlat.FuncTest
             var packageSourceProvider = new PackageSourceProvider(settings);
             project.Sources = packageSourceProvider.LoadPackageSources();
 
+            if (fileBasedApp)
+            {
+                project.VirtualProjectPath = project.ProjectPath;
+                project.ProjectPath = Path.ChangeExtension(project.ProjectPath, ".cs");
+                Directory.CreateDirectory(Path.GetDirectoryName(project.ProjectPath)!);
+                File.WriteAllText(project.ProjectPath, ""); // commands might check the file's existence
+            }
+
             project.Save();
+
             return project;
         }
 
@@ -376,6 +386,16 @@ namespace NuGet.XPlat.FuncTest
             return frameworksA.ToList()
                 .Intersect(frameworksB.ToList())
                 .First();
+        }
+
+        public static XDocument LoadCSProj(SimpleTestProjectContext project)
+        {
+            if (project.VirtualProjectContent != null)
+            {
+                return XDocument.Parse(project.VirtualProjectContent);
+            }
+
+            return LoadCSProj(project.ProjectPath);
         }
 
         public static XDocument LoadCSProj(string path)

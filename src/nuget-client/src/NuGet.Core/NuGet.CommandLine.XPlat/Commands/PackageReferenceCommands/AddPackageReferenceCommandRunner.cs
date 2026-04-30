@@ -78,6 +78,11 @@ namespace NuGet.CommandLine.XPlat
 
             var projectFullPath = Path.GetFullPath(packageReferenceArgs.ProjectPath);
 
+            if (msBuild.VirtualProjectBuilder?.IsValidEntryPointPath(projectFullPath) == true)
+            {
+                projectFullPath = msBuild.VirtualProjectBuilder.GetVirtualProjectPath(projectFullPath);
+            }
+
             var matchingPackageSpecs = dgSpec
                 .Projects
                 .Where(p => p.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference &&
@@ -104,7 +109,7 @@ namespace NuGet.CommandLine.XPlat
             var originalPackageSpec = matchingPackageSpecs.FirstOrDefault();
 
             // Check if the project files are correct for CPM
-            if (originalPackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !MSBuildAPIUtility.AreCentralVersionRequirementsSatisfied(packageReferenceArgs, originalPackageSpec))
+            if (originalPackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !msBuild.AreCentralVersionRequirementsSatisfied(packageReferenceArgs, originalPackageSpec))
             {
                 return 1;
             }

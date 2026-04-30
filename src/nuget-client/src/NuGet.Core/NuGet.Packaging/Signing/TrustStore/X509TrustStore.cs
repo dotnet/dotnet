@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using NuGet.Common;
@@ -18,8 +16,8 @@ namespace NuGet.Packaging.Signing
     /// </summary>
     public static class X509TrustStore
     {
-        private static IX509ChainFactory CodeSigningX509ChainFactory;
-        private static IX509ChainFactory TimestampingX509ChainFactory;
+        private static IX509ChainFactory? CodeSigningX509ChainFactory;
+        private static IX509ChainFactory? TimestampingX509ChainFactory;
         private static readonly object LockObject = new();
 
         /// <summary>
@@ -101,7 +99,7 @@ namespace NuGet.Packaging.Signing
         internal static IX509ChainFactory CreateX509ChainFactoryForDotNetSdk(
             X509StorePurpose storePurpose,
             ILogger logger,
-            FileInfo fallbackCertificateBundleFile)
+            FileInfo? fallbackCertificateBundleFile)
         {
 #if NET5_0_OR_GREATER
             if (RuntimeEnvironmentHelper.IsLinux)
@@ -109,7 +107,7 @@ namespace NuGet.Packaging.Signing
                 // System certificate bundle probe paths only support code signing not timestamping.
                 if (storePurpose == X509StorePurpose.CodeSigning &&
                     SystemCertificateBundleX509ChainFactory.TryCreate(
-                    out SystemCertificateBundleX509ChainFactory systemBundleFactory))
+                    out SystemCertificateBundleX509ChainFactory? systemBundleFactory))
                 {
                     logger.LogInformation(
                         string.Format(
@@ -123,7 +121,7 @@ namespace NuGet.Packaging.Signing
                 if (FallbackCertificateBundleX509ChainFactory.TryCreate(
                     storePurpose,
                     fallbackCertificateBundleFile?.FullName,
-                    out FallbackCertificateBundleX509ChainFactory fallbackBundleFactory))
+                    out FallbackCertificateBundleX509ChainFactory? fallbackBundleFactory))
                 {
                     logger.LogInformation(
                         string.Format(
@@ -144,7 +142,7 @@ namespace NuGet.Packaging.Signing
                 if (FallbackCertificateBundleX509ChainFactory.TryCreate(
                     storePurpose,
                     fallbackCertificateBundleFile?.FullName,
-                    out FallbackCertificateBundleX509ChainFactory fallbackBundleFactory))
+                    out FallbackCertificateBundleX509ChainFactory? fallbackBundleFactory))
                 {
                     logger.LogInformation(
                         string.Format(

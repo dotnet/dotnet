@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -34,6 +33,34 @@ namespace NuGet.Packaging.Signing
             X509Certificate2Collection extraStore,
             ILogger logger,
             CertificateType certificateType)
+        {
+            return GetCertificateChain(certificate, extraStore, logger, certificateType, allowUntrustedRoot: false);
+        }
+
+        /// <summary>
+        /// Create a list of certificates in chain order with the leaf first and root last.
+        /// </summary>
+        /// <param name="certificate">The certificate for which a chain should be built.</param>
+        /// <param name="extraStore">A certificate store containing additional certificates necessary
+        /// for chain building.</param>
+        /// <param name="logger">A logger.</param>
+        /// <param name="certificateType">The certificate type.</param>
+        /// <param name="allowUntrustedRoot">When <see langword="true" />, an <see cref="X509ChainStatusFlags.UntrustedRoot" />
+        /// chain status is treated as a warning instead of an error for signature certificates.
+        /// This has no effect for timestamp certificate chains.</param>
+        /// <returns>A certificate chain.</returns>
+        /// <remarks>This is intended to be used only during signing and timestamping operations,
+        /// not verification.</remarks>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="certificate" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="extraStore" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="certificateType" /> is undefined.</exception>
+        public static IX509CertificateChain GetCertificateChain(
+            X509Certificate2 certificate,
+            X509Certificate2Collection extraStore,
+            ILogger logger,
+            CertificateType certificateType,
+            bool allowUntrustedRoot)
         {
             if (certificate == null)
             {
@@ -76,7 +103,7 @@ namespace NuGet.Packaging.Signing
                 X509ChainStatusFlags errorStatusFlags;
                 X509ChainStatusFlags warningStatusFlags;
 
-                GetChainStatusFlags(certificate, certificateType, out errorStatusFlags, out warningStatusFlags);
+                GetChainStatusFlags(certificate, certificateType, allowUntrustedRoot, out errorStatusFlags, out warningStatusFlags);
 
                 var fatalStatuses = new List<X509ChainStatus>();
                 var logCode = certificateType == CertificateType.Timestamp ? NuGetLogCode.NU3028 : NuGetLogCode.NU3018;
@@ -142,6 +169,7 @@ namespace NuGet.Packaging.Signing
         private static void GetChainStatusFlags(
             X509Certificate2 certificate,
             CertificateType certificateType,
+            bool allowUntrustedRoot,
             out X509ChainStatusFlags errorStatusFlags,
             out X509ChainStatusFlags warningStatusFlags)
         {
@@ -152,7 +180,7 @@ namespace NuGet.Packaging.Signing
 
             warningStatusFlags = X509ChainStatusFlags.RevocationStatusUnknown | X509ChainStatusFlags.OfflineRevocation;
 
-            if (certificateType == CertificateType.Signature && CertificateUtility.IsSelfIssued(certificate))
+            if (certificateType == CertificateType.Signature && (CertificateUtility.IsSelfIssued(certificate) || allowUntrustedRoot))
             {
                 warningStatusFlags |= X509ChainStatusFlags.UntrustedRoot;
             }
@@ -238,7 +266,7 @@ namespace NuGet.Packaging.Signing
             return chainStatus.Any();
         }
 
-        internal static bool TryGetStatusAndMessage(X509ChainStatus[] chainStatuses, X509ChainStatusFlags status, out IEnumerable<string> statusAndMessages)
+        internal static bool TryGetStatusAndMessage(X509ChainStatus[] chainStatuses, X509ChainStatusFlags status, [NotNullWhen(returnValue: true)] out IEnumerable<string>? statusAndMessages)
         {
             statusAndMessages = null;
 
@@ -263,7 +291,7 @@ namespace NuGet.Packaging.Signing
 
         private static void LogAdditionalContext(IX509Chain chain, ILogger logger)
         {
-            ILogMessage additionalContext = chain.AdditionalContext;
+            ILogMessage? additionalContext = chain.AdditionalContext;
 
             if (additionalContext is not null)
             {

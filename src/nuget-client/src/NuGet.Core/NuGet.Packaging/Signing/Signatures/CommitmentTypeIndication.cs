@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -24,9 +22,9 @@ namespace NuGet.Packaging.Signing
     public sealed class CommitmentTypeIndication
     {
         public Oid CommitmentTypeId { get; }
-        public IReadOnlyList<CommitmentTypeQualifier> Qualifiers { get; }
+        public IReadOnlyList<CommitmentTypeQualifier>? Qualifiers { get; }
 
-        private CommitmentTypeIndication(Oid commitmentTypeId, IReadOnlyList<CommitmentTypeQualifier> qualifiers)
+        private CommitmentTypeIndication(Oid commitmentTypeId, IReadOnlyList<CommitmentTypeQualifier>? qualifiers)
         {
             CommitmentTypeId = commitmentTypeId;
             Qualifiers = qualifiers;
@@ -53,7 +51,7 @@ namespace NuGet.Packaging.Signing
         {
             var indicationReader = reader.ReadSequence();
             var commitmentTypeId = indicationReader.ReadOid();
-            List<CommitmentTypeQualifier> qualifiers = null;
+            List<CommitmentTypeQualifier>? qualifiers = null;
 
             if (indicationReader.HasData)
             {

@@ -9,7 +9,4 @@ internal partial class MarkupEndTagSyntax
     {
         return Name.IsMissing ? string.Empty : Bang.Content + Name.Content;
     }
-
-    public override BaseMarkupStartTagSyntax? GetStartTag()
-        => (Parent as MarkupElementSyntax)?.StartTag;
 }

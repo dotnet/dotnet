@@ -36,9 +36,9 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
     private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
     private CodeAnalysis.Workspace? _localWorkspace;
     private ExportProvider? _localExportProvider;
+    private IClientSettingsManager? _clientSettingsManager;
 
     private protected abstract IRemoteServiceInvoker RemoteServiceInvoker { get; }
-    private protected abstract IClientSettingsManager ClientSettingsManager { get; }
     private protected abstract IFilePathService FilePathService { get; }
     private protected abstract TestComposition LocalComposition { get; }
 
@@ -46,6 +46,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
     private protected RemoteClientCapabilitiesService ClientCapabilitiesService => (RemoteClientCapabilitiesService)OOPExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private protected CodeAnalysis.Workspace LocalWorkspace => _localWorkspace.AssumeNotNull();
+    private protected IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
 
     /// <summary>
     /// The export provider for client services (Roslyn)
@@ -102,6 +103,24 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         _ = RemoteWorkspaceProvider.Instance.GetWorkspace();
 
         _localWorkspace = CreateLocalWorkspace();
+
+        _clientSettingsManager = CreateClientSettingsManager();
+        _clientSettingsManager.ClientSettingsChanged += ClientSettingsManager_ClientSettingsChanged;
+    }
+
+    private protected abstract IClientSettingsManager CreateClientSettingsManager();
+
+    private void ClientSettingsManager_ClientSettingsChanged(object? sender, EventArgs e)
+    {
+        var remoteClientManager = OOPExportProvider.GetExportedValue<RemoteClientSettingsManager>();
+        remoteClientManager.Update(_clientSettingsManager.AssumeNotNull().GetClientSettings());
+    }
+
+    protected override Task DisposeAsync()
+    {
+        _clientSettingsManager?.ClientSettingsChanged -= ClientSettingsManager_ClientSettingsChanged;
+
+        return base.DisposeAsync();
     }
 
     private AdhocWorkspace CreateLocalWorkspace()

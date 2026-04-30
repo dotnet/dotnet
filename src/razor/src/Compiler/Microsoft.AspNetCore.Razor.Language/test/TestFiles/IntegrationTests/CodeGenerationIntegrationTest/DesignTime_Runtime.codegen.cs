@@ -34,10 +34,9 @@ for(int i = 1; i <= 10; i++) {
 #nullable disable
 
             WriteLiteral("    <p>This is item #");
-            Write(
 #nullable restore
-#line (3,23)-(3,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-i
+#line (3,23)-(3,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Write(i
 
 #line default
 #line hidden
@@ -53,20 +52,18 @@ i
 #nullable disable
 
             WriteLiteral("</div>\r\n\r\n<p>\r\n");
-            Write(
 #nullable restore
-#line (8,3)-(8,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Foo(Bar.Baz)
+#line (8,3)-(8,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Write(Foo(Bar.Baz)
 
 #line default
 #line hidden
 #nullable disable
             );
             WriteLiteral("\r\n");
-            Write(
 #nullable restore
-#line (9,2)-(9,6) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Foo(
+#line (9,2)-(9,6) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Write(Foo(
 
 #line default
 #line hidden
@@ -74,10 +71,9 @@ Foo(
             item => new global::Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_template_writer) => {
                 PushWriter(__razor_template_writer);
                 WriteLiteral("<p>Bar ");
-                Write(
 #nullable restore
-#line (9,15)-(9,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-baz
+#line (9,15)-(9,18) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Write(baz
 
 #line default
 #line hidden
@@ -98,10 +94,9 @@ baz
             WriteLiteral("\r\n</p>\r\n\r\n");
             DefineSection("Footer", async() => {
                 WriteLiteral("\r\n    <p>Foo</p>\r\n    ");
-                Write(
 #nullable restore
-#line (14,6)-(14,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-bar
+#line (14,6)-(14,9) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Write(bar
 
 #line default
 #line hidden

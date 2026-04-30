@@ -21,7 +21,7 @@ namespace NuGet.Packaging.Test
         {
             // Arrange & Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => new PackagePathResolver(
-                rootDirectory: null,
+                rootDirectory: null!,
                 useSideBySidePaths: true));
             Assert.Equal("rootDirectory", exception.ParamName);
         }
@@ -47,7 +47,7 @@ namespace NuGet.Packaging.Test
 
                 // Act
                 var exception = Assert.Throws<ArgumentException>(() => new PackagePathResolver(
-                    rootDirectory: null,
+                    rootDirectory: null!,
                     useSideBySidePaths: true));
 
                 // Assert

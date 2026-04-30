@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,6 +76,6 @@ namespace NuGet.Packaging
         /// Sets a throttle for package downloads.
         /// </summary>
         /// <param name="throttle">A throttle.  Can be <see langword="null" />.</param>
-        void SetThrottle(SemaphoreSlim throttle);
+        void SetThrottle(SemaphoreSlim? throttle);
     }
 }

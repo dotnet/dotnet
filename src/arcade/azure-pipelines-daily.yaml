@@ -16,7 +16,7 @@ stages:
       displayName: Synchronize secrets
       pool:
         name: NetCore1ESPool-Internal-NoMSI
-        demands: ImageOverride -equals 1es-windows-2022
+        demands: ImageOverride -equals windows.vs2026.amd64
 
       steps:
       - script: restore.cmd -ci

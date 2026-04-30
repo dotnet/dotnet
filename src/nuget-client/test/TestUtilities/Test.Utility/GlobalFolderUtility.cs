@@ -40,7 +40,7 @@ namespace NuGet.Test.Utility
                 using (var stream = File.OpenRead(packagePath))
                 {
                     await PackageExtractor.InstallFromSourceAsync(
-                        null,
+                        "source",
                         reader.GetIdentity(),
                         async (d) => await stream.CopyToAsync(d),
                         versionFolderPathResolver,

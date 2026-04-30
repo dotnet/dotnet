@@ -2,11 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Frozen;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.VisualStudio.Commanding;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Shell;
@@ -26,12 +27,6 @@ internal sealed partial class ViewCodeCommandHandler(
     ITextDocumentFactoryService textDocumentFactoryService,
     JoinableTaskContext joinableTaskContext) : ICommandHandler<ViewCodeCommandArgs>
 {
-    private static readonly FrozenSet<string> s_razorFileExtensions = new[]
-    {
-        RazorLSPConstants.CSHTMLFileExtension,
-        RazorLSPConstants.RazorFileExtension
-    }.ToFrozenSet(PathUtilities.OSSpecificPathComparer);
-
     private static readonly CommandState s_availableCommandState = new(isAvailable: true, displayText: SR.View_Code);
 
     private readonly IServiceProvider _serviceProvider = serviceProvider;
@@ -69,24 +64,19 @@ internal sealed partial class ViewCodeCommandHandler(
         // However, if that changes, we should assert because our FileExistsHelper will likely be corrupted.
         _joinableTaskContext.AssertUIThread();
 
+        // Exclude imports files — they don't have nested code files.
+        if (_textDocumentFactoryService.TryGetTextDocument(buffer, out var document)
+            && document?.FilePath is string filePath
+            && FileUtilities.IsAnyRazorFilePath(filePath, StringComparison.OrdinalIgnoreCase)
+            && Path.GetFileName(filePath) is string fileName
+            && !string.Equals(fileName, ComponentHelpers.ImportsFileName, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(fileName, MvcImportProjectFeature.ImportsFileName, StringComparison.OrdinalIgnoreCase))
+        {
+            codeFilePath = filePath + RazorLSPConstants.CSharpFileExtension;
+            return _helper.FileExists(codeFilePath);
+        }
+
         codeFilePath = null;
-
-        if (!_textDocumentFactoryService.TryGetTextDocument(buffer, out var document) ||
-            document?.FilePath is null)
-        {
-            return false;
-        }
-
-        var filePath = document.FilePath;
-        var extension = Path.GetExtension(filePath);
-
-        if (!s_razorFileExtensions.Contains(extension))
-        {
-            return false;
-        }
-
-        codeFilePath = Path.ChangeExtension(filePath, extension + RazorLSPConstants.CSharpFileExtension);
-
-        return _helper.FileExists(codeFilePath);
+        return false;
     }
 }

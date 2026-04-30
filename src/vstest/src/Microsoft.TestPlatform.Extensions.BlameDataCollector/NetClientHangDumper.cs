@@ -20,7 +20,10 @@ internal class NetClientHangDumper : IHangDumper
     public void Dump(int processId, string outputDirectory, DumpTypeOption type)
     {
         var process = Process.GetProcessById(processId);
-        var processTree = process.GetProcessTree();
+        // There is 30s timeout hardcoded for the NetClient, so if we try to connect to a non-net process it will take 30s to timeout.
+        // https://github.com/dotnet/diagnostics/blob/main/src/Microsoft.Diagnostics.NETCore.Client/DiagnosticsIpc/IpcClient.cs#L15
+        // We run this in parallel so it okay, but we are never interested in dumping the native helper processes of Windows, nor we can dump them.
+        var processTree = process.GetProcessTree().Where(p => p.Process?.ProcessName is not null and not "conhost" and not "WerFault" and not "createdump").ToList();
 
         if (EqtTrace.IsVerboseEnabled)
         {
@@ -62,7 +65,7 @@ internal class NetClientHangDumper : IHangDumper
                     try
                     {
                         var outputFile = Path.Combine(outputDirectory, $"{p.ProcessName}_{p.Id}_{DateTime.Now:yyyyMMddTHHmmss}_hangdump.dmp");
-                        EqtTrace.Verbose($"NetClientHangDumper.CollectDump: Selected dump type {type}. Dumping {process.Id} - {process.ProcessName} in {outputFile}. ");
+                        EqtTrace.Verbose($"NetClientHangDumper.CollectDump: Selected dump type {type}. Dumping {p.Id} - {p.ProcessName} in {outputFile}. ");
 
                         var client = new DiagnosticsClient(p.Id);
 

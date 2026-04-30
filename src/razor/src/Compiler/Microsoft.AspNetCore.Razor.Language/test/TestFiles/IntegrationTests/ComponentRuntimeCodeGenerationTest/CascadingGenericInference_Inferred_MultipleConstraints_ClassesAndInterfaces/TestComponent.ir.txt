@@ -16,7 +16,7 @@
                                     LazyIntermediateToken - (138:4,23 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Date
                             ComponentAttribute - (155:4,40 [4] x:\dir\subdir\Test\TestComponent.cshtml) - FieldName - FieldName - AttributeStructure.DoubleQuotes
                                 HtmlContent - (155:4,40 [4] x:\dir\subdir\Test\TestComponent.cshtml)
-                                    LazyIntermediateToken - (155:4,40 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Date
+                                    IntermediateToken - (155:4,40 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Date
                             ComponentAttribute -  - Format -  - AttributeStructure.DoubleQuotes
                                 HtmlContent - (169:4,54 [1] x:\dir\subdir\Test\TestComponent.cshtml)
                                     LazyIntermediateToken - (169:4,54 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - d
@@ -24,7 +24,7 @@
                                 HtmlContent - (179:4,64 [5] x:\dir\subdir\Test\TestComponent.cshtml)
                                     LazyIntermediateToken - (179:4,64 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - 10rem
                     ComponentTypeArgument - (31:2,13 [15] x:\dir\subdir\Test\TestComponent.cshtml) - TItem
-                        LazyIntermediateToken - (31:2,13 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - WeatherForecast
+                        IntermediateToken - (31:2,13 [15] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - WeatherForecast
                     ComponentAttribute -  - Items -  - AttributeStructure.DoubleQuotes
                         CSharpExpression - (55:2,37 [33] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (57:2,39 [30] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<WeatherForecast>()

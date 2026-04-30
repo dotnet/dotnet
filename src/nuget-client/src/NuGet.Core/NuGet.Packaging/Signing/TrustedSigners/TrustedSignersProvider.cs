@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -92,10 +90,10 @@ namespace NuGet.Packaging.Signing
 
                 foreach (var certificate in item.Certificates)
                 {
-                    ICollection<string> owners = null;
+                    ICollection<string>? owners = null;
                     if (itemTarget == VerificationTarget.Repository)
                     {
-                        owners = new HashSet<string>((item as RepositoryItem).Owners);
+                        owners = new HashSet<string>(((RepositoryItem)item).Owners);
                     }
 
                     if (certificateLookup.TryGetValue(GetCertLookupKey(certificate), out var existingEntry))
@@ -157,11 +155,11 @@ namespace NuGet.Packaging.Signing
 
             public SignaturePlacement Placement { get; set; }
 
-            public ICollection<string> Owners { get; set; }
+            public ICollection<string>? Owners { get; set; }
 
             public CertificateItem Certificate { get; }
 
-            public CertificateEntryLookupEntry(VerificationTarget target, SignaturePlacement placement, CertificateItem certificate, ICollection<string> owners = null)
+            public CertificateEntryLookupEntry(VerificationTarget target, SignaturePlacement placement, CertificateItem certificate, ICollection<string>? owners = null)
             {
                 Target = target;
                 Placement = placement;

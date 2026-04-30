@@ -115,7 +115,7 @@ namespace NuGet.Packaging.Test
             Verify(expectedTstInfo.Extensions, actualTstInfo.Extensions);
         }
 
-        private static void Verify(TestGeneralName? expectedTsa, byte[] actualTsa)
+        private static void Verify(TestGeneralName? expectedTsa, byte[]? actualTsa)
         {
             Assert.Equal(expectedTsa is null, actualTsa is null);
 

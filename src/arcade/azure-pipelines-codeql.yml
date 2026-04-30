@@ -41,7 +41,7 @@ jobs:
   displayName: CodeQL
   pool:
     name: $(DncEngInternalBuildPool)
-    demands: ImageOverride -equals 1es-windows-2022
+    demands: ImageOverride -equals windows.vs2026.amd64
   timeoutInMinutes: 90
 
   steps:

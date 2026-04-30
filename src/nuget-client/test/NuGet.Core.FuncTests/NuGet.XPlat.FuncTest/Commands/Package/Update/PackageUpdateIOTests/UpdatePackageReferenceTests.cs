@@ -24,9 +24,9 @@ namespace NuGet.XPlat.FuncTest.Commands.Package.Update.PackageUpdateIOTests;
 [Collection(XPlatCollection.Name)]
 public class UpdatePackageReferenceTests
 {
-    private static PackageUpdateIO CreatePackageUpdateIO(string solutionRoot)
+    private static PackageUpdateIO CreatePackageUpdateIO(string solutionRoot, IVirtualProjectBuilder? virtualProjectBuilder = null)
     {
-        var msbuildUtility = new MSBuildAPIUtility(NullLogger.Instance);
+        var msbuildUtility = new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder);
         var packageUpdateIO = new PackageUpdateIO(solutionRoot, msbuildUtility, TestEnvironmentVariableReader.EmptyInstance);
         return packageUpdateIO;
     }
@@ -135,5 +135,87 @@ public class UpdatePackageReferenceTests
         project2PackageReferences.Should().ContainSingle();
         var project2PackageRef = project2PackageReferences.First();
         project2PackageRef.Attribute("Version")?.Value.Should().Be("1.0.0");
+    }
+
+    [Fact]
+    public async Task UpdatePackageReference_FileBasedApp()
+    {
+        // Arrange
+        using var testContext = new SimpleTestPathContext();
+
+        var packageA_v1 = new SimpleTestPackageContext("PackageA", "1.0.0");
+        var packageA_v2 = new SimpleTestPackageContext("PackageA", "2.0.0");
+        await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, packageA_v1, packageA_v2);
+
+        var project = XPlatTestUtils.CreateProject("TestProject1", testContext, "net9.0", fileBasedApp: true);
+
+        project.AddPackageToAllFrameworks(packageA_v1);
+        project.Properties.Add("RestorePackagesPath", testContext.UserPackagesFolder);
+        project.Sources = new List<PackageSource> { new PackageSource(testContext.PackageSource) };
+        project.FallbackFolders = new List<string> { testContext.FallbackFolder };
+        project.GlobalPackagesFolder = testContext.UserPackagesFolder;
+
+        using var builder = TestVirtualProjectBuilder.From(project);
+        using var packageUpdateIO = CreatePackageUpdateIO(testContext.SolutionRoot, builder);
+
+        var updatedDgSpec = new ProjectModel.DependencyGraphSpec();
+        var originalProjectSpec1 = project.PackageSpec;
+        var projectSpec1 = originalProjectSpec1.Clone();
+        projectSpec1.RestoreMetadata.Sources = new List<PackageSource> { new PackageSource(testContext.PackageSource) };
+        projectSpec1.RestoreMetadata.FallbackFolders = new List<string> { testContext.FallbackFolder };
+        projectSpec1.RestoreMetadata.PackagesPath = testContext.UserPackagesFolder;
+        var framework1 = projectSpec1.TargetFrameworks.First();
+        framework1.Dependencies.Clear();
+        framework1.Dependencies.Add(new LibraryModel.LibraryDependency
+        {
+            LibraryRange = new LibraryModel.LibraryRange(
+                "PackageA",
+                VersionRange.Parse("2.0.0"),
+                NuGet.LibraryModel.LibraryDependencyTarget.Package)
+        });
+        updatedDgSpec.AddProject(projectSpec1);
+        updatedDgSpec.AddRestore(projectSpec1.RestoreMetadata.ProjectUniqueName);
+
+        foreach (var packageSpec in updatedDgSpec.Projects)
+        {
+            if (packageSpec.FilePath == project.VirtualProjectPath)
+            {
+                packageSpec.FilePath = project.ProjectPath;
+            }
+        }
+
+        var previewResult = await packageUpdateIO.PreviewUpdatePackageReferenceAsync(
+            updatedDgSpec,
+            NullLogger.Instance,
+            CancellationToken.None);
+        previewResult.Success.Should().BeTrue();
+
+        var packageToUpdate = new PackageToUpdate
+        {
+            Id = "PackageA",
+            CurrentVersion = VersionRange.Parse("1.0.0"),
+            NewVersion = VersionRange.Parse("2.0.0")
+        };
+
+        var tfmAliases = projectSpec1.TargetFrameworks.Select(tf => tf.TargetAlias).ToList();
+
+        // Act
+        packageUpdateIO.UpdatePackageReference(
+            projectSpec1,
+            previewResult,
+            tfmAliases,
+            packageToUpdate,
+            NullLogger.Instance);
+
+        // Assert
+        var project1Xml = XDocument.Parse(builder!.ModifiedContent!);
+        var ns = project1Xml.Root!.GetDefaultNamespace();
+        var project1PackageReferences = project1Xml.Descendants(ns + "PackageReference")
+            .Where(e => e.Attribute("Include")?.Value == "PackageA")
+            .ToList();
+
+        project1PackageReferences.Should().ContainSingle();
+        var project1PackageRef = project1PackageReferences.First();
+        project1PackageRef.Attribute("Version")?.Value.Should().Be("2.0.0");
     }
 }

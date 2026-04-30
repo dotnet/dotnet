@@ -21,13 +21,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : CohostTestBase(testOutputHelper)
 {
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
-    private IClientSettingsManager? _clientSettingsManager;
     private IFilePathService? _filePathService;
     private ISemanticTokensLegendService? _semanticTokensLegendService;
 
     private protected override IRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected TestRemoteServiceInvoker TestRemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
-    private protected override IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
     private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected ISemanticTokensLegendService SemanticTokensLegendService => _semanticTokensLegendService.AssumeNotNull();
 
@@ -40,12 +38,12 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         _remoteServiceInvoker = new TestRemoteServiceInvoker(JoinableTaskContext, OOPExportProvider, LoggerFactory);
         AddDisposable(_remoteServiceInvoker);
 
-        _clientSettingsManager = new ClientSettingsManager([], null, null);
-
         _filePathService = new VisualStudioFilePathService();
 
         _semanticTokensLegendService = TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions: true);
     }
+
+    private protected override IClientSettingsManager CreateClientSettingsManager() => new ClientSettingsManager([], null, null);
 
     private protected override RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions()
     {

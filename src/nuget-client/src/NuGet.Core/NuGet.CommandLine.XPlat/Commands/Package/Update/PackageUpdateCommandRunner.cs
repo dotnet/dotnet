@@ -26,7 +26,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update;
 internal static class PackageUpdateCommandRunner
 {
     // This overload sets static state, so should not be used in tests.
-    internal static Task<int> Run(PackageUpdateArgs args, CancellationToken cancellationToken)
+    internal static Task<int> Run(PackageUpdateArgs args, IVirtualProjectBuilder? virtualProjectBuilder, CancellationToken cancellationToken)
     {
         ILoggerWithColor logger = new CommandOutputLogger(args.LogLevel)
         {
@@ -39,7 +39,7 @@ internal static class PackageUpdateCommandRunner
         // MSBuildAPIUtility's output is different to what we want for package update.
         // While it would probably be a good idea to align the output of all commands using MSBuildAPIUtility,
         // in order to meet deadlines, we'll suppress its output, and leave improvements for later.
-        MSBuildAPIUtility msBuild = new(NullLogger.Instance);
+        MSBuildAPIUtility msBuild = new(NullLogger.Instance, virtualProjectBuilder);
 
         var restoreHelper = new PackageUpdateIO(args.Project, msBuild, EnvironmentVariableWrapper.Instance);
 

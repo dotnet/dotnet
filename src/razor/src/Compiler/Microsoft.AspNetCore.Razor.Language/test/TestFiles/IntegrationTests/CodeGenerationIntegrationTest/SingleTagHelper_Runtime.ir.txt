@@ -25,7 +25,7 @@
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_0
                     DefaultTagHelperProperty - (63:2,28 [4] SingleTagHelper.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (63:2,28 [4] SingleTagHelper.cshtml) - CSharp - 1337
+                        IntermediateToken - (63:2,28 [4] SingleTagHelper.cshtml) - CSharp - 1337
                     DefaultTagHelperExecute - 
             Inject - 
             Inject - 

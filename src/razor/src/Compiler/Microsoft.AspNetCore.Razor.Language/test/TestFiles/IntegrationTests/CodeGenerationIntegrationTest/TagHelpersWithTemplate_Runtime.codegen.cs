@@ -68,10 +68,9 @@ namespace AspNetCoreGeneratedDocument
                     PushWriter(__razor_template_writer);
                     __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "__UniqueIdSuppressedForTesting__", async() => {
                         WriteLiteral("<h3>");
-                        Write(
 #nullable restore
-#line (16,41)-(16,45) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
-item
+#line (16,41)-(16,45) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithTemplate.cshtml"
+Write(item
 
 #line default
 #line hidden

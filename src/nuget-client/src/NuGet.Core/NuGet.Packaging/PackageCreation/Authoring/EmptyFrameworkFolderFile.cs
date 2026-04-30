@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace NuGet.Packaging
@@ -12,6 +13,7 @@ namespace NuGet.Packaging
     /// </summary>
     internal sealed class EmptyFrameworkFolderFile : PhysicalPackageFile
     {
+        [SetsRequiredMembers]
         public EmptyFrameworkFolderFile(string directoryPathInPackage) :
             base(() => Stream.Null)
         {

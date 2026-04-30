@@ -463,7 +463,7 @@ public class DerivedViewComponentWithAmbiguity : AsyncViewComponentWithNonGeneri
     public string Invoke() => null;
 }
 
-public class StaticInvokeAsyncViewComponent
+public static class StaticInvokeAsyncViewComponent
 {
     public static Task<string> InvokeAsync() => null;
 }

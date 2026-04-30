@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +19,7 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// Gets a read-only list of package owners.
         /// </summary>
-        public IReadOnlyList<string> PackageOwners { get; }
+        public IReadOnlyList<string>? PackageOwners { get; }
 
         /// <summary>
         /// Gets the signature type.
@@ -53,7 +51,7 @@ namespace NuGet.Packaging.Signing
             HashAlgorithmName signatureHashAlgorithm,
             HashAlgorithmName timestampHashAlgorithm,
             Uri v3ServiceIndexUrl,
-            IReadOnlyList<string> packageOwners)
+            IReadOnlyList<string>? packageOwners)
             : base(
                   certificate,
                   signatureHashAlgorithm,

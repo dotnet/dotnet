@@ -33,7 +33,7 @@ internal sealed class RemoteWorkspaceProvider : IWorkspaceProvider
     /// </summary>
     public static class TestAccessor
     {
-        public async static Task<string?> InitializeRemoteExportProviderBuilderAsync(string localSettingsDirectory, TraceSource traceLogger, CancellationToken cancellationToken)
+        public static async Task<string?> InitializeRemoteExportProviderBuilderAsync(string localSettingsDirectory, TraceSource traceLogger, CancellationToken cancellationToken)
         {
             return await RemoteExportProviderBuilder.InitializeAsync(localSettingsDirectory, traceLogger, cancellationToken).ConfigureAwait(false);
         }

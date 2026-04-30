@@ -44,10 +44,9 @@ if(foo != null) {
 #line hidden
 #nullable disable
 
-            Write(
 #nullable restore
-#line (7,6)-(7,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml"
-foo
+#line (7,6)-(7,9) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml"
+Write(foo
 
 #line default
 #line hidden
@@ -81,10 +80,9 @@ if(!String.IsNullOrEmpty(bar)) {
 #line hidden
 #nullable disable
 
-            Write(
 #nullable restore
-#line (14,7)-(14,28) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml"
-bar.Replace("F", "B")
+#line (14,7)-(14,28) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExpressionsInCode.cshtml"
+Write(bar.Replace("F", "B")
 
 #line default
 #line hidden

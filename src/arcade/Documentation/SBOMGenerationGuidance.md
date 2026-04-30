@@ -167,7 +167,7 @@ for your release builds:
   - https://github.com/dotnet/runtime
   - https://github.com/dotnet/sdk
   - https://github.com/dotnet/source-build
-  - https://github.com/dotnet/source-build-reference-packages
+  - https://github.com/dotnet/source-build-assets
   - https://github.com/dotnet/templating
   - https://github.com/dotnet/test-templates
   - https://github.com/dotnet/windowsdesktop

@@ -78,8 +78,8 @@ public class TestResultSerializationTests
         var test = Deserialize<TestResult>(json, version);
 
         Assert.AreEqual(TestResult.TestCase.Id, test.TestCase.Id);
-        Assert.AreEqual(TestResult.Attachments.Count, test.Attachments.Count);
-        Assert.AreEqual(TestResult.Messages.Count, test.Messages.Count);
+        Assert.HasCount(TestResult.Attachments.Count, test.Attachments);
+        Assert.HasCount(TestResult.Messages.Count, test.Messages);
 
         Assert.AreEqual(TestResult.ComputerName, test.ComputerName);
         Assert.AreEqual(TestResult.DisplayName, test.DisplayName);
@@ -116,7 +116,7 @@ public class TestResultSerializationTests
 
         var result = Deserialize<TestResult>(json, version);
 
-        Assert.AreEqual(1, result.Attachments.Count);
+        Assert.HasCount(1, result.Attachments);
         Assert.AreEqual(new Uri("http://dummyUri"), result.Attachments[0].Uri);
         Assert.AreEqual("sampleAttachment", result.Attachments[0].DisplayName);
     }
@@ -147,8 +147,8 @@ public class TestResultSerializationTests
 
         var result = Deserialize<TestResult>(json, version);
 
-        Assert.AreEqual(0, result.Attachments.Count);
-        Assert.AreEqual(0, result.Messages.Count);
+        Assert.IsEmpty(result.Attachments);
+        Assert.IsEmpty(result.Messages);
         Assert.IsNull(result.DisplayName);
         Assert.IsNull(result.ErrorMessage);
         Assert.IsNull(result.ErrorStackTrace);
@@ -216,8 +216,8 @@ public class TestResultSerializationTests
         var test = Deserialize<TestResult>(json, version);
 
         Assert.AreEqual(TestResult.TestCase.Id, test.TestCase.Id);
-        Assert.AreEqual(TestResult.Attachments.Count, test.Attachments.Count);
-        Assert.AreEqual(TestResult.Messages.Count, test.Messages.Count);
+        Assert.HasCount(TestResult.Attachments.Count, test.Attachments);
+        Assert.HasCount(TestResult.Messages.Count, test.Messages);
 
         Assert.AreEqual(TestResult.ComputerName, test.ComputerName);
         Assert.AreEqual(TestResult.DisplayName, test.DisplayName);
@@ -254,7 +254,7 @@ public class TestResultSerializationTests
 
         var result = Deserialize<TestResult>(json, version);
 
-        Assert.AreEqual(1, result.Attachments.Count);
+        Assert.HasCount(1, result.Attachments);
         Assert.AreEqual(new Uri("http://dummyUri"), result.Attachments[0].Uri);
         Assert.AreEqual("sampleAttachment", result.Attachments[0].DisplayName);
     }
@@ -284,7 +284,7 @@ public class TestResultSerializationTests
         // only checked for version 2
         var version = int.MaxValue;
 
-        Assert.ThrowsException<NotSupportedException>(() => Serialize(TestResult, version));
+        Assert.ThrowsExactly<NotSupportedException>(() => Serialize(TestResult, version));
     }
 
     #endregion

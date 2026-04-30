@@ -15,19 +15,6 @@ namespace Microsoft.VisualStudio.Razor;
 
 public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    [Fact]
-    public void IsLspEditorEnabled()
-    {
-        // Arrange
-        var featureDetector = CreateLspEditorFeatureDetector();
-
-        // Act
-        var result = featureDetector.IsLspEditorEnabled();
-
-        // Assert
-        Assert.True(result);
-    }
-
     public static TheoryData<bool, bool> IsLspEditorEnabledAndSupportedTestData { get; } = new()
     {
         // hasDotNetCoreCSharpCapability, expectedResult
@@ -45,8 +32,7 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
         var featureDetector = CreateLspEditorFeatureDetector(hasDotNetCoreCSharpCapability);
 
         // Act
-        var result = featureDetector.IsLspEditorEnabled() &&
-                     featureDetector.IsLspEditorSupported(@"c:\TestProject\TestFile.cshtml");
+        var result = featureDetector.IsLspEditorSupported(@"c:\TestProject\TestFile.cshtml");
 
         // Assert
         Assert.Equal(expectedResult, result);

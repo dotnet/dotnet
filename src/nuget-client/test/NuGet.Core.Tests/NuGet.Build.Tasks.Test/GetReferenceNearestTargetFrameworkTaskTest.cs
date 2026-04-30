@@ -575,12 +575,17 @@ namespace NuGet.Build.Tasks.Test
         }
 
         [Theory]
-        [InlineData(".NETCoreApp,Version=v1.0", "", "net46", ".NETFramework,Version=v4.6", "None", "net45")]
-        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp2.0", ".NETCoreApp,Version=v2.0", "None", "net45")]
-        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp2.0", ".NETCoreApp,Version=v2.0", "None", "net45;net461")]
-        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp2.0;net472", ".NETCoreApp,Version=v2.0;.NETFramework,Version=v4.7.2", "None;None", "net45;net461")]
+        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp1.0", "net46", ".NETFramework,Version=v4.6", "None", "net45")]
+        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp1.0", "netcoreapp2.0", ".NETCoreApp,Version=v2.0", "None", "net45")]
+        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp1.0", "netcoreapp2.0", ".NETCoreApp,Version=v2.0", "None", "net45;net461")]
+        [InlineData(".NETCoreApp,Version=v1.0", "", "netcoreapp1.0", "netcoreapp2.0;net472", ".NETCoreApp,Version=v2.0;.NETFramework,Version=v4.7.2", "None;None", "net45;net461")]
+        [InlineData(".NETCoreApp,Version=v10.0", null, "conflict", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETFramework,Version=v4.8;.NETFramework,Version=v4.8", // TFM of reference project
+            "None;None", // TPM of reference project
+            "net48")] // ATF
         public void GetReferenceNearestTargetFrameworkTask_WithTargetFrameworkInformation_WithAssetTargetFallback_NoMatch(
-            string currentProjectTFM, string currentProjectTPM, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string atf)
+            string currentProjectTFM, string currentProjectTPM, string currentProjectTargetFramework, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string atf)
         {
             var buildEngine = new TestBuildEngine();
             var testLogger = buildEngine.TestLogger;
@@ -598,6 +603,7 @@ namespace NuGet.Build.Tasks.Test
                 BuildEngine = buildEngine,
                 CurrentProjectTargetFramework = currentProjectTFM,
                 CurrentProjectTargetPlatform = currentProjectTPM,
+                CurrentProjectTargetFrameworkProperty = currentProjectTargetFramework,
                 FallbackTargetFrameworks = atf.Split(';'),
                 AnnotatedProjectReferences = references.ToArray()
             };
@@ -614,12 +620,23 @@ namespace NuGet.Build.Tasks.Test
 
 
         [Theory]
-        [InlineData(".NETCoreApp,Version=v2.0", "", "net45;net46", ".NETFramework,Version=v4.5;.NETFramework,Version=v4.6", "None;None", "net46;net45;net461", "net46")]
-        [InlineData(".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "net472", ".NETFramework,Version=v4.7.2", "None", "net472;net471;net47;net462;net461;net46;net45", "net472")]
-        [InlineData(".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "actualResolvedAlias", ".NETFramework,Version=v4.7.2", "None", "net472;net471;net47;net462;net461;net46;net45", "actualResolvedAlias")]
-
+        [InlineData(".NETCoreApp,Version=v2.0", "", "netcoreapp2.0", "net45;net46", ".NETFramework,Version=v4.5;.NETFramework,Version=v4.6", "None;None", "net46;net45;net461", "net46")]
+        [InlineData(".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "net5.0", "net472", ".NETFramework,Version=v4.7.2", "None", "net472;net471;net47;net462;net461;net46;net45", "net472")]
+        [InlineData(".NETCoreApp,Version=v5.0", "Windows,Version=7.0", "net5.0", "actualResolvedAlias", ".NETFramework,Version=v4.7.2", "None", "net472;net471;net47;net462;net461;net46;net45", "actualResolvedAlias")]
+        [InlineData(".NETCoreApp,Version=v10.0", null, "apple", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETFramework,Version=v4.8;.NETFramework,Version=v4.8", // TFM of reference project
+            "None;None", // TPM of reference project
+            "net48;net47", // ATF
+            "apple")] // Alias to return
+        [InlineData(".NETCoreApp,Version=v10.0", null, "banana", // TFM & TPM & TF of current project
+            "apple;banana", // TargetFramework of reference project
+            ".NETFramework,Version=v4.8;.NETFramework,Version=v4.8", // TFM of reference project
+            "None;None", // TPM of reference project
+            "net48;net47", // ATF
+            "banana")] // Alias to return
         public void GetReferenceNearestTargetFrameworkTask_WithTargetFrameworkInformation_WhenATFMatches_Warns(
-            string currentProjectTFM, string currentProjectTPM, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string atf, string expected)
+            string currentProjectTFM, string currentProjectTPM, string currentProjectTargetFramework, string refTargetFrameworks, string refTargetFrameworkMonikers, string refTargetPlatformMonikers, string atf, string expected)
         {
             var buildEngine = new TestBuildEngine();
             var testLogger = buildEngine.TestLogger;
@@ -637,6 +654,7 @@ namespace NuGet.Build.Tasks.Test
                 BuildEngine = buildEngine,
                 CurrentProjectTargetFramework = currentProjectTFM,
                 CurrentProjectTargetPlatform = currentProjectTPM,
+                CurrentProjectTargetFrameworkProperty = currentProjectTargetFramework,
                 FallbackTargetFrameworks = atf.Split(';'),
                 AnnotatedProjectReferences = references.ToArray()
             };

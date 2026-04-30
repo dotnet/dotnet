@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.Json.Serialization;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Internal;
 
@@ -18,38 +20,53 @@ namespace Microsoft.CodeAnalysis.Razor.Settings;
 /// <param name="ClientSpaceSettings"></param>
 /// <param name="ClientCompletionSettings"></param>
 /// <param name="AdvancedSettings"></param>
-internal record ClientSettings(ClientSpaceSettings ClientSpaceSettings, ClientCompletionSettings ClientCompletionSettings, ClientAdvancedSettings AdvancedSettings)
+internal record ClientSettings(
+    [property: JsonPropertyName("clientSpaceSettings")] ClientSpaceSettings ClientSpaceSettings,
+    [property: JsonPropertyName("clientCompletionSettings")] ClientCompletionSettings ClientCompletionSettings,
+    [property: JsonPropertyName("advancedSettings")] ClientAdvancedSettings AdvancedSettings)
 {
     public static readonly ClientSettings Default = new(ClientSpaceSettings.Default, ClientCompletionSettings.Default, ClientAdvancedSettings.Default);
+
+    public RazorFormattingOptions ToRazorFormattingOptions()
+        => new()
+        {
+            InsertSpaces = !ClientSpaceSettings.IndentWithTabs,
+            TabSize = ClientSpaceSettings.IndentSize,
+            CodeBlockBraceOnNextLine = AdvancedSettings.CodeBlockBraceOnNextLine,
+            AttributeIndentStyle = AdvancedSettings.AttributeIndentStyle,
+        };
 }
 
-internal sealed record ClientCompletionSettings(bool AutoShowCompletion, bool AutoListParams)
+internal sealed record ClientCompletionSettings(
+    [property: JsonPropertyName("autoShowCompletion")] bool AutoShowCompletion,
+    [property: JsonPropertyName("autoListParams")] bool AutoListParams)
 {
     public static readonly ClientCompletionSettings Default = new(AutoShowCompletion: true, AutoListParams: true);
 }
 
-internal sealed record ClientSpaceSettings(bool IndentWithTabs, int IndentSize)
+internal sealed record ClientSpaceSettings(
+    [property: JsonPropertyName("indentWithTabs")] bool IndentWithTabs,
+    [property: JsonPropertyName("indentSize")] int IndentSize)
 {
     public static readonly ClientSpaceSettings Default = new(IndentWithTabs: false, IndentSize: 4);
-
-    public int IndentSize { get; } = IndentSize >= 0 ? IndentSize : throw new ArgumentOutOfRangeException(nameof(IndentSize));
 }
 
-internal sealed record ClientAdvancedSettings(bool FormatOnType,
-                                              bool AutoClosingTags,
-                                              bool AutoInsertAttributeQuotes,
-                                              bool ColorBackground,
-                                              bool CodeBlockBraceOnNextLine,
-                                              AttributeIndentStyle AttributeIndentStyle,
-                                              bool CommitElementsWithSpace,
-                                              SnippetSetting SnippetSetting,
-                                              LogLevel LogLevel,
-                                              bool FormatOnPaste,
-                                              ImmutableArray<string> TaskListDescriptors)
+internal sealed record ClientAdvancedSettings(
+    [property: JsonPropertyName("formatOnType")] bool FormatOnType,
+    [property: JsonPropertyName("autoClosingTags")] bool AutoClosingTags,
+    [property: JsonPropertyName("autoInsertAttributeQuotes")] bool AutoInsertAttributeQuotes,
+    [property: JsonPropertyName("colorBackground")] bool ColorBackground,
+    [property: JsonPropertyName("codeBlockBraceOnNextLine")] bool CodeBlockBraceOnNextLine,
+    [property: JsonPropertyName("attributeIndentStyle")] AttributeIndentStyle AttributeIndentStyle,
+    [property: JsonPropertyName("commitElementsWithSpace")] bool CommitElementsWithSpace,
+    [property: JsonPropertyName("snippetSetting")] SnippetSetting SnippetSetting,
+    [property: JsonPropertyName("logLevel")] LogLevel LogLevel,
+    [property: JsonPropertyName("formatOnPaste")] bool FormatOnPaste,
+    [property: JsonPropertyName("taskListDescriptors")] ImmutableArray<string> TaskListDescriptors)
 {
     public static readonly ClientAdvancedSettings Default = new(FormatOnType: true,
-                                                                AutoClosingTags: true,
-                                                                AutoInsertAttributeQuotes: true,
+                                                                 AutoClosingTags: true,
+                                                                 AutoInsertAttributeQuotes: true,
                                                                 ColorBackground: false,
                                                                 CodeBlockBraceOnNextLine: false,
                                                                 AttributeIndentStyle: AttributeIndentStyle.AlignWithFirst,

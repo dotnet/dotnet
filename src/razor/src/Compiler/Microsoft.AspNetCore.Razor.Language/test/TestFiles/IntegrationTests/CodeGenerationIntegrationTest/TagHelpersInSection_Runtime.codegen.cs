@@ -63,10 +63,9 @@ namespace AspNetCoreGeneratedDocument
                     WriteLiteral("\r\n            In None ContentBehavior.\r\n            ");
                     __tagHelperExecutionContext = __tagHelperScopeManager.Begin("nestedtaghelper", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "__UniqueIdSuppressedForTesting__", async() => {
                         WriteLiteral("Some buffered values with ");
-                        Write(
 #nullable restore
-#line (11,57)-(11,61) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
-code
+#line (11,57)-(11,61) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
+Write(code
 
 #line default
 #line hidden
@@ -90,10 +89,9 @@ code
                 __tagHelperExecutionContext.Add(__TestNamespace_MyTagHelper);
                 BeginWriteTagHelperAttribute();
                 WriteLiteral("Current Time: ");
-                WriteLiteral(
 #nullable restore
-#line (9,52)-(9,64) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
-DateTime.Now
+#line (9,52)-(9,64) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml"
+WriteLiteral(DateTime.Now
 
 #line default
 #line hidden

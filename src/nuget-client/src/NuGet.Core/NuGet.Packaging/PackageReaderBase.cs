@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,7 +23,7 @@ namespace NuGet.Packaging
     /// </summary>
     public abstract class PackageReaderBase : IPackageCoreReader, IPackageContentReader, IAsyncPackageCoreReader, IAsyncPackageContentReader, ISignedPackageReader
     {
-        private NuspecReader _nuspecReader;
+        private NuspecReader? _nuspecReader;
 
         protected IFrameworkNameProvider FrameworkProvider { get; set; }
         protected IFrameworkCompatibilityProvider CompatibilityProvider { get; set; }
@@ -83,7 +81,7 @@ namespace NuGet.Packaging
             return NuspecReader.GetIdentity();
         }
 
-        public virtual NuGetVersion GetMinClientVersion()
+        public virtual NuGetVersion? GetMinClientVersion()
         {
             return NuspecReader.GetMinClientVersion();
         }
@@ -132,7 +130,7 @@ namespace NuGet.Packaging
             return Task.FromResult(GetIdentity());
         }
 
-        public virtual Task<NuGetVersion> GetMinClientVersionAsync(CancellationToken cancellationToken)
+        public virtual Task<NuGetVersion?> GetMinClientVersionAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult(GetMinClientVersion());
         }
@@ -434,7 +432,7 @@ namespace NuGet.Packaging
                 // Use the known framework or if the folder did not parse, use the Any framework and consider it a sub folder
                 var framework = GetFrameworkFromPath(path, allowSubFolders);
 
-                List<string> items = null;
+                List<string>? items = null;
                 if (!groups.TryGetValue(framework, out items))
                 {
                     items = new List<string>();
@@ -597,7 +595,7 @@ namespace NuGet.Packaging
             throw new NotImplementedException();
         }
 
-        public abstract Task<PrimarySignature> GetPrimarySignatureAsync(CancellationToken token);
+        public abstract Task<PrimarySignature?> GetPrimarySignatureAsync(CancellationToken token);
 
         public abstract Task<bool> IsSignedAsync(CancellationToken token);
 
@@ -610,6 +608,6 @@ namespace NuGet.Packaging
         /// <summary>
         /// Get contenthash for a package.
         /// </summary>
-        public abstract string GetContentHash(CancellationToken token, Func<string> GetUnsignedPackageHash = null);
+        public abstract string GetContentHash(CancellationToken token, Func<string>? GetUnsignedPackageHash = null);
     }
 }

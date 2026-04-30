@@ -24,12 +24,12 @@ internal sealed class FormattingDiagnosticValidationPass(ILoggerFactory loggerFa
 
     public async Task<bool> IsValidAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
-        var originalDiagnostics = context.CodeDocument.GetRequiredSyntaxTree().Diagnostics;
+        var originalDiagnostics = context.CodeDocument.GetRequiredTagHelperRewrittenSyntaxTree().Diagnostics;
 
         var text = context.SourceText;
         var changedText = text.WithChanges(changes);
         var changedContext = await context.WithTextAsync(changedText, cancellationToken).ConfigureAwait(false);
-        var changedDiagnostics = changedContext.CodeDocument.GetRequiredSyntaxTree().Diagnostics;
+        var changedDiagnostics = changedContext.CodeDocument.GetRequiredTagHelperRewrittenSyntaxTree().Diagnostics;
 
         // We want to ensure diagnostics didn't change, but since we're formatting things, its expected
         // that some of them might have moved around.

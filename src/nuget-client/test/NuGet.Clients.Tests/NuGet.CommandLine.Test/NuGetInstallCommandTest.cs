@@ -115,7 +115,7 @@ namespace NuGet.CommandLine.Test
                 r2.Success.Should().BeTrue();
                 File.Exists(nupkgPath).Should().BeTrue();
 
-                using (var reader = new PackageArchiveReader(nupkgPath))
+                using (var reader = new PackageArchiveReader(nupkgPath!))
                 {
                     reader.NuspecReader.GetVersion().ToNormalizedString().Should().Be("2.0.0");
                 }
@@ -194,7 +194,7 @@ namespace NuGet.CommandLine.Test
                 File.Exists(Path.Combine(installDir, "data", "1.txt")).Should().BeFalse("this package was uninstalled");
                 File.Exists(Path.Combine(installDir, "data", "2.txt")).Should().BeTrue("this package was installed");
 
-                using (var reader = new PackageArchiveReader(nupkgPath))
+                using (var reader = new PackageArchiveReader(nupkgPath!))
                 {
                     reader.NuspecReader.GetVersion().ToNormalizedString().Should().Be("2.0.0");
                 }
@@ -226,7 +226,7 @@ namespace NuGet.CommandLine.Test
                 r2.Success.Should().BeTrue();
                 File.Exists(nupkgPath).Should().BeTrue();
 
-                using (var reader = new PackageArchiveReader(nupkgPath))
+                using (var reader = new PackageArchiveReader(nupkgPath!))
                 {
                     reader.NuspecReader.GetVersion().ToNormalizedString().Should().Be("2.0.0");
                 }

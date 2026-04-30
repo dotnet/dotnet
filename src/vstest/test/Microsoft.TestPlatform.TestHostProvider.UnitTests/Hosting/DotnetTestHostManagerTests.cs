@@ -54,6 +54,8 @@ public class DotnetTestHostManagerTests
 
     private readonly string _temp = Path.GetTempPath();
 
+    public TestContext TestContext { get; set; } = null!;
+
     public DotnetTestHostManagerTests()
     {
         _mockTestHostLauncher = new Mock<ITestHostLauncher>();
@@ -101,9 +103,11 @@ public class DotnetTestHostManagerTests
             .Setup(th => th.LaunchTestHost(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
             .Returns(pid);
 
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - Moq setup pattern
         _mockTestHostLauncher
             .Setup(th => th.LaunchTestHost(It.IsAny<TestProcessStartInfo>()))
             .Returns(pid);
+#pragma warning restore MSTEST0049
 
         _defaultTestProcessStartInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { defaultSourcePath }, null, _defaultConnectionInfo);
     }
@@ -113,7 +117,7 @@ public class DotnetTestHostManagerTests
     {
         Action action = () => _dotnetHostManager.GetTestHostProcessStartInfo(null!, null, _defaultConnectionInfo);
 
-        Assert.ThrowsException<ArgumentNullException>(action);
+        Assert.ThrowsExactly<ArgumentNullException>(action);
     }
 
     [TestMethod]
@@ -122,7 +126,7 @@ public class DotnetTestHostManagerTests
         var sources = new[] { "test1.dll", "test2.dll" };
         Action action = () => _dotnetHostManager.GetTestHostProcessStartInfo(sources, null, _defaultConnectionInfo);
 
-        Assert.ThrowsException<InvalidOperationException>(action);
+        Assert.ThrowsExactly<InvalidOperationException>(action);
     }
 
     [TestMethod]
@@ -153,7 +157,7 @@ public class DotnetTestHostManagerTests
         _mockFileHelper.Setup(ph => ph.Exists("testhost.dll")).Returns(true);
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.StartsWith(startInfo.Arguments, "exec");
+        Assert.StartsWith("exec", startInfo.Arguments);
     }
 
     [TestMethod]
@@ -164,7 +168,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.Contains(startInfo.Arguments, "--runtimeconfig \"test.runtimeconfig.json\"");
+        Assert.Contains("--runtimeconfig \"test.runtimeconfig.json\"", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -175,7 +179,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
 
-        Assert.IsFalse(startInfo.Arguments!.Contains("--runtimeconfig \"test.runtimeconfig.json\""));
+        Assert.DoesNotContain("--runtimeconfig \"test.runtimeconfig.json\"", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -186,7 +190,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.Contains(startInfo.Arguments, "--depsfile \"test.deps.json\"");
+        Assert.Contains("--depsfile \"test.deps.json\"", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -197,7 +201,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
 
-        Assert.IsFalse(startInfo.Arguments!.Contains("--depsfile \"test.deps.json\""));
+        Assert.DoesNotContain("--depsfile \"test.deps.json\"", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -208,7 +212,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, null, connectionInfo);
 
-        StringAssert.Contains(startInfo.Arguments, "--port " + connectionInfo.Port + " --endpoint " + connectionInfo.ConnectionInfo.Endpoint + " --role client --parentprocessid 101");
+        Assert.Contains("--port " + connectionInfo.Port + " --endpoint " + connectionInfo.ConnectionInfo.Endpoint + " --role client --parentprocessid 101", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -239,7 +243,7 @@ public class DotnetTestHostManagerTests
         _mockFileHelper.Setup(ph => ph.Exists("testhost.dll")).Returns(true);
 
         var startInfo = GetDefaultStartInfo();
-        StringAssert.Contains(startInfo.Arguments, "testhost.dll");
+        Assert.Contains("testhost.dll", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -252,7 +256,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.Contains(startInfo.FileName, testhostExePath);
+        Assert.Contains(testhostExePath, startInfo.FileName!);
     }
 
     [TestMethod]
@@ -264,8 +268,8 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.Contains(startInfo.FileName, "dotnet");
-        StringAssert.Contains(startInfo.Arguments, "testhost.dll");
+        Assert.Contains("dotnet", startInfo.FileName!);
+        Assert.Contains("testhost.dll", startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -279,7 +283,7 @@ public class DotnetTestHostManagerTests
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x64</TargetPlatform></RunConfiguration></RunSettings>");
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.Contains(startInfo.FileName, testhostExePath);
+        Assert.Contains(testhostExePath, startInfo.FileName!);
     }
 
     [TestMethod]
@@ -291,7 +295,7 @@ public class DotnetTestHostManagerTests
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, $"<RunSettings><RunConfiguration><DotNetHostPath>{dotnetHostPath}</DotNetHostPath></RunConfiguration></RunSettings>");
         var startInfo = GetDefaultStartInfo();
 
-        StringAssert.Contains(startInfo.FileName, dotnetHostPath);
+        Assert.Contains(dotnetHostPath, startInfo.FileName!);
     }
 
     [TestMethod]
@@ -364,7 +368,7 @@ public class DotnetTestHostManagerTests
 
         // If this starts failing after updating TFMs of packakges, the GetTestHostProcessStartInfo defines the default version
         // to use in GetTestHostProcessStartInfo, change that to the lowest supported netcore version, and pass this test.
-        StringAssert.Contains(startInfo.FileName, "C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x64\\testhost.exe");
+        Assert.Contains("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x64\\testhost.exe", startInfo.FileName!);
     }
 
     [TestMethod]
@@ -436,7 +440,7 @@ public class DotnetTestHostManagerTests
 
         // If this starts failing after updating TFMs of packakges, the GetTestHostProcessStartInfo defines the default version
         // to use in GetTestHostProcessStartInfo, change that to the lowest supported netcore version, and pass this test.
-        StringAssert.Contains(startInfo.FileName, "C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x86\\testhost.x86.exe");
+        Assert.Contains("C:\\packages\\microsoft.testplatform.testhost\\15.0.0-Dev\\build\\net8.0\\x86\\testhost.x86.exe", startInfo.FileName!);
     }
 
     [TestMethod]
@@ -456,8 +460,8 @@ public class DotnetTestHostManagerTests
 
         _dotnetHostManager.HostLaunched += DotnetHostManagerHostLaunched;
 
-        Task<bool> processId = _dotnetHostManager.LaunchTestHostAsync(startInfo, CancellationToken.None);
-        processId.Wait();
+        Task<bool> processId = _dotnetHostManager.LaunchTestHostAsync(startInfo, TestContext.CancellationToken);
+        processId.Wait(TestContext.CancellationToken);
 
         Assert.IsTrue(processId.Result);
         Assert.AreEqual(expectedProcessId, _testHostId);
@@ -473,14 +477,16 @@ public class DotnetTestHostManagerTests
         using (var p = Process.GetCurrentProcess())
             expectedProcessId = p.Id;
 #endif
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - Moq setup pattern
         _mockTestHostLauncher.Setup(thl => thl.LaunchTestHost(It.IsAny<TestProcessStartInfo>())).Returns(expectedProcessId);
+#pragma warning restore MSTEST0049
         _mockFileHelper.Setup(ph => ph.Exists("testhost.dll")).Returns(true);
         var startInfo = GetDefaultStartInfo();
 
         CancellationTokenSource cancellationTokenSource = new();
         cancellationTokenSource.Cancel();
 
-        Assert.ThrowsException<OperationCanceledException>(() => _dotnetHostManager.LaunchTestHostAsync(startInfo, cancellationTokenSource.Token).Wait());
+        Assert.ThrowsExactly<OperationCanceledException>(() => _dotnetHostManager.LaunchTestHostAsync(startInfo, cancellationTokenSource.Token).Wait(TestContext.CancellationToken));
     }
 
     [TestMethod]
@@ -492,8 +498,8 @@ public class DotnetTestHostManagerTests
 
         _dotnetHostManager.HostLaunched += DotnetHostManagerHostLaunched;
 
-        Task<bool> processId = _dotnetHostManager.LaunchTestHostAsync(startInfo, CancellationToken.None);
-        processId.Wait();
+        Task<bool> processId = _dotnetHostManager.LaunchTestHostAsync(startInfo, TestContext.CancellationToken);
+        processId.Wait(TestContext.CancellationToken);
 
         Assert.IsTrue(processId.Result);
         _mockTestHostLauncher.Verify(thl => thl.LaunchTestHost(It.Is<TestProcessStartInfo>(x => x.EnvironmentVariables!.Equals(variables)), It.IsAny<CancellationToken>()), Times.Once);
@@ -534,7 +540,7 @@ public class DotnetTestHostManagerTests
 
         Action action = () => GetDefaultStartInfo();
 
-        Assert.ThrowsException<TestPlatformException>(action);
+        Assert.ThrowsExactly<TestPlatformException>(action);
     }
 
     [TestMethod]
@@ -597,7 +603,7 @@ public class DotnetTestHostManagerTests
 #endif
             + " --port 123 --endpoint 127.0.0.1:123 --role client --parentprocessid 0";
         _dotnetHostManager.SetCustomLauncher(_mockTestHostLauncher.Object);
-        await _dotnetHostManager.LaunchTestHostAsync(_defaultTestProcessStartInfo, CancellationToken.None);
+        await _dotnetHostManager.LaunchTestHostAsync(_defaultTestProcessStartInfo, TestContext.CancellationToken);
 
         _mockTestHostLauncher.Verify(thl => thl.LaunchTestHost(It.Is<TestProcessStartInfo>(x => x.Arguments!.Equals(expectedArgs)), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -617,7 +623,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = GetDefaultStartInfo();
         _dotnetHostManager.SetCustomLauncher(_mockTestHostLauncher.Object);
-        _dotnetHostManager.LaunchTestHostAsync(startInfo, CancellationToken.None).Wait();
+        _dotnetHostManager.LaunchTestHostAsync(startInfo, TestContext.CancellationToken).Wait(TestContext.CancellationToken);
 
         _mockProcessHelper.Verify(ph => ph.SetExitCallback(expectedProcessId, It.IsAny<Action<object?>>()));
     }
@@ -633,7 +639,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        StringAssert.Contains(startInfo.Arguments, expectedTestHostPath);
+        Assert.Contains(expectedTestHostPath, startInfo.Arguments!);
     }
 
     // TODO: This assembly was previously compiled as net472 and so it was skipped and only ran as net8.0. This fails in test, but works in code that is not isolated in appdomain. Might be worth fixing because we get one null here, and another in DotnetTestHostManager.
@@ -653,13 +659,13 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        StringAssert.Contains(startInfo.Arguments, expectedTestHostPath);
+        Assert.Contains(expectedTestHostPath, startInfo.Arguments!);
         var expectedAdditionalDepsPath = Path.Combine(here, "testhost.deps.json");
-        StringAssert.Contains(startInfo.Arguments, $"--additional-deps \"{expectedAdditionalDepsPath}\"");
+        Assert.Contains($"--additional-deps \"{expectedAdditionalDepsPath}\"", startInfo.Arguments!);
         var expectedAdditionalProbingPath = here;
-        StringAssert.Contains(startInfo.Arguments, $"--additionalprobingpath \"{expectedAdditionalProbingPath}\"");
+        Assert.Contains($"--additionalprobingpath \"{expectedAdditionalProbingPath}\"", startInfo.Arguments!);
         var expectedRuntimeConfigPath = Path.Combine(here, "testhost-latest.runtimeconfig.json");
-        StringAssert.Contains(startInfo.Arguments, $"--runtimeconfig \"{expectedRuntimeConfigPath}\"");
+        Assert.Contains($"--runtimeconfig \"{expectedRuntimeConfigPath}\"", startInfo.Arguments!);
     }
 
 #endif
@@ -697,7 +703,7 @@ public class DotnetTestHostManagerTests
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
         var expectedRuntimeConfigPath = Path.Combine(here, $"testhost-{suffix}.runtimeconfig.json");
-        StringAssert.Contains(startInfo.Arguments, $"--runtimeconfig \"{expectedRuntimeConfigPath}\"");
+        Assert.Contains($"--runtimeconfig \"{expectedRuntimeConfigPath}\"", startInfo.Arguments!);
     }
 
 #endif
@@ -713,7 +719,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        Assert.IsTrue(startInfo.Arguments!.Contains(expectedTestHostPath));
+        Assert.Contains(expectedTestHostPath, startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -778,7 +784,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        Assert.IsTrue(startInfo.Arguments!.Contains(testHostFullPath));
+        Assert.Contains(testHostFullPath, startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -845,7 +851,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        Assert.IsTrue(startInfo.Arguments!.Contains(testHostPath));
+        Assert.Contains(testHostPath, startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -911,7 +917,7 @@ public class DotnetTestHostManagerTests
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        Assert.IsTrue(startInfo.Arguments!.Contains(testHostFullPath));
+        Assert.Contains(testHostFullPath, startInfo.Arguments!);
     }
 
     [TestMethod]
@@ -1058,9 +1064,10 @@ public class DotnetTestHostManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
 
@@ -1082,9 +1089,10 @@ public class DotnetTestHostManagerTests
                         It.IsAny<IDictionary<string, string?>>(),
                         It.IsAny<Action<object?, string?>>(),
                         It.IsAny<Action<object?>>(),
-                        It.IsAny<Action<object?, string?>>()))
-            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>>(
-                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback) =>
+                        It.IsAny<Action<object?, string?>>(),
+                        It.IsAny<bool>()))
+            .Callback<string, string, string, IDictionary<string, string>, Action<object, string>, Action<object>, Action<object, string>, bool>(
+                (var1, var2, var3, dictionary, errorCallback, exitCallback, outputCallback, createNoNewWindow) =>
                 {
                     var process = Process.GetCurrentProcess();
                     exitCallback(process);

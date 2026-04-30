@@ -196,15 +196,10 @@ internal class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
         {
             string? potentialStartTagName = null;
             RazorSyntaxNode? endTag = null;
-            if (node is MarkupTagHelperElementSyntax parentTagHelper)
+            if (node is BaseMarkupElementSyntax element)
             {
-                potentialStartTagName = parentTagHelper.StartTag?.Name.Content ?? parentTagHelper.EndTag?.Name.Content;
-                endTag = parentTagHelper.EndTag;
-            }
-            else if (node is MarkupElementSyntax parentElement)
-            {
-                potentialStartTagName = parentElement.StartTag?.Name.Content ?? parentElement.EndTag?.Name.Content;
-                endTag = parentElement.EndTag;
+                potentialStartTagName = element.StartTag?.Name.Content ?? element.EndTag?.Name.Content;
+                endTag = element.EndTag;
             }
 
             // Note - potentialStartTagName can be null for cases when markup element is contained in markup

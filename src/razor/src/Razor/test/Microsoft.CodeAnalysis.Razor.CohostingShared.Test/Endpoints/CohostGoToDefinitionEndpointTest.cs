@@ -74,6 +74,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
 
         var result = await GetGoToDefinitionResultAsync(input);
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -148,6 +149,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -182,6 +184,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -214,6 +217,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -246,6 +250,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -283,6 +288,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -324,6 +330,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.cs"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -365,6 +372,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.cs"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -412,6 +420,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("SurveyPrompt.razor"), surveyPrompt.Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -474,6 +483,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -509,6 +519,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -552,6 +563,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                     }
                     """)]);
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -589,6 +601,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -633,6 +646,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text)]);
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -696,6 +710,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -759,6 +774,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -844,6 +860,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
                         }
                         """).Text));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         Assert.Equal(expected.Spans.Length, locations.Length);
@@ -873,6 +890,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Legacy,
             additionalFiles: (FilePath("Views/Shared/_Partial.cshtml"), partialFileContent));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -896,6 +914,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Legacy,
             additionalFiles: (FilePath("_Partial.cshtml"), partialFileContent));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -925,6 +944,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
             additionalFiles: (FilePath("Pages/Counter.razor"), counterFileContent));
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -947,6 +967,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
 
         var result = await GetGoToDefinitionResultAsync(input);
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
@@ -1001,6 +1022,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
 
         var result = await GetGoToDefinitionResultCoreAsync(componentDocument, component, htmlResponse: null);
 
+        Assumes.NotNull(result);
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);

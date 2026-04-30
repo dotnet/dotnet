@@ -539,4 +539,8 @@ The "s" should be localized to the abbreviation for seconds.</comment>
     <value>Invalid package id : `{0}`.</value>
     <comment>0 - package id.</comment>
   </data>
+  <data name="Error_PackageIdentityDoesNotMatch" xml:space="preserve">
+    <value>Expected package {0} {1}, but got package {2} {3}</value>
+    <comment>0 and 2 are package names, and 1 and 3 are version numbers</comment>
+  </data>
 </root>

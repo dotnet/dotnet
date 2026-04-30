@@ -23,6 +23,7 @@ resources:
         include:
         - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.?xx*
+        - refs/heads/internal/release/*.0.???
       # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
       # publish/validation failures.
       stages:
@@ -55,9 +56,11 @@ parameters:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     pool:
       name: NetCore1ESPool-Svc-Internal
-      image: 1es-ubuntu-2204
+      image: build.azurelinux.3.amd64
       os: linux
     sdl:
       sourceAnalysisPool:

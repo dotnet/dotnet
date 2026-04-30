@@ -21,7 +21,7 @@
                     ComponentAttribute - (70:1,26 [7] x:\dir\subdir\Test\TestComponent.cshtml) - onclick - onclick - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
-                            LazyIntermediateToken - (70:1,26 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - OnClick
+                            IntermediateToken - (70:1,26 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - OnClick
                             IntermediateToken -  - CSharp - )
                 HtmlContent - (81:1,37 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (81:1,37 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n

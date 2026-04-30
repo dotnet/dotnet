@@ -19,7 +19,7 @@
                     LazyIntermediateToken - (11:0,11 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                 Component - (13:1,0 [29] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (37:1,24 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Parameter - Parameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (37:1,24 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
+                        IntermediateToken - (37:1,24 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - 1
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateMyComponent_0

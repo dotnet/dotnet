@@ -15,7 +15,7 @@ namespace NuGet.Packaging.Test
         public void Constructor_WhenV3ServiceIndexUrlNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => new NuGetV3ServiceIndexUrl(v3ServiceIndexUrl: null));
+                () => new NuGetV3ServiceIndexUrl(v3ServiceIndexUrl: null!));
 
             Assert.Equal("v3ServiceIndexUrl", exception.ParamName);
         }

@@ -43,7 +43,7 @@
                             CSharpExpression - 
                                 IntermediateToken -  - CSharp - ModelExpressionProvider.CreateModelExpression(ViewData, __model => 
                                 IntermediateToken -  - CSharp - __model.
-                                LazyIntermediateToken - (222:12,21 [4] Sections.cshtml) - CSharp - Date
+                                IntermediateToken - (222:12,21 [4] Sections.cshtml) - CSharp - Date
                                 IntermediateToken -  - CSharp - )
                         DefaultTagHelperExecute - 
                     HtmlContent - (230:12,29 [2] Sections.cshtml)

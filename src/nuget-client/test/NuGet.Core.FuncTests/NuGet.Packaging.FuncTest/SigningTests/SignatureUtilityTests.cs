@@ -57,7 +57,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                     using (FileStream stream = File.OpenRead(signedPackagePath))
                     using (var reader = new PackageArchiveReader(stream))
                     {
-                        PrimarySignature signature = await reader.GetPrimarySignatureAsync(CancellationToken.None);
+                        PrimarySignature signature = (await reader.GetPrimarySignatureAsync(CancellationToken.None))!;
 
                         var exception = Assert.Throws<SignatureException>(
                             () => SignatureUtility.GetTimestampCertificateChain(signature));
@@ -100,7 +100,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                     using (FileStream stream = File.OpenRead(signedPackagePath))
                     using (var reader = new PackageArchiveReader(stream))
                     {
-                        PrimarySignature signature = await reader.GetPrimarySignatureAsync(CancellationToken.None);
+                        PrimarySignature signature = (await reader.GetPrimarySignatureAsync(CancellationToken.None))!;
 
                         var exception = Assert.Throws<SignatureException>(
                             () => SignatureUtility.GetTimestampCertificateChain(signature));
@@ -143,7 +143,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                     using (FileStream stream = File.OpenRead(signedPackagePath))
                     using (var reader = new PackageArchiveReader(stream))
                     {
-                        PrimarySignature signature = await reader.GetPrimarySignatureAsync(CancellationToken.None);
+                        PrimarySignature signature = (await reader.GetPrimarySignatureAsync(CancellationToken.None))!;
 
                         using (IX509CertificateChain actualChain = SignatureUtility.GetTimestampCertificateChain(signature))
                         {
@@ -200,7 +200,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                     using (FileStream stream = File.OpenRead(signedPackagePath))
                     using (var reader = new PackageArchiveReader(stream))
                     {
-                        PrimarySignature signature = await reader.GetPrimarySignatureAsync(CancellationToken.None);
+                        PrimarySignature signature = (await reader.GetPrimarySignatureAsync(CancellationToken.None))!;
 
                         using (IX509CertificateChain actualChain = SignatureUtility.GetTimestampCertificateChain(signature))
                         {
