@@ -1,0 +1,5 @@
+{
+  "optedOutRepos": [
+    "nuget/nuget.client"
+  ]
+}
