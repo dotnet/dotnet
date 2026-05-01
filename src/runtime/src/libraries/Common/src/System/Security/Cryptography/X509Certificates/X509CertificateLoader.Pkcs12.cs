@@ -1192,11 +1192,7 @@ namespace System.Security.Cryptography.X509Certificates
                 }
             }
 
-            internal
-#if !NET
-                unsafe
-#endif
-                unsafe ArraySegment<byte> ToPfx(ReadOnlySpan<char> password)
+            internal unsafe ArraySegment<byte> ToPfx(ReadOnlySpan<char> password)
             {
                 Debug.Assert(_certBags is not null);
                 Debug.Assert(_keyBags is not null);
