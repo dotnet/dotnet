@@ -315,7 +315,7 @@ jobs:
 
             // Batch query associatedPullRequests via GraphQL
             const commitAliases = allCommits.map((c, i) =>
-              `c${i}: object(oid: "${c.sha}") { ... on Commit { associatedPullRequests(first: 5) { nodes { number } } } }`
+              `c${i}: object(oid: "${c.sha}") { ... on Commit { associatedPullRequests(first: 10) { nodes { number } } } }`
             );
 
             const prNumbers = new Set();
@@ -367,7 +367,7 @@ jobs:
               } catch (e) {
                 // Handle race condition — another run may have created it
                 if (e.status === 422) {
-                  const { data: retryMilestones } = await octokit.rest.issues.listMilestones({
+                  const retryMilestones = await octokit.paginate(octokit.rest.issues.listMilestones, {
                     owner, repo, state: 'open', per_page: 100,
                   });
                   milestone = retryMilestones.find(m => m.title === milestoneName);
@@ -403,12 +403,15 @@ jobs:
           // --- Step 5: Process deferred PRs ---
 
           async function processDeferredPRs(milestoneName) {
-            const deferredPRs = await github.paginate(github.rest.issues.listForRepo, {
+            const deferredItems = await github.paginate(github.rest.issues.listForRepo, {
               owner: 'dotnet', repo: 'dotnet',
               labels: 'needs-milestone',
               state: 'closed',
               per_page: 100,
             });
+
+            // Filter to PRs only (issues also have the listForRepo result)
+            const deferredPRs = deferredItems.filter(i => i.pull_request);
 
             for (const issue of deferredPRs) {
               core.info(`Processing deferred PR #${issue.number}`);
@@ -441,7 +444,8 @@ jobs:
                   continue;
                 }
 
-                const [, owner, repo] = urlMatch;
+                const [, owner, repoRaw] = urlMatch;
+                const repo = repoRaw.replace(/\.git$/, '');
 
                 if (!SUPPORTED_ORGS.has(owner.toLowerCase())) {
                   core.info(`Skipping ${owner}/${repo} — org not configured for milestoning`);
