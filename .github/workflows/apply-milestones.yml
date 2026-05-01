@@ -186,17 +186,12 @@ jobs:
 
             // Branch exists → branding is stale (just snapped)
 
-            // Check if this is a vNext snap: main still has rc branding, but
-            // the rc branch was snapped, meaning main is now the next major version.
+            // vNext snap: main still has rc branding, but the rc branch was
+            // snapped, meaning main is now the next major version.
             // e.g. main says rc1/11.0, release/11.0.1xx-rc1 exists → main is really 12.0-preview1
             if (label === 'rc') {
               const nextMajor = parseInt(major) + 1;
               return { name: `${nextMajor}.0-preview1`, deferred: false };
-            }
-
-            if (fullLabel === 'rc2') {
-              // Post-final-RC → RTM
-              return { name: `${major}.${minor}.0`, deferred: false };
             }
 
             // Can't determine next milestone (preview→rc transition ambiguity)
