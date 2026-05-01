@@ -12,6 +12,10 @@ permissions:
   contents: read
   pull-requests: read
 
+concurrency:
+  group: milestone-${{ github.event.pull_request.base.ref }}
+  cancel-in-progress: false
+
 jobs:
   apply-milestones:
     if: github.event.pull_request.merged == true
@@ -393,41 +397,45 @@ jobs:
             const changes = await extractChildPRs(prNumber);
 
             for (const change of changes) {
-              const urlMatch = change.remoteUri.match(/github\.com\/([^/]+)\/([^/]+)/);
-              if (!urlMatch) {
-                core.warning(`Could not parse remote URI: ${change.remoteUri}`);
-                continue;
-              }
-
-              const [, owner, repo] = urlMatch;
-
-              if (!SUPPORTED_ORGS.has(owner.toLowerCase())) {
-                core.info(`Skipping ${owner}/${repo} — org not configured for milestoning`);
-                continue;
-              }
-
-              if (OPTED_OUT_REPOS.has(`${owner}/${repo}`.toLowerCase())) {
-                core.info(`Skipping ${owner}/${repo} — opted out of auto-milestoning`);
-                continue;
-              }
-
-              const octokit = getOctokit(owner);
-
-              core.info(`Processing ${owner}/${repo}: ${change.oldSha.substring(0, 8)}..${change.newSha.substring(0, 8)}`);
-
-              const prNumbers = await findPRsInRange(owner, repo, change.oldSha, change.newSha, octokit);
-              core.info(`Found ${prNumbers.length} PRs: ${prNumbers.join(', ')}`);
-
-              if (prNumbers.length === 0) continue;
-
-              const milestoneNumber = await ensureMilestone(owner, repo, milestoneName, octokit);
-
-              for (const childPR of prNumbers) {
-                try {
-                  await applyMilestone(owner, repo, childPR, milestoneNumber, octokit);
-                } catch (e) {
-                  core.warning(`Failed to milestone ${owner}/${repo}#${childPR}: ${e.message}`);
+              try {
+                const urlMatch = change.remoteUri.match(/github\.com\/([^/]+)\/([^/]+)/);
+                if (!urlMatch) {
+                  core.warning(`Could not parse remote URI: ${change.remoteUri}`);
+                  continue;
                 }
+
+                const [, owner, repo] = urlMatch;
+
+                if (!SUPPORTED_ORGS.has(owner.toLowerCase())) {
+                  core.info(`Skipping ${owner}/${repo} — org not configured for milestoning`);
+                  continue;
+                }
+
+                if (OPTED_OUT_REPOS.has(`${owner}/${repo}`.toLowerCase())) {
+                  core.info(`Skipping ${owner}/${repo} — opted out of auto-milestoning`);
+                  continue;
+                }
+
+                const octokit = getOctokit(owner);
+
+                core.info(`Processing ${owner}/${repo}: ${change.oldSha.substring(0, 8)}..${change.newSha.substring(0, 8)}`);
+
+                const prNumbers = await findPRsInRange(owner, repo, change.oldSha, change.newSha, octokit);
+                core.info(`Found ${prNumbers.length} PRs: ${prNumbers.join(', ')}`);
+
+                if (prNumbers.length === 0) continue;
+
+                const milestoneNumber = await ensureMilestone(owner, repo, milestoneName, octokit);
+
+                for (const childPR of prNumbers) {
+                  try {
+                    await applyMilestone(owner, repo, childPR, milestoneNumber, octokit);
+                  } catch (e) {
+                    core.warning(`Failed to milestone ${owner}/${repo}#${childPR}: ${e.message}`);
+                  }
+                }
+              } catch (e) {
+                core.warning(`Failed to process repo ${change.remoteUri}: ${e.message}`);
               }
             }
           }
