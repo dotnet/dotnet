@@ -5,8 +5,7 @@ on:
     types: [closed]
     branches:
       - 'main'
-      - 'release/*.1xx-preview*'
-      - 'release/*.1xx-rc*'
+      - 'release/**'
     paths: ['src/source-manifest.json']
 
 permissions:
@@ -66,14 +65,74 @@ jobs:
           async function resolveMilestone() {
             const branch = context.payload.pull_request.base.ref;
 
-            // Release branches: parse directly from branch name
+            // --- Preview/RC release branches ---
             // release/11.0.1xx-preview4 → 11.0-preview4
             const releaseMatch = branch.match(/^release\/(\d+\.\d+)\.1xx-((?:preview|rc)\d+)$/);
             if (releaseMatch) {
               return { name: `${releaseMatch[1]}-${releaseMatch[2]}`, deferred: false };
             }
 
-            // Main branch: read branding from eng/Versions.props
+            // --- Bare release branches (e.g. release/11.0.1xx) ---
+            // These are used during the RC→RTM phase.
+            const bareMatch = branch.match(/^release\/(\d+\.\d+)\.(\d+)xx$/);
+            if (bareMatch) {
+              const ver = bareMatch[1];        // "11.0"
+              const featureBand = bareMatch[2]; // "1"
+
+              // Read patch version from eng/Versions.props on this branch
+              const fs = require('fs');
+              const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
+              const patchMatch = versionsProps.match(/<VersionPatch>(\d+)<\/VersionPatch>/);
+              const patch = patchMatch ? parseInt(patchMatch[1]) : -1;
+
+              if (patch !== 0) {
+                core.info(`Bare release branch ${branch} has patch version ${patch} (servicing), skipping`);
+                return null;
+              }
+
+              // Check if rc1 or rc2 sibling branches exist
+              let rc1Exists = false, rc2Exists = false;
+              for (const rcN of ['rc1', 'rc2']) {
+                try {
+                  await github.rest.repos.getBranch({
+                    owner: 'dotnet', repo: 'dotnet',
+                    branch: `release/${ver}.${featureBand}xx-${rcN}`,
+                  });
+                  if (rcN === 'rc1') rc1Exists = true;
+                  if (rcN === 'rc2') rc2Exists = true;
+                } catch (e) {
+                  if (e.status !== 404) throw e;
+                }
+              }
+
+              if (!rc1Exists && !rc2Exists) {
+                core.info(`Bare release branch ${branch} has no sibling rc branches, skipping`);
+                return null;
+              }
+
+              // Resolve milestone from branding on this branch
+              const labelMatch = versionsProps.match(/<PreReleaseVersionLabel>([^<]+)<\/PreReleaseVersionLabel>/);
+              const iterationMatch = versionsProps.match(/<PreReleaseVersionIteration>(\d*)<\/PreReleaseVersionIteration>/);
+              const label = labelMatch ? labelMatch[1] : '';
+              const iteration = iterationMatch ? iterationMatch[1] : '';
+
+              if (label === 'servicing' || label === '') {
+                // Already RTM-branded, skip
+                core.info(`Bare release branch ${branch} is branded as "${label || 'empty'}", skipping`);
+                return null;
+              }
+
+              const fullLabel = `${label}${iteration}`;
+              return { name: `${ver}-${fullLabel}`, deferred: false };
+            }
+
+            // --- Any other release branch format: skip ---
+            if (branch.startsWith('release/')) {
+              core.info(`Release branch ${branch} does not match expected patterns, skipping`);
+              return null;
+            }
+
+            // --- Main branch: read branding from eng/Versions.props ---
             const fs = require('fs');
             const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
 
