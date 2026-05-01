@@ -1,3 +1,0 @@
-﻿// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UnfinishedExpressionInCode.cshtml(2,11): error CS1001: Identifier expected
-// DateTime.
-Diagnostic(ErrorCode.ERR_IdentifierExpected, "").WithLocation(2, 11)
