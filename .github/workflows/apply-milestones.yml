@@ -7,18 +7,30 @@ on:
       - 'main'
       - 'release/**'
     paths: ['src/source-manifest.json']
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Log actions without making changes'
+        type: boolean
+        default: true
+      pr-number:
+        description: 'PR number to process (required for manual runs)'
+        type: number
+        required: true
 
 permissions:
   contents: read
   pull-requests: read
 
 concurrency:
-  group: milestone-${{ github.event.pull_request.base.ref }}
+  group: milestone-${{ github.event.pull_request.base.ref || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   apply-milestones:
-    if: github.event.pull_request.merged == true
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,9 +60,13 @@ jobs:
           github-token: ${{ steps.dotnet-token.outputs.token }}
         env:
           MICROSOFT_TOKEN: ${{ steps.microsoft-token.outputs.token }}
+          DRY_RUN: ${{ github.event.inputs.dry-run || 'false' }}
         script: |
           const { Octokit } = require("@octokit/rest");
           const microsoftOctokit = new Octokit({ auth: process.env.MICROSOFT_TOKEN });
+          const DRY_RUN = process.env.DRY_RUN === 'true';
+
+          if (DRY_RUN) core.info('🏃 DRY RUN — no milestones will be created or applied');
 
           // Supported orgs for milestoning. Repos outside these orgs are skipped.
           const SUPPORTED_ORGS = new Set(['dotnet', 'microsoft']);
@@ -67,8 +83,7 @@ jobs:
 
           // --- Step 1: Resolve milestone name ---
 
-          async function resolveMilestone() {
-            const branch = context.payload.pull_request.base.ref;
+          async function resolveMilestone(branch) {
 
             // --- Preview/RC release branches ---
             // release/11.0.1xx-preview4 → 11.0-preview4
@@ -339,6 +354,10 @@ jobs:
             }
 
             if (!milestone) {
+              if (DRY_RUN) {
+                core.info(`[DRY RUN] Would create milestone "${milestoneName}" in ${owner}/${repo}`);
+                return -1;  // Sentinel value for dry run
+              }
               core.info(`Creating milestone "${milestoneName}" in ${owner}/${repo}`);
               try {
                 const { data: created } = await octokit.rest.issues.createMilestone({
@@ -362,6 +381,11 @@ jobs:
           }
 
           async function applyMilestone(owner, repo, prNumber, milestoneNumber, octokit) {
+            if (DRY_RUN) {
+              core.info(`[DRY RUN] Would apply milestone to ${owner}/${repo}#${prNumber}`);
+              return;
+            }
+
             // Check if already milestoned
             const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
             if (pr.milestone?.number === milestoneNumber) {
@@ -455,7 +479,33 @@ jobs:
 
           // --- Main ---
 
-          const milestone = await resolveMilestone();
+          // Resolve the PR number — from event payload or workflow_dispatch input
+          const prNumber = context.payload.pull_request?.number
+            || parseInt(context.payload.inputs?.['pr-number']);
+
+          if (!prNumber) {
+            core.setFailed('No PR number available. For workflow_dispatch, provide pr-number input.');
+            return;
+          }
+
+          // For workflow_dispatch, fetch the PR to get its base branch
+          let baseBranch;
+          if (context.payload.pull_request) {
+            baseBranch = context.payload.pull_request.base.ref;
+          } else {
+            const { data: pr } = await github.rest.pulls.get({
+              owner: 'dotnet', repo: 'dotnet', pull_number: prNumber,
+            });
+            baseBranch = pr.base.ref;
+            if (!pr.merged) {
+              core.setFailed(`PR #${prNumber} has not been merged`);
+              return;
+            }
+          }
+
+          core.info(`Processing PR #${prNumber} against ${baseBranch}`);
+
+          const milestone = await resolveMilestone(baseBranch);
 
           if (!milestone) {
             core.info('Could not resolve milestone, skipping');
@@ -463,12 +513,15 @@ jobs:
           }
 
           if (milestone.deferred) {
-            // Label the PR for later processing
-            await github.rest.issues.addLabels({
-              owner: 'dotnet', repo: 'dotnet',
-              issue_number: context.payload.pull_request.number,
-              labels: ['needs-milestone'],
-            });
+            if (DRY_RUN) {
+              core.info(`[DRY RUN] Would label PR #${prNumber} with needs-milestone`);
+            } else {
+              await github.rest.issues.addLabels({
+                owner: 'dotnet', repo: 'dotnet',
+                issue_number: prNumber,
+                labels: ['needs-milestone'],
+              });
+            }
             core.info('Milestone deferred — labeled PR with needs-milestone');
             return;
           }
@@ -476,10 +529,11 @@ jobs:
           core.info(`Resolved milestone: ${milestone.name}`);
 
           // Process the current PR
-          await processOnePR(context.payload.pull_request.number, milestone.name);
+          await processOnePR(prNumber, milestone.name);
 
           // Process any deferred PRs (only on main — deferral only happens on main)
-          const branch = context.payload.pull_request.base.ref;
-          if (branch === 'main') {
+          if (baseBranch === 'main' && !DRY_RUN) {
             await processDeferredPRs(milestone.name);
+          } else if (baseBranch === 'main' && DRY_RUN) {
+            core.info('[DRY RUN] Would process deferred PRs with milestone: ' + milestone.name);
           }
