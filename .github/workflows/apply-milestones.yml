@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 2  # Need parent commit for diff
 
       - name: Generate dotnet org token
@@ -86,7 +87,7 @@ jobs:
               // Read patch version from eng/Versions.props on this branch
               const fs = require('fs');
               const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
-              const patchMatch = versionsProps.match(/<VersionPatch>(\d+)<\/VersionPatch>/);
+              const patchMatch = versionsProps.match(/<VersionSDKMinorPatch>(\d+)<\/VersionSDKMinorPatch>/);
               const patch = patchMatch ? parseInt(patchMatch[1]) : -1;
 
               if (patch !== 0) {
@@ -270,23 +271,35 @@ jobs:
           // --- Step 3: Find PRs in commit range using GraphQL ---
 
           async function findPRsInRange(owner, repo, oldSha, newSha, octokit) {
-            // Get commits in range — handle large ranges by paginating
-            const { data: comparison } = await octokit.rest.repos.compareCommits({
-              owner, repo,
-              base: oldSha,
-              head: newSha,
-            });
+            // Collect all commits in range, paginating if > 250
+            const allCommits = [];
+            let currentBase = oldSha;
 
-            if (comparison.commits.length === 0) {
-              return [];
+            while (true) {
+              const { data: comparison } = await octokit.rest.repos.compareCommits({
+                owner, repo,
+                base: currentBase,
+                head: newSha,
+                per_page: 250,
+              });
+
+              if (comparison.commits.length === 0) break;
+
+              allCommits.push(...comparison.commits);
+
+              // If we got all commits, we're done
+              if (allCommits.length >= comparison.total_commits) break;
+
+              // Move the base forward to the last commit we got
+              currentBase = comparison.commits[comparison.commits.length - 1].sha;
             }
 
-            if (comparison.total_commits > 250) {
-              core.warning(`${owner}/${repo} has ${comparison.total_commits} commits in range — only first 250 will be processed`);
-            }
+            if (allCommits.length === 0) return [];
+
+            core.info(`${owner}/${repo}: ${allCommits.length} commits in range`);
 
             // Batch query associatedPullRequests via GraphQL
-            const commitAliases = comparison.commits.map((c, i) =>
+            const commitAliases = allCommits.map((c, i) =>
               `c${i}: object(oid: "${c.sha}") { ... on Commit { associatedPullRequests(first: 5) { nodes { number } } } }`
             );
 
@@ -465,5 +478,8 @@ jobs:
           // Process the current PR
           await processOnePR(context.payload.pull_request.number, milestone.name);
 
-          // Process any deferred PRs
-          await processDeferredPRs(milestone.name);
+          // Process any deferred PRs (only on main — deferral only happens on main)
+          const branch = context.payload.pull_request.base.ref;
+          if (branch === 'main') {
+            await processDeferredPRs(milestone.name);
+          }
