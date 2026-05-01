@@ -84,22 +84,13 @@ jobs:
           // --- Constants: 7 previews, 2 RCs per release ---
           const MAX_PREVIEWS = 7;
 
-          // Compute the next milestone given a current label+iteration.
-          // preview1→preview2, preview7→rc1, rc1→rc2, rc2→{ver}.0 (RTM)
-          function nextMilestone(ver, label, iteration) {
-            if (label === 'preview' && iteration < MAX_PREVIEWS) {
+          // Compute the next milestone when a preview branch snap is detected.
+          // preview1→preview2, ..., preview7→rc1
+          function nextPreviewMilestone(ver, iteration) {
+            if (iteration < MAX_PREVIEWS) {
               return `${ver}-preview${iteration + 1}`;
             }
-            if (label === 'preview' && iteration >= MAX_PREVIEWS) {
-              return `${ver}-rc1`;
-            }
-            if (label === 'rc' && iteration === 1) {
-              return `${ver}-rc2`;
-            }
-            if (label === 'rc' && iteration === 2) {
-              return `${ver}.0`;
-            }
-            return null; // shouldn't happen
+            return `${ver}-rc1`;
           }
 
           // --- Step 1: Resolve milestone name ---
@@ -226,7 +217,7 @@ jobs:
             }
 
             // Preview snap: preview7→rc1, previewN→preview(N+1)
-            return nextMilestone(ver, label, iteration);
+            return nextPreviewMilestone(ver, iteration);
           }
 
           // --- Step 2: Extract child-repo PRs from source-manifest.json diff ---
@@ -470,7 +461,7 @@ jobs:
             return;
           }
 
-          // For workflow_dispatch, fetch the PR to get its base branch
+          // For workflow_dispatch, fetch the PR to get its base branch and checkout its merge commit
           let baseBranch;
           if (context.payload.pull_request) {
             baseBranch = context.payload.pull_request.base.ref;
@@ -483,6 +474,9 @@ jobs:
               core.setFailed(`PR #${prNumber} has not been merged`);
               return;
             }
+            // Checkout the merge commit so eng/Versions.props matches the PR's state
+            const { execSync } = require('child_process');
+            execSync(`git fetch origin ${pr.merge_commit_sha} --depth=2 && git checkout ${pr.merge_commit_sha}`, { stdio: 'inherit' });
           }
 
           core.info(`Processing PR #${prNumber} against ${baseBranch}`);
