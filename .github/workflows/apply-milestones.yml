@@ -59,27 +59,29 @@ jobs:
         with:
           github-token: ${{ steps.dotnet-token.outputs.token }}
         env:
+          DOTNET_TOKEN: ${{ steps.dotnet-token.outputs.token }}
           MICROSOFT_TOKEN: ${{ steps.microsoft-token.outputs.token }}
           DRY_RUN: ${{ github.event.inputs.dry-run || 'false' }}
         script: |
           const { Octokit } = require("@octokit/rest");
-          const microsoftOctokit = new Octokit({ auth: process.env.MICROSOFT_TOKEN });
           const DRY_RUN = process.env.DRY_RUN === 'true';
 
-          if (DRY_RUN) core.info('🏃 DRY RUN — no milestones will be created or applied');
+          if (DRY_RUN) core.info('DRY RUN -- no milestones will be created or applied');
 
-          // Supported orgs for milestoning. Repos outside these orgs are skipped.
-          const SUPPORTED_ORGS = new Set(['dotnet', 'microsoft']);
+          // Map of org -> authenticated Octokit client
+          const orgClients = {
+            dotnet: github,
+            microsoft: new Octokit({ auth: process.env.MICROSOFT_TOKEN }),
+          };
 
-          // Repos that have opted out of auto-milestoning — loaded from .github/milestone-config.json
+          function getOctokit(owner) {
+            return orgClients[owner.toLowerCase()] || null;
+          }
+
+          // Repos that have opted out of auto-milestoning
           const fs = require('fs');
           const config = JSON.parse(fs.readFileSync('.github/milestone-config.json', 'utf8'));
           const OPTED_OUT_REPOS = new Set(config.optedOutRepos.map(r => r.toLowerCase()));
-
-          function getOctokit(owner) {
-            if (owner === 'microsoft') return microsoftOctokit;
-            return github;
-          }
 
           // --- Constants: 7 previews, 2 RCs per release ---
           const MAX_PREVIEWS = 7;
@@ -410,17 +412,16 @@ jobs:
                 const [, owner, repoRaw] = urlMatch;
                 const repo = repoRaw.replace(/\.git$/, '');
 
-                if (!SUPPORTED_ORGS.has(owner.toLowerCase())) {
-                  core.info(`Skipping ${owner}/${repo} — org not configured for milestoning`);
-                  continue;
-                }
-
                 if (OPTED_OUT_REPOS.has(`${owner}/${repo}`.toLowerCase())) {
                   core.info(`Skipping ${owner}/${repo} — opted out of auto-milestoning`);
                   continue;
                 }
 
                 const octokit = getOctokit(owner);
+                if (!octokit) {
+                  core.info(`Skipping ${owner}/${repo} — org not configured for milestoning`);
+                  continue;
+                }
 
                 core.info(`Processing ${owner}/${repo}: ${change.oldSha.substring(0, 8)}..${change.newSha.substring(0, 8)}`);
 
