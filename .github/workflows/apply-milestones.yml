@@ -134,24 +134,16 @@ jobs:
                 return null;
               }
 
-              // Check that rc1 exists but rc2 does NOT
-              let rc1Exists = false, rc2Exists = false;
-              for (const rcN of ['rc1', 'rc2']) {
-                try {
-                  await github.rest.repos.getBranch({
-                    owner: 'dotnet', repo: 'dotnet',
-                    branch: `release/${ver}.${featureBand}xx-${rcN}`,
-                  });
-                  if (rcN === 'rc1') rc1Exists = true;
-                  if (rcN === 'rc2') rc2Exists = true;
-                } catch (e) {
-                  if (e.status !== 404) throw e;
-                }
-              }
-
-              if (!rc1Exists || rc2Exists) {
-                core.info(`Bare release branch ${branch}: rc1=${rc1Exists}, rc2=${rc2Exists} — skipping`);
+              // Only active if rc2 branch hasn't been snapped yet
+              try {
+                await github.rest.repos.getBranch({
+                  owner: 'dotnet', repo: 'dotnet',
+                  branch: `release/${ver}.${featureBand}xx-rc2`,
+                });
+                core.info(`Bare release branch ${branch}: rc2 branch already snapped, skipping`);
                 return null;
+              } catch (e) {
+                if (e.status !== 404) throw e;
               }
 
               return `${ver}-rc2`;
