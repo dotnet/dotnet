@@ -81,6 +81,27 @@ jobs:
             return github;
           }
 
+          // --- Constants: 7 previews, 2 RCs per release ---
+          const MAX_PREVIEWS = 7;
+
+          // Compute the next milestone given a current label+iteration.
+          // preview1→preview2, preview7→rc1, rc1→rc2, rc2→{ver}.0 (RTM)
+          function nextMilestone(ver, label, iteration) {
+            if (label === 'preview' && iteration < MAX_PREVIEWS) {
+              return `${ver}-preview${iteration + 1}`;
+            }
+            if (label === 'preview' && iteration >= MAX_PREVIEWS) {
+              return `${ver}-rc1`;
+            }
+            if (label === 'rc' && iteration === 1) {
+              return `${ver}-rc2`;
+            }
+            if (label === 'rc' && iteration === 2) {
+              return `${ver}.0`;
+            }
+            return null; // shouldn't happen
+          }
+
           // --- Step 1: Resolve milestone name ---
 
           async function resolveMilestone(branch) {
@@ -89,17 +110,16 @@ jobs:
             // release/11.0.1xx-preview4 → 11.0-preview4
             const releaseMatch = branch.match(/^release\/(\d+\.\d+)\.1xx-((?:preview|rc)\d+)$/);
             if (releaseMatch) {
-              return { name: `${releaseMatch[1]}-${releaseMatch[2]}`, deferred: false };
+              return `${releaseMatch[1]}-${releaseMatch[2]}`;
             }
 
             // --- Bare release branches (e.g. release/11.0.1xx) ---
-            // These are used during the RC→RTM phase.
+            // Used during RC→RTM phase.
             const bareMatch = branch.match(/^release\/(\d+\.\d+)\.(\d+)xx$/);
             if (bareMatch) {
-              const ver = bareMatch[1];        // "11.0"
-              const featureBand = bareMatch[2]; // "1"
+              const ver = bareMatch[1];
+              const featureBand = bareMatch[2];
 
-              // Read patch version from eng/Versions.props on this branch
               const fs = require('fs');
               const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
               const patchMatch = versionsProps.match(/<VersionSDKMinorPatch>(\d+)<\/VersionSDKMinorPatch>/);
@@ -110,40 +130,38 @@ jobs:
                 return null;
               }
 
-              // Check if rc1 or rc2 sibling branches exist
-              let rc1Exists = false, rc2Exists = false;
+              // Check if sibling rc branches exist
+              let hasRcSibling = false;
               for (const rcN of ['rc1', 'rc2']) {
                 try {
                   await github.rest.repos.getBranch({
                     owner: 'dotnet', repo: 'dotnet',
                     branch: `release/${ver}.${featureBand}xx-${rcN}`,
                   });
-                  if (rcN === 'rc1') rc1Exists = true;
-                  if (rcN === 'rc2') rc2Exists = true;
+                  hasRcSibling = true;
+                  break;
                 } catch (e) {
                   if (e.status !== 404) throw e;
                 }
               }
 
-              if (!rc1Exists && !rc2Exists) {
+              if (!hasRcSibling) {
                 core.info(`Bare release branch ${branch} has no sibling rc branches, skipping`);
                 return null;
               }
 
-              // Resolve milestone from branding on this branch
+              // Read branding from this branch
               const labelMatch = versionsProps.match(/<PreReleaseVersionLabel>([^<]+)<\/PreReleaseVersionLabel>/);
               const iterationMatch = versionsProps.match(/<PreReleaseVersionIteration>(\d*)<\/PreReleaseVersionIteration>/);
               const label = labelMatch ? labelMatch[1] : '';
-              const iteration = iterationMatch ? iterationMatch[1] : '';
+              const iteration = parseInt(iterationMatch?.[1] || '0');
 
               if (label === 'servicing' || label === '') {
-                // Already RTM-branded, skip
                 core.info(`Bare release branch ${branch} is branded as "${label || 'empty'}", skipping`);
                 return null;
               }
 
-              const fullLabel = `${label}${iteration}`;
-              return { name: `${ver}-${fullLabel}`, deferred: false };
+              return `${ver}-${label}${iteration}`;
             }
 
             // --- Any other release branch format: skip ---
@@ -152,7 +170,7 @@ jobs:
               return null;
             }
 
-            // --- Main branch: read branding from eng/Versions.props ---
+            // --- Main branch ---
             const fs = require('fs');
             const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
 
@@ -166,32 +184,29 @@ jobs:
               return null;
             }
 
-            const major = majorMatch[1];
+            const major = parseInt(majorMatch[1]);
             const minor = minorMatch ? minorMatch[1] : '0';
             const label = labelMatch[1];
-            const iteration = iterationMatch ? iterationMatch[1] : '';
+            const iteration = parseInt(iterationMatch?.[1] || '0');
+            const ver = `${major}.${minor}`;
 
-            // For servicing branches on main (shouldn't normally happen), skip
             if (label === 'servicing') {
               core.info('Main branch is branded as servicing, skipping');
               return null;
             }
 
-            // "alpha" always maps to preview1
+            // Alpha always maps to preview1
             if (label === 'alpha') {
-              return { name: `${major}.${minor}-preview1`, deferred: false };
+              return `${ver}-preview1`;
             }
 
-            // Combine label + iteration: "preview" + "5" → "preview5"
-            const fullLabel = `${label}${iteration}`;
-
             // Check if a release branch matching current branding exists
-            const candidateBranch = `release/${major}.${minor}.1xx-${fullLabel}`;
+            const fullLabel = `${label}${iteration}`;
+            const candidateBranch = `release/${ver}.1xx-${fullLabel}`;
             let branchExists = false;
             try {
               await github.rest.repos.getBranch({
-                owner: 'dotnet',
-                repo: 'dotnet',
+                owner: 'dotnet', repo: 'dotnet',
                 branch: candidateBranch,
               });
               branchExists = true;
@@ -200,24 +215,18 @@ jobs:
             }
 
             if (!branchExists) {
-              // Normal case: branding matches, use it
-              return { name: `${major}.${minor}-${fullLabel}`, deferred: false };
+              // Normal case: branding matches
+              return `${ver}-${fullLabel}`;
             }
 
-            // Branch exists → branding is stale (just snapped)
-
-            // vNext snap: main still has rc branding, but the rc branch was
-            // snapped, meaning main is now the next major version.
-            // e.g. main says rc1/11.0, release/11.0.1xx-rc1 exists → main is really 12.0-preview1
+            // Branch exists → branding is stale. Deterministically increment.
+            // RC snap means main is now vNext
             if (label === 'rc') {
-              const nextMajor = parseInt(major) + 1;
-              return { name: `${nextMajor}.0-preview1`, deferred: false };
+              return `${major + 1}.0-preview1`;
             }
 
-            // Can't determine next milestone (preview→rc transition ambiguity)
-            // Defer by labeling the PR
-            core.info(`Branch ${candidateBranch} exists but branding not yet bumped. Deferring milestone.`);
-            return { name: null, deferred: true };
+            // Preview snap: preview7→rc1, previewN→preview(N+1)
+            return nextMilestone(ver, label, iteration);
           }
 
           // --- Step 2: Extract child-repo PRs from source-manifest.json diff ---
@@ -400,37 +409,6 @@ jobs:
             core.info(`Applied milestone to ${owner}/${repo}#${prNumber}`);
           }
 
-          // --- Step 5: Process deferred PRs ---
-
-          async function processDeferredPRs(milestoneName) {
-            const deferredItems = await github.paginate(github.rest.issues.listForRepo, {
-              owner: 'dotnet', repo: 'dotnet',
-              labels: 'needs-milestone',
-              state: 'closed',
-              per_page: 100,
-            });
-
-            // Filter to PRs only (issues also have the listForRepo result)
-            const deferredPRs = deferredItems.filter(i => i.pull_request);
-
-            for (const issue of deferredPRs) {
-              core.info(`Processing deferred PR #${issue.number}`);
-              try {
-                await processOnePR(issue.number, milestoneName);
-
-                // Only remove label if processing fully succeeded
-                await github.rest.issues.removeLabel({
-                  owner: 'dotnet', repo: 'dotnet',
-                  issue_number: issue.number,
-                  name: 'needs-milestone',
-                });
-              } catch (e) {
-                // Keep the label so it gets retried on next run
-                core.warning(`Failed to process deferred PR #${issue.number}: ${e.message}`);
-              }
-            }
-          }
-
           // --- Core logic: process a single dotnet/dotnet PR ---
 
           async function processOnePR(prNumber, milestoneName) {
@@ -509,35 +487,14 @@ jobs:
 
           core.info(`Processing PR #${prNumber} against ${baseBranch}`);
 
-          const milestone = await resolveMilestone(baseBranch);
+          const milestoneName = await resolveMilestone(baseBranch);
 
-          if (!milestone) {
+          if (!milestoneName) {
             core.info('Could not resolve milestone, skipping');
             return;
           }
 
-          if (milestone.deferred) {
-            if (DRY_RUN) {
-              core.info(`[DRY RUN] Would label PR #${prNumber} with needs-milestone`);
-            } else {
-              await github.rest.issues.addLabels({
-                owner: 'dotnet', repo: 'dotnet',
-                issue_number: prNumber,
-                labels: ['needs-milestone'],
-              });
-            }
-            core.info('Milestone deferred — labeled PR with needs-milestone');
-            return;
-          }
-
-          core.info(`Resolved milestone: ${milestone.name}`);
+          core.info(`Resolved milestone: ${milestoneName}`);
 
           // Process the current PR
-          await processOnePR(prNumber, milestone.name);
-
-          // Process any deferred PRs (only on main — deferral only happens on main)
-          if (baseBranch === 'main' && !DRY_RUN) {
-            await processDeferredPRs(milestone.name);
-          } else if (baseBranch === 'main' && DRY_RUN) {
-            core.info('[DRY RUN] Would process deferred PRs with milestone: ' + milestone.name);
-          }
+          await processOnePR(prNumber, milestoneName);
