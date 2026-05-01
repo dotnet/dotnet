@@ -105,7 +105,8 @@ jobs:
             }
 
             // --- Bare release branches (e.g. release/11.0.1xx) ---
-            // Used during RC→RTM phase.
+            // Only active during the narrow window where this branch is staging rc2:
+            // branding is "rc2", release/X.Y.1xx-rc1 exists, but release/X.Y.1xx-rc2 does not.
             const bareMatch = branch.match(/^release\/(\d+\.\d+)\.(\d+)xx$/);
             if (bareMatch) {
               const ver = bareMatch[1];
@@ -113,46 +114,47 @@ jobs:
 
               const fs = require('fs');
               const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
+
+              // Skip if servicing (patch > 0)
               const patchMatch = versionsProps.match(/<VersionSDKMinorPatch>(\d+)<\/VersionSDKMinorPatch>/);
               const patch = patchMatch ? parseInt(patchMatch[1]) : -1;
-
               if (patch !== 0) {
                 core.info(`Bare release branch ${branch} has patch version ${patch} (servicing), skipping`);
                 return null;
               }
 
-              // Check if sibling rc branches exist
-              let hasRcSibling = false;
+              // Only proceed if branding is rc2
+              const labelMatch = versionsProps.match(/<PreReleaseVersionLabel>([^<]+)<\/PreReleaseVersionLabel>/);
+              const iterationMatch = versionsProps.match(/<PreReleaseVersionIteration>(\d*)<\/PreReleaseVersionIteration>/);
+              const label = labelMatch ? labelMatch[1] : '';
+              const iteration = parseInt(iterationMatch?.[1] || '0');
+
+              if (label !== 'rc' || iteration !== 2) {
+                core.info(`Bare release branch ${branch} branded as "${label}${iteration}", not rc2 — skipping`);
+                return null;
+              }
+
+              // Check that rc1 exists but rc2 does NOT
+              let rc1Exists = false, rc2Exists = false;
               for (const rcN of ['rc1', 'rc2']) {
                 try {
                   await github.rest.repos.getBranch({
                     owner: 'dotnet', repo: 'dotnet',
                     branch: `release/${ver}.${featureBand}xx-${rcN}`,
                   });
-                  hasRcSibling = true;
-                  break;
+                  if (rcN === 'rc1') rc1Exists = true;
+                  if (rcN === 'rc2') rc2Exists = true;
                 } catch (e) {
                   if (e.status !== 404) throw e;
                 }
               }
 
-              if (!hasRcSibling) {
-                core.info(`Bare release branch ${branch} has no sibling rc branches, skipping`);
+              if (!rc1Exists || rc2Exists) {
+                core.info(`Bare release branch ${branch}: rc1=${rc1Exists}, rc2=${rc2Exists} — skipping`);
                 return null;
               }
 
-              // Read branding from this branch
-              const labelMatch = versionsProps.match(/<PreReleaseVersionLabel>([^<]+)<\/PreReleaseVersionLabel>/);
-              const iterationMatch = versionsProps.match(/<PreReleaseVersionIteration>(\d*)<\/PreReleaseVersionIteration>/);
-              const label = labelMatch ? labelMatch[1] : '';
-              const iteration = parseInt(iterationMatch?.[1] || '0');
-
-              if (label === 'servicing' || label === '') {
-                core.info(`Bare release branch ${branch} is branded as "${label || 'empty'}", skipping`);
-                return null;
-              }
-
-              return `${ver}-${label}${iteration}`;
+              return `${ver}-rc2`;
             }
 
             // --- Any other release branch format: skip ---
