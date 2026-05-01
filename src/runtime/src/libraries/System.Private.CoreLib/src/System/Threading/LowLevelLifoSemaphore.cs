@@ -30,7 +30,7 @@ namespace System.Threading
             internal LifoWaitNode? _next;
         }
 
-        private readonly LowLevelLock _stackLock = new LowLevelLock();
+        private readonly LowLevelLock _blockerStackLock = new LowLevelLock();
         private LifoWaitNode? _blockerStack;
 
         // Sometimes due to races we may see nonzero waiter count, but no blockers to wake.
@@ -263,7 +263,7 @@ namespace System.Threading
                 t_blocker = blocker = new LifoWaitNode();
             }
 
-            _stackLock.Acquire();
+            _blockerStackLock.Acquire();
             if (_pendingSignals != 0)
             {
                 Debug.Assert(_blockerStack == null);
@@ -277,7 +277,7 @@ namespace System.Threading
                 _blockerStack = blocker;
             }
 
-            _stackLock.Release();
+            _blockerStackLock.Release();
 
             // lock release has a full fence thus ordinary read of _pendingWakes is ok
             if (_pendingWakes > 0)
@@ -323,19 +323,34 @@ namespace System.Threading
             WakeOneCore();
         }
 
+        // Turn any pending wakes into actual thread wakes, but use TryAcquire to acquire the _blockerStackLock.
+        // The main goal here is that the threads who release other threads do not get blocked themselves as
+        // the releasers are the threads who do the actual work (as opposed to threads who are parking/unparking).
+        // If someone acquires _blockerStackLock, it becomes its responsibility to check for pending wakes after
+        // releasing and call here.
         private void WakeOneCore()
         {
             while (true)
             {
-                if (!_stackLock.TryAcquire())
-                    return; // lock holder will pick up _pendingWakes on their exit
+                if (!_blockerStackLock.TryAcquire())
+                {
+                    // The lock holder will pick up _pendingWakes on release.
+                    // NOTE: both incrementing _pendingWakes and releasing the lock are done via CAS,
+                    // thus the holder is guaranteed to observe the wake that it is blocking.
+                    return;
+                }
 
                 if (Interlocked.Decrement(ref _pendingWakes) < 0)
                 {
                     // No work claimed - restore and bail
                     Interlocked.Increment(ref _pendingWakes);
-                    _stackLock.Release();
-                    return;
+                    _blockerStackLock.Release();
+                    if (_pendingWakes <= 0)
+                        return;
+
+                    // Loop: handle any wakes that arrived while we were holding the lock
+                    //       it is highly unlikely, but not impossible.
+                    continue;
                 }
 
                 LifoWaitNode? top = _blockerStack;
@@ -350,17 +365,23 @@ namespace System.Threading
                     Debug.Assert(_pendingSignals != ushort.MaxValue);
                 }
 
-                _stackLock.Release();
+                _blockerStackLock.Release();
+
+                // Loop: handle any wakes that arrived while we were holding the lock
+                //       it is highly unlikely, but not impossible.
+                //
+                // CONSIDER: actually it is impossible if we allow only one wake at a time.
+                // Once one-wake is settled, we can rely on that and also make _pendingWakes
+                // a two-state _pendingWake.
+                bool needToTryAgain = _pendingWakes > 0;
+
                 if (top != null)
                 {
                     top.WakeOne();
                 }
 
-                // lock release has a full fence thus ordinary read of _pendingWakes is ok
-                if (_pendingWakes <= 0)
+                if (!needToTryAgain)
                     return;
-
-                // Loop: handle any wakes that arrived while we were working
             }
         }
 
@@ -368,7 +389,7 @@ namespace System.Threading
         private bool TryRemove(LifoWaitNode node)
         {
             bool removed = false;
-            _stackLock.Acquire();
+            _blockerStackLock.Acquire();
 
             LifoWaitNode? current = _blockerStack;
             if (current == node)
@@ -393,7 +414,7 @@ namespace System.Threading
                 }
             }
 
-            _stackLock.Release();
+            _blockerStackLock.Release();
 
             // lock release has a full fence thus ordinary read of _pendingWakes is ok
             if (_pendingWakes > 0)
