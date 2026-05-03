@@ -6932,6 +6932,8 @@ private:
     GenTree* fgMorphSmpOpOptional(GenTreeOp* tree, bool* optAssertionPropDone);
     GenTree* fgMorphConst(GenTree* tree);
 
+    void fgPushConstantsRight(GenTreeOp* tree);
+
     GenTreeOp* fgMorphCommutative(GenTreeOp* tree);
 
     GenTree* fgMorphReduceAddOps(GenTree* tree);
@@ -9459,9 +9461,11 @@ public:
     }
 
     // Things that MAY belong either in CodeGen or CodeGenContext
-    FuncInfoDsc*   compFuncInfos;
-    unsigned short compCurrFuncIdx;
-    unsigned short compFuncInfoCount;
+    FuncInfoDsc*    compFuncInfos;
+    unsigned short  compCurrFuncIdx;
+    unsigned short  compFuncInfoCount;
+    unsigned short* compVMClauseOrderToEHTabOrder;
+    unsigned short* compEHTabOrderToVMClauseOrder;
 
     unsigned short compFuncCount()
     {
