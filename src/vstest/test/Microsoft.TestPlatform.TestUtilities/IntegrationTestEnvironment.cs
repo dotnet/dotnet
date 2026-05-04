@@ -62,8 +62,8 @@ public class IntegrationTestEnvironment
         // If the variables are not set, valid defaults are assumed.
         if (TargetFramework.IsNullOrEmpty())
         {
-            // Run integration tests for net462 by default.
-            TargetFramework = "net462";
+            // Run integration tests for net481 by default.
+            TargetFramework = "net481";
         }
 
         TestAssetsPath = Path.Combine(RepoRootDirectory, "test", "TestAssets");
@@ -76,7 +76,7 @@ public class IntegrationTestEnvironment
             ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages")
             : Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", ".nuget", "packages"));
         TestArtifactsDirectory = Path.Combine(RepoRootDirectory, "artifacts", "testArtifacts");
-        RunnerFramework = "net48";
+        RunnerFramework = "net481";
     }
 
     /// <summary>

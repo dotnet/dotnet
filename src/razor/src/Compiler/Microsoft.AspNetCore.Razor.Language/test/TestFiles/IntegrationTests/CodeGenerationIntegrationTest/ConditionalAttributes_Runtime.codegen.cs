@@ -130,10 +130,9 @@ if(cls != null) {
 #line default
 #line hidden
 #nullable disable
-                Write(
 #nullable restore
-#line (10,35)-(10,38) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml"
-cls
+#line (10,35)-(10,38) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes.cshtml"
+Write(cls
 
 #line default
 #line hidden

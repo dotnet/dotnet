@@ -545,10 +545,10 @@ Render Children
         var csharp = context.CodeWriter.GetText().ToString();
         Assert.Equal(
             $"""
-            Write(
+
             #nullable restore
-            #line (3,4)-(4,3) "{expectedFileName}"
-            i++
+            #line (3,4)-(4,3) 6 "{expectedFileName}"
+            Write(i++
 
             #line default
             #line hidden

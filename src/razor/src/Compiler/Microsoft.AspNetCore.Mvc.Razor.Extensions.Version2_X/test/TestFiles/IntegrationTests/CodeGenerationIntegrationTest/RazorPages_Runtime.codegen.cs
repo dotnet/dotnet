@@ -83,9 +83,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages
                 WriteLiteral("\r\n        <label class=\"col-md-2 control-label\">");
                 EndContext();
                 BeginContext(661, 10, false);
-                Write(
-#line (29,48)-(29,58) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
-Model.Name
+#line (29,48)-(29,58) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
+Write(Model.Name
 
 #line default
 #line hidden

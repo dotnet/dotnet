@@ -135,6 +135,7 @@ internal partial class EditorInProcess
             lastSessionResetTime = stopWatch.ElapsedMilliseconds;
             return asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Invoke, textView.TextSnapshot), textView.Caret.Position.BufferPosition, cancellationToken);
         }
+
         void OpenOrUpdate(IAsyncCompletionSession currentSession)
         {
             // Preserve insertion semantics for active sessions so filtering and uniqueness still

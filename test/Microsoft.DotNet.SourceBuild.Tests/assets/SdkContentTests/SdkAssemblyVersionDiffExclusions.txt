@@ -3,7 +3,7 @@
 # the version in the MSFT SDK. If the version is less, the file will show up in the results as this is not a scenario
 # that is valid for shipping.
 #
-# This list is processed using FileSystemName.MatchesSimpleExpression
+# This list is processed using Microsoft.Extensions.FileSystemGlobbing.Matcher
 #
 # '*' in exclusions match zero or more characters.
 # '*' will match files and directory names but it will not match separator characters.

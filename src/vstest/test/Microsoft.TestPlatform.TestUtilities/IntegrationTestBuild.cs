@@ -17,7 +17,7 @@ using System.Xml.Linq;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Microsoft.TestPlatform.TestUtilities;
 
@@ -179,7 +179,10 @@ public class IntegrationTestBuild : IntegrationTestBase
         {
             if (s_isSessionMutexOwner)
             {
-                try { s_sessionMutex.ReleaseMutex(); } catch (ApplicationException) { }
+                // AssemblyCleanup may run on a different thread than AssemblyInitialize.
+                // On macOS/Linux the runtime throws InvalidOperationException for
+                // cross-thread release; on Windows it throws ApplicationException.
+                try { s_sessionMutex.ReleaseMutex(); } catch (Exception ex) when (ex is ApplicationException or InvalidOperationException) { }
             }
             s_sessionMutex.Dispose();
             s_sessionMutex = null;
@@ -193,16 +196,16 @@ public class IntegrationTestBuild : IntegrationTestBase
 
         var netTestSdkVersion = IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion;
 
-        ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -p:PackageVersion={netTestSdkVersion} "{testAssets}" """);
-        ExecuteApplication2(Dotnet, $"""build "{testAssets}" --configuration {IntegrationTestEnvironment.BuildConfiguration} --no-restore""");
+        ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -p:PackageVersion={netTestSdkVersion} -nodereuse:false "{testAssets}" """);
+        ExecuteApplication2(Dotnet, $"""build "{testAssets}" --configuration {IntegrationTestEnvironment.BuildConfiguration} --no-restore -nodereuse:false""");
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             // Build special project written in IL.
             // This project is used on Windows only Tests. On non-Windows the build fails with: "IlasmToolPath must be set in order to build ilproj's outside of Windows.".
             var cilProject = Path.Combine(Root, "test", "TestAssets", "CILProject", "CILProject.proj");
-            var binPath = Path.Combine(Root, "artifacts", "bin", "TestAssets", "CILProject", IntegrationTestEnvironment.BuildConfiguration, "net462");
-            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{cilProject}" """);
+            var binPath = Path.Combine(Root, "artifacts", "bin", "TestAssets", "CILProject", IntegrationTestEnvironment.BuildConfiguration, "net481");
+            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -nodereuse:false "{cilProject}" """);
             ExecuteApplication2(Dotnet, $"""build "{cilProject}" --configuration {IntegrationTestEnvironment.BuildConfiguration} --no-restore --output {binPath}""");
         }
     }
@@ -338,7 +341,7 @@ public class IntegrationTestBuild : IntegrationTestBase
             // We restore this project to download TestPlatform and TestPlatform.CLI nugets, into our package cache.
             // Using nuget.exe install errors out in various weird ways.
             var tools = Path.Combine(Root, "test", "TestAssets", "Tools", "Tools.csproj");
-            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{tools}" -p:PackageVersion={netTestSdkVersionDir} """);
+            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -nodereuse:false "{tools}" -p:PackageVersion={netTestSdkVersionDir} """);
         }
 
         foreach (var propertyName in msTestVersionProperties)
@@ -349,7 +352,7 @@ public class IntegrationTestBuild : IntegrationTestBase
 
         cacheId["projects"] = projects;
 
-        var cacheIdText = JsonConvert.SerializeObject(cacheId, Formatting.Indented);
+        var cacheIdText = JsonSerializer.Serialize(cacheId, new JsonSerializerOptions { WriteIndented = true });
 
         var currentCacheId = File.Exists(Path.Combine(generated, "checksum.json")) ? File.ReadAllText(Path.Combine(generated, "checksum.json")) : null;
 
@@ -357,8 +360,8 @@ public class IntegrationTestBuild : IntegrationTestBase
         if (cacheIdText == currentCacheId)
         {
             // Project cache is up-to-date, just rebuilding solution.
-            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{generatedSln}" """);
-            ExecuteApplication2(Dotnet, $"build {generatedSln} --no-restore --configuration {IntegrationTestEnvironment.BuildConfiguration} -v:minimal");
+            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -nodereuse:false "{generatedSln}" """);
+            ExecuteApplication2(Dotnet, $"build {generatedSln} --no-restore --configuration {IntegrationTestEnvironment.BuildConfiguration} -v:minimal -nodereuse:false");
             rebuild = false;
         }
 
@@ -471,8 +474,8 @@ public class IntegrationTestBuild : IntegrationTestBase
 
             ExecuteApplication2(Dotnet, $"""sln {generatedSln} add "{string.Join("\" \"", projectsToAdd)}" """);
 
-            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{generatedSln}" """);
-            ExecuteApplication2(Dotnet, $"""build --no-restore --configuration {IntegrationTestEnvironment.BuildConfiguration} "{generatedSln}" """);
+            ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -nodereuse:false "{generatedSln}" """);
+            ExecuteApplication2(Dotnet, $"""build --no-restore --configuration {IntegrationTestEnvironment.BuildConfiguration} -nodereuse:false "{generatedSln}" """);
 
             File.WriteAllText(Path.Combine(generated, "checksum.json"), cacheIdText);
         }

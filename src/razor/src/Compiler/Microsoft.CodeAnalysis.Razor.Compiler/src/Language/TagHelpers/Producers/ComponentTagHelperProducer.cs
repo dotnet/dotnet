@@ -645,31 +645,25 @@ internal sealed partial class ComponentTagHelperProducer : TagHelperProducer
                 }
 
                 var kind = PropertyKind.Default;
-                if (property.DeclaredAccessibility != Accessibility.Public)
+                if (property.DeclaredAccessibility != Accessibility.Public // Not public
+                    || property.Parameters.Length != 0 // Indexer
+                    || property.SetMethod == null // No setter
+                    || property.SetMethod.DeclaredAccessibility != Accessibility.Public // No public setter
+                    || property.IsStatic)
                 {
-                    // Not public
-                    kind = PropertyKind.Ignored;
-                }
+                    // For non-override properties, skip the expensive GetAttributes() call
+                    // since the property will be ignored regardless. GetAttributes() triggers
+                    // attribute binding and nullable analysis in the compiler, which is a
+                    // significant cost during tag helper discovery. Override properties still
+                    // need the check because [Parameter] determines whether to shadow or pass
+                    // through to the base class.
+                    if (!property.IsOverride)
+                    {
+                        names.Add(property.Name);
+                        results.Add((property, PropertyKind.Ignored));
+                        continue;
+                    }
 
-                if (property.Parameters.Length != 0)
-                {
-                    // Indexer
-                    kind = PropertyKind.Ignored;
-                }
-
-                if (property.SetMethod == null)
-                {
-                    // No setter
-                    kind = PropertyKind.Ignored;
-                }
-                else if (property.SetMethod.DeclaredAccessibility != Accessibility.Public)
-                {
-                    // No public setter
-                    kind = PropertyKind.Ignored;
-                }
-
-                if (property.IsStatic)
-                {
                     kind = PropertyKind.Ignored;
                 }
 

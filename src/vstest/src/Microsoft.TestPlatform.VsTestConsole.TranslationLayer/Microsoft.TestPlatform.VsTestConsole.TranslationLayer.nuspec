@@ -6,16 +6,13 @@
 
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="NETStandard.Library" version="[2.0.0, )" />
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
     </dependencies>

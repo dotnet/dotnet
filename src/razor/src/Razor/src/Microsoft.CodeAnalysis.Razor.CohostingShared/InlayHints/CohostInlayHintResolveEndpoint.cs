@@ -51,7 +51,7 @@ internal class CohostInlayHintResolveEndpoint(
         return data.TextDocument;
     }
 
-    protected async override Task<InlayHint?> HandleRequestAsync(InlayHint request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<InlayHint?> HandleRequestAsync(InlayHint request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var razorData = GetInlayHintResolveData(request).AssumeNotNull();
         var razorPosition = request.Position;

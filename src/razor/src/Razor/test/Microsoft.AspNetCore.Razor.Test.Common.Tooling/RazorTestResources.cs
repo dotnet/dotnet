@@ -10,8 +10,8 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 
 internal static class RazorTestResources
 {
-    private readonly static Dictionary<(string Name, string? Folder), string> s_textMap = new();
-    private readonly static Dictionary<(string Name, string? Folder), byte[]> s_bytesMap = new();
+    private static readonly Dictionary<(string Name, string? Folder), string> s_textMap = new();
+    private static readonly Dictionary<(string Name, string? Folder), byte[]> s_bytesMap = new();
 
     private static string GetResourceName(string name, string? folder)
         => folder is not null

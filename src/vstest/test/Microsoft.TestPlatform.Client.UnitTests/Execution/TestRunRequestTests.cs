@@ -300,7 +300,7 @@ public class TestRunRequestTests
 
         _testRunRequest.HandleRawMessage(string.Empty);
 
-        _mockDataSerializer.Verify(x => x.SerializePayload(It.IsAny<string>(), It.IsAny<TestRunCompletePayload>()), Times.Once);
+        _mockDataSerializer.Verify(x => x.SerializePayload(It.IsAny<string>(), It.IsAny<TestRunCompletePayload>(), It.IsAny<int>()), Times.Once);
         _mockRequestData.Verify(x => x.MetricsCollection, Times.AtLeastOnce);
         Assert.IsTrue(onDiscoveryCompleteInvoked);
     }

@@ -14,9 +14,9 @@ public class CustomCompatibilityDataSource : CompatibilityDataSourceAttribute
     private readonly CompatibilityRowsBuilder _builder;
 
     public CustomCompatibilityDataSource(
-        string runnerFrameworks = AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
+        string runnerFrameworks = AcceptanceTestBase.RUNNER_NETFX_AND_NET,
         string runnerVersions = AcceptanceTestBase.LATEST_TO_LEGACY,
-        string hostFrameworks = AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+        string hostFrameworks = AcceptanceTestBase.HOST_NETFX_AND_NET,
         string hostVersions = AcceptanceTestBase.LATEST_TO_LEGACY,
         string adapterVersions = AcceptanceTestBase.LATESTPREVIEW_TO_LEGACY,
         string adapters = AcceptanceTestBase.MSTEST)

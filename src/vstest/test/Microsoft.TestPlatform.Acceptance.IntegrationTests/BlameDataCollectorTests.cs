@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -22,8 +22,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestCategory("Windows-Review")]
 public class BlameDataCollectorTests : AcceptanceTestBase
 {
-    public const string NETCOREANDFX = "net462;net472;net8.0";
-    public const string NET80 = "net8.0";
+    public const string NETCOREANDFX = "net481;net11.0";
+    public const string NET = "net11.0";
     private readonly string _procDumpPath;
 
     public BlameDataCollectorTests()
@@ -48,7 +48,6 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue);
         arguments = string.Concat(arguments, $" /Blame");
         arguments = string.Concat(arguments, $" /ResultsDirectory:{TempDirectory.Path}");
-        arguments = string.Concat(arguments, $" /diag:logs\\log.txt");
         InvokeVsTest(arguments);
 
         VaildateOutput(TempDirectory, "BlameUnitTestProject.UnitTest1.TestMethod2");
@@ -126,7 +125,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net48;net10.0")]
+    [NetCoreRunner("net481;net11.0")]
     public void HangDumpOnTimeout(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -191,7 +190,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net48;net10.0")]
+    [NetCoreRunner("net481;net11.0")]
     public void CrashDumpOnStackOverflow(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -211,7 +210,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner(NET80)]
+    [NetCoreRunner(NET)]
     public void CrashDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -225,7 +224,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net48;net10.0")]
+    [NetCoreRunner("net481;net11.0")]
     public void HangDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

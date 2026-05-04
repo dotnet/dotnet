@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Microsoft.Win32.SafeHandles;
 
 public class SigningComparer : BuildComparer
 {
@@ -259,20 +260,15 @@ public class SigningComparer : BuildComparer
 
             using (var process = new Process())
             {
+                using SafeFileHandle nullHandle = File.OpenNullHandle();
+
                 process.StartInfo.FileName = _command;
                 process.StartInfo.Arguments = arguments;
                 process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-
-                // Send the output and error streams to empty handlers because the text is also written to the log files
-                process.OutputDataReceived += (sender, e) => { };
-                process.ErrorDataReceived += (sender, e) => { };
+                process.StartInfo.StandardOutputHandle = nullHandle;
+                process.StartInfo.StandardErrorHandle = nullHandle;
 
                 process.Start();
-
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
 
                 // Wait for either the process to exit or the timeout to occur
                 using (var cts = new CancellationTokenSource(_timeout))

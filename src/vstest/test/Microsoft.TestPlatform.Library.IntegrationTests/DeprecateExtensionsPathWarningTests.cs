@@ -56,6 +56,6 @@ public class DeprecateExtensionsPathWarningTests : AcceptanceTestBase
     public override string GetConsoleRunnerPath()
     {
         return Path.Combine(IntegrationTestEnvironment.PublishDirectory, $"Microsoft.TestPlatform.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "tools",
-            DEFAULT_RUNNER_NETFX, "Common7", "IDE", "Extensions", "TestPlatform", "vstest.console.exe");
+            RUNNER_NETFX, "Common7", "IDE", "Extensions", "TestPlatform", "vstest.console.exe");
     }
 }

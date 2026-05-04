@@ -79,9 +79,8 @@ namespace Microsoft.Deployment.DotNet.Releases
             }
 
             using var stream = new MemoryStream(await Utils.s_httpClient.GetByteArrayAsync(releasesIndexUrl).ConfigureAwait(false));
-            using var reader = new StreamReader(stream);
 
-            return await GetAsync(reader).ConfigureAwait(false);
+            return await GetAsync(stream).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,19 +100,19 @@ namespace Microsoft.Deployment.DotNet.Releases
         {
             await Utils.GetLatestFileAsync(path, downloadLatest, ReleasesIndexDefaultUrl).ConfigureAwait(false);
 
-            using TextReader reader = File.OpenText(path);
+            using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
 
-            return await GetAsync(reader).ConfigureAwait(false);
+            return await GetAsync(stream).ConfigureAwait(false);
         }
 
-        private static async Task<ProductCollection> GetAsync(TextReader reader)
+        private static async Task<ProductCollection> GetAsync(Stream stream)
         {
-            if (reader == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(nameof(reader));
+                throw new ArgumentNullException(nameof(stream));
             }
 
-            using var releasesIndexDocument = JsonDocument.Parse(await reader.ReadToEndAsync().ConfigureAwait(false));
+            using var releasesIndexDocument = await JsonDocument.ParseAsync(stream).ConfigureAwait(false);
             var root = releasesIndexDocument.RootElement.GetProperty("releases-index");
             var products = new List<Product>();
 

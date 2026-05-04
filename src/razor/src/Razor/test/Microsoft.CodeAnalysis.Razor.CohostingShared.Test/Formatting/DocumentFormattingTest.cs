@@ -10535,6 +10535,273 @@ public class DocumentFormattingTest(ITestOutputHelper testOutput) : DocumentForm
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_ComponentAttributesWithExplicitExpression()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                TValue="string"
+                                              Multiple="false"
+                                   Items="@Digits"
+                                              SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@
+                <FluentAutocomplete Id="my-list"
+                                    TOption="string"
+                                    TValue="string"
+                                    Multiple="false"
+                                    Items="@Digits"
+                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                                    TOption="string"
+                                                    TValue="string"
+                                                    Multiple="false"
+                                                    Items="@Digits"
+                                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_ComponentAttributesWithExplicitExpression_IndentByOne()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                TValue="string"
+                                              Multiple="false"
+                                   Items="@Digits"
+                                              SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@
+                <FluentAutocomplete Id="my-list"
+                                    TOption="string"
+                                    TValue="string"
+                                    Multiple="false"
+                                    Items="@Digits"
+                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                            TOption="string"
+                            TValue="string"
+                            Multiple="false"
+                            Items="@Digits"
+                            SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByOne);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_ComponentAttributesWithExplicitExpression_IndentByTwo()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                TValue="string"
+                                              Multiple="false"
+                                   Items="@Digits"
+                                              SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@
+                <FluentAutocomplete Id="my-list"
+                                    TOption="string"
+                                    TValue="string"
+                                    Multiple="false"
+                                    Items="@Digits"
+                                    SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<FluentAutocomplete Id="my-list"
+                                TOption="string"
+                                TValue="string"
+                                Multiple="false"
+                                Items="@Digits"
+                                SelectedItem="@("Three")" />);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            attributeIndentStyle: AttributeIndentStyle.IndentByTwo);
+    }
+
+    [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/13064")]
+    public async Task RenderFragment_Multiline_NestedComponentAttributesWithExplicitExpression()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<div>
+                                <FluentAutocomplete Id="my-list"
+                                                TOption="string"
+                                        TValue="string"
+                                                      Multiple="false"
+                                           Items="@Digits"
+                                                      SelectedItem="@("Three")" />
+                        </div>);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            htmlFormatted: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<div>
+                    <FluentAutocomplete Id="my-list"
+                                        TOption="string"
+                                        TValue="string"
+                                        Multiple="false"
+                                        Items="@Digits"
+                                        SelectedItem="@("Three")" />
+                </div>);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """,
+            expected: """
+                @code {
+                    [Fact]
+                    private void RenderFragment_First()
+                    {
+                        Render(@<div>
+                            <FluentAutocomplete Id="my-list"
+                                                TOption="string"
+                                                TValue="string"
+                                                Multiple="false"
+                                                Items="@Digits"
+                                                SelectedItem="@("Three")" />
+                        </div>);
+                    }
+
+                    [Fact]
+                    private void RenderFragment_Second()
+                    {
+                    }
+                }
+                """);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/9119")]
     public async Task CollectionInitializers()
     {

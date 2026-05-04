@@ -14,6 +14,10 @@ trigger:
     - rel/17.4
     - rel/17.5
     - rel/17.6
+  paths:
+    exclude:
+      - .gitignore
+      - .vscode/*
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
@@ -26,8 +30,10 @@ pr:
       - .github/*
       - .devcontainer/*
       - docs/*
+      - .vscode/*
       - .markdownlint.json
       - .markdownlintignore
+      - .gitignore
       - CODE_OF_CONDUCT.md
       - CONTRIBUTING.md
       - README.md
@@ -210,4 +216,3 @@ stages:
             PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
             ArtifactName: TestResults
           condition: failed()
-

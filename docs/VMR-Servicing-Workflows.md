@@ -102,6 +102,12 @@ gantt
 
 #### Developer – Public Fix
 
+> **Multi-band note (10.0+):** For 10.0+ releases the runtime source code only lives in the 1xx band branch (and release-specific branches derived from it). This means:
+> - **Runtime / shared-component fixes** – Apply the fix only to the 1xx band branch (e.g., `release/10.0.1xx`). The updated runtime packages will automatically flow to 2xx and higher band branches.
+> - **SDK / band-specific fixes** – Apply the fix to **each** band branch that requires it (e.g., `release/10.0.1xx` and `release/10.0.2xx` separately).
+>
+> See [Managing SDK Bands](./VMR-Managing-SDK-Bands.md#servicing-fixes-across-bands) for full details.
+
 1. Developer prepares source for their fix in their component repository, or in the VMR if the fix is VMR-specific.
 2. Developer prepares an approval template and brings the fix to Tactics.
 3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
@@ -115,8 +121,14 @@ gantt
 
 #### Developer – Internal Fix
 
+> **Multi-band note (10.0+):** For 10.0+ releases the runtime source code only lives in the 1xx band branch (and release-specific branches derived from it). This means:
+> - **Runtime / shared-component fixes** – Apply the fix only to the 1xx band branch (e.g., `internal/release/10.0.1xx`). The updated runtime packages will automatically flow to 2xx and higher band branches.
+> - **SDK / band-specific fixes** – Apply the fix to **each** band branch that requires it (e.g., `internal/release/10.0.1xx` and `internal/release/10.0.2xx` separately).
+>
+> See [Managing SDK Bands](./VMR-Managing-SDK-Bands.md#servicing-fixes-across-bands) for full details.
+
 1. Developer prepares source for their fix. This can be done in two ways:
-  - In the internal validation branch of their component repository (to enable repo-specific PR validation), followed by cherry-picking to the internal VMR servicing branch.
+  - In the internal validation branch of their component repository (to enable repo-specific PR validation), followed by cherry-picking to the internal VMR servicing branch. If a repo-specific PR is opened for validation, crosslink them for traceability.
   - Directly in the internal VMR servicing branch.
 2. Developer prepares an approval template and brings the fix to .NET Tactics.
 3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
@@ -124,9 +136,10 @@ gantt
     - If the approved milestone corresponds to the **Release Specific** branch, then the PR is targeted to the internal VMR **Release Specific** branch and merged.
     - If the approved milestone corresponds to the current state of the **General Servicing** branch (the branch is branded for that milestone), then the PR is targeted to the internal VMR **General Servicing** branch and merged.
     - If the approved milestone does not correspond to any currently open branch, the fix is parked until a **General Servicing** internal VMR branch matches the milestone, and then the fix is merged.
-5. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
-6. Wait for a validation build.
-7. Validate the fix in the shipping product.
+5. If a staging pull request was created against the component repository for repo-specific validation, be sure to Abandon the PR with a comment that the PR was used for validation, linking to the internal VMR pull request that was used to merge the fix.
+6. Confirm that the fix made it into the VMR servicing branch matching the approved milestone.
+7. Wait for a validation build.
+8. Validate the fix in the shipping product.
 
 #### Repository Owner - Preparing for Upcoming Release
 
@@ -301,6 +314,12 @@ gantt
 
 #### Developer – Public Fix
 
+> **Multi-band note (10.0+):** For 10.0+ releases the runtime source code only lives in the 1xx band branch. This means:
+> - **Runtime / shared-component fixes** – Apply the fix only to the 1xx band branch. The updated runtime packages will automatically flow to 2xx and higher band branches.
+> - **SDK / band-specific fixes** – Apply the fix to **each** band branch that requires it separately.
+>
+> See [Managing SDK Bands](./VMR-Managing-SDK-Bands.md#servicing-fixes-across-bands) for full details.
+
 1. Developer prepares source for their fix in their component repository, or in the VMR if the fix is VMR-specific.
 2. Developer prepares an approval template and brings the fix to Tactics.
 3. Tactics approves the bug for a specific release (e.g. 10.0.3 or 10.0.4)
@@ -312,6 +331,12 @@ gantt
 7. Validate the fix in the shipping product.
 
 #### Developer – Internal Fix
+
+> **Multi-band note (10.0+):** For 10.0+ releases the runtime source code only lives in the 1xx band branch. This means:
+> - **Runtime / shared-component fixes** – Apply the fix only to the 1xx band branch. The updated runtime packages will automatically flow to 2xx and higher band branches.
+> - **SDK / band-specific fixes** – Apply the fix to **each** band branch that requires it separately.
+>
+> See [Managing SDK Bands](./VMR-Managing-SDK-Bands.md#servicing-fixes-across-bands) for full details.
 
 1. Developer prepares source for their fix. This can be done in two ways:
   - In the internal validation branch of their component repository (enables repo-specific PR validation), then cherry-pick to the internal VMR servicing branch.

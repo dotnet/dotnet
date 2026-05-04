@@ -133,18 +133,9 @@ internal static class DelegatedCompletionHelper
     }
 
     public static RazorVSInternalCompletionList RewriteHtmlResponse(
-        RazorVSInternalCompletionList? delegatedResponse,
+        RazorVSInternalCompletionList delegatedResponse,
         RazorCompletionOptions completionOptions)
     {
-        if (delegatedResponse?.Items is null)
-        {
-            // If we don't get a response from the delegated server, we have to make sure to return an incomplete completion
-            // list. When a user is typing quickly, the delegated request from the first keystroke will fail to synchronize,
-            // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
-            // so we'd only ever return Razor completion items.
-            return new RazorVSInternalCompletionList() { IsIncomplete = true, Items = [] };
-        }
-
         var rewrittenResponse = s_delegatedHtmlCompletionResponseRewriter.Rewrite(
             delegatedResponse,
             completionOptions);

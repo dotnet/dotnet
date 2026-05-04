@@ -22,8 +22,8 @@ public class DisableAppdomainTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var diableAppdomainTest1 = _testEnvironment.GetTestAsset("DisableAppdomainTest1.dll", Net462TargetFramework);
-        var diableAppdomainTest2 = _testEnvironment.GetTestAsset("DisableAppdomainTest2.dll", Net462TargetFramework);
+        var diableAppdomainTest1 = _testEnvironment.GetTestAsset("DisableAppdomainTest1.dll", Net481TargetFramework);
+        var diableAppdomainTest2 = _testEnvironment.GetTestAsset("DisableAppdomainTest2.dll", Net481TargetFramework);
 
         RunTests($"{diableAppdomainTest1}\" \"{diableAppdomainTest2}", 2);
     }
@@ -35,7 +35,7 @@ public class DisableAppdomainTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var newtonSoftDependnecyTest = _testEnvironment.GetTestAsset("NewtonSoftDependency.dll", Net462TargetFramework);
+        var newtonSoftDependnecyTest = _testEnvironment.GetTestAsset("NewtonSoftDependency.dll", Net481TargetFramework);
 
         RunTests(newtonSoftDependnecyTest, 1);
     }

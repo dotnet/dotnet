@@ -24,10 +24,10 @@
 
   <PropertyGroup>
     <!-- The TFMs to build and test against. -->
-    <NetFrameworkMinimum>net462</NetFrameworkMinimum>
-    <NetCoreAppMinimum>net8.0</NetCoreAppMinimum>
-    <NetFrameworkTargetFrameworks>net462;net472;net48</NetFrameworkTargetFrameworks>
-    <NetCoreAppTargetFrameworks>net8.0;net9.0;net10.0;net11.0</NetCoreAppTargetFrameworks>
+    <NetFrameworkMinimum>net481</NetFrameworkMinimum>
+    <NetCoreAppMinimum>net11.0</NetCoreAppMinimum>
+    <NetFrameworkTargetFrameworks>net481</NetFrameworkTargetFrameworks>
+    <NetCoreAppTargetFrameworks>net11.0</NetCoreAppTargetFrameworks>
     <TestProjectTargetFrameworks>$(NetFrameworkTargetFrameworks);$(NetCoreAppTargetFrameworks)</TestProjectTargetFrameworks>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>

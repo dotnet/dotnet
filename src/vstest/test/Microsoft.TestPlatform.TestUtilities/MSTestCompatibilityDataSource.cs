@@ -20,10 +20,10 @@ public class MSTestCompatibilityDataSource : CompatibilityDataSourceAttribute
         _builder = new CompatibilityRowsBuilder(
             // runner, use just .NET, because the adapter runs in the testhost, and we will add InProcess and VSIX, that will test running with the Runner.
             AcceptanceTestBase.LATEST,
-            AcceptanceTestBase.DEFAULT_RUNNER_NET,
+            AcceptanceTestBase.RUNNER_NET,
             // host
             AcceptanceTestBase.LATEST,
-            AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+            AcceptanceTestBase.HOST_NETFX_AND_NET,
             // adapter
             AcceptanceTestBase.LATESTPREVIEW_TO_LEGACY,
             AcceptanceTestBase.MSTEST);

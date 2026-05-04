@@ -736,6 +736,10 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</comment>
   <data name="Error_CannotFindNonArchitectureSpecificMsbuild" xml:space="preserve">
     <value>The resolved MSBuild directory is `{0}` which is an architecture-specific directory. Could not find MSBuild in its parent directory (non-architecture specific).</value>
   </data>
+  <data name="Error_MsBuildIsNetCoreMsBuild" xml:space="preserve">
+    <value>The MSBuild directory '{0}' appears to be a .NET SDK (dotnet) MSBuild installation. NuGet.exe requires the .NET Framework version of MSBuild, which is included with Visual Studio. Use 'dotnet restore' instead, or provide the path to a Visual Studio MSBuild installation.</value>
+    <comment>{0} is the MSBuild directory path. Do not localize 'NuGet.exe', 'MSBuild', '.NET SDK', '.NET Framework', 'dotnet restore', 'Visual Studio'.</comment>
+  </data>
   <data name="Warning_CommandDeprecated" xml:space="preserve">
     <value>'{0} {1}' is deprecated. Use '{0} {2}' instead.</value>
     <comment>{0} - name of the assembly running the command, e.g., NuGet

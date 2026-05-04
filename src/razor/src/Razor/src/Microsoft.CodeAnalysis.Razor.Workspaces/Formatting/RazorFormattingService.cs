@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -92,10 +93,12 @@ internal class RazorFormattingService : IRazorFormattingService
         }
 
         var logger = _formattingLoggerFactory.CreateLogger(documentContext.Snapshot.FilePath, range is null ? "Full" : "Range");
+        logger?.LogObject("FileKind", documentContext.Snapshot.FileKind);
         logger?.LogObject("Options", options);
         logger?.LogObject("HtmlChanges", htmlChanges.SelectAsArray(e => e.ToRazorTextChange()));
         logger?.LogObject("Range", range);
         logger?.LogSourceText("InitialDocument", sourceText);
+        LogSyntaxTree(logger, codeDocument);
 
         var uri = documentContext.Uri;
         var documentSnapshot = documentContext.Snapshot;
@@ -285,10 +288,12 @@ internal class RazorFormattingService : IRazorFormattingService
         collapseChanges |= generatedDocumentChanges.Length == 1;
 
         var logger = _formattingLoggerFactory.CreateLogger(documentSnapshot.FilePath, formattingType);
+        logger?.LogObject("FileKind", documentSnapshot.FileKind);
         logger?.LogObject("Options", options);
         logger?.LogObject("Parameters", new { hostDocumentIndex, triggerCharacter, collapseChanges, includeCSharpLanguageFeatureEdits, validate });
         logger?.LogObject("GeneratedDocumentChanges", generatedDocumentChanges);
         logger?.LogSourceText("InitialDocument", codeDocument.Source.Text);
+        LogSyntaxTree(logger, codeDocument);
 
         var context = FormattingContext.CreateForOnTypeFormatting(
             documentSnapshot,
@@ -373,6 +378,18 @@ internal class RazorFormattingService : IRazorFormattingService
         }
 
         return changes;
+    }
+
+    private static void LogSyntaxTree(IFormattingLogger? logger, RazorCodeDocument codeDocument)
+    {
+        if (logger is null)
+        {
+            return;
+        }
+
+        var syntaxRoot = (RazorSyntaxNode)codeDocument.GetRequiredTagHelperRewrittenSyntaxTree().Root;
+        var serializedSyntaxTree = SyntaxSerializer.Default.Serialize(syntaxRoot);
+        logger.LogSourceText("SyntaxTree", SourceText.From(serializedSyntaxTree));
     }
 
     private static ImmutableArray<TextChange> ReplaceInChanges(ImmutableArray<TextChange> csharpChanges, string toFind, string replacement)

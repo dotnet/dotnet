@@ -21,10 +21,10 @@ public class TestHostCompatibilityDataSource : CompatibilityDataSourceAttribute
         _builder = new CompatibilityRowsBuilder(
             // runner
             AcceptanceTestBase.LATEST_TO_RECENT_STABLE,
-            AcceptanceTestBase.DEFAULT_RUNNER_NETFX_AND_NET,
+            AcceptanceTestBase.RUNNER_NETFX_AND_NET,
             // host
             AcceptanceTestBase.LATEST,
-            AcceptanceTestBase.DEFAULT_HOST_NETFX_AND_NET,
+            AcceptanceTestBase.HOST_NETFX_AND_NET,
             // adapter
             AcceptanceTestBase.LATESTSTABLE,
             AcceptanceTestBase.MSTEST);
