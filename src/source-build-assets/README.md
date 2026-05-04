@@ -135,7 +135,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
    It will also ensure the new version does not contain prohibited checked-in binaries.
 
 1. After the PR is merged to update a component, coordination is often needed in the darc dependency flows.
-   The source-build-reference-packages source may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
+   The source-build-assets source may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
    Sometimes it can be easier to add the new upgraded version along side the older version and then delete the old version after all product repos have been upgraded to the new version.
 
 #### Patches
@@ -180,7 +180,7 @@ the maintenance burden when [updating a component to a newer version](#updating-
 
 ### Reference
 
-The [generate script](https://github.com/dotnet/source-build-reference-packages/blob/main/generate.sh)
+The [generate script](https://github.com/dotnet/source-build-assets/blob/main/generate.sh)
 supports generating reference packages.
 Run `generate.sh --help` for usage details.
 
@@ -205,7 +205,7 @@ The tooling does not handle all situations and sometimes the generated code will
 it to compile. If this occurs when generating a newer version of an existing package, it can be helpful to
 regenerate the older version to see what customizations to the generated code were made.
 
-> **Suggestion:** Open an [issue](https://github.com/dotnet/source-build-reference-packages/issues/new) that describes the packages to add and assign it to Copilot to do the work (example [issue](https://github.com/dotnet/source-build-reference-packages/issues/1324) and [resulting PR](https://github.com/dotnet/source-build-reference-packages/pull/1325)).
+> **Suggestion:** Open an [issue](https://github.com/dotnet/source-build-assets/issues/new) that describes the packages to add and assign it to Copilot to do the work (example [issue](https://github.com/dotnet/source-build-assets/issues/1324) and [resulting PR](https://github.com/dotnet/source-build-assets/pull/1325)).
 
 #### Workflow
 
@@ -269,7 +269,7 @@ Run `generate.sh --help` for usage details.
 
 ### Text Only
 
-The [generate script](https://github.com/dotnet/source-build-reference-packages/blob/main/generate.sh)
+The [generate script](https://github.com/dotnet/source-build-assets/blob/main/generate.sh)
 supports generating text-only packages.
 Run `generate.sh --help` for usage details.
 
@@ -277,7 +277,7 @@ Run `generate.sh --help` for usage details.
 ./generate.sh --type text --package microsoft.build.traversal,3.1.6
 ```
 
-> **Suggestion:** Open an [issue](https://github.com/dotnet/source-build-reference-packages/issues/new) that describes the packages to add and assign it to Copilot to do the work (example [issue](https://github.com/dotnet/source-build-reference-packages/issues/1324) and [resulting PR](https://github.com/dotnet/source-build-reference-packages/pull/1325)).
+> **Suggestion:** Open an [issue](https://github.com/dotnet/source-build-assets/issues/new) that describes the packages to add and assign it to Copilot to do the work (example [issue](https://github.com/dotnet/source-build-assets/issues/1324) and [resulting PR](https://github.com/dotnet/source-build-assets/pull/1325)).
 
 ## Vulnerable Packages
 
@@ -287,7 +287,7 @@ packages. If product repos migrate off these vulnerable packages, they can be [r
 
 ## Filing Issues
 
-This repo should contain [issues](https://github.com/dotnet/source-build-reference-packages/issues) that are tied to reference, text-only, external, and target packages used by source build.
+This repo should contain [issues](https://github.com/dotnet/source-build-assets/issues) that are tied to reference, text-only, external, and target packages used by source build.
 
 Other source build related issues should be opened in [dotnet/source-build](https://github.com/dotnet/source-build/issues/new/choose)
 
