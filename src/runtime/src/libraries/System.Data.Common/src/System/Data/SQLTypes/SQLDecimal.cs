@@ -921,6 +921,10 @@ namespace System.Data.SqlTypes
         }
 
         public override unsafe string ToString()
+        {
+            if (IsNull)
+                return SQLResource.NullString;
+            AssertValid();
 
             // Make local copy of data to avoid modifying input.
             Span<uint> rgulNumeric = [_data1, _data2, _data3, _data4];

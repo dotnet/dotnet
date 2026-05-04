@@ -513,6 +513,12 @@ namespace System.Xml.Schema
         /// Serialization to a string
         /// </summary>
         public override unsafe string ToString()
+        {
+            Span<char> destination = stackalloc char[CharStackBufferSize];
+            bool success = TryFormat(destination, out int charsWritten);
+            Debug.Assert(success);
+
+            return destination.Slice(0, charsWritten).ToString();
         }
 
         public bool TryFormat(Span<char> destination, out int charsWritten)

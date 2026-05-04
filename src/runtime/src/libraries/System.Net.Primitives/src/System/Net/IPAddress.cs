@@ -458,6 +458,8 @@ namespace System.Net
         ///   </para>
         /// </devdoc>
         public override unsafe string ToString()
+        {
+            string? toString = _toString;
             if (toString is null)
             {
                 Span<char> span = stackalloc char[IPAddressParser.MaxIPv6StringLength];
