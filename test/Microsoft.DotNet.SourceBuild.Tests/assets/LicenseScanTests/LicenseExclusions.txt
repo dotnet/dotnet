@@ -36,8 +36,6 @@ src/aspnetcore/src/Framework/App.Runtime/bundle/theme/**/*.wxl|unknown-license-r
 src/aspnetcore/src/Installers/Windows/**/*.wxl|unknown-license-reference
 src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
 
-# License reference used in configuration, but not applying to code
-
 #
 # command-line-api
 #
