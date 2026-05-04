@@ -755,7 +755,7 @@ namespace System.Text.RegularExpressions
         /// If the method returns false, the caller can be sure the sets do not overlap.
         /// If the method returns true, it's still possible the sets don't overlap.
         /// </remarks>
-        public static bool MayOverlap(string set1, string set2)
+        public static unsafe bool MayOverlap(string set1, string set2)
         {
             // If the sets are identical, there's obviously overlap.
             if (set1 == set2)

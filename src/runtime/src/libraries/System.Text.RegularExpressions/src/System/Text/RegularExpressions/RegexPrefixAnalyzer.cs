@@ -54,7 +54,7 @@ namespace System.Text.RegularExpressions
             // this one should be examined, or returns false if they shouldn't be because the node wasn't guaranteed
             // to be fully processed.
             // </summary>
-            static bool FindPrefixesCore(RegexNode node, List<StringBuilder> results, bool ignoreCase)
+            static unsafe bool FindPrefixesCore(RegexNode node, List<StringBuilder> results, bool ignoreCase)
             {
                 // If we're too deep to analyze further, we can't trust what we've already computed, so stop iterating.
                 // Also bail if any of our results is already hitting the threshold, or if this node is RTL, which is
