@@ -37,7 +37,6 @@ src/aspnetcore/src/Installers/Windows/**/*.wxl|unknown-license-reference
 src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
 
 # License reference used in configuration, but not applying to code
-src/aspnetcore/src/Mvc/Settings.StyleCop|unknown-license-reference
 
 #
 # command-line-api
