@@ -60,9 +60,10 @@ while(i <= 10) {
 #nullable disable
 
             WriteLiteral("    <p>Hello from C#, #");
+            Write(
 #nullable restore
-#line (9,26)-(9,27) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml"
-Write(i
+#line (9,26)-(9,27) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml"
+i
 
 #line default
 #line hidden
@@ -136,9 +137,10 @@ for(int j = 1; j <= 10; j += 2) {
 #nullable disable
 
             WriteLiteral("    <p>Hello again from C#, #");
+            Write(
 #nullable restore
-#line (27,32)-(27,33) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml"
-Write(j
+#line (27,32)-(27,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml"
+j
 
 #line default
 #line hidden
@@ -172,9 +174,10 @@ try {
 #nullable disable
 
             WriteLiteral("    <p>Oh no! An error occurred: ");
+            Write(
 #nullable restore
-#line (33,36)-(33,46) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml"
-Write(ex.Message
+#line (33,36)-(33,46) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Instrumented.cshtml"
+ex.Message
 
 #line default
 #line hidden

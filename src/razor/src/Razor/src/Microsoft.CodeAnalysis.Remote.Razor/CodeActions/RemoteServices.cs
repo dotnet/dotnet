@@ -62,7 +62,7 @@ internal sealed class OOPComponentAccessibilityCodeActionProvider(IFileSystem fi
 internal sealed class OOPUnboundDirectiveAttributeAddUsingCodeActionProvider : UnboundDirectiveAttributeAddUsingCodeActionProvider;
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
-internal sealed class OOPGenerateEventHandlerCodeActionProvider : GenerateEventHandlerCodeActionProvider;
+internal sealed class OOPGenerateMethodCodeActionProvider : GenerateMethodCodeActionProvider;
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 internal sealed class OOPPromoteUsingDirectiveCodeActionProvider : PromoteUsingCodeActionProvider;
@@ -85,7 +85,7 @@ internal sealed class OOPDefaultCSharpCodeActionProvider(LanguageServerFeatureOp
 
 [Export(typeof(IHtmlCodeActionProvider)), Shared]
 [method: ImportingConstructor]
-internal sealed class OOPDefaultHtmlCodeActionProvider(IRazorEditService razorEditService) : HtmlCodeActionProvider(razorEditService);
+internal sealed class OOPDefaultHtmlCodeActionProvider(IEditMappingService editMappingService) : HtmlCodeActionProvider(editMappingService);
 
 // Code Action Resolvers
 
@@ -120,6 +120,15 @@ internal sealed class OOPAddUsingsCodeActionResolver : AddUsingsCodeActionResolv
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]
+internal sealed class OOPGenerateMethodCodeActionResolver(
+    IRoslynCodeActionHelpers roslynCodeActionHelpers,
+    IDocumentMappingService documentMappingService,
+    IRazorFormattingService razorFormattingService,
+    IFileSystem fileSystem)
+    : GenerateMethodCodeActionResolver(roslynCodeActionHelpers, documentMappingService, razorFormattingService, fileSystem);
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+[method: ImportingConstructor]
 internal sealed class OOPPromoteUsingDirectiveCodeActionResolver(IFileSystem fileSystem) : PromoteUsingCodeActionResolver(fileSystem);
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
@@ -141,4 +150,4 @@ internal sealed class OOPUnformattedRemappingCSharpCodeActionResolver(IDocumentM
 
 [Export(typeof(IHtmlCodeActionResolver)), Shared]
 [method: ImportingConstructor]
-internal sealed class OOPHtmlCodeActionResolver(IRazorEditService razorEditService) : HtmlCodeActionResolver(razorEditService);
+internal sealed class OOPHtmlCodeActionResolver(IEditMappingService editMappingService) : HtmlCodeActionResolver(editMappingService);

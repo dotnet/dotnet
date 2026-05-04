@@ -10,20 +10,13 @@ internal sealed class DefaultRazorTagHelperRewritePhase : RazorEnginePhaseBase
 {
     protected override RazorCodeDocument ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
-        if (!codeDocument.TryGetSyntaxTree(out var syntaxTree))
-        {
-            return codeDocument.WithReferencedTagHelpers([]);
-        }
-
-        if (!codeDocument.TryGetTagHelperContext(out var context) ||
+        if (!codeDocument.TryGetPreTagHelperSyntaxTree(out var syntaxTree) ||
+            !codeDocument.TryGetTagHelperContext(out var context) ||
             context.TagHelpers is [])
         {
-            // No tag helpers to rewrite. The rewritten tree is the same as the canonical tree.
-            // Tooling in the workspaces layer always expects GetRequiredTagHelperRewrittenSyntaxTree()
-            // to return a non-null value after the full pipeline has run.
-            return codeDocument
-                .WithReferencedTagHelpers([])
-                .WithTagHelperRewrittenSyntaxTree(syntaxTree);
+            // No descriptors, so no need to see if any are used. Without setting this though,
+            // we trigger an Assert in the ProcessRemaining method in the source generator.
+            return codeDocument.WithReferencedTagHelpers([]);
         }
 
         var binder = context.GetBinder();
@@ -32,6 +25,6 @@ internal sealed class DefaultRazorTagHelperRewritePhase : RazorEnginePhaseBase
 
         return codeDocument
             .WithReferencedTagHelpers(usedHelpers.ToCollection())
-            .WithTagHelperRewrittenSyntaxTree(rewrittenSyntaxTree);
+            .WithSyntaxTree(rewrittenSyntaxTree);
     }
 }

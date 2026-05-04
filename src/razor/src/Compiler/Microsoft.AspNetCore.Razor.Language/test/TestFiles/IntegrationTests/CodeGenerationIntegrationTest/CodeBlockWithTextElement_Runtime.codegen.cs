@@ -44,9 +44,10 @@ namespace AspNetCoreGeneratedDocument
 #nullable disable
 
             WriteLiteral("bar ");
+            Write(
 #nullable restore
-#line (3,30)-(3,33) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml"
-Write(a+b
+#line (3,30)-(3,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlockWithTextElement.cshtml"
+a+b
 
 #line default
 #line hidden

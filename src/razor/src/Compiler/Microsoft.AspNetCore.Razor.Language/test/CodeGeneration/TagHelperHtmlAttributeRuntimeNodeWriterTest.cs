@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
@@ -14,7 +13,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
 
     protected override void ConfigureCodeDocumentProcessor(RazorCodeDocumentProcessor processor)
     {
-        processor.ExecutePhasesThrough<DefaultTagHelperResolutionPhase>();
+        processor.ExecutePhasesThrough<IRazorIntermediateNodeLoweringPhase>();
     }
 
     [Fact]
@@ -27,7 +26,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var processor = CreateCodeDocumentProcessor(codeDocument);
         var documentNode = processor.GetDocumentNode();
-        var node = FindDescendant<HtmlAttributeIntermediateNode>(documentNode).Children[0] as HtmlAttributeValueIntermediateNode;
+        var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[0] as HtmlAttributeValueIntermediateNode;
 
         using var context = TestCodeRenderingContext.CreateRuntime();
 
@@ -52,7 +51,7 @@ public class TagHelperHtmlAttributeRuntimeNodeWriterTest : RazorProjectEngineTes
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var processor = CreateCodeDocumentProcessor(codeDocument);
         var documentNode = processor.GetDocumentNode();
-        var node = FindDescendant<HtmlAttributeIntermediateNode>(documentNode).Children[1] as CSharpExpressionAttributeValueIntermediateNode;
+        var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpExpressionAttributeValueIntermediateNode;
 
         using var context = TestCodeRenderingContext.CreateRuntime();
 
@@ -86,7 +85,7 @@ false
         var codeDocument = ProjectEngine.CreateCodeDocument(source);
         var processor = CreateCodeDocumentProcessor(codeDocument);
         var documentNode = processor.GetDocumentNode();
-        var node = FindDescendant<HtmlAttributeIntermediateNode>(documentNode).Children[1] as CSharpCodeAttributeValueIntermediateNode;
+        var node = documentNode.Children.OfType<HtmlAttributeIntermediateNode>().Single().Children[1] as CSharpCodeAttributeValueIntermediateNode;
 
         using var context = TestCodeRenderingContext.CreateRuntime(source: source);
 
@@ -113,4 +112,3 @@ if(@true){ }
             ignoreLineEndingDifferences: true);
     }
 }
-

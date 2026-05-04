@@ -33,7 +33,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
             return null;
         }
 
-        if (!documentContext.Snapshot.FileKind.IsComponent())
+        if (!documentContext.FileKind.IsComponent())
         {
             return null;
         }

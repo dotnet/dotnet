@@ -229,7 +229,6 @@ public partial class VSCodeService
                     process.Kill(entireProcessTree: true);
                 }
                 catch { }
-
                 throw new TimeoutException($"Extension installation timed out after 3 minutes for {extensionId}");
             }
         }
@@ -298,7 +297,6 @@ public partial class VSCodeService
                     process.Kill(entireProcessTree: true);
                 }
                 catch { }
-
                 testServices.Logger.Log("Timeout checking extensions, assuming not installed");
                 return false;
             }

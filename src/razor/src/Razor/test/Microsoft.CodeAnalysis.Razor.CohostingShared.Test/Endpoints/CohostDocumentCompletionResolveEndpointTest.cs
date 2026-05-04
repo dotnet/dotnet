@@ -60,7 +60,10 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
             new ThrowingSnippetCompletionItemResolveProvider(),
             LoggerFactory);
 
+        var textDocumentIdentifier = new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() }, Version: 0);
+
         var context = new DelegatedCompletionResolutionContext(
+            textDocumentIdentifier,
             OriginalCompletionListData: null,
             ProjectedKind: RazorLanguageKind.Html,
             ProvisionalTextEdit: null);
@@ -85,7 +88,7 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
 
         var resultId = completionListCache.Add(list, context);
         list.SetResultId(resultId, clientCapabilities);
-        RazorCompletionResolveData.Wrap(list, new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() }, clientCapabilities);
+        RazorCompletionResolveData.Wrap(list, textDocumentIdentifier.TextDocumentIdentifier, clientCapabilities);
 
         var request = list.Items[0];
         // Simulate the LSP client, which would receive all of the items and the list data, and send the item back to us with

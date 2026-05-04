@@ -28,9 +28,4 @@ internal interface IRazorEditService
         IDocumentSnapshot snapshot,
         bool includeCSharpLanguageFeatureEdits,
         CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Maps C# changes in a workspace edit, to their equivalent Razor changes, modifying them in place
-    /// </summary>
-    Task MapWorkspaceEditAsync(IDocumentSnapshot contextDocumentSnapshot, WorkspaceEdit workspaceEdit, CancellationToken cancellationToken);
 }

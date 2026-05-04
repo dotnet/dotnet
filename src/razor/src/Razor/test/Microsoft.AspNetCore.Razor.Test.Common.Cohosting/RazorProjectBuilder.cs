@@ -46,7 +46,6 @@ internal class RazorProjectBuilder(ProjectId? id = null)
     private readonly List<PortableExecutableReference> _references = [];
     private readonly List<(DocumentId id, string name, SourceText text, string filePath)> _documents = [];
     private readonly List<(DocumentId id, string name, SourceText text, string filePath)> _additionalDocuments = [];
-    private readonly List<(string name, SourceText text, string filePath)> _analyzerConfigDocuments = [];
 
     internal void AddReferences(IEnumerable<PortableExecutableReference> enumerable)
     {
@@ -73,12 +72,6 @@ internal class RazorProjectBuilder(ProjectId? id = null)
     {
         var name = Path.GetFileName(filePath);
         _additionalDocuments.Add((id, name, text, filePath));
-    }
-
-    internal void AddAnalyzerConfigDocument(string filePath, SourceText text)
-    {
-        var name = Path.GetFileName(filePath);
-        _analyzerConfigDocuments.Add((name, text, filePath));
     }
 
     public Solution Build(Solution solution)
@@ -161,15 +154,6 @@ internal class RazorProjectBuilder(ProjectId? id = null)
                 name: ".globalconfig",
                 text: SourceText.From(globalConfigContent.ToString()),
                 filePath: Path.Combine(projectBasePath, ".globalconfig"));
-        }
-
-        foreach (var analyzerConfigDocument in _analyzerConfigDocuments)
-        {
-            solution = solution.AddAnalyzerConfigDocument(
-                DocumentId.CreateNewId(Id),
-                name: analyzerConfigDocument.name,
-                text: analyzerConfigDocument.text,
-                filePath: analyzerConfigDocument.filePath);
         }
 
         return solution;

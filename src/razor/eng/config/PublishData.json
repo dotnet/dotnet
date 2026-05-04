@@ -8,14 +8,14 @@
     }
   },
   "branches": {
-    "release/insiders": {
+    "release/stable": {
       "nugetKind": [
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
+      "vsBranch": "rel/stable",
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[Insiders]"
+      "insertionTitlePrefix": "[Stable]"
     }
   }
 }

@@ -65,9 +65,10 @@ namespace AspNetCoreGeneratedDocument
             __TestViewComponentTagHelper = CreateTagHelper<global::AspNetCoreGeneratedDocument.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelper.__Generated__TestViewComponentTagHelper>();
             __tagHelperExecutionContext.Add(__TestViewComponentTagHelper);
             BeginWriteTagHelperAttribute();
+            WriteLiteral(
 #nullable restore
-#line (6,23)-(6,26) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml"
-WriteLiteral(foo
+#line (6,23)-(6,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml"
+foo
 
 #line default
 #line hidden

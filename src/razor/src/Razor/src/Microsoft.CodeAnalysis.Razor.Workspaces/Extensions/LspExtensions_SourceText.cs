@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.LanguageServer.Protocol;
@@ -45,16 +44,6 @@ internal static partial class LspExtensions
     public static TextChange GetTextChange(this SourceText text, TextEdit edit)
         => new(text.GetTextSpan(edit.Range), edit.NewText);
 
-    public static RazorTextChange GetRazorTextChange(this SourceText text, TextEdit edit)
-        => new()
-        {
-            Span = text.GetTextSpan(edit.Range).ToRazorTextSpan(),
-            NewText = edit.NewText
-        };
-
     public static TextEdit GetTextEdit(this SourceText text, TextChange change)
         => LspFactory.CreateTextEdit(text.GetRange(change.Span), change.NewText ?? "");
-
-    public static TextEdit GetTextEdit(this SourceText text, RazorTextChange change)
-        => LspFactory.CreateTextEdit(text.GetRange(change.Span.Start, change.Span.Start + change.Span.Length), change.NewText ?? "");
 }

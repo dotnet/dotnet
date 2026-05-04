@@ -34,9 +34,10 @@ namespace AspNetCoreGeneratedDocument
 #nullable disable
 
             WriteLiteral("        <p>Hello from C#, #");
+            Write(
 #nullable restore
-#line (3,30)-(3,42) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml"
-Write(i.ToString()
+#line (3,30)-(3,42) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml"
+i.ToString()
 
 #line default
 #line hidden

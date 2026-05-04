@@ -16,8 +16,7 @@ public sealed record class RazorConfiguration(
     bool UseConsolidatedMvcViews = true,
     bool SuppressAddComponentParameter = false,
     bool UseRoslynTokenizer = false,
-    ImmutableArray<string> PreprocessorSymbols = default,
-    int RazorWarningLevel = 0)
+    ImmutableArray<string> PreprocessorSymbols = default)
 {
     public ImmutableArray<string> PreprocessorSymbols
     {
@@ -43,7 +42,6 @@ public sealed record class RazorConfiguration(
            SuppressAddComponentParameter == other.SuppressAddComponentParameter &&
            UseConsolidatedMvcViews == other.UseConsolidatedMvcViews &&
            UseRoslynTokenizer == other.UseRoslynTokenizer &&
-           RazorWarningLevel == other.RazorWarningLevel &&
            PreprocessorSymbols.SequenceEqual(other.PreprocessorSymbols) &&
            Extensions.SequenceEqual(other.Extensions);
 
@@ -57,7 +55,6 @@ public sealed record class RazorConfiguration(
         hash.Add(SuppressAddComponentParameter);
         hash.Add(UseConsolidatedMvcViews);
         hash.Add(UseRoslynTokenizer);
-        hash.Add(RazorWarningLevel);
         hash.Add(PreprocessorSymbols);
         return hash;
     }

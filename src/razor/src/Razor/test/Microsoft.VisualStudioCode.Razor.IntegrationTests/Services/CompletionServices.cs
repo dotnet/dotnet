@@ -107,7 +107,6 @@ public class CompletionServices(IntegrationTestServices testServices) : ServiceB
             {
                 TestServices.Logger.Log($"First few items: {string.Join(", ", results.Take(5))}");
             }
-
             return results;
         }
 

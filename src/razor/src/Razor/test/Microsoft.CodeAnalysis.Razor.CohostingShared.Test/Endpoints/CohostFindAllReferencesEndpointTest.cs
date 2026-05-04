@@ -187,6 +187,7 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             (FilePath("SurveyPrompt.razor"), surveyPrompt));
     }
 
+
     [Fact]
     public async Task ComponentAttribute_CrossProject()
     {

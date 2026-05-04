@@ -57,18 +57,20 @@ namespace AspNetCoreGeneratedDocument
 #nullable disable
 
             WriteLiteral("    <a ");
+            Write(
 #nullable restore
-#line (5,9)-(5,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (5,9)-(5,10) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
 #nullable disable
             );
             WriteLiteral(" href=\"x\" />\r\n    <p ");
+            Write(
 #nullable restore
-#line (6,9)-(6,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (6,9)-(6,10) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -86,9 +88,10 @@ cls
             , 106, 4, false);
             EndWriteAttribute();
             WriteLiteral(" />\r\n    <p ");
+            Write(
 #nullable restore
-#line (7,9)-(7,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (7,9)-(7,10) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -107,9 +110,10 @@ cls
             , 135, 4, false);
             EndWriteAttribute();
             WriteLiteral(" />\r\n    <p ");
+            Write(
 #nullable restore
-#line (8,9)-(8,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (8,9)-(8,10) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -128,9 +132,10 @@ cls
             WriteAttributeValue(" ", 166, "x", 167, 2, true);
             EndWriteAttribute();
             WriteLiteral(" />\r\n    <input type=\"checkbox\" ");
+            Write(
 #nullable restore
-#line (9,29)-(9,30) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (9,29)-(9,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -148,9 +153,10 @@ ch
             , 213, 3, false);
             EndWriteAttribute();
             WriteLiteral(" />\r\n    <input type=\"checkbox\" ");
+            Write(
 #nullable restore
-#line (10,29)-(10,30) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (10,29)-(10,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -169,9 +175,10 @@ ch
             , 263, 3, false);
             EndWriteAttribute();
             WriteLiteral(" />\r\n    <p ");
+            Write(
 #nullable restore
-#line (11,9)-(11,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (11,9)-(11,10) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -187,9 +194,10 @@ if(cls != null) {
 #line default
 #line hidden
 #nullable disable
+                Write(
 #nullable restore
-#line (11,38)-(11,41) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(cls
+#line (11,38)-(11,41) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+cls
 
 #line default
 #line hidden
@@ -220,9 +228,10 @@ Write(cls
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("\r\n    <script ");
+            Write(
 #nullable restore
-#line (13,14)-(13,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (13,14)-(13,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -240,9 +249,10 @@ Url.Content("~/Scripts/jquery-1.6.2.min.js")
             , 365, 45, false);
             EndWriteAttribute();
             WriteLiteral(" type=\"text/javascript\"></script>\r\n    <p ");
+            Write(
 #nullable restore
-#line (14,9)-(14,10) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (14,9)-(14,10) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -272,9 +282,10 @@ null
             , 488, 5, false);
             EndWriteAttribute();
             WriteLiteral(" ");
+            Write(
 #nullable restore
-#line (15,23)-(15,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (15,23)-(15,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -283,9 +294,10 @@ Write(s
             WriteLiteral(" />\r\n");
             WriteLiteral("    <p ");
             WriteLiteral(" ");
+            Write(
 #nullable restore
-#line (17,23)-(17,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (17,23)-(17,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden
@@ -304,9 +316,10 @@ null
             EndWriteAttribute();
             WriteLiteral(">x</p>\r\n");
             WriteLiteral("    <p ");
+            Write(
 #nullable restore
-#line (19,10)-(19,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s + s
+#line (19,10)-(19,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s + s
 
 #line default
 #line hidden
@@ -332,9 +345,10 @@ if (s.Length != 0) {
 #line hidden
 #nullable disable
 
+            Write(
 #nullable restore
-#line (20,32)-(20,33) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
-Write(s
+#line (20,32)-(20,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ConditionalAttributes2.cshtml"
+s
 
 #line default
 #line hidden

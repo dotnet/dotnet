@@ -148,7 +148,7 @@ internal sealed class FormattingContext
 
         static ImmutableArray<FormattingSpan> ComputeFormattingSpans(RazorCodeDocument codeDocument)
         {
-            var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
+            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
             var inGlobalNamespace = codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace) &&
                 string.IsNullOrEmpty(@namespace);
 

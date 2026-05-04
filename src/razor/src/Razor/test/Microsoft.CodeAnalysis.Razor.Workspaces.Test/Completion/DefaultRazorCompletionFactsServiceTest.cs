@@ -46,10 +46,10 @@ public class DefaultRazorCompletionFactsServiceTest(ITestOutputHelper testOutput
         var completionFactsService = new TestRazorCompletionFactsProvider(provider1, provider2);
 
         // Act
-        var result = completionFactsService.GetCompletionItems(context);
+        var completionItems = completionFactsService.GetCompletionItems(context);
 
         // Assert
-        Assert.Equal<RazorCompletionItem>([completionItem1, completionItem2], result.Items);
+        Assert.Equal<RazorCompletionItem>([completionItem1, completionItem2], completionItems);
     }
 
     private sealed class TestRazorCompletionFactsProvider(

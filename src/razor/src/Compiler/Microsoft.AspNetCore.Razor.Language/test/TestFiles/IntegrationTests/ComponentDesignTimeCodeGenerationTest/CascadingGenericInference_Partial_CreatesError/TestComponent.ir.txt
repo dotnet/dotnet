@@ -18,9 +18,10 @@
                     ComponentChildContent -  - ChildContent - context
                         Component - (41:0,41 [29] x:\dir\subdir\Test\TestComponent.cshtml) - Column
                             ComponentTypeArgument - (62:0,62 [4] x:\dir\subdir\Test\TestComponent.cshtml) - TChildOther
-                                IntermediateToken - (62:0,62 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - long
+                                LazyIntermediateToken - (62:0,62 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - long
                     ComponentAttribute - (13:0,13 [26] x:\dir\subdir\Test\TestComponent.cshtml) - Items - Items - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (15:0,15 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
+                        CSharpExpression - (14:0,14 [25] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (15:0,15 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateGrid_0

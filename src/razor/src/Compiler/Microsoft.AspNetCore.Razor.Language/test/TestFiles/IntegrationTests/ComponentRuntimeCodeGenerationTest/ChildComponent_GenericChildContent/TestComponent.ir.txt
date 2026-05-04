@@ -13,6 +13,7 @@
                             CSharpExpression - (51:1,8 [17] x:\dir\subdir\Test\TestComponent.cshtml)
                                 LazyIntermediateToken - (51:1,8 [17] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - context.ToLower()
                     ComponentTypeArgument - (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml) - TItem
-                        IntermediateToken - (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - string
+                        LazyIntermediateToken - (19:0,19 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - string
                     ComponentAttribute - (32:0,32 [7] x:\dir\subdir\Test\TestComponent.cshtml) - Item - Item - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (34:0,34 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "hi"
+                        CSharpExpression - (33:0,33 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (34:0,34 [4] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "hi"

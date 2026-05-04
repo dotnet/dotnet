@@ -33,9 +33,10 @@ foo.bar<baz<biz>>.boz
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (3,2)-(3,7) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml"
-Write(foo()
+#line (3,2)-(3,7) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inherits.cshtml"
+foo()
 
 #line default
 #line hidden
