@@ -3,12 +3,8 @@
 
 #nullable disable
 
-<<<<<<< ours
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
-=======
 using System.Text.Json;
->>>>>>> theirs
 
 namespace Microsoft.DotNet.Cli.Installer.Windows;
 
