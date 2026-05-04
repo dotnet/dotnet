@@ -477,7 +477,7 @@ namespace System.Data.SqlTypes
             _data4 = s_uiZero;
         }
 
-        public SqlDecimal(decimal value)
+        public unsafe SqlDecimal(decimal value)
         {
             // set the null bit
             _bStatus = s_bNotNull;
@@ -920,11 +920,7 @@ namespace System.Data.SqlTypes
             }
         }
 
-        public override string ToString()
-        {
-            if (IsNull)
-                return SQLResource.NullString;
-            AssertValid();
+        public override unsafe string ToString()
 
             // Make local copy of data to avoid modifying input.
             Span<uint> rgulNumeric = [_data1, _data2, _data3, _data4];
@@ -1418,7 +1414,7 @@ namespace System.Data.SqlTypes
         //    add to the next multiplicand UI4.  Until the end of the multiplier data
         //    array is reached.
         //
-        public static SqlDecimal operator *(SqlDecimal x, SqlDecimal y)
+        public static unsafe SqlDecimal operator *(SqlDecimal x, SqlDecimal y)
         {
             x.AssertValid();
             y.AssertValid();
@@ -1657,7 +1653,7 @@ namespace System.Data.SqlTypes
         //  Call general purpose arbitrary precision division routine with scale = 0.
         //    Scale,prec adjusted later.
         //
-        public static SqlDecimal operator /(SqlDecimal x, SqlDecimal y)
+        public static unsafe SqlDecimal operator /(SqlDecimal x, SqlDecimal y)
         {
             if (x.IsNull || y.IsNull)
                 return Null;
