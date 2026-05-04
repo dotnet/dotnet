@@ -16,12 +16,6 @@ public class RoundTripXmlSlnxThruModelCopy
     [Fact]
     public Task CommentsAsync()
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return Task.CompletedTask;
-        }
-
         return Assert.ThrowsAsync<FailException>(() => TestRoundTripSerializerAsync(SlnAssets.XmlSlnxComments));
     }
 
@@ -55,14 +49,11 @@ public class RoundTripXmlSlnxThruModelCopy
     [Fact]
     public Task TraditionalAsync() => TestRoundTripSerializerAsync(SlnAssets.XmlSlnxTraditional);
 
+    [Fact]
+    public Task ReportProjectAsync() => TestRoundTripSerializerAsync(SlnAssets.LoadResource("Report Project.slnx"));
+
     private static async Task TestRoundTripSerializerAsync(ResourceStream slnStream)
     {
-        if (IsMono)
-        {
-            // Mono is not supported.
-            return;
-        }
-
         // Open the Model from stream.
         SolutionModel model = await SolutionSerializers.SlnXml.OpenAsync(slnStream.Stream, CancellationToken.None);
         AssertNotTarnished(model);

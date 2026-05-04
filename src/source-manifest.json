@@ -97,10 +97,10 @@
       "commitSha": "50044437f4d10f44c1e8925218955edf39f1f657"
     },
     {
-      "barId": 309145,
+      "barId": 311472,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "c81c75ee8eb6cbf89b78e93dffeffb65eaf8e8b9"
+      "commitSha": "63c027863c5d20572a6677977190e7719a6d2659"
     },
     {
       "barId": 311277,
@@ -204,7 +204,7 @@
     {
       "path": "source-build-assets/src/externalPackages/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
-      "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
+      "commitSha": "4e13299d4b0ec96bd4df9954ef646bd2d1b5bf2a"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
@@ -224,7 +224,7 @@
     {
       "path": "source-build-assets/src/externalPackages/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
-      "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
+      "commitSha": "19c3ca7dc997dba2b3a86f6c666e9f717f34c8fe"
     }
   ]
 }
