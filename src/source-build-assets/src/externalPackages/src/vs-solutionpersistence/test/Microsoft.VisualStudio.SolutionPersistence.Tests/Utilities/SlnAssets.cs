@@ -13,6 +13,8 @@ internal static class SlnAssets
 
     public static ResourceName[] ClassicSlnFiles => GetAllSampleFiles(".sln").ToArray();
 
+    public static ResourceName[] XmlSlnxFiles => GetAllSampleFiles(".slnx").ToArray();
+
     #region Sample Classic Sln
 
     // Empty VS Solution template. ASCII encoding.
@@ -96,8 +98,6 @@ internal static class SlnAssets
 
     // A solution with missing configurations.
     public static ResourceStream XmlSlnxMissingConfigurations => LoadResource("Configurations/MissingConfigurations.slnx");
-
-    public static ResourceName[] XmlSlnxFiles => GetAllSampleFiles(".slnx").ToArray();
 
     #endregion
 

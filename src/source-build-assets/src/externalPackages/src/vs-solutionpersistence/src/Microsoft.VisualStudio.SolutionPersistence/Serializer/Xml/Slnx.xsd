@@ -7,10 +7,8 @@
                 <xs:element name="Folder" type="Folder" minOccurs="0" maxOccurs="unbounded" />
                 <xs:group ref="PropertiesGroup" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
-            <xs:attribute name="Description"/>
-            <xs:attribute name="SolutionId" />
-            <xs:attribute name="VisualStudioVersion" />
-            <xs:attribute name="MinimalVisualStudioVersion" />
+            <xs:attribute name="Description" type="xs:string" />
+            <xs:attribute name="Version" type="xs:string" />
         </xs:complexType>
     </xs:element>
 
@@ -38,7 +36,8 @@
         <xs:attribute name="Name" type="xs:string" />
         <xs:attribute name="Extension" type="xs:string" />
         <xs:attribute name="BasedOn" type="xs:string" />
-        <xs:attribute name="IsBuildable" type="xs:string" default="True" />
+        <xs:attribute name="IsBuildable" type="xs:boolean" default="true" use="optional" />
+        <xs:attribute name="SupportsPlatform" type="xs:boolean" default="true" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="Folder">
