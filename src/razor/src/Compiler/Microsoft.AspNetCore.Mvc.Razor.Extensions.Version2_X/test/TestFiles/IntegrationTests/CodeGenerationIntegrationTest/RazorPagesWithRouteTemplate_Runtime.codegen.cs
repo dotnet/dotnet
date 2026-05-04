@@ -43,8 +43,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages
             WriteLiteral("\r\n<h1>New Customer ");
             EndContext();
             BeginContext(213, 10, false);
-#line (13,19)-(13,29) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-Write(Model.Name
+            Write(
+#line (13,19)-(13,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+Model.Name
 
 #line default
 #line hidden

@@ -22,7 +22,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [Fact]
+    [Fact(Skip = "Waiting for Roslyn insertion")]
     public Task GenerateMethod_NoCodeBlock()
         => VerifyCodeActionAsync(
             csharpFile: """
@@ -60,7 +60,7 @@ public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : Co
                 """,
             codeActionName: RazorPredefinedCodeFixProviderNames.GenerateMethod);
 
-    [Fact]
+    [Fact(Skip = "Waiting for Roslyn insertion")]
     public async Task GenerateMethod_NoCodeBlock_CodeBlockBraceOnNextLine()
     {
         ClientSettingsManager.Update(ClientSettingsManager.GetClientSettings().AdvancedSettings with { CodeBlockBraceOnNextLine = true });
@@ -103,7 +103,7 @@ public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : Co
                 codeActionName: RazorPredefinedCodeFixProviderNames.GenerateMethod);
     }
 
-    [Fact]
+    [Fact(Skip = "Waiting for Roslyn insertion")]
     public Task GenerateMethod_ExistingCodeBlock()
         => VerifyCodeActionAsync(
             csharpFile: """
@@ -150,7 +150,7 @@ public class CohostRoslynCodeActionTest(ITestOutputHelper testOutputHelper) : Co
                 """,
             codeActionName: RazorPredefinedCodeFixProviderNames.GenerateMethod);
 
-    [Fact]
+    [Fact(Skip = "Waiting for Roslyn insertion")]
     public Task GenerateMethod_ExistingCodeBlock_UsesTabsWhenConfigured()
     {
         ClientSettingsManager.Update(new ClientSpaceSettings(IndentWithTabs: true, IndentSize: 4));

@@ -5,7 +5,7 @@
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public static class RazorDiagnosticSerializer
+public class RazorDiagnosticSerializer
 {
     public static string Serialize(RazorDiagnostic diagnostic)
     {

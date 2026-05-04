@@ -43,7 +43,7 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         return RequestMultipleServerCoreAsync<TIn, TOut>(method, parameters, cancellationToken);
     }
 
-    public override async Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
+    public async override Task<ReinvokeResponse<TOut>> ReinvokeRequestOnServerAsync<TIn, TOut>(
         string method,
         string languageServerName,
         TIn parameters,

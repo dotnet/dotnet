@@ -34,9 +34,10 @@ foreach (var result in (dynamic)Url)
 #nullable disable
 
             WriteLiteral("        <div>\r\n            ");
+            Write(
 #nullable restore
-#line (5,14)-(5,30) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCSharp.cshtml"
-Write(result.SomeValue
+#line (5,14)-(5,30) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCSharp.cshtml"
+result.SomeValue
 
 #line default
 #line hidden

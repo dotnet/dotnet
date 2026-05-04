@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -28,7 +29,7 @@ internal static class CompletionListMerger
             return delegatedCompletionList;
         }
 
-        if (delegatedCompletionList is null || delegatedCompletionList.Items.Length == 0)
+        if (delegatedCompletionList?.Items is null)
         {
             return razorCompletionList;
         }
@@ -37,7 +38,7 @@ internal static class CompletionListMerger
         EnsureMergeableData(razorCompletionList, delegatedCompletionList);
 
         var mergedIsIncomplete = razorCompletionList.IsIncomplete || delegatedCompletionList.IsIncomplete;
-        VSInternalCompletionItem[] mergedItems = [.. razorCompletionList.Items, .. delegatedCompletionList.Items];
+        var mergedItems = razorCompletionList.Items.Concat(delegatedCompletionList.Items).ToArray();
         var mergedData = MergeData(razorCompletionList.Data, delegatedCompletionList.Data);
         var mergedCommitCharacters = razorCompletionList.CommitCharacters
             ?? delegatedCompletionList.CommitCharacters;

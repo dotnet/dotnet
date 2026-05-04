@@ -15,19 +15,19 @@
                     HtmlAttribute - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - onsubmit=" - "
                         CSharpExpressionAttributeValue -  - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
-                            IntermediateToken - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
+                            LazyIntermediateToken - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                             IntermediateToken -  - CSharp - )
                     FormName - (97:1,53 [25] x:\dir\subdir\Test\TestComponent.cshtml)
-                        HtmlContent - (97:1,53 [5] x:\dir\subdir\Test\TestComponent.cshtml)
+                        HtmlContent - (97:1,53 [6] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (97:1,53 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - start
-                            IntermediateToken -  - Html -  
+                            LazyIntermediateToken - (102:1,58 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  
                         CSharpExpression - (105:1,61 [9] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (105:1,61 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "literal"
-                        HtmlContent - 
-                            IntermediateToken -  - Html -  
+                        HtmlContent - (115:1,71 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (115:1,71 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  
                         CSharpExpression - (117:1,73 [1] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (117:1,73 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - x
                         HtmlContent - (118:1,74 [4] x:\dir\subdir\Test\TestComponent.cshtml)
-                            IntermediateToken - (118:1,74 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  end
+                            LazyIntermediateToken - (118:1,74 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  end
             CSharpCode - (140:2,7 [18] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (140:2,7 [18] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    int x = 1;\n

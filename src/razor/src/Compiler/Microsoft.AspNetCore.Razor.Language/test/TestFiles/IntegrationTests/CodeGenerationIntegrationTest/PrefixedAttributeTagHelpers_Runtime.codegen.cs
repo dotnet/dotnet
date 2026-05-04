@@ -239,9 +239,10 @@ intDictionary
             }
             BeginWriteTagHelperAttribute();
             WriteLiteral("literate ");
+            WriteLiteral(
 #nullable restore
-#line (21,43)-(21,51) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml"
-WriteLiteral(literate
+#line (21,43)-(21,51) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PrefixedAttributeTagHelpers.cshtml"
+literate
 
 #line default
 #line hidden

@@ -18,7 +18,7 @@ internal static partial class RazorCodeDocumentExtensions
 {
     public static bool TryGetSyntaxRoot(this RazorCodeDocument codeDocument, [NotNullWhen(true)] out Syntax.SyntaxNode? result)
     {
-        if (codeDocument.TryGetTagHelperRewrittenSyntaxTree(out var syntaxTree))
+        if (codeDocument.TryGetSyntaxTree(out var syntaxTree))
         {
             result = syntaxTree.Root;
             return true;
@@ -29,7 +29,7 @@ internal static partial class RazorCodeDocumentExtensions
     }
 
     public static Syntax.SyntaxNode GetRequiredSyntaxRoot(this RazorCodeDocument codeDocument)
-        => codeDocument.GetRequiredTagHelperRewrittenSyntaxTree().Root;
+        => codeDocument.GetRequiredSyntaxTree().Root;
 
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)
         => document.GetRequiredCSharpDocument().Text;

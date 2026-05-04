@@ -6,7 +6,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
     internal static class DiagnosticIds
     {
         public const string InvalidRazorLangVersionRuleId = "RZ3600";
-        public const string InvalidRazorWarningLevelRuleId = "RZ3601";
         public const string ReComputingTagHelpersRuleId = "RSG001";
         public const string TargetPathNotProvidedRuleId = "RSG002";
         public const string GeneratedOutputFullPathNotProvidedRuleId = "RSG003";

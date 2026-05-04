@@ -49,9 +49,9 @@
                         HtmlContent - (48:2,13 [8] DuplicateTargetTagHelper.cshtml)
                             LazyIntermediateToken - (48:2,13 [8] DuplicateTargetTagHelper.cshtml) - Html - checkbox
                     DefaultTagHelperProperty - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - checked - bool TestNamespace.InputTagHelper.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                        IntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
+                        LazyIntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
                     DefaultTagHelperProperty - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - checked - bool TestNamespace.CatchAllTagHelper.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                        IntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
+                        LazyIntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
                     DefaultTagHelperExecute - 
             Inject - 
             Inject - 

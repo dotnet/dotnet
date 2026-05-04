@@ -9,9 +9,9 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal class HtmlCodeActionResolver(IRazorEditService razorEditService) : IHtmlCodeActionResolver
+internal class HtmlCodeActionResolver(IEditMappingService editMappingService) : IHtmlCodeActionResolver
 {
-    private readonly IRazorEditService _razorEditService = razorEditService;
+    private readonly IEditMappingService _editMappingService = editMappingService;
 
     public string Action => LanguageServerConstants.CodeActions.Default;
 
@@ -20,7 +20,7 @@ internal class HtmlCodeActionResolver(IRazorEditService razorEditService) : IHtm
         CodeAction codeAction,
         CancellationToken cancellationToken)
     {
-        await HtmlCodeActionProvider.MapAndFixHtmlCodeActionEditAsync(_razorEditService, documentContext.Snapshot, codeAction, cancellationToken).ConfigureAwait(false);
+        await HtmlCodeActionProvider.MapAndFixHtmlCodeActionEditAsync(_editMappingService, documentContext.Snapshot, codeAction, cancellationToken).ConfigureAwait(false);
 
         return codeAction;
     }

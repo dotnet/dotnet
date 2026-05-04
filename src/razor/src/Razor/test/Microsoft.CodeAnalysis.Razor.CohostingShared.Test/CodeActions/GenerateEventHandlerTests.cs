@@ -78,7 +78,6 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
                 public void M()
                 {
                 }
-
                 private void DoesNotExist(MouseEventArgs args)
                 {
                     throw new NotImplementedException();
@@ -106,7 +105,7 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
                 private void DoesNotExist(MouseEventArgs args)
                 {
                     throw new NotImplementedException();
-                }
+                }  
             }
             """;
 

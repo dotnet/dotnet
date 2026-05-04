@@ -37,7 +37,7 @@ internal class RenameService(
         CancellationToken cancellationToken)
     {
         // We only support renaming of .razor components, not .cshtml tag helpers
-        if (!documentContext.Snapshot.FileKind.IsComponent())
+        if (!documentContext.FileKind.IsComponent())
         {
             return new(Edit: null);
         }
@@ -93,7 +93,7 @@ internal class RenameService(
         string newName,
         [NotNullWhen(true)] out WorkspaceEdit? workspaceEdit)
     {
-        var oldPath = documentContext.Snapshot.FilePath;
+        var oldPath = documentContext.FilePath;
         var newPath = MakeNewPath(oldPath, newName);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();

@@ -34,7 +34,6 @@ public class CompletionTests(ITestOutputHelper output) : VSCodeIntegrationTestBa
             // If not visible yet, trigger explicitly
             hasCompletions = await TestServices.Completion.TriggerAsync();
         }
-
         Assert.True(hasCompletions, "Expected completion list to appear");
 
         // Assert - look for currentCount in completions

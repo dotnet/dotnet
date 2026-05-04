@@ -13,9 +13,11 @@
                             ComponentChildContent -  - ChildContent - context
                                 Component - (79:2,8 [9] x:\dir\subdir\Test\TestComponent.cshtml) - Child
                             ComponentAttribute - (57:1,22 [10] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
-                                LazyIntermediateToken - (59:1,24 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "Hello"
+                                CSharpExpression - (58:1,23 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+                                    LazyIntermediateToken - (59:1,24 [7] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "Hello"
                     ComponentAttribute - (18:0,18 [13] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (19:0,19 [12] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - int.MaxValue
+                        CSharpExpression - (19:0,19 [12] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (19:0,19 [12] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - int.MaxValue
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateParentOne_0

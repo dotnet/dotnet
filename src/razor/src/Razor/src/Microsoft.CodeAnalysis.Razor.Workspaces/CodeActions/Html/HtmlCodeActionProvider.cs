@@ -14,9 +14,9 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.CodeActions;
 
-internal class HtmlCodeActionProvider(IRazorEditService razorEditService) : IHtmlCodeActionProvider
+internal class HtmlCodeActionProvider(IEditMappingService editMappingService) : IHtmlCodeActionProvider
 {
-    private readonly IRazorEditService _razorEditService = razorEditService;
+    private readonly IEditMappingService _editMappingService = editMappingService;
 
     public async Task<ImmutableArray<RazorVSInternalCodeAction>> ProvideAsync(
         RazorCodeActionContext context,
@@ -28,7 +28,7 @@ internal class HtmlCodeActionProvider(IRazorEditService razorEditService) : IHtm
         {
             if (codeAction.Edit is not null)
             {
-                await MapAndFixHtmlCodeActionEditAsync(_razorEditService, context.DocumentSnapshot, codeAction, cancellationToken).ConfigureAwait(false);
+                await MapAndFixHtmlCodeActionEditAsync(_editMappingService, context.DocumentSnapshot, codeAction, cancellationToken).ConfigureAwait(false);
 
                 results.Add(codeAction);
             }
@@ -41,11 +41,11 @@ internal class HtmlCodeActionProvider(IRazorEditService razorEditService) : IHtm
         return results.ToImmutable();
     }
 
-    public static async Task MapAndFixHtmlCodeActionEditAsync(IRazorEditService razorEditService, IDocumentSnapshot documentSnapshot, CodeAction codeAction, CancellationToken cancellationToken)
+    public static async Task MapAndFixHtmlCodeActionEditAsync(IEditMappingService editMappingService, IDocumentSnapshot documentSnapshot, CodeAction codeAction, CancellationToken cancellationToken)
     {
         Assumes.NotNull(codeAction.Edit);
 
-        await razorEditService.MapWorkspaceEditAsync(documentSnapshot, codeAction.Edit, cancellationToken).ConfigureAwait(false);
+        await editMappingService.MapWorkspaceEditAsync(documentSnapshot, codeAction.Edit, cancellationToken).ConfigureAwait(false);
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var htmlSourceText = codeDocument.GetHtmlSourceText(cancellationToken);

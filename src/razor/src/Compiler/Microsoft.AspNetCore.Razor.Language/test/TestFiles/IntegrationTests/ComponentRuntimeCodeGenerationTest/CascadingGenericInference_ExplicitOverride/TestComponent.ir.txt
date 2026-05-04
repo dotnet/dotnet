@@ -11,8 +11,9 @@
                     ComponentChildContent -  - ChildContent - context
                         Component - (58:0,58 [38] x:\dir\subdir\Test\TestComponent.cshtml) - Column
                             ComponentTypeArgument - (73:0,73 [19] x:\dir\subdir\Test\TestComponent.cshtml) - TItem
-                                IntermediateToken - (73:0,73 [19] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - System.TimeZoneInfo
+                                LazyIntermediateToken - (73:0,73 [19] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - System.TimeZoneInfo
                     ComponentTypeArgument - (13:0,13 [8] x:\dir\subdir\Test\TestComponent.cshtml) - TItem
-                        IntermediateToken - (13:0,13 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - DateTime
+                        LazyIntermediateToken - (13:0,13 [8] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - DateTime
                     ComponentAttribute - (30:0,30 [26] x:\dir\subdir\Test\TestComponent.cshtml) - Items - Items - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (32:0,32 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()
+                        CSharpExpression - (31:0,31 [25] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (32:0,32 [23] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Array.Empty<DateTime>()

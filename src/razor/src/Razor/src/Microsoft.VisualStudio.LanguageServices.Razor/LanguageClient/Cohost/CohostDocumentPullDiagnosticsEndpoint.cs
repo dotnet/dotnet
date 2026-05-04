@@ -67,7 +67,7 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentDiagnosticsParams request)
         => request.TextDocument?.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<VSInternalDiagnosticReport[]?> HandleRequestAsync(VSInternalDocumentDiagnosticsParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected async override Task<VSInternalDiagnosticReport[]?> HandleRequestAsync(VSInternalDocumentDiagnosticsParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         if (request.QueryingDiagnosticKind?.Value == VSInternalDiagnosticKind.Task.Value)
         {

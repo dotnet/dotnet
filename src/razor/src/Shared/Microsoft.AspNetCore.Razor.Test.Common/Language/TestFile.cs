@@ -75,15 +75,13 @@ public class TestFile
         }
     }
 
-    public string ReadAllText(bool normalizeLineEndings = true)
+    public string ReadAllText()
     {
         using (var reader = new StreamReader(OpenRead()))
         {
             var contents = reader.ReadToEnd();
 
-            return normalizeLineEndings
-                ? NormalizeContents(contents)
-                : contents;
+            return NormalizeContents(contents);
         }
     }
 

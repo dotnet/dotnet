@@ -31,18 +31,20 @@ using TestNamespace
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("\r\n<h1>");
+            Write(
 #nullable restore
-#line (5,6)-(5,16) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-Write(Model.Name
+#line (5,6)-(5,16) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+Model.Name
 
 #line default
 #line hidden
 #nullable disable
             );
             WriteLiteral("</h1>\r\n\r\n<h2>");
+            Write(
 #nullable restore
-#line (7,6)-(7,20) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-Write(Model?.Address
+#line (7,6)-(7,20) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+Model?.Address
 
 #line default
 #line hidden

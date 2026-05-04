@@ -29,7 +29,7 @@ public static class TestWorkspace
 
         var workspace = Create(hostServices);
 
-        AddAnalyzersToWorkspace(workspace);
+        AddAnalyzersToWorkspace(workspace, exportProvider);
 
         return workspace;
     }
@@ -48,7 +48,7 @@ public static class TestWorkspace
         }
     }
 
-    private static void AddAnalyzersToWorkspace(Workspace workspace)
+    private static void AddAnalyzersToWorkspace(Workspace workspace, ExportProvider exportProvider)
     {
         var analyzerLoader = RazorTestAnalyzerLoader.CreateAnalyzerAssemblyLoader();
 

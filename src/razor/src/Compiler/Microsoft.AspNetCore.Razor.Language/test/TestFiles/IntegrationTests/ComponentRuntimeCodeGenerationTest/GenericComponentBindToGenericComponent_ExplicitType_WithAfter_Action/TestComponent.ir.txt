@@ -9,16 +9,16 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (19:1,0 [88] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentTypeArgument - (40:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml) - TValue
-                        IntermediateToken - (40:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - TParam
+                        LazyIntermediateToken - (40:1,21 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - TParam
                     ComponentAttribute - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            IntermediateToken - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            LazyIntermediateToken - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (65:1,46 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp -  __value => { ParentValue = __value; global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeSynchronousDelegate(
-                            IntermediateToken - (97:1,78 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
+                            LazyIntermediateToken - (97:1,78 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
                             IntermediateToken -  - CSharp - ); }
                     ComponentAttribute - (97:1,78 [6] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
-                        IntermediateToken - (97:1,78 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
+                        LazyIntermediateToken - (97:1,78 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Update
             CSharpCode - (116:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (116:2,7 [79] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public TParam ParentValue { get; set; }\n\n    public void Update() { }\n

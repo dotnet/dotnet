@@ -34,6 +34,4 @@ internal static class RazorLSPConstants
     public const string RoslynSemanticTokenRangesEndpointName = "roslyn/semanticTokenRanges";
 
     public const string ApplyRenameEditName = "razor/applyRenameEdit";
-
-    public const string AddNestedFileName = "razor/addNestedFile";
 }

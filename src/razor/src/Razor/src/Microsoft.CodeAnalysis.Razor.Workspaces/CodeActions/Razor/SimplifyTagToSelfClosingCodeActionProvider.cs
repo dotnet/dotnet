@@ -43,7 +43,7 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var syntaxTree = context.CodeDocument.GetTagHelperRewrittenSyntaxTree();
+        var syntaxTree = context.CodeDocument.GetSyntaxTree();
         if (syntaxTree?.Root is null)
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
