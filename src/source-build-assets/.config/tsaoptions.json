@@ -2,7 +2,7 @@
     "instanceUrl": "https://devdiv.visualstudio.com/",
     "template": "TFSDEVDIV",
     "projectName": "DEVDIV",
-    "areaPath": "DevDiv\\NET Fundamentals\\.NET Acquisition\\Source-build-assets",
+    "areaPath": "DevDiv\\NET Fundamentals\\.NET Acquisition\\Source-build-reference-packages",
     "iterationPath": "DevDiv",
     "notificationAliases": [ "dnsbcgalerts@microsoft.com" ],
     "repositoryName":"source-build-assets",
