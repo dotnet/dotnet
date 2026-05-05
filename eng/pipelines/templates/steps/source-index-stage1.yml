@@ -24,21 +24,35 @@ parameters:
   sourceIndexUploadPackageVersion: 2.0.0-20260505.1
   sourceIndexProcessBinlogPackageVersion: 1.0.1-20260505.1
   sourceIndexPackageSource: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+  sourceIndexBaseDir: $(Agent.TempDirectory)/.source-index
 
 steps:
+- task: UseDotNet@2
+  displayName: "Source Index: Install .NET SDK"
+  inputs:
+    packageType: sdk
+    version: 10.0.x
+    installationPath: ${{ parameters.sourceIndexBaseDir }}/dotnet
+    workingDirectory: $(Agent.TempDirectory)
+
 - pwsh: |
-    $toolPath = Join-Path '$(Agent.TempDirectory)' '.source-index' 'tools'
-    dotnet tool install BinLogToSln --version ${{ parameters.sourceIndexProcessBinlogPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
-    dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+    $baseDir = "${{ parameters.sourceIndexBaseDir }}"
+    $dotnet = Join-Path $baseDir 'dotnet' 'dotnet'
+    if ($IsWindows) { $dotnet += '.exe' }
+    $toolPath = Join-Path $baseDir 'tools'
+    & $dotnet tool install BinLogToSln --version ${{ parameters.sourceIndexProcessBinlogPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+    & $dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
   displayName: "Source Index: Install Tools"
+  workingDirectory: $(Agent.TempDirectory)
 
 - pwsh: |
-    $ErrorActionPreference = 'Continue'
+    $ErrorActionPreference = 'Stop'
 
+    $baseDir = "${{ parameters.sourceIndexBaseDir }}"
     $sourcesPath = "${{ parameters.sourcesPath }}"
     $logsPath = "${{ parameters.logsPath }}"
-    $outputDir = Join-Path '$(Agent.TempDirectory)' '.source-index' 'stage1output'
-    $toolPath = Join-Path '$(Agent.TempDirectory)' '.source-index' 'tools'
+    $outputDir = Join-Path $baseDir 'stage1output'
+    $toolPath = Join-Path $baseDir 'tools'
     $excludeRepos = "${{ parameters.excludeRepos }}" -split '\s+' | Where-Object { $_ }
     $includeRepos = "${{ parameters.includeRepos }}" -split '\s+' | Where-Object { $_ }
 
@@ -47,7 +61,12 @@ steps:
     $binLogToSln = Join-Path $toolPath 'BinLogToSln'
     if ($IsWindows) { $binLogToSln += '.exe' }
 
-    $binlogs = Get-ChildItem -Path $logsPath -Filter "Build.binlog" -Recurse -ErrorAction SilentlyContinue
+    # Only look for Build.binlog in immediate subdirectories (per-repo logs).
+    # This avoids picking up the VMR orchestrator log at artifacts/log/Release/Build.binlog.
+    $binlogs = Get-ChildItem -Path $logsPath -Directory |
+      ForEach-Object { Get-ChildItem -Path $_.FullName -Filter "Build.binlog" -File -ErrorAction SilentlyContinue } |
+      Where-Object { $_ }
+
     foreach ($binlog in $binlogs) {
       $repoName = $binlog.Directory.Name
 
@@ -62,11 +81,14 @@ steps:
       }
 
       Write-Host "Processing binlog for repo: $repoName"
-      & $binLogToSln -i $binlog.FullName -r $sourcesPath -n $repoName -o $outputDir
-
-      if ($LASTEXITCODE -ne 0) {
-        Write-Host "##vso[task.logissue type=warning]BinLogToSln failed for $repoName, continuing..."
-        $global:LASTEXITCODE = 0
+      try {
+        & $binLogToSln -i $binlog.FullName -r $sourcesPath -n $repoName -o $outputDir
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "##vso[task.logissue type=warning]BinLogToSln failed for $repoName (exit code $LASTEXITCODE), continuing..."
+          $global:LASTEXITCODE = 0
+        }
+      } catch {
+        Write-Host "##vso[task.logissue type=warning]BinLogToSln threw an exception for $repoName: $_"
       }
     }
 
@@ -90,8 +112,9 @@ steps:
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      $outputDir = Join-Path '$(Agent.TempDirectory)' '.source-index' 'stage1output'
-      $toolPath = Join-Path '$(Agent.TempDirectory)' '.source-index' 'tools'
+      $baseDir = "${{ parameters.sourceIndexBaseDir }}"
+      $outputDir = Join-Path $baseDir 'stage1output'
+      $toolPath = Join-Path $baseDir 'tools'
       $uploadTool = Join-Path $toolPath 'UploadIndexStage1'
       if ($IsWindows) { $uploadTool += '.exe' }
 
