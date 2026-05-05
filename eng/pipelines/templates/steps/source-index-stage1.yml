@@ -1,0 +1,102 @@
+### Steps to process multiple per-repo Build.binlog files into SLN format and upload
+### as source index stage 1 data for https://github.com/dotnet/source-indexer.
+###
+### Unlike eng/common/core-templates/steps/source-index-stage1-publish.yml which
+### handles a single binlog, this template processes all per-repo Build.binlog files
+### produced by a VMR build.
+
+parameters:
+  # The name to use when uploading the source index data (e.g., 'dotnet-dotnet')
+  sourceIndexName: ''
+
+  # The root directory of the VMR sources
+  sourcesPath: ''
+
+  # The directory containing per-repo build logs (artifacts/log/<RepoName>/Build.binlog)
+  logsPath: ''
+
+  # Repos to exclude from source indexing (space-separated list of repo directory names)
+  excludeRepos: ''
+
+  # Repos to include (if set, ONLY these repos will be indexed; space-separated)
+  includeRepos: ''
+
+  sourceIndexUploadPackageVersion: 2.0.0-20260505.1
+  sourceIndexProcessBinlogPackageVersion: 1.0.1-20260505.1
+  sourceIndexPackageSource: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+
+steps:
+- pwsh: |
+    $toolPath = Join-Path '$(Agent.TempDirectory)' '.source-index' 'tools'
+    dotnet tool install BinLogToSln --version ${{ parameters.sourceIndexProcessBinlogPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+    dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+  displayName: "Source Index: Install Tools"
+
+- pwsh: |
+    $ErrorActionPreference = 'Continue'
+
+    $sourcesPath = "${{ parameters.sourcesPath }}"
+    $logsPath = "${{ parameters.logsPath }}"
+    $outputDir = Join-Path '$(Agent.TempDirectory)' '.source-index' 'stage1output'
+    $toolPath = Join-Path '$(Agent.TempDirectory)' '.source-index' 'tools'
+    $excludeRepos = "${{ parameters.excludeRepos }}" -split '\s+' | Where-Object { $_ }
+    $includeRepos = "${{ parameters.includeRepos }}" -split '\s+' | Where-Object { $_ }
+
+    New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
+
+    $binLogToSln = Join-Path $toolPath 'BinLogToSln'
+    if ($IsWindows) { $binLogToSln += '.exe' }
+
+    $binlogs = Get-ChildItem -Path $logsPath -Filter "Build.binlog" -Recurse -ErrorAction SilentlyContinue
+    foreach ($binlog in $binlogs) {
+      $repoName = $binlog.Directory.Name
+
+      if ($includeRepos.Count -gt 0 -and $repoName -notin $includeRepos) {
+        Write-Host "Skipping repo not in include list: $repoName"
+        continue
+      }
+
+      if ($excludeRepos -contains $repoName) {
+        Write-Host "Skipping excluded repo: $repoName"
+        continue
+      }
+
+      Write-Host "Processing binlog for repo: $repoName"
+      & $binLogToSln -i $binlog.FullName -r $sourcesPath -n $repoName -o $outputDir
+
+      if ($LASTEXITCODE -ne 0) {
+        Write-Host "##vso[task.logissue type=warning]BinLogToSln failed for $repoName, continuing..."
+        $global:LASTEXITCODE = 0
+      }
+    }
+
+    # Verify output
+    if (Test-Path $outputDir) {
+      $files = Get-ChildItem -Path $outputDir -Recurse -File
+      if ($files.Count -gt 0) {
+        Write-Host "Source index stage 1 output produced successfully. $($files.Count) files."
+        $files | Select-Object -First 20 | ForEach-Object { Write-Host $_.FullName }
+      } else {
+        Write-Host "##vso[task.logissue type=warning]No source index stage 1 output was produced."
+      }
+    }
+  displayName: "Source Index: Process Binlogs into indexable SLN files"
+
+- task: AzureCLI@2
+  displayName: "Source Index: Upload to Azure (${{ parameters.sourceIndexName }})"
+  inputs:
+    azureSubscription: 'SourceDotNet Stage1 Publish'
+    addSpnToEnvironment: true
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $outputDir = Join-Path '$(Agent.TempDirectory)' '.source-index' 'stage1output'
+      $toolPath = Join-Path '$(Agent.TempDirectory)' '.source-index' 'tools'
+      $uploadTool = Join-Path $toolPath 'UploadIndexStage1'
+      if ($IsWindows) { $uploadTool += '.exe' }
+
+      if ((Test-Path $outputDir) -and (Get-ChildItem -Path $outputDir -Recurse -File).Count -gt 0) {
+        & $uploadTool -i $outputDir -n "${{ parameters.sourceIndexName }}" -s netsourceindexstage1 -b stage1
+      } else {
+        Write-Host "No source index output to upload."
+      }

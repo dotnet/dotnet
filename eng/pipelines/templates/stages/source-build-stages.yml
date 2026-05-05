@@ -127,6 +127,8 @@ stages:
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifact: false        # 🚫
+            sourceIndexName: dotnet-dotnet
+            sourceIndexExcludeRepos: 'winforms wpf windowsdesktop'
             ${{ if in(parameters.scope, 'lite') }}:
               extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
