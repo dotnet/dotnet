@@ -481,7 +481,7 @@ namespace System.Security.Cryptography
             A.CopyTo(destination);
         }
 
-        private ulong Rfc3394Unwrap(ReadOnlySpan<byte> source, Span<byte> destination)
+        private unsafe ulong Rfc3394Unwrap(ReadOnlySpan<byte> source, Span<byte> destination)
         {
             Span<byte> B = stackalloc byte[16];
             Span<byte> A = B.Slice(0, 8);
