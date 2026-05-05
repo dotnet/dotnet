@@ -819,6 +819,7 @@
           Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
           Timeout="$(BuildServerShutdownTimeoutInMilliseconds)"
+          ContinueOnError="WarnAndContinue"
           IgnoreStandardErrorWarningFormat="true"
           IgnoreExitCode="true" />
 
