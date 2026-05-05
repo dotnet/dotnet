@@ -202,17 +202,19 @@ function Verify-DllFrameworks {
     }
 
     # Packages that were expected but are now absent.
+    # In VMR/source-build, not all packages are built, so we only warn (don't error)
+    # when expected packages are missing from the actual set.
     foreach ($pkg in $expectedFrameworks.Keys) {
         if (-not $actualFrameworks.Contains($pkg)) {
-            $errors += "Package '$pkg' is in the expected file but was not found in actual packages."
-            $hasMismatch = $true
+            Write-Host "  Package '$pkg' is in the expected file but was not found in actual packages. Skipping." -ForegroundColor Yellow
         }
     }
 
     # Compare native exclude lists.
-    $sortedActualNatives = @($actualNatives | Sort-Object)
-    $sortedExpectedNatives = @($expectedNativeExcludes | Sort-Object)
-    $nativesChanged = ($sortedActualNatives -join '|') -ne ($sortedExpectedNatives -join '|')
+    # Only flag new natives not in expected. Missing natives are expected
+    # when not all packages are built (e.g. VMR/source-build).
+    $newNatives = @($actualNatives | Where-Object { $_ -notin $expectedNativeExcludes })
+    $nativesChanged = $newNatives.Count -gt 0
 
     # --- Report / fix ------------------------------------------------------
     if (-not $hasMismatch -and -not $nativesChanged -and $errors.Count -eq 0) {
@@ -244,7 +246,7 @@ function Verify-DllFrameworks {
             Write-Host "  $err" -ForegroundColor Yellow
         }
 
-        Write-DllFrameworksJson -NativeExcludes $sortedActualNatives -Frameworks $actualFrameworks
+        Write-DllFrameworksJson -NativeExcludes @($actualNatives | Sort-Object) -Frameworks $actualFrameworks
         Write-Host "Updated '$($script:ExpectedFrameworksFile)'. Please commit the changes." -ForegroundColor Green
     }
 
