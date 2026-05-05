@@ -7,6 +7,7 @@
 
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
+    <BuildServerShutdownTimeoutInMilliseconds Condition="'$(BuildServerShutdownTimeoutInMilliseconds)' == ''">300000</BuildServerShutdownTimeoutInMilliseconds>
 
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
@@ -817,6 +818,7 @@
     <Exec Command="&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler"
           Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
+          Timeout="$(BuildServerShutdownTimeoutInMilliseconds)"
           IgnoreStandardErrorWarningFormat="true"
           IgnoreExitCode="true" />
 
