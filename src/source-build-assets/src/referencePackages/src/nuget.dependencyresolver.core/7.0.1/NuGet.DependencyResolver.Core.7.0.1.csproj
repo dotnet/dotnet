@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <PackageVersion>7.0.1</PackageVersion>
+    <AssemblyName>NuGet.DependencyResolver.Core</AssemblyName>
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../nuget.configuration/7.0.1/NuGet.Configuration.7.0.1.csproj" />
+    <ProjectReference Include="../../nuget.librarymodel/7.0.1/NuGet.LibraryModel.7.0.1.csproj" />
+    <ProjectReference Include="../../nuget.protocol/7.0.1/NuGet.Protocol.7.0.1.csproj" />
+  </ItemGroup>
+
+</Project>
