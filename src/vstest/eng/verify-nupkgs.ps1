@@ -20,6 +20,9 @@ $expectedCountsFile = Join-Path $PSScriptRoot "expected-nupkg-file-counts.json"
 # Import binding redirect verification.
 . "$PSScriptRoot/verify-binding-redirects.ps1"
 
+# Import DLL target framework verification.
+. "$PSScriptRoot/verify-dll-frameworks.ps1"
+
 function Verify-Nuget-Packages {
     Write-Host "Starting Verify-Nuget-Packages."
     $expectedNumOfFiles = @{}
@@ -58,6 +61,8 @@ function Verify-Nuget-Packages {
         $version = "$versionPrefix$suffix"
     }
 
+    # Store for use by Verify-DllFrameworks.
+    $script:packageVersion = $version
 
     Write-Host "Found $(@($nugetPackages).Count) nuget packages:`n    $($nugetPackages.FullName -join "`n    ")"
     
@@ -360,3 +365,6 @@ Verify-NugetPackageVersion -configuration $configuration -UnzipNugetPackages $un
 
 Write-Host "`nVerifying binding redirects..."
 Verify-BindingRedirects -PackageDirs $unzipNugetPackages -Configuration $configuration
+
+Write-Host "`nVerifying DLL target frameworks..."
+Verify-DllFrameworks -PackageDirs $unzipNugetPackages -Configuration $configuration -Version $script:packageVersion
