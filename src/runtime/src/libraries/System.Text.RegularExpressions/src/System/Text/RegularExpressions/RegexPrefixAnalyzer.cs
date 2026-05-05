@@ -337,7 +337,7 @@ namespace System.Text.RegularExpressions
         }
 
         /// <summary>Computes the leading substring in <paramref name="node"/>; may be empty.</summary>
-        public static string FindPrefix(RegexNode node)
+        public static unsafe string FindPrefix(RegexNode node)
         {
             var vsb = new ValueStringBuilder(stackalloc char[64]);
             Process(node, ref vsb);
@@ -508,7 +508,7 @@ namespace System.Text.RegularExpressions
         /// <param name="root">The RegexNode tree root.</param>
         /// <param name="thorough">true to spend more time finding sets (e.g. through alternations); false to do a faster analysis that's potentially more incomplete.</param>
         /// <returns>The array of found sets, or null if there aren't any.</returns>
-        public static List<RegexFindOptimizations.FixedDistanceSet>? FindFixedDistanceSets(RegexNode root, bool thorough)
+        public static unsafe List<RegexFindOptimizations.FixedDistanceSet>? FindFixedDistanceSets(RegexNode root, bool thorough)
         {
             const int MaxLoopExpansion = 20; // arbitrary cut-off to avoid loops adding significant overhead to processing
             const int MaxFixedResults = 50; // arbitrary cut-off to avoid generating lots of sets unnecessarily
@@ -1124,7 +1124,7 @@ namespace System.Text.RegularExpressions
         /// Analyzes the pattern for a leading set loop followed by a non-overlapping literal. If such a pattern is found, an implementation
         /// can search for the literal and then walk backward through all matches for the loop until the beginning is found.
         /// </summary>
-        public static (RegexNode LoopNode, (char Char, string? String, StringComparison StringComparison, char[]? Chars) Literal)? FindLiteralFollowingLeadingLoop(RegexNode node)
+        public static unsafe (RegexNode LoopNode, (char Char, string? String, StringComparison StringComparison, char[]? Chars) Literal)? FindLiteralFollowingLeadingLoop(RegexNode node)
         {
             if ((node.Options & RegexOptions.RightToLeft) != 0)
             {
