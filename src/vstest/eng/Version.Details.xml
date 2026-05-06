@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="2e6efe3a93c7a685d76951a7bfd91c520dc7b333" BarId="311960" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="3c45e4f3e8b0e9069e8b740c7cfa610075c8ca34" BarId="312822" />
   <ProductDependencies>
     <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.7.0-preview.26223.1">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
       <Sha>e8a74b66b49be69b94cbc5fd5044146b7ed88490</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26226.111">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26251.112">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>2e6efe3a93c7a685d76951a7bfd91c520dc7b333</Sha>
+      <Sha>3c45e4f3e8b0e9069e8b740c7cfa610075c8ca34</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
