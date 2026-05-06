@@ -927,7 +927,7 @@ jobs:
           enableMicrobuild: true
           enableMicrobuildForMacAndLinux: true
 
-  - ${{ if and(ne(parameters.sourceIndexName, ''), eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true'))) }}:
+  - ${{ if and(ne(parameters.sourceIndexName, ''), eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - template: ../steps/source-index-stage1.yml
       parameters:
         sourceIndexName: ${{ parameters.sourceIndexName }}

@@ -29,6 +29,7 @@ parameters:
 steps:
 - task: UseDotNet@2
   displayName: "Source Index: Install .NET SDK"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
   inputs:
     packageType: sdk
     version: 10.0.x
@@ -43,6 +44,7 @@ steps:
     & $dotnet tool install BinLogToSln --version ${{ parameters.sourceIndexProcessBinlogPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
     & $dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
   displayName: "Source Index: Install Tools"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
   workingDirectory: $(Agent.TempDirectory)
 
 - pwsh: |
@@ -103,9 +105,11 @@ steps:
       }
     }
   displayName: "Source Index: Process Binlogs into indexable SLN files"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
 
 - task: AzureCLI@2
   displayName: "Source Index: Upload to Azure (${{ parameters.sourceIndexName }})"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
   inputs:
     azureSubscription: 'SourceDotNet Stage1 Publish'
     addSpnToEnvironment: true
