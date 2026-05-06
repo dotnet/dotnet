@@ -71,6 +71,11 @@ internal sealed class Condition
     /// </summary>
     public const Operation DefaultOperation = Operation.Contains;
 
+    /// <summary>
+    /// Reserved filter value that matches tests with no value for a given property (uncategorized).
+    /// </summary>
+    internal const string NoneFilterValue = "None";
+
 #if !IS_VSTEST_REPO
     private const string TestCaseFilterFormatException = "Incorrect format for TestCaseFilter {0}. Specify the correct format and try again. Note that the incorrect format can lead to no test getting executed.";
 
@@ -103,6 +108,13 @@ internal sealed class Condition
 
     private bool EvaluateEqualOperation(string[]? multiValue)
     {
+        // Reserved keyword: "None" matches tests with no value for this property (uncategorized).
+        if (multiValue is null or { Length: 0 }
+            && string.Equals(Value, NoneFilterValue, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         // if any value in multi-valued property matches 'this.Value', for Equal to evaluate true.
         if (multiValue != null)
         {
