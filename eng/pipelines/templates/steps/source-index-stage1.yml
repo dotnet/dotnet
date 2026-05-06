@@ -90,7 +90,7 @@ steps:
           $global:LASTEXITCODE = 0
         }
       } catch {
-        Write-Host "##vso[task.logissue type=warning]BinLogToSln threw an exception for $repoName: $_"
+        Write-Host "##vso[task.logissue type=warning]BinLogToSln threw an exception for ${repoName}: $_"
       }
     }
 
