@@ -1790,12 +1790,12 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 expression);
 
         /// <summary>
-        ///     The number of ordinals provided ({ordinalsCount}) must match the number of array segments in the JSON path ({arraySegmentCount}).
+        ///     The number of indices provided ({indicesCount}) must match the number of array segments in the JSON path ({arraySegmentCount}).
         /// </summary>
-        public static string InvalidJsonPathOrdinalCount(object? ordinalsCount, object? arraySegmentCount)
+        public static string InvalidStructuredJsonPathIndexCount(object? indicesCount, object? arraySegmentCount)
             => string.Format(
-                GetString("InvalidJsonPathOrdinalCount", nameof(ordinalsCount), nameof(arraySegmentCount)),
-                ordinalsCount, arraySegmentCount);
+                GetString("InvalidStructuredJsonPathIndexCount", nameof(indicesCount), nameof(arraySegmentCount)),
+                indicesCount, arraySegmentCount);
 
         /// <summary>
         ///     Unable to track an entity of type '{entityType}' because its primary key property '{keyProperty}' is null.
@@ -3892,6 +3892,31 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
             }
 
             return (EventDefinition<string, string>)definition;
+        }
+
+        /// <summary>
+        ///     'EnsureCreated' was called on a context that is already tracking added, modified, or deleted entities. These tracked changes would be lost if a retry occurs due to a transient failure.
+        /// </summary>
+        public static EventDefinition LogEnsureCreatedWithTrackedEntities(IDiagnosticsLogger logger)
+        {
+            var definition = ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities,
+                    logger,
+                    static logger => new EventDefinition(
+                        logger.Options,
+                        CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
+                        LogLevel.Warning,
+                        "CoreEventId.EnsureCreatedWithTrackedEntitiesWarning",
+                        level => LoggerMessage.Define(
+                            level,
+                            CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
+                            _resourceManager.GetString("LogEnsureCreatedWithTrackedEntities")!)));
+            }
+
+            return (EventDefinition)definition;
         }
 
         /// <summary>
