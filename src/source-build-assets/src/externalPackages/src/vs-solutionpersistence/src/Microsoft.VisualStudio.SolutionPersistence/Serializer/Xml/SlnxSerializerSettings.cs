@@ -15,8 +15,8 @@ public readonly struct SlnxSerializerSettings(SlnxSerializerSettings settings)
 {
     /// <summary>
     /// Gets a value indicating whether to keep whitespace when writing the solution file.
-    /// If this is true, the solution file will be written with the same whitespace as the original file.
-    /// Default is true.
+    /// If this is <see langword="true"/>, the solution file will be written with the same whitespace as the original file.
+    /// Default is <see langword="true"/>.
     /// </summary>
     public bool? PreserveWhitespace { get; init; } = settings.PreserveWhitespace;
 

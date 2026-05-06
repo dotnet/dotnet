@@ -9,16 +9,24 @@
 
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
 
+    <!-- The upstream build uses Nerdbank.GitVersioning to compute the FileVersion revision from git
+         commit height, which cannot work in the VMR context. Set it here to match the official NuGet
+         package. See https://github.com/dotnet/source-build/issues/5512 -->
+    <FileVersionRevision>6595</FileVersionRevision>
+    <!-- Used by the update-external-metadata script to determine the package to download. -->
+    <FileVersionValidationPackage>Microsoft.VisualStudio.SolutionPersistence</FileVersionValidationPackage>
+
     <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:AssemblyOriginatorKeyFile=$(SlnPersistenceKeyFilePath)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:SignAssembly=true</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:PublicSign=true</DotNetToolArgs>
-    <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
-    <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:Version=$(VsSolutionPersistenceReleaseVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(VsSolutionPersistenceReleaseVersion).$(FileVersionRevision)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(VsSolutionPersistenceReleaseVersion)</DotNetToolArgs>
 
     <BuildCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
-    <SourceRevisionId>0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac</SourceRevisionId>
+    <SourceRevisionId>19c3ca7dc997dba2b3a86f6c666e9f717f34c8fe</SourceRevisionId>
   </PropertyGroup>
 
   <ItemGroup>
