@@ -18,6 +18,8 @@
       <RuntimeProject>$(ProjectDirectory)src/OpenTelemetry.Instrumentation.Runtime/OpenTelemetry.Instrumentation.Runtime.csproj</RuntimeProject>
 
       <CommonBuildArgs>/p:Configuration=$(Configuration)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DelaySign=$(DelaySign)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:PublicSign=$(PublicSign)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
       <!-- Source-build behavioral overrides (keeps patches minimal) -->

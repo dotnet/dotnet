@@ -15,6 +15,8 @@
       <OTelOtlpProject>$(ProjectDirectory)src/OpenTelemetry.Exporter.OpenTelemetryProtocol/OpenTelemetry.Exporter.OpenTelemetryProtocol.csproj</OTelOtlpProject>
 
       <CommonBuildArgs>/p:Configuration=$(Configuration)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:DelaySign=$(DelaySign)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:PublicSign=$(PublicSign)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetReleaseVersion)</CommonBuildArgs>
