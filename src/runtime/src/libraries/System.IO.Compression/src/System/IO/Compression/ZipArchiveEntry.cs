@@ -1200,7 +1200,7 @@ namespace System.IO.Compression
         }
 
         // return value is true if we allocated an extra field for 64 bit headers, un/compressed size
-        private bool WriteLocalFileHeader(bool isEmptyFile, bool forceWrite, bool preserveDataDescriptor = false)
+        private unsafe bool WriteLocalFileHeader(bool isEmptyFile, bool forceWrite, bool preserveDataDescriptor = false)
         {
             if (WriteLocalFileHeaderInitialize(isEmptyFile, forceWrite, preserveDataDescriptor, out Zip64ExtraField? zip64ExtraField, out uint compressedSizeTruncated, out uint uncompressedSizeTruncated, out ushort extraFieldLength, out uint crc32ToWrite))
             {
