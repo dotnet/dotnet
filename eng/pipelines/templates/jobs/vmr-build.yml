@@ -245,6 +245,8 @@ jobs:
       value: false
 
   - ${{ if eq(parameters.disableComponentGovernance, true) }}:
+    - name: ONEES_ENFORCED_COMPONENTGOVERNANCE_ENABLED
+      value: false
     - name: skipComponentGovernanceDetection
       value: true
 
