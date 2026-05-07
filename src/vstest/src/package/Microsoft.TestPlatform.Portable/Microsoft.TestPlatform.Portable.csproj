@@ -12,7 +12,7 @@
       Sometimes NU1702 is not suppressed correctly, so force reducing severity of the warning.
       See https://github.com/NuGet/Home/issues/9147
     -->
-    <MSBuildWarningsAsMessages>NU1702</MSBuildWarningsAsMessages>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NU1702</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
   <PropertyGroup>
