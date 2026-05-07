@@ -90,7 +90,7 @@ stages:
         downloadType: 'specific'
         artifact: ReleaseConfigs
         itemPattern: |
-          ReleaseConfigs/SymbolPublishingExclusionsFile.txt
+          **/SymbolPublishingExclusionsFile.txt
         downloadPath: '$(Build.ArtifactStagingDirectory)/ReleaseConfigs'
 
     - task: NuGetToolInstaller@1
