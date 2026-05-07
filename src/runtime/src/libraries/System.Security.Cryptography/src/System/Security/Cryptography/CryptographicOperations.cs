@@ -786,7 +786,7 @@ namespace System.Security.Cryptography
         ///   This API performs a fixed-time comparison of the derived HMAC against a known HMAC to prevent leaking
         ///   timing information.
         /// </remarks>
-        public static bool VerifyHmac(
+        public static unsafe bool VerifyHmac(
             HashAlgorithmName hashAlgorithm,
             ReadOnlySpan<byte> key,
             ReadOnlySpan<byte> source,
@@ -881,7 +881,7 @@ namespace System.Security.Cryptography
         ///   This API performs a fixed-time comparison of the derived HMAC against a known HMAC to prevent leaking
         ///   timing information.
         /// </remarks>
-        public static bool VerifyHmac(HashAlgorithmName hashAlgorithm, ReadOnlySpan<byte> key, Stream source, ReadOnlySpan<byte> hash)
+        public static unsafe bool VerifyHmac(HashAlgorithmName hashAlgorithm, ReadOnlySpan<byte> key, Stream source, ReadOnlySpan<byte> hash)
         {
             int hashSizeInBytes = CheckHashAndGetLength(hashAlgorithm);
 
