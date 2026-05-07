@@ -16,7 +16,6 @@ from_vmr=false
 ci=false
 node_reuse=true
 binary_log=false
-warn_not_as_error=''
 
 # resolve $SOURCE until the file is no longer a symlink
 while [[ -h $source ]]; do
@@ -60,10 +59,6 @@ while [[ $# > 0 ]]; do
       ;;
     --nodereuse)
       node_reuse=$2
-      shift
-      ;;
-    --warnnotaserror)
-      warn_not_as_error=$2
       shift
       ;;
     *)
@@ -124,7 +119,7 @@ dotnetArguments+=("/p:DotNetBuild=$product_build")
 dotnetArguments+=("/p:DotNetBuildSourceOnly=$source_build")
 dotnetArguments+=("/p:DotNetBuildFromVMR=$from_vmr")
 
-bl=""
+local bl=""
 if [[ "$binary_log" == true ]]; then
   bl="/bl:\"${repo_root}artifacts/log/${configuration}/Build.binlog\""
 fi
@@ -133,12 +128,4 @@ if [[ "$ci" == true ]]; then
   node_reuse=false
 fi
 
-warnnotaserror_switch=""
-if [[ -n "$warn_not_as_error" ]]; then
-  # Only passing /p:AdditionalWarningsNotAsErrors here because this script does not pass /warnaserror to MSBuild.
-  # /warnNotAsError requires /warnaserror to be present, otherwise MSBuild will error.
-  # If /warnaserror is ever added to the command below, also add /warnnotaserror:$warn_not_as_error here.
-  warnnotaserror_switch="/p:AdditionalWarningsNotAsErrors=$warn_not_as_error"
-fi
-
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl $warnnotaserror_switch ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}

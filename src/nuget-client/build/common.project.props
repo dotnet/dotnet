@@ -12,9 +12,9 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">$(NetCurrent)</NETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</NETCoreTargetFramework>
     <LatestNETCoreTargetFramework>net10.0</LatestNETCoreTargetFramework>
-    <LatestNETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">$(NetCurrent)</LatestNETCoreTargetFramework>
+    <LatestNETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</LatestNETCoreTargetFramework>
 
     <!-- Target frameworks for class libraries-->
     <TargetFrameworksLibrary>$(NETCoreTargetFramework)</TargetFrameworksLibrary>
@@ -58,9 +58,6 @@
   <PropertyGroup>
     <TreatWarningsAsErrors Condition=" '$(TreatWarningsAsErrors)' == '' ">true</TreatWarningsAsErrors>
     <WarningsNotAsErrors>NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
-    <!-- Append build script specified warnings not as errors (mirrors Arcade's ProjectDefaults.props logic
-         for projects that don't import the Arcade SDK, like restorehelper.targets). -->
-    <WarningsNotAsErrors Condition="'$(AdditionalWarningsNotAsErrors)' != ''">$(WarningsNotAsErrors);$(AdditionalWarningsNotAsErrors)</WarningsNotAsErrors>
     <!-- Treat all warnings as errors, except on official builds since we don't want new warnings to break servicing branches -->
     <!-- MSBuild currently has a bug: https://github.com/dotnet/msbuild/issues/10801 -->
     <!-- <MSBuildTreatWarningsAsErrors Condition=" '$(MSBuildTreatWarningsAsErrors)' == '' And '$(IsOfficialBuild)' != 'true' ">true</MSBuildTreatWarningsAsErrors> -->

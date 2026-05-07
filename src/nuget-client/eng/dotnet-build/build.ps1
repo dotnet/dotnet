@@ -10,7 +10,6 @@ param (
   [switch][Alias('pb')]$productBuild,
   [switch]$fromVMR,
   [bool]$nodeReuse = $true,
-  [string]$warnNotAsError = '',
   [Parameter(ValueFromRemainingArguments = $true)][string[]]$properties
 )
 
