@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "RazorSyntaxGenerator": {
-      "commandName": "Project",
-      "commandLineArgs": "\"$(RepositoryRoot)\\src\\Compiler\\Microsoft.CodeAnalysis.Razor.Compiler\\src\\Language\\Syntax\\Syntax.xml\" \"$(RepositoryRoot)\\src\\Compiler\\Microsoft.CodeAnalysis.Razor.Compiler\\src\\Language\\Syntax\\Generated\\\""
-    }
-  }
-}
