@@ -53,14 +53,16 @@ internal class MsiPackageCache(InstallElevationContextBase elevationContext, ISe
             throw new ArgumentException($"Invalid package version: {packageVersion}");
         }
 
-        // Validate that the manifest path resolves to a location under the package cache root
-        // or the user's temp directory (where packages are extracted before caching).
-        string fullManifestPath = Path.GetFullPath(manifestPath);
+            // Validate that the manifest path resolves to a location under the elevated server's temp
+            // directory or the unelevated client's temp directory (when supplied at server launch via
+            // --client-temp). This prevents an IPC client from coercing the elevated server into reading
+            // or moving arbitrary files.
+            string fullManifestPath = Path.GetFullPath(manifestPath);
 
-        if (!File.Exists(fullManifestPath))
-        {
-            throw new FileNotFoundException($"CachePayload: Manifest file not found: {fullManifestPath}");
-        }
+            if (!WindowsUtils.ValidateManifestPath(fullManifestPath))
+            {
+                throw new ArgumentException($"CachePayload: Manifest path is not under an allowed temp directory: {manifestPath}");
+            }
 
         Elevate();
 
