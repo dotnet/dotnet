@@ -3,6 +3,8 @@ trigger:
   branches:
     include:
     - main
+    - 'v*.*'
+    - microbuild
     - 'validate/*'
   paths:
     exclude:

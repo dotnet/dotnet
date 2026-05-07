@@ -1,6 +1,3 @@
-[submodule "application-insights"]
-	path = src/externalPackages/src/application-insights
-	url = https://github.com/microsoft/ApplicationInsights-dotnet
 [submodule "cssparser"]
 	path = src/externalPackages/src/cssparser
 	url = https://github.com/dotnet/cssparser
