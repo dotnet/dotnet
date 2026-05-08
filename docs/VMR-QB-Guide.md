@@ -170,7 +170,7 @@ On release day, monitor these automated PRs for servicing branches:
 - **Internal → public merge PRs** (e.g. [PR #6182](https://github.com/dotnet/dotnet/pull/6182))
 - **Re-bootstrap PRs** (e.g. [PR #6174](https://github.com/dotnet/dotnet/pull/6174))
 
-Ensure they are merged or escalated if blocked. Communicate with Larry if issues remain.
+Ensure they are merged or escalated if blocked.
 
 > **Note:** Internal → public merge PRs may fail the "Validate user changes in VMR / Run Validation Script" CI job because a user touched `Version.Details.props`, which normally only the code flow bot modifies. This is expected — **merge anyway** by elevating to admin at https://repos.opensource.microsoft.com/orgs/dotnet/repos/dotnet (requires netvmr-lt membership).
 
