@@ -17,7 +17,7 @@ internal static class WorkloadElevateCommandParser
     /// </summary>
     public static readonly Option<string> ClientTempOption = new("--client-temp")
     {
-        IsHidden = true
+        Hidden = true
     };
 
     private static readonly Command Command = ConstructCommand();
