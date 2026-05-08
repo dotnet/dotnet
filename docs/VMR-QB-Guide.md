@@ -2,7 +2,7 @@
 
 ## Overview
 
-The VMR QB is responsible for keeping [code flow](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) into the [VMR](https://github.com/dotnet/dotnet) up-to-date and ensuring its official build is healthy. This is a daily role requiring approximately **30–60 minutes per day**. The QB's job is to **identify and route issues**, not to investigate or fix them — though you're welcome to do so if you choose.
+The VMR QB is responsible for keeping code flow into the [VMR](https://github.com/dotnet/dotnet) up-to-date and ensuring its official build is healthy. This is a daily role requiring approximately **30–60 minutes per day**. The QB's job is to **identify and route issues**, not to investigate or fix them — though you're welcome to do so if you choose.
 
 ## Daily Checklist
 
@@ -10,7 +10,7 @@ Each morning:
 
 1. **Check build health** — Run the pipeline health assessment (see [Build Health Monitoring](#build-health-monitoring))
 2. **Check dependency flow** — Run the flow analysis and check the [Maestro dashboard](https://maestro.dot.net/codeflows?branch=main) (see [Code Flow Monitoring](#code-flow-monitoring))
-3. **Merge green code flow PRs** — Approve and merge any code flow PRs that are green (see [Merging Code Flow PRs](#merging-code-flow-prs))
+3. **Merge green code flow PRs** — Approve and merge any [code flow](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) PRs that are green (see [Merging Code Flow PRs](#merging-code-flow-prs))
 4. **Triage failures** — Identify broken builds or stale PRs and ping the appropriate owner (see [Repo Ownership](#repo-ownership))
 5. **Communicate** — Post updates in the appropriate Teams channels for any hot issues
 
