@@ -190,26 +190,26 @@ When you identify a failure, ping the appropriate team. This table is derived fr
 
 | Repo | Owner |
 |------|-------|
-| arcade | @dotnet/dnceng |
-| aspnetcore | @dotnet/aspnet-build |
-| command-line-api | @dotnet/system-commandline |
-| deployment-tools | @dotnet/deployment-tools-admins |
-| efcore | @dotnet/efteam |
-| emsdk | @dotnet/dnr-codeflow |
-| fsharp | @dotnet/fsharp |
-| msbuild | @dotnet/msbuild |
-| nuget-client | @dotnet/nuget-team |
-| razor | @dotnet/roslyn-infrastructure |
-| roslyn | @dotnet/roslyn-infrastructure |
-| runtime | @dotnet/dnr-codeflow |
-| sdk | @dotnet/dotnet-cli |
-| source-build-assets | @dotnet/source-build |
-| templating | @dotnet/templating-engine-maintainers |
-| vstest | @dotnet/dotnet-testing-admin |
-| windowsdesktop | @dotnet/wpf-developers |
-| winforms | @dotnet/dotnet-winforms-admin |
-| wpf | @dotnet/wpf-developers |
-| *General VMR infra* | @dotnet/prodconsvcs |
+| arcade | [@dotnet/dnceng](https://github.com/orgs/dotnet/teams/dnceng) |
+| aspnetcore | [@dotnet/aspnet-build](https://github.com/orgs/dotnet/teams/aspnet-build) |
+| command-line-api | [@dotnet/system-commandline](https://github.com/orgs/dotnet/teams/system-commandline) |
+| deployment-tools | [@dotnet/deployment-tools-admins](https://github.com/orgs/dotnet/teams/deployment-tools-admins) |
+| efcore | [@dotnet/efteam](https://github.com/orgs/dotnet/teams/efteam) |
+| emsdk | [@dotnet/dnr-codeflow](https://github.com/orgs/dotnet/teams/dnr-codeflow) |
+| fsharp | [@dotnet/fsharp](https://github.com/orgs/dotnet/teams/fsharp) |
+| msbuild | [@dotnet/msbuild](https://github.com/orgs/dotnet/teams/msbuild) |
+| nuget-client | [@dotnet/nuget-team](https://github.com/orgs/dotnet/teams/nuget-team) |
+| razor | [@dotnet/roslyn-infrastructure](https://github.com/orgs/dotnet/teams/roslyn-infrastructure) |
+| roslyn | [@dotnet/roslyn-infrastructure](https://github.com/orgs/dotnet/teams/roslyn-infrastructure) |
+| runtime | [@dotnet/dnr-codeflow](https://github.com/orgs/dotnet/teams/dnr-codeflow) |
+| sdk | [@dotnet/dotnet-cli](https://github.com/orgs/dotnet/teams/dotnet-cli) |
+| source-build-assets | [@dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build) |
+| templating | [@dotnet/templating-engine-maintainers](https://github.com/orgs/dotnet/teams/templating-engine-maintainers) |
+| vstest | [@dotnet/dotnet-testing-admin](https://github.com/orgs/dotnet/teams/dotnet-testing-admin) |
+| windowsdesktop | [@dotnet/wpf-developers](https://github.com/orgs/dotnet/teams/wpf-developers) |
+| winforms | [@dotnet/dotnet-winforms-admin](https://github.com/orgs/dotnet/teams/dotnet-winforms-admin) |
+| wpf | [@dotnet/wpf-developers](https://github.com/orgs/dotnet/teams/wpf-developers) |
+| *General VMR infra* | [@dotnet/prodconsvcs](https://github.com/orgs/dotnet/teams/prodconsvcs) |
 
 ### Tips for finding the right person:
 
