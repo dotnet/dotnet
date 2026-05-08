@@ -75,15 +75,21 @@ internal abstract class InstallerBase(InstallElevationContextBase elevationConte
     public static readonly Process ParentProcess;
 
     /// <summary>
-        /// The fully-qualified path of the unelevated client's temp directory, as supplied at server launch
-        /// via the <c>--client-temp</c> argument. Used by path validators to accept manifest/log paths that
-        /// originate from the client when the client and server resolve different values for
-        /// <see cref="Path.GetTempPath"/> (e.g., over-the-shoulder UAC, custom TEMP env vars).
-        /// <see langword="null"/> if not supplied.
-        /// </summary>
-        public static string TrustedClientTempDirectory { get; set; }
+    /// The fully-qualified path of the unelevated client's temp directory, as supplied at server launch
+    /// via the <c>--client-temp</c> argument. Used by path validators to accept manifest/log paths that
+    /// originate from the client when the client and server resolve different values for
+    /// <see cref="Path.GetTempPath"/> (e.g., over-the-shoulder UAC, custom TEMP env vars).
+    /// <see langword="null"/> if not supplied.
+    /// </summary>
+    public static string TrustedClientTempDirectory { get; set; }
 
-        /// <summary>
+    /// <summary>
+    /// Gets the processor architecture.
+    /// </summary>
+    protected static readonly string ProcessorArchitecture;
+
+    /// <summary>
+    /// Queries WUA to determine if the system has a pending reboot.
     /// </summary>
     protected readonly bool RebootPending = WindowsUtils.RebootRequired();
 
