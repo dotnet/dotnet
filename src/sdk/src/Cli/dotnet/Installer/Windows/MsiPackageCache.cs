@@ -64,6 +64,11 @@ internal class MsiPackageCache(InstallElevationContextBase elevationContext, ISe
                 throw new ArgumentException($"CachePayload: Manifest path is not under an allowed temp directory: {manifestPath}");
             }
 
+            if (!File.Exists(fullManifestPath))
+            {
+                throw new FileNotFoundException($"CachePayload: Manifest file not found: {fullManifestPath}");
+            }
+
         Elevate();
 
         if (IsElevated)
