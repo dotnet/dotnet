@@ -2,7 +2,7 @@
 
 ## Overview
 
-The VMR QB is responsible for keeping [code flow](https://github.com/dotnet/dotnet/pulls) into the [VMR](https://github.com/dotnet/dotnet) up-to-date and ensuring its official build is healthy. This is a daily role requiring approximately **30–60 minutes per day**. The QB's job is to **identify and route issues**, not to investigate or fix them — though you're welcome to do so if you choose.
+The VMR QB is responsible for keeping [code flow](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) into the [VMR](https://github.com/dotnet/dotnet) up-to-date and ensuring its official build is healthy. This is a daily role requiring approximately **30–60 minutes per day**. The QB's job is to **identify and route issues**, not to investigate or fix them — though you're welcome to do so if you choose.
 
 ## Daily Checklist
 
@@ -113,7 +113,7 @@ These are the most important repos to keep flowing, especially before a preview 
 
 ## Merging Code Flow PRs
 
-Most [code flow PRs](https://github.com/dotnet/dotnet/pulls) contain code that's already been reviewed in the source repo. If CI is green, **approve and merge**.
+Most [code flow PRs](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) contain code that's already been reviewed in the source repo. If CI is green, **approve and merge**.
 
 ### Exceptions — Do NOT merge without repo owner review:
 
