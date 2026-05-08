@@ -105,7 +105,7 @@ You can also trigger subscriptions from this page to create new code flow PRs.
 
 ### Key Repos to Watch
 
-These are the most important repos to keep flowing, especially before a preview snap:
+All repos in the VMR are the QB's responsibility, but the following are the **highest priority** — especially right before code complete for servicing branches, and right before the release branch is snapped for previews/RCs:
 
 **Product repos:** aspnetcore, efcore, runtime, sdk, windowsdesktop, winforms, wpf
 
