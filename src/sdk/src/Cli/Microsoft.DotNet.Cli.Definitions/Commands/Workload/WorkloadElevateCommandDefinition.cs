@@ -15,7 +15,7 @@ internal sealed class WorkloadElevateCommandDefinition : WorkloadCommandDefiniti
     /// </summary>
     public readonly Option<string> ClientTempOption = new("--client-temp")
     {
-        IsHidden = true
+        Hidden = true
     };
 
     public WorkloadElevateCommandDefinition()
