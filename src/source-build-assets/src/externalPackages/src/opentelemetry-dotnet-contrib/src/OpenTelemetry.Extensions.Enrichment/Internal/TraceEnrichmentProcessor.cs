@@ -13,7 +13,7 @@ internal sealed class TraceEnrichmentProcessor : BaseProcessor<Activity>
 
     public TraceEnrichmentProcessor(IEnumerable<TraceEnricher> traceEnrichers)
     {
-        this.traceEnrichers = traceEnrichers.ToArray();
+        this.traceEnrichers = [.. traceEnrichers];
     }
 
     public override void OnStart(Activity activity)
@@ -22,7 +22,14 @@ internal sealed class TraceEnrichmentProcessor : BaseProcessor<Activity>
 
         foreach (var enricher in this.traceEnrichers)
         {
-            enricher.EnrichOnActivityStart(bag);
+            try
+            {
+                enricher.EnrichOnActivityStart(bag);
+            }
+            catch (Exception ex)
+            {
+                EnrichmentEventSource.Log.TraceEnricherException(nameof(this.OnStart), enricher, ex);
+            }
         }
     }
 
@@ -32,7 +39,14 @@ internal sealed class TraceEnrichmentProcessor : BaseProcessor<Activity>
 
         foreach (var enricher in this.traceEnrichers)
         {
-            enricher.Enrich(bag);
+            try
+            {
+                enricher.Enrich(bag);
+            }
+            catch (Exception ex)
+            {
+                EnrichmentEventSource.Log.TraceEnricherException(nameof(this.OnEnd), enricher, ex);
+            }
         }
     }
 }

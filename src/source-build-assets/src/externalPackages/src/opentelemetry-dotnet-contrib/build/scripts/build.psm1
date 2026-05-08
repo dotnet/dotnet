@@ -88,6 +88,8 @@ function FindComponentOwners {
     [Parameter()][ref]$componentOwners
   )
 
+  $componentOwners.Value = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+
   $projectPath = "src/$component/$component.csproj"
 
   if ((Test-Path -Path $projectPath) -eq $false)
@@ -97,7 +99,7 @@ function FindComponentOwners {
         gh issue comment $issueNumber `
           --body "I couldn't find the project file for the requested component. Please create a new release request and select a valid component or edit the description and set a valid component."
       }
-      Return
+      return $false
   }
 
   $projectContent = Get-Content -Path $projectPath
@@ -110,7 +112,7 @@ function FindComponentOwners {
         gh issue comment $issueNumber `
           --body "I couldn't find ``MinVerTagPrefix`` in the project file for the requested component. Please create a new release request and select a valid component or edit the description and set a valid component."
       }
-      Return
+      return $false
   }
 
   $minVerTagPrefix = $match.Groups[1].Value
@@ -118,8 +120,6 @@ function FindComponentOwners {
   $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$minVerTagPrefix</MinVerTagPrefix>" -List | Select Path | Split-Path -Parent
 
   $componentOwnersContent = Get-Content '.github/component_owners.yml' -Raw
-
-  $componentOwners.Value = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
 
   foreach ($projectDir in $projectDirs)
   {
@@ -136,6 +136,8 @@ function FindComponentOwners {
       }
     }
   }
+
+  return $true
 }
 
 Export-ModuleMember -Function FindComponentOwners

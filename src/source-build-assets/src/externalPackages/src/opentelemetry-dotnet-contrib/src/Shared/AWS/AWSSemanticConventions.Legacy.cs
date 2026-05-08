@@ -62,6 +62,8 @@ internal partial class AWSSemanticConventions
         public override string AttributeAWSBedrockGuardrailId => "aws.bedrock.guardrail.id";
         public override string AttributeAWSBedrockKnowledgeBaseId => "aws.bedrock.knowledge_base.id";
         public override string AttributeAWSBedrock => "aws_bedrock";
+        public override string AttributeAWSS3BucketName => "aws.s3.bucket";
+        public override string AttributeAWSS3Key => "aws.s3.key";
 
         // FAAS Attributes
         public override string AttributeFaasID => "faas.id";

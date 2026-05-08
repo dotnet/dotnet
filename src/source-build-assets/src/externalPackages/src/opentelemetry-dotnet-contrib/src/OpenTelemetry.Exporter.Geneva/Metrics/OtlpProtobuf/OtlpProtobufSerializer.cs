@@ -141,7 +141,9 @@ internal sealed class OtlpProtobufSerializer
             {
                 case char:
                 case string:
+#pragma warning disable IDE0370 // Suppression is unnecessary
                     ProtobufSerializerHelper.WriteStringTag(buffer, ref cursor, FieldNumberConstants.AnyValue_string_value, Convert.ToString(value, CultureInfo.InvariantCulture)!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
                     break;
                 case bool b:
                     ProtobufSerializerHelper.WriteBoolWithTag(buffer, ref cursor, FieldNumberConstants.AnyValue_bool_value, (bool)value);
@@ -744,9 +746,7 @@ internal sealed class OtlpProtobufSerializer
     }
 
     private void SendMetricPoint(byte[] buffer, ref int cursor)
-    {
-        this.MetricDataTransport.SendOtlpProtobufEvent(buffer, cursor);
-    }
+        => this.MetricDataTransport.SendOtlpProtobufEvent(buffer, cursor);
 
     private void SerializeResource(byte[] buffer, ref int cursor, Resource resource)
     {
@@ -756,7 +756,9 @@ internal sealed class OtlpProtobufSerializer
             cursor += TagAndLengthSize;
             var valueIndex = cursor;
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
             SerializeTags(buffer, ref cursor, resource.Attributes!, FieldNumberConstants.Resource_attributes);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
             // TODO: check to see if should de-dupe in case the values are also provided via resource attributes.
             if (this.metricAccount != null)

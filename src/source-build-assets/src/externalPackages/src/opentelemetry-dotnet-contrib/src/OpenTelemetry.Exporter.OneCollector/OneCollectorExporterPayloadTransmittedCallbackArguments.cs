@@ -29,21 +29,19 @@ public readonly ref struct OneCollectorExporterPayloadTransmittedCallbackArgumen
         Uri transportEndpoint,
         bool succeeded)
     {
-        Debug.Assert(payloadStream != null, "payload stream was null");
-        Debug.Assert(payloadStream!.CanSeek, "payload stream was not seekable");
-        Debug.Assert(transportEndpoint != null, "transportEndpoint was null");
+        Debug.Assert(payloadStream.CanSeek, "payload stream was not seekable");
 
         this.PayloadSerializationFormat = payloadSerializationFormat;
         this.payloadStream = payloadStream;
         this.TransportProtocol = transportProtocol;
-        this.TransportEndpoint = transportEndpoint!;
+        this.TransportEndpoint = transportEndpoint;
         this.Succeeded = succeeded;
     }
 
     /// <summary>
     /// Gets the payload size in bytes.
     /// </summary>
-    public long PayloadSizeInBytes => this.payloadStream!.Length;
+    public long PayloadSizeInBytes => this.payloadStream.Length;
 
     /// <summary>
     /// Gets the transport endpoint.

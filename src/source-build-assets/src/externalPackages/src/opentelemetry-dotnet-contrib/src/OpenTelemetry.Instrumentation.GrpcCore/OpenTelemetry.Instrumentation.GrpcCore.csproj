@@ -7,6 +7,10 @@
     <MinVerTagPrefix>Instrumentation.GrpcCore-</MinVerTagPrefix>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <!-- Do not run Package Baseline Validation as this package has never released a stable version.
   Remove this property once we have released a stable version and add PackageValidationBaselineVersion property. -->
   <PropertyGroup>
@@ -14,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" VersionOverride="[3.15.0,)" />
+    <PackageReference Include="Google.Protobuf" VersionOverride="[3.33.2,)" />
     <PackageReference Include="Grpc.Core.Api" />
     <PackageReference Include="OpenTelemetry.Api" />
   </ItemGroup>

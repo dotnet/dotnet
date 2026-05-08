@@ -27,6 +27,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                             .Measurement(measurement)
                             .Field(metricName, metricPoint.GetGaugeLastValueLong())
                             .Tags(metricPoint.Tags)
+                            .Tags(metric.MeterTags)
                             .Tags(resource?.Attributes)
                             .Timestamp(metricPoint.EndTime.UtcDateTime, WritePrecision.Ns);
                         writeApi.WritePoint(pointData);
@@ -43,6 +44,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                             .Measurement(measurement)
                             .Field(metricName, metricPoint.GetGaugeLastValueDouble())
                             .Tags(metricPoint.Tags)
+                            .Tags(metric.MeterTags)
                             .Tags(resource?.Attributes)
                             .Timestamp(metricPoint.EndTime.UtcDateTime, WritePrecision.Ns);
                         writeApi.WritePoint(pointData);
@@ -59,6 +61,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                             .Measurement(measurement)
                             .Field(metricName, metricPoint.GetSumLong())
                             .Tags(metricPoint.Tags)
+                            .Tags(metric.MeterTags)
                             .Tags(resource?.Attributes)
                             .Timestamp(metricPoint.EndTime.UtcDateTime, WritePrecision.Ns);
                         writeApi.WritePoint(pointData);
@@ -75,6 +78,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                             .Measurement(measurement)
                             .Field(metricName, metricPoint.GetSumDouble())
                             .Tags(metricPoint.Tags)
+                            .Tags(metric.MeterTags)
                             .Tags(resource?.Attributes)
                             .Timestamp(metricPoint.EndTime.UtcDateTime, WritePrecision.Ns);
                         writeApi.WritePoint(pointData);
@@ -91,6 +95,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                             .Measurement(measurement)
                             .Field(metricName, dataPoint.GetSumLong())
                             .Tags(dataPoint.Tags)
+                            .Tags(metric.MeterTags)
                             .Tags(resource?.Attributes)
                             .Timestamp(dataPoint.EndTime.UtcDateTime, WritePrecision.Ns);
                         writeApi.WritePoint(pointData);
@@ -107,6 +112,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                             .Measurement(measurement)
                             .Field(metricName, dataPoint.GetSumDouble())
                             .Tags(dataPoint.Tags)
+                            .Tags(metric.MeterTags)
                             .Tags(resource?.Attributes)
                             .Timestamp(dataPoint.EndTime.UtcDateTime, WritePrecision.Ns);
                         writeApi.WritePoint(pointData);
@@ -121,6 +127,7 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
                     var basePoint = PointData
                         .Measurement(measurement)
                         .Tags(metricPoint.Tags)
+                        .Tags(metric.MeterTags)
                         .Tags(resource?.Attributes)
                         .Timestamp(metricPoint.EndTime.UtcDateTime, WritePrecision.Ns);
 
@@ -137,14 +144,18 @@ internal sealed class TelegrafPrometheusWriterV2 : IMetricsWriter
 
                     writeApi.WritePoint(headPoint);
 
+                    long cumulativeCount = 0;
+
                     foreach (var histogramBucket in metricPoint.GetHistogramBuckets())
                     {
+                        cumulativeCount += histogramBucket.BucketCount;
+
                         var boundFieldKey = double.IsPositiveInfinity(histogramBucket.ExplicitBound)
                             ? "+Inf"
                             : histogramBucket.ExplicitBound.ToString("F", CultureInfo.InvariantCulture);
                         var bucketPoint = basePoint
                             .Tag("le", boundFieldKey)
-                            .Field($"{metricName}_bucket", histogramBucket.BucketCount);
+                            .Field($"{metricName}_bucket", cumulativeCount);
                         writeApi.WritePoint(bucketPoint);
                     }
                 }

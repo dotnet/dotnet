@@ -97,7 +97,7 @@ internal static class HttpWebRequestActivitySource
 
         if (activity.IsAllDataRequested)
         {
-            // see the spec https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-spans.md
+            // See the spec: https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md#http-client-span
             HttpTagHelper.RequestDataHelper.SetHttpMethodTag(activity, request.Method);
 
             activity.SetTag(SemanticConventions.AttributeServerAddress, request.RequestUri.Host);
@@ -784,54 +784,34 @@ internal static class HttpWebRequestActivitySource
         }
 
         public override void Add(object key, object value)
-        {
-            this.table.Add(key, value);
-        }
+            => this.table.Add(key, value);
 
         public override void Clear()
-        {
-            this.table.Clear();
-        }
+            => this.table.Clear();
 
         public override bool Contains(object key)
-        {
-            return this.table.Contains(key);
-        }
+            => this.table.Contains(key);
 
         public override bool ContainsKey(object key)
-        {
-            return this.table.ContainsKey(key);
-        }
+            => this.table.ContainsKey(key);
 
         public override bool ContainsValue(object key)
-        {
-            return this.table.ContainsValue(key);
-        }
+            => this.table.ContainsValue(key);
 
         public override void CopyTo(Array array, int arrayIndex)
-        {
-            this.table.CopyTo(array, arrayIndex);
-        }
+            => this.table.CopyTo(array, arrayIndex);
 
         public override object Clone()
-        {
-            return new HashtableWrapper((Hashtable)this.table.Clone());
-        }
+            => new HashtableWrapper((Hashtable)this.table.Clone());
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.table.GetEnumerator();
-        }
+            => this.table.GetEnumerator();
 
         public override IDictionaryEnumerator GetEnumerator()
-        {
-            return this.table.GetEnumerator();
-        }
+            => this.table.GetEnumerator();
 
         public override void Remove(object key)
-        {
-            this.table.Remove(key);
-        }
+            => this.table.Remove(key);
     }
 
     /// <summary>
@@ -839,13 +819,8 @@ internal static class HttpWebRequestActivitySource
     /// intercept each new ServicePoint object being added to ServicePointManager.s_ServicePointTable
     /// and replace its ConnectionGroupList hashtable field.
     /// </summary>
-    private sealed class ServicePointHashtable : HashtableWrapper
+    private sealed class ServicePointHashtable(Hashtable table) : HashtableWrapper(table)
     {
-        public ServicePointHashtable(Hashtable table)
-            : base(table)
-        {
-        }
-
         public override object this[object key]
         {
             get => base[key];
@@ -862,13 +837,8 @@ internal static class HttpWebRequestActivitySource
     /// intercept each new ConnectionGroup object being added to ServicePoint.m_ConnectionGroupList
     /// and replace its m_ConnectionList arraylist field.
     /// </summary>
-    private sealed class ConnectionGroupHashtable : HashtableWrapper
+    private sealed class ConnectionGroupHashtable(Hashtable table) : HashtableWrapper(table)
     {
-        public ConnectionGroupHashtable(Hashtable table)
-            : base(table)
-        {
-        }
-
         public override object this[object key]
         {
             get => base[key];
@@ -885,15 +855,9 @@ internal static class HttpWebRequestActivitySource
     /// have the array elements, but rather access another array list that's given at
     /// construction time.
     /// </summary>
-    private class ArrayListWrapper : ArrayList
+    private class ArrayListWrapper(ArrayList list) : ArrayList
     {
-        private ArrayList list;
-
-        internal ArrayListWrapper(ArrayList list)
-            : base()
-        {
-            this.list = list;
-        }
+        private ArrayList list = list;
 
         public override int Capacity
         {
@@ -918,174 +882,108 @@ internal static class HttpWebRequestActivitySource
         }
 
         public override int Add(object value)
-        {
-            return this.list.Add(value);
-        }
+            => this.list.Add(value);
 
         public override void AddRange(ICollection c)
-        {
-            this.list.AddRange(c);
-        }
+            => this.list.AddRange(c);
 
         public override int BinarySearch(object value)
-        {
-            return this.list.BinarySearch(value);
-        }
+            => this.list.BinarySearch(value);
 
         public override int BinarySearch(object value, IComparer comparer)
-        {
-            return this.list.BinarySearch(value, comparer);
-        }
+            => this.list.BinarySearch(value, comparer);
 
         public override int BinarySearch(int index, int count, object value, IComparer comparer)
-        {
-            return this.list.BinarySearch(index, count, value, comparer);
-        }
+            => this.list.BinarySearch(index, count, value, comparer);
 
         public override void Clear()
-        {
-            this.list.Clear();
-        }
+            => this.list.Clear();
 
         public override object Clone()
-        {
-            return new ArrayListWrapper((ArrayList)this.list.Clone());
-        }
+            => new ArrayListWrapper((ArrayList)this.list.Clone());
 
         public override bool Contains(object item)
-        {
-            return this.list.Contains(item);
-        }
+            => this.list.Contains(item);
 
         public override void CopyTo(Array array)
-        {
-            this.list.CopyTo(array);
-        }
+            => this.list.CopyTo(array);
 
         public override void CopyTo(Array array, int index)
-        {
-            this.list.CopyTo(array, index);
-        }
+            => this.list.CopyTo(array, index);
 
         public override void CopyTo(int index, Array array, int arrayIndex, int count)
-        {
-            this.list.CopyTo(index, array, arrayIndex, count);
-        }
+            => this.list.CopyTo(index, array, arrayIndex, count);
 
         public override IEnumerator GetEnumerator()
-        {
-            return this.list.GetEnumerator();
-        }
+            => this.list.GetEnumerator();
 
         public override IEnumerator GetEnumerator(int index, int count)
-        {
-            return this.list.GetEnumerator(index, count);
-        }
+            => this.list.GetEnumerator(index, count);
 
         public override int IndexOf(object value)
-        {
-            return this.list.IndexOf(value);
-        }
+            => this.list.IndexOf(value);
 
         public override int IndexOf(object value, int startIndex)
-        {
-            return this.list.IndexOf(value, startIndex);
-        }
+            => this.list.IndexOf(value, startIndex);
 
         public override int IndexOf(object value, int startIndex, int count)
-        {
-            return this.list.IndexOf(value, startIndex, count);
-        }
+            => this.list.IndexOf(value, startIndex, count);
 
         public override void Insert(int index, object value)
-        {
-            this.list.Insert(index, value);
-        }
+            => this.list.Insert(index, value);
 
         public override void InsertRange(int index, ICollection c)
-        {
-            this.list.InsertRange(index, c);
-        }
+            => this.list.InsertRange(index, c);
 
         public override int LastIndexOf(object value)
-        {
-            return this.list.LastIndexOf(value);
-        }
+            => this.list.LastIndexOf(value);
 
         public override int LastIndexOf(object value, int startIndex)
-        {
-            return this.list.LastIndexOf(value, startIndex);
-        }
+            => this.list.LastIndexOf(value, startIndex);
 
         public override int LastIndexOf(object value, int startIndex, int count)
-        {
-            return this.list.LastIndexOf(value, startIndex, count);
-        }
+            => this.list.LastIndexOf(value, startIndex, count);
 
         public override void Remove(object value)
-        {
-            this.list.Remove(value);
-        }
+            => this.list.Remove(value);
 
         public override void RemoveAt(int index)
-        {
-            this.list.RemoveAt(index);
-        }
+            => this.list.RemoveAt(index);
 
         public override void RemoveRange(int index, int count)
-        {
-            this.list.RemoveRange(index, count);
-        }
+            => this.list.RemoveRange(index, count);
 
         public override void Reverse(int index, int count)
-        {
-            this.list.Reverse(index, count);
-        }
+            => this.list.Reverse(index, count);
 
         public override void SetRange(int index, ICollection c)
-        {
-            this.list.SetRange(index, c);
-        }
+            => this.list.SetRange(index, c);
 
         public override ArrayList GetRange(int index, int count)
-        {
-            return this.list.GetRange(index, count);
-        }
+            => this.list.GetRange(index, count);
 
         public override void Sort()
-        {
-            this.list.Sort();
-        }
+            => this.list.Sort();
 
         public override void Sort(IComparer comparer)
-        {
-            this.list.Sort(comparer);
-        }
+            => this.list.Sort(comparer);
 
         public override void Sort(int index, int count, IComparer comparer)
-        {
-            this.list.Sort(index, count, comparer);
-        }
+            => this.list.Sort(index, count, comparer);
 
         public override object[] ToArray()
-        {
-            return this.list.ToArray();
-        }
+            => this.list.ToArray();
 
         public override Array ToArray(Type type)
-        {
-            return this.list.ToArray(type);
-        }
+            => this.list.ToArray(type);
 
         public override void TrimToSize()
-        {
-            this.list.TrimToSize();
-        }
+            => this.list.TrimToSize();
 
         public ArrayList Swap()
         {
             var old = this.list;
-            this.list = new ArrayList(old.Capacity);
+            this.list = new(old.Capacity);
             return old;
         }
     }
@@ -1095,13 +993,8 @@ internal static class HttpWebRequestActivitySource
     /// intercept each new Connection object being added to ConnectionGroup.m_ConnectionList
     /// and replace its m_WriteList arraylist field.
     /// </summary>
-    private sealed class ConnectionArrayList : ArrayListWrapper
+    private sealed class ConnectionArrayList(ArrayList list) : ArrayListWrapper(list)
     {
-        public ConnectionArrayList(ArrayList list)
-            : base(list)
-        {
-        }
-
         public override int Add(object value)
         {
             HookConnection(value);
@@ -1116,13 +1009,8 @@ internal static class HttpWebRequestActivitySource
     /// It also intercepts all HttpWebRequest objects that are about to get removed from
     /// Connection.m_WriteList as they have completed the request.
     /// </summary>
-    private sealed class HttpWebRequestArrayList : ArrayListWrapper
+    private sealed class HttpWebRequestArrayList(ArrayList list) : ArrayListWrapper(list)
     {
-        public HttpWebRequestArrayList(ArrayList list)
-            : base(list)
-        {
-        }
-
         public override int Add(object value)
         {
             // Add before firing events so if some user code cancels/aborts the request it will be found in the outstanding list.

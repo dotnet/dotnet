@@ -12,7 +12,9 @@ internal sealed class ProcessMetrics
 {
     internal static readonly Assembly Assembly = typeof(ProcessMetrics).Assembly;
     internal static readonly AssemblyName AssemblyName = Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string MeterName = AssemblyName.Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
     private static readonly Meter MeterInstance = new(MeterName, Assembly.GetPackageVersion());
 

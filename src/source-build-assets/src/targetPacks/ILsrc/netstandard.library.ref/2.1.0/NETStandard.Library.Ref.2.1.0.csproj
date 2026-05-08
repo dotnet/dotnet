@@ -1,1 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>NETStandard.Library.Ref</PackageId>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <PackageVersion>2.1.0</PackageVersion>
+    <AssemblyName>NETStandard.Library.Ref</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Serviceable>true</Serviceable>
+    <Description>Internal implementation package not meant for direct consumption. Please do not reference directly. 
+A set of standard .NET APIs that are prescribed to be used and supported together. Contains reference assemblies, documentation, and other design-time assets. 
+7d57652f33493fa022125b7f63aad0d70c52d810 
+When using NuGet 3.x this package requires at least version 3.4.</Description>
+    <Title>NETStandard.Library.Ref</Title>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799417</PackageReleaseNotes>
+    <PackageType>DotnetPlatform</PackageType>
+    <MinClientVersion>2.12</MinClientVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/FrameworkList.xml" Pack="true" PackagePath="data" />
+    <None Include="data/PackageOverrides.txt" Pack="true" PackagePath="data" />
+    <None Include="LICENSE.TXT" Pack="true" PackagePath="" />
+    <None Include="THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

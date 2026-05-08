@@ -10,7 +10,7 @@ namespace OpenTelemetry.Instrumentation.Quartz.Implementation;
 /// EventSource events emitted from the project.
 /// </summary>
 [EventSource(Name = "OpenTelemetry-Instrumentation-Quartz")]
-internal class QuartzInstrumentationEventSource : EventSource
+internal sealed class QuartzInstrumentationEventSource : EventSource
 {
     public static readonly QuartzInstrumentationEventSource Log = new();
 

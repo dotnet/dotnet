@@ -272,10 +272,7 @@ Merge once packages are available on NuGet and the build passes.
 
   if ($tagPrefix -eq 'Instrumentation.AspNetCore-' -and $version -match '^[01]\.')
   {
-    $body +=
-@"
-* Sets ``OpenTelemetryInstrumentationAspNetCoreLatestStableVersion`` in Common.props to version ``$version``.
-"@
+    $body += "`n* Sets ``OpenTelemetryInstrumentationAspNetCoreLatestStableVersion`` in Common.props to version ``$version``."
   }
 
   gh pr create `

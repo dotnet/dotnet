@@ -1,7 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System.Diagnostics;
 using System.Text.Json;
 using OpenTelemetry.Internal;
 using OpenTelemetry.Logs;
@@ -54,7 +53,7 @@ internal sealed class LogRecordCommonSchemaJsonSerializer : CommonSchemaJsonSeri
 
             if (AttributeKeyStartWithExtensionPrefix(scopeAttribute.Key))
             {
-                serializationState.AddExtensionAttribute(scopeAttribute!);
+                serializationState.AddExtensionAttribute(scopeAttribute);
                 continue;
             }
 
@@ -73,9 +72,7 @@ internal sealed class LogRecordCommonSchemaJsonSerializer : CommonSchemaJsonSeri
         int maxNumberOfItemsPerPayload = int.MaxValue)
         : base(tenantToken, maxPayloadSizeInBytes, maxNumberOfItemsPerPayload)
     {
-        Debug.Assert(eventNameManager != null, "eventNameManager was null");
-
-        this.eventNameManager = eventNameManager!;
+        this.eventNameManager = eventNameManager;
         this.exceptionStackTraceHandling = exceptionStackTraceHandling;
     }
 
@@ -83,13 +80,9 @@ internal sealed class LogRecordCommonSchemaJsonSerializer : CommonSchemaJsonSeri
 
     protected override void SerializeItemToJson(Resource resource, LogRecord item, CommonSchemaJsonSerializationState serializationState)
     {
-        Debug.Assert(serializationState != null, "serializationState was null");
+        var writer = serializationState.Writer;
 
-        var writer = serializationState!.Writer;
-
-        Debug.Assert(writer != null, "writer was null");
-
-        int attributeStartIndex = 0;
+        var attributeStartIndex = 0;
         EventNameManager.ResolvedEventFullName resolvedEventFullName;
         if (item.Attributes != null
             && item.Attributes.Count > 0
@@ -107,7 +100,7 @@ internal sealed class LogRecordCommonSchemaJsonSerializer : CommonSchemaJsonSeri
                 item.EventId.Name);
         }
 
-        writer!.WriteStartObject();
+        writer.WriteStartObject();
 
         writer.WriteString(CommonSchemaJsonSerializationHelper.VersionProperty, CommonSchemaJsonSerializationHelper.Version4Value);
 
@@ -164,7 +157,7 @@ internal sealed class LogRecordCommonSchemaJsonSerializer : CommonSchemaJsonSeri
 
         if (item.Attributes != null)
         {
-            for (int i = attributeStartIndex; i < item.Attributes.Count; i++)
+            for (var i = attributeStartIndex; i < item.Attributes.Count; i++)
             {
                 var attribute = item.Attributes[i];
 

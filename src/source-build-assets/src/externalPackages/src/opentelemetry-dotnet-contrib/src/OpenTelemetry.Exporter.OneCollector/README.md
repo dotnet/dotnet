@@ -41,7 +41,7 @@ logger.LogWarning("Warning encountered {error_code}!", 0xBAADBEEF);
 ## Table name resolution
 
 By default when sending logs/events `OneCollectorExporter` generates fully
-qualifed names using the `LogRecord` `CategoryName` and `EventId.Name`
+qualified names using the `LogRecord` `CategoryName` and `EventId.Name`
 properties (ex: `$"{CategoryName}.{EventId.Name}"`). When `EventId.Name` is not
 supplied the `OneCollectorLogExporterOptions.DefaultEventName` property is used
 (the default value is `Log`). Event full names are used by the OneCollector
@@ -141,7 +141,7 @@ logger.LogInformation(
 
 #### Pass-through mappings
 
-Pass-through mappings that preserve the orignal event namespace and/or name are
+Pass-through mappings that preserve the original event namespace and/or name are
 also possible.
 
 For example, given the configuration...

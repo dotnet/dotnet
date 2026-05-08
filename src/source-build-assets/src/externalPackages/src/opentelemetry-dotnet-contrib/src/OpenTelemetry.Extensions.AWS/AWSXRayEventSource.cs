@@ -7,7 +7,7 @@ using OpenTelemetry.Internal;
 namespace OpenTelemetry.Extensions.AWS;
 
 [EventSource(Name = "OpenTelemetry-AWS-XRay")]
-internal class AWSXRayEventSource : EventSource
+internal sealed class AWSXRayEventSource : EventSource
 {
     public static AWSXRayEventSource Log = new();
 

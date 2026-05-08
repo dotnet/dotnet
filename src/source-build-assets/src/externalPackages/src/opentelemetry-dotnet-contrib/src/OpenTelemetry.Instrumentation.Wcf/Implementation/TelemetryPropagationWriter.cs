@@ -85,7 +85,7 @@ internal static class TelemetryPropagationWriter
         Guard.ThrowIfNull(callbacks);
         Array.ForEach(callbacks, cb => Guard.ThrowIfNull(cb));
 
-        return (Message request, string name, string value) =>
+        return (request, name, value) =>
         {
             foreach (var writer in callbacks)
             {

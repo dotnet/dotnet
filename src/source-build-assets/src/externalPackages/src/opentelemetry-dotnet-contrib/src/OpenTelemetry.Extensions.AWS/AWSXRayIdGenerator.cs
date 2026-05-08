@@ -112,7 +112,7 @@ public static class AWSXRayIdGenerator
         lock (RandLock)
         {
             NextBytes(bytes);
-            hexNumber = string.Concat(bytes.Select(x => x.ToString("x2", CultureInfo.InvariantCulture)).ToArray());
+            hexNumber = string.Concat(bytes.Select(x => x.ToString("x2", CultureInfo.InvariantCulture)));
             if (digits % 2 != 0)
             {
                 hexNumber += Next(16).ToString("x", CultureInfo.InvariantCulture);
@@ -127,11 +127,9 @@ public static class AWSXRayIdGenerator
     /// </summary>
     /// <param name="buffer">An array of bytes to contain random numbers.</param>
     private static void NextBytes(byte[] buffer)
-    {
 #pragma warning disable CA5394 // Do not use insecure randomness
-        Global.NextBytes(buffer);
+        => Global.NextBytes(buffer);
 #pragma warning restore CA5394 // Do not use insecure randomness
-    }
 
     /// <summary>
     /// Returns a non-negative random integer that is less than the specified maximum.
@@ -139,11 +137,9 @@ public static class AWSXRayIdGenerator
     /// <param name="maxValue">Max value of the random integer.</param>
     /// <returns>A 32-bit signed integer that is greater than or equal to 0, and less than maxValue.</returns>
     private static int Next(int maxValue)
-    {
 #pragma warning disable CA5394 // Do not use insecure randomness
-        return Global.Next(maxValue);
+        => Global.Next(maxValue);
 #pragma warning restore CA5394 // Do not use insecure randomness
-    }
 
     private static ActivitySamplingResult ComputeRootActivitySamplingResult(
         Activity activity,

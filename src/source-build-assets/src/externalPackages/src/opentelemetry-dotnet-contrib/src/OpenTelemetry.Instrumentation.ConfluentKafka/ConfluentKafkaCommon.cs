@@ -15,7 +15,9 @@ internal static class ConfluentKafkaCommon
     internal const string KafkaMessagingSystem = "kafka";
     internal const string PublishOperationName = "publish";
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string InstrumentationName = typeof(ConfluentKafkaCommon).Assembly.GetName().Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly string InstrumentationVersion = typeof(ConfluentKafkaCommon).Assembly.GetPackageVersion();
     internal static readonly ActivitySource ActivitySource = new(InstrumentationName, InstrumentationVersion);
     internal static readonly Meter Meter = new(InstrumentationName, InstrumentationVersion);

@@ -61,7 +61,7 @@ public static class TracerProviderBuilderExtensions
             return new EntityFrameworkInstrumentation(options);
         });
 
-        builder.AddSource(EntityFrameworkDiagnosticListener.ActivitySourceName);
+        builder.AddSource(EntityFrameworkDiagnosticListener.ActivitySource.Name);
 
         return builder;
     }

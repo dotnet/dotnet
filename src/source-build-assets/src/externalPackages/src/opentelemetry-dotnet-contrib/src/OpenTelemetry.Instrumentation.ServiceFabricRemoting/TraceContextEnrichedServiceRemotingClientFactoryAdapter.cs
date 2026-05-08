@@ -34,8 +34,8 @@ public class TraceContextEnrichedServiceRemotingClientFactoryAdapter : IServiceR
     /// </summary>
     public event EventHandler<CommunicationClientEventArgs<IServiceRemotingClient>> ClientConnected
     {
-        add { this.innerFactory.ClientConnected += value; }
-        remove { this.innerFactory.ClientConnected -= value; }
+        add => this.innerFactory.ClientConnected += value;
+        remove => this.innerFactory.ClientConnected -= value;
     }
 
     /// <summary>
@@ -43,8 +43,8 @@ public class TraceContextEnrichedServiceRemotingClientFactoryAdapter : IServiceR
     /// </summary>
     public event EventHandler<CommunicationClientEventArgs<IServiceRemotingClient>> ClientDisconnected
     {
-        add { this.innerFactory.ClientDisconnected += value; }
-        remove { this.innerFactory.ClientDisconnected -= value; }
+        add => this.innerFactory.ClientDisconnected += value;
+        remove => this.innerFactory.ClientDisconnected -= value;
     }
 
     /// <summary>
@@ -52,14 +52,12 @@ public class TraceContextEnrichedServiceRemotingClientFactoryAdapter : IServiceR
     /// </summary>
     /// <returns>A factory for creating the remoting message bodies.</returns>
     public IServiceRemotingMessageBodyFactory GetRemotingMessageBodyFactory()
-    {
-        return this.innerFactory.GetRemotingMessageBodyFactory();
-    }
+        => this.innerFactory.GetRemotingMessageBodyFactory();
 
     /// <inheritdoc/>
     public async Task<IServiceRemotingClient> GetClientAsync(Uri serviceUri, ServicePartitionKey partitionKey, TargetReplicaSelector targetReplicaSelector, string listenerName, OperationRetrySettings retrySettings, CancellationToken cancellationToken)
     {
-        IServiceRemotingClient serviceRemotingClient = await this.innerFactory.GetClientAsync(
+        var serviceRemotingClient = await this.innerFactory.GetClientAsync(
             serviceUri,
             partitionKey,
             targetReplicaSelector,
@@ -73,7 +71,7 @@ public class TraceContextEnrichedServiceRemotingClientFactoryAdapter : IServiceR
     /// <inheritdoc/>
     public async Task<IServiceRemotingClient> GetClientAsync(ResolvedServicePartition previousRsp, TargetReplicaSelector targetReplicaSelector, string listenerName, OperationRetrySettings retrySettings, CancellationToken cancellationToken)
     {
-        IServiceRemotingClient serviceRemotingClient = await this.innerFactory.GetClientAsync(
+        var serviceRemotingClient = await this.innerFactory.GetClientAsync(
             previousRsp,
             targetReplicaSelector,
             listenerName,
@@ -86,9 +84,8 @@ public class TraceContextEnrichedServiceRemotingClientFactoryAdapter : IServiceR
     /// <inheritdoc/>
     public Task<OperationRetryControl> ReportOperationExceptionAsync(IServiceRemotingClient client, ExceptionInformation exceptionInformation, OperationRetrySettings retrySettings, CancellationToken cancellationToken)
     {
-        IServiceRemotingClient innerClient = client;
-        TraceContextEnrichedServiceRemotingClientAdapter? clientAdapter = client as TraceContextEnrichedServiceRemotingClientAdapter;
-        if (clientAdapter != null)
+        var innerClient = client;
+        if (client is TraceContextEnrichedServiceRemotingClientAdapter clientAdapter)
         {
             innerClient = clientAdapter.InnerClient;
         }

@@ -1,9 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <PackageId>Microsoft.CodeAnalysis.PooledObjects</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>5.0.0-1.25277.114</PackageVersion>
     <AssemblyName>Microsoft.CodeAnalysis.PooledObjects</AssemblyName>
+    <Serviceable>true</Serviceable>
+    <Description>Package containing sources of Microsoft .NET Compiler Platform ("Roslyn") pooled objects.
+    
+
+      The source code included in this package is subject to arbitrary changes in future versions. 
+      Updating a reference to this package to a newer version of the package may require changes in the referencing project.
+      No compatibility guarantees are provided.
+    
+      More details at https://aka.ms/roslyn-packages
+      This package was built from the source at https://github.com/dotnet/dotnet/commit/ddf39a1b4690fbe23aea79c78da67004a5c31094.</Description>
+    <PackageProjectUrl>https://github.com/dotnet/roslyn</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Parser Scanner Lexer Emit CodeGeneration Metadata IL Compilation Scripting Syntax Semantics</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -12,6 +27,22 @@
     <ProjectReference Include="../../../../referencePackages/src/system.memory/4.5.5/System.Memory.4.5.5.csproj" />
     <ProjectReference Include="../../../../referencePackages/src/system.numerics.vectors/4.5.0/System.Numerics.Vectors.4.5.0.csproj" />
     <ProjectReference Include="../../../../referencePackages/src/system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build/Microsoft.CodeAnalysis.PooledObjects.targets" Pack="true" PackagePath="build" />
+    <None Include="contentFiles/cs/netstandard2.0/.editorconfig" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="None" />
+    <None Include="contentFiles/cs/netstandard2.0/ArrayBuilder.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ArrayBuilder.Enumerator.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ArrayBuilderExtensions.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/IPooled.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ObjectPool`1.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/PooledDelegates.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/PooledDictionary.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/PooledDisposer.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/PooledHashSet.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/PooledStringBuilder.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="ThirdPartyNotices.rtf" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>

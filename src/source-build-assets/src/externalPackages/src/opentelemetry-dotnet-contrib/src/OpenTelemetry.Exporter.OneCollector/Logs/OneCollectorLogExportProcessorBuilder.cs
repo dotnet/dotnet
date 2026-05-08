@@ -1,7 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -229,22 +228,20 @@ public sealed class OneCollectorLogExportProcessorBuilder
     internal BaseProcessor<LogRecord> BuildProcessor(
         IServiceProvider serviceProvider)
     {
-        Debug.Assert(serviceProvider != null, "serviceProvider was null");
-
         ServiceProvider? ownedServiceProvider = null;
         if (this.ownsServices)
         {
             ownedServiceProvider = this.services.BuildServiceProvider();
         }
 
-        var exporterOptions = (ownedServiceProvider ?? serviceProvider!).GetRequiredService<IOptionsMonitor<OneCollectorLogExporterOptions>>().Get(this.name);
-        var batchOptions = (ownedServiceProvider ?? serviceProvider!).GetRequiredService<IOptionsMonitor<BatchExportLogRecordProcessorOptions>>().Get(this.name);
+        var exporterOptions = (ownedServiceProvider ?? serviceProvider).GetRequiredService<IOptionsMonitor<OneCollectorLogExporterOptions>>().Get(this.name);
+        var batchOptions = (ownedServiceProvider ?? serviceProvider).GetRequiredService<IOptionsMonitor<BatchExportLogRecordProcessorOptions>>().Get(this.name);
 
         try
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope
             return new BatchLogRecordExportProcessor(
-                CreateExporter(this.name, serviceProvider!, exporterOptions, (ownedServiceProvider ?? serviceProvider!).GetServices<ConfigureOneCollectorExporter>()),
+                CreateExporter(this.name, serviceProvider, exporterOptions, (ownedServiceProvider ?? serviceProvider).GetServices<ConfigureOneCollectorExporter>()),
                 batchOptions.MaxQueueSize,
                 batchOptions.ScheduledDelayMilliseconds,
                 batchOptions.ExporterTimeoutMilliseconds,

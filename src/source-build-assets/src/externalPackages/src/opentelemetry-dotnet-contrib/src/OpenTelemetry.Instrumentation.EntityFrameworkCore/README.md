@@ -23,9 +23,9 @@ and collects traces about outgoing requests.
 > [Azure Cosmos DB](https://learn.microsoft.com/ef/core/providers/cosmos/).
 
 **Note: This component is based on the OpenTelemetry semantic conventions for
-[metrics](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/database-metrics.md)
+[metrics](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/database-metrics.md)
 and
-[traces](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/database-spans.md).
+[traces](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/database-spans.md).
 These conventions are
 [Experimental](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/document-status.md),
 and hence, this package is a
@@ -164,7 +164,7 @@ if your queries and/or environment are appropriate for enabling this option.
 
 `OTEL_DOTNET_EXPERIMENTAL_EFCORE_ENABLE_TRACE_DB_QUERY_PARAMETERS` is implicitly
 `false` by default. When set to `true`, the instrumentation will set
-[`db.query.parameter.<key>`](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/database-spans.md#span-definition)
+[`db.query.parameter.<key>`](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/database-spans.md#span-definition)
 attributes for each of the query parameters associated with a database command.
 
 ## Activity Duration calculation

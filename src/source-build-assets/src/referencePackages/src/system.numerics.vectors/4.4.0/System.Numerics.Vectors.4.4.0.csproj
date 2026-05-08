@@ -1,9 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>System.Numerics.Vectors</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>4.4.0</PackageVersion>
     <AssemblyName>System.Numerics.Vectors</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Description>Provides hardware-accelerated numeric types, suitable for high-performance processing and graphics applications.
+
+Commonly Used Types:
+System.Numerics.Matrix3x2
+System.Numerics.Matrix4x4
+System.Numerics.Plane
+System.Numerics.Quaternion
+System.Numerics.Vector2
+System.Numerics.Vector3
+System.Numerics.Vector4
+System.Numerics.Vector
+System.Numerics.Vector&lt;T&gt;
+ 
+8321c729934c0f8be754953439b88e6e1c120c24</Description>
+    <Title>System.Numerics.Vectors</Title>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+    <MinClientVersion>2.8.6</MinClientVersion>
   </PropertyGroup>
 
 </Project>

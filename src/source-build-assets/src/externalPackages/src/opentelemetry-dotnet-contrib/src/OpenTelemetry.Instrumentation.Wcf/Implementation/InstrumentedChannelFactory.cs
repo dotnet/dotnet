@@ -18,29 +18,19 @@ internal sealed class InstrumentedChannelFactory<TChannel> : InstrumentedChannel
     }
 
     TChannel IChannelFactory<TChannel>.CreateChannel(EndpointAddress to, Uri via)
-    {
-        return this.WrapChannel(this.Inner.CreateChannel(to, via));
-    }
+        => this.WrapChannel(this.Inner.CreateChannel(to, via));
 
     TChannel IChannelFactory<TChannel>.CreateChannel(EndpointAddress to)
-    {
-        return this.WrapChannel(this.Inner.CreateChannel(to));
-    }
+        => this.WrapChannel(this.Inner.CreateChannel(to));
 
     private TChannel WrapChannel(TChannel innerChannel)
     {
         Guard.ThrowIfNull(innerChannel);
 
-        if (typeof(TChannel) == typeof(IRequestChannel) || typeof(TChannel) == typeof(IRequestSessionChannel))
-        {
-            return (TChannel)(IRequestChannel)new InstrumentedRequestChannel((IRequestChannel)innerChannel!);
-        }
-
-        if (typeof(TChannel) == typeof(IDuplexChannel) || typeof(TChannel) == typeof(IDuplexSessionChannel))
-        {
-            return (TChannel)(IDuplexChannel)new InstrumentedDuplexChannel((IDuplexChannel)innerChannel!, this.binding.SendTimeout);
-        }
-
-        throw new NotImplementedException();
+        return typeof(TChannel) == typeof(IRequestChannel) || typeof(TChannel) == typeof(IRequestSessionChannel)
+            ? (TChannel)(IRequestChannel)new InstrumentedRequestChannel((IRequestChannel)innerChannel)
+            : typeof(TChannel) == typeof(IDuplexChannel) || typeof(TChannel) == typeof(IDuplexSessionChannel)
+            ? (TChannel)(IDuplexChannel)new InstrumentedDuplexChannel((IDuplexChannel)innerChannel, this.binding.SendTimeout)
+            : throw new NotImplementedException();
     }
 }

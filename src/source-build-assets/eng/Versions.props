@@ -14,6 +14,10 @@
 
   <!-- External package versions -->
   <PropertyGroup>
+    <!-- Update whenever the bootstrap version changes. Can't use the release version here
+         as external packages (which includes newtonsoft.json) build last. -->
+    <NewtonsoftJsonBootstrapVersion>13.0.4</NewtonsoftJsonBootstrapVersion>
+
     <Antlr4Version>4.13.1</Antlr4Version>
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
@@ -22,9 +26,9 @@
     <NewtonsoftJsonReleaseVersion>13.0.4</NewtonsoftJsonReleaseVersion>
     <VsSolutionPersistenceReleaseVersion>1.0.52</VsSolutionPersistenceReleaseVersion>
     <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
-    <OpenTelemetryDotNetReleaseVersion>1.15.1</OpenTelemetryDotNetReleaseVersion>
-    <OpenTelemetryDotNetContribHttpReleaseVersion>1.15.0</OpenTelemetryDotNetContribHttpReleaseVersion>
-    <OpenTelemetryDotNetContribRuntimeReleaseVersion>1.15.0</OpenTelemetryDotNetContribRuntimeReleaseVersion>
+    <OpenTelemetryDotNetReleaseVersion>1.15.3</OpenTelemetryDotNetReleaseVersion>
+    <OpenTelemetryDotNetContribHttpReleaseVersion>1.15.1</OpenTelemetryDotNetContribHttpReleaseVersion>
+    <OpenTelemetryDotNetContribRuntimeReleaseVersion>1.15.1</OpenTelemetryDotNetContribRuntimeReleaseVersion>
   </PropertyGroup>
 
   <PropertyGroup>

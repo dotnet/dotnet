@@ -34,19 +34,13 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
     public string? GroupId { get; internal set; }
 
     public void Dispose()
-    {
-        this.consumer.Dispose();
-    }
+        => this.consumer.Dispose();
 
     public int AddBrokers(string brokers)
-    {
-        return this.consumer.AddBrokers(brokers);
-    }
+        => this.consumer.AddBrokers(brokers);
 
     public void SetSaslCredentials(string username, string password)
-    {
-        this.consumer.SetSaslCredentials(username, password);
-    }
+        => this.consumer.SetSaslCredentials(username, password);
 
     public ConsumeResult<TKey, TValue>? Consume(int millisecondsTimeout)
     {
@@ -130,134 +124,81 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
     }
 
     public void Subscribe(IEnumerable<string> topics)
-    {
-        this.consumer.Subscribe(topics);
-    }
+        => this.consumer.Subscribe(topics);
 
     public void Subscribe(string topic)
-    {
-        this.consumer.Subscribe(topic);
-    }
+        => this.consumer.Subscribe(topic);
 
     public void Unsubscribe()
-    {
-        this.consumer.Unsubscribe();
-    }
+        => this.consumer.Unsubscribe();
 
     public void Assign(TopicPartition partition)
-    {
-        this.consumer.Assign(partition);
-    }
+        => this.consumer.Assign(partition);
 
     public void Assign(TopicPartitionOffset partition)
-    {
-        this.consumer.Assign(partition);
-    }
+        => this.consumer.Assign(partition);
 
     public void Assign(IEnumerable<TopicPartitionOffset> partitions)
-    {
-        this.consumer.Assign(partitions);
-    }
+        => this.consumer.Assign(partitions);
 
     public void Assign(IEnumerable<TopicPartition> partitions)
-    {
-        this.consumer.Assign(partitions);
-    }
+        => this.consumer.Assign(partitions);
 
     public void IncrementalAssign(IEnumerable<TopicPartitionOffset> partitions)
-    {
-        this.consumer.IncrementalAssign(partitions);
-    }
+        => this.consumer.IncrementalAssign(partitions);
 
     public void IncrementalAssign(IEnumerable<TopicPartition> partitions)
-    {
-        this.consumer.IncrementalAssign(partitions);
-    }
+        => this.consumer.IncrementalAssign(partitions);
 
     public void IncrementalUnassign(IEnumerable<TopicPartition> partitions)
-    {
-        this.consumer.IncrementalUnassign(partitions);
-    }
+        => this.consumer.IncrementalUnassign(partitions);
 
-    public void Unassign()
-    {
-        this.consumer.Unassign();
-    }
+    public void Unassign() => this.consumer.Unassign();
 
     public void StoreOffset(ConsumeResult<TKey, TValue> result)
-    {
-        this.consumer.StoreOffset(result);
-    }
+        => this.consumer.StoreOffset(result);
 
     public void StoreOffset(TopicPartitionOffset offset)
-    {
-        this.consumer.StoreOffset(offset);
-    }
+        => this.consumer.StoreOffset(offset);
 
     public List<TopicPartitionOffset> Commit()
-    {
-        return this.consumer.Commit();
-    }
+        => this.consumer.Commit();
 
     public void Commit(IEnumerable<TopicPartitionOffset> offsets)
-    {
-        this.consumer.Commit(offsets);
-    }
+        => this.consumer.Commit(offsets);
 
     public void Commit(ConsumeResult<TKey, TValue> result)
-    {
-        this.consumer.Commit(result);
-    }
+        => this.consumer.Commit(result);
 
     public void Seek(TopicPartitionOffset tpo)
-    {
-        this.consumer.Seek(tpo);
-    }
+        => this.consumer.Seek(tpo);
 
     public void Pause(IEnumerable<TopicPartition> partitions)
-    {
-        this.consumer.Pause(partitions);
-    }
+        => this.consumer.Pause(partitions);
 
     public void Resume(IEnumerable<TopicPartition> partitions)
-    {
-        this.consumer.Resume(partitions);
-    }
+        => this.consumer.Resume(partitions);
 
     public List<TopicPartitionOffset> Committed(TimeSpan timeout)
-    {
-        return this.consumer.Committed(timeout);
-    }
+        => this.consumer.Committed(timeout);
 
     public List<TopicPartitionOffset> Committed(IEnumerable<TopicPartition> partitions, TimeSpan timeout)
-    {
-        return this.consumer.Committed(partitions, timeout);
-    }
+        => this.consumer.Committed(partitions, timeout);
 
     public Offset Position(TopicPartition partition)
-    {
-        return this.consumer.Position(partition);
-    }
+        => this.consumer.Position(partition);
 
     public List<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout)
-    {
-        return this.consumer.OffsetsForTimes(timestampsToSearch, timeout);
-    }
+        => this.consumer.OffsetsForTimes(timestampsToSearch, timeout);
 
     public WatermarkOffsets GetWatermarkOffsets(TopicPartition topicPartition)
-    {
-        return this.consumer.GetWatermarkOffsets(topicPartition);
-    }
+        => this.consumer.GetWatermarkOffsets(topicPartition);
 
     public WatermarkOffsets QueryWatermarkOffsets(TopicPartition topicPartition, TimeSpan timeout)
-    {
-        return this.consumer.QueryWatermarkOffsets(topicPartition, timeout);
-    }
+        => this.consumer.QueryWatermarkOffsets(topicPartition, timeout);
 
     public void Close()
-    {
-        this.consumer.Close();
-    }
+        => this.consumer.Close();
 
     private static string FormatConsumeException(ConsumeException consumeException) =>
         $"ConsumeException: {consumeException.Error}";
@@ -349,9 +290,11 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
 
     private Activity? StartReceiveActivity(PropagationContext propagationContext, DateTimeOffset start, TopicPartitionOffset? topicPartitionOffset, object? key)
     {
+#pragma warning disable IDE0370 // Suppression is unnecessary
         var spanName = string.IsNullOrEmpty(topicPartitionOffset?.Topic)
             ? ConfluentKafkaCommon.ReceiveOperationName
             : string.Concat(topicPartitionOffset!.Topic, " ", ConfluentKafkaCommon.ReceiveOperationName);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
         ActivityLink[] activityLinks = propagationContext.ActivityContext.IsValid()
             ? [new ActivityLink(propagationContext.ActivityContext)]

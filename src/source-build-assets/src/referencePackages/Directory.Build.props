@@ -3,20 +3,18 @@
   <Import Project="..\..\Directory.Build.props" />
 
   <PropertyGroup>
-    <!-- Common properties for all Reference Packages -->
+    <Configuration>Release</Configuration>
     <DebugType>None</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Serviceable>true</Serviceable>
 
-    <SignAssembly>true</SignAssembly>
-    <PublicSign>true</PublicSign>
-    <FullAssemblySigningSupported Condition="('$(FullAssemblySigningSupported)' == '') and ('$(OS)' != 'Windows_NT')">false</FullAssemblySigningSupported>
-
+    <FullAssemblySigningSupported Condition="'$(FullAssemblySigningSupported)' == '' and '$(OS)' != 'Windows_NT'">false</FullAssemblySigningSupported>
     <StrongNameKeyId>Microsoft</StrongNameKeyId>
-
-    <SourceControlInformationFeatureSupported>false</SourceControlInformationFeatureSupported>
-    <Configuration>Release</Configuration>
     <EnableSourceLink>false</EnableSourceLink>
+    <SourceControlInformationFeatureSupported>false</SourceControlInformationFeatureSupported>
     <NuGetAudit>false</NuGetAudit>
 
     <NoStdLib>true</NoStdLib>
@@ -24,14 +22,8 @@
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
-
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <WarningsAsErrors></WarningsAsErrors>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    
-    <Nullable>Disable</Nullable>
-    <LangVersion>latest</LangVersion>
 
     <CommonSrc>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'common'))</CommonSrc>
 
@@ -52,7 +44,7 @@
     <!-- Don't warn on CS0649 - The field is never assigned to. -->
     <!-- Don't warn on CS3001, CS3002, CS3003, CS3008, CS3009 - Type is not CLS-compliant. -->
     <!-- Don't warn on CS0659 - Type overrides Object.Equals(object o) but does not override Object.GetHashCode(). -->
-    <NoWarn>$(NoWarn);NU1603,NU1605,NU5125,CS0109,CS0169,CS0618,CS0649,CS3001,CS3002,CS3003,CS3008,CS3009;CS0659</NoWarn>
+    <NoWarn>$(NoWarn);NU1603,NU1605,CS0109,CS0169,CS0618,CS0649,CS3001,CS3002,CS3003,CS3008,CS3009;CS0659</NoWarn>
 
     <!--
       Disable CS0108: generated source code is missing "new" when hiding inherited member.
@@ -70,23 +62,9 @@
     -->
     <NoWarn>$(NoWarn);CS0809</NoWarn>
 
-    <!--
-      Disable NU5130: some packages have intentional target framework mismatches between nuspec and
-      ref. One particular case is the 'net463' TFM. It's present in the packages on the nuget
-      gallery, but no targeting pack exists for 4.6.3, so we have trouble building it. We instead
-      build net462 and leave 'net463' in the nuspec, triggering this warning.
-
-      Discussion and more info: https://github.com/dotnet/source-build/issues/1615
-    -->
-    <NoWarn>$(NoWarn);NU5130</NoWarn>
-
-    <!-- Disable NU5128 -->
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
     <!-- Disable NU5131: unclear warning caused by ref-only (https://github.com/NuGet/Home/issues/8684) -->
     <NoWarn>$(NoWarn);NU5131</NoWarn>
-    <!-- Disable NU5048: continue to use deprecated 'PackageIconUrl'/'iconUrl' for now. -->
-    <NoWarn>$(NoWarn);NU5048</NoWarn>
-    
+
     <!--
       Don't warn on CS8632 - The annotation for nullable reference types should only be used in code within a ‘#nullable’ annotations context.
       The generated APIs may contain null annotated code, but we disable nullable project wide 

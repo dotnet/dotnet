@@ -55,7 +55,9 @@ internal abstract class CommonSchemaJsonSerializer<T> : ISerializer<T>
         {
             jsonSerializerState.BeginItem();
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
             this.SerializeItemToJson(resource, item!, jsonSerializerState);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
             var currentItemSizeInBytes = writer.BytesCommitted + writer.BytesPending + 1;
 
@@ -105,9 +107,7 @@ internal abstract class CommonSchemaJsonSerializer<T> : ISerializer<T>
     }
 
     protected static bool AttributeKeyStartWithExtensionPrefix(string attributeKey)
-    {
-        return attributeKey.StartsWith("ext.", StringComparison.OrdinalIgnoreCase);
-    }
+        => attributeKey.StartsWith("ext.", StringComparison.OrdinalIgnoreCase);
 
     protected static void SerializeResourceToJsonInsideCurrentObject(Resource resource, CommonSchemaJsonSerializationState serializationState)
     {

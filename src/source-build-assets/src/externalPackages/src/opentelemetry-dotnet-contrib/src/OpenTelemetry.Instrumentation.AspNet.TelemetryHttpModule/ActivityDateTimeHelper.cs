@@ -13,9 +13,9 @@ namespace OpenTelemetry.Instrumentation.AspNet;
 
 internal static class ActivityDateTimeHelper
 {
-#pragma warning disable CA1823 // suppress unused field warning, as it's used to keep the timer alive
+#pragma warning disable CA1823, IDE0052 // suppress unused field warning, as it's used to keep the timer alive
     private static readonly Timer SyncTimeUpdater = InitializeSyncTimer();
-#pragma warning restore CA1823
+#pragma warning restore CA1823, IDE0052
     private static readonly double TickFrequency = (double)TimeSpan.TicksPerSecond / Stopwatch.Frequency;
 
     private static TimeSync timeSync = new();
@@ -32,7 +32,7 @@ internal static class ActivityDateTimeHelper
         var tmp = timeSync;
 
         // Timer ticks need to be converted to DateTime ticks
-        long dateTimeTicksDiff = (long)((Stopwatch.GetTimestamp() - tmp.SyncStopwatchTicks) * TickFrequency);
+        var dateTimeTicksDiff = (long)((Stopwatch.GetTimestamp() - tmp.SyncStopwatchTicks) * TickFrequency);
 
         // DateTime.AddSeconds (or Milliseconds) rounds value to 1 ms, use AddTicks to prevent it
         return tmp.SyncUtcNow.AddTicks(dateTimeTicksDiff);
@@ -51,7 +51,7 @@ internal static class ActivityDateTimeHelper
         Timer timer;
 
         // Don't capture the current ExecutionContext and its AsyncLocals onto the timer causing them to live forever
-        bool restoreFlow = false;
+        var restoreFlow = false;
         try
         {
             if (!ExecutionContext.IsFlowSuppressed())

@@ -20,11 +20,11 @@ internal sealed class CallbackManager<T> : IDisposable
         lock (this.lockObject)
         {
 #if NET
-            ObjectDisposedException.ThrowIf(this.disposed, nameof(CallbackManager<T>));
+            ObjectDisposedException.ThrowIf(this.disposed, nameof(CallbackManager<>));
 #else
             if (this.disposed)
             {
-                throw new ObjectDisposedException(nameof(CallbackManager<T>));
+                throw new ObjectDisposedException(nameof(CallbackManager<>));
             }
 #endif
 
@@ -55,14 +55,10 @@ internal sealed class CallbackManager<T> : IDisposable
 
         public CallbackManagerRegistration(Action disposeAction)
         {
-            Debug.Assert(disposeAction != null, "disposeAction was null");
-
-            this.disposeAction = disposeAction!;
+            this.disposeAction = disposeAction;
         }
 
         public void Dispose()
-        {
-            this.disposeAction();
-        }
+            => this.disposeAction();
     }
 }

@@ -56,7 +56,9 @@ internal sealed partial class ContainerDetector : IResourceDetector
     {
         var containerId = this.ExtractContainerId(path, cgroupVersion);
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
         return string.IsNullOrEmpty(containerId) ? Resource.Empty : new Resource([new(ContainerSemanticConventions.AttributeContainerId, containerId!)]);
+#pragma warning restore IDE0370 // Suppression is unnecessary
     }
 
     /// <summary>
@@ -96,7 +98,9 @@ internal sealed partial class ContainerDetector : IResourceDetector
             containerId = match.Groups[1].Value;
         }
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
         return string.IsNullOrEmpty(containerId) || !EncodingUtils.IsValidHexString(containerId!) ? null : containerId;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     }
 
 #if NET

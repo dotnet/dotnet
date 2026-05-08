@@ -43,8 +43,7 @@ public static class MeterProviderBuilderExtensions
         var options = new RuntimeInstrumentationOptions();
         configure?.Invoke(options);
 
-        var instrumentation = new RuntimeMetrics(options);
         builder.AddMeter(RuntimeMetrics.MeterInstance.Name);
-        return builder.AddInstrumentation(() => instrumentation);
+        return builder.AddInstrumentation(() => new RuntimeMetrics(options));
     }
 }

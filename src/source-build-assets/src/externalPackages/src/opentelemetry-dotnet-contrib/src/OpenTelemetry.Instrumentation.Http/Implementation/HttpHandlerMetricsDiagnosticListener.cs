@@ -18,8 +18,10 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
     internal const string OnStopEvent = "System.Net.Http.HttpRequestOut.Stop";
 
     internal static readonly AssemblyName AssemblyName = typeof(HttpClientMetrics).Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string MeterName = AssemblyName.Name!;
     internal static readonly string MeterVersion = AssemblyName.Version!.ToString();
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly Meter Meter = new(MeterName, MeterVersion);
     private const string OnUnhandledExceptionEvent = "System.Net.Http.Exception";
     private static readonly Histogram<double> HttpClientRequestDuration = Meter.CreateHistogram(
@@ -68,7 +70,7 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
                 tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpResponseStatusCode, TelemetryHelper.GetBoxedStatusCode(response.StatusCode)));
 
                 // Set error.type to status code for failed requests
-                // https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-spans.md#common-attributes
+                // https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md#http-client-span
                 if (SpanHelper.ResolveActivityStatusForHttpStatusCode(ActivityKind.Client, (int)response.StatusCode) == ActivityStatusCode.Error)
                 {
                     tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeErrorType, TelemetryHelper.GetStatusCodeString(response.StatusCode)));
@@ -84,7 +86,7 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
 #endif
 
                 // Set error.type to exception type if response was not received.
-                // https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-spans.md#common-attributes
+                // https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md#http-client-span
                 if (errorType != null)
                 {
                     tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeErrorType, errorType));

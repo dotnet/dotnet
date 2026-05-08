@@ -6,10 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
-#if NET
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Routing;
-#endif
 using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
 
@@ -23,8 +19,10 @@ internal sealed class HttpInMetricsListener : ListenerHandler
     internal const string OnUnhandledDiagnosticsExceptionEvent = "Microsoft.AspNetCore.Diagnostics.UnhandledException";
 
     internal static readonly AssemblyName AssemblyName = typeof(HttpInListener).Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string InstrumentationName = AssemblyName.Name!;
     internal static readonly string InstrumentationVersion = AssemblyName.Version!.ToString();
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly Meter Meter = new(InstrumentationName, InstrumentationVersion);
 
     private const string OnStopEvent = "Microsoft.AspNetCore.Hosting.HttpRequestIn.Stop";
@@ -94,11 +92,10 @@ internal sealed class HttpInMetricsListener : ListenerHandler
 
 #if NET
         // Check the exception handler feature first in case the endpoint was overwritten
-        var route = (context.Features.Get<IExceptionHandlerPathFeature>()?.Endpoint as RouteEndpoint ??
-                     context.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText;
-        if (!string.IsNullOrEmpty(route))
+        var routePattern = context.GetHttpRoute();
+        if (!string.IsNullOrEmpty(routePattern))
         {
-            tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpRoute, route));
+            tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpRoute, routePattern));
         }
 #endif
         if (context.Items.TryGetValue(ErrorTypeHttpContextItemsKey, out var errorType))

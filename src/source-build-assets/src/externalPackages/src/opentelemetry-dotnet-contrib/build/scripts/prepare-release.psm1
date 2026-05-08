@@ -202,6 +202,9 @@ function CreateReleaseTagAndPostNoticeOnPullRequest {
 
   gh pr unlock $pullRequestNumber
 
+  # Avoid race condition between the PR being unlocked and being able to post a comment
+  sleep 10
+
   $body =
 @"
 I just pushed the [$tag](https://github.com/$gitRepository/releases/tag/$tag) tag.
@@ -358,10 +361,13 @@ function TagCodeOwnersOnOrRunWorkflowForRequestReleaseIssue {
 
   $componentOwners = $null
 
-  FindComponentOwners `
+  if ((FindComponentOwners `
       -component $component `
       -issueNumber $issueNumber `
-      -componentOwners ([ref]$componentOwners)
+      -componentOwners ([ref]$componentOwners)) -eq $false)
+  {
+    return
+  }
 
   $requestedByUserPermission = gh api "repos/$gitRepository/collaborators/$requestedByUserName/permission" | ConvertFrom-Json
 

@@ -11,7 +11,9 @@ internal sealed class QuartzDiagnosticListener : ListenerHandler
 {
     internal static readonly Assembly Assembly = typeof(QuartzDiagnosticListener).Assembly;
     internal static readonly AssemblyName AssemblyName = Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string ActivitySourceName = AssemblyName.Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Assembly.GetPackageVersion());
     internal readonly PropertyFetcher<object> JobDetailsPropertyFetcher = new("JobDetail");
 
@@ -48,25 +50,19 @@ internal sealed class QuartzDiagnosticListener : ListenerHandler
         }
     }
 
-    private static string GetDisplayName(Activity activity)
+    private static string GetDisplayName(Activity activity) => activity.OperationName switch
     {
-        return activity.OperationName switch
-        {
-            OperationName.Job.Execute => $"execute {GetTag(activity.Tags, TagName.JobName)}",
-            OperationName.Job.Veto => $"veto {GetTag(activity.Tags, TagName.JobName)}",
-            _ => activity.DisplayName,
-        };
-    }
+        OperationName.Job.Execute => $"execute {GetTag(activity.Tags, TagName.JobName)}",
+        OperationName.Job.Veto => $"veto {GetTag(activity.Tags, TagName.JobName)}",
+        _ => activity.DisplayName,
+    };
 
-    private static ActivityKind GetActivityKind(Activity activity)
+    private static ActivityKind GetActivityKind(Activity activity) => activity.OperationName switch
     {
-        return activity.OperationName switch
-        {
-            OperationName.Job.Execute => ActivityKind.Internal,
-            OperationName.Job.Veto => ActivityKind.Internal,
-            _ => activity.Kind,
-        };
-    }
+        OperationName.Job.Execute => ActivityKind.Internal,
+        OperationName.Job.Veto => ActivityKind.Internal,
+        _ => activity.Kind,
+    };
 
     private static string? GetTag(IEnumerable<KeyValuePair<string, string?>> tags, string tagName)
     {
