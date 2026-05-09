@@ -743,6 +743,7 @@
       <AbsoluteSymbolPath Condition="'@(AbsoluteSymbolPath)' != ''">
         <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
       </AbsoluteSymbolPath>
+      <StagedSymbolPath Include="$(RepoArtifactsPdbArtifactsDir)**\*.pdb" />
     </ItemGroup>
 
     <MakeDir Directories="$(IntermediateSymbolsRepoDir)" />
@@ -750,6 +751,13 @@
     <Copy
       SourceFiles="@(AbsoluteSymbolPath)"
       DestinationFolder="$(IntermediateSymbolsRepoDir)%(RecursiveDir)"
+      SkipUnchangedFiles="true"
+      UseHardlinksIfPossible="true" />
+
+    <!-- Include symbol PDBs that repos stage explicitly during publish; these are not always under artifacts\obj. -->
+    <Copy
+      SourceFiles="@(StagedSymbolPath)"
+      DestinationFolder="$(IntermediateSymbolsRepoDir)staged\%(RecursiveDir)"
       SkipUnchangedFiles="true"
       UseHardlinksIfPossible="true" />
   </Target>
