@@ -120,6 +120,24 @@
     <RemoveDir Directories="@(_SymbolDirsToDelete)" Condition="'@(_SymbolDirsToDelete)' != ''" />
   </Target>
 
+  <Target Name="ExtractPreviouslySourceBuiltSymbols">
+    <ItemGroup>
+      <_PreviouslySourceBuiltSymbolsAllTarball Include="$(PreviouslySourceBuiltPackagesPath)assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_PreviouslySourceBuiltSymbolsDir>$(IntermediateSymbolsRootDir)previously-source-built</_PreviouslySourceBuiltSymbolsDir>
+      <_PreviouslySourceBuiltSymbolsTarballPath>@(_PreviouslySourceBuiltSymbolsAllTarball->'%(FullPath)')</_PreviouslySourceBuiltSymbolsTarballPath>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_PreviouslySourceBuiltSymbolsDir)" Condition="'@(_PreviouslySourceBuiltSymbolsAllTarball)' != ''" />
+
+    <!-- Extract all symbols from the previously source-built symbols tarball so reused packages can be matched too. -->
+    <Exec Command="tar -xzf $(_PreviouslySourceBuiltSymbolsTarballPath)"
+          WorkingDirectory="$(_PreviouslySourceBuiltSymbolsDir)"
+          Condition="'@(_PreviouslySourceBuiltSymbolsAllTarball)' != ''" />
+  </Target>
+
   <!--
     Prepares the source built artifacts produced from the 1xx feature band so that they can be used in the current build.
     There are two possible sources for these artifacts:
@@ -152,9 +170,10 @@
   </Target>
 
   <Target Name="UnpackTarballs"
-          DependsOnTargets="UnpackSourceBuiltArtifactsArchive;
-                            UnpackSourceBuiltPrebuiltsArchive;
-                            PrepareSharedComponents" />
+           DependsOnTargets="UnpackSourceBuiltArtifactsArchive;
+                             ExtractPreviouslySourceBuiltSymbols;
+                             UnpackSourceBuiltPrebuiltsArchive;
+                             PrepareSharedComponents" />
 
   <!-- Build the custom msbuild sdk resolver. -->
   <Target Name="BuildMSBuildSdkResolver"
