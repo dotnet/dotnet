@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="command-line-api" />
   </ItemGroup>
 
