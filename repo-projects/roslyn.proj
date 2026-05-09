@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="aspnetcore" />
+    <RepositoryReference Include="aspnetcore" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <RepositoryReference Include="command-line-api" />
   </ItemGroup>
 
