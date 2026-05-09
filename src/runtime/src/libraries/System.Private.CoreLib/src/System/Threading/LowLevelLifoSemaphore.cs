@@ -23,24 +23,33 @@ namespace System.Threading
         private readonly int _maxSpinCount;
         private readonly Action _onWait;
 
-        // When we need to block threads we use a linked list of thread blockers.
+        // When we need to block threads we use a linked list of per-thread blockers.
         // When we need to wake a worker, we pop the topmost blocker and release it.
         private sealed class LifoWaitNode : LowLevelThreadBlocker
         {
             internal LifoWaitNode? _next;
         }
 
+        [ThreadStatic]
+        private static LifoWaitNode? t_blocker;
+
         private readonly LowLevelLock _blockerStackLock = new LowLevelLock();
         private LifoWaitNode? _blockerStack;
 
         // Sometimes due to races we may see nonzero waiter count, but no blockers to wake.
-        // That happens if a thread that added itself to waiter count, has not yet blocked itself.
-        // In such case we increment _pendingSignals and the waiter will simply
+        // That happens if threads that added themselves to waiter count, have not yet blocked themselves.
+        // In such case we increment _racingUnblocks and the waiter will simply
         // decrement the counter and return without blocking.
-        private int _pendingSignals;
+        private int _racingUnblocks;
 
-        [ThreadStatic]
-        private static LifoWaitNode? t_blocker;
+        // If a _blockerStackLock is locked by other thread, like someone is inserting itself into blocker list,
+        // we cannot proceed with a wake, but we do not want to wait while releasing, thus we do it in two-stages:
+        // - we register an intent to wake, then
+        // - try waking and if _blockerStackLock is locked the waking becomes
+        //   a responsibility of the thread that holds the lock.
+        // The main goal here is that the threads who release other threads do not get themselves blocked as
+        // the releasers are the hot threads that do the actual work (as opposed to threads who are parking/unparking).
+        private int _pendingWake;
 
         public LowLevelLifoSemaphore(int maximumSignalCount, Action onWait)
         {
@@ -86,6 +95,7 @@ namespace System.Threading
             return WaitSlow(timeoutMs);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private bool WaitSlow(int timeoutMs)
         {
             int spinsRemaining = Environment.IsSingleProcessor ? 0 : _maxSpinCount;
@@ -129,26 +139,36 @@ namespace System.Threading
             return WaitAsWaiter(timeoutMs);
         }
 
+        // If we have signals and have waiters, we need to make sure at least one is waking.
+        private static bool HasWaitersToWake(Counts counts) =>
+            counts.SignalCount > 0 &&
+            counts.WaiterCount > 0 &&
+            counts.CountOfWaitersSignaledToWake == 0;
+
         private void MaybeWakeWaiters(Counts counts)
         {
-            // Check if waiters need to be woken
-            uint collisionCount = 0;
-            while (true)
+            if (!HasWaitersToWake(counts))
             {
-                // Determine how many waiters we can wake.
-                // The number of wakes should not be more than the signal count, not more than waiter count and discount any pending wakes.
-                int countOfWaitersToWake = (int)Math.Min(counts.SignalCount, counts.WaiterCount) - counts.CountOfWaitersSignaledToWake;
-                if (countOfWaitersToWake <= 0)
-                {
-                    // No waiters to wake. This is the most common case.
-                    break;
-                }
+                // No waiters to wake. This is the most common case.
+                return;
+            }
 
-                // Wake one waiter. If it finds work it will ask for workers and that can wake more waiters if spinners
-                // do not consume the additional signals.
-                // NB: It is rare to have > 1 signal. That only happens when the count of desired workers had a forced change.
-                // We would prefer that extra signals be consumed by spinners thus we release waiters one by one.
-                countOfWaitersToWake = 1;
+            MaybeWakeWaitersSlow(counts);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void MaybeWakeWaitersSlow(Counts counts)
+        {
+            Debug.Assert(HasWaitersToWake(counts));
+
+            uint collisionCount = 0;
+            do
+            {
+                // We wake one waiter at a time. If it finds work it will ask for workers and that can wake more waiters
+                // if other workers do not consume the additional signals.
+                // It is generally unusual to have > 1 signal. That only happens when the count of desired workers had a forced change.
+                // In any case, we would prefer that extra signals be consumed by active workers, but must guarantee that signals
+                // are consumed eventually thus we release waiters one by one.
                 if (counts.CountOfWaitersSignaledToWake > 0)
                 {
                     // A waiter is already waking up.
@@ -156,16 +176,12 @@ namespace System.Threading
                 }
 
                 Counts newCounts = counts;
-                newCounts.AddCountOfWaitersSignaledToWake((uint)countOfWaitersToWake);
+                newCounts.AddCountOfWaitersSignaledToWake(1);
+                Debug.Assert(newCounts.CountOfWaitersSignaledToWake == 1);
                 Counts countsBeforeUpdate = _separated._counts.InterlockedCompareExchange(newCounts, counts);
                 if (countsBeforeUpdate == counts)
                 {
-                    Debug.Assert(_maximumSignalCount - counts.SignalCount >= 1);
-                    if (countOfWaitersToWake > 0)
-                    {
-                        ReleaseCore(countOfWaitersToWake);
-                    }
-
+                    WakeOne();
                     break;
                 }
 
@@ -174,6 +190,7 @@ namespace System.Threading
 
                 counts = _separated._counts;
             }
+            while (HasWaitersToWake(counts));
         }
 
         private bool WaitAsWaiter(int timeoutMs)
@@ -218,7 +235,7 @@ namespace System.Threading
                     Debug.Assert(counts.WaiterCount != 0);
 
                     // we consumed a wake, decrement the count
-                    Debug.Assert(counts.CountOfWaitersSignaledToWake != 0);
+                    Debug.Assert(counts.CountOfWaitersSignaledToWake == 1);
                     newCounts.DecrementCountOfWaitersSignaledToWake();
 
                     // If there is a signal, try claiming it and stop waiting.
@@ -263,15 +280,24 @@ namespace System.Threading
             LifoWaitNode? blocker = t_blocker;
             if (blocker == null)
             {
-                t_blocker = blocker = new LifoWaitNode();
+                try
+                {
+                    t_blocker = blocker = new LifoWaitNode();
+                }
+                catch (OutOfMemoryException)
+                {
+                    // Treat OOM as a timeout.
+                    // The thread will try to exit.
+                    return false;
+                }
             }
 
             _blockerStackLock.Acquire();
-            if (_pendingSignals != 0)
+            if (_racingUnblocks != 0)
             {
                 Debug.Assert(_blockerStack == null);
-                Debug.Assert(_pendingSignals > 0);
-                _pendingSignals--;
+                Debug.Assert(_racingUnblocks > 0);
+                _racingUnblocks--;
                 blocker = null;
             }
             else
@@ -282,8 +308,8 @@ namespace System.Threading
 
             _blockerStackLock.Release();
 
-            // LowLevelLock release is a full fence thus ordinary read of _pendingWakes is ok
-            if (_pendingWakes > 0)
+            // LowLevelLock release is a full fence thus ordinary read of _pendingWake is ok
+            if (_pendingWake > 0)
                 WakeOneCore();
 
             if (blocker != null)
@@ -308,28 +334,11 @@ namespace System.Threading
             return true;
         }
 
-        private void ReleaseCore(int count)
-        {
-            Debug.Assert(count > 0);
-
-            for (int i = 0; i < count; i++)
-            {
-                WakeOne();
-            }
-        }
-
-        // If a _blockerStackLock is locked by other thread (i.e. someone is parking),
-        // we cannot proceed with a wake, but we do not want to wait,
-        // thus we do it in two-stages - we register an intent to wake, then try waking
-        // and if _blockerStackLock is locked the waking becomes a responsibility
-        // of the thread that holds the lock.
-        // The main goal here is that the threads who release other threads do not get blocked themselves as
-        // the releasers are the threads who do the actual work (as opposed to threads who are parking/unparking).
-        private int _pendingWakes;
-
         private void WakeOne()
         {
-            Interlocked.Increment(ref _pendingWakes);
+            // must use Interlocked as assignment must happen before trying to acquire the _blockerStackLock
+            int origWake = Interlocked.Exchange(ref _pendingWake, 1);
+            Debug.Assert(origWake == 0);
             WakeOneCore();
         }
 
@@ -342,29 +351,34 @@ namespace System.Threading
             {
                 if (!_blockerStackLock.TryAcquire())
                 {
-                    // The lock holder will pick up _pendingWakes on release.
-                    // NOTE: both incrementing _pendingWakes and releasing the lock are done via CAS,
-                    // thus the holder is guaranteed to observe the wake that it is blocking.
+                    // The lock holder will pick up _pendingWake on release.
+                    // NOTE: both setting _pendingWake and releasing the lock are done via full fence atomic
+                    // operations, thus the holder is guaranteed to observe the wake that it is blocking.
                     return;
                 }
 
-                if (_pendingWakes == 0)
+                if (_pendingWake == 0)
                 {
                     _blockerStackLock.Release();
 
                     // Loop: handle any wakes that arrived while we were holding the lock
                     //       it is highly unlikely, but not impossible.
                     //
-                    // LowLevelLock release is a full fence thus ordinary read of _pendingWakes is ok
-                    if (_pendingWakes > 0)
+                    // LowLevelLock release is a full fence thus ordinary read of _pendingWake is ok
+                    if (_pendingWake != 0)
                         continue;
 
                     // no pending wakes
                     return;
                 }
 
-                int wakes = Interlocked.Decrement(ref _pendingWakes);
-                Debug.Assert(wakes >= 0);
+                // We support only one pending wake at a time and this is the only place when we clear.
+                // We are also holding the _blockerStackLock and whoever we are unparking cannot acknowledge
+                // the wake while we are holding the lock.
+                // Until the wake is acknowledged _pendingWake cannot change by any thread except the current.
+                // Therefore we can use an ordinary --
+                Debug.Assert(_pendingWake == 1);
+                _pendingWake--;
 
                 LifoWaitNode? top = _blockerStack;
                 if (top != null)
@@ -374,27 +388,22 @@ namespace System.Threading
                 }
                 else
                 {
-                    _pendingSignals++;
-                    Debug.Assert(_pendingSignals != ushort.MaxValue);
+                    _racingUnblocks++;
+                    Debug.Assert(_racingUnblocks != ushort.MaxValue);
                 }
 
+                // no new wakes can be pended while we are holding the lock for the purpose of
+                // clearing an existing pending wake.
+                // (thus we do not check _pendingWake after releasing the lock in this case)
+                Debug.Assert(_pendingWake == 0);
                 _blockerStackLock.Release();
-
-                // Loop: handle any wakes that arrived while we were holding the lock
-                //       it is highly unlikely, but not impossible.
-                //
-                // CONSIDER: actually it is impossible if we allow only one wake at a time.
-                // Once one-wake policy is settled, we can rely on that and also make _pendingWakes
-                // a two-state _pendingWake. (i.e. Interlocked.Decrement above might be just "--")
-                bool noPendingWakes = _pendingWakes == 0;
 
                 if (top != null)
                 {
                     top.WakeOne();
                 }
 
-                if (noPendingWakes)
-                    return;
+                return;
             }
         }
 
@@ -429,8 +438,8 @@ namespace System.Threading
 
             _blockerStackLock.Release();
 
-            // LowLevelLock release is a full fence thus ordinary read of _pendingWakes is ok
-            if (_pendingWakes > 0)
+            // LowLevelLock release is a full fence thus ordinary read of _pendingWake is ok
+            if (_pendingWake > 0)
                 WakeOneCore();
 
             return removed;
