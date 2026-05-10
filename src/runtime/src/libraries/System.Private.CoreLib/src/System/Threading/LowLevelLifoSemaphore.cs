@@ -95,7 +95,6 @@ namespace System.Threading
             return WaitSlow(timeoutMs);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private bool WaitSlow(int timeoutMs)
         {
             int spinsRemaining = Environment.IsSingleProcessor ? 0 : _maxSpinCount;
@@ -134,18 +133,23 @@ namespace System.Threading
             // Perhaps the current thread will be such waiter, but we should still
             // go through wait/wake routine (vs. just claiming the signal) as the
             // caller wants to park the thread.
-            MaybeWakeWaiters(counts);
+            MaybeWakeWaiter(counts);
 
             return WaitAsWaiter(timeoutMs);
         }
 
         // If we have signals and have waiters, we need to make sure at least one is waking.
+        // We wake one waiter at a time. If it finds work it will ask for workers and that can wake more waiters
+        // if other workers do not consume the additional signals.
+        // It is generally unusual to have > 1 signal. That only happens when the count of desired workers had a forced change.
+        // In any case, we would prefer that extra signals be consumed by active workers, but must guarantee that signals
+        // are consumed eventually thus we release waiters one by one.
         private static bool HasWaitersToWake(Counts counts) =>
+            counts.CountOfWaitersSignaledToWake == 0 &&
             counts.SignalCount > 0 &&
-            counts.WaiterCount > 0 &&
-            counts.CountOfWaitersSignaledToWake == 0;
+            counts.WaiterCount > 0;
 
-        private void MaybeWakeWaiters(Counts counts)
+        private void MaybeWakeWaiter(Counts counts)
         {
             if (!HasWaitersToWake(counts))
             {
@@ -153,28 +157,17 @@ namespace System.Threading
                 return;
             }
 
-            MaybeWakeWaitersSlow(counts);
+            MaybeWakeWaiterSlow(counts);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void MaybeWakeWaitersSlow(Counts counts)
+        private void MaybeWakeWaiterSlow(Counts counts)
         {
             Debug.Assert(HasWaitersToWake(counts));
 
             uint collisionCount = 0;
             do
             {
-                // We wake one waiter at a time. If it finds work it will ask for workers and that can wake more waiters
-                // if other workers do not consume the additional signals.
-                // It is generally unusual to have > 1 signal. That only happens when the count of desired workers had a forced change.
-                // In any case, we would prefer that extra signals be consumed by active workers, but must guarantee that signals
-                // are consumed eventually thus we release waiters one by one.
-                if (counts.CountOfWaitersSignaledToWake > 0)
-                {
-                    // A waiter is already waking up.
-                    break;
-                }
-
                 Counts newCounts = counts;
                 newCounts.AddCountOfWaitersSignaledToWake(1);
                 Debug.Assert(newCounts.CountOfWaitersSignaledToWake == 1);
@@ -270,7 +263,7 @@ namespace System.Threading
         {
             // Increment signal count. This enables one-shot acquire.
             Counts counts = _separated._counts.InterlockedIncrementSignalCount();
-            MaybeWakeWaiters(counts);
+            MaybeWakeWaiter(counts);
         }
 
         private bool Block(int timeoutMs)
@@ -372,7 +365,7 @@ namespace System.Threading
                     return;
                 }
 
-                // We support only one pending wake at a time and this is the only place when we clear.
+                // We support only one pending wake at a time and this is the only place when we clear it.
                 // We are also holding the _blockerStackLock and whoever we are unparking cannot acknowledge
                 // the wake while we are holding the lock.
                 // Until the wake is acknowledged _pendingWake cannot change by any thread except the current.
@@ -392,9 +385,9 @@ namespace System.Threading
                     Debug.Assert(_racingUnblocks != ushort.MaxValue);
                 }
 
-                // no new wakes can be pended while we are holding the lock for the purpose of
+                // No new wakes can be pended while we are holding the lock for the purpose of
                 // clearing an existing pending wake.
-                // (thus we do not check _pendingWake after releasing the lock in this case)
+                // Thus we do not check _pendingWake after releasing the lock in this case.
                 Debug.Assert(_pendingWake == 0);
                 _blockerStackLock.Release();
 
