@@ -10,18 +10,21 @@ using Microsoft.SignCheck.Logging;
 
 namespace Microsoft.SignCheck.Verification
 {
-    public class TarVerifier : ArchiveVerifier
+    public class TarVerifier : PgpVerifier
     {
         public TarVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension) : base(log, exclusions, options, fileExtension)
         {
             if (fileExtension != ".tar" && fileExtension != ".gz" && fileExtension != ".tgz")
             {
-                throw new ArgumentException("fileExtension must be .tar or .gz");
+                throw new ArgumentException("fileExtension must be .tar, .gz, or .tgz");
             }
         }
 
         public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
-            => VerifyUnsupportedFileType(path, parent, virtualPath);
+            => VerifyDetachedSignature(path, parent, virtualPath);
+
+        protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string path, string tempDir)
+            => GetDetachedSignatureDocumentAndSignableContent(path, tempDir);
 
         protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
         {

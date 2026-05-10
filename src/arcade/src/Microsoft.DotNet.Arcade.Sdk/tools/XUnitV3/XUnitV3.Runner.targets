@@ -22,7 +22,7 @@
 
       <_TestRunner>%(TestToRun.RunCommand)</_TestRunner>
       <_TestRunnerArgs Condition="'$(UseMicrosoftTestingPlatformRunner)' != 'true'">%(TestToRun.RunArguments) $(_TestRunnerAdditionalArguments) -xml "%(TestToRun.ResultsXmlPath)" -html "%(TestToRun.ResultsHtmlPath)" -trx "%(TestToRun.ResultsTrxPath)"</_TestRunnerArgs>
-      <_TestRunnerArgs Condition="'$(UseMicrosoftTestingPlatformRunner)' == 'true'">%(TestToRun.RunArguments) $(_TestRunnerAdditionalArguments) --results-directory "$(_TestResultDirectory)" --report-xunit --report-xunit-filename "$(_TestResultXmlFileName)" --report-xunit-html --report-xunit-html-filename "$(_TestResultHtmlFileName)" --report-trx --report-trx-filename "$(_TestResultTrxFileName)"</_TestRunnerArgs>
+      <_TestRunnerArgs Condition="'$(UseMicrosoftTestingPlatformRunner)' == 'true'">%(TestToRun.RunArguments) $(_TestRunnerAdditionalArguments) --results-directory "$(_TestResultDirectory)" --report-xunit-xml --report-xunit-xml-filename "$(_TestResultXmlFileName)" --report-xunit-html --report-xunit-html-filename "$(_TestResultHtmlFileName)" --report-trx --report-trx-filename "$(_TestResultTrxFileName)"</_TestRunnerArgs>
 
       <TestDotNetRoot Condition="'$(TestDotNetRoot)' == ''">$(DotNetRoot)</TestDotNetRoot>
     </PropertyGroup>
