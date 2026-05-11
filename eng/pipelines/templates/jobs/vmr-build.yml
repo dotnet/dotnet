@@ -932,7 +932,7 @@ jobs:
       parameters:
         sourceIndexName: ${{ parameters.sourceIndexName }}
         sourcesPath: $(sourcesPath)
-        logsPath: $(sourcesPath)/artifacts/log
+        logsPath: $(sourcesPath)/artifacts/log/Release
         excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
         includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
 
