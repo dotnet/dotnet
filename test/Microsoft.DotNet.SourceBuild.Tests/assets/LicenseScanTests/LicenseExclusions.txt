@@ -186,7 +186,6 @@ src/source-build-assets/src/textOnlyPackages/src/microsoft.netcore.*/1.*/ThirdPa
 src/source-build-assets/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/*/1033/System.Security.Permissions.xml|unknown-license-reference
 
 # Contains references to licenses which are not applicable to the source
-src/source-build-assets/src/packageSourceGenerator/PackageSourceGeneratorTask/RewriteNuspec.cs|unknown-license-reference,ms-net-library-2018-11
 src/source-build-assets/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/windowsdesktop/1033/PresentationCore.xml|proprietary-license
 
 #
