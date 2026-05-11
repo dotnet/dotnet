@@ -206,6 +206,12 @@
     <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Build.Locator.dll</Right>
   </Suppression>
   <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.VisualStudio.SolutionPersistence, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
+  </Suppression>
+  <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Bson.BsonReader</Target>
     <Left>/msft/sdk/x.y.z/Newtonsoft.Json.dll</Left>
