@@ -1156,6 +1156,28 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNet10InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
+            // .NET 10.0.3xx SDK Release,
+            new TargetChannelConfig(
+                id: 10407,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["10.0.3xx-release"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 10.0.3xx SDK Release Internal,
+            new TargetChannelConfig(
+                id: 10408,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["internal/10.0.3xx-release"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10InternalFeeds,
+                symbolTargetType: SymbolPublishVisibility.Internal),
+
             // .NET 10.0.4xx SDK,
             new TargetChannelConfig(
                 id: 10307,

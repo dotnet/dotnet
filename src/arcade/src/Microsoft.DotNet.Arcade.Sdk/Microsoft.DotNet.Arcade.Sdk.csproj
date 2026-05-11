@@ -70,7 +70,6 @@
     <MicrosoftDotNetXliffTasksVersion>$(PackageVersion)</MicrosoftDotNetXliffTasksVersion>
     <MicrosoftSymbolUploaderBuildTaskVersion>$(MicrosoftSymbolUploaderBuildTaskVersion)</MicrosoftSymbolUploaderBuildTaskVersion>
     <MicrosoftTemplateEngineAuthoringTasksVersion>$(MicrosoftTemplateEngineAuthoringTasksVersion)</MicrosoftTemplateEngineAuthoringTasksVersion>
-    <MicrosoftDotNetXUnitAssertVersion>$(PackageVersion)</MicrosoftDotNetXUnitAssertVersion>
   </PropertyGroup>
 
 </Project>]]>

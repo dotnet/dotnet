@@ -9,10 +9,15 @@
     
     <Exec Condition="'$(OS)' != 'Windows_NT'" Command="chmod +x &quot;$(_DotNetInstallScript)&quot;" />
 
+    <PropertyGroup>
+      <_DotNetPath Condition="'$(DOTNET_GLOBAL_INSTALL_DIR)' != ''">$(DOTNET_GLOBAL_INSTALL_DIR)</_DotNetPath>
+      <_DotNetPath Condition="'$(_DotNetPath)' == ''">$(RepoRoot).dotnet</_DotNetPath>
+    </PropertyGroup>
+
     <InstallDotNetCore
       VersionsPropsPath="$(RepositoryEngineeringDir)Versions.props"
       GlobalJsonPath="$(RepoRoot)global.json"
-      DotNetPath ="$(RepoRoot).dotnet"
+      DotNetPath="$(_DotNetPath)"
       DotNetInstallScript="$(_DotNetInstallScript)"
       Platform="$(Platform)"
       RuntimeSourceFeed="$(DotNetRuntimeSourceFeed)"
