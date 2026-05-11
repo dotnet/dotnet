@@ -32,7 +32,7 @@ internal class AWSLambdaUtils
         return headers.TryGetValue(name, out var value) ? [value] : [];
     };
 
-    // Added volatile for abundance of caution because in theory, particular in using Lambda's Mananged Instances,
+    // Added volatile for abundance of caution because in theory, particular in using Lambda's Managed Instances,
     // during initial startup multiple invocations invoking GetXRayParentContext() at the same time before the first
     // TraceProviderIsolated.CurrentTraceId is called.
     private static volatile bool traceProviderIsolatedFailed;
@@ -112,29 +112,23 @@ internal class AWSLambdaUtils
     }
 
     internal static string? GetAWSRegion()
-    {
-        return Environment.GetEnvironmentVariable(AWSRegion);
-    }
+        => Environment.GetEnvironmentVariable(AWSRegion);
 
     internal static string? GetFunctionName(ILambdaContext? context = null)
-    {
-        return context?.FunctionName ?? Environment.GetEnvironmentVariable(FunctionName);
-    }
+        => context?.FunctionName ?? Environment.GetEnvironmentVariable(FunctionName);
 
     internal static string? GetFunctionVersion()
-    {
-        return Environment.GetEnvironmentVariable(FunctionVersion);
-    }
+        => Environment.GetEnvironmentVariable(FunctionVersion);
 
-    internal static int? GetFunctionMemorySize(ILambdaContext? context = null)
+    internal static long? GetFunctionMemorySize(ILambdaContext? context = null)
     {
-        int? memoryLimitInMB = context?.MemoryLimitInMB;
+        var memoryLimitInMB = context?.MemoryLimitInMB;
 
         if (!memoryLimitInMB.HasValue)
         {
             var value = Environment.GetEnvironmentVariable(FunctionMaxMemory);
 
-            if (!string.IsNullOrWhiteSpace(value) && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int valueMB))
+            if (!string.IsNullOrWhiteSpace(value) && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var valueMB))
             {
                 memoryLimitInMB = valueMB;
             }
@@ -143,16 +137,14 @@ internal class AWSLambdaUtils
         if (memoryLimitInMB.HasValue)
         {
             // Convert to bytes to match semantic conventions (e.g. 128 to 134217728)
-            return memoryLimitInMB.Value * 1024 * 1024;
+            return memoryLimitInMB.Value * 1024L * 1024L;
         }
 
         return null;
     }
 
     internal static string? GetFunctionInstance(ILambdaContext? context = null)
-    {
-        return context?.LogStreamName ?? Environment.GetEnvironmentVariable(FunctionLogStreamName);
-    }
+        => context?.LogStreamName ?? Environment.GetEnvironmentVariable(FunctionLogStreamName);
 
     internal static IEnumerable<string>? GetHeaderValues(APIGatewayProxyRequest request, string name)
     {
@@ -221,7 +213,9 @@ internal class AWSLambdaUtils
         // The fifth item of function arn: https://github.com/open-telemetry/opentelemetry-specification/blob/86aeab1e0a7e6c67be09c7f15ff25063ee6d2b5c/specification/trace/semantic_conventions/instrumentation/aws-lambda.md#all-triggers
         // Function arn format - arn:aws:lambda:<region>:<account-id>:function:<function-name>
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
         var items = functionArn!.Split(':');
+#pragma warning restore IDE0370 // Suppression is unnecessary
         return items.Length >= 5 ? items[4] : null;
     }
 
@@ -237,7 +231,9 @@ internal class AWSLambdaUtils
         // According to faas.id description https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/instrumentation/aws-lambda.md#all-triggers
         // the 8th part of arn (function version or alias, see https://docs.aws.amazon.com/lambda/latest/dg/lambda-api-permissions-ref.html)
         // should not be included into faas.id
+#pragma warning disable IDE0370 // Suppression is unnecessary
         var items = functionArn!.Split(':');
+#pragma warning restore IDE0370 // Suppression is unnecessary
         if (items.Length >= 8)
         {
             faasId = string.Join(":", items.Take(7));

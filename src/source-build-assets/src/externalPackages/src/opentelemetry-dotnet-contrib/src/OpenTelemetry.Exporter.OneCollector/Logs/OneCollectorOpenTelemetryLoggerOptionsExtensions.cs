@@ -127,7 +127,9 @@ public static class OneCollectorOpenTelemetryLoggerOptionsExtensions
 
         if (!string.IsNullOrWhiteSpace(connectionString))
         {
+#pragma warning disable IDE0370 // Suppression is unnecessary
             builder.SetConnectionString(connectionString!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
         }
 
         configure?.Invoke(builder);

@@ -221,11 +221,11 @@ internal static class CommonSchemaJsonSerializationHelper
         }
 #endif
 
-        string v;
+        string? v;
 
         try
         {
-            v = Convert.ToString(value, CultureInfo.InvariantCulture)!;
+            v = Convert.ToString(value, CultureInfo.InvariantCulture);
         }
         catch
         {

@@ -15,16 +15,16 @@ internal static class Varint64
 
     public static bool TryDecode(ReadOnlySequence<byte> sequence, out int bytesRead, out ulong result, out string errorMessage)
     {
-        int shift = 0;
+        var shift = 0;
         result = 0;
         bytesRead = 0;
         errorMessage = string.Empty;
 
         foreach (var memory in sequence)
         {
-            foreach (byte b in memory.Span)
+            foreach (var b in memory.Span)
             {
-                ulong value = (ulong)(b & DataMask);
+                var value = (ulong)(b & DataMask);
                 result |= value << shift;
                 bytesRead++;
 

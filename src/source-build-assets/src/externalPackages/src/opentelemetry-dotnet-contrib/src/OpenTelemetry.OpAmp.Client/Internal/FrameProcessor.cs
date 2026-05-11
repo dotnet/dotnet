@@ -44,19 +44,14 @@ internal sealed class FrameProcessor
             _ => [],
             (_, list) =>
             {
-                if (list.Count == 1 && list[0] is IOpAmpListener<T> typedListener && ReferenceEquals(typedListener, listener))
-                {
-                    return [];
-                }
-
-                return list.Where(x => !ReferenceEquals(x, listener)).ToList();
+                return list.Count == 1 && list[0] is IOpAmpListener<T> typedListener && ReferenceEquals(typedListener, listener)
+                    ? []
+                    : [.. list.Where(x => !ReferenceEquals(x, listener))];
             });
     }
 
     public void OnServerFrame(ReadOnlySequence<byte> sequence)
-    {
-        this.Deserialize(sequence);
-    }
+        => this.Deserialize(sequence);
 
     public void OnServerFrame(ReadOnlySequence<byte> sequence, int count, bool verifyHeader)
     {
@@ -65,7 +60,7 @@ internal sealed class FrameProcessor
         // verify and decode
         if (verifyHeader)
         {
-            if (!OpAmpWsHeaderHelper.TryVerifyHeader(sequence, out headerSize, out string errorMessage))
+            if (!OpAmpWsHeaderHelper.TryVerifyHeader(sequence, out headerSize, out var errorMessage))
             {
                 OpAmpClientEventSource.Log.InvalidWsFrame(errorMessage);
 

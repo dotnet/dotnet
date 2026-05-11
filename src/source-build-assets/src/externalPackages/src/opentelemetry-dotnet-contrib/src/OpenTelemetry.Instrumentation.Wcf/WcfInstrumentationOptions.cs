@@ -45,7 +45,7 @@ public class WcfInstrumentationOptions
     public bool SuppressDownstreamInstrumentation { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether or not the SOAP message version should be added as the <see cref="WcfInstrumentationConstants.SoapMessageVersionTag"/> tag. Default value: False.
+    /// Gets or sets a value indicating whether or not the SOAP message version should be added as the <see cref="WcfInstrumentationConstants.AttributeSoapMessageVersion"/> tag. Default value: False.
     /// </summary>
     public bool SetSoapMessageVersion { get; set; }
 

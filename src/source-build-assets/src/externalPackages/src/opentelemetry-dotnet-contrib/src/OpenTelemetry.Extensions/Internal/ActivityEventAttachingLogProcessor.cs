@@ -8,7 +8,7 @@ namespace OpenTelemetry.Logs;
 
 internal sealed class ActivityEventAttachingLogProcessor : BaseProcessor<LogRecord>
 {
-    private static readonly Action<LogRecordScope, State> ProcessScope = (LogRecordScope scope, State state) =>
+    private static readonly Action<LogRecordScope, State> ProcessScope = (scope, state) =>
     {
         try
         {

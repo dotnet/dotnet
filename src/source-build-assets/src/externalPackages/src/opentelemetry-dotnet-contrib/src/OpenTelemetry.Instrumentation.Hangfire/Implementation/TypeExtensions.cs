@@ -58,7 +58,7 @@ internal static class TypeExtensions
         {
             var currentGenericArgumentNumbers = int.Parse(match.Value.Substring(1), CultureInfo.InvariantCulture);
             var currentArguments = string.Join(",", genericArguments.Take(currentGenericArgumentNumbers).Select(ToGenericTypeString));
-            genericArguments = genericArguments.Skip(currentGenericArgumentNumbers).ToArray();
+            genericArguments = [.. genericArguments.Skip(currentGenericArgumentNumbers)];
             return string.Concat("<", currentArguments, ">");
         });
 

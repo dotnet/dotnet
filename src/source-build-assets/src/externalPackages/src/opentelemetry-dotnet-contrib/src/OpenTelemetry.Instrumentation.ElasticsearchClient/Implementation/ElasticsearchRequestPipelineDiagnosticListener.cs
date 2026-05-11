@@ -24,7 +24,9 @@ internal partial class ElasticsearchRequestPipelineDiagnosticListener : Listener
 
     internal static readonly Assembly Assembly = typeof(ElasticsearchRequestPipelineDiagnosticListener).Assembly;
     internal static readonly AssemblyName AssemblyName = Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string ActivitySourceName = AssemblyName.Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Assembly.GetPackageVersion());
 
     private const string RequestRegexPattern = @"\n# Request:\r?\n(\{.*)\n# Response";

@@ -44,11 +44,9 @@ internal sealed class PropertyFetcher<T>
     [RequiresUnreferencedCode(TrimCompatibilityMessage)]
 #endif
     public T Fetch(object? obj)
-    {
-        return !this.TryFetch(obj, out var value)
+        => !this.TryFetch(obj, out var value)
             ? throw new ArgumentException("Supplied object was null or did not match the expected type.", nameof(obj))
             : value;
-    }
 
     /// <summary>
     /// Try to fetch the property from the object.
@@ -113,14 +111,14 @@ internal sealed class PropertyFetcher<T>
                     return null;
                 }
 
-                var declaringType = propertyInfo.DeclaringType;
-                if (declaringType!.IsValueType)
-                {
-                    throw new NotSupportedException(
-                        $"Type: {declaringType.FullName} is a value type. PropertyFetcher can only operate on reference payload types.");
-                }
+#pragma warning disable IDE0370 // Suppression is unnecessary
+                var declaringType = propertyInfo.DeclaringType!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
-                return DynamicInstantiationHelper(declaringType, propertyInfo);
+                return declaringType.IsValueType
+                    ? throw new NotSupportedException(
+                        $"Type: {declaringType.FullName} is a value type. PropertyFetcher can only operate on reference payload types.")
+                    : DynamicInstantiationHelper(declaringType, propertyInfo);
 
                 // Separated as a local function to be able to target the suppression to just this call.
                 // IL3050 was generated here because of the call to MakeGenericType, which is problematic in AOT if one of the type parameters is a value type;
@@ -131,10 +129,12 @@ internal sealed class PropertyFetcher<T>
 #endif
                 static PropertyFetch? DynamicInstantiationHelper(Type declaringType, PropertyInfo propertyInfo)
                 {
+#pragma warning disable IDE0370 // Suppression is unnecessary
                     return (PropertyFetch?)typeof(PropertyFetch)
                         .GetMethod(nameof(CreateInstantiated), BindingFlags.NonPublic | BindingFlags.Static)!
                         .MakeGenericMethod(declaringType) // This is validated in the earlier call chain to be a reference type.
-                        .Invoke(null, [propertyInfo])!;
+                        .Invoke(null, [propertyInfo]);
+#pragma warning restore IDE0370 // Suppression is unnecessary
                 }
             }
         }
@@ -166,7 +166,7 @@ internal sealed class PropertyFetcher<T>
         //    The declared object type is guaranteed to be a reference type (throw on value type.) Thus, MakeGenericMethod is AOT compatible.
         private static PropertyFetchInstantiated<TDeclaredObject> CreateInstantiated<TDeclaredObject>(PropertyInfo propertyInfo)
             where TDeclaredObject : class
-            => new PropertyFetchInstantiated<TDeclaredObject>(propertyInfo);
+            => new(propertyInfo);
 
 #if NET
         [RequiresUnreferencedCode(TrimCompatibilityMessage)]
@@ -184,7 +184,7 @@ internal sealed class PropertyFetcher<T>
 #if NET
                 this.propertyFetch = property.GetMethod!.CreateDelegate<Func<TDeclaredObject, T>>();
 #else
-                this.propertyFetch = (Func<TDeclaredObject, T>)property.GetMethod!.CreateDelegate(typeof(Func<TDeclaredObject, T>));
+                this.propertyFetch = (Func<TDeclaredObject, T>)property.GetMethod.CreateDelegate(typeof(Func<TDeclaredObject, T>));
 #endif
             }
 

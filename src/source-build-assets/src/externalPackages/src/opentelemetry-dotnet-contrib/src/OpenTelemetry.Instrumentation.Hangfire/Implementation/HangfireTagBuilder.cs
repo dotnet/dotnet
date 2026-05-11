@@ -243,7 +243,7 @@ internal static class HangfireTagBuilder
 
         if (loggedException is JobPerformanceException { InnerException: not null } pe)
         {
-            loggedException = pe.InnerException!;
+            loggedException = pe.InnerException;
         }
 
         return new KeyValuePair<string, object?>(WorkflowAttributes.AttributeErrorType, loggedException.GetType().FullName ?? loggedException.GetType().Name);

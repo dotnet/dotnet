@@ -7,7 +7,7 @@ using OpenTelemetry.Internal;
 namespace OpenTelemetry.Instrumentation.EntityFrameworkCore.Implementation;
 
 [EventSource(Name = "OpenTelemetry-Instrumentation-EntityFrameworkCore")]
-internal class EntityFrameworkInstrumentationEventSource : EventSource
+internal sealed class EntityFrameworkInstrumentationEventSource : EventSource
 {
     public static EntityFrameworkInstrumentationEventSource Log = new();
 

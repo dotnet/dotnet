@@ -6,10 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
-#if !NETSTANDARD
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Routing;
-#endif
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
@@ -28,8 +24,10 @@ internal class HttpInListener : ListenerHandler
     internal const string AspNetCoreActivitySourceName = "Microsoft.AspNetCore";
 
     internal static readonly AssemblyName AssemblyName = typeof(HttpInListener).Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string ActivitySourceName = AssemblyName.Name!;
     internal static readonly Version Version = AssemblyName.Version!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Version.ToString());
     internal static readonly bool Net7OrGreater = Environment.Version.Major >= 7;
 
@@ -244,8 +242,7 @@ internal class HttpInListener : ListenerHandler
             var response = context.Response;
 
 #if !NETSTANDARD
-            var routePattern = (context.Features.Get<IExceptionHandlerPathFeature>()?.Endpoint as RouteEndpoint ??
-                    context.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText;
+            var routePattern = context.GetHttpRoute();
             if (!string.IsNullOrEmpty(routePattern))
             {
                 TelemetryHelper.RequestDataHelper.SetActivityDisplayName(activity, context.Request.Method, routePattern);
@@ -376,7 +373,7 @@ internal class HttpInListener : ListenerHandler
         var validConversion = GrpcTagHelper.TryGetGrpcStatusCodeFromActivity(activity, out var status);
         if (validConversion)
         {
-            activity.SetStatus(GrpcTagHelper.ResolveSpanStatusForGrpcStatusCode(status));
+            activity.SetStatus(GrpcTagHelper.ResolveSpanStatusForGrpcStatusCodeOnServer(status));
         }
 
         if (GrpcTagHelper.TryParseRpcServiceAndRpcMethod(grpcMethod, out var rpcService, out var rpcMethod))

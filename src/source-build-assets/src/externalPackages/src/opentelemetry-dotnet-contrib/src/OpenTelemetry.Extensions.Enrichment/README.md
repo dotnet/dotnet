@@ -46,6 +46,10 @@ dotnet add package OpenTelemetry.Extensions.Enrichment --prerelease
 
 Create your custom enricher class that inherits from the `TraceEnricher` class
 and override the `public abstract void Enrich(in TraceEnrichmentBag bag)` method.
+The `TraceEnrichmentBag` is a lightweight `readonly struct` passed by reference
+that wraps the underlying `Activity` and exposes a single
+`Add(string key, object? value)` method for adding tags.
+
 Optionally, inject other services your enricher class depends on:
 
 ```csharp
@@ -71,10 +75,38 @@ An example of IMyService implementation is available
 [here](../../examples/enrichment/Examples.Enrichment/MyService.cs).
 
 For every `Activity`, the `Enrich()`
-method is guaranteed to be called exactly once. Semantically,
-for the example above it means that a new [tag object](https://learn.microsoft.com/dotnet/api/system.diagnostics.activity.tagobjects?view=net-7.0)
-with the service key and the status  value will be added to every `Activity`
+method is guaranteed to be called exactly once when the `Activity` stops.
+Semantically, for the example above it means that a new
+[tag object](https://learn.microsoft.com/dotnet/api/system.diagnostics.activity.tagobjects)
+with the service key and the status value will be added to every `Activity`
 in your application.
+
+You can also override `EnrichOnActivityStart` to add tags when an `Activity`
+starts rather than when it stops. It has a default no-op implementation, so you
+only need to override it when you need start-time enrichment:
+
+```csharp
+internal sealed class MyTraceEnricher : TraceEnricher
+{
+    private readonly IMyService myService;
+
+    public MyTraceEnricher(IMyService myService)
+    {
+        this.myService = myService;
+    }
+
+    public override void Enrich(in TraceEnrichmentBag bag)
+    {
+        var (service, status) = this.myService.MyDailyStatus();
+
+        bag.Add(service, status);
+    }
+    public override void EnrichOnActivityStart(in TraceEnrichmentBag bag)
+    {
+        bag.Add("scenario", "customer_onboarding");
+    }
+}
+```
 
 ### Step 3: Register enricher class
 

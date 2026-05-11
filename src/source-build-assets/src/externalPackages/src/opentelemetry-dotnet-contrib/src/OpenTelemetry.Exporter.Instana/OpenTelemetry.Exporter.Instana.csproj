@@ -6,7 +6,7 @@
     <PackageTags>Instana Tracing APM</PackageTags>
     <Description>Instana .NET Exporter for OpenTelemetry.</Description>
     <MinVerTagPrefix>Exporter.Instana-</MinVerTagPrefix>
-    <PackageValidationBaselineVersion>1.0.5</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.0.6</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -21,69 +21,70 @@ internal static class ResourceDetectorUtils
     private static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerDefaults.Web);
 #endif
 
-    internal static async Task<string> SendOutRequestAsync(
+    internal static string SendOutRequest(
         string url,
         HttpMethod method,
         KeyValuePair<string, string>? header,
-        HttpClientHandler? handler = null)
+        HttpClientHandler? handler = null,
+        CancellationToken cancellationToken = default)
     {
-        using (var httpRequestMessage = new HttpRequestMessage())
+        using var httpRequestMessage = new HttpRequestMessage();
+
+        httpRequestMessage.RequestUri = new Uri(url);
+        httpRequestMessage.Method = method;
+
+        if (header is { } headerValue)
         {
-            httpRequestMessage.RequestUri = new Uri(url);
-            httpRequestMessage.Method = method;
-            if (header.HasValue)
-            {
-                httpRequestMessage.Headers.Add(header.Value.Key, header.Value.Value);
-            }
+            httpRequestMessage.Headers.Add(headerValue.Key, headerValue.Value);
+        }
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var httpClient = handler == null ? new HttpClient() : new HttpClient(handler);
+        var httpClient = handler == null ? new HttpClient() : new HttpClient(handler);
 #pragma warning restore CA2000 // Dispose objects before losing scope
-            using (var response = await httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            }
-        }
+
+#if NET
+        using var response = httpClient.Send(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+#else
+#pragma warning disable CA2025 // Do not pass 'IDisposable' instances into unawaited tasks
+        using var response = httpClient.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
+#pragma warning restore CA2025 // Do not pass 'IDisposable' instances into unawaited tasks
+#endif
+
+        response.EnsureSuccessStatusCode();
+
+        return HttpClientHelpers.GetResponseBodyAsString(response, cancellationToken) ?? string.Empty;
     }
 
 #if NETFRAMEWORK
     internal static T? DeserializeFromFile<T>(string filePath)
     {
-        using (var stream = GetStream(filePath))
-        {
-            return JsonSerializer.Deserialize<T>(stream, JsonSerializerOptions);
-        }
+        using var stream = GetStream(filePath);
+        return JsonSerializer.Deserialize<T>(stream, JsonSerializerOptions);
     }
 
-    internal static T? DeserializeFromString<T>(string json)
-    {
-        return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
-    }
+    internal static T? DeserializeFromString<T>(string json) =>
+        JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
 #else
     internal static T? DeserializeFromFile<T>(string filePath, JsonTypeInfo<T> jsonTypeInfo)
     {
-        using (var stream = GetStream(filePath))
-        {
-            return JsonSerializer.Deserialize(stream, jsonTypeInfo);
-        }
+        using var stream = GetStream(filePath);
+        return JsonSerializer.Deserialize(stream, jsonTypeInfo);
     }
 
-    internal static T? DeserializeFromString<T>(string json, JsonTypeInfo<T> jsonTypeInfo)
-    {
-        return JsonSerializer.Deserialize(json, jsonTypeInfo);
-    }
+    internal static T? DeserializeFromString<T>(string json, JsonTypeInfo<T> jsonTypeInfo) =>
+        JsonSerializer.Deserialize(json, jsonTypeInfo);
 #endif
 
-    internal static Stream GetStream(string filePath)
-    {
-        return new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-    }
+    internal static Stream GetStream(string filePath) =>
+        new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
     internal static StreamReader GetStreamReader(string filePath)
     {
         var fileStream = GetStream(filePath);
-        var streamReader = new StreamReader(fileStream, Encoding.UTF8);
-        return streamReader;
+#if NET
+        return new StreamReader(fileStream, Encoding.UTF8, leaveOpen: false);
+#else
+        return new StreamReader(fileStream, Encoding.UTF8);
+#endif
     }
 }

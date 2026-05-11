@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>NuGet.Common</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>6.13.2</PackageVersion>
     <AssemblyName>NuGet.Common</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+    <Description>Common utilities and interfaces for all NuGet libraries.</Description>
+    <PackageProjectUrl>https://aka.ms/nugetprj</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>nuget</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

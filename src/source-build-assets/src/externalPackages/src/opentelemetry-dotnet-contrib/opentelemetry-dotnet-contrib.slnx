@@ -30,6 +30,7 @@
     <File Path=".github/workflows/verifyaotcompat.yml" />
   </Folder>
   <Folder Name="/build/">
+    <File Path="build/BannedSymbols.txt" />
     <File Path="build/Common.nonprod.props" />
     <File Path="build/Common.prod.props" />
     <File Path="build/Common.props" />
@@ -157,9 +158,11 @@
     <Project Path="src/OpenTelemetry.Instrumentation.GrpcNetClient/OpenTelemetry.Instrumentation.GrpcNetClient.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.Hangfire/OpenTelemetry.Instrumentation.Hangfire.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.Http/OpenTelemetry.Instrumentation.Http.csproj" />
+    <Project Path="src/OpenTelemetry.Instrumentation.Kusto/OpenTelemetry.Instrumentation.Kusto.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.Owin/OpenTelemetry.Instrumentation.Owin.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.Process/OpenTelemetry.Instrumentation.Process.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.Quartz/OpenTelemetry.Instrumentation.Quartz.csproj" />
+    <Project Path="src/OpenTelemetry.Instrumentation.Remoting/OpenTelemetry.Instrumentation.Remoting.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.Runtime/OpenTelemetry.Instrumentation.Runtime.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.ServiceFabricRemoting/OpenTelemetry.Instrumentation.ServiceFabricRemoting.csproj" />
     <Project Path="src/OpenTelemetry.Instrumentation.SqlClient/OpenTelemetry.Instrumentation.SqlClient.csproj" />
@@ -182,6 +185,7 @@
   <Folder Name="/src/Shared/">
     <File Path="src/Shared/ActivityHelperExtensions.cs" />
     <File Path="src/Shared/ActivityInstrumentationHelper.cs" />
+    <File Path="src/Shared/ActivitySourceFactory.cs" />
     <File Path="src/Shared/AssemblyVersionExtensions.cs" />
     <File Path="src/Shared/DatabaseSemanticConventionHelper.cs" />
     <File Path="src/Shared/DiagnosticSourceListener.cs" />
@@ -196,6 +200,7 @@
     <File Path="src/Shared/IsExternalInit.cs" />
     <File Path="src/Shared/ListenerHandler.cs" />
     <File Path="src/Shared/Lock.cs" />
+    <File Path="src/Shared/MeterFactory.cs" />
     <File Path="src/Shared/MultiTypePropertyFetcher.cs" />
     <File Path="src/Shared/NullableAttributes.cs" />
     <File Path="src/Shared/PropertyFetcher.cs" />
@@ -205,7 +210,6 @@
     <File Path="src/Shared/SemanticConventions.cs" />
     <File Path="src/Shared/ServerCertificateValidationHandler.cs" />
     <File Path="src/Shared/ServerCertificateValidationProvider.cs" />
-    <File Path="src/Shared/SpanAttributeConstants.cs" />
     <File Path="src/Shared/SpanHelper.cs" />
     <File Path="src/Shared/SqlConnectionDetails.cs" />
     <File Path="src/Shared/SqlParameterProcessor.cs" />
@@ -241,6 +245,7 @@
     <Project Path="test/OpenTelemetry.Contrib.Shared.FuzzTests/OpenTelemetry.Contrib.Shared.FuzzTests.csproj" />
     <Project Path="test/OpenTelemetry.Contrib.Shared.Tests/OpenTelemetry.Contrib.Shared.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.Geneva.Benchmarks/OpenTelemetry.Exporter.Geneva.Benchmarks.csproj" />
+    <Project Path="test/OpenTelemetry.Exporter.Geneva.FuzzTests/OpenTelemetry.Exporter.Geneva.FuzzTests.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.Geneva.Stress/OpenTelemetry.Exporter.Geneva.Stress.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.Geneva.Tests/OpenTelemetry.Exporter.Geneva.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.InfluxDB.Tests/OpenTelemetry.Exporter.InfluxDB.Tests.csproj" />
@@ -268,12 +273,15 @@
     <Project Path="test/OpenTelemetry.Instrumentation.Hangfire.Tests/OpenTelemetry.Instrumentation.Hangfire.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Http.Benchmarks/OpenTelemetry.Instrumentation.Http.Benchmarks.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Http.Tests/OpenTelemetry.Instrumentation.Http.Tests.csproj" />
+    <Project Path="test/OpenTelemetry.Instrumentation.Kusto.Tests/OpenTelemetry.Instrumentation.Kusto.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Owin.Tests/OpenTelemetry.Instrumentation.Owin.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Process.Tests/OpenTelemetry.Instrumentation.Process.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Quartz.Tests/OpenTelemetry.Instrumentation.Quartz.Tests.csproj" />
+    <Project Path="test/OpenTelemetry.Instrumentation.Remoting.Tests/OpenTelemetry.Instrumentation.Remoting.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Runtime.Tests/OpenTelemetry.Instrumentation.Runtime.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.ServiceFabricRemoting.Tests/OpenTelemetry.Instrumentation.ServiceFabricRemoting.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.SqlClient.Tests/OpenTelemetry.Instrumentation.SqlClient.Tests.csproj" />
+    <Project Path="test/OpenTelemetry.Instrumentation.StackExchangeRedis.Benchmarks/OpenTelemetry.Instrumentation.StackExchangeRedis.Benchmarks.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.StackExchangeRedis.Tests/OpenTelemetry.Instrumentation.StackExchangeRedis.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.Wcf.Tests/OpenTelemetry.Instrumentation.Wcf.Tests.csproj" />
     <Project Path="test/OpenTelemetry.OpAmp.Client.Tests/OpenTelemetry.OpAmp.Client.Tests.csproj" />

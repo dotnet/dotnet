@@ -1,21 +1,21 @@
 <Project>
+
   <Import Project="..\..\Directory.Build.props" />
 
   <PropertyGroup>
-    <IsTextOnlyPackage>true</IsTextOnlyPackage>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- Force NoTargets to honor TFM-conditioned <ProjectReference> items. By default NoTargets
+         sets DoNotReferenceOutputAssemblies=true and skips the per-TFM ResolveProjectReferences
+         walk, which would cause our text packages with TFM-conditional P2Ps to referencePackage
+         csprojs (e.g. Microsoft.CodeAnalysis.Collections referencing
+         system.threading.tasks.extensions only on net9.0) to fail with NETSDK1005 when the
+         referenced project's restored assets file doesn't have an asset for the consumer's TFM. -->
+    <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
     <NoDefaultExcludes>true</NoDefaultExcludes>
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 
-    <!-- Don't warn on NU5125 - The 'licenseUrl' element will be deprecated. -->
-    <NoWarn>$(NoWarn);NU5125</NoWarn>
-    <!-- Disable NU5128: we have placeholders in TFMs with no implementations, normal in this context. -->
+    <!-- Disable NU5128: text-only packages declare TFMs that have no lib/ref content
+         (workload manifests, source-only packages, etc.). NuGet flags this even though
+         it's the intentional layout. -->
     <NoWarn>$(NoWarn);NU5128</NoWarn>
-    <!-- Disable NU5048: continue to use deprecated 'PackageIconUrl'/'iconUrl' for now. -->
-    <NoWarn>$(NoWarn);NU5048</NoWarn>
-    <!-- Disable NU5131: text-only packages with placeholders produce this warning -->
-    <NoWarn>$(NoWarn);NU5131</NoWarn>
   </PropertyGroup>
 
 </Project>

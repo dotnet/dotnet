@@ -130,9 +130,11 @@ public static class OpenTelemetryConsumeResultExtensions
 
     private static Activity? StartProcessActivity<TKey>(PropagationContext propagationContext, TopicPartitionOffset? topicPartitionOffset, TKey? key, string clientId, string groupId)
     {
+#pragma warning disable IDE0370 // Suppression is unnecessary
         var spanName = string.IsNullOrEmpty(topicPartitionOffset?.Topic)
             ? ConfluentKafkaCommon.ProcessOperationName
             : string.Concat(topicPartitionOffset!.Topic, " ", ConfluentKafkaCommon.ProcessOperationName);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
         ActivityLink[] activityLinks = propagationContext != default && propagationContext.ActivityContext.IsValid()
             ? [new ActivityLink(propagationContext.ActivityContext)]

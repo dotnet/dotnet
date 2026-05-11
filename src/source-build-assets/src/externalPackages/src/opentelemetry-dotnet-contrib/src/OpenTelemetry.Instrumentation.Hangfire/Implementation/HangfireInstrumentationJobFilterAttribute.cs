@@ -43,7 +43,7 @@ internal sealed class HangfireInstrumentationJobFilterAttribute : JobFilterAttri
 
         if (activity != null)
         {
-            var displayNameFunc = this.options.DisplayNameFunc;
+            var displayNameFunc = this.options.DisplayNameFunc ?? HangfireInstrumentation.DefaultDisplayNameFunc;
 
             activity.DisplayName = displayNameFunc(performingContext.BackgroundJob);
 

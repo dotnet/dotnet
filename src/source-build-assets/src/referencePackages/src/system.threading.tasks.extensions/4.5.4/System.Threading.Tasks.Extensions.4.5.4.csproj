@@ -1,10 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>System.Threading.Tasks.Extensions</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>4.5.4</PackageVersion>
     <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
+    <Description>Provides additional types that simplify the work of writing concurrent and asynchronous code.
+
+Commonly Used Types:
+System.Threading.Tasks.ValueTask&lt;TResult&gt;
+ 
+7601f4f6225089ffb291dc7d58293c7bbf5c5d4f</Description>
+    <Title>System.Threading.Tasks.Extensions</Title>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+    <MinClientVersion>2.8.6</MinClientVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -75,7 +75,7 @@ internal static class TelemetryPropagationReader
         Guard.ThrowIfNull(callbacks);
         Array.ForEach(callbacks, cb => Guard.ThrowIfNull(cb));
 
-        return (Message request, string name) =>
+        return (request, name) =>
         {
             foreach (var reader in callbacks)
             {

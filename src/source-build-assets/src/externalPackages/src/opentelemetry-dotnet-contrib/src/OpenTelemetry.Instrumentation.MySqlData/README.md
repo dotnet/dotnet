@@ -78,13 +78,13 @@ This instrumentation can be configured to change the default behavior by using
 ### Capturing 'db.statement'
 
 The `MySqlDataInstrumentationOptions` class exposes several properties that can
-be used to configure how the [`db.statement`](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/mysql.md)
+be used to configure how the [`db.statement`](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/mysql.md)
 attribute is captured upon execution of a query.
 
 #### SetDbStatement
 
 The `SetDbStatement` property can be used to control whether this instrumentation
-should set the [`db.statement`](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/mysql.md)
+should set the [`db.statement`](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/mysql.md)
 attribute to the text of the `MySqlCommand` being executed.
 
 Since `CommandType.Text` might contain sensitive data, SQL capturing is
@@ -143,4 +143,4 @@ using var tracerProvider = Sdk.CreateTracerProviderBuilder()
 
 * [OpenTelemetry Project](https://opentelemetry.io/)
 
-* [OpenTelemetry semantic conventions for MySQL](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/mysql.md)
+* [OpenTelemetry semantic conventions for MySQL](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/mysql.md)

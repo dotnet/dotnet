@@ -1,9 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <PackageId>Microsoft.Extensions.CommandLineUtils.Sources</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>3.0.0-preview6.19253.5</PackageVersion>
     <AssemblyName>Microsoft.Extensions.CommandLineUtils.Sources</AssemblyName>
+    <Serviceable>true</Serviceable>
+    <Description>Microsoft.Extensions.CommandLineUtils.Sources</Description>
+    <PackageProjectUrl>https://asp.net/</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="contentFiles/cs/netstandard1.0/shared/CommandLine/AnsiConsole.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/CommandLine" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/CommandLine/CommandArgument.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/CommandLine" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/CommandLine/CommandLineApplication.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/CommandLine" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/CommandLine/CommandOption.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/CommandLine" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/CommandLine/CommandOptionType.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/CommandLine" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/CommandLine/CommandParsingException.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/CommandLine" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/Utilities/ArgumentEscaper.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/Utilities" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard1.0/shared/Utilities/DotNetMuxer.cs" Pack="true" PackagePath="contentFiles/cs/netstandard1.0/shared/Utilities" BuildAction="Compile" />
+  </ItemGroup>
 
 </Project>

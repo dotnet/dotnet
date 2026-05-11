@@ -3,7 +3,7 @@
 | Status | |
 | ------ | --- |
 | Stability | [Stable](../../README.md#stable) |
-| Code Owners | [@srprash](https://github.com/srprash), [@normj](https://github.com/normj), [@lukeina2z](https://github.com/lukeina2z) |
+| Code Owners | [@srprash](https://github.com/srprash), [@normj](https://github.com/normj) |
 
 [![NuGet version badge](https://img.shields.io/nuget/v/OpenTelemetry.Instrumentation.AWS)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.AWS)
 [![NuGet download count badge](https://img.shields.io/nuget/dt/OpenTelemetry.Instrumentation.AWS)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.AWS)
@@ -37,7 +37,7 @@ public void ConfigureServices(IServiceCollection services)
 ## Semantic Conventions
 
 _For an overview on Semantic Conventions, see
-[OpenTelemetery - Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/)_.
+[OpenTelemetry - Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/)_.
 
 While this library is intended for production use, it relies on several
 Semantic Conventions that are still considered Experimental, meaning

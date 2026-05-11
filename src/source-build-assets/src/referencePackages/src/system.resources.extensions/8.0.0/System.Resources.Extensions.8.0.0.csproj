@@ -1,10 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>System.Resources.Extensions</PackageId>
     <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>8.0.0</PackageVersion>
     <AssemblyName>System.Resources.Extensions</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
+    <Description>Provides classes which read and write resources in a format that supports non-primitive objects.
+
+Commonly Used Types:
+System.Resources.Extensions.DeserializingResourceReader
+System.Resources.Extensions.PreserializedResourceWriter</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
