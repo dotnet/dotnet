@@ -542,9 +542,10 @@
       
       The dotnet-aot project declares RuntimeIdentifier=$(TargetRid) so that centralized
       NuGet restore (via sdk.slnx) generates the RID-specific target in project.assets.json.
-      Restore is skipped here since the initial restore is sufficient.
+      Restore is NOT skipped here because runtime packs (e.g. Microsoft.NETCore.App.Runtime)
+      are only downloaded during a RID-aware restore, which the centralized restore may not cover.
     -->
-    <Exec Command="&quot;$(DotNetTool)&quot; publish &quot;$(RepoRoot)src/Cli/dotnet-aot/dotnet-aot.csproj&quot; --no-restore -c $(Configuration) -r $(TargetRid) -o &quot;$(_DotnetAotPublishDir)&quot;"
+    <Exec Command="&quot;$(DotNetTool)&quot; publish &quot;$(RepoRoot)src/Cli/dotnet-aot/dotnet-aot.csproj&quot; -c $(Configuration) -r $(TargetRid) -o &quot;$(_DotnetAotPublishDir)&quot;"
           IgnoreStandardErrorWarningFormat="true" />
 
     <!-- Verify the native library was produced -->
