@@ -20,6 +20,7 @@ namespace OpenTelemetry.Instrumentation.ServiceFabricRemoting;
 public sealed class TraceContextEnrichedServiceRemotingProviderAttribute : FabricTransportServiceRemotingProviderAttribute
 {
     private const string DefaultV2listenerName = "V2Listener";
+    private const string DefaultTransportSettingsSectionName = "TransportSettings";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TraceContextEnrichedServiceRemotingProviderAttribute"/> class.
@@ -30,6 +31,10 @@ public sealed class TraceContextEnrichedServiceRemotingProviderAttribute : Fabri
         this.RemotingListenerVersion = RemotingListenerVersion.V2;
     }
 
+    internal static Func<FabricTransportRemotingSettings?> RemotingSettingsLoader { get; set; } = LoadRemotingSettings;
+
+    internal static Func<FabricTransportRemotingListenerSettings?> ListenerSettingsLoader { get; set; } = LoadListenerSettings;
+
     /// <summary>
     /// Creates a V2 service remoting listener for remoting the service interface.
     /// </summary>
@@ -39,16 +44,17 @@ public sealed class TraceContextEnrichedServiceRemotingProviderAttribute : Fabri
     /// </returns>
     public override Dictionary<string, Func<ServiceContext, IService, IServiceRemotingListener>> CreateServiceRemotingListeners()
     {
-        Dictionary<string, Func<ServiceContext, IService, IServiceRemotingListener>> dictionary = new Dictionary<string, Func<ServiceContext, IService, IServiceRemotingListener>>();
-
-        dictionary.Add(DefaultV2listenerName, (ServiceContext serviceContext, IService serviceImplementation) =>
+        var dictionary = new Dictionary<string, Func<ServiceContext, IService, IServiceRemotingListener>>
         {
-            FabricTransportRemotingListenerSettings listenerSettings = this.GetListenerSettings(serviceContext);
-            ServiceRemotingMessageDispatcher serviceRemotingMessageDispatcher = new ServiceRemotingMessageDispatcher(serviceContext, serviceImplementation);
-            ServiceRemotingMessageDispatcherAdapter dispatcherAdapter = new ServiceRemotingMessageDispatcherAdapter(serviceRemotingMessageDispatcher);
+            [DefaultV2listenerName] = (serviceContext, serviceImplementation) =>
+            {
+                var listenerSettings = this.GetListenerSettings();
+                var serviceRemotingMessageDispatcher = new ServiceRemotingMessageDispatcher(serviceContext, serviceImplementation);
+                var dispatcherAdapter = new ServiceRemotingMessageDispatcherAdapter(serviceRemotingMessageDispatcher);
 
-            return new FabricTransportServiceRemotingListener(serviceContext, dispatcherAdapter, listenerSettings);
-        });
+                return new FabricTransportServiceRemotingListener(serviceContext, dispatcherAdapter, listenerSettings);
+            },
+        };
 
         return dictionary;
     }
@@ -65,13 +71,9 @@ public sealed class TraceContextEnrichedServiceRemotingProviderAttribute : Fabri
     /// </returns>
     public override IServiceRemotingClientFactory CreateServiceRemotingClientFactoryV2(IServiceRemotingCallbackMessageHandler? callbackMessageHandler)
     {
-        FabricTransportRemotingSettings fabricTransportRemotingSettings = new FabricTransportRemotingSettings();
-        fabricTransportRemotingSettings.MaxMessageSize = this.GetAndValidateMaxMessageSize(fabricTransportRemotingSettings.MaxMessageSize);
-        fabricTransportRemotingSettings.OperationTimeout = this.GetAndValidateOperationTimeout(fabricTransportRemotingSettings.OperationTimeout);
-        fabricTransportRemotingSettings.KeepAliveTimeout = this.GetAndValidateKeepAliveTimeout(fabricTransportRemotingSettings.KeepAliveTimeout);
-        fabricTransportRemotingSettings.ConnectTimeout = this.GetConnectTimeout(fabricTransportRemotingSettings.ConnectTimeout);
+        var fabricTransportRemotingSettings = this.GetRemotingSettings();
 
-        FabricTransportServiceRemotingClientFactory fabricTransportServiceRemotingClientFactory = new FabricTransportServiceRemotingClientFactory(
+        var fabricTransportServiceRemotingClientFactory = new FabricTransportServiceRemotingClientFactory(
             fabricTransportRemotingSettings,
             callbackMessageHandler,
             servicePartitionResolver: null,
@@ -81,34 +83,67 @@ public sealed class TraceContextEnrichedServiceRemotingProviderAttribute : Fabri
         return new TraceContextEnrichedServiceRemotingClientFactoryAdapter(fabricTransportServiceRemotingClientFactory);
     }
 
-    private FabricTransportRemotingListenerSettings GetListenerSettings(ServiceContext serviceContext)
+    internal FabricTransportRemotingListenerSettings GetListenerSettings()
     {
-        FabricTransportRemotingListenerSettings listenerSettings = new FabricTransportRemotingListenerSettings();
+        var settings = ListenerSettingsLoader() ?? new FabricTransportRemotingListenerSettings();
 
-        listenerSettings.MaxMessageSize = this.GetAndValidateMaxMessageSize(listenerSettings.MaxMessageSize);
-        listenerSettings.OperationTimeout = this.GetAndValidateOperationTimeout(listenerSettings.OperationTimeout);
-        listenerSettings.KeepAliveTimeout = this.GetAndValidateKeepAliveTimeout(listenerSettings.KeepAliveTimeout);
+        settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
+        settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
+        settings.KeepAliveTimeout = this.GetAndValidateKeepAliveTimeout(settings.KeepAliveTimeout);
 
-        return listenerSettings;
+        return settings;
+    }
+
+    internal FabricTransportRemotingSettings GetRemotingSettings()
+    {
+        var settings = RemotingSettingsLoader() ?? new FabricTransportRemotingSettings();
+
+        settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
+        settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
+        settings.KeepAliveTimeout = this.GetAndValidateKeepAliveTimeout(settings.KeepAliveTimeout);
+        settings.ConnectTimeout = this.GetConnectTimeout(settings.ConnectTimeout);
+
+        return settings;
+    }
+
+    private static FabricTransportRemotingSettings? LoadRemotingSettings() =>
+        TryLoadSettings(() =>
+            FabricTransportRemotingSettings.TryLoadFrom(DefaultTransportSettingsSectionName, out var settings, filepath: null, configPackageName: null)
+                ? settings
+                : null);
+
+    private static FabricTransportRemotingListenerSettings? LoadListenerSettings() =>
+        TryLoadSettings(() =>
+            FabricTransportRemotingListenerSettings.TryLoadFrom(DefaultTransportSettingsSectionName, out var settings, configPackageName: null)
+                ? settings
+                : null);
+
+    private static T? TryLoadSettings<T>(Func<T?> loader)
+        where T : class
+    {
+        try
+        {
+            return loader();
+        }
+        catch (DllNotFoundException)
+        {
+            return null;
+        }
+        catch (TypeInitializationException ex) when (ex.InnerException is DllNotFoundException)
+        {
+            return null;
+        }
     }
 
     private long GetAndValidateMaxMessageSize(long maxMessageSizeDefault)
-    {
-        return (this.MaxMessageSize > 0) ? this.MaxMessageSize : maxMessageSizeDefault;
-    }
+        => (this.MaxMessageSize > 0) ? this.MaxMessageSize : maxMessageSizeDefault;
 
     private TimeSpan GetAndValidateOperationTimeout(TimeSpan operationTimeoutDefault)
-    {
-        return (this.OperationTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.OperationTimeoutInSeconds) : operationTimeoutDefault;
-    }
+        => (this.OperationTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.OperationTimeoutInSeconds) : operationTimeoutDefault;
 
     private TimeSpan GetAndValidateKeepAliveTimeout(TimeSpan keepAliveTimeoutDefault)
-    {
-        return (this.KeepAliveTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.KeepAliveTimeoutInSeconds) : keepAliveTimeoutDefault;
-    }
+        => (this.KeepAliveTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.KeepAliveTimeoutInSeconds) : keepAliveTimeoutDefault;
 
     private TimeSpan GetConnectTimeout(TimeSpan connectTimeoutDefault)
-    {
-        return (this.ConnectTimeoutInMilliseconds > 0) ? TimeSpan.FromMilliseconds(this.ConnectTimeoutInMilliseconds) : connectTimeoutDefault;
-    }
+        => (this.ConnectTimeoutInMilliseconds > 0) ? TimeSpan.FromMilliseconds(this.ConnectTimeoutInMilliseconds) : connectTimeoutDefault;
 }

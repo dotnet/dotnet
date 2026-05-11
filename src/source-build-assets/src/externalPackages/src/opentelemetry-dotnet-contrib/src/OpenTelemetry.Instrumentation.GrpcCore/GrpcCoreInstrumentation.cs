@@ -25,7 +25,7 @@ internal static class GrpcCoreInstrumentation
     /// <summary>
     /// The activity source name.
     /// </summary>
-    internal static readonly string ActivitySourceName = AssemblyName.Name!;
+    internal static readonly string ActivitySourceName = AssemblyName.Name;
 
     /// <summary>
     /// The activity source.

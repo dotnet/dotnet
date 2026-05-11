@@ -76,6 +76,23 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         [Output]
         public string? PackageId { get; set; }
 
+        /// <summary>
+        /// The relative path to the package icon file as declared in the nuspec's &lt;icon&gt; element,
+        /// or empty if the nuspec does not declare an icon. Used by the generator pipeline to
+        /// strip the icon file from the on-disk package source (we do not bundle icons in SBRP
+        /// outputs, see <see cref="GenerateProject"/>).
+        /// </summary>
+        [Output]
+        public string? IconPath { get; set; }
+
+        /// <summary>
+        /// The relative path to the package readme file as declared in the nuspec's &lt;readme&gt;
+        /// element, or empty if the nuspec does not declare a readme. Used by the generator
+        /// pipeline to strip the readme file from the on-disk package source.
+        /// </summary>
+        [Output]
+        public string? ReadmePath { get; set; }
+
         public override bool Execute()
         {
             using PackageArchiveReader packageArchiveReader = new(PackagePath!);
@@ -86,6 +103,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             SetPackageDependencies(packageArchiveReader, targetFrameworkRegexFilter);
             SetFrameworkReferences(packageArchiveReader, targetFrameworkRegexFilter);
             PackageId = packageArchiveReader.GetIdentity().Id;
+
+            NuspecReader nuspecReader = packageArchiveReader.NuspecReader;
+            IconPath = nuspecReader.GetMetadataValue("icon") ?? string.Empty;
+            ReadmePath = nuspecReader.GetMetadataValue("readme") ?? string.Empty;
 
             if (targetFrameworkRegexFilter.FoundExcludedTargetFrameworks.Count > 0)
             {

@@ -18,7 +18,7 @@ namespace OpenTelemetry.Instrumentation.Hangfire.Implementation;
 /// </remarks>
 internal sealed class HangfirePendingDurationFilterAttribute : JobFilterAttribute, IServerFilter, IElectStateFilter
 {
-    private const string EnqueuedAtParameter = "OpenTelemetry.EnqueuedAt";
+    private const string EnqueuedAtParameter = "opentelemetry_enqueued_at";
 
     public void OnStateElection(ElectStateContext context)
     {

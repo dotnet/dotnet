@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
+#if NET
 using System.Diagnostics;
+#endif
 using System.Text.RegularExpressions;
 
 namespace OpenTelemetry.Exporter.OneCollector;
@@ -17,18 +19,14 @@ internal sealed partial class EventNameManager
     private readonly string defaultEventName;
     private readonly IReadOnlyDictionary<string, EventFullName>? eventFullNameMappings;
     private readonly ResolvedEventFullName defaultEventFullName;
-    private readonly Hashtable eventFullNameCache = new(StringComparer.OrdinalIgnoreCase);
 
     public EventNameManager(
         string defaultEventNamespace,
         string defaultEventName,
         IReadOnlyDictionary<string, EventFullName>? eventFullNameMappings = null)
     {
-        Debug.Assert(defaultEventNamespace != null, "defaultEventNamespace was null");
-        Debug.Assert(defaultEventName != null, "defaultEventName was null");
-
-        this.defaultEventNamespace = defaultEventNamespace!;
-        this.defaultEventName = defaultEventName!;
+        this.defaultEventNamespace = defaultEventNamespace;
+        this.defaultEventName = defaultEventName;
         this.eventFullNameMappings = eventFullNameMappings;
 
         this.defaultEventFullName = new(
@@ -44,7 +42,7 @@ internal sealed partial class EventNameManager
     // Note: These caches are exposed for unit tests.
     internal Hashtable EventNamespaceCache { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-    internal Hashtable EventFullNameCache => this.eventFullNameCache;
+    internal Hashtable EventFullNameCache { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     public static bool IsEventNamespaceValid(string eventNamespace)
         => EventNamespaceValidationRegex().IsMatch(eventNamespace);
@@ -55,23 +53,23 @@ internal sealed partial class EventNameManager
     public ResolvedEventFullName ResolveEventFullName(
         string eventFullName)
     {
-        if (this.eventFullNameCache[eventFullName] is ResolvedEventFullName cachedEventFullName)
+        if (this.EventFullNameCache[eventFullName] is ResolvedEventFullName cachedEventFullName)
         {
             return cachedEventFullName;
         }
 
-        byte[] eventFullNameBlob = BuildEventFullName(string.Empty, eventFullName);
+        var eventFullNameBlob = BuildEventFullName(string.Empty, eventFullName);
 
         var resolvedEventFullName = new ResolvedEventFullName(
             eventFullNameBlob,
             originalEventNamespace: null,
             originalEventName: null);
 
-        lock (this.eventFullNameCache)
+        lock (this.EventFullNameCache)
         {
-            if (this.eventFullNameCache[eventFullName] is null)
+            if (this.EventFullNameCache[eventFullName] is null)
             {
-                this.eventFullNameCache[eventFullName] = resolvedEventFullName;
+                this.EventFullNameCache[eventFullName] = resolvedEventFullName;
             }
         }
 
@@ -304,7 +302,7 @@ internal sealed partial class EventNameManager
         }
         else
         {
-            eventFullName = BuildEventFullName(eventNamespace!, eventName!);
+            eventFullName = BuildEventFullName(eventNamespace, eventName);
         }
 
         return eventFullName;

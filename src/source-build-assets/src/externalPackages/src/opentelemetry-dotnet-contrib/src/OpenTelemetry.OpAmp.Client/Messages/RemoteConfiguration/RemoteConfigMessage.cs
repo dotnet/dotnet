@@ -16,15 +16,24 @@ public class RemoteConfigMessage : OpAmpMessage
 
     internal RemoteConfigMessage(AgentRemoteConfig agentRemoteConfig)
     {
-        this.agentConfigMap = new Dictionary<string, AgentConfigFile>(agentRemoteConfig.Config.ConfigMap.Count, StringComparer.Ordinal);
-
-        foreach (var config in agentRemoteConfig.Config.ConfigMap)
+        // Config may be absent per the OpAmp proto spec - it SHOULD NOT be set when
+        // the configuration has not changed since the last request.
+        if (agentRemoteConfig.Config is not null)
         {
-            // The value should never be null, but just in case...
-            if (config.Value is not null)
+            this.agentConfigMap = new Dictionary<string, AgentConfigFile>(agentRemoteConfig.Config.ConfigMap.Count, StringComparer.Ordinal);
+
+            foreach (var config in agentRemoteConfig.Config.ConfigMap)
             {
-                this.agentConfigMap[config.Key] = new AgentConfigFile(config.Key, config.Value);
+                // The value should never be null, but just in case...
+                if (config.Value is not null)
+                {
+                    this.agentConfigMap[config.Key] = new AgentConfigFile(config.Key, config.Value);
+                }
             }
+        }
+        else
+        {
+            this.agentConfigMap = new Dictionary<string, AgentConfigFile>(StringComparer.Ordinal);
         }
 
         this.configHash = agentRemoteConfig.ConfigHash;

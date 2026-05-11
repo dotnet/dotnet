@@ -60,18 +60,16 @@ internal sealed class InstrumentedRequestChannel : InstrumentedChannel<IRequestC
         return reply;
     }
 
-    IAsyncResult IRequestChannel.BeginRequest(Message message, TimeSpan timeout, AsyncCallback callback, object? state)
+    IAsyncResult IRequestChannel.BeginRequest(Message message, TimeSpan timeout, AsyncCallback? callback, object? state)
     {
         Guard.ThrowIfNull(message);
-        Guard.ThrowIfNull(callback);
 
         return this.InternalBeginRequest(message, (cb, s) => this.Inner.BeginRequest(message, timeout, cb, s), callback, state);
     }
 
-    IAsyncResult IRequestChannel.BeginRequest(Message message, AsyncCallback callback, object? state)
+    IAsyncResult IRequestChannel.BeginRequest(Message message, AsyncCallback? callback, object? state)
     {
         Guard.ThrowIfNull(message);
-        Guard.ThrowIfNull(callback);
 
         return this.InternalBeginRequest(message, (cb, s) => this.Inner.BeginRequest(message, cb, s), callback, state);
     }
@@ -96,7 +94,7 @@ internal sealed class InstrumentedRequestChannel : InstrumentedChannel<IRequestC
         return reply;
     }
 
-    private IAsyncResult InternalBeginRequest(Message message, Func<AsyncCallback, object?, IAsyncResult> beginRequestDelegate, AsyncCallback callback, object? state)
+    private IAsyncResult InternalBeginRequest(Message message, Func<AsyncCallback?, object?, IAsyncResult> beginRequestDelegate, AsyncCallback? callback, object? state)
     {
         IAsyncResult? result = null;
 

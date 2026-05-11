@@ -39,18 +39,16 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         this.SendInternal(message, timeout, _ => this.Inner.Send(message, timeout));
     }
 
-    public IAsyncResult BeginSend(Message message, AsyncCallback callback, object? state)
+    public IAsyncResult BeginSend(Message message, AsyncCallback? callback, object? state)
     {
         Guard.ThrowIfNull(message);
-        Guard.ThrowIfNull(callback);
 
         return this.SendInternal(message, this.telemetryTimeout, (cb, s) => this.Inner.BeginSend(message, cb, s), callback, state);
     }
 
-    public IAsyncResult BeginSend(Message message, TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginSend(Message message, TimeSpan timeout, AsyncCallback? callback, object? state)
     {
         Guard.ThrowIfNull(message);
-        Guard.ThrowIfNull(callback);
 
         return this.SendInternal(message, timeout, (cb, s) => this.Inner.BeginSend(message, timeout, cb, s), callback, state);
     }
@@ -85,17 +83,13 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         return message;
     }
 
-    public IAsyncResult BeginReceive(AsyncCallback callback, object? state)
+    public IAsyncResult BeginReceive(AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginReceive(callback, state);
     }
 
-    public IAsyncResult BeginReceive(TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginReceive(TimeSpan timeout, AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginReceive(timeout, callback, state);
     }
 
@@ -115,10 +109,8 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         return returnValue;
     }
 
-    public IAsyncResult BeginTryReceive(TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginTryReceive(TimeSpan timeout, AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginTryReceive(timeout, callback, state);
     }
 
@@ -136,10 +128,8 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         return this.Inner.WaitForMessage(timeout);
     }
 
-    public IAsyncResult BeginWaitForMessage(TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginWaitForMessage(TimeSpan timeout, AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginWaitForMessage(timeout, callback, state);
     }
 
@@ -164,7 +154,7 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         ClientChannelInstrumentation.AfterRequestCompleted(null, telemetryState);
     }
 
-    private IAsyncResult SendInternal(Message message, TimeSpan timeout, Func<AsyncCallback, object?, IAsyncResult> executeSend, AsyncCallback callback, object? state)
+    private IAsyncResult SendInternal(Message message, TimeSpan timeout, Func<AsyncCallback?, object?, IAsyncResult> executeSend, AsyncCallback? callback, object? state)
     {
         IAsyncResult? result = null;
         this.SendInternal(message, timeout, telemetryState =>

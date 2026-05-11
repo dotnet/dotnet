@@ -7,6 +7,10 @@
     <MinVerTagPrefix>Resources.Azure-</MinVerTagPrefix>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <!-- Do not run Package Baseline Validation as this package has never released a stable version.
   Remove this property once we have released a stable version and add PackageValidationBaselineVersion property. -->
   <PropertyGroup>
@@ -25,6 +29,7 @@
 
   <ItemGroup>
     <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\HttpClientHelpers.cs" Link="Includes\HttpClientHelpers.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\ResourceSemanticConventions.cs" Link="Includes\ResourceSemanticConventions.cs"/>
   </ItemGroup>
 

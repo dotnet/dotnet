@@ -29,10 +29,18 @@ internal sealed class RequestDataHelper
     {
         var suppliedKnownMethods = configureByHttpKnownMethodsEnvironmentalVariable ? Environment.GetEnvironmentVariable(KnownHttpMethodsEnvironmentVariable)
             ?.Split(SplitChars, StringSplitOptions.RemoveEmptyEntries) : null;
-        var knownMethodSet = suppliedKnownMethods?.Length > 0
-            ? suppliedKnownMethods.ToDictionary(x => x, x => x, StringComparer.OrdinalIgnoreCase)
-            : new(StringComparer.OrdinalIgnoreCase)
+
+        Dictionary<string, string> knownMethodSet;
+
+        if (suppliedKnownMethods?.Length > 0)
+        {
+            knownMethodSet = suppliedKnownMethods.ToDictionary(x => x, x => x, StringComparer.OrdinalIgnoreCase);
+        }
+        else
+        {
+            knownMethodSet = new(StringComparer.OrdinalIgnoreCase)
             {
+                // See https://github.com/open-telemetry/semantic-conventions/blob/v1.38.0/model/http/registry.yaml
                 ["GET"] = "GET",
                 ["POST"] = "POST",
                 ["PUT"] = "PUT",
@@ -43,6 +51,15 @@ internal sealed class RequestDataHelper
                 ["PATCH"] = "PATCH",
                 ["CONNECT"] = "CONNECT",
             };
+
+            // .NET 9+ has native support for instrumentation, so our custom code doesn't run,
+            // but we don't target net9.0 so we cannot use conditional compilation to light-up
+            // support for QUERY and only .NET 10+ has support for QUERY itself.
+            if (Environment.Version.Major is not 9)
+            {
+                knownMethodSet["QUERY"] = "QUERY";
+            }
+        }
 
 #if NET
         this.knownHttpMethods = knownMethodSet.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
@@ -74,16 +91,12 @@ internal sealed class RequestDataHelper
     }
 
     public string GetNormalizedHttpMethod(string method)
-    {
-        return this.knownHttpMethods.TryGetValue(method, out var normalizedMethod)
+        => this.knownHttpMethods.TryGetValue(method, out var normalizedMethod)
             ? normalizedMethod
             : OtherHttpMethod;
-    }
 
     public void SetActivityDisplayName(Activity activity, string originalHttpMethod, string? httpRoute = null)
-    {
-        activity.DisplayName = this.GetActivityDisplayName(originalHttpMethod, httpRoute);
-    }
+        => activity.DisplayName = this.GetActivityDisplayName(originalHttpMethod, httpRoute);
 
     public string GetActivityDisplayName(string originalHttpMethod, string? httpRoute = null)
     {
@@ -95,26 +108,20 @@ internal sealed class RequestDataHelper
         return string.IsNullOrEmpty(httpRoute) ? namePrefix : $"{namePrefix} {httpRoute}";
     }
 
-    internal static string GetHttpProtocolVersion(Version httpVersion)
+    internal static string GetHttpProtocolVersion(Version httpVersion) => httpVersion switch
     {
-        return httpVersion switch
-        {
-            { Major: 1, Minor: 0 } => "1.0",
-            { Major: 1, Minor: 1 } => "1.1",
-            { Major: 2, Minor: 0 } => "2",
-            { Major: 3, Minor: 0 } => "3",
-            _ => httpVersion.ToString(),
-        };
-    }
+        { Major: 1, Minor: 0 } => "1.0",
+        { Major: 1, Minor: 1 } => "1.1",
+        { Major: 2, Minor: 0 } => "2",
+        { Major: 3, Minor: 0 } => "3",
+        _ => httpVersion.ToString(),
+    };
 
-    internal static string GetHttpProtocolVersion(string protocol)
+    internal static string GetHttpProtocolVersion(string protocol) => protocol switch
     {
-        return protocol switch
-        {
-            "HTTP/1.1" => "1.1",
-            "HTTP/2" => "2",
-            "HTTP/3" => "3",
-            _ => protocol,
-        };
-    }
+        "HTTP/1.1" => "1.1",
+        "HTTP/2" => "2",
+        "HTTP/3" => "3",
+        _ => protocol,
+    };
 }

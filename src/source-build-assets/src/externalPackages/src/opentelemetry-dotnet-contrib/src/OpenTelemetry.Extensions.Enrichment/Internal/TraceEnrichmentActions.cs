@@ -11,14 +11,22 @@ internal sealed class TraceEnrichmentActions : TraceEnricher
 
     public TraceEnrichmentActions(IEnumerable<Action<TraceEnrichmentBag>> actions)
     {
-        this.actions = actions.ToArray();
+        this.actions = [.. actions];
     }
 
     public override void Enrich(in TraceEnrichmentBag bag)
     {
         for (var i = 0; i < this.actions.Length; i++)
         {
-            this.actions[i].Invoke(bag);
+            var action = this.actions[i];
+            try
+            {
+                action.Invoke(bag);
+            }
+            catch (Exception ex)
+            {
+                EnrichmentEventSource.Log.TraceEnrichmentActionException(action, ex);
+            }
         }
     }
 }

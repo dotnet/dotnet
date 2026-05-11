@@ -438,10 +438,10 @@ message TLSConnectionSettings
   // skip certificate verification.
   bool insecure_skip_verify = 3;
 
-  // Miniumum accepted TLS version; default "1.2".
+  // Minimum accepted TLS version; default "1.2".
   string min_version = 4;
 
-  // Maxiumum accepted TLS version; default "".
+  // Maximum accepted TLS version; default "".
   string max_version = 5;
 
     // Explicit list of cipher suites.

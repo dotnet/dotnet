@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.ServiceModel.Channels;
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry.Internal;
+using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Instrumentation.Wcf.Implementation;
 
@@ -38,29 +39,29 @@ internal static class ClientChannelInstrumentation
 
             if (activity.IsAllDataRequested)
             {
-                activity.SetTag(WcfInstrumentationConstants.RpcSystemTag, WcfInstrumentationConstants.WcfSystemValue);
+                activity.SetTag(SemanticConventions.AttributeRpcSystem, WcfInstrumentationConstants.WcfSystemValue);
 
                 var actionMetadata = GetActionMetadata(request, action);
-                activity.SetTag(WcfInstrumentationConstants.RpcServiceTag, actionMetadata.ContractName);
-                activity.SetTag(WcfInstrumentationConstants.RpcMethodTag, actionMetadata.OperationName);
+                activity.SetTag(SemanticConventions.AttributeRpcService, actionMetadata.ContractName);
+                activity.SetTag(SemanticConventions.AttributeRpcMethod, actionMetadata.OperationName);
 
                 if (WcfInstrumentationActivitySource.Options!.SetSoapMessageVersion)
                 {
-                    activity.SetTag(WcfInstrumentationConstants.SoapMessageVersionTag, request.Version.ToString());
+                    activity.SetTag(WcfInstrumentationConstants.AttributeSoapMessageVersion, request.Version.ToString());
                 }
 
                 var remoteAddressUri = request.Headers.To ?? remoteChannelAddress;
                 if (remoteAddressUri != null)
                 {
-                    activity.SetTag(WcfInstrumentationConstants.NetPeerNameTag, remoteAddressUri.Host);
-                    activity.SetTag(WcfInstrumentationConstants.NetPeerPortTag, remoteAddressUri.Port);
-                    activity.SetTag(WcfInstrumentationConstants.WcfChannelSchemeTag, remoteAddressUri.Scheme);
-                    activity.SetTag(WcfInstrumentationConstants.WcfChannelPathTag, remoteAddressUri.LocalPath);
+                    activity.SetTag(SemanticConventions.AttributeNetPeerName, remoteAddressUri.Host);
+                    activity.SetTag(SemanticConventions.AttributeNetPeerPort, remoteAddressUri.Port);
+                    activity.SetTag(WcfInstrumentationConstants.AttributeWcfChannelScheme, remoteAddressUri.Scheme);
+                    activity.SetTag(WcfInstrumentationConstants.AttributeWcfChannelPath, remoteAddressUri.LocalPath);
                 }
 
                 if (request.Properties.Via != null)
                 {
-                    activity.SetTag(WcfInstrumentationConstants.SoapViaTag, request.Properties.Via.ToString());
+                    activity.SetTag(WcfInstrumentationConstants.AttributeSoapVia, request.Properties.Via.ToString());
                 }
 
                 try
@@ -101,7 +102,7 @@ internal static class ClientChannelInstrumentation
 
                 if (reply != null)
                 {
-                    activity.SetTag(WcfInstrumentationConstants.SoapReplyActionTag, reply.Headers.Action);
+                    activity.SetTag(WcfInstrumentationConstants.AttributeSoapReplyAction, reply.Headers.Action);
                     try
                     {
                         WcfInstrumentationActivitySource.Options!.Enrich?.Invoke(activity, WcfEnrichEventNames.AfterReceiveReply, reply);
@@ -117,12 +118,10 @@ internal static class ClientChannelInstrumentation
         }
     }
 
-    private static IDisposable? SuppressDownstreamInstrumentation()
-    {
-        return WcfInstrumentationActivitySource.Options?.SuppressDownstreamInstrumentation ?? false
+    private static IDisposable? SuppressDownstreamInstrumentation() =>
+        WcfInstrumentationActivitySource.Options?.SuppressDownstreamInstrumentation ?? false
             ? SuppressInstrumentationScope.Begin()
             : null;
-    }
 
     private static ActionMetadata GetActionMetadata(Message request, string action)
     {

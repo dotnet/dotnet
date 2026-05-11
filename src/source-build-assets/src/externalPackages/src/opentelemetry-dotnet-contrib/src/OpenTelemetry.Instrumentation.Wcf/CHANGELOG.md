@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+* Update `System.Security.Cryptography.Xml` dependency versions for .NET 8, 9 and
+  10 to pick up fixes for [GHSA-w3x6-4m5h-cxqf](https://github.com/dotnet/runtime/security/advisories/GHSA-w3x6-4m5h-cxqf)
+  and [GHSA-37gx-xxp4-5rgx](https://github.com/dotnet/runtime/security/advisories/GHSA-37gx-xxp4-5rgx).
+  ([#4103](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4103))
+
+* Fixed an issue where instrumented WCF channel `Begin*` methods threw an
+  `ArgumentNullException` when `AsyncCallback` was `null`.
+  ([#4164](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4164))
+
+* Updated OpenTelemetry core component version(s) to `1.15.3`.
+  ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
+
 ## 1.15.0-beta.1
 
 Released 2026-Jan-21

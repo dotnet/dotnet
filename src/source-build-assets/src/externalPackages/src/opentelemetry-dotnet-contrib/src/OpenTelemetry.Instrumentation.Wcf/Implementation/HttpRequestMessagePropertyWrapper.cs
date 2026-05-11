@@ -47,9 +47,11 @@ internal static class HttpRequestMessagePropertyWrapper
         Type? type = null;
         try
         {
+#pragma warning disable IDE0370 // Suppression is unnecessary
             type = Type.GetType(
                 "System.ServiceModel.Channels.HttpRequestMessageProperty, System.ServiceModel, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 true)!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
             var constructor = type.GetConstructor(Type.EmptyTypes)
                 ?? throw new NotSupportedException("HttpRequestMessageProperty public parameterless constructor was not found");

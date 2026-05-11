@@ -58,7 +58,7 @@ public sealed class OneCollectorExporterTransportOptions
     internal int MaxNumberOfItemsPerPayload { get; set; } = DefaultMaxNumberOfItemsPerPayload;
 
     /// <summary>
-    /// Gets or sets the compression type to use when transmiting telemetry over
+    /// Gets or sets the compression type to use when transmitting telemetry over
     /// HTTP. Default value: <see
     /// cref="OneCollectorExporterHttpTransportCompressionType.Deflate"/>.
     /// </summary>

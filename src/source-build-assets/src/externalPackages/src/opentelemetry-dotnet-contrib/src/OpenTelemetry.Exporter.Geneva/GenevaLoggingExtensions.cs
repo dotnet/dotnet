@@ -1,7 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenTelemetry;
@@ -35,27 +34,23 @@ public static class GenevaLoggingExtensions
         var exporter = new GenevaLogExporter(genevaOptions);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-        bool enableAFDEnrichment = false;
+        var enableAFDEnrichment = false;
         if (!string.IsNullOrEmpty(genevaOptions.ConnectionString))
         {
             var connectionStringBuilder = new ConnectionStringBuilder(genevaOptions.ConnectionString);
             enableAFDEnrichment = connectionStringBuilder.PrivatePreviewEnableAFDCorrelationIdEnrichment;
         }
 
-        if (exporter.IsUsingUnixDomainSocket)
-        {
-            return enableAFDEnrichment
+        return exporter.IsUsingUnixDomainSocket
+            ? enableAFDEnrichment
                 ? options.AddProcessor(sp =>
                                 new CompositeProcessor<LogRecord>(
                                 [
                                     new AFDCorrelationIdLogProcessor(),
                                     new BatchLogRecordExportProcessor(exporter),
                                 ]))
-                : options.AddProcessor(sp => new BatchLogRecordExportProcessor(exporter));
-        }
-        else
-        {
-            return enableAFDEnrichment
+                : options.AddProcessor(sp => new BatchLogRecordExportProcessor(exporter))
+            : enableAFDEnrichment
                 ? options.AddProcessor(sp =>
                                 new CompositeProcessor<LogRecord>(
                                 [
@@ -63,7 +58,6 @@ public static class GenevaLoggingExtensions
                                     new ReentrantExportProcessor<LogRecord>(exporter),
                                 ]))
                 : options.AddProcessor(sp => new ReentrantExportProcessor<LogRecord>(exporter));
-        }
     }
 
     /// <summary>
@@ -146,24 +140,17 @@ public static class GenevaLoggingExtensions
        BatchExportLogRecordProcessorOptions batchExportLogRecordProcessorOptions,
        GenevaExporterOptions exporterOptions)
     {
-        Debug.Assert(exporterOptions != null, "exporterOptions was null");
-
 #pragma warning disable CA2000 // Dispose objects before losing scope
-        var exporter = new GenevaLogExporter(exporterOptions!);
+        var exporter = new GenevaLogExporter(exporterOptions);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-        if (exporter.IsUsingUnixDomainSocket)
-        {
-            return new BatchLogRecordExportProcessor(
+        return exporter.IsUsingUnixDomainSocket
+            ? new BatchLogRecordExportProcessor(
                 exporter,
                 batchExportLogRecordProcessorOptions.MaxQueueSize,
                 batchExportLogRecordProcessorOptions.ScheduledDelayMilliseconds,
                 batchExportLogRecordProcessorOptions.ExporterTimeoutMilliseconds,
-                batchExportLogRecordProcessorOptions.MaxExportBatchSize);
-        }
-        else
-        {
-            return new ReentrantExportProcessor<LogRecord>(exporter);
-        }
+                batchExportLogRecordProcessorOptions.MaxExportBatchSize)
+            : new ReentrantExportProcessor<LogRecord>(exporter);
     }
 }

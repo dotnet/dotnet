@@ -328,7 +328,7 @@ internal class EventHeaderLogExporter : TldLogCommon, IDisposable
             {
                 // Get all "other" fields and collapse them into single field
                 // named "env_properties".
-                var serializedEnvPropertiesStringAsBytes = JsonSerializer.SerializeKeyValuePairsListAsBytes(envPropertiesList, out var count);
+                var serializedEnvPropertiesStringAsBytes = JsonSerializer.SerializeKeyValuePairsListAsBytes(envPropertiesList, out _);
                 eb.AddString8("env_properties", serializedEnvPropertiesStringAsBytes);
             }
 
@@ -344,9 +344,7 @@ internal class EventHeaderLogExporter : TldLogCommon, IDisposable
         => OnProcessScopeForIndividualColumns(
             scope,
             state.serializationData.Value!,
-            state.customFields,
-            PartCFields.Value!,
-            EnvProperties.Value);
+            state.customFields);
 }
 
 #endif

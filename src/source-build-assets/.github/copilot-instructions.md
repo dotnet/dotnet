@@ -11,6 +11,13 @@ All general documentation is maintained in the [README.md](../README.md) to avoi
 - **NEVER** delete or recreate `Customizations.props` or `Customizations.cs` files
 - **NEVER** suggest adding preview/RC packages
 - **NEVER** ignore build failures in `./build.sh -sb`
+- **NEVER** hand-author `.nuspec` files for reference or text-only packages — they are
+  no longer present in the source tree. Per-package metadata (description, license,
+  projectUrl, releaseNotes, tags, etc.) lives in the generated `.csproj` and is
+  produced from the source nuspec by the package source generator. Centralized
+  fields (Authors, Copyright, Serviceable, etc.) live in
+  `src/referencePackages/Directory.Build.props` and
+  `src/textOnlyPackages/Directory.Build.props`.
 
 ### Before Making Changes
 

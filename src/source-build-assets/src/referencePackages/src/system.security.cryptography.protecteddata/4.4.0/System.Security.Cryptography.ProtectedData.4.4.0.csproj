@@ -1,9 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>System.Security.Cryptography.ProtectedData</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>4.4.0</PackageVersion>
     <AssemblyName>System.Security.Cryptography.ProtectedData</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Description>Provides access to Windows Data Protection Api.
+
+Commonly Used Types:
+System.Security.Cryptography.DataProtectionScope
+System.Security.Cryptography.ProtectedData
+ 
+8321c729934c0f8be754953439b88e6e1c120c24 
+When using NuGet 3.x this package requires at least version 3.4.</Description>
+    <Title>System.Security.Cryptography.ProtectedData</Title>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+    <MinClientVersion>2.12</MinClientVersion>
   </PropertyGroup>
 
 </Project>

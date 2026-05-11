@@ -32,7 +32,7 @@ public class GenerateScriptTests
     public GenerateScriptTests(ITestOutputHelper output)
     {
         Output = output;
-        SandboxDirectory = Path.Combine(Environment.CurrentDirectory, $"GenerateTests-{DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()}");
+        SandboxDirectory = Path.Combine(Environment.CurrentDirectory, $"GenerateTests-{Guid.NewGuid():N}");
         Directory.CreateDirectory(SandboxDirectory);
         PkgsSandboxDirectory = Path.Combine(SandboxDirectory, ".packages");
         Directory.CreateDirectory(PkgsSandboxDirectory);
@@ -49,7 +49,12 @@ public class GenerateScriptTests
             PackageType.Target => " -t target",
             _ => string.Empty
         };
-        string arguments = $"-p {package},{version} -x -d {SandboxDirectory}{typeArg}";
+        // Redirect Arcade's ArtifactsDir into the per-test sandbox so the sub-build does not
+        // write to the outer build's artifacts/obj/... (which would clobber files such as
+        // AfterSolutionBuild.proj.nuget.g.props that the outer build depends on, leading to
+        // MSB4036 "WritePackageUsageData task was not found" failures).
+        string artifactsDir = Path.Combine(SandboxDirectory, "artifacts") + Path.DirectorySeparatorChar;
+        string arguments = $"-p {package},{version} -x -d {SandboxDirectory}{typeArg} /p:ArtifactsDir={artifactsDir}";
         string pkgDirectory = type == PackageType.Target
             ? Path.Combine(PathUtilities.GetPackageTypeDir(type), package.ToLower(), version)
             : Path.Combine(PathUtilities.GetPackageTypeDir(type), "src", package.ToLower(), version);

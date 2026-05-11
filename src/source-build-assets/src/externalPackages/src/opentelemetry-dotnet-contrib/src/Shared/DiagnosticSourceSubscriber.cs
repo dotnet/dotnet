@@ -40,9 +40,7 @@ internal sealed class DiagnosticSourceSubscriber : IDisposable, IObserver<Diagno
     }
 
     public void Subscribe()
-    {
-        this.allSourcesSubscription ??= DiagnosticListener.AllListeners.Subscribe(this);
-    }
+        => this.allSourcesSubscription ??= DiagnosticListener.AllListeners.Subscribe(this);
 
     public void OnNext(DiagnosticListener value)
     {

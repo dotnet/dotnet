@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Microsoft.Build.Tasks.Core</PackageId>
     <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>17.11.48</PackageVersion>
     <AssemblyName>Microsoft.Build.Tasks.Core</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Description>This package contains the Microsoft.Build.Tasks assembly which implements the commonly used tasks of MSBuild.</Description>
+    <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>MSBuild</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

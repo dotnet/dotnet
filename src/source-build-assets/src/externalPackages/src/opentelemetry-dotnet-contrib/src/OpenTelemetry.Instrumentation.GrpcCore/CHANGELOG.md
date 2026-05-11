@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 1.0.0-beta.11
+
+Released 2026-Apr-21
+
+* Fixed `RecordMessageEvents` to skip message-event emission for custom-marshalled
+  payloads that do not implement `Google.Protobuf.IMessage`.
+  ([#4141](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4141))
+
+* Updated OpenTelemetry core component version(s) to `1.15.3`.
+  ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
+
+## 1.0.0-beta.10
+
+Released 2026-Feb-16
+
+* Update minimum supported version of `Google.Protobuf` to `3.33.2`
+  for native AoT compatibility.
+  ([#3845](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3845))
+
 ## 1.0.0-beta.9
 
 Released 2026-Jan-21
