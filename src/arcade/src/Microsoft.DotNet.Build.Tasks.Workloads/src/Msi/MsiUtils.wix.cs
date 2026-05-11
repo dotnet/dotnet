@@ -20,6 +20,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         private const string _getComponentsQuery = "SELECT `Component`, `ComponentId`, `Directory_`, `Attributes`, `Condition`, `KeyPath` FROM `Component`";
 
         /// <summary>
+        /// Query string to retrieve all the rows from the MSI CustomAction table.
+        /// </summary>
+        private const string _getCustomActionsQuery = "SELECT `Action`, `Type`, `Source`, `Target` FROM `CustomAction`";
+
+        /// <summary>
         /// Query string to retrieve all the rows from the MSI File table.
         /// </summary>
         private const string _getFilesQuery = "SELECT `File`, `Component_`, `FileName`, `FileSize`, `Version`, `Language`, `Attributes`, `Sequence` FROM `File`";
@@ -32,7 +37,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// Query string to retrieve the dependency provider key from the WixDependencyProvider table.
         /// </summary>
-        private const string _getWixDependencyProviderQuery = "SELECT `ProviderKey` FROM `WixDependencyProvider`";
+        private const string _getWixDependencyProviderQuery = "SELECT `ProviderKey` FROM `Wix4DependencyProvider`";
 
         /// <summary>
         /// Query string to retrieve all the rows from the MSI Directory table.
@@ -154,6 +159,29 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         /// <summary>
+        /// Gets all custom actions defined in the CustomAction table of an MSI.
+        /// </summary>
+        /// <param name="packagePath">The path of the MSI package to query.</param>
+        /// <returns>An enumeration of custom action rows.</returns>
+        public static IEnumerable<CustomActionRow> GetCustomActions(string packagePath)
+        {
+            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+            if (db.Tables.Contains("CustomAction"))
+            {
+                using View customActionView = db.OpenView(_getCustomActionsQuery);
+                List<CustomActionRow> customActions = new();
+                customActionView.Execute();
+                foreach (Record customAction in customActionView)
+                {
+                    customActions.Add(CustomActionRow.Create(customAction));
+                }
+                return customActions;
+            }
+            return Enumerable.Empty<CustomActionRow>();
+        }
+
+        /// <summary>
         /// Gets the dependency provider key from the MSI package.
         /// </summary>
         /// <param name="packagePath">The path of the MSI package to query.</param>
@@ -163,7 +191,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
             using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
 
-            if (db.Tables.Contains("WixDependencyProvider"))
+            if (db.Tables.Contains("Wix4DependencyProvider"))
             {
                 using View depProviderView = db.OpenView(_getWixDependencyProviderQuery);
                 depProviderView.Execute();

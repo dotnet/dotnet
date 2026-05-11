@@ -166,7 +166,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 Dictionary<string, WorkloadManifestMsi> manifestMsisByPlatform = new();
                 foreach (string platform in SupportedPlatforms)
                 {
-                    var manifestMsi = new WorkloadManifestMsi(manifestPackage, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath, EnableSideBySideManifests);
+                    var manifestMsi = new WorkloadManifestMsi(manifestPackage, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, EnableSideBySideManifests);
                     manifestMsisToBuild.Add(manifestMsi);
                     manifestMsisByPlatform[platform] = manifestMsi;
                 }
@@ -341,7 +341,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 // Enumerate over the platforms and build each MSI once.
                 _ = Parallel.ForEach(data.FeatureBands.Keys, platform =>
                 {
-                    WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath);
+                    WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath);
                     ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
 
                     // Generate a .csproj to package the MSI and its manifest for CLI installs.
@@ -388,7 +388,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
 
                 foreach (var platform in packGroup.ManifestsPerPlatform.Keys)
                 {
-                    WorkloadPackGroupMsi msi = new(packGroup, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath);
+                    WorkloadPackGroupMsi msi = new(packGroup, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath);
                     ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
 
                     // Generate a .csproj to package the MSI and its manifest for CLI installs.

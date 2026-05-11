@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using AwesomeAssertions;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
+using WixToolset.Dtf.WindowsInstaller;
+using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 {
@@ -18,9 +21,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         public static readonly string MsiOutputPath = Path.Combine(BaseOutputPath, "msi");
         public static readonly string TestAssetsPath = Path.Combine(AppContext.BaseDirectory, "testassets");
 
-        public static readonly string WixToolsetPath = Path.Combine(TestAssetsPath, "wix");
+//        public static readonly string WixToolsetPath = Path.Combine(TestAssetsPath, "wix");
 
         public static readonly string TestOutputRoot = Path.Combine(AppContext.BaseDirectory, "TEST_OUTPUT");
+
+        /// <summary>
+        /// Wix Toolset to use for tests. 
+        /// </summary>
+        public static WixToolsetConfiguration WixToolsetConfig = WixToolsetConfiguration.Create(
+            WixToolsetInfo.WixExePath, WixToolsetInfo.HeatExePath,
+            WixToolsetInfo.DependencyExt, WixToolsetInfo.UtilExt, WixToolsetInfo.UIExt);
 
         /// <summary>
         /// Returns a new, random directory for a test case.
@@ -40,6 +50,30 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 r.VersionMax == expectedVersionMax &&
                 r.ActionProperty == expectedActionProperty &&
                 r.Attributes == expectedAttributes);
+        }
+
+        /// <summary>
+        /// Verify that the CustomAction table contains the expected entries for setting DOTNETHOME when executing
+        /// under emulation on arm64.
+        /// </summary>
+        /// <param name="customActions">List of custom actions to validate.</param>
+        /// <param name="platform">The platform of the MSI to validate.</param>
+        protected static void ValidateDotNetHomeCustomActions(IEnumerable<CustomActionRow> customActions, string platform)
+        {
+            if (platform == "x64")
+            { 
+                customActions.Should().Contain(c => c.Action == "Set_NON_NATIVE_ARCHITECTURE" &&
+                    c.Source=="NON_NATIVE_ARCHITECTURE");
+                customActions.Should().Contain(c => c.Action == "Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" &&
+                    c.Source == "DOTNETHOME");
+            }
+            else
+            {
+                customActions.Should().NotContain(c => c.Action == "Set_NON_NATIVE_ARCHITECTURE" &&
+                    c.Source == "NON_NATIVE_ARCHITECTURE");
+                customActions.Should().NotContain(c => c.Action == "Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" &&
+                    c.Source == "DOTNETHOME");
+            }
         }
 
         /// <summary>
@@ -98,6 +132,30 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             registryKeys.Should().Contain(r =>
                 r.Name == "DisplayName" &&
                 r.Value == "[ProductName]");
+        }
+
+        /// <summary>
+        /// Verify that the summary information stream matches the expected values for the given platform.
+        /// </summary>
+        /// <param name="path">The path to the MSI.</param>
+        /// <param name="platform">The target platform from the test.</param>
+        protected static void ValidateSummaryInformation(string path, string platform)
+        {
+            using SummaryInfo si = new(path, enableWrite: false);
+
+            switch (platform)
+            {
+                case "x86":
+                    Assert.Equal("Intel;1033", si.Template);
+                    break;
+                case "x64":
+                    Assert.Equal($"x64;1033", si.Template);
+                    break;
+                case "arm64":
+                    Assert.Equal($"Arm64;1033", si.Template);
+                    break;
+                default: throw new Exception($"Invalid platform: {platform}");
+            }
         }
     }
 }

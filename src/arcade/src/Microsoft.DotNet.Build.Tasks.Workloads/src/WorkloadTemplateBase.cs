@@ -12,6 +12,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     public abstract class WorkloadTemplateBase
     {
         /// <summary>
+        /// List of source files that have been added to the template.
+        /// </summary>
+        private List<string> _files = new();
+
+        /// <summary>
         /// The root intermediate output directory. 
         /// </summary>
         public string OutputPath
@@ -27,6 +32,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         {
             get;
         } = new();
+
+        /// <summary>
+        /// List of source files that have been added to the template.
+        /// </summary>
+        protected IEnumerable<string> Files => _files;
 
         /// <summary>
         /// The path of the root directory where the template will be generated.
@@ -73,7 +83,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// Generates the template content like project and source files.
         /// </summary>
         /// <returns>The path to the project file.</returns>
-        public abstract string Create();
+        public virtual string Create()
+        {
+            return "";
+        }
 
         /// <summary>
         /// Extracts the specified template file into the source directory and optionally replace tokens.
@@ -101,7 +114,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 Utils.StringReplace(templatePath, ReplacementTokens);
             }
 
+            AddSourceFile(templatePath);
+
             return templatePath;
         }
+
+        /// <summary>
+        /// Add an existing file to the list of source files associated with the template.
+        /// </summary>
+        /// <param name="path">The file system path of the file to add.</param>
+        public void AddSourceFile(string path) => _files.Add(path);
     }
 }

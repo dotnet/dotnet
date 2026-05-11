@@ -68,5 +68,19 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
 
             public static readonly string No = "no";
         }
+
+        internal static class Wix
+        {
+            /// <summary>
+            /// Default LCID value for the ProductLanguage property.
+            /// </summary>
+            public const string Language = "1033";
+
+            /// <summary>
+            /// Default preprocessor variable to use for substituing File@Source when harvesting a directory with Heat.
+            /// </summary>
+            public const string SourceVariableName = "SourceDir";
+        }
+
     }
 }

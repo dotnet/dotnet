@@ -19,136 +19,138 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <inheritdoc />
         protected override string BaseOutputName => Metadata.Id;
 
-        public WorkloadPackGroupMsi(WorkloadPackGroupPackage package, string platform, IBuildEngine buildEngine, string wixToolsetPath,
+        public WorkloadPackGroupMsi(WorkloadPackGroupPackage package, string platform, IBuildEngine buildEngine, 
+            WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediatOutputPath)
-             : base(package.GetMsiMetadata(), buildEngine, wixToolsetPath, platform, baseIntermediatOutputPath)
+             : base(package.GetMsiMetadata(), buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
         {
             _package = package;
         }
 
         public override string Create() => "";
 
-        public override ITaskItem Build(string outputPath, ITaskItem[] iceSuppressions)
+        public  ITaskItem Build2(string outputPath, ITaskItem[] iceSuppressions)
         {
-            List<string> packageContentWxsFiles = new List<string>();
+            return null;
+            //List<string> packageContentWxsFiles = new List<string>();
 
-            int packNumber = 1;
+            //int packNumber = 1;
 
-            MsiDirectory dotnetHomeDirectory = new MsiDirectory("dotnet", "DOTNETHOME");
-            Dictionary<string, string> sourceDirectoryNamesAndValues = new();
+            //MsiDirectory dotnetHomeDirectory = new MsiDirectory("dotnet", "DOTNETHOME");
+            //Dictionary<string, string> sourceDirectoryNamesAndValues = new();
 
-            foreach (var pack in _package.Packs)
-            {
-                string packageContentWxs = Path.Combine(SourcePath, $"PackageContent.{pack.Id}.wxs");
+            //foreach (var pack in _package.Packs)
+            //{
+            //    string packageContentWxs = Path.Combine(SourcePath, $"PackageContent.{pack.Id}.wxs");
 
-                string directoryReference;
-                if (pack.Kind == WorkloadPackKind.Library)
-                {
-                    directoryReference = dotnetHomeDirectory.GetSubdirectory("library-packs", "LibraryPacksDir").Id;
-                }
-                else if (pack.Kind == WorkloadPackKind.Template)
-                {
-                    directoryReference = dotnetHomeDirectory.GetSubdirectory("template-packs", "TemplatePacksDir").Id;
-                }
-                else
-                {
-                    var versionDir = dotnetHomeDirectory.GetSubdirectory("packs", "PacksDir")
-                        .GetSubdirectory(pack.Id, "PackDir" + packNumber)
-                        .GetSubdirectory($"{pack.PackageVersion}", "PackVersionDir" + packNumber);
+            //    string directoryReference;
+            //    if (pack.Kind == WorkloadPackKind.Library)
+            //    {
+            //        directoryReference = dotnetHomeDirectory.GetSubdirectory("library-packs", "LibraryPacksDir").Id;
+            //    }
+            //    else if (pack.Kind == WorkloadPackKind.Template)
+            //    {
+            //        directoryReference = dotnetHomeDirectory.GetSubdirectory("template-packs", "TemplatePacksDir").Id;
+            //    }
+            //    else
+            //    {
+            //        var versionDir = dotnetHomeDirectory.GetSubdirectory("packs", "PacksDir")
+            //            .GetSubdirectory(pack.Id, "PackDir" + packNumber)
+            //            .GetSubdirectory($"{pack.PackageVersion}", "PackVersionDir" + packNumber);
 
-                    directoryReference = versionDir.Id;
-                }
+            //        directoryReference = versionDir.Id;
+            //    }
 
-                HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
-                {
-                    DirectoryReference = directoryReference,
-                    OutputFile = packageContentWxs,
-                    Platform = this.Platform,
-                    SourceDirectory = pack.DestinationDirectory,
-                    SourceVariableName = "SourceDir" + packNumber,
-                    ComponentGroupName = "CG_PackageContents" + packNumber
-                };
+            //    HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
+            //    {
+            //        DirectoryReference = directoryReference,
+            //        OutputFile = packageContentWxs,
+            //        Platform = this.Platform,
+            //        SourceDirectory = pack.DestinationDirectory,
+            //        SourceVariableName = "SourceDir" + packNumber,
+            //        ComponentGroupName = "CG_PackageContents" + packNumber
+            //    };
 
-                sourceDirectoryNamesAndValues[heat.SourceVariableName] = heat.SourceDirectory;
+            //    sourceDirectoryNamesAndValues[heat.SourceVariableName] = heat.SourceDirectory;
 
-                if (!heat.Execute())
-                {
-                    throw new Exception(Strings.HeatFailedToHarvest);
-                }
+            //    if (!heat.Execute())
+            //    {
+            //        throw new Exception(Strings.HeatFailedToHarvest);
+            //    }
 
-                packageContentWxsFiles.Add(packageContentWxs);
+            //    packageContentWxsFiles.Add(packageContentWxs);
 
-                packNumber++;
-            }
+            //    packNumber++;
+            //}
 
-            //  Create wxs file from dotnetHomeDirectory structure
-            string directoriesWxsPath = AddFile("Directories.wxs");
-            var directoriesDoc = XDocument.Load(directoriesWxsPath);
-            var dotnetHomeElement = directoriesDoc.Root.Descendants().Where(d => (string)d.Attribute("Id") == "DOTNETHOME").Single();
-            //  Remove existing subfolders of DOTNETHOME, which are for single pack MSI
-            dotnetHomeElement.ReplaceWith(dotnetHomeDirectory.ToXml());
-            directoriesDoc.Save(directoriesWxsPath);
+            ////  Create wxs file from dotnetHomeDirectory structure
+            //string directoriesWxsPath = AddFile("Directories.wxs");
+            //var directoriesDoc = XDocument.Load(directoriesWxsPath);
+            //var dotnetHomeElement = directoriesDoc.Root.Descendants().Where(d => (string)d.Attribute("Id") == "DOTNETHOME").Single();
+            ////  Remove existing subfolders of DOTNETHOME, which are for single pack MSI
+            //dotnetHomeElement.ReplaceWith(dotnetHomeDirectory.ToXml());
+            //directoriesDoc.Save(directoriesWxsPath);
 
-            //  Replace single ComponentGroupRef from Product.wxs with a ref for each pack
-            string productWxsPath = AddFile("Product.wxs");
-            var productDoc = XDocument.Load(productWxsPath);
-            var ns = productDoc.Root.Name.Namespace;
-            var componentGroupRefElement = productDoc.Root.Descendants(ns + "ComponentGroupRef").Single();
-            componentGroupRefElement.ReplaceWith(Enumerable.Range(1, _package.Packs.Count).Select(n => new XElement(ns + "ComponentGroupRef", new XAttribute("Id", "CG_PackageContents" + n))));
-            productDoc.Save(productWxsPath);
+            ////  Replace single ComponentGroupRef from Product.wxs with a ref for each pack
+            //string productWxsPath = AddFile("Product.wxs");
+            //var productDoc = XDocument.Load(productWxsPath);
+            //var ns = productDoc.Root.Name.Namespace;
+            //var componentGroupRefElement = productDoc.Root.Descendants(ns + "ComponentGroupRef").Single();
+            //componentGroupRefElement.ReplaceWith(Enumerable.Range(1, _package.Packs.Count).Select(n => new XElement(ns + "ComponentGroupRef", new XAttribute("Id", "CG_PackageContents" + n))));
+            //productDoc.Save(productWxsPath);
 
-            // Add registry keys for packs in the pack group.
-            string registryWxsPath = AddFile("Registry.wxs");
-            var registryDoc = XDocument.Load(registryWxsPath);
-            ns = registryDoc.Root.Name.Namespace;
-            var registryKeyElement = registryDoc.Root.Descendants(ns + "RegistryKey").Single();
-            foreach (var pack in _package.Packs)
-            {
-                registryKeyElement.Add(new XElement(ns + "RegistryKey", new XAttribute("Key", pack.Id),
-                                        new XElement(ns + "RegistryKey", new XAttribute("Key", pack.PackageVersion),
-                                        new XElement(ns + "RegistryValue", new XAttribute("Value", ""), new XAttribute("Type", "string")))));
-            }
-            registryDoc.Save(registryWxsPath);
+            //// Add registry keys for packs in the pack group.
+            //string registryWxsPath = AddFile("Registry.wxs");
+            //var registryDoc = XDocument.Load(registryWxsPath);
+            //ns = registryDoc.Root.Name.Namespace;
+            //var registryKeyElement = registryDoc.Root.Descendants(ns + "RegistryKey").Single();
+            //foreach (var pack in _package.Packs)
+            //{
+            //    registryKeyElement.Add(new XElement(ns + "RegistryKey", new XAttribute("Key", pack.Id),
+            //                            new XElement(ns + "RegistryKey", new XAttribute("Key", pack.PackageVersion),
+            //                            new XElement(ns + "RegistryValue", new XAttribute("Value", ""), new XAttribute("Type", "string")))));
+            //}
+            //registryDoc.Save(registryWxsPath);
 
-            CompilerToolTask candle = CreateDefaultCompiler();
+            //CompilerToolTask candle = CreateDefaultCompiler();
 
-            candle.AddSourceFiles(packageContentWxsFiles);
+            //candle.AddSourceFiles(packageContentWxsFiles);
 
-            candle.AddSourceFiles(
-                AddFile("DependencyProvider.wxs"),
-                directoriesWxsPath,
-                AddFile("dotnethome_x64.wxs"),
-                productWxsPath,
-                registryWxsPath);
+            //candle.AddSourceFiles(
+            //    AddFile("DependencyProvider.wxs"),
+            //    directoriesWxsPath,
+            //    AddFile("dotnethome_x64.wxs"),
+            //    productWxsPath,
+            //    registryWxsPath);
 
-            // Only extract the include file as it's not compilable, but imported by various source files.
-            AddFile("Variables.wxi");
+            //// Only extract the include file as it's not compilable, but imported by various source files.
+            //AddFile("Variables.wxi");
 
-            // Workload packs are not upgradable so the upgrade code is generated using the package identity as that
-            // includes the package version.
-            Guid upgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{Metadata.Id};{Platform}");
-            string providerKeyName = $"{_package.Id},{Metadata.PackageVersion},{Platform}";
+            //// Workload packs are not upgradable so the upgrade code is generated using the package identity as that
+            //// includes the package version.
+            //Guid upgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{Metadata.Id};{Platform}");
+            //string providerKeyName = $"{_package.Id},{Metadata.PackageVersion},{Platform}";
 
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.UpgradeCode, $"{upgradeCode:B}");
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.DependencyProviderKeyName, $"{providerKeyName}");
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.InstallationRecordKey, $"InstalledPackGroups");
-            foreach (var kvp in sourceDirectoryNamesAndValues)
-            {
-                candle.AddPreprocessorDefinition(kvp.Key, kvp.Value);
-            }
+            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.UpgradeCode, $"{upgradeCode:B}");
+            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.DependencyProviderKeyName, $"{providerKeyName}");
+            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.InstallationRecordKey, $"InstalledPackGroups");
+            //foreach (var kvp in sourceDirectoryNamesAndValues)
+            //{
+            //    candle.AddPreprocessorDefinition(kvp.Key, kvp.Value);
+            //}
 
-            if (!candle.Execute())
-            {
-                throw new Exception(Strings.FailedToCompileMsi);
-            }
+            //if (!candle.Execute())
+            //{
+            //    throw new Exception(Strings.FailedToCompileMsi);
+            //}
 
-            string msiFileName = Path.Combine(outputPath, OutputName);
+            //string msiFileName = Path.Combine(outputPath, OutputName);
 
-            ITaskItem msi = Link(candle.OutputPath, msiFileName, iceSuppressions);
+            //ITaskItem msi = Link(candle.OutputPath, msiFileName, iceSuppressions);
 
-            AddDefaultPackageFiles(msi);
+            //AddDefaultPackageFiles(msi);
 
-            return msi;
+            //return msi;
         }
 
         class MsiDirectory

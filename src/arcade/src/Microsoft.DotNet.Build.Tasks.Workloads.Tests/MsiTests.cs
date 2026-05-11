@@ -35,7 +35,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadManifestPackage pkg = new(packageItem, Path.Combine(outputPath, "pkg"),
                 new Version(msiVersion));
             pkg.Extract();
-            WorkloadManifestMsi msi = new(pkg, platform, new MockBuildEngine(), WixToolsetPath,
+            WorkloadManifestMsi msi = new(pkg, platform, new MockBuildEngine(), WixToolsetConfig,
                 outputPath, isSxS: allowSideBySideInstalls);
 
             return msi.Build(Path.Combine(outputPath, "msi"));
@@ -44,14 +44,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildSideBySideManifestMsis()
         {
-            string outputDirectory = GetTestCaseDirectory();
+            using var fixture = new TestFixture();
 
             // Build 6.0.200 manifest for version 6.0.3
-            ITaskItem msi603 = BuildManifestMsi(outputDirectory, Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"));
+            ITaskItem msi603 = BuildManifestMsi(fixture.OutputPath, Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"));
             string msiPath603 = msi603.GetMetadata(Metadata.FullPath);
 
             // Build 6.0.200 manifest for version 6.0.4
-            ITaskItem msi604 = BuildManifestMsi(outputDirectory, Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.4.nupkg"));
+            ITaskItem msi604 = BuildManifestMsi(fixture.OutputPath, Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.4.nupkg"));
             string msiPath604 = msi604.GetMetadata(Metadata.FullPath);
 
             // For upgradable MSIs, the 6.0.4 and 6.0.3 copies of the package would have generated the same
@@ -80,21 +80,21 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
         [WindowsOnlyTheory]
         [InlineData(true, null, "Microsoft.NET.Workload.Mono.ToolChain,6.0.200,6.0.3,x64")]
+        [InlineData(true, null, "Microsoft.NET.Workload.Mono.ToolChain,6.0.200,6.0.3,x86", "x86")]
         [InlineData(false, "{E4761192-882D-38E9-A3F4-14B6C4AD12BD}", "Microsoft.NET.Workload.Mono.ToolChain,6.0.200,x64")]
-        public void ItCanBuildAManifestMsi2(bool allowSideBySideInstalls, string expectedUpgradeCode,
-            string expectedProviderKeyName)
+        [InlineData(false, "{239D1181-C3CE-3E9E-91FE-3A645B0077B2}", "Microsoft.NET.Workload.Mono.ToolChain,6.0.200,arm64", "arm64")]
+        public void ItCanBuildAManifestMsi(bool allowSideBySideInstalls, string expectedUpgradeCode,
+            string expectedProviderKeyName, string platform = "x64")
         {
             string outputDirectory = GetTestCaseDirectory();
             string wixpackOutputDirectory = Path.Combine(outputDirectory, "wixpack");
 
             ITaskItem msi = BuildManifestMsi(outputDirectory,
                 Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"),
+                platform: platform,
                 allowSideBySideInstalls: allowSideBySideInstalls);
 
             string msiPath = msi.GetMetadata(Metadata.FullPath);
-
-            // Process the summary information stream's template to extract the MSIs target platform.
-            using SummaryInfo si = new(msiPath, enableWrite: false);
 
             string upgradeCode = MsiUtils.GetProperty(msiPath, MsiProperty.UpgradeCode);
 
@@ -114,7 +114,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             }
             else
             {
-                Assert.False(MsiUtils.HasTable(msiPath, "Upgrade"));
+                // We can technically remove the Upgrade table by setting Package@UpgradeStrategy="none", but even
+                // for SxS installs we still write some information to the JSON manifest that the CLI uses and the
+                // absence of the table might have unforseen consequences with VS authoring and SWIX toolset.
 
                 // The versioned manifest directory is required to support SxS installs.
                 MsiUtils.GetAllDirectories(msiPath).Select(d => d.Directory).Should().Contain("ManifestVersionDir",
@@ -125,18 +127,23 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             // The same ProviderKey is used across different versions when upgrades are supported,
             // but for SxS installs, the package version is included to differentiate it.
             Assert.Equal(expectedProviderKeyName, MsiUtils.GetProviderKeyName(msiPath));
-            Assert.Equal("x64;1033", si.Template);
+
+            // Process the summary information stream's template to extract the MSIs target platform.
+            ValidateSummaryInformation(msiPath, platform);
 
             // Verify the installation record and dependency provider registry entries
             var registryKeys = MsiUtils.GetAllRegistryKeys(msiPath);
             string expectedProductCode = MsiUtils.GetProperty(msiPath, MsiProperty.ProductCode);
-            string installationRecordKey = @"SOFTWARE\Microsoft\dotnet\InstalledManifests\x64\Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.200\6.0.3";
+            string installationRecordKey = $@"SOFTWARE\Microsoft\dotnet\InstalledManifests\{platform}\Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.200\6.0.3";
             string dependencyProviderKey = @"Software\Classes\Installer\Dependencies\" + expectedProviderKeyName;
 
             ValidateInstallationRecord(registryKeys, installationRecordKey,
                 expectedProviderKeyName,
                 expectedProductCode, upgradeCode, "1.2.3");
             ValidateDependencyProviderKey(registryKeys, dependencyProviderKey);
+
+            var customActions = MsiUtils.GetCustomActions(msiPath);
+            ValidateDotNetHomeCustomActions(customActions, platform);
 
             // The File table should contain the workload manifest and targets. There may be additional
             // localized content for the manifests. Their presence is neither required nor critical to
@@ -166,7 +173,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             workloadPackPackage.Extract();
 
             var workloadPackMsi = new WorkloadPackMsi(workloadPackPackage, "x64", new MockBuildEngine(),
-                WixToolsetPath, outputDirectory);
+                WixToolsetConfig, outputDirectory);
 
             // Build the MSI and verify its contents
             var msiItem = workloadPackMsi.Build(msiOutputDirectory);
@@ -210,10 +217,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, pkgDirectory);
             pkg.Extract();
             var buildEngine = new MockBuildEngine();
-            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetPath, outputDirectory);
-            ITaskItem item = msi.Build(msiDirectory);
+            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetConfig, outputDirectory);
+            ITaskItem msiItem = msi.Build(msiDirectory);
 
-            string msiPath = item.GetMetadata(Metadata.FullPath);
+            string msiPath = msiItem.GetMetadata(Metadata.FullPath);
 
             // Process the summary information stream's template to extract the MSIs target platform.
             using SummaryInfo si = new(msiPath, enableWrite: false);
@@ -240,7 +247,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             // Generated MSI should return the path where the .wixobj files are located so
             // WiX packs can be created for post-build signing.
-            Assert.NotNull(item.GetMetadata(Metadata.WixObj));
+            Assert.NotNull(msiItem.GetMetadata(Metadata.WixObj));
 
             // Verify the installation record and dependency provider registry entries
             var registryKeys = MsiUtils.GetAllRegistryKeys(msiPath);

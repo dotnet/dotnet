@@ -47,7 +47,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), packageVersion, WorkloadPackKind.Template, null);
             TemplatePackPackage pkg = new(p, packagePath, ["x64"], pkgDirectory);
             pkg.Extract();
-            WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, outputDirectory);
+            WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetConfig, outputDirectory);
 
             ITaskItem msiItem = msi.Build(msiDirectory);
             msiItem.SetMetadata(Metadata.Platform, "x64");
@@ -65,6 +65,5 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Contains("vs.package.chip=x64", msiSwr);
             Assert.Contains("vs.package.machineArch=x64", msiSwr);
         }
-
     }
 }

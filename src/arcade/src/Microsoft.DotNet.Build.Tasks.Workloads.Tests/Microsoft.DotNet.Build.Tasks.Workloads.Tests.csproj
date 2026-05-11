@@ -80,9 +80,13 @@
   <Target Name="GenerateToolsetInfo" BeforeTargets="CoreCompile">
     <PropertyGroup>
       <ToolsetInfoText>$([System.IO.File]::ReadAllText(WixToolsetInfo.cs.pp))</ToolsetInfoText>
-      <ToolsetInfoText>$(ToolsetInfoText.Replace('{ArcadeVersion}', $(VersionPrefix)-*))</ToolsetInfoText>
       <ToolsetInfoText>$(ToolsetInfoText.Replace('{WixExePath}', $(PkgMicrosoft_Wix)\tools\net6.0\any\wix.exe))</ToolsetInfoText>
-      <ToolsetInfoText>$(ToolsetInfoText.Replace('{HeatExePath}', $(PkgMicrosoft_Wix)\tools\tools\net472\x64\heat.exe))</ToolsetInfoText>
+      <!-- Use the .NET Framework copy. The .NET 6.0 copy needs to be invoked using dotnet.exe. -->
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{HeatExePath}', $(PkgMicrosoft_WixToolset_Heat)\tools\net472\x64\heat.exe))</ToolsetInfoText>
+      <!-- Extensions-->
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{DependencyExt}', $(PkgMicrosoft_WixToolset_Dependency_wixext)\wixext6\WixToolset.Dependency.wixext.dll))</ToolsetInfoText>
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{UIExt}', $(PkgMicrosoft_WixToolset_UI_wixext)\wixext6\WixToolset.UI.wixext.dll))</ToolsetInfoText>
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{UtilExt}', $(PkgMicrosoft_WixToolset_Util_wixext)\wixext6\WixToolset.Util.wixext.dll))</ToolsetInfoText>
     </PropertyGroup>
 
     <WriteLinesToFile File="$(IntermediateOutputPath)WixToolsetInfo.cs" Overwrite="true" Lines="$(ToolsetInfoText)" />

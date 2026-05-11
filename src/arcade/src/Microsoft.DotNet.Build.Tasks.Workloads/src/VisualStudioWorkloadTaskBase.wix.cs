@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
 {
@@ -87,6 +88,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// </summary>
         [Required]
         public string WixToolsetPath
+        {
+            get;
+            set;
+        }
+
+        public WixToolsetConfiguration WixToolsetConfig
         {
             get;
             set;

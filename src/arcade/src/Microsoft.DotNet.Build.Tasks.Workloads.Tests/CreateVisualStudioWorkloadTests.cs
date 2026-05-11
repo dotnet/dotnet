@@ -63,7 +63,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ManifestMsiVersion = null,
                 PackageSource = TestBase.TestAssetsPath,
                 ShortNames = shortNames,
-                WixToolsetPath = TestBase.WixToolsetPath,
+                WixToolsetConfig = TestBase.WixToolsetConfig,
                 WorkloadManifestPackageFiles = manifestsPackages,
                 IsOutOfSupportInVisualStudio = true
             };
@@ -200,7 +200,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ManifestMsiVersion = null,
                 PackageSource = TestBase.TestAssetsPath,
                 ShortNames = shortNames,
-                WixToolsetPath = TestBase.WixToolsetPath,
+                WixToolsetConfig = TestBase.WixToolsetConfig,
                 WorkloadManifestPackageFiles = manifestsPackages,
             };
 

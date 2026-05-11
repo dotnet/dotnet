@@ -50,7 +50,7 @@
     <EmbeddedResource Include="MsiTemplate\*.wxi" />
     <EmbeddedResource Include="SwixTemplate\*.swr" />
     <EmbeddedResource Include="SwixTemplate\*.swixproj" />
-    <EmbeddedResource Include="..\..\Common\wix\dotnethome_x64.wxs" Link="MsiTemplate\dotnethome_x64.wxs" />
+    <EmbeddedResource Include="..\..\Common\wix5\dotnethome_x64.wxs" Link="MsiTemplate\dotnethome_x64.wxs" />
     <EmbeddedResource Update="Strings.resx"
                       Generator="ResXFileCodeGenerator"
                       LastGenOutput="Strings.Designer.cs" />
