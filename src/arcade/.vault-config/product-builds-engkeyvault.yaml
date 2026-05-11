@@ -40,17 +40,6 @@ secrets:
       gitHubBotAccountSecret: BotAccount-dotnet-bot
       gitHubBotAccountName: dotnet-bot
 
-  dn-bot-dnceng-build-rw-code-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dnceng-build
-      organizations: dnceng
-      scopes: build_execute code_write
-
   akams-client-id:
     type: text
     parameters:

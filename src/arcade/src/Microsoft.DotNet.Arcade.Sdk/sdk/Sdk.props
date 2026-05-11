@@ -1,6 +1,28 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <Import Project="..\tools\Settings.props" />
+  <PropertyGroup>
+    <ArcadeSdkDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', 'tools'))</ArcadeSdkDir>
+
+    <_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets>$(CustomBeforeMicrosoftCommonTargets)</_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets>
+    <_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets>$(CustomBeforeMicrosoftCommonCrossTargetingTargets)</_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets>
+    <CustomBeforeMicrosoftCommonTargets>$(ArcadeSdkDir)BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
+    <CustomBeforeMicrosoftCommonCrossTargetingTargets>$(ArcadeSdkDir)BeforeCommonTargets.CrossTargeting.targets</CustomBeforeMicrosoftCommonCrossTargetingTargets>
+    <BeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets);$(ArcadeSdkDir)BeforeNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
+
+    <NETCORE_ENGINEERING_TELEMETRY Condition="'$(NETCORE_ENGINEERING_TELEMETRY)' == ''">$(_NETCORE_ENGINEERING_TELEMETRY)</NETCORE_ENGINEERING_TELEMETRY>
+  </PropertyGroup>
+
+  <Import Project="$(ArcadeSdkDir)BuildTasks.props" />
+  <Import Project="$(ArcadeSdkDir)ProjectLayout.props" />
+  <Import Project="$(ArcadeSdkDir)DefaultVersions.props"/>
+  <Import Project="$(ArcadeSdkDir)StrongName.props"/>
+  <Import Project="$(ArcadeSdkDir)ProjectDefaults.props"/>
+  <Import Project="$(ArcadeSdkDir)Tests.props" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
+  <Import Project="$(ArcadeSdkDir)Workarounds.props"/>
+  <Import Project="$(ArcadeSdkDir)TargetFrameworkDefaults.props"/>
+
+  <Import Project="$(ArcadeSdkDir)Compiler.props" Condition="'$(UsingToolMicrosoftNetCompilers)' == 'true'" />
+  <Import Project="$(ArcadeSdkDir)VisualStudio.props" Condition="'$(UsingToolVSSDK)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'"/>
 
 </Project>
