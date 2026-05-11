@@ -1,8 +1,0 @@
-{
-  "files": [
-    {
-      "path": "PackageSourceGeneratorTask/GenerateProject.cs",
-      "detected_license_expression": "mit AND (mit AND unknown-license-reference AND ms-net-library-2018-11) AND (mit AND proprietary-license) AND (unknown-license-reference AND ms-net-library-2018-11)"
-    }
-  ]
-}

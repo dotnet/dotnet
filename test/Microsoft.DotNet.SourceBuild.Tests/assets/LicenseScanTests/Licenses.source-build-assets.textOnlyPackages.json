@@ -1,8 +1,0 @@
-{
-  "files": [
-    {
-      "path": "src/microsoft.netcore.platforms/1.1.0/dotnet_library_license.txt",
-      "detected_license_expression": "ms-net-library"
-    }
-  ]
-}

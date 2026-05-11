@@ -1,8 +1,0 @@
-{
-  "files": [
-    {
-      "path": "Directory.Build.props",
-      "detected_license_expression": "unknown-license-reference AND (mit OR apache-2.0)"
-    }
-  ]
-}
