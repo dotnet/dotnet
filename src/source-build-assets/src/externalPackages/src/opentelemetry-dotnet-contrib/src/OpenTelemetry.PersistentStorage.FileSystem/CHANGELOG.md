@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+* Fixed an issue in persistent storage cleanup where malformed `.blob`, `.tmp`,
+  or `.lock` filenames could throw and interrupt maintenance.
+  [#4159](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4159)
+
 ## 1.0.2
 
 Released 2025-Nov-13

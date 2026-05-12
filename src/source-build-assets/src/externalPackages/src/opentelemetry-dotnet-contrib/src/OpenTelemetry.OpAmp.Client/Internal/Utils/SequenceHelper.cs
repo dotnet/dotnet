@@ -29,12 +29,12 @@ internal static class SequenceHelper
             return new ReadOnlySequence<byte>(buffers[0], 0, endIndex);
         }
 
-        BufferSegment segment1 = new BufferSegment(buffers[0]);
-        BufferSegment currentSegment = segment1;
+        var segment1 = new BufferSegment(buffers[0]);
+        var currentSegment = segment1;
 
-        for (int i = 1; i < buffers.Count; i++)
+        for (var i = 1; i < buffers.Count; i++)
         {
-            BufferSegment nextSegment = new BufferSegment(buffers[i]);
+            var nextSegment = new BufferSegment(buffers[i]);
 
             currentSegment.SetNext(nextSegment);
             currentSegment = nextSegment;

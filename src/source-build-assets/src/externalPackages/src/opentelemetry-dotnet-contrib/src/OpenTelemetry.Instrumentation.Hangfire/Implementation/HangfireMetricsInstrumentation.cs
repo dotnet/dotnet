@@ -11,7 +11,7 @@ namespace OpenTelemetry.Instrumentation.Hangfire.Implementation;
 /// </summary>
 internal sealed class HangfireMetricsInstrumentation : IDisposable
 {
-    private readonly List<object> filters = new();
+    private readonly List<object> filters = [];
 
     public HangfireMetricsInstrumentation(HangfireMetricsInstrumentationOptions options)
     {

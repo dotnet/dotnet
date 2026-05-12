@@ -218,10 +218,10 @@ configuration:
       - payloadType: Pull_Request
       - or:
         - filesMatchPattern:
-            pattern: 'src/source-build-reference-packages/.*'
+            pattern: 'src/source-build-assets/.*'
             matchAny: true
         - titleContains:
-            pattern: 'dotnet/source-build-reference-packages'
+            pattern: 'dotnet/source-build-assets'
             isRegex: False
       then:
       - requestReview:

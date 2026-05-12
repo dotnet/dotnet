@@ -16,7 +16,9 @@ internal static class WcfInstrumentationActivitySource
 {
     internal static readonly Assembly Assembly = typeof(WcfInstrumentationActivitySource).Assembly;
     internal static readonly AssemblyName AssemblyName = Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string ActivitySourceName = AssemblyName.Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly string IncomingRequestActivityName = ActivitySourceName + ".IncomingRequest";
     internal static readonly string OutgoingRequestActivityName = ActivitySourceName + ".OutgoingRequest";
     internal static readonly string UnassociatedExceptionActivityName = ActivitySourceName + ".Exception";
@@ -26,12 +28,8 @@ internal static class WcfInstrumentationActivitySource
     public static WcfInstrumentationOptions? Options { get; set; }
 
     public static IEnumerable<string>? MessageHeaderValuesGetter(Message request, string name)
-    {
-        return TelemetryPropagationReader.Default(request, name);
-    }
+        => TelemetryPropagationReader.Default(request, name);
 
     public static void MessageHeaderValueSetter(Message request, string name, string value)
-    {
-        TelemetryPropagationWriter.Default(request, name, value);
-    }
+        => TelemetryPropagationWriter.Default(request, name, value);
 }

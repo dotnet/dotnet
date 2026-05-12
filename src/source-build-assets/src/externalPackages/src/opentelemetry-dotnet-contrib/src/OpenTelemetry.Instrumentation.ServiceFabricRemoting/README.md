@@ -27,7 +27,7 @@ dotnet add package OpenTelemetry.Instrumentation.ServiceFabricRemoting
 
 ### Step 2: Configure SF Remoting with Distributed Tracing instrumentation
 
-These instructions are a moified vertion of the steps mentioned here:
+These instructions are a modified version of the steps mentioned here:
 [`Use an assembly attribute to use the V2 stack`](https://learn.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication-remoting#use-an-assembly-attribute-to-use-the-v2-stack)
 
 a) Change the endpoint resource from "ServiceEndpoint" to "ServiceEndpointV2"

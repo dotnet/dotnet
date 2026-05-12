@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using OpenTelemetry.Exporter.Geneva.MsgPack;
 using OpenTelemetry.Exporter.Geneva.Tld;
 using OpenTelemetry.Internal;
-using OpenTelemetry.Resources;
 
 namespace OpenTelemetry.Exporter.Geneva;
 
@@ -70,11 +69,13 @@ public class GenevaTraceExporter : GenevaBaseExporter<Activity>
 
         if (useMsgPackExporter)
         {
+#pragma warning disable IDE0200 // Remove unnecessary lambda expression
             var msgPackTraceExporter = new MsgPackTraceExporter(options, () =>
             {
                 // this is not equivalent to passing a method reference, because the ParentProvider could change after the constructor.
-                return this.ParentProvider?.GetResource() ?? Resource.Empty;
+                return this.ParentProvider.GetResource();
             });
+#pragma warning restore IDE0200 // Remove unnecessary lambda expression
             this.IsUsingUnixDomainSocket = msgPackTraceExporter.IsUsingUnixDomainSocket;
             this.exportActivity = msgPackTraceExporter.Export;
             this.Exporter = msgPackTraceExporter;
@@ -92,9 +93,7 @@ public class GenevaTraceExporter : GenevaBaseExporter<Activity>
 
     /// <inheritdoc/>
     public override ExportResult Export(in Batch<Activity> batch)
-    {
-        return this.exportActivity(in batch);
-    }
+        => this.exportActivity(in batch);
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)

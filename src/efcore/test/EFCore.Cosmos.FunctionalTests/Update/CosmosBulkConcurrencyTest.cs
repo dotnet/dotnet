@@ -17,6 +17,9 @@ public class CosmosBulkConcurrencyTest(CosmosBulkConcurrencyTest.ConcurrencyFixt
 
     public class ConcurrencyFixture : CosmosConcurrencyTest.CosmosFixture
     {
+        protected override string StoreName
+            => nameof(CosmosBulkConcurrencyTest);
+
         public override ConcurrencyContext CreateContext()
         {
             var context = base.CreateContext();
@@ -25,7 +28,7 @@ public class CosmosBulkConcurrencyTest(CosmosBulkConcurrencyTest.ConcurrencyFixt
         }
 
         public override DbContextOptionsBuilder AddOptions(DbContextOptionsBuilder builder)
-            => base.AddOptions(builder).UseCosmos(x => x.BulkExecutionEnabled());
+            => base.AddOptions(builder).UseCosmos(x => x.BulkExecutionAllowed());
     }
 
     protected override ConcurrencyContext CreateContext(DbContextOptions options)

@@ -69,4 +69,10 @@ public sealed class StringTable
     {
         _ = this.GetString(str);
     }
+
+    // Used to test the string table.
+    internal bool Contains(string str)
+    {
+        return this.strings.Contains(str);
+    }
 }

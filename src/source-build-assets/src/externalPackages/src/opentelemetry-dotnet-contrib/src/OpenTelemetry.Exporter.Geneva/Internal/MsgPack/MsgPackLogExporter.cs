@@ -4,7 +4,6 @@
 #if NET
 using System.Collections.Frozen;
 #endif
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -170,7 +169,9 @@ internal sealed class MsgPackLogExporter : MsgPackExporter, IDisposable
 
                 this.DataTransportListener?.Invoke(data);
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
                 this.dataTransport.Send(data.Array!, data.Count);
+#pragma warning restore IDE0370 // Suppression is unnecessary
             }
             catch (Exception ex)
             {
@@ -225,7 +226,7 @@ internal sealed class MsgPackLogExporter : MsgPackExporter, IDisposable
             if (this.resourceFieldNames != null)
             {
                 // this might seem inefficient, but it's only run once and I don't expect there to be many resource attributes
-                foreach (var wantedAttribute in this.resourceFieldNames!)
+                foreach (var wantedAttribute in this.resourceFieldNames)
                 {
                     if (wantedAttribute == key)
                     {
@@ -585,35 +586,33 @@ internal sealed class MsgPackLogExporter : MsgPackExporter, IDisposable
         return new(buffer, 0, cursor);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static byte GetSeverityNumber(LogLevel logLevel)
-    {
-        // Maps the Ilogger LogLevel to OpenTelemetry logging level.
-        // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#mapping-of-severitynumber
-        // TODO: for improving perf simply do ((int)loglevel * 4) + 1
-        // or ((int)logLevel << 2) + 1
-        return logLevel switch
-        {
-            LogLevel.Trace => 1,
-            LogLevel.Debug => 5,
-            LogLevel.Information => 9,
-            LogLevel.Warning => 13,
-            LogLevel.Error => 17,
-            LogLevel.Critical => 21,
+    // Maps the Ilogger LogLevel to OpenTelemetry logging level.
+    // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#mapping-of-severitynumber
+    // TODO: for improving perf simply do ((int)loglevel * 4) + 1
+    // or ((int)logLevel << 2) + 1
 
-            // we reach default only for LogLevel.None
-            // but that is filtered out anyway.
-            // should we throw here then?
-            LogLevel.None => 1,
-            _ => 1,
-        };
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static byte GetSeverityNumber(LogLevel logLevel) => logLevel switch
+    {
+        LogLevel.Trace => 1,
+        LogLevel.Debug => 5,
+        LogLevel.Information => 9,
+        LogLevel.Warning => 13,
+        LogLevel.Error => 17,
+        LogLevel.Critical => 21,
+
+        // we reach default only for LogLevel.None
+        // but that is filtered out anyway.
+        // should we throw here then?
+        LogLevel.None => 1,
+        _ => 1,
+    };
 
     private static void OnProcessScopeForIndividualColumns(LogRecordScope scope, MsgPackLogExporter state)
     {
-        Debug.Assert(state.serializationData.Value != null, "state.serializationData.Value was null");
-
+#pragma warning disable IDE0370 // Suppression is unnecessary
         var stateData = state.serializationData.Value!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
         var customFields = state.customFields;
 
         foreach (var scopeItem in scope)
@@ -642,8 +641,6 @@ internal sealed class MsgPackLogExporter : MsgPackExporter, IDisposable
 
     private static void OnProcessScopeForEnvProperties(LogRecordScope scope, MsgPackLogExporter state)
     {
-        Debug.Assert(state.serializationData.Value != null, "state.serializationData.Value was null");
-
         var stateData = state.serializationData.Value!;
         var customFields = state.customFields;
 
@@ -665,14 +662,9 @@ internal sealed class MsgPackLogExporter : MsgPackExporter, IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int SerializeValueWithLimitIfString(byte[] buffer, int cursor, object? value)
-    {
-        if (value is string stringValue)
-        {
-            return MessagePackSerializer.SerializeUnicodeString(buffer, cursor, stringValue, this.stringFieldSizeLimitCharCount);
-        }
-
-        return MessagePackSerializer.Serialize(buffer, cursor, value);
-    }
+        => value is string stringValue
+            ? MessagePackSerializer.SerializeUnicodeString(buffer, cursor, stringValue, this.stringFieldSizeLimitCharCount)
+            : MessagePackSerializer.Serialize(buffer, cursor, value);
 
     private sealed class SerializationDataForScopes
     {

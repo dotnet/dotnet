@@ -21,11 +21,6 @@ internal static class SpanHelper
     {
         var lowerBound = kind == ActivityKind.Client ? 400 : 500;
         var upperBound = 599;
-        if (httpStatusCode >= lowerBound && httpStatusCode <= upperBound)
-        {
-            return ActivityStatusCode.Error;
-        }
-
-        return ActivityStatusCode.Unset;
+        return httpStatusCode >= lowerBound && httpStatusCode <= upperBound ? ActivityStatusCode.Error : ActivityStatusCode.Unset;
     }
 }

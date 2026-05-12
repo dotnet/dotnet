@@ -7,6 +7,10 @@
     <MinVerTagPrefix>Instrumentation.StackExchangeRedis-</MinVerTagPrefix>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <!-- Do not run Package Baseline Validation as this package has never released a stable version.
   Remove this property once we have released a stable version and add PackageValidationBaselineVersion property. -->
   <PropertyGroup>
@@ -21,8 +25,6 @@
     <Compile Include="$(RepoRoot)\src\Shared\NullableAttributes.cs" Link="Includes\NullableAttributes.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\PropertyFetcher.cs" Link="Includes\PropertyFetcher.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\SemanticConventions.cs" Link="Includes\SemanticConventions.cs" />
-    <Compile Include="$(RepoRoot)\src\Shared\SqlProcessor.cs" Link="Includes\SqlProcessor.cs" />
-    <Compile Include="$(RepoRoot)\src\Shared\SqlStatementInfo.cs" Link="Includes\SqlStatementInfo.cs" />
 
   </ItemGroup>
 
@@ -32,6 +34,10 @@
     <PackageReference Include="OpenTelemetry.Api.ProviderBuilderExtensions" />
     <PackageReference Include="StackExchange.Redis" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETStandard'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTelemetry.Instrumentation.StackExchangeRedis.Benchmarks" PublicKey="$(StrongNamePublicKey)" />
   </ItemGroup>
 
 </Project>

@@ -242,8 +242,8 @@ shipped through CI.
 > [!NOTE]
 > It is generally helpful to reference a previous pull request when adding a new
   project to the repository. A good example to follow is the pull request which
-  added the `OpenTelemetry.OpAmp.Client` project:
-  [#2917](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/2917).
+  added the `OpenTelemetry.Instrumentation.Kusto` project:
+  [#4041](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4041).
 
 * Based on what your project is, you may need to depend on the [OpenTelemetry
   SDK](https://www.nuget.org/packages/OpenTelemetry) or the [OpenTelemetry

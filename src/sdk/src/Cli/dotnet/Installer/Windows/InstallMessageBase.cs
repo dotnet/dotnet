@@ -3,8 +3,7 @@
 
 #nullable disable
 
-using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Microsoft.DotNet.Cli.Installer.Windows;
 
@@ -14,19 +13,12 @@ namespace Microsoft.DotNet.Cli.Installer.Windows;
 internal abstract class InstallMessageBase
 {
     /// <summary>
-    /// Default serialization settings for a message.
-    /// </summary>
-    protected static JsonSerializerSettings DefaultSerializerSettings;
-
-    /// <summary>
     /// Serializes the message to a JSON string.
     /// </summary>
     /// <returns>The serialized message.</returns>
-    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
     public override string ToString()
     {
-        return JsonConvert.SerializeObject(this, DefaultSerializerSettings);
+        return JsonSerializer.Serialize(this, GetType(), InstallerJsonSerializerContext.Default);
     }
 
     /// <summary>
@@ -36,13 +28,5 @@ internal abstract class InstallMessageBase
     public byte[] ToByteArray()
     {
         return Encoding.UTF8.GetBytes(ToString());
-    }
-
-    static InstallMessageBase()
-    {
-        DefaultSerializerSettings = new JsonSerializerSettings()
-        {
-            NullValueHandling = NullValueHandling.Ignore
-        };
     }
 }

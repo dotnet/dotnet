@@ -1451,16 +1451,14 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
             }
 
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(), duplicateNavigation.DeclaringEntityType.DisplayName()));
+                duplicateNavigation.FormatConflictingMemberMessage(name, this));
         }
 
         var duplicateProperty = FindMembersInHierarchy(name).FirstOrDefault();
         if (duplicateProperty != null)
         {
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(), ((IReadOnlyTypeBase)duplicateProperty.DeclaringType).DisplayName()));
+                duplicateProperty.FormatConflictingMemberMessage(name, this));
         }
 
         Check.DebugAssert(
@@ -1633,8 +1631,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         if (duplicateProperty != null)
         {
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(), duplicateProperty.DeclaringType.DisplayName()));
+                duplicateProperty.FormatConflictingMemberMessage(name, this));
         }
 
         if (memberInfo != null)
@@ -2286,9 +2283,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         if (duplicateMember != null)
         {
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(),
-                    ((IReadOnlyTypeBase)duplicateMember.DeclaringType).DisplayName()));
+                duplicateMember.FormatConflictingMemberMessage(name, this));
         }
 
         ValidateClrMember(name, memberInfo, false);
@@ -2786,16 +2781,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     /// </summary>
     public virtual IReadOnlyCollection<IQueryFilter> GetDeclaredQueryFilters()
         => (QueryFilterCollection?)this[CoreAnnotationNames.QueryFilter] ?? new QueryFilterCollection();
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    [Obsolete("Use GetDeclaredQueryFilters() instead.")]
-    public virtual LambdaExpression? GetQueryFilter()
-        => GetDeclaredQueryFilters()?.FirstOrDefault(f => f.IsAnonymous)?.Expression;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

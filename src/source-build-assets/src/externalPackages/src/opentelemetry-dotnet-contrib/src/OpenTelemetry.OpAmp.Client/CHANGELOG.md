@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+* Add agent effective config reporting.
+  ([#3716](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3716))
+
+* Add ability to send custom messages.
+  ([#3809](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3809))
+
+* Add support for sticky HTTP connections via the `OpAMP-Instance-UID` header.
+  ([#3830](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3830))
+
+* Apply response size limits for oversized OpAMP responses.
+  ([#4116](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4116))
+
+* Harden WebSocket transport:
+  * Enforce maximum server message size.
+  * Use a cancellable receive loop with deterministic disposal.
+  * Add `OpAmpClientSettings.ClientWebSocketFactory`, and remove the insecure
+  default of accepting any server TLS certificate when connecting on .NET.
+  ([#4133](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4133))
+
+* Ensure heartbeat interval is bounded.
+  ([#4136](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4136))
+
+* Add missing null check for remote config.
+  ([#4138](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4138))
+
 ## 0.1.0-alpha.4
 
 Released 2026-Jan-14

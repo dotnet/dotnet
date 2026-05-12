@@ -150,9 +150,7 @@ internal class RulesCache : IDisposable
             return defaultPollingTime;
         }
 
-        var minPollingTime = this.RuleAppliers
-            .Select(r => r.NextSnapshotTime)
-            .Min();
+        var minPollingTime = this.RuleAppliers.Min(r => r.NextSnapshotTime);
 
         return minPollingTime < this.Clock.Now() ? defaultPollingTime : minPollingTime;
     }

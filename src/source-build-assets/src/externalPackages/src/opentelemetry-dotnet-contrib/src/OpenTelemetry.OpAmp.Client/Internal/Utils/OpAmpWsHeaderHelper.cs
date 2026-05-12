@@ -17,14 +17,16 @@ internal static class OpAmpWsHeaderHelper
     {
         Debug.Assert(buffer.Count >= EncodedHeader.Length, $"Ensure {EncodedHeader.Length} bytes for the buffer.");
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
         Buffer.BlockCopy(EncodedHeader, 0, buffer.Array!, buffer.Offset, EncodedHeader.Length);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
         return EncodedHeader.Length;
     }
 
     public static bool TryVerifyHeader(ReadOnlySequence<byte> sequence, out int headerSize, out string errorMessage)
     {
-        var result = Varint64.TryDecode(sequence, out headerSize, out ulong header, out errorMessage);
+        var result = Varint64.TryDecode(sequence, out headerSize, out var header, out errorMessage);
         if (!result)
         {
             return false;

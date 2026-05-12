@@ -40,17 +40,6 @@ secrets:
       gitHubBotAccountSecret: BotAccount-dotnet-bot
       gitHubBotAccountName: dotnet-bot
 
-  dn-bot-dnceng-build-rw-code-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dnceng-build
-      organizations: dnceng
-      scopes: build_execute code_write
-
   akams-client-id:
     type: text
     parameters:
@@ -66,18 +55,6 @@ secrets:
       name: dn-bot-all-orgs-build
       organizations: dnceng devdiv microsoft dotnet-security-partners
       scopes: build_execute code_write
-
-  #DotNet-AllOrgs-Darc-Pats
-  dn-bot-devdiv-dnceng-rw-code-pat:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-devdiv-dnceng
-      organizations: dnceng devdiv
-      scopes: code_write
 
   #AzureDevOps-Artifact-Feeds-Pats
   dn-bot-dnceng-artifact-feeds-rw:

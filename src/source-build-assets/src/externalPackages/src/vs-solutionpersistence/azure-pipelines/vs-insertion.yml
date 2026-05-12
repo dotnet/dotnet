@@ -54,13 +54,13 @@ extends:
             packageParentPath: $(Pipeline.Workspace)/CI/VSInsertion-Windows
             allowPackageConflicts: true
             publishVstsFeed: VS
-        - task: MicroBuildInsertVsPayload@4
+        - task: MicroBuildInsertVsPayload@5
           displayName: 🏭 Insert VS Payload
           inputs:
             TeamName: $(TeamName)
             TeamEmail: $(TeamEmail)
             InsertionPayloadName: $(Build.Repository.Name) $(Build.BuildNumber)
-            InsertionBuildPolicy: Request Perf DDRITs
+            InsertionBuildPolicies: Request Perf DDRITs
             InsertionReviewers: $(Build.RequestedFor),VS Core - Solution Experience # Append `,Your team name` (without quotes)
             AutoCompletePR: true
             AutoCompleteMergeStrategy: Squash

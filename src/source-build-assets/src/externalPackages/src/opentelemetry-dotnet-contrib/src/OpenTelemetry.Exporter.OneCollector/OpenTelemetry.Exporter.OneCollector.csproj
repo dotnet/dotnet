@@ -13,8 +13,12 @@
     this at the call site but there is a bug. This could possibly be cleaned up
     in the future (hopefully .NET 9) see https://github.com/dotnet/runtime/issues/92509 -->
     <NoWarn>$(NoWarn);SYSLIB1100;SYSLIB1101</NoWarn>
-    <PackageValidationBaselineVersion>1.14.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.15.0</PackageValidationBaselineVersion>
     <AssemblyIsCLSCompliant>false</AssemblyIsCLSCompliant>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,6 +41,7 @@
   <ItemGroup>
     <Compile Include="$(RepoRoot)\src\Shared\ExceptionExtensions.cs" Link="Includes\ExceptionExtensions.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\HttpClientHelpers.cs" Link="Includes\HttpClientHelpers.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\IsExternalInit.cs" Link="Includes\IsExternalInit.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\Lock.cs" Link="Includes\Lock.cs" />
   </ItemGroup>

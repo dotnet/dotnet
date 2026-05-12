@@ -10,9 +10,9 @@ internal static class ServiceFabricRemotingUtils
 {
     internal static void InjectTraceContextIntoServiceRemotingRequestMessageHeader(IServiceRemotingRequestMessageHeader requestMessageHeader, string key, string value)
     {
-        if (!requestMessageHeader.TryGetHeaderValue(key, out byte[] _))
+        if (!requestMessageHeader.TryGetHeaderValue(key, out var _))
         {
-            byte[] valueAsBytes = Encoding.UTF8.GetBytes(value);
+            var valueAsBytes = Encoding.UTF8.GetBytes(value);
 
             requestMessageHeader.AddHeader(key, valueAsBytes);
         }
@@ -20,13 +20,13 @@ internal static class ServiceFabricRemotingUtils
 
     internal static IEnumerable<string> ExtractTraceContextFromRequestMessageHeader(IServiceRemotingRequestMessageHeader requestMessageHeader, string headerKey)
     {
-        if (requestMessageHeader.TryGetHeaderValue(headerKey, out byte[] headerValueAsBytes))
+        if (requestMessageHeader.TryGetHeaderValue(headerKey, out var headerValueAsBytes))
         {
-            string headerValue = Encoding.UTF8.GetString(headerValueAsBytes);
+            var headerValue = Encoding.UTF8.GetString(headerValueAsBytes);
 
             return [headerValue];
         }
 
-        return Enumerable.Empty<string>();
+        return [];
     }
 }

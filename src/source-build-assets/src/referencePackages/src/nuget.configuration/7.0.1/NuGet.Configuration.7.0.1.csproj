@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>NuGet.Configuration</PackageId>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <PackageVersion>7.0.1</PackageVersion>
     <AssemblyName>NuGet.Configuration</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+    <Description>NuGet's configuration settings implementation.</Description>
+    <PackageProjectUrl>https://aka.ms/nugetprj</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>nuget</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

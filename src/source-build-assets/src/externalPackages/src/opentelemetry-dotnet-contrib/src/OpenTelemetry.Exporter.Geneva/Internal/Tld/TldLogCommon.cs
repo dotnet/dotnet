@@ -81,29 +81,27 @@ internal abstract class TldLogCommon : IDisposable
 
     public void Dispose() => this.Dispose(true);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected static byte GetSeverityNumber(LogLevel logLevel)
-    {
-        // Maps the Ilogger LogLevel to OpenTelemetry logging level.
-        // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#mapping-of-severitynumber
-        // TODO: for improving perf simply do ((int)loglevel * 4) + 1
-        // or ((int)logLevel << 2) + 1
-        return logLevel switch
-        {
-            LogLevel.Trace => 1,
-            LogLevel.Debug => 5,
-            LogLevel.Information => 9,
-            LogLevel.Warning => 13,
-            LogLevel.Error => 17,
-            LogLevel.Critical => 21,
+    // Maps the Ilogger LogLevel to OpenTelemetry logging level.
+    // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#mapping-of-severitynumber
+    // TODO: for improving perf simply do ((int)loglevel * 4) + 1
+    // or ((int)logLevel << 2) + 1
 
-            // we reach default only for LogLevel.None
-            // but that is filtered out anyway.
-            // should we throw here then?
-            LogLevel.None => 1,
-            _ => 1,
-        };
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    protected static byte GetSeverityNumber(LogLevel logLevel) => logLevel switch
+    {
+        LogLevel.Trace => 1,
+        LogLevel.Debug => 5,
+        LogLevel.Information => 9,
+        LogLevel.Warning => 13,
+        LogLevel.Error => 17,
+        LogLevel.Critical => 21,
+
+        // we reach default only for LogLevel.None
+        // but that is filtered out anyway.
+        // should we throw here then?
+        LogLevel.None => 1,
+        _ => 1,
+    };
 
     // This method would map the logger category to a table name which only contains alphanumeric values with the following additions:
     // Any character that is not allowed will be removed.
@@ -144,7 +142,7 @@ internal abstract class TldLogCommon : IDisposable
             }
 
             var cur = categoryName[i];
-            if (cur is >= 'a' and <= 'z' or >= 'A' and <= 'Z' or >= '0' and <= '9')
+            if (cur is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9'))
             {
                 result[validNameLength] = cur;
                 ++validNameLength;
@@ -157,9 +155,7 @@ internal abstract class TldLogCommon : IDisposable
     protected static void OnProcessScopeForIndividualColumns(
         LogRecordScope scope,
         SerializationDataForScopes stateDataValue,
-        HashSet<string>? customFields,
-        KeyValuePair<string, object>[] partCFieldsValue,
-        List<KeyValuePair<string, object?>>? envProperties)
+        HashSet<string>? customFields)
     {
         Debug.Assert(stateDataValue != null, "state.serializationData was null");
         Debug.Assert(PartCFields.Value != null, "PartCFields.Value was null");

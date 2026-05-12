@@ -21,9 +21,7 @@ public static class OneCollectorLoggerProviderBuilderExtensions
     /// chaining.</returns>
     public static LoggerProviderBuilder AddOneCollectorExporter(
         this LoggerProviderBuilder builder)
-    {
-        return AddOneCollectorExporter(builder, name: null, connectionString: null, configuration: null, configure: null);
-    }
+        => AddOneCollectorExporter(builder, name: null, connectionString: null, configuration: null, configure: null);
 
     /// <summary>
     /// Add OneCollector exporter to the <see
@@ -163,7 +161,9 @@ public static class OneCollectorLoggerProviderBuilderExtensions
 
             if (!string.IsNullOrWhiteSpace(connectionString))
             {
+#pragma warning disable IDE0370 // Suppression is unnecessary
                 processorBuilder.SetConnectionString(connectionString!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
             }
 
             configure?.Invoke(processorBuilder);

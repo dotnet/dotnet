@@ -39,16 +39,17 @@ public sealed class TraceContextEnrichedActorRemotingProviderAttribute : FabricT
     /// </returns>
     public override Dictionary<string, Func<ActorService, IServiceRemotingListener>> CreateServiceRemotingListeners()
     {
-        Dictionary<string, Func<ActorService, IServiceRemotingListener>> dictionary = new Dictionary<string, Func<ActorService, IServiceRemotingListener>>();
-
-        dictionary.Add(DefaultV2listenerName, (actorService) =>
+        var dictionary = new Dictionary<string, Func<ActorService, IServiceRemotingListener>>
         {
-            ActorServiceRemotingDispatcher actorServiceRemotingDispatcher = new ActorServiceRemotingDispatcher(actorService, serviceRemotingRequestMessageBodyFactory: null);
-            ServiceRemotingMessageDispatcherAdapter dispatcherAdapter = new ServiceRemotingMessageDispatcherAdapter(actorServiceRemotingDispatcher);
-            FabricTransportRemotingListenerSettings listenerSettings = this.InitializeListenerSettings(actorService);
+            [DefaultV2listenerName] = (actorService) =>
+            {
+                var actorServiceRemotingDispatcher = new ActorServiceRemotingDispatcher(actorService, serviceRemotingRequestMessageBodyFactory: null);
+                var dispatcherAdapter = new ServiceRemotingMessageDispatcherAdapter(actorServiceRemotingDispatcher);
+                var listenerSettings = this.InitializeListenerSettings(actorService);
 
-            return new FabricTransportActorServiceRemotingListener(actorService, dispatcherAdapter, listenerSettings);
-        });
+                return new FabricTransportActorServiceRemotingListener(actorService, dispatcherAdapter, listenerSettings);
+            },
+        };
 
         return dictionary;
     }
@@ -61,13 +62,13 @@ public sealed class TraceContextEnrichedActorRemotingProviderAttribute : FabricT
     /// <returns> An <see cref="IServiceRemotingClientFactory"/>.</returns>
     public override IServiceRemotingClientFactory CreateServiceRemotingClientFactory(IServiceRemotingCallbackMessageHandler? callbackMessageHandler)
     {
-        FabricTransportRemotingSettings settings = new FabricTransportRemotingSettings();
+        var settings = new FabricTransportRemotingSettings();
         settings.MaxMessageSize = this.GetAndValidateMaxMessageSize(settings.MaxMessageSize);
         settings.OperationTimeout = this.GetAndValidateOperationTimeout(settings.OperationTimeout);
         settings.KeepAliveTimeout = this.GetAndValidateKeepAliveTimeout(settings.KeepAliveTimeout);
         settings.ConnectTimeout = this.GetConnectTimeout(settings.ConnectTimeout);
 
-        FabricTransportActorRemotingClientFactory fabricTransportActorRemotingClientFactory = new FabricTransportActorRemotingClientFactory(
+        var fabricTransportActorRemotingClientFactory = new FabricTransportActorRemotingClientFactory(
             settings,
             callbackMessageHandler,
             servicePartitionResolver: null,
@@ -79,10 +80,10 @@ public sealed class TraceContextEnrichedActorRemotingProviderAttribute : FabricT
 
     private static FabricTransportRemotingListenerSettings GetActorListenerSettings(ActorService actorService)
     {
-        string sectionName = ActorNameFormat.GetFabricServiceTransportSettingsSectionName(actorService.ActorTypeInformation.ImplementationType);
+        var sectionName = ActorNameFormat.GetFabricServiceTransportSettingsSectionName(actorService.ActorTypeInformation.ImplementationType);
 
-        bool isSucceded = FabricTransportRemotingListenerSettings.TryLoadFrom(sectionName, out FabricTransportRemotingListenerSettings listenerSettings);
-        if (!isSucceded)
+        var succeeded = FabricTransportRemotingListenerSettings.TryLoadFrom(sectionName, out var listenerSettings);
+        if (!succeeded)
         {
             listenerSettings = new FabricTransportRemotingListenerSettings();
         }
@@ -92,7 +93,7 @@ public sealed class TraceContextEnrichedActorRemotingProviderAttribute : FabricT
 
     private FabricTransportRemotingListenerSettings InitializeListenerSettings(ActorService actorService)
     {
-        FabricTransportRemotingListenerSettings listenerSettings = GetActorListenerSettings(actorService);
+        var listenerSettings = GetActorListenerSettings(actorService);
 
         listenerSettings.MaxMessageSize = this.GetAndValidateMaxMessageSize(listenerSettings.MaxMessageSize);
         listenerSettings.OperationTimeout = this.GetAndValidateOperationTimeout(listenerSettings.OperationTimeout);
@@ -102,22 +103,14 @@ public sealed class TraceContextEnrichedActorRemotingProviderAttribute : FabricT
     }
 
     private long GetAndValidateMaxMessageSize(long maxMessageSizeDefault)
-    {
-        return (this.MaxMessageSize > 0) ? this.MaxMessageSize : maxMessageSizeDefault;
-    }
+        => (this.MaxMessageSize > 0) ? this.MaxMessageSize : maxMessageSizeDefault;
 
     private TimeSpan GetAndValidateOperationTimeout(TimeSpan operationTimeoutDefault)
-    {
-        return (this.OperationTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.OperationTimeoutInSeconds) : operationTimeoutDefault;
-    }
+        => (this.OperationTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.OperationTimeoutInSeconds) : operationTimeoutDefault;
 
     private TimeSpan GetAndValidateKeepAliveTimeout(TimeSpan keepAliveTimeoutDefault)
-    {
-        return (this.KeepAliveTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.KeepAliveTimeoutInSeconds) : keepAliveTimeoutDefault;
-    }
+        => (this.KeepAliveTimeoutInSeconds > 0) ? TimeSpan.FromSeconds(this.KeepAliveTimeoutInSeconds) : keepAliveTimeoutDefault;
 
     private TimeSpan GetConnectTimeout(TimeSpan connectTimeoutDefault)
-    {
-        return (this.ConnectTimeoutInMilliseconds > 0) ? TimeSpan.FromMilliseconds(this.ConnectTimeoutInMilliseconds) : connectTimeoutDefault;
-    }
+        => (this.ConnectTimeoutInMilliseconds > 0) ? TimeSpan.FromMilliseconds(this.ConnectTimeoutInMilliseconds) : connectTimeoutDefault;
 }

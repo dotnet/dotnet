@@ -305,6 +305,13 @@ internal partial class AWSSemanticConventions
         public virtual string AttributeAWSDynamoTableName => string.Empty;
 
         /// <summary>
+        /// Returns attribute names whose values must be reported as a <c>string[]</c>
+        /// (string array) rather than a plain <c>string</c>, as required by the
+        /// OpenTelemetry Semantic Conventions specification.
+        /// </summary>
+        public virtual IReadOnlyCollection<string> ArrayValueAttributeNames { get; } = [];
+
+        /// <summary>
         /// Not yet incorporated in Semantic Conventions repository.
         /// </summary>
         public virtual string AttributeAWSSQSQueueUrl => string.Empty;
@@ -333,6 +340,16 @@ internal partial class AWSSemanticConventions
         /// Not yet incorporated in Semantic Conventions repository.
         /// </summary>
         public virtual string AttributeAWSBedrock => string.Empty;
+
+        /// <summary>
+        /// The name of the S3 bucket the request targets.
+        /// </summary>
+        public virtual string AttributeAWSS3BucketName => string.Empty;
+
+        /// <summary>
+        /// The name of the S3 key the request targets.
+        /// </summary>
+        public virtual string AttributeAWSS3Key => string.Empty;
 
         #endregion
 

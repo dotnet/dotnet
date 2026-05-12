@@ -1,0 +1,29 @@
+[default.extend-words]
+# OpenTelemetry abbreviation
+OT = "OT"
+ot = "ot"
+# Google App Engine (GAE)
+Gae = "Gae"
+GAE = "GAE"
+gae = "gae"
+# Azure Kubernetes Service (AKS)
+Aks = "Aks"
+aks = "aks"
+# HP Vertica database
+Vertica = "Vertica"
+vertica = "vertica"
+# POSIX O_WRONLY flag
+WRONLY = "WRONLY"
+# PowerShell -Force abbreviation
+fo = "fo"
+# Part of "café" (caf\u00e9)
+caf = "caf"
+# Hex substring (e.g. 0ba902b7)
+ba = "ba"
+# Valid plural
+Enumerables = "Enumerables"
+# Truncated SQL keywords in BenchmarkDotNet output
+DELET = "DELET"
+INSER = "INSER"
+SELEC = "SELEC"
+UPDAT = "UPDAT"

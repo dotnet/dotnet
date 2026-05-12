@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>NuGet.Protocol</PackageId>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <PackageVersion>7.0.1</PackageVersion>
     <AssemblyName>NuGet.Protocol</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+    <Description>NuGet's implementation for interacting with feeds. Contains functionality for all feed types.</Description>
+    <PackageProjectUrl>https://aka.ms/nugetprj</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>nuget protocol</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

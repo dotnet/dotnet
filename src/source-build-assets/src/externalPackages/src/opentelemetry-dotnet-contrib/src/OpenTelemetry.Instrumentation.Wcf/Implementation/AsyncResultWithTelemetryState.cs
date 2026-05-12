@@ -23,11 +23,13 @@ internal sealed class AsyncResultWithTelemetryState : IAsyncResult
 
     bool IAsyncResult.IsCompleted => this.Inner.IsCompleted;
 
-    public static AsyncCallback GetAsyncCallback(AsyncCallback innerCallback, RequestTelemetryState telemetryState)
+    public static AsyncCallback? GetAsyncCallback(AsyncCallback? innerCallback, RequestTelemetryState telemetryState)
     {
-        return (IAsyncResult ar) =>
+        if (innerCallback == null)
         {
-            innerCallback(new AsyncResultWithTelemetryState(ar, telemetryState));
-        };
+            return null;
+        }
+
+        return ar => innerCallback(new AsyncResultWithTelemetryState(ar, telemetryState));
     }
 }

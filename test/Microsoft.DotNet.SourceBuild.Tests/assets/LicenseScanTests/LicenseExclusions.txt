@@ -1,6 +1,6 @@
 # Contains the list of files to be excluded from license scanning.
 #
-# This list is processed using FileSystemName.MatchesSimpleExpression
+# This list is processed using Microsoft.Extensions.FileSystemGlobbing.Matcher
 #
 # Format:
 #   Exclude the file entirely from license scanning:
@@ -35,9 +35,6 @@ src/aspnetcore/THIRD-PARTY-NOTICES.txt|unknown
 src/aspnetcore/src/Framework/App.Runtime/bundle/theme/**/*.wxl|unknown-license-reference
 src/aspnetcore/src/Installers/Windows/**/*.wxl|unknown-license-reference
 src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
-
-# License reference used in configuration, but not applying to code
-src/aspnetcore/src/Mvc/Settings.StyleCop|unknown-license-reference
 
 #
 # command-line-api
@@ -180,8 +177,6 @@ src/sdk/src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt|ms-net-libra
 src/source-build-assets/src/externalPackages/src/antlr4/developer-cert-of-origin.txt|dco-1.1
 
 # False positive
-src/source-build-assets/src/externalPackages/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown-license-reference
-src/source-build-assets/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
 src/source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
 src/source-build-assets/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
 src/source-build-assets/src/externalPackages/src/spectre-console/README.md|unknown-license-reference

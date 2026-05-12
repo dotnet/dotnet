@@ -1,0 +1,159 @@
+header:
+  schema-version: '1.0.0'
+  expiration-date: '2027-03-30T00:00:00.000Z'
+  last-updated: '2026-03-30'
+  last-reviewed: '2026-03-30'
+  project-url: https://github.com/open-telemetry/opentelemetry-dotnet-contrib
+  changelog: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/releases
+  license: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/LICENSE.TXT
+
+project-lifecycle:
+  status: active
+  bug-fixes-only: false
+  core-maintainers:
+    - https://github.com/alanwest
+    - https://github.com/CodeBlanch
+    - https://github.com/Kielek
+    - https://github.com/martincostello
+    - https://github.com/rajkumar-rangaraj
+    - https://github.com/TimothyMothra
+
+contribution-policy:
+  accepts-pull-requests: true
+  accepts-automated-pull-requests: true
+  contributing-policy: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/CONTRIBUTING.md
+  code-of-conduct: https://github.com/open-telemetry/.github/blob/main/CODE_OF_CONDUCT.md
+  automated-tools-list:
+    - automated-tool: renovatebot
+      action: allowed
+      comment: Automated dependency updates are accepted.
+
+documentation:
+  - https://opentelemetry.io/docs/languages/dotnet/
+
+distribution-points:
+  - pkg:nuget/OpenTelemetry.Exporter.Geneva
+  - pkg:nuget/OpenTelemetry.Exporter.InfluxDB
+  - pkg:nuget/OpenTelemetry.Exporter.Instana
+  - pkg:nuget/OpenTelemetry.Exporter.OneCollector
+  - pkg:nuget/OpenTelemetry.Extensions
+  - pkg:nuget/OpenTelemetry.Extensions.AWS
+  - pkg:nuget/OpenTelemetry.Extensions.Enrichment
+  - pkg:nuget/OpenTelemetry.Extensions.Enrichment.AspNetCore
+  - pkg:nuget/OpenTelemetry.Extensions.Enrichment.Http
+  - pkg:nuget/OpenTelemetry.Instrumentation.AspNet
+  - pkg:nuget/OpenTelemetry.Instrumentation.AspNet.TelemetryHttpModule
+  - pkg:nuget/OpenTelemetry.Instrumentation.AspNetCore
+  - pkg:nuget/OpenTelemetry.Instrumentation.AWS
+  - pkg:nuget/OpenTelemetry.Instrumentation.AWSLambda
+  - pkg:nuget/OpenTelemetry.Instrumentation.Cassandra
+  - pkg:nuget/OpenTelemetry.Instrumentation.ConfluentKafka
+  - pkg:nuget/OpenTelemetry.Instrumentation.ElasticsearchClient
+  - pkg:nuget/OpenTelemetry.Instrumentation.EntityFrameworkCore
+  - pkg:nuget/OpenTelemetry.Instrumentation.EventCounters
+  - pkg:nuget/OpenTelemetry.Instrumentation.GrpcCore
+  - pkg:nuget/OpenTelemetry.Instrumentation.GrpcNetClient
+  - pkg:nuget/OpenTelemetry.Instrumentation.Hangfire
+  - pkg:nuget/OpenTelemetry.Instrumentation.Http
+  - pkg:nuget/OpenTelemetry.Instrumentation.Kusto
+  - pkg:nuget/OpenTelemetry.Instrumentation.Owin
+  - pkg:nuget/OpenTelemetry.Instrumentation.Process
+  - pkg:nuget/OpenTelemetry.Instrumentation.Quartz
+  - pkg:nuget/OpenTelemetry.Instrumentation.Remoting
+  - pkg:nuget/OpenTelemetry.Instrumentation.Runtime
+  - pkg:nuget/OpenTelemetry.Instrumentation.ServiceFabricRemoting
+  - pkg:nuget/OpenTelemetry.Instrumentation.SqlClient
+  - pkg:nuget/OpenTelemetry.Instrumentation.StackExchangeRedis
+  - pkg:nuget/OpenTelemetry.Instrumentation.Wcf
+  - pkg:nuget/OpenTelemetry.OpAmp.Client
+  - pkg:nuget/OpenTelemetry.PersistentStorage.Abstractions
+  - pkg:nuget/OpenTelemetry.PersistentStorage.FileSystem
+  - pkg:nuget/OpenTelemetry.Resources.AWS
+  - pkg:nuget/OpenTelemetry.Resources.Azure
+  - pkg:nuget/OpenTelemetry.Resources.Container
+  - pkg:nuget/OpenTelemetry.Resources.Gcp
+  - pkg:nuget/OpenTelemetry.Resources.Host
+  - pkg:nuget/OpenTelemetry.Resources.OperatingSystem
+  - pkg:nuget/OpenTelemetry.Resources.Process
+  - pkg:nuget/OpenTelemetry.Resources.ProcessRuntime
+  - pkg:nuget/OpenTelemetry.Sampler.AWS
+
+security-artifacts:
+  threat-model:
+    threat-model-created: false
+    comment: |
+      No formal threat model created yet.
+  self-assessment:
+    self-assessment-created: false
+    comment: |
+      No formal self-assessment yet.
+
+security-contacts:
+  - type: website
+    value: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/security
+    primary: true
+  - type: email
+    value: security@opentelemetry.io
+    primary: false
+  - type: email
+    value: cncf-opentelemetry-security@lists.cncf.io
+    primary: false
+
+security-testing:
+  - tool-type: sca
+    tool-name: Renovate
+    tool-version: latest
+    tool-url: https://docs.renovatebot.com/
+    tool-rulesets:
+      - built-in
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      Automated dependency updates.
+  - tool-type: fuzzing
+    tool-name: FsCheck
+    tool-version: latest
+    tool-url: https://fscheck.github.io/FsCheck/
+    tool-rulesets:
+      - default
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: false
+    comment: |
+      FsCheck is used for fuzz testing as part of CI.
+  - tool-type: sast
+    tool-name: CodeQL
+    tool-version: latest
+    tool-url: https://github.com/github/codeql
+    tool-rulesets:
+      - default
+    integration:
+      ad-hoc: false
+      ci: true
+      before-release: true
+    comment: |
+      CodeQL static analysis is run in CI for all commits and pull requests to detect security vulnerabilities.
+
+vulnerability-reporting:
+  accepts-vulnerability-reports: true
+  email-contact: security@opentelemetry.io
+  security-policy: https://opentelemetry.io/docs/security/security-response/
+  bug-bounty-available: false
+  comment: |
+    Report security vulnerabilities via https://github.com/open-telemetry/opentelemetry-dotnet-contrib/security.
+
+dependencies:
+  third-party-packages: true
+  dependencies-lists:
+    - https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/Directory.Packages.props
+  dependencies-lifecycle:
+    policy-url: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/.github/renovate.json
+    comment: |
+      Dependencies are kept up to date by Renovate.
+  env-dependencies-policy:
+    policy-url: https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/.github/renovate.json
+    comment: |
+      Dependencies are kept up to date by Renovate.

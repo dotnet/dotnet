@@ -16,7 +16,7 @@ internal static class SqlParameterProcessor
             return;
         }
 
-        int index = 0;
+        var index = 0;
 
         foreach (var parameter in dbCommand.Parameters)
         {

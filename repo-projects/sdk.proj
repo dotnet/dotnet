@@ -37,7 +37,6 @@
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="sourcelink" />
     <RepositoryReference Include="symreader" />
-    <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
     <RepositoryReference Include="windowsdesktop" />
     <RepositoryReference Include="xdt" />

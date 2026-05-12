@@ -179,6 +179,13 @@ internal class TagHelperCompletionService : ITagHelperCompletionService
 
         foreach (var possibleDescriptor in possibleChildTagHelpers)
         {
+            if (possibleDescriptor.BoundAttributes.Any(static boundAttribute => boundAttribute.IsDirectiveAttribute))
+            {
+                // Directive attribute tag helpers (e.g., @bind, @ref, @key) don't contribute element names
+                // to completion — they stand on their own as attribute completions.
+                continue;
+            }
+
             var addRuleCompletions = false;
             var checkAttributeRules = true;
             var outputHint = possibleDescriptor.TagOutputHint;
@@ -255,14 +262,6 @@ internal class TagHelperCompletionService : ITagHelperCompletionService
 
         static void UpdateCompletions(string tagName, TagHelperDescriptor possibleDescriptor, Dictionary<string, HashSet<TagHelperDescriptor>> elementCompletions, HashSet<TagHelperDescriptor>? tagHelperDescriptors = null)
         {
-            if (possibleDescriptor.BoundAttributes.Any(static boundAttribute => boundAttribute.IsDirectiveAttribute))
-            {
-                // This is a TagHelper that ultimately represents a DirectiveAttribute. In classic Razor TagHelper land TagHelpers with bound attribute descriptors
-                // are valuable to show in the completion list to understand what was possible for a certain tag; however, with Blazor directive attributes stand
-                // on their own and shouldn't be indicated at the element level completion.
-                return;
-            }
-
             HashSet<TagHelperDescriptor>? existingRuleDescriptors;
             if (tagHelperDescriptors is not null)
             {

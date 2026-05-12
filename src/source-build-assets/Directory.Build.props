@@ -3,12 +3,30 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
-    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <!-- Centralized package metadata that's constant across all SBRP layers
+         (referencePackages, textOnlyPackages, targetPacks). Per-package values that
+         used to live in each hand-authored .nuspec are now embedded in the individual
+         .csproj files; the values below are the only ones that are constant repo-wide. -->
+    <Authors>Microsoft</Authors>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IsPackable>true</IsPackable>
+    <!-- Suppress Arcade's repo-wide license validation. SBRP republishes upstream packages
+         that may declare licenses other than MIT (Apache-2.0 for the NuGet client packages,
+         etc.). Arcade compares the repo's LICENSE.txt against each unique
+         PackageLicenseExpression value across all packable projects and errors when they
+         don't match — but a single SBRP repo legitimately produces packages under several
+         different upstream licenses, so the validation can't succeed for all of them. -->
+    <SuppressLicenseValidation>true</SuppressLicenseValidation>
+    <!-- Override Arcade defaults: original NuGet packages predominantly do not require
+         license acceptance and ship without an icon. -->
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageIcon></PackageIcon>
+    <PackageIconFullPath></PackageIconFullPath>
     <!--
-      Arcade defaults Serviceable to 'true'. Reset it, to use the value in the nuspec. Improves
-      equality with real packages.
+      Arcade defaults Serviceable to 'true'. Reset it so per-layer Directory.Build.props
+      (or per-csproj overrides) decide whether to re-assert true. Improves equality with
+      real packages where <serviceable> isn't always present.
     -->
     <Serviceable />
     <CustomizationsPrefix>Customizations</CustomizationsPrefix>
@@ -16,7 +34,6 @@
     <CustomizationsSourceFile>$(CustomizationsPrefix).cs</CustomizationsSourceFile>
 
     <ArtifactsReferenceOnlyPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsPackagesDir)','ReferenceOnly'))</ArtifactsReferenceOnlyPackagesDir>
-    <ManualNuspecTargets>$(RepositoryEngineeringDir)ManualNuspec.targets</ManualNuspecTargets>
 
     <LogVerbosity Condition="'$(LogVerbosity)' == ''">minimal</LogVerbosity>
 

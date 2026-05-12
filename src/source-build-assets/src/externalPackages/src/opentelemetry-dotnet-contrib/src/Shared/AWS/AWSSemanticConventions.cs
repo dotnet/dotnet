@@ -79,6 +79,15 @@ internal partial class AWSSemanticConventions
     /// <inheritdoc cref="TagBuilderImpl"/>
     public TagBuilderImpl TagBuilder { get; }
 
+    /// <summary>
+    /// Returns attribute names whose values must be reported as a <c>string[]</c>
+    /// (string array) rather than a plain <c>string</c>, as required by the
+    /// OpenTelemetry Semantic Conventions specification.
+    /// </summary>
+    /// <returns>A collection of attribute names that require array values.</returns>
+    public IReadOnlyCollection<string> GetArrayValueAttributeNames()
+        => this.GetSemanticConventionVersion().ArrayValueAttributeNames;
+
     /// <inheritdoc cref="AWSSemanticConventions"/>
     /// <param name="semanticConventionVersion">
     /// Sets the <see cref="SemanticConventionVersion"/> that will be used to resolve attribute names.
@@ -97,7 +106,7 @@ internal partial class AWSSemanticConventions
     public class ParameterMappingBuilderImpl
     {
         private readonly AWSSemanticConventions awsSemanticConventions;
-        private Dictionary<string, string> state = new();
+        private Dictionary<string, string> state = [];
 
         public ParameterMappingBuilderImpl(AWSSemanticConventions semanticConventions)
         {
@@ -110,7 +119,7 @@ internal partial class AWSSemanticConventions
         {
             var builtState = this.state;
 
-            this.state = new Dictionary<string, string>();
+            this.state = [];
 
             return builtState;
         }
@@ -143,6 +152,14 @@ internal partial class AWSSemanticConventions
         /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeAWSBedrockKnowledgeBaseId"/>
         public ParameterMappingBuilderImpl AddAttributeAWSBedrockKnowledgeBaseId(string value)
             => this.awsSemanticConventions.AddDic(this, x => x.AttributeAWSBedrockKnowledgeBaseId, value);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeAWSS3BucketName"/>
+        public ParameterMappingBuilderImpl AddAttributeAWSS3BucketName(string value)
+            => this.awsSemanticConventions.AddDic(this, x => x.AttributeAWSS3BucketName, value);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeAWSS3Key"/>
+        public ParameterMappingBuilderImpl AddAttributeAWSS3Key(string value)
+            => this.awsSemanticConventions.AddDic(this, x => x.AttributeAWSS3Key, value);
         #endregion
     }
 
@@ -489,22 +506,13 @@ internal partial class AWSSemanticConventions
         return dict;
     }
 
-    private AWSSemanticConventionsBase GetSemanticConventionVersion()
+    private AWSSemanticConventions_V1_28_0 GetSemanticConventionVersion() => this.semanticConventionVersion switch
     {
-        switch (this.semanticConventionVersion)
-        {
-            case SemanticConventionVersion.Latest:
-            case SemanticConventionVersion.V1_29_0:
-                return new AWSSemanticConventions_V1_29_0();
-
-            case SemanticConventionVersion.V1_28_0:
-                return new AWSSemanticConventions_V1_28_0();
-
-            default:
-                throw new InvalidEnumArgumentException(
-                    argumentName: nameof(SemanticConventionVersion),
-                    (int)this.semanticConventionVersion,
-                    typeof(SemanticConventionVersion));
-        }
-    }
+        SemanticConventionVersion.Latest or SemanticConventionVersion.V1_29_0 => new AWSSemanticConventions_V1_29_0(),
+        SemanticConventionVersion.V1_28_0 => new AWSSemanticConventions_V1_28_0(),
+        _ => throw new InvalidEnumArgumentException(
+                argumentName: nameof(SemanticConventionVersion),
+                (int)this.semanticConventionVersion,
+                typeof(SemanticConventionVersion)),
+    };
 }

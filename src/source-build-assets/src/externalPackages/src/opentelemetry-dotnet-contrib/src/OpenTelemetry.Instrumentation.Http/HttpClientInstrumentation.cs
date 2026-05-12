@@ -25,10 +25,10 @@ internal sealed class HttpClientInstrumentation : IDisposable
 
     private readonly DiagnosticSourceSubscriber diagnosticSourceSubscriber;
 
-    private readonly Func<string, object?, object?, bool> isEnabled = (eventName, _, _)
+    private readonly Func<string, object?, object?, bool> isEnabled = static (eventName, _, _)
         => !ExcludedDiagnosticSourceEvents.Contains(eventName);
 
-    private readonly Func<string, object?, object?, bool> isEnabledNet7OrGreater = (eventName, _, _)
+    private readonly Func<string, object?, object?, bool> isEnabledNet7OrGreater = static (eventName, _, _)
         => !ExcludedDiagnosticSourceEventsNet7OrGreater.Contains(eventName);
 
     /// <summary>
@@ -37,22 +37,21 @@ internal sealed class HttpClientInstrumentation : IDisposable
     /// <param name="options">Configuration options for HTTP client instrumentation.</param>
     public HttpClientInstrumentation(HttpClientTraceInstrumentationOptions options)
     {
-        // For .NET7.0 activity will be created using activitySource.
+        // For .NET 7+ activity will be created using ActivitySource.
         // https://github.com/dotnet/runtime/blob/main/src/libraries/System.Net.Http/src/System/Net/Http/DiagnosticsHandler.cs
         // However, in case when activity creation returns null (due to sampling)
-        // the framework will fall back to creating activity anyways due to active diagnostic source listener
+        // the framework will fall back to creating an activity anyway due to active diagnostic source listener.
         // To prevent this, isEnabled is implemented which will return false always
         // so that the sampler's decision is respected.
-        this.diagnosticSourceSubscriber = HttpHandlerDiagnosticListener.IsNet7OrGreater
-                ? new DiagnosticSourceSubscriber(new HttpHandlerDiagnosticListener(options), this.isEnabledNet7OrGreater, HttpInstrumentationEventSource.Log.UnknownErrorProcessingEvent)
-                : new DiagnosticSourceSubscriber(new HttpHandlerDiagnosticListener(options), this.isEnabled, HttpInstrumentationEventSource.Log.UnknownErrorProcessingEvent);
+        this.diagnosticSourceSubscriber = new(
+            new HttpHandlerDiagnosticListener(options),
+            HttpHandlerDiagnosticListener.IsNet7OrGreater ? this.isEnabledNet7OrGreater : this.isEnabled,
+            HttpInstrumentationEventSource.Log.UnknownErrorProcessingEvent);
 
         this.diagnosticSourceSubscriber.Subscribe();
     }
 
     /// <inheritdoc/>
     public void Dispose()
-    {
-        this.diagnosticSourceSubscriber?.Dispose();
-    }
+        => this.diagnosticSourceSubscriber?.Dispose();
 }

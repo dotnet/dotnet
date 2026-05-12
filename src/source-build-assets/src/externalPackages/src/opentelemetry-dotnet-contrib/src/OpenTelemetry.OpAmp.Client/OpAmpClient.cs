@@ -24,6 +24,7 @@ public sealed class OpAmpClient : IDisposable
     private readonly Dictionary<string, IBackgroundService> services = [];
     private readonly FrameDispatcher dispatcher;
     private readonly IOpAmpTransport transport;
+    private bool disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OpAmpClient"/> class.
@@ -46,6 +47,8 @@ public sealed class OpAmpClient : IDisposable
     /// <returns>A task that represents the asynchronous start operation.</returns>
     public async Task StartAsync(CancellationToken token = default)
     {
+        this.ThrowIfDisposed();
+
         if (this.transport is WsTransport wsTransport)
         {
             await wsTransport.StartAsync(token)
@@ -62,12 +65,19 @@ public sealed class OpAmpClient : IDisposable
     }
 
     /// <summary>
-    /// Stops the <see cref="OpAmpClient"/> instance, terminating the connection to the server and stopping all running services.
+    /// Stops the <see cref="OpAmpClient"/> instance gracefully, terminating the connection to the server and stopping all running services.
     /// </summary>
     /// <param name="token">Cancellation token.</param>
     /// <returns>A task that represents the asynchronous stop operation.</returns>
+    /// <remarks>
+    /// This method is the preferred shutdown path when the caller wants the client to notify the
+    /// server that it is disconnecting. In particular, for WebSocket transport this attempts a
+    /// graceful close handshake after sending the agent disconnect message.
+    /// </remarks>
     public async Task StopAsync(CancellationToken token = default)
     {
+        this.ThrowIfDisposed();
+
         await this.dispatcher.DispatchAgentDisconnectAsync(token)
             .ConfigureAwait(false);
 
@@ -91,6 +101,7 @@ public sealed class OpAmpClient : IDisposable
     public void Subscribe<T>(IOpAmpListener<T> listener)
         where T : OpAmpMessage
     {
+        this.ThrowIfDisposed();
         Guard.ThrowIfNull(listener, nameof(listener));
         this.processor.Subscribe(listener);
     }
@@ -103,21 +114,113 @@ public sealed class OpAmpClient : IDisposable
     public void Unsubscribe<T>(IOpAmpListener<T> listener)
         where T : OpAmpMessage
     {
+        this.ThrowIfDisposed();
         Guard.ThrowIfNull(listener, nameof(listener));
         this.processor.Unsubscribe(listener);
     }
 
     /// <summary>
-    /// Disposes the OpAmpClient instance and releases all associated resources.
+    /// Report current effective configuration of the agent.
     /// </summary>
+    /// <param name="files">Configuration files to report.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    /// <remarks>
+    /// <para>
+    /// File contents are transmitted verbatim to the OpAMP server with no redaction.
+    /// Ensure the transport is secured with TLS and the OpAMP server is fully trusted
+    /// before reporting files that may contain sensitive data such as passwords or tokens.
+    /// </para>
+    /// </remarks>
+    public Task SendEffectiveConfigAsync(IEnumerable<EffectiveConfigFile> files, CancellationToken cancellationToken = default)
+    {
+        this.ThrowIfDisposed();
+
+        if (!this.settings.EffectiveConfigurationReporting.EnableReporting)
+        {
+            throw new InvalidOperationException("Effective configuration reporting is not enabled in settings.");
+        }
+
+        return this.dispatcher.DispatchEffectiveConfigAsync(files, cancellationToken);
+    }
+
+    /// <summary>
+    /// Reports custom capabilities supported by the agent.
+    /// </summary>
+    /// <param name="capabilities">Capabilities list.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    public Task SendCustomCapabilitiesAsync(IEnumerable<string> capabilities, CancellationToken cancellationToken = default)
+    {
+        this.ThrowIfDisposed();
+
+        return this.dispatcher.DispatchCustomCapabilitiesAsync(capabilities, cancellationToken);
+    }
+
+    /// <summary>
+    /// Sends a custom message related to a supported custom capability.
+    /// </summary>
+    /// <param name="capability">Capability that matches a reported custom capability.</param>
+    /// <param name="type">Type of message within the capability.</param>
+    /// <param name="data">Contents of the message.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    public Task SendCustomMessageAsync(string capability, string type, ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+    {
+        this.ThrowIfDisposed();
+
+        return this.dispatcher.DispatchCustomMessageAsync(capability, type, data, cancellationToken);
+    }
+
+    /// <summary>
+    /// Disposes the <see cref="OpAmpClient"/> instance and releases all associated resources.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Disposal performs synchronous, best-effort cleanup of background services and transport
+    /// resources.
+    /// </para>
+    /// <para>
+    /// This is not a graceful shutdown path and does not send the agent disconnect message. Call
+    /// <see cref="StopAsync(CancellationToken)"/> before disposal when the client
+    /// should unregister cleanly from the server.
+    /// </para>
+    /// </remarks>
     public void Dispose()
     {
+        if (this.disposed)
+        {
+            return;
+        }
+
+        this.disposed = true;
+
+        foreach (var service in this.services.Values)
+        {
+            service.Stop();
+        }
+
+        foreach (var service in this.services.Values)
+        {
+            if (service is IDisposable disposableService)
+            {
+                disposableService.Dispose();
+            }
+        }
+
+        if (this.transport is IDisposable disposableTransport)
+        {
+            disposableTransport.Dispose();
+        }
+
         this.dispatcher.Dispose();
     }
 
     // Used for testing purposes only.
     internal Task SendHeartbeatAsync(HealthReport healthReport, CancellationToken cancellationToken = default)
     {
+        this.ThrowIfDisposed();
+
         return this.dispatcher.DispatchHeartbeatAsync(healthReport, cancellationToken);
     }
 
@@ -125,10 +228,22 @@ public sealed class OpAmpClient : IDisposable
     {
         return settings.ConnectionType switch
         {
-            ConnectionType.WebSocket => new WsTransport(settings.ServerUrl, processor),
+            ConnectionType.WebSocket => new WsTransport(settings, processor),
             ConnectionType.Http => new PlainHttpTransport(settings, processor),
             _ => throw new NotSupportedException("Unsupported transport type"),
         };
+    }
+
+    private void ThrowIfDisposed()
+    {
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(this.disposed, this);
+#else
+        if (this.disposed)
+        {
+            throw new ObjectDisposedException(nameof(OpAmpClient));
+        }
+#endif
     }
 
     private void ConfigureServices()

@@ -1,9 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>System.IO.FileSystem.AccessControl</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>5.0.0</PackageVersion>
     <AssemblyName>System.IO.FileSystem.AccessControl</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Description>Provides types for managing access and audit control lists for files and directories.
+
+Commonly Used Types:
+System.Security.AccessControl.DirectoryObjectSecurity
+System.Security.AccessControl.DirectorySecurity
+System.Security.AccessControl.FileSecurity
+System.Security.AccessControl.FileSystemAccessRule
+System.Security.AccessControl.FileSystemAuditRule
+System.Security.AccessControl.FileSystemRights
+System.Security.AccessControl.FileSystemSecurity
+ 
+When using NuGet 3.x this package requires at least version 3.4.</Description>
+    <Title>System.IO.FileSystem.AccessControl</Title>
+    <PackageProjectUrl>https://github.com/dotnet/runtime</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+    <MinClientVersion>2.12</MinClientVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

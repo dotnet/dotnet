@@ -17,7 +17,7 @@ and collects traces about outgoing calls to Redis.
 
 > [!NOTE]
 > This component is based on the OpenTelemetry semantic conventions for
-[traces](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/redis.md).
+[traces](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/redis.md).
 These conventions are
 [Experimental](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/document-status.md),
 and hence, this package is a [pre-release](https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/VERSIONING.md#pre-releases).

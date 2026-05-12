@@ -71,9 +71,7 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
     /// <param name="right">The second <see cref="AnyValueUnion"/> instance to compare.</param>
     /// <returns><see langword="true"/> if the two instances are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(AnyValueUnion left, AnyValueUnion right)
-    {
-        return left.Equals(right);
-    }
+        => left.Equals(right);
 
     /// <summary>
     /// Determines whether two <see cref="AnyValueUnion"/> instances are not equal.
@@ -82,9 +80,7 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
     /// <param name="right">The second <see cref="AnyValueUnion"/> instance to compare.</param>
     /// <returns><see langword="true"/> if the two instances are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(AnyValueUnion left, AnyValueUnion right)
-    {
-        return !left.Equals(right);
-    }
+        => !left.Equals(right);
 
     /// <summary>
     /// Determines whether the specified object is equal to the current instance.
@@ -93,14 +89,7 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
     /// <returns><see langword="true"/> if the specified object is of type <c>AnyValueUnion</c> and has the same type and value
     /// as the current instance; otherwise, <see langword="false"/>.</returns>
     public override bool Equals(object? obj)
-    {
-        if (obj is AnyValueUnion other)
-        {
-            return this.Equals(other);
-        }
-
-        return false;
-    }
+        => obj is AnyValueUnion other && this.Equals(other);
 
     /// <summary>
     /// Determines whether the current instance is equal to the specified <see cref="AnyValueUnion"/> instance.
@@ -109,22 +98,14 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
     /// <returns><see langword="true"/> if the current instance is equal to <paramref name="other"/>; otherwise, <see
     /// langword="false"/>. Equality is determined based on the <see cref="Type"/> and the corresponding
     /// value.</returns>
-    public bool Equals(AnyValueUnion other)
+    public bool Equals(AnyValueUnion other) => this.Type == other.Type && this.Type switch
     {
-        if (this.Type != other.Type)
-        {
-            return false;
-        }
-
-        return this.Type switch
-        {
-            AnyValueType.Integer => this.IntValue == other.IntValue,
-            AnyValueType.Boolean => this.BoolValue == other.BoolValue,
-            AnyValueType.String => string.Equals(this.StringValue, other.StringValue, StringComparison.Ordinal),
-            AnyValueType.Double => this.DoubleValue == other.DoubleValue,
-            _ => false,
-        };
-    }
+        AnyValueType.Integer => this.IntValue == other.IntValue,
+        AnyValueType.Boolean => this.BoolValue == other.BoolValue,
+        AnyValueType.String => string.Equals(this.StringValue, other.StringValue, StringComparison.Ordinal),
+        AnyValueType.Double => this.DoubleValue == other.DoubleValue,
+        _ => false,
+    };
 
     /// <summary>
     /// Computes a hash code for the current instance based on its value type and associated data.

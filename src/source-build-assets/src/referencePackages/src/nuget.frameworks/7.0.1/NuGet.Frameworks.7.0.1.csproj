@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>NuGet.Frameworks</PackageId>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <PackageVersion>7.0.1</PackageVersion>
     <AssemblyName>NuGet.Frameworks</AssemblyName>
     <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+    <Description>NuGet's understanding of target frameworks.</Description>
+    <PackageProjectUrl>https://aka.ms/nugetprj</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>nuget</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
 </Project>
