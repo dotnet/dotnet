@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Minimal repro for System.Collections.Immutable binding mismatch.
+
+    Simulates how Azure DevOps' Distributed Test Agent (DTAExecutionHost) consumes
+    the Microsoft.TestPlatform nupkg:
+      - net472 host process
+      - No app.config / no binding redirects (DTA has its own host exe that never
+        picked up vstest.console.exe.config).
+      - References Common.dll + ObjectModel.dll from the package's
+        tools/net462/Common7/IDE/Extensions/TestPlatform/ layout, which is the
+        same layout the VsTest task lays out on the agent.
+
+    FilterExpressionWrapper's ctor calls FilterExpression.Parse which, for simple
+    filters, builds a FastFilter via FastFilter.Builder. FastFilter.Builder uses
+    ImmutableDictionary / ImmutableHashSet, which forces System.Collections.Immutable
+    to load.
+
+    With the fix, Common.dll's metadata references System.Collections.Immutable v10.0.0.0
+    and the package ships v10.0.0.0 next to it, so hosts without binding redirects
+    can load SCI without FileLoadException.
+  -->
+
+  <PropertyGroup>
+    <AssemblyName>DtaLikeHost</AssemblyName>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <!-- Emulate DTA: no auto-generated binding redirects, no app.config. -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>false</GenerateBindingRedirectsOutputType>
+    <ImplicitlyExpandNETStandardFacades>true</ImplicitlyExpandNETStandardFacades>
+    <!-- Avoid warnings-as-errors on NuGet audit for a repro asset. -->
+    <NuGetAudit>false</NuGetAudit>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TestPlatformToolsDirOverride)' == ''">
+    <!-- Pull the package onto disk; we don't use its compile-time assets (there
+         are none for net472 in lib/), we consume its tools/ layout below. -->
+    <PackageReference Include="Microsoft.TestPlatform" Version="$(PackageVersion)" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TestPlatformToolsDirOverride)' == ''">
+    <_TestPlatformToolsDir>$(PkgMicrosoft_TestPlatform)\tools\net462\Common7\IDE\Extensions\TestPlatform</_TestPlatformToolsDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TestPlatformToolsDirOverride)' != ''">
+    <!-- VSIX flat layout: all DLLs + .exe.configs at the root of the extracted VSIX. -->
+    <_TestPlatformToolsDir>$(TestPlatformToolsDirOverride)</_TestPlatformToolsDir>
+  </PropertyGroup>
+
+  <Target Name="AddTestPlatformToolsReferences" BeforeTargets="ResolveAssemblyReferences" Condition="Exists('$(_TestPlatformToolsDir)')">
+    <ItemGroup>
+      <Reference Include="Microsoft.VisualStudio.TestPlatform.Common">
+        <HintPath>$(_TestPlatformToolsDir)\Microsoft.VisualStudio.TestPlatform.Common.dll</HintPath>
+        <Private>true</Private>
+      </Reference>
+      <Reference Include="Microsoft.VisualStudio.TestPlatform.ObjectModel">
+        <HintPath>$(_TestPlatformToolsDir)\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll</HintPath>
+        <Private>true</Private>
+      </Reference>
+      <!-- Copy the assemblies that actually ship next to Common.dll so the runtime
+           probing sees exactly what DTA would see on the build agent. -->
+      <Content Include="$(_TestPlatformToolsDir)\System.Collections.Immutable.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(_TestPlatformToolsDir)\System.Reflection.Metadata.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <!-- SCI 10.0.0 for net462 has transitive dependencies that also ship in the layout. -->
+      <Content Include="$(_TestPlatformToolsDir)\System.Memory.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(_TestPlatformToolsDir)\System.Buffers.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(_TestPlatformToolsDir)\System.Runtime.CompilerServices.Unsafe.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+</Project>
