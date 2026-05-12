@@ -189,9 +189,7 @@ jobs:
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
-  - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
-    - group: DotNet-VSTS-Infra-Access
-  - ${{ else }}:
+  - ${{ if ne(parameters.enableIBCOptimization, 'true') }}:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
   - name: additionalBuildArgs
@@ -343,7 +341,7 @@ jobs:
   ### Additional properties
   - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
     - name: ibcProperties
-      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(dn-bot-devdiv-drop-r-code-r)'
+      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(IBCDropAccessToken)'
   - ${{ else }}:
     - name: ibcProperties
       value: ''
@@ -431,6 +429,45 @@ jobs:
       displayName: Create artifact staging directories
       condition: always()
 
+  # Acquire a WIF-based access token for DevDiv AzDO when IBC optimization is enabled
+  # This replaces the dn-bot-devdiv-drop-r-code-r PAT with a federated identity credential
+  - ${{ if and(eq(parameters.enableIBCOptimization, 'true'), eq(variables['System.TeamProject'], 'internal')) }}:
+    - task: PowerShell@2
+      displayName: Acquire DevDiv access token (WIF)
+      inputs:
+        targetType: inline
+        pwsh: true
+        script: |
+          # Service connection: dnceng-devdiv-drop-r-code-r-wif (workloadidentityuser)
+          $scId = "e424d847-170d-4cff-ad3b-ebe41f5e245c"
+          $appId = "6c2f92d6-4ad3-4d8d-a8eb-f7ac0964b7e9"
+          $tenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+
+          # Request OIDC token from the pipeline
+          $oidcUri = "$(System.CollectionUri)$(System.TeamProjectId)/_apis/distributedtask/hubs/build/plans/$(System.PlanId)/jobs/$(System.JobId)/oidctoken?serviceConnectionId=$scId&api-version=7.1-preview.1"
+          $oidcResponse = Invoke-RestMethod -Uri $oidcUri -Method Post -Headers @{
+            Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
+            "Content-Type" = "application/json"
+          } -Body "{}"
+
+          # Exchange OIDC token for Entra access token scoped to Azure DevOps
+          $tokenResponse = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token" -Method Post -Body @{
+            client_id = $appId
+            client_assertion = $oidcResponse.oidcToken
+            client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+            scope = "499b84ac-1321-427f-aa17-267ca6975798/.default"
+            grant_type = "client_credentials"
+          }
+
+          if ([string]::IsNullOrWhiteSpace($tokenResponse.access_token)) {
+            Write-Host "##vso[task.logissue type=error]Failed to acquire DevDiv access token via WIF: token response did not contain a non-empty access_token."
+            exit 1
+          }
+
+          Write-Host "##vso[task.setvariable variable=IBCDropAccessToken;issecret=true]$($tokenResponse.access_token)"
+          Write-Host "Successfully acquired DevDiv access token via WIF for IBC optimization"
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
