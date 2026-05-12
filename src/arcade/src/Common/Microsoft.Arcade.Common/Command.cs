@@ -118,11 +118,7 @@ namespace Microsoft.Arcade.Common
 
         public ICommand EnvironmentVariable(string name, string value)
         {
-#if NET45
-            _process.StartInfo.EnvironmentVariables[name] = value;
-#else
             _process.StartInfo.Environment[name] = value;
-#endif
             _process.StartInfo.UseShellExecute = false;
             return this;
         }

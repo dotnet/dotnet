@@ -20,7 +20,7 @@ namespace NuGet.CommandLine.XPlat
     internal class Table
     {
         // This is the default window width if we cannot get the actual window width
-        const int DefaultWindowWidth = 115;
+        internal const int DefaultWindowWidth = 115;
         // This is the minimum number of characters in a column which includes "| c |" where c is a character
         const int MinimumCharactersInAColumn = 4;
         // This is the list of columns in the table
@@ -36,30 +36,16 @@ namespace NuGet.CommandLine.XPlat
         // This is the default console color
         private readonly ConsoleColor _consoleColor = Console.ForegroundColor;
 
-        public Table(int[] columnsToHighlight, params string[] headers)
+        public Table(int[] columnsToHighlight, string[] headers, int consoleWidth)
         {
+            if (consoleWidth <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(consoleWidth), consoleWidth, "Console width must be greater than zero.");
+            }
+
             _columnsToHighlight = columnsToHighlight;
-            int windowWidth = -1;
 
-            // Get the window width if possible 
-            try
-            {
-                windowWidth = Console.WindowWidth;
-            }
-            catch (Exception)
-            {
-                // Ignore any exception
-            }
-
-            // If the window width is not available, use the default window width
-            if (windowWidth <= 0)
-            {
-                _maxColumnWidth = DefaultWindowWidth;
-            }
-            else
-            {
-                _maxColumnWidth = Math.Max(MinimumCharactersInAColumn, (windowWidth - MinimumCharactersInAColumn * headers.Length) / headers.Length);
-            }
+            _maxColumnWidth = Math.Max(MinimumCharactersInAColumn, (consoleWidth - MinimumCharactersInAColumn * headers.Length) / headers.Length);
 
             // Add the headers
             foreach (var header in headers)

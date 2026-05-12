@@ -7,7 +7,7 @@ namespace Microsoft.SignCheck.Verification
 {
     public class CabVerifier : AuthentiCodeVerifier
     {
-        public CabVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension) : base(log, exclusions, options, ".cab")
+        public CabVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".cab", new CabSecurityInfoProvider())
         {
 
         }

@@ -459,7 +459,7 @@ public static partial class ManagedNameHelper
         if (arity > 0 && methodArity == arity)
         {
             methodBuilder.Append(
-#if NET6_0_OR_GREATER
+#if NET
                 System.Globalization.CultureInfo.InvariantCulture,
 #endif
                 $"`{arity}");

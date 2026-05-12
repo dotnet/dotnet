@@ -16,8 +16,7 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [53] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (22:0,22 [28] x:\dir\subdir\Test\TestComponent.cshtml) - OnClick - OnClick - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (23:0,23 [27] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (24:0,24 [25] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (MyType arg) => counter++
+                        LazyIntermediateToken - (24:0,24 [25] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - (MyType arg) => counter++
                 HtmlContent - (53:0,53 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (53:0,53 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (64:2,7 [28] x:\dir\subdir\Test\TestComponent.cshtml)

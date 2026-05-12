@@ -1,0 +1,18 @@
+abstract OpenTelemetry.Extensions.Enrichment.TraceEnricher.Enrich(in OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag bag) -> void
+Microsoft.Extensions.DependencyInjection.TraceEnrichmentServiceCollectionExtensions
+OpenTelemetry.Extensions.Enrichment.TraceEnricher
+OpenTelemetry.Extensions.Enrichment.TraceEnricher.TraceEnricher() -> void
+OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag
+OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag.Add(string! key, object? value) -> void
+OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag.TraceEnrichmentBag() -> void
+OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag.TraceEnrichmentBag(System.Diagnostics.Activity! activity) -> void
+OpenTelemetry.Extensions.Enrichment.TraceEnrichmentProviderBuilderExtensions
+static Microsoft.Extensions.DependencyInjection.TraceEnrichmentServiceCollectionExtensions.TryAddTraceEnricher(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, OpenTelemetry.Extensions.Enrichment.TraceEnricher! enricher) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Microsoft.Extensions.DependencyInjection.TraceEnrichmentServiceCollectionExtensions.AddTraceEnricher(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag>! enrichmentAction) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Microsoft.Extensions.DependencyInjection.TraceEnrichmentServiceCollectionExtensions.AddTraceEnricher(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<System.IServiceProvider!, OpenTelemetry.Extensions.Enrichment.TraceEnricher!>! enricherImplementationFactory) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Microsoft.Extensions.DependencyInjection.TraceEnrichmentServiceCollectionExtensions.TryAddTraceEnricher<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static OpenTelemetry.Extensions.Enrichment.TraceEnrichmentProviderBuilderExtensions.TryAddTraceEnricher(this OpenTelemetry.Trace.TracerProviderBuilder! builder, OpenTelemetry.Extensions.Enrichment.TraceEnricher! enricher) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Extensions.Enrichment.TraceEnrichmentProviderBuilderExtensions.AddTraceEnricher(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag>! enrichmentAction) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Extensions.Enrichment.TraceEnrichmentProviderBuilderExtensions.AddTraceEnricher(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Func<System.IServiceProvider!, OpenTelemetry.Extensions.Enrichment.TraceEnricher!>! enricherImplementationFactory) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Extensions.Enrichment.TraceEnrichmentProviderBuilderExtensions.TryAddTraceEnricher<T>(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+virtual OpenTelemetry.Extensions.Enrichment.TraceEnricher.EnrichOnActivityStart(in OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag bag) -> void

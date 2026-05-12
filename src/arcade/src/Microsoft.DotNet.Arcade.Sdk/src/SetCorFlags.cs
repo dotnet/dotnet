@@ -12,15 +12,8 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
-#if NET472
-    [LoadInSeparateAppDomain]
-    public class SetCorFlags : AppDomainIsolatedTask
-    {
-        static SetCorFlags() => AssemblyResolution.Initialize();
-#else
     public class SetCorFlags : Microsoft.Build.Utilities.Task
     {
-#endif
         [Required]
         public string FilePath { get; set; }
 
@@ -35,9 +28,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         public override bool Execute()
         {
-#if NET472
-            AssemblyResolution.Log = Log;
-#endif
             try
             {
                 ExecuteImpl();
@@ -45,9 +35,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
             }
             finally
             {
-#if NET472
-                AssemblyResolution.Log = null;
-#endif
             }
         }
 

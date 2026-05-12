@@ -1,11 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -33,7 +32,7 @@ namespace NuGet.ContentModel
 
             foreach (var entry in entries)
             {
-                Dictionary<ReadOnlyMemory<char>, object> byProp;
+                Dictionary<ReadOnlyMemory<char>, object>? byProp;
                 if (!_table.TryGetValue(entry.PropertyName, out byProp))
                 {
                     byProp = new Dictionary<ReadOnlyMemory<char>, object>(ReadOnlyMemoryCharComparerOrdinal.Instance);
@@ -50,7 +49,7 @@ namespace NuGet.ContentModel
         /// <param name="propertyName">Property moniker</param>
         /// <param name="name">Token name</param>
         /// <param name="value">Replacement value</param>
-        internal bool TryLookup(string propertyName, ReadOnlyMemory<char> name, out object value)
+        internal bool TryLookup(string propertyName, ReadOnlyMemory<char> name, [NotNullWhen(true)] out object? value)
         {
             if (propertyName == null)
             {
@@ -58,10 +57,10 @@ namespace NuGet.ContentModel
             }
             Debug.Assert(MemoryMarshal.TryGetString(name, out _, out _, out _));
 
-            Dictionary<ReadOnlyMemory<char>, object> byProp;
+            Dictionary<ReadOnlyMemory<char>, object>? byProp;
             if (_table.TryGetValue(propertyName, out byProp))
             {
-                return byProp.TryGetValue(name, out value);
+                return byProp.TryGetValue(name, out value!);
             }
 
             value = null;

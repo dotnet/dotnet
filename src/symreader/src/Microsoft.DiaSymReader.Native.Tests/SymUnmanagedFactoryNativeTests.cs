@@ -2,6 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the License.txt file in the project root for more information.
 
+// Tests are skipped on non-Windows already.
+#pragma warning disable CA1416 // Validate platform compatibility
+
 using System;
 using System.IO;
 using Microsoft.DiaSymReader.Tools;

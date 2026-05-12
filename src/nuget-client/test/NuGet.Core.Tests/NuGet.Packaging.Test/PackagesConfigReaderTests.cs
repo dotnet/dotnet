@@ -50,7 +50,7 @@ namespace NuGet.Packaging.Test
             Assert.True(packageEntries[0].IsDevelopmentDependency);
             Assert.True(packageEntries[0].IsUserInstalled);
             Assert.True(packageEntries[0].RequireReinstallation);
-            Assert.Equal("[6.0.0, )", packageEntries[0].AllowedVersions.ToString());
+            Assert.Equal("[6.0.0, )", packageEntries[0].AllowedVersions!.ToString());
         }
 
         [Fact]

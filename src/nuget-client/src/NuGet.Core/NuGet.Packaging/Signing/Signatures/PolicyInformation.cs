@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing.DerEncoding;
@@ -23,9 +21,9 @@ namespace NuGet.Packaging.Signing
     public sealed class PolicyInformation
     {
         public Oid PolicyIdentifier { get; }
-        public IReadOnlyList<PolicyQualifierInfo> PolicyQualifiers { get; }
+        public IReadOnlyList<PolicyQualifierInfo>? PolicyQualifiers { get; }
 
-        private PolicyInformation(Oid policyIdentifier, IReadOnlyList<PolicyQualifierInfo> policyQualifiers)
+        private PolicyInformation(Oid policyIdentifier, IReadOnlyList<PolicyQualifierInfo>? policyQualifiers)
         {
             PolicyIdentifier = policyIdentifier;
             PolicyQualifiers = policyQualifiers;
@@ -43,7 +41,7 @@ namespace NuGet.Packaging.Signing
             var policyInfoReader = reader.ReadSequence();
             var policyIdentifier = policyInfoReader.ReadOid();
             var isAnyPolicy = policyIdentifier.Value == Oids.AnyPolicy;
-            IReadOnlyList<PolicyQualifierInfo> policyQualifiers = null;
+            IReadOnlyList<PolicyQualifierInfo>? policyQualifiers = null;
 
             if (policyInfoReader.HasData)
             {

@@ -69,10 +69,10 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
 
             return new LicenseMetadata(type,
-                license,
+                license!,
                 licenseExpression,
                 warningsAndErrors,
-                version);
+                version!);
         }
 
         protected override void SerializeCore(ref MessagePackWriter writer, LicenseMetadata value, MessagePackSerializerOptions options)

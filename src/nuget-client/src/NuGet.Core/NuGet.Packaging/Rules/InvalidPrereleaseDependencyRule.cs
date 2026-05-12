@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,7 +20,7 @@ namespace NuGet.Packaging.Rules
         }
         public IEnumerable<PackagingLogMessage> Validate(PackageArchiveReader builder)
         {
-            var nuspecReader = builder?.NuspecReader;
+            var nuspecReader = builder.NuspecReader;
             if (nuspecReader.GetDependencyGroups() == null)
             {
                 // We have independent validation for null-versions.

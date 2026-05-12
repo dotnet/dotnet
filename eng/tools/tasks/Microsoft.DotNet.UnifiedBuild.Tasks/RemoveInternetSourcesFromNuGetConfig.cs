@@ -34,6 +34,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         /// </summary>
         public string[] KeepFeedPrefixes { get; set; } = [];
 
+        /// <summary>
+        /// Whether to clear the disabledPackageSources section. When true, all disabled entries are
+        /// removed so that internal feeds kept via KeepFeedPrefixes become active. Should only be set
+        /// to true for internal builds that have feed credentials (e.g., SYSTEM_TEAMPROJECT == 'internal').
+        /// </summary>
+        public bool ClearDisabledPackageSources { get; set; }
+
         private readonly string[] Sections = [ "packageSources" ];
 
         public override bool Execute()
@@ -48,8 +55,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 ProcessSection(d, sectionName);
             }
 
-            // Remove disabledPackageSources element so if any internal packages remain, they are used in source-build
-            disabledPackageSourcesElement?.ReplaceNodes(new XElement("clear"));
+            // Clear disabledPackageSources only in internal builds where feed credentials are available.
+            // In public builds, disabled sources must remain so that internal feeds kept via
+            // KeepFeedPrefixes don't cause 401 Unauthorized errors.
+            if (ClearDisabledPackageSources)
+            {
+                disabledPackageSourcesElement?.ReplaceNodes(new XElement("clear"));
+            }
 
             using (var w = XmlWriter.Create(NuGetConfigFile, new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
             {

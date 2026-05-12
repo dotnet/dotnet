@@ -2,19 +2,17 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="NETStandard.Library" version="[2.0.0, )" />
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
     </dependencies>
@@ -29,6 +27,7 @@
 
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- Add a third party notice file -->
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />

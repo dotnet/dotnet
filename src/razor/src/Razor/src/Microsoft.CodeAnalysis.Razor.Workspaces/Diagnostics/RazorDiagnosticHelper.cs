@@ -40,7 +40,7 @@ internal static class RazorDiagnosticHelper
         return [new VSDiagnosticProjectInformation()
                 {
                     Context = null,
-                    ProjectIdentifier = documentSnapshot.Project.Key.Id,
+                    ProjectIdentifier = documentSnapshot.Project.IntermediateOutputPath,
                     ProjectName = documentSnapshot.Project.DisplayName
                 }];
     }

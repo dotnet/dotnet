@@ -6,7 +6,6 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Packaging.Signing;
-using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Packaging.FuncTest.SigningTests
@@ -21,7 +20,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
             _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
         }
 
-        [CIOnlyFact]
+        [Fact]
         public void AdditionalContext_WhenRootCertificateIsUntrusted_ReturnsNull()
         {
             DotNetDefaultTrustStoreX509ChainFactory factory = new();

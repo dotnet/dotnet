@@ -2,30 +2,19 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Threading;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Razor.LanguageClient;
-using Xunit;
 
 namespace Microsoft.VisualStudio.Extensibility.Testing;
 
 [TestService]
 internal partial class RazorProjectSystemInProcess
 {
-    public async Task<bool> IsCohostingActiveAsync(CancellationToken cancellationToken)
-    {
-        var options = await TestServices.Shell.GetComponentModelServiceAsync<LanguageServerFeatureOptions>(cancellationToken);
-        Assert.NotNull(options);
-        return options.UseRazorCohostServer;
-    }
-
     public async Task WaitForLSPServerActivatedAsync(CancellationToken cancellationToken)
     {
         await WaitForLSPServerActivationStatusAsync(active: true, cancellationToken);
@@ -43,82 +32,6 @@ internal partial class RazorProjectSystemInProcess
         {
             return Task.FromResult(tracker.IsActive == active);
         }, TimeSpan.FromMilliseconds(50), cancellationToken);
-    }
-
-    public async Task WaitForProjectFileAsync(string projectFilePath, CancellationToken cancellationToken)
-    {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            return;
-        }
-
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
-        Assert.NotNull(projectManager);
-        await Helper.RetryAsync(ct =>
-        {
-            var projectKeys = projectManager.GetProjectKeysWithFilePath(projectFilePath);
-
-            return projectKeys is [var projectKey, ..] && projectManager.ContainsProject(projectKey)
-                ? SpecializedTasks.True
-                : SpecializedTasks.False;
-        }, TimeSpan.FromMilliseconds(100), cancellationToken);
-    }
-
-    public async Task WaitForComponentTagNameAsync(string projectName, string componentName, CancellationToken cancellationToken)
-    {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            return;
-        }
-
-        var projectFilePath = await TestServices.SolutionExplorer.GetProjectFileNameAsync(projectName, cancellationToken);
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
-        Assert.NotNull(projectManager);
-        await Helper.RetryAsync(async ct =>
-        {
-            var projectKeys = projectManager.GetProjectKeysWithFilePath(projectFilePath);
-
-            if (projectKeys is [var projectKey, ..] && projectManager.TryGetProject(projectKey, out var project))
-            {
-                var tagHelpers = await project.GetTagHelpersAsync(cancellationToken);
-                return tagHelpers.Any(tagHelper => tagHelper.TagMatchingRules.Any(r => r.TagName.Equals(componentName, StringComparison.Ordinal)));
-            }
-
-            return false;
-        }, TimeSpan.FromMilliseconds(100), cancellationToken);
-    }
-
-    public async Task WaitForRazorFileInProjectAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
-    {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            return;
-        }
-
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
-        Assert.NotNull(projectManager);
-
-        await Helper.RetryAsync(ct =>
-        {
-            var projectKeys = projectManager.GetProjectKeysWithFilePath(projectFilePath);
-
-            return projectKeys is [var projectKey, ..] && projectManager.ContainsDocument(projectKey, filePath)
-                ? SpecializedTasks.True
-                : SpecializedTasks.False;
-        }, TimeSpan.FromMilliseconds(100), cancellationToken);
-    }
-
-    public async Task<ImmutableArray<string>> GetProjectKeyIdsForProjectAsync(string projectFilePath, CancellationToken cancellationToken)
-    {
-        if (await IsCohostingActiveAsync(cancellationToken))
-        {
-            throw new InvalidOperationException("This method makes no sense in cohosting, as there are no project keys.");
-        }
-
-        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManager>(cancellationToken);
-        Assert.NotNull(projectManager);
-
-        return projectManager.GetProjectKeysWithFilePath(projectFilePath).SelectAsArray(static key => key.Id);
     }
 
     public async Task WaitForHtmlVirtualDocumentAsync(string razorFilePath, CancellationToken cancellationToken)

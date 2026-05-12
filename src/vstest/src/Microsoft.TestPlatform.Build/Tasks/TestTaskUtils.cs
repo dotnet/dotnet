@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Microsoft.Build.Utilities;
 
@@ -236,5 +237,17 @@ internal static class TestTaskUtils
         }
 
         return builder.ToString();
+    }
+
+    /// <summary>
+    /// Resolves the full path to the dotnet host from the DOTNET_HOST_PATH environment variable.
+    /// </summary>
+    /// <returns>
+    /// The resolved full path to the dotnet host, or <see langword="null"/> if the variable is not set or empty.
+    /// </returns>
+    internal static string? ResolveDotnetPath()
+    {
+        var dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
+        return StringUtils.IsNullOrEmpty(dotnetHostPath) ? null : Path.GetFullPath(dotnetHostPath);
     }
 }

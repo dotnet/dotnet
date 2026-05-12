@@ -177,6 +177,23 @@ internal static class TagHelperMatchingConventions
     }
 
     /// <summary>
+    /// Returns true if any tag helper in the collection has a bound attribute matching the given name.
+    /// Use this instead of <see cref="GetAttributeMatches"/> when only existence is needed.
+    /// </summary>
+    public static bool HasAttributeMatches(TagHelperCollection tagHelpers, string name)
+    {
+        foreach (var tagHelper in tagHelpers)
+        {
+            if (TryGetFirstBoundAttributeMatch(tagHelper, name, out _))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     ///  Gets all attribute matches from the specified tag helpers for the given attribute name.
     /// </summary>
     /// <param name="tagHelpers">The collection of tag helper descriptors to search through.</param>

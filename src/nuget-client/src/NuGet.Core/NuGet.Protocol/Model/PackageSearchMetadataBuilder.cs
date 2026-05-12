@@ -62,6 +62,18 @@ namespace NuGet.Protocol.Core.Types
             [Obsolete("PackagePath is recommended in place of PackageReader")]
             public Func<PackageReaderBase> PackageReader { get; set; }
             public string PackagePath { get; set; }
+
+            internal void CacheStrings(MetadataReferenceCache cache)
+            {
+                Authors = cache.GetString(Authors);
+                Description = cache.GetString(Description);
+                Owners = cache.GetString(Owners);
+                ReadmeFileUrl = cache.GetString(ReadmeFileUrl);
+                Summary = cache.GetString(Summary);
+                Tags = cache.GetString(Tags);
+                Title = cache.GetString(Title);
+                PackagePath = cache.GetString(PackagePath);
+            }
         }
 
         private PackageSearchMetadataBuilder(IPackageSearchMetadata metadata)

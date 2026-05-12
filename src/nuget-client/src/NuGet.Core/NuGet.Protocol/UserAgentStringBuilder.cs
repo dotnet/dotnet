@@ -8,6 +8,8 @@ using System;
 #endif
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text;
+using NuGet.Common;
 using NuGet.Packaging;
 
 namespace NuGet.Protocol.Core.Types
@@ -16,13 +18,13 @@ namespace NuGet.Protocol.Core.Types
     {
         public static readonly string DefaultNuGetClientName = "NuGet Client V3";
 
-        private const string UserAgentWithOSDescriptionAndVisualStudioSKUTemplate = "{0}/{1} ({2}, {3})";
-        private const string UserAgentWithOSDescriptionTemplate = "{0}/{1} ({2})";
+        private const string UserAgentWithMetadataTemplate = "{0}/{1} ({2})";
         private const string UserAgentTemplate = "{0}/{1}";
 
         private readonly string _clientName;
         private string _vsInfo;
         private string _osInfo;
+        private string _ciInfo;
 
         public UserAgentStringBuilder()
             : this(DefaultNuGetClientName)
@@ -30,6 +32,16 @@ namespace NuGet.Protocol.Core.Types
         }
 
         public UserAgentStringBuilder(string clientName)
+            : this(clientName, EnvironmentVariableWrapper.Instance)
+        {
+        }
+
+        /// <summary>
+        /// Internal constructor for testing purposes that allows injecting an environment variable reader.
+        /// </summary>
+        /// <param name="clientName">The client name to use in the user agent string.</param>
+        /// <param name="environmentVariableReader">The environment variable reader for CI detection.</param>
+        internal UserAgentStringBuilder(string clientName, IEnvironmentVariableReader environmentVariableReader)
         {
             _clientName = clientName;
 
@@ -37,6 +49,7 @@ namespace NuGet.Protocol.Core.Types
             NuGetClientVersion = MinClientVersionUtility.GetNuGetClientVersion().ToNormalizedString();
 
             _osInfo = GetOS();
+            _ciInfo = CIEnvironmentDetector.Detect(environmentVariableReader);
         }
 
         public string NuGetClientVersion { get; }
@@ -59,7 +72,9 @@ namespace NuGet.Protocol.Core.Types
                 clientInfo = DefaultNuGetClientName;
             }
 
-            if (string.IsNullOrEmpty(_osInfo))
+            string metadataString = BuildMetadataString();
+
+            if (string.IsNullOrEmpty(metadataString))
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
@@ -68,25 +83,43 @@ namespace NuGet.Protocol.Core.Types
                     NuGetClientVersion);
             }
 
-            if (string.IsNullOrEmpty(_vsInfo))
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                UserAgentWithMetadataTemplate,
+                clientInfo,
+                NuGetClientVersion,
+                metadataString);
+        }
+
+        /// <summary>
+        /// Builds the metadata string for the parentheses section.
+        /// Items are collected in order (OS, CI, VS) and joined with ", ".
+        /// </summary>
+        internal string BuildMetadataString()
+        {
+            var sb = new StringBuilder();
+
+            // OS info
+            if (!string.IsNullOrEmpty(_osInfo))
             {
-                return string.Format(
-                    CultureInfo.InvariantCulture,
-                    UserAgentWithOSDescriptionTemplate,
-                    clientInfo,
-                    NuGetClientVersion,
-                    _osInfo);
+                sb.Append(_osInfo);
             }
-            else
+
+            // CI info (formatted as "CI: {provider}")
+            if (!string.IsNullOrEmpty(_ciInfo))
             {
-                return string.Format(
-                    CultureInfo.InvariantCulture,
-                    UserAgentWithOSDescriptionAndVisualStudioSKUTemplate,
-                    _clientName,
-                    NuGetClientVersion, /* NuGet version */
-                    _osInfo, /* OS version */
-                    _vsInfo);  /* VS SKU + version */
+                if (sb.Length > 0) sb.Append(", ");
+                sb.Append("CI: ").Append(_ciInfo);
             }
+
+            // VS info
+            if (!string.IsNullOrEmpty(_vsInfo))
+            {
+                if (sb.Length > 0) sb.Append(", ");
+                sb.Append(_vsInfo);
+            }
+
+            return sb.ToString();
         }
 
         internal static string GetOS()

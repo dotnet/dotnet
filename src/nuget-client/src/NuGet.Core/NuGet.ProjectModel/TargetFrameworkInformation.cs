@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -14,6 +15,7 @@ using NuGet.Shared;
 
 namespace NuGet.ProjectModel
 {
+    [DebuggerDisplay("{TargetAlias} / {FrameworkName}")]
     public class TargetFrameworkInformation : IEquatable<TargetFrameworkInformation>
     {
         // private fields to allow for validating initialization values

@@ -252,7 +252,7 @@ namespace NuGet.ProjectModel
             {
                 if (targetFrameworkInfo.FrameworkName == null && targetFramework is AssetTargetFallbackFramework atfFramework)
                 {
-                    targetFrameworkInfo = packageSpec.GetNearestTargetFramework(atfFramework.AsFallbackFramework(), targetAlias: null);
+                    targetFrameworkInfo = packageSpec.GetNearestTargetFramework(atfFramework.AsFallbackFramework(), targetAlias: targetAlias);
                 }
             }
 

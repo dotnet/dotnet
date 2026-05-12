@@ -11,6 +11,7 @@ using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
+using NuGet.Common;
 using Spectre.Console;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
@@ -25,9 +26,10 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             });
         }
 
-        internal static void Register(Command rootCommand, Lazy<IAnsiConsole> console)
+        internal static void Register(Command rootCommand, Lazy<IAnsiConsole> console, IVirtualProjectBuilder? virtualProjectBuilder = null)
         {
-            Register(rootCommand, console, WhyCommandRunner.ExecuteCommand);
+            Register(rootCommand, console,
+                () => new WhyCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder)));
         }
 
         /// <summary>
@@ -35,11 +37,23 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// For now, this allows the dotnet CLI to invoke why directly, instead of running NuGet.CommandLine.XPlat as a child process.
         /// </summary>
         /// <param name="rootCommand">The <c>dotnet nuget</c> command handler, to add <c>why</c> to.</param>
-        public static void GetWhyCommand(Command rootCommand)
+        /// <param name="virtualProjectBuilder">For handling file-based apps.</param>
+        public static void GetWhyCommand(Command rootCommand, IVirtualProjectBuilder? virtualProjectBuilder = null)
         {
             Register(rootCommand,
                 new Lazy<IAnsiConsole>(() => Spectre.Console.AnsiConsole.Console),
-                WhyCommandRunner.ExecuteCommand);
+                virtualProjectBuilder);
+        }
+
+        // For binary backcompat. To delete once the SDK starts using the other overload.
+        public static void GetWhyCommand(Command rootCommand)
+        {
+            GetWhyCommand(rootCommand, virtualProjectBuilder: null);
+        }
+
+        internal static void Register(Command rootCommand, Lazy<IAnsiConsole> console, Func<WhyCommandRunner> getCommandRunner)
+        {
+            Register(rootCommand, console, action: (args) => getCommandRunner().ExecuteCommand(args));
         }
 
         // console must be lazy, because Spectre.Console's AnsiConsole will send VT sequences to the output
@@ -48,7 +62,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         {
             var whyCommand = new DocumentedCommand("why", Strings.WhyCommand_Description, "https://aka.ms/dotnet/nuget/why");
 
-            Argument<string> path = new Argument<string>("PROJECT|SOLUTION")
+            Argument<string> path = new Argument<string>("PROJECT|SOLUTION|FILE")
             {
                 Description = Strings.WhyCommand_PathArgument_Description,
                 // We really want this to be zero or one, however, because this is the first argument, it doesn't work.

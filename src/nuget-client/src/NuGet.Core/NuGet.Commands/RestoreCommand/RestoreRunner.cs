@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -259,9 +258,9 @@ namespace NuGet.Commands
             var request = summaryRequest.Request;
 
             var command = new RestoreCommand(request);
-            if (NuGetEventSource.IsEnabled) TraceEvents.RestoreProjectStart(request.Project.FilePath);
+            if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreRunner_RestoreProjectStart(request.Project.FilePath);
             var result = await command.ExecuteAsync(token);
-            if (NuGetEventSource.IsEnabled) TraceEvents.RestoreProjectStop(request.Project.FilePath);
+            if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreRunner_RestoreProjectStop(request.Project.FilePath);
 
             return new RestoreResultPair(summaryRequest, result);
         }
@@ -292,9 +291,9 @@ namespace NuGet.Commands
 
                 // Commit the result
                 log.LogVerbose(Strings.Log_Committing);
-                if (NuGetEventSource.IsEnabled) TraceEvents.CommitAsyncStart(summaryRequest.InputPath);
+                if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreRunner_CommitAsyncStart(summaryRequest.InputPath);
                 await result.CommitAsync(log, token);
-                if (NuGetEventSource.IsEnabled) TraceEvents.CommitAsyncStop(summaryRequest.InputPath);
+                if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreRunner_CommitAsyncStop(summaryRequest.InputPath);
             }
             finally
             {
@@ -407,60 +406,6 @@ namespace NuGet.Commands
             }
 
             return Strings.Error_InvalidCommandLineInput;
-        }
-
-        private static class TraceEvents
-        {
-            private const string EventNameRestoreProject = "RestoreRunner/RestoreProject";
-            private const string EventNameCommitAsync = "RestoreRunner/CommitAsync";
-
-            public static void RestoreProjectStart(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameRestoreProject, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void RestoreProjectStop(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameRestoreProject, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void CommitAsyncStart(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameCommitAsync, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void CommitAsyncStop(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameCommitAsync, eventOptions, new { FilePath = filePath });
-            }
         }
     }
 }

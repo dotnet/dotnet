@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -180,7 +178,7 @@ namespace NuGet.Packaging.Signing
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="signedAttributes" /> is <see langword="null" />.</exception>
         /// <exception cref="SignatureException">Thrown if the attribute does not contain exactly one
         /// attribute value.</exception>
-        public static IReadOnlyList<string> GetNuGetPackageOwners(CryptographicAttributeObjectCollection signedAttributes)
+        public static IReadOnlyList<string>? GetNuGetPackageOwners(CryptographicAttributeObjectCollection signedAttributes)
         {
             if (signedAttributes == null)
             {
@@ -270,7 +268,7 @@ namespace NuGet.Packaging.Signing
         /// Returns the first attribute if the Oid is found.
         /// Returns null if the attribute is not found.
         /// </summary>
-        internal static CryptographicAttributeObject GetAttributeOrDefault(this CryptographicAttributeObjectCollection attributes, string oid)
+        internal static CryptographicAttributeObject? GetAttributeOrDefault(this CryptographicAttributeObjectCollection attributes, string oid)
         {
             if (oid == null)
             {
@@ -299,7 +297,7 @@ namespace NuGet.Packaging.Signing
             foreach (var value in attribute.Values)
             {
                 var indication = CommitmentTypeIndication.Read(value.RawData);
-                var signatureType = GetSignatureType(indication.CommitmentTypeId.Value);
+                var signatureType = GetSignatureType(indication.CommitmentTypeId.Value!);
 
                 values.Add(signatureType);
             }
@@ -316,7 +314,7 @@ namespace NuGet.Packaging.Signing
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="attributes" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="oid" /> is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="CryptographicException">Thrown if multiple attribute instances with the specified OID were found.</exception>
-        public static CryptographicAttributeObject GetAttribute(this CryptographicAttributeObjectCollection attributes, string oid)
+        public static CryptographicAttributeObject? GetAttribute(this CryptographicAttributeObjectCollection attributes, string oid)
         {
             if (attributes == null)
             {

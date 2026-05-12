@@ -40,11 +40,9 @@ namespace NuGet.Protocol
 
             return Task.Run<IEnumerable<IPackageSearchMetadata>>(() =>
             {
-                var metadataCache = new MetadataReferenceCache();
                 return _localResource.FindPackagesById(packageId, log, token)
                     .Where(p => includePrerelease || !p.Identity.Version.IsPrerelease)
                     .Select(GetPackageMetadata)
-                    .Select(p => metadataCache.GetObject(p))
                     .ToList();
             },
             token);

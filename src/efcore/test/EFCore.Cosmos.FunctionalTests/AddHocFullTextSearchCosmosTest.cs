@@ -141,6 +141,8 @@ public class AdHocFullTextSearchCosmosTest(NonSharedFixture fixture) : NonShared
     #region SettingDefaultFullTextSearchLanguage
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/162 (Full-text search not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public async Task Set_unsupported_full_text_search_default_language()
     {
         var exception = (await Assert.ThrowsAsync<CosmosException>(() => InitializeNonSharedTest<ContextSettingDefaultFullTextSearchLanguage>()));
@@ -224,6 +226,8 @@ public class AdHocFullTextSearchCosmosTest(NonSharedFixture fixture) : NonShared
     #region DefaultFullTextSearchLanguageNoMismatchWhenNotSpecified
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/162 (Full-text search not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public async Task
         Explicitly_setting_default_full_text_language_doesnt_clash_with_not_setting_it_on_other_entity_for_the_same_container()
     {
@@ -298,6 +302,8 @@ public class AdHocFullTextSearchCosmosTest(NonSharedFixture fixture) : NonShared
     #region DefaultFullTextSearchLanguageUsedWhenPropertyDoesntSpecifyOneExplicitly
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/162 (Full-text search not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public async Task Default_full_text_language_is_used_for_full_text_properties_if_they_dont_specify_language_themselves()
     {
         var exception = (await Assert.ThrowsAsync<CosmosException>(()
@@ -337,6 +343,8 @@ public class AdHocFullTextSearchCosmosTest(NonSharedFixture fixture) : NonShared
     #region ExplicitFullTextLanguageOverridesTheDefault
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/162 (Full-text search not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public async Task Explicitly_setting_full_text_language_overrides_default()
     {
         var exception =

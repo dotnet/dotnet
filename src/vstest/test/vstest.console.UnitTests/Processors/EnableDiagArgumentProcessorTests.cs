@@ -118,14 +118,7 @@ public class EnableDiagArgumentProcessorTests
     [DataRow("log.log")]
     public void EnableDiagArgumentProcessorExecutorShouldNotThrowIfValidArgument(string argument)
     {
-        try
-        {
-            _diagProcessor.Executor!.Value.Initialize(argument);
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail("Expected no exception, but got: " + ex.Message);
-        }
+        _diagProcessor.Executor!.Value.Initialize(argument);
     }
 
     [TestMethod]
@@ -178,7 +171,7 @@ public class EnableDiagArgumentProcessorTests
 
     private void EnableDiagArgumentProcessorExecutorShouldThrowIfInvalidArgument(string argument, string exceptionMessage)
     {
-        var e = Assert.ThrowsException<CommandLineException>(() => _diagProcessor.Executor!.Value.Initialize(argument));
-        StringAssert.Contains(e.Message, exceptionMessage);
+        var e = Assert.ThrowsExactly<CommandLineException>(() => _diagProcessor.Executor!.Value.Initialize(argument));
+        Assert.Contains(exceptionMessage, e.Message);
     }
 }

@@ -15,6 +15,4 @@ internal class TestLanguageServerFeatureOptions(
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => false;
 
     public override bool ShowAllCSharpCodeActions => showAllCSharpCodeActions;
-
-    public override bool UseRazorCohostServer => false;
 }

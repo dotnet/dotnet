@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Globalization;
+
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -67,35 +69,29 @@ public class PlatformArgumentProcessorTests
     [TestMethod]
     public void InitializeShouldThrowIfArgumentIsNull()
     {
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize(null),
-            "The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize(null));
+        Assert.Contains("The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86", ex.Message);
     }
 
     [TestMethod]
     public void InitializeShouldThrowIfArgumentIsEmpty()
     {
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("  "),
-            "The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("  "));
+        Assert.Contains("The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86", ex.Message);
     }
 
     [TestMethod]
     public void InitializeShouldThrowIfArgumentIsNotAnArchitecture()
     {
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("foo"),
-            "Invalid platform type: {0}. Valid platform types are X86, X64, ARM, ARM64, S390x, Ppc64le, RiscV64, LoongArch64.",
-            "foo");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("foo"));
+        Assert.Contains(string.Format(CultureInfo.CurrentCulture, "Invalid platform type: {0}. Valid platform types are X86, X64, ARM, ARM64, S390x, Ppc64le, RiscV64, LoongArch64.", "foo"), ex.Message);
     }
 
     [TestMethod]
     public void InitializeShouldThrowIfArgumentIsNotASupportedArchitecture()
     {
-        ExceptionUtilities.ThrowsException<CommandLineException>(
-            () => _executor.Initialize("AnyCPU"),
-            "Invalid platform type: {0}. Valid platform types are X86, X64, ARM, ARM64, S390x, Ppc64le, RiscV64, LoongArch64.",
-            "AnyCPU");
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => _executor.Initialize("AnyCPU"));
+        Assert.Contains(string.Format(CultureInfo.CurrentCulture, "Invalid platform type: {0}. Valid platform types are X86, X64, ARM, ARM64, S390x, Ppc64le, RiscV64, LoongArch64.", "AnyCPU"), ex.Message);
     }
 
     [TestMethod]

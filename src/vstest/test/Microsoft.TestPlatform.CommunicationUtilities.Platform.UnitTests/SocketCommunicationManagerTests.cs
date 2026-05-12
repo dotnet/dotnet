@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,12 +15,16 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+// ConnectAsync(IPAddress, int, CancellationToken) and AcceptTcpClientAsync(CancellationToken)
+// overloads are unavailable on .NET Framework; suppress CancellationToken usage warnings.
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken'
+
 namespace Microsoft.TestPlatform.CommunicationUtilities.PlatformTests;
 
 [TestClass]
 public class SocketCommunicationManagerTests : IDisposable
 {
-    private const string TestDiscoveryStartMessageWithNullPayload = "{\"MessageType\":\"TestDiscovery.Start\",\"Payload\":null}";
+    private const string TestDiscoveryStartMessageWithNullPayload = "{\"MessageType\":\"TestDiscovery.Start\"}";
 
     private const string TestDiscoveryStartMessageWithDummyPayload = "{\"MessageType\":\"TestDiscovery.Start\",\"Payload\":\"Dummy Payload\"}";
 
@@ -32,6 +35,8 @@ public class SocketCommunicationManagerTests : IDisposable
     private readonly SocketCommunicationManager _communicationManager;
     private readonly TcpClient _tcpClient;
     private readonly TcpListener _tcpListener;
+
+    public TestContext TestContext { get; set; }
 
     public SocketCommunicationManagerTests()
     {
@@ -57,7 +62,7 @@ public class SocketCommunicationManagerTests : IDisposable
     {
         var port = _communicationManager.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
 
-        Assert.IsTrue(port > 0);
+        Assert.IsGreaterThan(0, port);
         await _tcpClient.ConnectAsync(IPAddress.Loopback, port);
         Assert.IsTrue(_tcpClient.Connected);
     }
@@ -75,7 +80,8 @@ public class SocketCommunicationManagerTests : IDisposable
                 clientConnected = true;
                 waitEvent.Set();
             },
-            null);
+            null,
+            TestContext.CancellationToken);
 
         await _tcpClient.ConnectAsync(IPAddress.Loopback, port);
         Assert.IsTrue(_tcpClient.Connected);
@@ -115,7 +121,7 @@ public class SocketCommunicationManagerTests : IDisposable
 
         _communicationManager.StopServer();
 
-        Assert.ThrowsException<AggregateException>(() => _tcpClient.ConnectAsync(IPAddress.Loopback, port).Wait());
+        Assert.ThrowsExactly<AggregateException>(() => _tcpClient.ConnectAsync(IPAddress.Loopback, port).Wait());
     }
 
     #endregion
@@ -156,20 +162,15 @@ public class SocketCommunicationManagerTests : IDisposable
     }
 
     [TestMethod]
+    [OSCondition(OperatingSystems.Windows | OperatingSystems.Linux)]
     public async Task StopClientShouldDisconnectClient()
     {
-        // TODO: This won't throw on MacOS? No way to try it.
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            return;
-        }
-
         var client = await StartServerAndWaitForConnection();
 
         _communicationManager.StopClient();
 
         // Attempt to write on client socket should throw since it should have disconnected.
-        Assert.ThrowsException<SocketException>(() => WriteOnSocket(client.Client));
+        Assert.ThrowsExactly<SocketException>(() => WriteOnSocket(client.Client));
     }
 
     #endregion
@@ -229,10 +230,9 @@ public class SocketCommunicationManagerTests : IDisposable
         var message = _communicationManager.ReceiveMessage();
 
         Assert.AreEqual(MessageType.StartDiscovery, message?.MessageType);
-        // Payload property is present on the Message, but we don't populate it in the newer versions,
-        // instead we populate internal field with the rawMessage, and wait until Serializer.DeserializePayload<T>(message)
-        // is called by the message consumer. This avoids deserializing the payload when we just want to route the message.
-        Assert.IsNull(message!.Payload);
+        // RawMessage contains the full JSON wire data, but the message itself stores
+        // only the header fields (MessageType, Version). Payload is deserialized on demand.
+        Assert.IsNotNull(message!.RawMessage);
     }
 
     [TestMethod]
@@ -242,13 +242,11 @@ public class SocketCommunicationManagerTests : IDisposable
         WriteToStream(client.GetStream(), TestDiscoveryStartMessageWithVersionAndPayload);
 
         var message = await _communicationManager.ReceiveMessageAsync(CancellationToken.None);
-        var versionedMessage = (VersionedMessage)message!;
-        Assert.AreEqual(MessageType.StartDiscovery, versionedMessage.MessageType);
-        Assert.AreEqual(2, versionedMessage.Version);
-        // Payload property is present on the Message, but we don't populate it in the newer versions,
-        // instead we populate internal field with the rawMessage, and wait until Serializer.DeserializePayload<T>(message)
-        // is called by the message consumer. This avoids deserializing the payload when we just want to route the message.
-        Assert.IsNull(versionedMessage.Payload);
+        Assert.AreEqual(MessageType.StartDiscovery, message!.MessageType);
+        Assert.AreEqual(2, message.Version);
+        // RawMessage contains the full JSON wire data, but the message itself stores
+        // only the header fields (MessageType, Version). Payload is deserialized on demand.
+        Assert.IsNotNull(message.RawMessage);
     }
 
     [TestMethod]
@@ -283,8 +281,8 @@ public class SocketCommunicationManagerTests : IDisposable
         var client = new SocketCommunicationManager();
 
         int port = server.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
-        client.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port)).Wait();
-        server.AcceptClientAsync().Wait();
+        client.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port)).Wait(TestContext.CancellationToken);
+        server.AcceptClientAsync().Wait(TestContext.CancellationToken);
 
         server.WaitForClientConnection(1000);
         client.WaitForServerConnection(1000);
@@ -296,12 +294,10 @@ public class SocketCommunicationManagerTests : IDisposable
         while (dataReceived < 2048 * 5)
         {
             dataReceived += server.ReceiveRawMessageAsync(CancellationToken.None).Result!.Length;
-            Task.Delay(1000).Wait();
+            Task.Delay(1000, TestContext.CancellationToken).Wait(TestContext.CancellationToken);
         }
 
         clientThread.Join();
-
-        Assert.IsTrue(true);
     }
 
     [TestMethod]

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Common;
 
@@ -17,7 +15,7 @@ namespace NuGet.Packaging.Signing
         internal const char ValueDelimiter = ',';
 
         private static readonly object LockObject = new object();
-        private static IX509ChainBuildPolicy Policy;
+        private static IX509ChainBuildPolicy? Policy;
 
         internal static IX509ChainBuildPolicy Create(IEnvironmentVariableReader reader)
         {

@@ -168,8 +168,7 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
@@ -183,8 +182,7 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_Element_SingleAssociatedTagHelper_ReturnsTrue_NestedTypes()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {
@@ -226,8 +224,7 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_Element_NamespaceContainsTypeName_ReturnsTrue()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {
@@ -268,8 +265,7 @@ End summary description.";
     public async Task TryCreateTooltip_ClassifiedTextElement_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {
@@ -450,8 +446,7 @@ End summary description.";
     public async Task TryCreateTooltip_ContainerElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var elementDescription = AggregateBoundElementDescription.Empty;
 
@@ -466,8 +461,7 @@ End summary description.";
     public async Task TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var projectManager = CreateProjectSnapshotManager();
-        var componentAvailabilityService = new TestComponentAvailabilityService(projectManager);
+        var componentAvailabilityService = new TestComponentAvailabilityService();
 
         var associatedTagHelperInfos = new[]
         {

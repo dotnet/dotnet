@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -33,9 +31,9 @@ namespace NuGet.Packaging.Signing
     {
         public AlgorithmIdentifier HashAlgorithm { get; }
         public byte[] CertificateHash { get; }
-        public IssuerSerial IssuerSerial { get; }
+        public IssuerSerial? IssuerSerial { get; }
 
-        private EssCertIdV2(AlgorithmIdentifier hashAlgorithm, byte[] hash, IssuerSerial issuerSerial)
+        private EssCertIdV2(AlgorithmIdentifier hashAlgorithm, byte[] hash, IssuerSerial? issuerSerial)
         {
             HashAlgorithm = hashAlgorithm;
             CertificateHash = hash;
@@ -79,7 +77,7 @@ namespace NuGet.Packaging.Signing
             }
 
             var hash = sequenceReader.ReadOctetString();
-            IssuerSerial issuerSerial = null;
+            IssuerSerial? issuerSerial = null;
 
             if (sequenceReader.HasData)
             {
@@ -99,7 +97,7 @@ namespace NuGet.Packaging.Signing
             return DerEncoder.ConstructSegmentedSequence(
                 HashAlgorithm.Encode(),
                 DerEncoder.SegmentedEncodeOctetString(CertificateHash),
-                IssuerSerial.Encode());
+                IssuerSerial!.Encode());
         }
     }
 }

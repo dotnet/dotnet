@@ -284,7 +284,7 @@ namespace Microsoft.DotNet.SignTool
                     if (_batchData.ZipDataMap.TryGetValue(file.FileContentKey, out var zipData))
                     {
                         _log.LogMessage($"Repacking container: '{file.FileName}'");
-                        zipData.Repack(_log, _signTool.TempDir, _signTool.Wix3ToolsPath, _signTool.WixToolsPath, _signTool.TarToolPath, _signTool.PkgToolPath);
+                        zipData.Repack(_log, _signTool.TempDir, _signTool.Wix3ToolsPath, _signTool.WixToolsPath, _signTool.PkgToolPath);
                     }
                     else
                     {
@@ -444,7 +444,20 @@ namespace Microsoft.DotNet.SignTool
             processStartInfo.EnvironmentVariables.Add("PATH", path);
 
             var process = Process.Start(processStartInfo);
+            // Read stdout/stderr to avoid deadlock when the pipe buffer fills up.
+            string standardOutput = process.StandardOutput.ReadToEnd();
+            string standardError = process.StandardError.ReadToEnd();
             process.WaitForExit();
+
+            if (!string.IsNullOrWhiteSpace(standardOutput))
+            {
+                log.LogMessage(MessageImportance.Low, standardOutput);
+            }
+            if (!string.IsNullOrWhiteSpace(standardError))
+            {
+                log.LogMessage(MessageImportance.Low, standardError);
+            }
+
             return process.ExitCode == 0;
         }
 

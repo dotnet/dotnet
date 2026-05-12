@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol.DevTools;
-using Microsoft.CodeAnalysis.Razor.Serialization;
 
 namespace Microsoft.CodeAnalysis.Razor.Remote;
 
@@ -17,7 +16,7 @@ internal interface IRemoteDevToolsService
 
     ValueTask<string> GetFormattingDocumentTextAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, CancellationToken cancellationToken);
 
-    ValueTask<FetchTagHelpersResult> GetTagHelpersJsonAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, TagHelpersKind kind, CancellationToken cancellationToken);
+    ValueTask<string> GetTagHelpersJsonAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, TagHelpersKind kind, CancellationToken cancellationToken);
 
     ValueTask<SyntaxVisualizerTree?> GetRazorSyntaxTreeAsync(RazorPinnedSolutionInfoWrapper solutionInfo, DocumentId razorDocumentId, CancellationToken cancellationToken);
 }

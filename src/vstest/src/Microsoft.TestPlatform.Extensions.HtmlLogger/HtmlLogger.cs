@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -33,7 +34,6 @@ public class HtmlLogger : ITestLoggerWithParameters
     private readonly IFileHelper _fileHelper;
     private readonly XmlObjectSerializer _xmlSerializer;
     private readonly IHtmlTransformer _htmlTransformer;
-    private static readonly object FileCreateLockObject = new();
     private Dictionary<string, string?>? _parametersDictionary;
 
     public HtmlLogger()
@@ -70,25 +70,30 @@ public class HtmlLogger : ITestLoggerWithParameters
     /// </summary>
     public TestRunDetails? TestRunDetails { get; private set; }
 
+    private int _passedTests;
+    private int _failedTests;
+    private int _totalTests;
+    private int _skippedTests;
+
     /// <summary>
     /// Total passed tests in the test results.
     /// </summary>
-    public int PassedTests { get; private set; }
+    public int PassedTests { get => _passedTests; private set => _passedTests = value; }
 
     /// <summary>
     /// Total failed tests in the test results.
     /// </summary>
-    public int FailedTests { get; private set; }
+    public int FailedTests { get => _failedTests; private set => _failedTests = value; }
 
     /// <summary>
     /// Total tests in the results.
     /// </summary>
-    public int TotalTests { get; private set; }
+    public int TotalTests { get => _totalTests; private set => _totalTests = value; }
 
     /// <summary>
     /// Total skipped tests in the results.
     /// </summary>
-    public int SkippedTests { get; private set; }
+    public int SkippedTests { get => _skippedTests; private set => _skippedTests = value; }
 
     /// <summary>
     /// Path to the xml file.
@@ -214,17 +219,17 @@ public class HtmlLogger : ITestLoggerWithParameters
             TestRunDetails.ResultCollectionList!.Add(testResultCollection);
         }
 
-        TotalTests++;
+        Interlocked.Increment(ref _totalTests);
         switch (e.Result.Outcome)
         {
             case TestOutcome.Failed:
-                FailedTests++;
+                Interlocked.Increment(ref _failedTests);
                 break;
             case TestOutcome.Passed:
-                PassedTests++;
+                Interlocked.Increment(ref _passedTests);
                 break;
             case TestOutcome.Skipped:
-                SkippedTests++;
+                Interlocked.Increment(ref _skippedTests);
                 break;
             default:
                 break;
@@ -287,7 +292,7 @@ public class HtmlLogger : ITestLoggerWithParameters
                 logFilePrefixValue = logFilePrefixValue + "_" + framework;
             }
 
-            logFilePrefixValue = logFilePrefixValue + DateTime.Now.ToString("_yyyyMMddHHmmss", DateTimeFormatInfo.InvariantInfo) + $".{HtmlLoggerConstants.HtmlFileExtension}";
+            logFilePrefixValue = logFilePrefixValue + DateTime.Now.ToString("_yyyyMMdd_HHmmss.fffffff", DateTimeFormatInfo.InvariantInfo) + $".{HtmlLoggerConstants.HtmlFileExtension}";
             HtmlFilePath = Path.Combine(TestResultsDirPath!, logFilePrefixValue);
         }
         else
@@ -350,13 +355,14 @@ public class HtmlLogger : ITestLoggerWithParameters
         {
             var fileNameWithIter = i == 0 ? fileName : Path.GetFileNameWithoutExtension(fileName) + $"[{i}]";
             fullFilePath = Path.Combine(TestResultsDirPath!, $"TestResult_{fileNameWithIter}.{fileExtension}");
-            lock (FileCreateLockObject)
+            try
             {
-                if (!File.Exists(fullFilePath))
-                {
-                    using var _ = File.Create(fullFilePath);
-                    return fullFilePath;
-                }
+                using var _ = new FileStream(fullFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                return fullFilePath;
+            }
+            catch (IOException) when (File.Exists(fullFilePath))
+            {
+                // File already exists (another process created it), try next iteration.
             }
         }
 
@@ -365,7 +371,7 @@ public class HtmlLogger : ITestLoggerWithParameters
 
     private static string FormatDateTimeForRunName(DateTime timeStamp)
     {
-        return timeStamp.ToString("yyyyMMdd_HHmmss", DateTimeFormatInfo.InvariantInfo);
+        return timeStamp.ToString("yyyyMMdd_HHmmss.fffffff", DateTimeFormatInfo.InvariantInfo);
     }
 
     /// <summary>

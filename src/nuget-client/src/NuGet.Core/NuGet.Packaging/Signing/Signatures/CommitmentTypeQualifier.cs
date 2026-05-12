@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Security.Cryptography;
 using NuGet.Packaging.Signing.DerEncoding;
 
@@ -21,9 +19,9 @@ namespace NuGet.Packaging.Signing
     public sealed class CommitmentTypeQualifier
     {
         public Oid CommitmentTypeIdentifier { get; }
-        public byte[] Qualifier { get; }
+        public byte[]? Qualifier { get; }
 
-        private CommitmentTypeQualifier(Oid commitmentTypeIdentifier, byte[] qualifier)
+        private CommitmentTypeQualifier(Oid commitmentTypeIdentifier, byte[]? qualifier)
         {
             CommitmentTypeIdentifier = commitmentTypeIdentifier;
             Qualifier = qualifier;
@@ -40,7 +38,7 @@ namespace NuGet.Packaging.Signing
         {
             var commitmentTypeQualifierReader = reader.ReadSequence();
             var commitmentTypeIdentifier = commitmentTypeQualifierReader.ReadOid();
-            byte[] qualifier = null;
+            byte[]? qualifier = null;
 
             if (commitmentTypeQualifierReader.HasData)
             {

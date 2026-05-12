@@ -22,6 +22,7 @@
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildVersion)" />
     <!-- NuGet dependencies -->
+    <PackageVersion Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
     <PackageVersion Include="NuGet.ProjectModel" Version="$(NuGetProjectModelVersion)" />
     <PackageVersion Include="NuGet.Protocol" Version="$(NuGetProtocolVersion)" />
     <!-- Roslyn dependencies -->
@@ -37,7 +38,6 @@
 
   <!-- External dependencies -->
   <ItemGroup>
-    <PackageVersion Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
   </ItemGroup>

@@ -309,6 +309,23 @@ namespace Microsoft.SignCheck.Verification
         }
 
         /// <summary>
+        /// Creates a SignatureVerificationResult for a file that failed verification due to an unexpected error.
+        /// </summary>
+        /// <param name="path">The path to the file that caused the error.</param>
+        /// <param name="parent">The parent container of the file, or null for top-level files.</param>
+        /// <param name="virtualPath">The virtual path of the file.</param>
+        /// <param name="exception">The exception that occurred during verification.</param>
+        public static SignatureVerificationResult ErrorResult(string path, string parent, string virtualPath, Exception exception)
+        {
+            var signatureVerificationResult = new SignatureVerificationResult(path, parent, virtualPath);
+
+            signatureVerificationResult.AddDetail(DetailKeys.Error,
+                String.Format(SignCheckResources.DetailVerificationError, exception.ToString()));
+
+            return signatureVerificationResult;
+        }
+
+        /// <summary>
         /// Creates a SignatureVerificationResult for an excluded file type or file extension.
         /// </summary>
         /// <param name="path">The path to the excluded file.</param>

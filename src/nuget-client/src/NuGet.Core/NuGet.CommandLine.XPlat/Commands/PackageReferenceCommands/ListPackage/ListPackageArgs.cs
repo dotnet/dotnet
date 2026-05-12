@@ -119,7 +119,7 @@ namespace NuGet.CommandLine.XPlat
 
             if (HighestPatch)
             {
-                sb.Append("--highest-patch");
+                sb.Append(" --highest-patch");
             }
 
             return sb.ToString().Trim();

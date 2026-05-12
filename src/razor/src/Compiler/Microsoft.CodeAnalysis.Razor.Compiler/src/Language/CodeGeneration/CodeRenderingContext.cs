@@ -92,7 +92,22 @@ public sealed class CodeRenderingContext : IDisposable
     }
 
     public ImmutableArray<RazorDiagnostic> GetDiagnostics()
-        => _diagnostics.ToImmutableOrderedBy(static d => d.Span.AbsoluteIndex);
+    {
+        var warningLevel = Options.RazorWarningLevel;
+
+        // Filter out diagnostics whose warning level exceeds the configured level.
+        // Diagnostics with level 0 are always reported regardless of the configured level.
+        using var filtered = new PooledArrayBuilder<RazorDiagnostic>(capacity: _diagnostics.Count);
+        foreach (var diagnostic in _diagnostics)
+        {
+            if (diagnostic.WarningLevel <= warningLevel)
+            {
+                filtered.Add(diagnostic);
+            }
+        }
+
+        return filtered.ToImmutableOrderedBy(static d => d.Span.AbsoluteIndex);
+    }
 
     public void AddSourceMappingFor(IntermediateNode node)
     {

@@ -157,8 +157,8 @@
     </ItemGroup>
 
     <WriteSbrpUsageReport ContinueOnError="WarnAndContinue"
-                          SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
-                          SbrpPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-reference-packages"
+                          SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
+                          SbaPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-assets"
                           ProjectAssetsJsons="@(ProjectAssetsJsonFile)"
                           OutputPath="$(ArtifactsLogDir)" />
   </Target>

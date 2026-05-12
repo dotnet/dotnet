@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,9 +19,9 @@ namespace NuGet.Packaging.Signing
         // Occurs when SignedCms.ComputeSignature cannot read the certificate private key
         // "Invalid provider type specified." (INVALID_PROVIDER_TYPE)
         private const int INVALID_PROVIDER_TYPE_HRESULT = unchecked((int)0x80090014);
-        private readonly ITimestampProvider _timestampProvider;
+        private readonly ITimestampProvider? _timestampProvider;
 
-        public X509SignatureProvider(ITimestampProvider timestampProvider)
+        public X509SignatureProvider(ITimestampProvider? timestampProvider)
         {
             _timestampProvider = timestampProvider;
         }
@@ -199,14 +197,14 @@ namespace NuGet.Packaging.Signing
                 target: SignaturePlacement.PrimarySignature
             );
 
-            return _timestampProvider.TimestampSignatureAsync(signature, timestampRequest, logger, token);
+            return _timestampProvider!.TimestampSignatureAsync(signature, timestampRequest, logger, token);
         }
 
         private Task<PrimarySignature> TimestampRepositoryCountersignatureAsync(SignPackageRequest request, ILogger logger, PrimarySignature primarySignature, CancellationToken token)
         {
             var repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
-            var signatureValue = repositoryCountersignature.GetSignatureValue();
-            var messageHash = request.TimestampHashAlgorithm.ComputeHash(signatureValue);
+            var signatureValue = repositoryCountersignature!.GetSignatureValue();
+            var messageHash = request.TimestampHashAlgorithm.ComputeHash(signatureValue!);
 
             var timestampRequest = new TimestampRequest(
                 signingSpecifications: SigningSpecifications.V1,
@@ -215,7 +213,7 @@ namespace NuGet.Packaging.Signing
                 target: SignaturePlacement.Countersignature
             );
 
-            return _timestampProvider.TimestampSignatureAsync(primarySignature, timestampRequest, logger, token);
+            return _timestampProvider!.TimestampSignatureAsync(primarySignature, timestampRequest, logger, token);
         }
 
 

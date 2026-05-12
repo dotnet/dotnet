@@ -96,7 +96,7 @@ public class VirtualDocumentFactoryBaseTest : ToolingTestBase
         public const string LanguageFileNameSuffixConst = "__virtual.test";
 
         public static IContentType LanguageLSPContentTypeInstance { get; } = new TestContentType(LanguageContentTypeNameConst);
-        public static Dictionary<object, object> LanguageBufferPropertiesInstance = new() { {"testKey", "testValue"} };
+        public static Dictionary<object, object> LanguageBufferPropertiesInstance = new() { { "testKey", "testValue" } };
 
         public TestVirtualDocumentFactory(
             IContentTypeRegistryService contentTypeRegistryService,

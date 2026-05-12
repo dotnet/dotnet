@@ -7,7 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
+using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -18,6 +20,7 @@ using NuGet.XPlat.FuncTest;
 using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
+using Strings = NuGet.Packaging.Strings;
 
 namespace Dotnet.Integration.Test
 {
@@ -74,6 +77,74 @@ namespace Dotnet.Integration.Test
                 // Should resolve to specified package.
                 ridlessTarget.Libraries.Should().Contain(e => e.Version.Equals(packageX_V2.Version));
             }
+        }
+
+        // https://github.com/NuGet/Home/issues/14823: This should use `dotnet package add` when it supports file-based apps.
+        [Fact]
+        public async Task AddPkg_FileBasedApp()
+        {
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+
+            // Create the file-based app.
+            var fbaDir = Path.Join(pathContext.SolutionRoot, "fba");
+            Directory.CreateDirectory(fbaDir);
+
+            var appFile = Path.Join(fbaDir, "app.cs");
+            File.WriteAllText(appFile, """
+                #:property PublishAot=false
+                Console.WriteLine();
+                """);
+
+            var tempDir = Path.Join(pathContext.WorkingDirectory, "temp");
+            Directory.CreateDirectory(tempDir);
+
+            // Generate DG file.
+            var dgFile = Path.Join(tempDir, "dg.json");
+            _fixture.RunDotnetExpectSuccess(fbaDir, $"build app.cs -t:GenerateRestoreGraphFile -p:RestoreGraphOutputPath={ArgumentEscaper.EscapeAndConcatenate([dgFile])}", testOutputHelper: _testOutputHelper);
+
+            // Get project content.
+            var virtualProject = _fixture.GetFileBasedAppVirtualProject(appFile, _testOutputHelper);
+            _testOutputHelper.WriteLine("before:\n" + virtualProject.Content);
+            Assert.DoesNotContain("PackageReference", virtualProject.Content);
+            using var builder = new TestVirtualProjectBuilder(virtualProject);
+
+            // Create a package.
+            var packageX = XPlatTestUtils.CreatePackage();
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, packageX);
+
+            // Add the package.
+            using var outWriter = new StringWriter();
+            using var errorWriter = new StringWriter();
+            var testApp = new CommandLineApplication
+            {
+                Out = outWriter,
+                Error = errorWriter,
+            };
+            AddPackageReferenceCommand.Register(
+                testApp,
+                () => new TestLogger(_testOutputHelper),
+                () => new AddPackageReferenceCommandRunner(),
+                () => builder);
+            int result = testApp.Execute([
+                "add",
+                "--project", appFile,
+                "--package", "packageX",
+                "--dg-file", dgFile,
+            ]);
+
+            var output = outWriter.ToString();
+            var error = errorWriter.ToString();
+
+            _testOutputHelper.WriteLine(output);
+            _testOutputHelper.WriteLine(error);
+
+            Assert.Equal(0, result);
+
+            Assert.Empty(error);
+
+            var modifiedProjectContent = builder.ModifiedContent;
+            _testOutputHelper.WriteLine("after:\n" + modifiedProjectContent);
+            Assert.Contains("""<PackageReference Include="packageX" Version="1.0.0" />""", modifiedProjectContent);
         }
 
         [Fact]

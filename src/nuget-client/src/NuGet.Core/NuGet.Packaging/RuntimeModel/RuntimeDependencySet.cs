@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,22 +26,22 @@ namespace NuGet.RuntimeModel
         public IReadOnlyDictionary<string, RuntimePackageDependency> Dependencies { get; }
 
         public RuntimeDependencySet(string id)
-            : this(id, (IReadOnlyDictionary<string, RuntimePackageDependency>)null)
+            : this(id, (IReadOnlyDictionary<string, RuntimePackageDependency>?)null)
         {
         }
 
-        public RuntimeDependencySet(string id, IEnumerable<RuntimePackageDependency> dependencies)
+        public RuntimeDependencySet(string id, IEnumerable<RuntimePackageDependency>? dependencies)
             : this(id, dependencies?.ToDictionary(d => d.Id, StringComparer.OrdinalIgnoreCase))
         {
         }
 
-        private RuntimeDependencySet(string id, IReadOnlyDictionary<string, RuntimePackageDependency> dependencies)
+        private RuntimeDependencySet(string id, IReadOnlyDictionary<string, RuntimePackageDependency>? dependencies)
         {
             Id = id;
             Dependencies = dependencies is null or { Count: 0 } ? EmptyDependencies : dependencies;
         }
 
-        public bool Equals(RuntimeDependencySet other)
+        public bool Equals(RuntimeDependencySet? other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -59,7 +57,7 @@ namespace NuGet.RuntimeModel
                 && Dependencies.OrderedEquals(other.Dependencies, p => p.Key, StringComparer.OrdinalIgnoreCase);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as RuntimeDependencySet);
         }

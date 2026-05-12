@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <DockerCredsProviderReleaseVersion>2.2.4</DockerCredsProviderReleaseVersion>
+    <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
+    <PackagesOutput>$(ProjectDirectory)src/Valleysoft.DockerCredsProvider/bin/$(Configuration)/</PackagesOutput>
+    <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>6e1ecd0a80755f9f0e88dc23b98b52f51a77c65e</SourceRevisionId>
+  </PropertyGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <BuildCommandArgs>$(ProjectDirectory)src/Valleysoft.DockerCredsProvider/Valleysoft.DockerCredsProvider.csproj</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(DockerCredsProviderReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; build /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public struct SourceSpan : IEquatable<SourceSpan>
+public readonly struct SourceSpan : IEquatable<SourceSpan>
 {
     public static readonly SourceSpan Undefined = new SourceSpan(SourceLocation.Undefined, 0);
 
@@ -126,4 +126,12 @@ public struct SourceSpan : IEquatable<SourceSpan>
 
         return Length.CompareTo(other.Length);
     }
+
+    public readonly SourceSpan WithFilePath(string filePath) => new(filePath, AbsoluteIndex, LineIndex, CharacterIndex, Length, LineCount, EndCharacterIndex);
+    public readonly SourceSpan WithAbsoluteIndex(int absoluteIndex) => new(FilePath, absoluteIndex, LineIndex, CharacterIndex, Length, LineCount, EndCharacterIndex);
+    public readonly SourceSpan WithLineIndex(int lineIndex) => new(FilePath, AbsoluteIndex, lineIndex, CharacterIndex, Length, LineCount, EndCharacterIndex);
+    public readonly SourceSpan WithCharacterIndex(int characterIndex) => new(FilePath, AbsoluteIndex, LineIndex, characterIndex, Length, LineCount, EndCharacterIndex);
+    public readonly SourceSpan WithLength(int length) => new(FilePath, AbsoluteIndex, LineIndex, CharacterIndex, length, LineCount, EndCharacterIndex);
+    public readonly SourceSpan WithLineCount(int lineCount) => new(FilePath, AbsoluteIndex, LineIndex, CharacterIndex, Length, lineCount, EndCharacterIndex);
+    public readonly SourceSpan WithEndCharacterIndex(int endCharacterIndex) => new(FilePath, AbsoluteIndex, LineIndex, CharacterIndex, Length, LineCount, endCharacterIndex);
 }

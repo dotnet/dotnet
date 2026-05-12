@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Frameworks;
@@ -36,7 +34,7 @@ namespace NuGet.Packaging
         /// </summary>
         public IEnumerable<FrameworkReference> FrameworkReferences { get; }
 
-        public bool Equals(FrameworkReferenceGroup other)
+        public bool Equals(FrameworkReferenceGroup? other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -52,7 +50,7 @@ namespace NuGet.Packaging
                    FrameworkReferences.OrderedEquals(other.FrameworkReferences, dependency => dependency);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as FrameworkReferenceGroup);
         }

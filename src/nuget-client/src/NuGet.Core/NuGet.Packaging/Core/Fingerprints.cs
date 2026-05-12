@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +16,7 @@ namespace NuGet.Packaging.Core
         }
 
         // Get fingerprint from hash algorithm oid.
-        public string this[string key]
+        public string? this[string key]
         {
             get
             {

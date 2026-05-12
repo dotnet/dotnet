@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 
@@ -45,7 +44,7 @@ public class DataCollectionTestCaseEventSenderTests
     {
         _mockCommunicationManager.Setup(x => x.SetupClientAsync(It.IsAny<IPEndPoint>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.InitializeCommunication(123));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.InitializeCommunication(123));
     }
 
     [TestMethod]
@@ -61,7 +60,7 @@ public class DataCollectionTestCaseEventSenderTests
     {
         _mockCommunicationManager.Setup(x => x.WaitForServerConnection(It.IsAny<int>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.WaitForRequestSenderConnection(123));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.WaitForRequestSenderConnection(123));
     }
 
     [TestMethod]
@@ -77,7 +76,7 @@ public class DataCollectionTestCaseEventSenderTests
     {
         _mockCommunicationManager.Setup(x => x.StopClient()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.Close());
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.Close());
     }
 
     [TestMethod]
@@ -97,7 +96,7 @@ public class DataCollectionTestCaseEventSenderTests
         var testcaseStartEventArgs = new TestCaseStartEventArgs(_testCase);
         _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestStart, testcaseStartEventArgs)).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseStart(testcaseStartEventArgs));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseStart(testcaseStartEventArgs));
     }
 
     [TestMethod]
@@ -106,7 +105,7 @@ public class DataCollectionTestCaseEventSenderTests
         var testCaseEndEventArgs = new TestCaseEndEventArgs();
 
         var attachmentSet = new AttachmentSet(new Uri("my://attachment"), "displayname");
-        _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Returns(new Message() { MessageType = MessageType.DataCollectionTestEndResult, Payload = JToken.FromObject(new Collection<AttachmentSet>() { attachmentSet }) });
+        _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Returns(new Message() { MessageType = MessageType.DataCollectionTestEndResult, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DataCollectionTestEndResult, new Collection<AttachmentSet>() { attachmentSet }, 7) });
         var attachments = _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs)!;
 
         Assert.AreEqual(attachments[0].Uri, attachmentSet.Uri);
@@ -120,6 +119,6 @@ public class DataCollectionTestCaseEventSenderTests
 
         _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestEnd, It.IsAny<TestCaseEndEventArgs>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs));
+        Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs));
     }
 }

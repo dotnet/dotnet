@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,7 +21,7 @@ namespace NuGet.Packaging
         /// </summary>
         /// <param name="pathContext">NuGet paths loaded from NuGet.Config settings.</param>
         public FallbackPackagePathResolver(INuGetPathContext pathContext)
-            : this(pathContext?.UserPackageFolder, pathContext?.FallbackPackageFolders)
+            : this(pathContext.UserPackageFolder, pathContext.FallbackPackageFolders)
         {
 
         }
@@ -77,7 +75,7 @@ namespace NuGet.Packaging
         /// <param name="packageId">Package id.</param>
         /// <param name="version">Package version.</param>
         /// <returns>Returns the path if the package exists in any of the folders. Null if the package does not exist.</returns>
-        public string GetPackageDirectory(string packageId, string version)
+        public string? GetPackageDirectory(string packageId, string version)
         {
             return GetPackageDirectory(packageId, NuGetVersion.Parse(version));
         }
@@ -88,7 +86,7 @@ namespace NuGet.Packaging
         /// <param name="packageId">Package id.</param>
         /// <param name="version">Package version.</param>
         /// <returns>Returns the path if the package exists in any of the folders. Null if the package does not exist.</returns>
-        public string GetPackageDirectory(string packageId, NuGetVersion version)
+        public string? GetPackageDirectory(string packageId, NuGetVersion version)
         {
             // Find the package
             var info = GetPackageInfo(packageId, version);
@@ -103,7 +101,7 @@ namespace NuGet.Packaging
         /// <param name="packageId">Package id.</param>
         /// <param name="version">Package version.</param>
         /// <returns>Returns the package info if the package exists in any of the folders. Null if the package does not exist.</returns>
-        public FallbackPackagePathInfo GetPackageInfo(string packageId, NuGetVersion version)
+        public FallbackPackagePathInfo? GetPackageInfo(string packageId, NuGetVersion version)
         {
             if (string.IsNullOrEmpty(packageId))
             {

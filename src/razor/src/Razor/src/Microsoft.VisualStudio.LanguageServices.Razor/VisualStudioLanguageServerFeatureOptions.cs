@@ -36,6 +36,4 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     private bool IsCodespacesOrLiveshare => _lspEditorFeatureDetector.IsRemoteClient() || _lspEditorFeatureDetector.IsLiveShareHost();
 
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions.Value;
-
-    public override bool UseRazorCohostServer => true;
 }

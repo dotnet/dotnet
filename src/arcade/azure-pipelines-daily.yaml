@@ -16,11 +16,15 @@ stages:
       displayName: Synchronize secrets
       pool:
         name: NetCore1ESPool-Internal-NoMSI
-        demands: ImageOverride -equals 1es-windows-2022
+        demands: ImageOverride -equals windows.vs2026.amd64
 
       steps:
-      - script: restore.cmd -ci
-        displayName: Run restore.cmd
+      # Secret synchronization only needs the repo SDK plus local tools.
+      # Use the repo bootstrap so the exact preview SDK from global.json is installed reliably.
+      - script: |
+          call eng\common\dotnet.cmd --info
+          call eng\common\dotnet.cmd tool restore
+        displayName: Bootstrap repo SDK and restore dotnet tools
 
       - task: UseDotNet@2
         displayName: Install .NET 8 runtime
@@ -29,9 +33,6 @@ stages:
           version: 8.x
           installationPath: $(System.DefaultWorkingDirectory)/.dotnet
 
-      - script: dotnet tool restore
-        displayName: Restore dotnet tools
-
       - task: AzureCLI@2
         displayName: Run secret-manager synchronize
         inputs:
@@ -39,4 +40,4 @@ stages:
           scriptType: pscore
           scriptLocation: inlineScript
           inlineScript: |
-            Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize --skip-untracked $_}
+            Get-ChildItem .vault-config/*.yaml |% { & .\eng\common\dotnet.ps1 secret-manager synchronize --skip-untracked $_.FullName }

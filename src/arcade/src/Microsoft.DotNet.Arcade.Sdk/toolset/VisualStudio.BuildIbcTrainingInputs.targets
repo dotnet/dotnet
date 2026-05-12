@@ -1,0 +1,27 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Properties:
+      RepositoryName                   Current repository name (e.g. 'dotnet/roslyn').
+      VisualStudioDropName             Product drop name, e.g. 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
+  -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" />
+  </ItemGroup>
+
+  <Target Name="_BuildTrainingInputs" BeforeTargets="AfterBuild">
+    <Error Condition="('$(VisualStudioDropName)' == '' or '$(RepositoryName)' == '') and '$(OfficialBuild)' == 'true'"
+           Text="Properties VisualStudioDropName and RepositoryName must be specified in official build that produces Visual Studio insertion components." />
+
+    <GenerateTrainingInputFiles ConfigurationFile="$(RepositoryEngineeringDir)config\OptProf.json"
+                                InsertionDirectory="$(VisualStudioSetupInsertionPath)"
+                                OutputDirectory="$(ArtifactsDir)OptProf\$(Configuration)\Data" />
+
+    <GenerateTrainingPropsFile ProductDropName="$(VisualStudioDropName)"
+                               RepositoryName="$(RepositoryName)"
+                               OutputDirectory="$(VisualStudioSetupInsertionPath)OptProf"/>
+  </Target>
+
+</Project>

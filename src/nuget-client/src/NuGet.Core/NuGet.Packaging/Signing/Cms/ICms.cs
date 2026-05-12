@@ -13,7 +13,7 @@ namespace NuGet.Packaging.Signing
     {
         byte[] GetPrimarySignatureSignatureValue();
 
-        byte[] GetRepositoryCountersignatureSignatureValue();
+        byte[]? GetRepositoryCountersignatureSignatureValue();
 
         void AddCertificates(IEnumerable<X509Certificate2> certificates);
 

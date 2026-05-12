@@ -1,7 +1,7 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <UsingTask TaskName="ClearAssemblyReferenceVersions" AssemblyFile="$(GenFacadesTargetAssemblyPath)" />
+  <UsingTask TaskName="ClearAssemblyReferenceVersions" AssemblyFile="$(GenFacadesTargetAssemblyPath)" Runtime="NET" />
 
   <PropertyGroup>
     <!-- Support zero version seeds by rewriting the output of the compiler. -->

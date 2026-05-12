@@ -1,0 +1,7 @@
+OpenTelemetry.Instrumentation.EventCounters.EventCountersInstrumentationOptions
+OpenTelemetry.Instrumentation.EventCounters.EventCountersInstrumentationOptions.AddEventSources(params string![]! names) -> void
+OpenTelemetry.Instrumentation.EventCounters.EventCountersInstrumentationOptions.EventCountersInstrumentationOptions() -> void
+OpenTelemetry.Instrumentation.EventCounters.EventCountersInstrumentationOptions.RefreshIntervalSecs.get -> int
+OpenTelemetry.Instrumentation.EventCounters.EventCountersInstrumentationOptions.RefreshIntervalSecs.set -> void
+OpenTelemetry.Metrics.MeterProviderBuilderExtensions
+static OpenTelemetry.Metrics.MeterProviderBuilderExtensions.AddEventCountersInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.EventCounters.EventCountersInstrumentationOptions!>? configure = null) -> OpenTelemetry.Metrics.MeterProviderBuilder!

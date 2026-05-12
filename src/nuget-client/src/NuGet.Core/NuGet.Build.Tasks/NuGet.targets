@@ -961,6 +961,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <UsingMicrosoftNETSdk>$(UsingMicrosoftNETSdk)</UsingMicrosoftNETSdk>
         <NETCoreSdkVersion>$(NETCoreSdkVersion)</NETCoreSdkVersion>
         <RestoreUseLegacyDependencyResolver>$(RestoreUseLegacyDependencyResolver)</RestoreUseLegacyDependencyResolver>
+        <RestoreDoNotWriteDependencyGraphSpec>$(RestoreDoNotWriteDependencyGraphSpec)</RestoreDoNotWriteDependencyGraphSpec>
       </_RestoreGraphEntry>
     </ItemGroup>
 

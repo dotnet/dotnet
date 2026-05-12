@@ -28,11 +28,9 @@ variables:
     - group: Publish-Build-Assets
     - group: DotNet-HelixApi-Access
     - group: SDL_Settings
-    # DotNetPublishUsingPipelines can be removed when Arcade itself consumes a new Arcade version.
     - name: _InternalBuildArgs
       value: /p:DotNetSignType=${{ parameters.signType }}
         /p:TeamName=$(_TeamName)
-        /p:DotNetPublishUsingPipelines=true
         /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
     - name: PostBuildSign
       value: true

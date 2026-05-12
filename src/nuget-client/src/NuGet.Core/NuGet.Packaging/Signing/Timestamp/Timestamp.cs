@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +13,6 @@ namespace NuGet.Packaging.Signing
 {
     public sealed class Timestamp
     {
-
         /// <summary>
         /// Upper limit of Timestamp.
         /// </summary>
@@ -34,17 +31,17 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// A SignedCms object holding the timestamp and SignerInfo.
         /// </summary>
-        public SignedCms SignedCms { get; }
+        public SignedCms? SignedCms { get; }
 
         /// <summary>
         /// SignerInfo for this timestamp.
         /// </summary>
-        public SignerInfo SignerInfo => SignedCms.SignerInfos[0];
+        public SignerInfo SignerInfo => SignedCms!.SignerInfos[0];
 
         /// <summary>
         /// Timestamp token info for this timestamp.
         /// </summary>
-        internal IRfc3161TimestampTokenInfo TstInfo { get; }
+        internal IRfc3161TimestampTokenInfo? TstInfo { get; }
 
         /// <summary>
         /// Default constructor. Limits are set to current time.
@@ -139,7 +136,7 @@ namespace NuGet.Packaging.Signing
                     $"{Environment.NewLine}{CertificateUtility.X509Certificate2ToString(timestamperCertificate, fingerprintAlgorithm)}")));
 
                 SignatureVerificationStatusFlags flags = SignatureVerificationStatusFlags.NoErrors;
-                var certificateExtraStore = SignedCms.Certificates;
+                var certificateExtraStore = SignedCms!.Certificates;
 
                 using (X509ChainHolder chainHolder = X509ChainHolder.CreateForTimestamping())
                 {
@@ -178,13 +175,12 @@ namespace NuGet.Packaging.Signing
                     else
                     {
                         var chainBuildingHasIssues = false;
-                        IEnumerable<string> messages;
 
                         var timestampInvalidCertificateFlags = CertificateChainUtility.DefaultObservedStatusFlags;
 
-                        if (CertificateChainUtility.TryGetStatusAndMessage(chainStatusList, timestampInvalidCertificateFlags, out messages))
+                        if (CertificateChainUtility.TryGetStatusAndMessage(chainStatusList, timestampInvalidCertificateFlags, out IEnumerable<string>? messages))
                         {
-                            foreach (var message in messages)
+                            foreach (string message in messages)
                             {
                                 issues.Add(SignatureLog.Issue(treatIssueAsError, NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, message)));
                             }
@@ -209,7 +205,7 @@ namespace NuGet.Packaging.Signing
 
                         if (CertificateChainUtility.TryGetStatusAndMessage(chainStatusList, X509ChainStatusFlags.Revoked, out messages))
                         {
-                            issues.Add(SignatureLog.Error(NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, messages.First())));
+                            issues.Add(SignatureLog.Error(NuGetLogCode.NU3028, string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, messages!.First())));
                             flags |= SignatureVerificationStatusFlags.CertificateRevoked;
 
                             return flags;
@@ -221,11 +217,11 @@ namespace NuGet.Packaging.Signing
                         {
                             if (treatIssueAsError)
                             {
-                                string unknownRevocationMessage = null;
+                                string? unknownRevocationMessage = null;
 
                                 if (unknownRevocationErrors)
                                 {
-                                    unknownRevocationMessage = string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, unknownRevocationStatusMessages.First());
+                                    unknownRevocationMessage = string.Format(CultureInfo.CurrentCulture, Strings.VerifyError_TimestampVerifyChainBuildingIssue, signature.FriendlyName, unknownRevocationStatusMessages!.First());
                                 }
 
                                 if (settings.RevocationMode == RevocationMode.Offline)

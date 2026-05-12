@@ -16,15 +16,16 @@ public class DisableAppdomainTests : AcceptanceTestBase
 {
     [TestMethod]
     [TestCategory("Windows")]
-    [NetFullTargetFrameworkDataSource]
+    // Run in .NET Framework testhost, disabling appdomain will force running out of process in all cases.
+    [NetFullTargetFrameworkDataSource(inProcess: true)]
     public void DisableAppdomainTest(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var diableAppdomainTest1 = _testEnvironment.GetTestAsset("DisableAppdomainTest1.dll", Net462TargetFramework);
-        var diableAppdomainTest2 = _testEnvironment.GetTestAsset("DisableAppdomainTest2.dll", Net462TargetFramework);
+        var diableAppdomainTest1 = _testEnvironment.GetTestAsset("DisableAppdomainTest1.dll", Net481TargetFramework);
+        var diableAppdomainTest2 = _testEnvironment.GetTestAsset("DisableAppdomainTest2.dll", Net481TargetFramework);
 
-        RunTests(runnerInfo, $"{diableAppdomainTest1}\" \"{diableAppdomainTest2}", 2);
+        RunTests($"{diableAppdomainTest1}\" \"{diableAppdomainTest2}", 2);
     }
 
     [TestMethod]
@@ -34,19 +35,13 @@ public class DisableAppdomainTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var newtonSoftDependnecyTest = _testEnvironment.GetTestAsset("NewtonSoftDependency.dll", Net462TargetFramework);
+        var newtonSoftDependnecyTest = _testEnvironment.GetTestAsset("NewtonSoftDependency.dll", Net481TargetFramework);
 
-        RunTests(runnerInfo, newtonSoftDependnecyTest, 1);
+        RunTests(newtonSoftDependnecyTest, 1);
     }
 
-    private void RunTests(RunnerInfo runnerInfo, string testAssembly, int passedTestCount)
+    private void RunTests(string testAssembly, int passedTestCount)
     {
-        if (runnerInfo.IsNetRunner)
-        {
-            Assert.Inconclusive("This test is not meant for .netcore.");
-            return;
-        }
-
         var runConfigurationDictionary = new Dictionary<string, string>
         {
             { "DisableAppDomain", "true" }

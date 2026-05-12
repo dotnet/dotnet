@@ -194,10 +194,9 @@ if (false)
                     __TestNamespace_InputTagHelper2 = CreateTagHelper<global::TestNamespace.InputTagHelper2>();
                     __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper2);
                     BeginWriteTagHelperAttribute();
-                    WriteLiteral(
 #nullable restore
-#line (17,47)-(17,55) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
-checkbox
+#line (17,47)-(17,55) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
+WriteLiteral(checkbox
 
 #line default
 #line hidden
@@ -244,10 +243,9 @@ true
                 __TestNamespace_InputTagHelper2 = CreateTagHelper<global::TestNamespace.InputTagHelper2>();
                 __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper2);
                 BeginWriteTagHelperAttribute();
-                WriteLiteral(
 #nullable restore
-#line (18,32)-(18,62) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
-true ? "checkbox" : "anything"
+#line (18,32)-(18,62) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
+WriteLiteral(true ? "checkbox" : "anything"
 
 #line default
 #line hidden
@@ -596,10 +594,9 @@ DateTimeOffset.Now.Year - 1970
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral("\r\n        ");
-            Write(
 #nullable restore
-#line (35,10)-(35,21) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
-someMethod(
+#line (35,10)-(35,21) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ComplexTagHelpers.cshtml"
+Write(someMethod(
 
 #line default
 #line hidden

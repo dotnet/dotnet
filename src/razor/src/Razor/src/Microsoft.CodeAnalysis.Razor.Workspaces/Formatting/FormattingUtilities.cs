@@ -7,7 +7,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
@@ -16,112 +15,6 @@ namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
 internal static class FormattingUtilities
 {
-    public const string Indent = "$$Indent$$";
-    public const string InitialIndent = "$$InitialIndent$$";
-
-    /// <summary>
-    ///  Adds indenting to the method.
-    /// </summary>
-    /// <param name="method">
-    ///  The method to add indenting to. The method should be marked with <see cref="Indent"/> where an indent is wanted
-    /// </param>
-    /// <param name="tabSize">
-    ///  The indentation size
-    /// </param>
-    /// <param name="insertSpaces">
-    ///  Use spaces for indentation.
-    /// </param>
-    /// <param name="startingIndent">
-    ///  The size of the any existing indent.
-    /// </param>
-    /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startingIndent)
-    {
-        var initialIndent = GetIndentationString(startingIndent, insertSpaces, tabSize);
-        var indent = GetIndentationString(tabSize, insertSpaces, tabSize);
-        return method.Replace(InitialIndent, initialIndent).Replace(Indent, indent);
-    }
-
-    /// <summary>
-    ///  Adds indenting to the method.
-    /// </summary>
-    /// <param name="method">
-    ///  The method to add indenting to. The method should be marked with <see cref="Indent"/> where an indent is wanted
-    ///  and <see cref="InitialIndent"/> where some initial indent is needed.
-    /// </param>
-    /// <param name="tabSize">
-    ///  The indentation size
-    /// </param>
-    /// <param name="insertSpaces">
-    /// Use spaces for indentation.
-    /// </param>
-    /// <param name="startAbsoluteIndex">
-    ///  The absolute index of the beginning of the class in the C# file the method will be added to.
-    /// </param>
-    /// <param name="numCharacterBefore">
-    ///  The number of characters on the line before where startAbsoluteIndex is in the source.
-    /// </param>
-    /// <param name="source">
-    ///  The contents of the C# file.
-    /// </param>
-    /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startAbsoluteIndex, int numCharacterBefore, SourceText source)
-    {
-        var startingIndent = 0;
-        for (var i = 1; i <= numCharacterBefore; i++)
-        {
-            if (source[startAbsoluteIndex - i] == '\t')
-            {
-                startingIndent += tabSize;
-            }
-            else
-            {
-                startingIndent++;
-            }
-        }
-
-        return AddIndentationToMethod(method, tabSize, insertSpaces, startingIndent);
-    }
-
-    /// <summary>
-    ///  Adds indenting to the method.
-    /// </summary>
-    /// <param name="method">
-    ///  The method to add indenting to. The method should be marked with <see cref="Indent"/> where an indent is wanted
-    ///  and <see cref="InitialIndent"/> where some initial indent is needed.
-    /// </param>
-    /// <param name="tabSize">
-    ///  The indentation size
-    /// </param>
-    /// <param name="insertSpaces"></param>
-    /// <param name="startAbsoluteIndex">
-    ///  The absolute index of the beginning of the code block in the Razor file where the method will be added to.
-    /// </param>
-    /// <param name="numCharacterBefore">
-    ///  The number of characters on the line before where startAbsoluteIndex is in the source.
-    /// </param>
-    /// <param name="source">
-    ///  The <see cref="RazorSourceDocument"/> of the razor file the method is being added to.
-    /// </param>
-    /// <returns>The indented method.</returns>
-    public static string AddIndentationToMethod(string method, int tabSize, bool insertSpaces, int startAbsoluteIndex, int numCharacterBefore, RazorSourceDocument source)
-    {
-        var startingIndent = 0;
-        for (var i = 1; i <= numCharacterBefore; i++)
-        {
-            if (source.Text[startAbsoluteIndex - i] == '\t')
-            {
-                startingIndent += tabSize;
-            }
-            else
-            {
-                startingIndent++;
-            }
-        }
-
-        return AddIndentationToMethod(method, tabSize, insertSpaces, startingIndent);
-    }
-
     /// <summary>
     /// Counts the number of non-whitespace characters in a given span of text.
     /// </summary>
@@ -142,7 +35,7 @@ internal static class FormattingUtilities
         return count;
     }
 
-    public static int GetIndentationLevel(TextLine line, int firstNonWhitespaceCharacterPosition, bool insertSpaces, int tabSize, out string additionalIndentation)
+    public static int GetIndentationLevel(TextLine line, int firstNonWhitespaceCharacterPosition, bool insertSpaces, int tabSize, out int additionalIndentation)
     {
         if (firstNonWhitespaceCharacterPosition > line.End)
         {
@@ -168,22 +61,19 @@ internal static class FormattingUtilities
             else
             {
                 Debug.Assert(text[i] == ' ');
-                additionalIndentation = text.ToString(TextSpan.FromBounds(i, firstNonWhitespaceCharacterPosition));
+                additionalIndentation = firstNonWhitespaceCharacterPosition - i;
                 return tabCount;
             }
         }
 
-        additionalIndentation = "";
+        additionalIndentation = 0;
         return tabCount;
     }
 
-    public static int GetIndentationLevel(int length, int tabSize, out string additionalIndentation)
+    public static int GetIndentationLevel(int length, int tabSize, out int additionalIndentation)
     {
         var indentationLevel = length / tabSize;
-        var additionalIndentationLength = length % tabSize;
-        additionalIndentation = additionalIndentationLength == 0
-            ? ""
-            : new string(' ', additionalIndentationLength);
+        additionalIndentation = length % tabSize;
         return indentationLevel;
     }
 
@@ -195,21 +85,7 @@ internal static class FormattingUtilities
     /// <param name="tabSize">The size of a tab and indentation.</param>
     /// <returns>A whitespace string representation indentation.</returns>
     public static string GetIndentationString(int indentation, bool insertSpaces, int tabSize)
-    {
-        if (insertSpaces)
-        {
-            return new string(' ', indentation);
-        }
-
-        var tabs = indentation / tabSize;
-        var tabPrefix = new string('\t', tabs);
-
-        var spaces = indentation % tabSize;
-        var spaceSuffix = new string(' ', spaces);
-
-        var combined = string.Concat(tabPrefix, spaceSuffix);
-        return combined;
-    }
+        => IndentCache.GetIndentString(indentation, insertSpaces, tabSize);
 
     /// <summary>
     /// Unindents a span of text with a few caveats:
@@ -252,7 +128,7 @@ internal static class FormattingUtilities
         static ReadOnlySpan<char> UnindentLine(ReadOnlySpan<char> line, int indentation)
         {
             var startCharacter = 0;
-            while (startCharacter < indentation && IsWhitespace(line[startCharacter]))
+            while (startCharacter < indentation && IsTabOrSpace(line[startCharacter]))
             {
                 startCharacter++;
             }
@@ -288,7 +164,7 @@ internal static class FormattingUtilities
             for (var position = line.Span.Start; position < line.Span.End; position++)
             {
                 var c = line.Text[position];
-                if (!IsWhitespace(c))
+                if (!IsTabOrSpace(c))
                 {
                     break;
                 }
@@ -299,8 +175,10 @@ internal static class FormattingUtilities
             return indentation;
         }
 
-        static bool IsWhitespace(char c)
-            => c == ' ' || c == '\t';
+        static bool IsTabOrSpace(char c)
+        {
+            return c == ' ' || c == '\t';
+        }
 
         static ImmutableArray<Range> GetLineRanges(string text)
         {
@@ -338,25 +216,25 @@ internal static class FormattingUtilities
     public static TextEdit[] FixHtmlTextEdits(SourceText htmlSourceText, TextEdit[] edits)
     {
         // Avoid computing a minimal diff if we don't need to
-        if (!edits.Any(static e => e.NewText.Contains("~")))
+        if (!edits.Any(static e => e.NewText.Contains('~')))
             return edits;
 
         var changes = edits.SelectAsArray(htmlSourceText.GetTextChange);
 
         var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
-        return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];
+        return fixedChanges.SelectAsPlainArray(htmlSourceText.GetTextEdit);
     }
 
     internal static SumType<TextEdit, AnnotatedTextEdit>[] FixHtmlTextEdits(SourceText htmlSourceText, SumType<TextEdit, AnnotatedTextEdit>[] edits)
     {
         // Avoid computing a minimal diff if we don't need to
-        if (!edits.Any(static e => ((TextEdit)e).NewText.Contains("~")))
+        if (!edits.Any(static e => ((TextEdit)e).NewText.Contains('~')))
             return edits;
 
         var changes = edits.SelectAsArray(e => htmlSourceText.GetTextChange((TextEdit)e));
 
         var fixedChanges = htmlSourceText.MinimizeTextChanges(changes);
-        return [.. fixedChanges.Select(htmlSourceText.GetTextEdit)];
+        return fixedChanges.SelectAsPlainArray<TextChange, SumType<TextEdit, AnnotatedTextEdit>>(c => htmlSourceText.GetTextEdit(c));
     }
 
     public static void GetOriginalDocumentChangesFromLineInfo(FormattingContext context, SourceText originalText, ImmutableArray<LineInfo> formattedLineInfo, SourceText formattedText, ILogger logger, Func<int, bool>? shouldKeepInsertedNewlineAtPosition, ref PooledArrayBuilder<TextChange> formattingChanges, out int lastFormattedTextLine)
@@ -366,8 +244,32 @@ internal static class FormattingUtilities
         {
             var lineInfo = formattedLineInfo[iOriginal];
 
-            if (lineInfo.SkipPreviousLine)
+            if (lineInfo.SkippedPreviousLineOriginOffset is { } skippedPreviousLineOriginOffset)
             {
+                var skippedPreviousLineIndentationWidth = GetFixedIndentationWidth(context, lineInfo);
+                var currentLineWasCollapsedIntoSkippedPreviousLine =
+                    CurrentLineIsOnlyAnOpenBrace(originalText, iOriginal) &&
+                    CurrentLineEndsWithAnOpenBrace(formattedText, iFormatted);
+
+                FormatSkippedPreviousLine(
+                    context,
+                    originalText,
+                    formattedText,
+                    logger,
+                    shouldKeepInsertedNewlineAtPosition,
+                    skippedPreviousLineOriginOffset,
+                    skippedPreviousLineIndentationWidth,
+                    ref formattingChanges,
+                    iOriginal,
+                    ref iFormatted);
+
+                if (currentLineWasCollapsedIntoSkippedPreviousLine)
+                {
+                    // The carried-forward previous line already consumed this brace-only line by pulling `{`
+                    // back up onto the previous line, so the normal per-line processing below must skip it.
+                    continue;
+                }
+
                 iFormatted++;
             }
 
@@ -383,15 +285,13 @@ internal static class FormattingUtilities
             {
                 var originalLine = originalText.Lines[iOriginal];
                 var originalLineOffset = originalLine.GetFirstNonWhitespaceOffset().GetValueOrDefault();
-                var fixedIndentString = context.GetIndentationLevelString(lineInfo.FixedIndentLevel);
+                var fixedIndentationWidth = GetFixedIndentationWidth(context, lineInfo);
 
                 if (lineInfo.ProcessIndentation)
                 {
                     // First up, we take the indentation from the formatted file, and add on the fixed indentation level from the line info, and
                     // replace whatever was in the original file with it.
-                    indentationString = formattedText.ToString(new TextSpan(formattedLine.Start, formattedIndentation))
-                        + fixedIndentString
-                        + lineInfo.AdditionalIndentation;
+                    indentationString = GetAdjustedIndentationString(context, formattedLine, fixedIndentationWidth);
                     formattingChanges.Add(new TextChange(new TextSpan(originalLine.Start, originalLineOffset), indentationString));
                 }
 
@@ -404,11 +304,54 @@ internal static class FormattingUtilities
                     var length = lineInfo.FormattedLength == 0
                         ? originalLine.End - originalStart
                         : lineInfo.FormattedLength;
+                    var initialFormattedLine = iFormatted;
                     var formattedStart = formattedLine.Start + formattedIndentation + lineInfo.FormattedOffset;
                     var formattedEnd = formattedLine.End - lineInfo.FormattedOffsetFromEndOfLine;
+                    if (lineInfo.FormattedOffsetFromEndOfLine > 0)
+                    {
+                        // This is the partial-line case: we cannot use ConsumeNewLines because we're intentionally
+                        // trimming trailing generated text, so instead we only advance the formatted side until
+                        // we've captured all of the non-whitespace Roslyn moved onto wrapped lines.
+                        var originalNonWhitespace = CountNonWhitespaceChars(originalText, originalStart, originalStart + length);
+                        var formattedNonWhitespace = CountNonWhitespaceChars(formattedText, formattedStart, Math.Max(formattedStart, formattedEnd));
+
+                        while (originalNonWhitespace > formattedNonWhitespace &&
+                            iFormatted + 1 < formattedText.Lines.Count)
+                        {
+                            iFormatted++;
+                            formattedLine = formattedText.Lines[iFormatted];
+                            formattedEnd = formattedLine.End - lineInfo.FormattedOffsetFromEndOfLine;
+                            formattedNonWhitespace = CountNonWhitespaceChars(formattedText, formattedStart, Math.Max(formattedStart, formattedEnd));
+                        }
+                    }
+
                     if (formattedEnd > formattedStart)
                     {
-                        formattingChanges.Add(new TextChange(new TextSpan(originalStart, length), formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedEnd))));
+                        // Start with Roslyn's raw formatted slice, then reapply Razor's fixed indentation
+                        // if the formatter wrapped it across lines so closing braces/trailing text stay aligned.
+                        string replacementText;
+                        if (iFormatted > initialFormattedLine)
+                        {
+                            using var _ = StringBuilderPool.GetPooledObject(out var replacementBuilder);
+
+                            replacementBuilder.Append(formattedText.ToString(TextSpan.FromBounds(
+                                formattedStart,
+                                formattedText.Lines[initialFormattedLine].EndIncludingLineBreak)));
+
+                            for (var wrappedLineIndex = initialFormattedLine + 1; wrappedLineIndex < iFormatted; wrappedLineIndex++)
+                            {
+                                replacementBuilder.Append(GetAdjustedFormattedLineText(context, formattedText.Lines[wrappedLineIndex], fixedIndentationWidth, formattedText.Lines[wrappedLineIndex].EndIncludingLineBreak));
+                            }
+
+                            replacementBuilder.Append(GetAdjustedFormattedLineText(context, formattedText.Lines[iFormatted], fixedIndentationWidth, formattedEnd));
+                            replacementText = replacementBuilder.ToString();
+                        }
+                        else
+                        {
+                            replacementText = formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedEnd));
+                        }
+
+                        formattingChanges.Add(new TextChange(new TextSpan(originalStart, length), replacementText));
                     }
 
                     if (lineInfo.CheckForNewLines)
@@ -419,7 +362,7 @@ internal static class FormattingUtilities
                         ConsumeNewLines(
                             context, originalText, formattedText, logger, shouldKeepInsertedNewlineAtPosition,
                             ref formattingChanges, ref iOriginal, ref iFormatted, ref originalLine, ref formattedLine,
-                            originalStart, formattedStart, fixedIndentString);
+                            originalStart, formattedStart, fixedIndentationWidth);
                     }
 
                     // The above "CheckForNewLines" means new lines inserted in the middle of a line of the original text, but
@@ -448,20 +391,28 @@ internal static class FormattingUtilities
             }
             else if (lineInfo.SkipNextLineIfBrace)
             {
-                // If the next line is a brace, we skip it. This is used to skip the opening brace of a class
-                // that we insert, but Roslyn settings might place on the same line as the class declaration,
-                // or skip the opening brace of a lambda definition we insert, but Roslyn might place it on the
-                // next line. In that case, we can't place it on the next line ourselves because Roslyn doesn't
-                // adjust the indentation of opening braces of lambdas in that scenario.
+                // If the next line is a brace, we skip it. This is used for synthetic lines like:
+                //
+                //     class @code {
+                //     () => {
+                //
+                // Roslyn may keep the brace on that same line, move it down to the next line, or pull an original
+                // next-line brace back up. We have to tolerate all of those shapes when mapping the formatted C#
+                // back onto the Razor document.
                 if (NextLineIsOnlyAnOpenBrace(formattedText, iFormatted))
                 {
                     iFormatted++;
                 }
 
-                // On the other hand, we might insert the opening brace of a class, and Roslyn might collapse
-                // it up to the previous line, so we would want to skip the next line in the original document
-                // in that case. Fortunately its illegal to have `@code {\r\n {` in a Razor file, so there can't
-                // be false positives here.
+                // The reverse case is an original next-line brace being collapsed up by Roslyn. For example, Razor may
+                // start with:
+                //
+                //     @code
+                //     {
+                //
+                // while the generated C# becomes `class @code {` on one line. In that case we skip the original brace
+                // line and copy the previous line's indentation onto it so the surviving brace still lands where Roslyn
+                // intended. Fortunately `@code {\r\n {` is illegal in Razor, so there are no false positives here.
                 if (NextLineIsOnlyAnOpenBrace(originalText, iOriginal))
                 {
                     iOriginal++;
@@ -486,12 +437,122 @@ internal static class FormattingUtilities
         lastFormattedTextLine = iFormatted;
     }
 
+    private static int GetFixedIndentationWidth(FormattingContext context, LineInfo lineInfo)
+        => context.GetIndentationOffsetForLevel(lineInfo.FixedIndentLevel) + (lineInfo.AdditionalIndentation ?? 0);
+
+    /// <summary>
+    /// Recomputes only the leading indentation for a formatted line after Razor's fixed indentation has been applied.
+    /// </summary>
+    private static string GetAdjustedIndentationString(FormattingContext context, TextLine formattedLine, int fixedIndentationWidth)
+    {
+        var indentationWidth = formattedLine.GetIndentationSize(context.Options.TabSize) + fixedIndentationWidth;
+        if (indentationWidth < 0)
+        {
+            indentationWidth = 0;
+        }
+
+        return GetIndentationString(indentationWidth, context.Options.InsertSpaces, context.Options.TabSize);
+    }
+
+    /// <summary>
+    /// Returns a formatted line slice with adjusted indentation.
+    /// Unlike <see cref="GetAdjustedIndentationString"/>, this preserves Roslyn's original slice when no adjustment is needed.
+    /// </summary>
+    private static string GetAdjustedFormattedLineText(FormattingContext context, TextLine formattedLine, int fixedIndentationWidth, int end)
+    {
+        var lineText = formattedLine.Text.AssumeNotNull();
+        if (fixedIndentationWidth == 0)
+        {
+            return lineText.ToString(TextSpan.FromBounds(formattedLine.Start, end));
+        }
+
+        var indentationString = GetAdjustedIndentationString(context, formattedLine, fixedIndentationWidth);
+
+        if (formattedLine.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
+            formattedLine.Start + firstNonWhitespace < end)
+        {
+            return indentationString + lineText.ToString(TextSpan.FromBounds(formattedLine.Start + firstNonWhitespace, end));
+        }
+
+        return end > formattedLine.End
+            ? indentationString + lineText.ToString(TextSpan.FromBounds(formattedLine.End, end))
+            : indentationString;
+    }
+
+    private static void FormatSkippedPreviousLine(
+        FormattingContext context,
+        SourceText originalText,
+        SourceText formattedText,
+        ILogger logger,
+        Func<int, bool>? shouldKeepInsertedNewlineAtPosition,
+        int skippedPreviousLineOriginOffset,
+        int fixedIndentationWidth,
+        ref PooledArrayBuilder<TextChange> formattingChanges,
+        int iOriginal,
+        ref int iFormatted)
+    {
+        Debug.Assert(iOriginal > 0);
+        Debug.Assert(iFormatted < formattedText.Lines.Count);
+
+        if (iOriginal == 0 || iFormatted >= formattedText.Lines.Count)
+        {
+            // This helper only applies to a carried-forward previous line from a multiline expression. If we're on the
+            // first original line, or we've already consumed all formatted lines, there is nothing safe to map back.
+            return;
+        }
+
+        var previousOriginalLineIndex = iOriginal - 1;
+        var originalLine = originalText.Lines[previousOriginalLineIndex];
+        var formattedLine = formattedText.Lines[iFormatted];
+        if (formattedLine.GetFirstNonWhitespaceOffset() is not { } formattedIndentation)
+        {
+            // Roslyn can leave the carried-forward line blank or whitespace-only. In that case there is no formatted
+            // content to apply to the previous original line, so we leave it alone and let normal processing continue.
+            return;
+        }
+
+        var originalStart = originalLine.Start + skippedPreviousLineOriginOffset;
+        var formattedStart = formattedLine.Start + formattedIndentation;
+        formattingChanges.Add(new TextChange(
+            TextSpan.FromBounds(originalStart, originalLine.End),
+            formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedLine.End))));
+
+        ConsumeNewLines(
+            context, originalText, formattedText, logger, shouldKeepInsertedNewlineAtPosition,
+            ref formattingChanges, ref previousOriginalLineIndex, ref iFormatted, ref originalLine, ref formattedLine,
+            originalStart, formattedStart, fixedIndentationWidth);
+    }
+
     private static bool NextLineIsOnlyAnOpenBrace(SourceText text, int lineNumber)
         => lineNumber + 1 < text.Lines.Count &&
-            text.Lines[lineNumber + 1] is { Span.Length: > 0 } nextLine &&
-            nextLine.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
-            nextLine.Start + firstNonWhitespace == nextLine.End - 1 &&
-            nextLine.CharAt(firstNonWhitespace) == '{';
+            CurrentLineIsOnlyAnOpenBrace(text, lineNumber + 1);
+
+    private static bool CurrentLineIsOnlyAnOpenBrace(SourceText text, int lineNumber)
+        => lineNumber >= 0 &&
+            lineNumber < text.Lines.Count &&
+            text.Lines[lineNumber] is { Span.Length: > 0 } line &&
+            line.GetFirstNonWhitespaceOffset() is { } firstNonWhitespace &&
+            line.Start + firstNonWhitespace == line.End - 1 &&
+            line.CharAt(firstNonWhitespace) == '{';
+
+    private static bool CurrentLineEndsWithAnOpenBrace(SourceText text, int lineNumber)
+    {
+        if (lineNumber < 0 || lineNumber >= text.Lines.Count)
+        {
+            return false;
+        }
+
+        var line = text.Lines[lineNumber];
+        for (var i = line.End - 1; i >= line.Start; i--)
+        {
+            if (!char.IsWhiteSpace(text[i]))
+            {
+                return text[i] == '{';
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Handles the case where the external formatter has changed the number of lines by inserting or removing newlines.
@@ -511,7 +572,7 @@ internal static class FormattingUtilities
         ref TextLine formattedLine,
         int originalStart,
         int formattedStart,
-        string fixedIndentString)
+        int fixedIndentationWidth)
     {
         // We assume the external formatter won't change anything but whitespace, so we can just apply the
         // changes directly, but it could very well be adding whitespace in the form of newlines, for example
@@ -586,7 +647,9 @@ internal static class FormattingUtilities
                     if (shouldKeepInsertedNewlineAtPosition?.Invoke(originalPosition) ?? true)
                     {
                         // If we're keeping it, we insert this newline after the original line, with the correct indentation.
-                        formattingChanges.Add(new TextChange(new(originalLine.EndIncludingLineBreak, 0), fixedIndentString + formattedText.ToString(formattedLine.SpanIncludingLineBreak)));
+                        formattingChanges.Add(new TextChange(
+                            new(originalLine.EndIncludingLineBreak, 0),
+                            GetAdjustedFormattedLineText(context, formattedLine, fixedIndentationWidth, formattedLine.EndIncludingLineBreak)));
                     }
                     else
                     {
@@ -606,7 +669,7 @@ internal static class FormattingUtilities
         {
             // The formatter re-wrapped content at a different point, consuming lines from both sides.
             // Update the formatting change to cover the full range of consumed original and formatted lines.
-            formattingChanges[formattingChanges.Count - 1] = new TextChange(
+            formattingChanges[^1] = new TextChange(
                 TextSpan.FromBounds(originalStart, originalLine.End),
                 formattedText.ToString(TextSpan.FromBounds(formattedStart, formattedLine.End)));
         }
@@ -626,7 +689,7 @@ internal static class FormattingUtilities
         if (lineIndex >= text.Lines.Count)
         {
             context.Logger?.LogMessage($"Ran out of {label} lines at index {lineIndex} of {text.Lines.Count} (other side: {otherLineIndex} of {otherLineCount})");
-            logger.LogError($"Ran out of {label} lines while trying to process formatted changes. Abandoning further formatting to not corrupt the source file, please report this issue.");
+            logger.LogError(SR.Formatting_Error);
             return false;
         }
 

@@ -73,6 +73,18 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
 
             DependencyGraphSpec result = DependencyGraphSpec.Load(tempFile);
 
+            // Fixup virtual project paths.
+            if (_msbuildUtility.VirtualProjectBuilder?.GetVirtualProjectPath(project) is { } virtualProjectPath)
+            {
+                foreach (var packageSpec in result.Projects)
+                {
+                    if (packageSpec.FilePath == virtualProjectPath)
+                    {
+                        packageSpec.FilePath = project;
+                    }
+                }
+            }
+
             return result;
         }
         finally
@@ -86,20 +98,25 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
             // But when NuGet.CommandLine.XPlat is being called directly, call dotnet on the path, so this code is debuggable.
             string dotnetPath = _environmentVariableReader.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet";
 
+            bool isFileBasedApp = _msbuildUtility.VirtualProjectBuilder?.IsValidEntryPointPath(project) == true;
+
             // don't redirect stdout or stderr, so errors are output. But use quiet verbosity, so that success has no output.
             ProcessStartInfo processStartInfo = new ProcessStartInfo(dotnetPath)
             {
-                Arguments = $"msbuild " +
+                Arguments = (isFileBasedApp ? "build " : "msbuild ") +
                 $"\"{project}\" " +
-                $"-restore:false " +
-                $"-target:GenerateRestoreGraphFile " +
+                (isFileBasedApp ? "--no-restore " : "-restore:false ") +
+                "-target:GenerateRestoreGraphFile " +
                 $"-property:RestoreGraphOutputPath=\"{tempFile}\" " +
-                $"-property:RestoreRecursive=false " +
-                $"-nologo " +
-                $"-verbosity:quiet " +
-                $"-tl:false " +
-                $"-noautoresponse",
+                "-property:RestoreRecursive=false " +
+                "-nologo " +
+                "-verbosity:quiet " +
+                (!isFileBasedApp ? $"-noautoresponse" : null), // currently not supported for file-based apps
                 UseShellExecute = false,
+                Environment =
+                {
+                    { "MSBUILDTERMINALLOGGER", "off" },
+                },
             };
 
             using var process = Process.Start(processStartInfo);

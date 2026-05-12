@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +17,7 @@ namespace NuGet.Packaging.Signing
         /// Get package signature.
         /// </summary>
         /// <remarks>Returns a null if the package is unsigned.</remarks>
-        Task<PrimarySignature> GetPrimarySignatureAsync(CancellationToken token);
+        Task<PrimarySignature?> GetPrimarySignatureAsync(CancellationToken token);
 
         /// <summary>
         /// Check if a package contains signing information.
@@ -47,7 +45,8 @@ namespace NuGet.Packaging.Signing
         /// <param name="GetUnsignedPackageHash">Function to return the hash in case the package is not signed.</param>
         /// <remarks>The method takes an optional function to get the hash of an unsigned package instead of calculating it.</remarks>
         /// <returns>hash of the unsigned content of the package.</returns>
-        string GetContentHash(CancellationToken token, Func<string> GetUnsignedPackageHash = null);
+        /// <remarks>The content hash is null in plugin scenarios, but those plugins are currently unused.</remarks>
+        string GetContentHash(CancellationToken token, Func<string>? GetUnsignedPackageHash = null);
 
         /// <summary>
         /// Indicates if the the ISignedPackageReader instance can verify signed packages.

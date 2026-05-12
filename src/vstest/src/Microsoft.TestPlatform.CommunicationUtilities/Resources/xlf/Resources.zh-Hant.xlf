@@ -22,6 +22,21 @@
         <target state="translated">使用中的測試探索已中止。原因: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">{0} 程序無法在 {2} 秒後連接到 {1} 程序。程序無法啟動，這可能是因為防毒軟體使其無法啟動。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">{0} 程序無法在 {2} 秒後連接到 {1} 程序。程序 {3} - {4}，使用 exitCode {5} 退出，錯誤輸出: \n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">{0} 程序無法在 {2} 秒後連接到 {1} 程序。逾時發生時，程序 {3} -{4} 仍在執行。這通常是因為機器運行緩慢，請設定環境變數 {5} 以延長逾時時間。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">無法與測試主機處理序通訊。</target>

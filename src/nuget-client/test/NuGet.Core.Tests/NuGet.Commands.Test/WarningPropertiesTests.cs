@@ -15,19 +15,19 @@ namespace NuGet.Commands.Test
         [Fact]
         public void Constructor_WithNullNoWarn_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new WarningProperties(allWarningsAsErrors: true, noWarn: null, warningsAsErrors: new HashSet<NuGetLogCode>() { }, warningsNotAsErrors: new HashSet<NuGetLogCode>() { }));
+            Assert.Throws<ArgumentNullException>(() => new WarningProperties(allWarningsAsErrors: true, noWarn: null!, warningsAsErrors: new HashSet<NuGetLogCode>() { }, warningsNotAsErrors: new HashSet<NuGetLogCode>() { }));
         }
 
         [Fact]
         public void Constructor_WithNullWarningsAsErrors_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new WarningProperties(allWarningsAsErrors: true, noWarn: new HashSet<NuGetLogCode>() { }, warningsAsErrors: null, warningsNotAsErrors: new HashSet<NuGetLogCode>() { }));
+            Assert.Throws<ArgumentNullException>(() => new WarningProperties(allWarningsAsErrors: true, noWarn: new HashSet<NuGetLogCode>() { }, warningsAsErrors: null!, warningsNotAsErrors: new HashSet<NuGetLogCode>() { }));
         }
 
         [Fact]
         public void Constructor_WithNullWarningsNotAsErrors_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new WarningProperties(allWarningsAsErrors: true, noWarn: new HashSet<NuGetLogCode>() { }, warningsAsErrors: new HashSet<NuGetLogCode>() { }, warningsNotAsErrors: null));
+            Assert.Throws<ArgumentNullException>(() => new WarningProperties(allWarningsAsErrors: true, noWarn: new HashSet<NuGetLogCode>() { }, warningsAsErrors: new HashSet<NuGetLogCode>() { }, warningsNotAsErrors: null!));
         }
 
         [Fact]

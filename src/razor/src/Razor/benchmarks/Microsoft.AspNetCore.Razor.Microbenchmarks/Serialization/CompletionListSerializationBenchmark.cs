@@ -66,7 +66,7 @@ public class CompletionListSerializationBenchmark
         var sourceDocument = RazorSourceDocument.Create(documentContent, RazorSourceDocumentProperties.Default);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
-        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate([.. CommonResources.LegacyTagHelpers]);
+        var tagHelperDocumentContext = TagHelperDocumentContext.GetOrCreate([]);
 
         var owner = syntaxTree.Root.FindInnermostNode(queryIndex, includeWhitespace: true, walkMarkersBack: true);
         var context = new RazorCompletionContext(codeDocument, queryIndex, owner, syntaxTree, tagHelperDocumentContext);

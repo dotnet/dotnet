@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Common;
@@ -19,7 +17,7 @@ namespace NuGet.Packaging.Signing
         /// <param name="fallbackSettings">SignedPackageVerifierSettings to be used if RepositorySignatureInfo is unavailable.</param>
         /// <returns>SignedPackageVerifierSettings based on the RepositorySignatureInfo and SignedPackageVerifierSettings.</returns>
         public static SignedPackageVerifierSettings GetSignedPackageVerifierSettings(
-            RepositorySignatureInfo repoSignatureInfo,
+            RepositorySignatureInfo? repoSignatureInfo,
             SignedPackageVerifierSettings fallbackSettings)
         {
             if (fallbackSettings == null)
@@ -55,9 +53,9 @@ namespace NuGet.Packaging.Signing
             }
         }
 
-        public static IReadOnlyCollection<CertificateHashAllowListEntry> GetRepositoryAllowList(IEnumerable<IRepositoryCertificateInfo> repositoryCertificateInfos)
+        public static IReadOnlyCollection<CertificateHashAllowListEntry>? GetRepositoryAllowList(IEnumerable<IRepositoryCertificateInfo>? repositoryCertificateInfos)
         {
-            HashSet<CertificateHashAllowListEntry> repositoryAllowedCertificates = null;
+            HashSet<CertificateHashAllowListEntry>? repositoryAllowedCertificates = null;
 
             if (repositoryCertificateInfos != null)
             {
@@ -71,7 +69,7 @@ namespace NuGet.Packaging.Signing
 
                         if (!string.IsNullOrEmpty(fingerprint))
                         {
-                            repositoryAllowedCertificates.Add(new CertificateHashAllowListEntry(VerificationTarget.Repository, SignaturePlacement.Any, fingerprint, hashAlgorithm));
+                            repositoryAllowedCertificates.Add(new CertificateHashAllowListEntry(VerificationTarget.Repository, SignaturePlacement.Any, fingerprint!, hashAlgorithm));
                         }
                     }
                 }

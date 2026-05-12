@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#pragma warning disable MSTEST0049 // CancellationToken not applicable in test setup/Moq callbacks
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

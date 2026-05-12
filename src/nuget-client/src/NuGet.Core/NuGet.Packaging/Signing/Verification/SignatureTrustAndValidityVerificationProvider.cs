@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -17,9 +15,9 @@ namespace NuGet.Packaging.Signing
     public sealed class SignatureTrustAndValidityVerificationProvider : ISignatureVerificationProvider
     {
         private readonly HashAlgorithmName _fingerprintAlgorithm;
-        private readonly IEnumerable<KeyValuePair<string, HashAlgorithmName>> _allowUntrustedRootList;
+        private readonly IEnumerable<KeyValuePair<string, HashAlgorithmName>>? _allowUntrustedRootList;
 
-        public SignatureTrustAndValidityVerificationProvider(IEnumerable<KeyValuePair<string, HashAlgorithmName>> allowUntrustedRootList = null)
+        public SignatureTrustAndValidityVerificationProvider(IEnumerable<KeyValuePair<string, HashAlgorithmName>>? allowUntrustedRootList = null)
         {
             _fingerprintAlgorithm = HashAlgorithmName.SHA256;
             _allowUntrustedRootList = allowUntrustedRootList;
@@ -75,7 +73,7 @@ namespace NuGet.Packaging.Signing
                 reportUntrustedRoot: !isUntrustedRootAllowed,
                 revocationMode: settings.RevocationMode);
 
-            SignatureVerificationSummary primarySummary = null;
+            SignatureVerificationSummary? primarySummary = null;
 
             if (settings.SignaturePlacement.HasFlag(SignaturePlacement.PrimarySignature) &&
                 VerificationUtility.IsVerificationTarget(signature.Type, settings.VerificationTarget))
@@ -161,7 +159,7 @@ namespace NuGet.Packaging.Signing
                                 issues = issues.Where(log => log.Code != NuGetLogCode.NU3018);
 
                                 if (countersignatureSummary.Timestamp != null &&
-                                Rfc3161TimestampVerificationUtility.ValidateSignerCertificateAgainstTimestamp(signature.SignerInfo.Certificate, countersignatureSummary.Timestamp))
+                                Rfc3161TimestampVerificationUtility.ValidateSignerCertificateAgainstTimestamp(signature.SignerInfo.Certificate!, countersignatureSummary.Timestamp))
                                 {
                                     // Exclude the issue of the primary signature being expired since the repository countersignature fulfills the role of a trusted timestamp.
                                     issues = issues.Where(log => log.Code != NuGetLogCode.NU3037);
@@ -171,7 +169,7 @@ namespace NuGet.Packaging.Signing
                             }
                             else if (IsSignatureExpired(primarySummary) &&
                                 countersignatureSummary.Timestamp != null &&
-                                Rfc3161TimestampVerificationUtility.ValidateSignerCertificateAgainstTimestamp(signature.SignerInfo.Certificate, countersignatureSummary.Timestamp))
+                                Rfc3161TimestampVerificationUtility.ValidateSignerCertificateAgainstTimestamp(signature.SignerInfo.Certificate!, countersignatureSummary.Timestamp))
                             {
                                 // Exclude the issue of the primary signature being expired since the repository countersignature fulfills the role of a trusted timestamp.
                                 issues = issues.Where(log => log.Code != NuGetLogCode.NU3037);
@@ -202,7 +200,7 @@ namespace NuGet.Packaging.Signing
         private SignatureVerificationSummary GetTimestamp(
             Signature signature,
             SignedPackageVerifierSettings verifierSettings,
-            out Timestamp timestamp)
+            out Timestamp? timestamp)
         {
             var issues = new List<SignatureLog>();
             SignatureVerificationStatus status;
@@ -230,11 +228,11 @@ namespace NuGet.Packaging.Signing
             SignatureVerifySettings settings,
             X509Certificate2Collection certificateExtraStore)
         {
-            Timestamp timestamp;
+            Timestamp? timestamp;
             var timestampSummary = GetTimestamp(signature, verifierSettings, out timestamp);
 
             var status = signature.Verify(
-            timestamp,
+            timestamp!,
             settings,
             _fingerprintAlgorithm,
             certificateExtraStore);

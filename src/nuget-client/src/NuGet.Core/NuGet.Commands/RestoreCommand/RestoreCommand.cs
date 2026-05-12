@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,6 +40,7 @@ namespace NuGet.Commands
         private readonly Dictionary<RestoreTargetGraph, Dictionary<string, LibraryIncludeFlags>> _includeFlagGraphs
             = new Dictionary<RestoreTargetGraph, Dictionary<string, LibraryIncludeFlags>>();
 
+        internal IEnvironmentVariableReader EnvironmentVariableReader { get; init; }
         public Guid ParentId { get; }
 
         private const string ProjectRestoreInformation = nameof(ProjectRestoreInformation);
@@ -68,6 +68,7 @@ namespace NuGet.Commands
         private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
         private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
         private const string UsesLegacyPackagesDirectory = nameof(UsesLegacyPackagesDirectory);
+        private const string UsesLegacyAssetTargetFallback = nameof(UsesLegacyAssetTargetFallback);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -174,6 +175,7 @@ namespace NuGet.Commands
 
             _isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
             _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && ShouldUseNewResolverWithLockFile(_isLockFileEnabled, _request.Project) && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
+            EnvironmentVariableReader = EnvironmentVariableWrapper.Instance;
         }
 
         // Use the new resolver if lock files are not enabled, or if lock files are enabled and legacy projects or .NET 10 SDK is used.
@@ -263,7 +265,7 @@ namespace NuGet.Commands
                 telemetry.StartIntervalMeasure();
 
                 // Create assets file
-                if (NuGetEventSource.IsEnabled) TraceEvents.BuildAssetsFileStart(_request.Project.FilePath);
+                if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreCommand_BuildAssetsFileStart(_request.Project.FilePath);
 
                 LockFile assetsFile = BuildAssetsFile(
                     _request.ExistingLockFile,
@@ -272,7 +274,7 @@ namespace NuGet.Commands
                     localRepositories,
                     contextForProject);
 
-                if (NuGetEventSource.IsEnabled) TraceEvents.BuildAssetsFileStop(_request.Project.FilePath);
+                if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreCommand_BuildAssetsFileStop(_request.Project.FilePath);
 
                 telemetry.EndIntervalMeasure(GenerateAssetsFileDuration);
 
@@ -342,7 +344,8 @@ namespace NuGet.Commands
                     restoreTime.Elapsed)
                 {
                     AuditRan = auditRan,
-                    DidDGHashChange = !noOpCacheFileEvaluation
+                    DidDGHashChange = !noOpCacheFileEvaluation,
+                    DoNotWriteDependencyGraphSpec = _request.Project.RestoreMetadata.RestoreDoNotWriteDependencyGraphSpec
                 };
 
                 telemetry.TelemetryEvent[UpdatedAssetsFile] = restoreResult._isAssetsFileDirty.Value;
@@ -361,6 +364,7 @@ namespace NuGet.Commands
             success &= EvaluateHttpSourceUsage();
             success &= HasValidPlatformVersions();
             success &= PackageReferencesHaveVersions();
+            success &= EnsureNoAliasesWithDisallowedCharacters();
 
             return success;
         }
@@ -385,6 +389,8 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[NETSdkVersion] = _request.Project.RestoreSettings.SdkVersion;
             telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
             telemetry.TelemetryEvent[UsesLegacyPackagesDirectory] = !_request.IsLowercasePackagesDirectory;
+            telemetry.TelemetryEvent[UsesLegacyAssetTargetFallback] = MSBuildStringUtility.IsTrue(EnvironmentVariableReader.GetEnvironmentVariable("NUGET_USE_LEGACY_ASSET_TARGET_FALLBACK_DEPENDENCY_RESOLUTION"));
+
             _operationId = telemetry.OperationId;
 
             var isCpvmEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
@@ -448,9 +454,9 @@ namespace NuGet.Commands
             bool noOpCacheFileEvaluation;
             TimeSpan? cacheFileAge;
 
-            if (NuGetEventSource.IsEnabled) TraceEvents.CalcNoOpRestoreStart(_request.Project.FilePath);
+            if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreCommand_CalcNoOpRestoreStart(_request.Project.FilePath);
             (cacheFile, noOpCacheFileEvaluation, cacheFileAge) = EvaluateCacheFile();
-            if (NuGetEventSource.IsEnabled) TraceEvents.CalcNoOpRestoreStop(_request.Project.FilePath);
+            if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreCommand_CalcNoOpRestoreStop(_request.Project.FilePath);
 
             telemetry.TelemetryEvent[NoOpCacheFileEvaluationResult] = noOpCacheFileEvaluation;
             telemetry.TelemetryEvent[ForceRestore] = !_request.AllowNoOp;
@@ -579,8 +585,7 @@ namespace NuGet.Commands
             {
                 using (telemetry.StartIndependentInterval(GenerateRestoreGraphDuration))
                 {
-                    if (NuGetEventSource.IsEnabled)
-                        TraceEvents.BuildRestoreGraphStart(_request.Project.FilePath);
+                    if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreCommand_BuildRestoreGraphStart(_request.Project.FilePath);
 
                     bool resultSuccessful;
                     if (_enableNewDependencyResolver)
@@ -594,8 +599,7 @@ namespace NuGet.Commands
                     }
                     success &= resultSuccessful;
 
-                    if (NuGetEventSource.IsEnabled)
-                        TraceEvents.BuildRestoreGraphStop(_request.Project.FilePath);
+                    if (CommandsEventSource.Instance.IsEnabled()) CommandsEventSource.Instance.RestoreCommand_BuildRestoreGraphStop(_request.Project.FilePath);
                 }
             }
             else
@@ -840,6 +844,70 @@ namespace NuGet.Commands
             {
                 return true;
             }
+        }
+
+        private bool EnsureNoAliasesWithDisallowedCharacters()
+        {
+            return EnsureNoAliasesWithDisallowedCharacters(_request.Project, _logger);
+        }
+
+        internal static bool EnsureNoAliasesWithDisallowedCharacters(PackageSpec project, ILogger logger)
+        {
+            if (!SdkAnalysisLevelMinimums.IsEnabled(project.RestoreMetadata.SdkAnalysisLevel, project.RestoreMetadata.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.V10_0_300))
+            {
+                return true;
+            }
+
+            bool nonAsciiIsError = SdkAnalysisLevelMinimums.IsEnabled(project.RestoreMetadata.SdkAnalysisLevel, project.RestoreMetadata.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.V11_0_100);
+            var success = true;
+
+            foreach (TargetFrameworkInformation framework in project.TargetFrameworks)
+            {
+                string alias = framework.TargetAlias;
+                if (string.IsNullOrEmpty(alias))
+                {
+                    continue;
+                }
+
+                if (alias.Contains('/') || alias.Contains('\\'))
+                {
+                    logger.Log(RestoreLogMessage.CreateError(
+                        NuGetLogCode.NU1019,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasContainsDisallowedCharacters, project.Name, alias)));
+                    success = false;
+                }
+                else if (!IsAscii(alias))
+                {
+                    if (nonAsciiIsError)
+                    {
+                        logger.Log(RestoreLogMessage.CreateError(
+                            NuGetLogCode.NU1019,
+                            string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasContainsDisallowedCharacters, project.Name, alias)));
+                        success = false;
+                    }
+                    else
+                    {
+                        logger.Log(RestoreLogMessage.CreateWarning(
+                            NuGetLogCode.NU1019,
+                            string.Format(CultureInfo.CurrentCulture, Strings.Log_AliasContainsDisallowedCharacters, project.Name, alias)));
+                    }
+                }
+            }
+
+            return success;
+        }
+
+        internal static bool IsAscii(string value)
+        {
+            foreach (char c in value.AsSpan())
+            {
+                if (c > 127)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static void AnalyzePruningResults(PackageSpec project, TelemetryEvent telemetryEvent, ILogger logger)
@@ -1549,13 +1617,32 @@ namespace NuGet.Commands
             {
                 foreach (var versionConflict in graph.AnalyzeResult.VersionConflicts)
                 {
-                    var message = string.Format(
-                           CultureInfo.CurrentCulture,
-                           Strings.Log_VersionConflict,
-                           versionConflict.Selected.Key.Name,
-                           versionConflict.Selected.GetIdAndVersionOrRange(),
-                           _request.Project.Name)
-                       + $" {Environment.NewLine} {versionConflict.Selected.GetPathWithLastRange()} {Environment.NewLine} {versionConflict.Conflicting.GetPathWithLastRange()}.";
+                    string message;
+
+                    bool isPinningEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled == true && _request.Project.RestoreMetadata?.CentralPackageTransitivePinningEnabled == true; // If pinning is enabled for this project, the error message can provide details about adding a PackageVersion.
+                    // If pinning is enabled, then this package is not centrally managed yet.
+                    // If the conflicting package was centrally managed, it'd be pinned and a pinned package cannot cause downgrades or version conflicts.
+                    // A pinned package would basically raise NU1109 if downgraded or no error otherwise.
+
+                    if (isPinningEnabled)
+                    {
+                        message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Log_VersionConflictForCentralTransitive,
+                                versionConflict.Selected.Key.Name,
+                                versionConflict.Selected.GetIdAndVersionOrRange())
+                           + $" {Environment.NewLine} {versionConflict.Selected.GetPathWithLastRange()} {Environment.NewLine} {versionConflict.Conflicting.GetPathWithLastRange()}.";
+                    }
+                    else
+                    {
+                        message = string.Format(
+                                CultureInfo.CurrentCulture,
+                                Strings.Log_VersionConflict,
+                                versionConflict.Selected.Key.Name,
+                                versionConflict.Selected.GetIdAndVersionOrRange(),
+                                _request.Project.Name)
+                           + $" {Environment.NewLine} {versionConflict.Selected.GetPathWithLastRange()} {Environment.NewLine} {versionConflict.Conflicting.GetPathWithLastRange()}.";
+                    }
 
                     await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1107, message, versionConflict.Selected.Key.Name, graph.TargetGraphName));
                     return false;
@@ -1979,7 +2066,7 @@ namespace NuGet.Commands
         }
 
         private static NuGetVersion Version_11_WithAliasSupport = NuGetVersion.Parse("11.0.100-preview.2.26104");
-        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.1");
+        private static NuGetVersion Version_10_WithAliasSupport = NuGetVersion.Parse("10.0.300-preview.0.26159");
 
         private static bool DoesProjectToolsetSupportsDuplicateFrameworks(PackageSpec project)
         {
@@ -2181,85 +2268,6 @@ namespace NuGet.Commands
                 project,
                 msbuildProjectPath: null,
                 projectReferences: Enumerable.Empty<string>());
-        }
-
-        private static class TraceEvents
-        {
-            private const string EventNameBuildAssetsFile = "RestoreCommand/BuildAssetsFile";
-            private const string EventNameBuildRestoreGraph = "RestoreCommand/BuildRestoreGraph";
-            private const string EventNameCalcNoOpRestore = "RestoreCommand/CalcNoOpRestore";
-
-            public static void BuildAssetsFileStart(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameBuildAssetsFile, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void BuildAssetsFileStop(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameBuildAssetsFile, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void BuildRestoreGraphStart(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameBuildRestoreGraph, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void BuildRestoreGraphStop(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameBuildRestoreGraph, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void CalcNoOpRestoreStart(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameCalcNoOpRestore, eventOptions, new { FilePath = filePath });
-            }
-
-            public static void CalcNoOpRestoreStop(string filePath)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    Keywords = NuGetEventSource.Keywords.Performance |
-                                NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameCalcNoOpRestore, eventOptions, new { FilePath = filePath });
-            }
         }
     }
 }

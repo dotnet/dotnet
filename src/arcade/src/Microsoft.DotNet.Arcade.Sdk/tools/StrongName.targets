@@ -31,21 +31,21 @@
     <When Condition="'$(SignAssembly)' == 'false'" />
     <When Condition="'$(StrongNameKeyId)' == 'Microsoft'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/MSFT.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(ArcadeSdkSnkDir)MSFT.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(MicrosoftPublicKey)</PublicKey>
         <PublicKeyToken>b03f5f7f11d50a3a</PublicKeyToken>
       </PropertyGroup>
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'MicrosoftShared'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(ArcadeSdkSnkDir)35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(MicrosoftSharedPublicKey)</PublicKey>
         <PublicKeyToken>31BF3856AD364E35</PublicKeyToken>
       </PropertyGroup>
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'MicrosoftAspNetCore'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/AspNetCore.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(ArcadeSdkSnkDir)AspNetCore.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(MicrosoftAspNetCorePublicKey)</PublicKey>
         <PublicKeyToken>adb9793829ddae60</PublicKeyToken>
         <PublicSign Condition="'$(FullAssemblySigningSupported)' != 'false'">false</PublicSign> <!-- The MicrosoftAspNetCore strong name key is a full key -->
@@ -53,7 +53,7 @@
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'ECMA'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/ECMA.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(ArcadeSdkSnkDir)ECMA.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(ECMAPublicKey)</PublicKey>
         <PublicKeyToken>b77a5c561934e089</PublicKeyToken>
       </PropertyGroup>
@@ -65,7 +65,7 @@
     -->
     <When Condition="'$(StrongNameKeyId)' == 'Open'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/Open.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(ArcadeSdkSnkDir)Open.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(OpenPublicKey)</PublicKey>
         <PublicKeyToken>cc7b13ffcd2ddd51</PublicKeyToken>
         <DelaySign>false</DelaySign>
@@ -74,7 +74,7 @@
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'SilverlightPlatform'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)snk/SilverlightPlatformPublicKey.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(ArcadeSdkSnkDir)SilverlightPlatformPublicKey.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(SilverlightPlatformPublicKey)</PublicKey>
         <PublicKeyToken>7cec85d7bea7798e</PublicKeyToken>
       </PropertyGroup>

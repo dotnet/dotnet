@@ -13,6 +13,7 @@ namespace NuGet.CommandLine.XPlat
     {
         private const int DefaultSkip = 0;
         private const int DefaultTake = 20;
+        public int ConsoleWidth { get; set; }
         public List<string> Sources { get; set; }
         public int Skip { get; set; }
         public int Take { get; set; }

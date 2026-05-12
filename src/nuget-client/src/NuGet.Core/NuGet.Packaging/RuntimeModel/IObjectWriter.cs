@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 
@@ -74,7 +72,7 @@ namespace NuGet.RuntimeModel
         /// <param name="value">The datum.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
-        void WriteNameValue(string name, string value);
+        void WriteNameValue(string name, string? value);
 
         /// <summary>
         /// Writes a name-collection pair.

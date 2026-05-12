@@ -41,7 +41,7 @@
         <TabControl.Resources>
           <Style TargetType="TabItem">
             <Setter Property="Background" Value="{DynamicResource {x:Static nuget:Brushes.HeaderBackground}}" />
-            <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource Font122PercentSizeConverter}}"/>
+            <Setter Property="FontSize" Value="{DynamicResource {x:Static nuget:Brushes.Environment122PercentFontSizeKey}}"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static nuget:Brushes.UIText}}" />
             <Setter Property="Padding" Value="20,0,20,0" />
             <Setter Property="FocusVisualStyle" Value="{DynamicResource ControlsFocusVisualStyle}" />
@@ -171,7 +171,7 @@
         Grid.Column="4"
         HorizontalAlignment="Right"
         VerticalAlignment="Center"
-        FontSize="{Binding FontSize,RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource Font155PercentSizeConverter}}"
+        FontSize="{DynamicResource {x:Static nuget:Brushes.Environment155PercentFontSizeKey}}"
         Margin="20,0,0,0"
         TextTrimming="CharacterEllipsis">
         Package Manager

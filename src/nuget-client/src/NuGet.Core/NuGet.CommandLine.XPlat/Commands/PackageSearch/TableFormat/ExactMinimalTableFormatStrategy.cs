@@ -10,9 +10,9 @@ namespace NuGet.CommandLine.XPlat
         private readonly string[] _minimalVerbosityTableHeaderForExactMatch = { "Package ID", "Version" };
         private readonly int[] _minimalColumnsToHighlight = { 0 };
 
-        public Table CreateTable()
+        public Table CreateTable(int consoleWidth)
         {
-            return new Table(_minimalColumnsToHighlight, _minimalVerbosityTableHeaderForExactMatch);
+            return new Table(_minimalColumnsToHighlight, _minimalVerbosityTableHeaderForExactMatch, consoleWidth);
         }
     }
 }

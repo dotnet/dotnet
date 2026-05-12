@@ -15,8 +15,6 @@ public class VSTestTask : Task, ITestTask
 {
     private int _activeProcessId;
 
-    private const string DotnetExe = "dotnet";
-
     [Required]
     public ITaskItem? TestFileFullPath { get; set; }
     public string? VSTestSetting { get; set; }
@@ -73,7 +71,7 @@ public class VSTestTask : Task, ITestTask
 
         var processInfo = new ProcessStartInfo
         {
-            FileName = DotnetExe,
+            FileName = TestTaskUtils.ResolveDotnetPath() ?? "dotnet",
             Arguments = TestTaskUtils.CreateCommandLineArguments(this),
             UseShellExecute = false,
         };

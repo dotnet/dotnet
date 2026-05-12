@@ -1083,6 +1083,7 @@ namespace NuGet.Build.Tasks.Console
             restoreMetadata.UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(project.GetProperty("UsingMicrosoftNETSdk"));
             restoreMetadata.SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(project.GetProperty("SdkAnalysisLevel"));
             restoreMetadata.UseLegacyDependencyResolver = project.IsPropertyTrue("RestoreUseLegacyDependencyResolver");
+            restoreMetadata.RestoreDoNotWriteDependencyGraphSpec = project.IsPropertyTrue("RestoreDoNotWriteDependencyGraphSpec");
 
             return (restoreMetadata, targetFrameworkInfos);
 

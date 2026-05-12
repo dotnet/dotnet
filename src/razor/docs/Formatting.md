@@ -4,6 +4,14 @@ Razor formatting can sometimes behave unexpectedly or appear to do nothing. This
 explains common causes and describes concrete steps you can take to reproduce issues and
 help us investigate.
 
+## Formatting causes an error or crash
+
+If formatting produces an error, C# or HTML formatting likely produced a change Razor cannot
+handle. If this happens you might see an info bar in Visual Studio, or a popup in VS Code, saying
+"Formatting error." and "Please report this issue". We can usually fix these errors quickly, but
+we need detailed information to find the root cause. Turn on Formatting Logging (see the bottom
+of this doc) and attach the resulting logs to your issue so we can reproduce and resolve the crash.
+
 ## Formatting appears to do nothing
 
 The formatter deliberately aborts if it detects a change that would modify any non-whitespace
@@ -33,13 +41,6 @@ repro if you can — smaller repros help us diagnose and fix the issue faster.
 
 Also enable formatting logging and attach the logs to the issue; those logs contain useful
 diagnostic information we need to investigate formatting bugs.
-
-## Formatting causes an error or crash
-
-If formatting produces an error, C# or HTML formatting likely produced a change Razor cannot
-handle. We can usually fix these errors quickly, but we need detailed information to find the
-root cause. Turn on Formatting Logging and attach the resulting logs to your issue so we can
-reproduce and resolve the crash.
 
 ## Turn on Formatting Logging
 

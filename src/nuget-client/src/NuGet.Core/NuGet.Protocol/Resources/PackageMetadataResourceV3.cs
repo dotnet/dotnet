@@ -286,7 +286,7 @@ namespace NuGet.Protocol
                     {
                         catalogEntry.ReadmeFileUrl = _readmeUriTemplateResource?.GetReadmeUrl(catalogEntry.PackageId, catalogEntry.Version);
                     }
-                    catalogEntry = metadataCache.GetObject(catalogEntry);
+                    catalogEntry.CacheStrings(metadataCache);
                     results.Add(catalogEntry);
                 }
             }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Security.Cryptography;
 
@@ -15,7 +13,7 @@ namespace NuGet.Packaging
     /// </summary>
     public sealed class Sha512HashFunction : IHashFunction
     {
-        private byte[] _hash;
+        private byte[]? _hash;
 
 #if IS_DESKTOP
         private readonly SHA512 _hashFunc;

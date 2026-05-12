@@ -10,15 +10,8 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Tools
 {
-#if NET472
-    [LoadInSeparateAppDomain]
-    public sealed class UpdatePackageVersionTask : AppDomainIsolatedTask
-    {
-        static UpdatePackageVersionTask() => AssemblyResolution.Initialize();
-#else
     public class UpdatePackageVersionTask : Microsoft.Build.Utilities.Task
     {
-#endif
         public string VersionKind { get; set; }
 
         [Required]
@@ -33,9 +26,6 @@ namespace Microsoft.DotNet.Tools
 
         public override bool Execute()
         {
-#if NET472
-            AssemblyResolution.Log = Log;
-#endif
             try
             {
                 ExecuteImpl();
@@ -43,9 +33,6 @@ namespace Microsoft.DotNet.Tools
             }
             finally
             {
-#if NET472
-                AssemblyResolution.Log = null;
-#endif
             }
         }
 

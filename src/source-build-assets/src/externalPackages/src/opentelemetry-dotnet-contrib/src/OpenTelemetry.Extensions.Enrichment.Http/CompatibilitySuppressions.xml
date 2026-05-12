@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Suppression>
+        <DiagnosticId>CP0002</DiagnosticId>
+        <Target>M:OpenTelemetry.Extensions.Enrichment.Http.HttpClientTraceEnricher.EnrichWithRequest(OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag@,System.Net.Http.HttpRequestMessage)</Target>
+        <Left>lib/netstandard2.0/OpenTelemetry.Extensions.Enrichment.Http.dll</Left>
+        <Right>lib/net462/OpenTelemetry.Extensions.Enrichment.Http.dll</Right>
+    </Suppression>
+    <Suppression>
+        <DiagnosticId>CP0002</DiagnosticId>
+        <Target>M:OpenTelemetry.Extensions.Enrichment.Http.HttpClientTraceEnricher.EnrichWithResponse(OpenTelemetry.Extensions.Enrichment.TraceEnrichmentBag@,System.Net.Http.HttpResponseMessage)</Target>
+        <Left>lib/netstandard2.0/OpenTelemetry.Extensions.Enrichment.Http.dll</Left>
+        <Right>lib/net462/OpenTelemetry.Extensions.Enrichment.Http.dll</Right>
+    </Suppression>
+</Suppressions>

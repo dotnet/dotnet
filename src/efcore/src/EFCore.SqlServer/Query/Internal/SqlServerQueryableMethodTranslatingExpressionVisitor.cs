@@ -91,8 +91,7 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
                         _, // source, translated above
                         UnaryExpression { NodeType: ExpressionType.Quote, Operand: LambdaExpression vectorPropertySelector },
                         var similarTo,
-                        var metric,
-                        var topN
+                        var metric
                     ]
                     && source is
                     {
@@ -113,8 +112,7 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
                     }
 
                     if (TranslateExpression(similarTo) is not { } translatedSimilarTo
-                        || TranslateExpression(metric, applyDefaultTypeMapping: false) is not { } translatedMetric
-                        || TranslateExpression(topN) is not { } translatedTopN)
+                        || TranslateExpression(metric, applyDefaultTypeMapping: false) is not { } translatedMetric)
                     {
                         return QueryCompilationContext.NotTranslatedExpression;
                     }
@@ -135,8 +133,7 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
                             // as required by SQL Server)
                             vectorColumn,
                             translatedSimilarTo,
-                            translatedMetric,
-                            translatedTopN
+                            translatedMetric
                         ]);
 
                     // We have the VECTOR_SEARCH() function call. Modify the SelectExpression and shaper to use it and project
@@ -172,6 +169,11 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
                         return new ShapedQueryExpression(select, shaper);
                     }
 #pragma warning restore EF9105 // VectorSearch is experimental
+                }
+
+                case nameof(SqlServerQueryableExtensions.WithApproximate):
+                {
+                    return TranslateWithApproximate(source);
                 }
 
                 case nameof(SqlServerQueryableExtensions.FreeTextTable) or nameof(SqlServerQueryableExtensions.ContainsTable)
@@ -537,12 +539,11 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
 
         // Find the container column in the relational model to get its type mapping
         // Note that we assume exactly one column with the given name mapped to the entity (despite entity splitting).
-        // See #36647 and #36646 about improving this.
-        var containerColumnName = structuralType.GetContainerColumnName();
+        // See #38060 about improving this.
+        var containerColumnName = structuralType.GetContainerColumnName()!;
         var containerColumn = structuralType.ContainingEntityType.GetTableMappings()
-            .SelectMany(m => m.Table.Columns)
-            .Where(c => c.Name == containerColumnName)
-            .Single();
+            .Select(m => m.Table.FindColumn(containerColumnName))
+            .Single(c => c is not null)!;
 
         var nestedJsonPropertyNames = jsonQueryExpression.StructuralType switch
         {
@@ -796,6 +797,34 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
             result = source.UpdateQueryExpression(new SelectExpression(translation, _queryCompilationContext.SqlAliasManager));
 #pragma warning restore EF1001
             return true;
+        }
+    }
+
+    private ShapedQueryExpression TranslateWithApproximate(ShapedQueryExpression source)
+    {
+        var selectExpression = (SelectExpression)source.QueryExpression;
+
+        switch (selectExpression)
+        {
+            // WithApproximate() after Skip().Take() — not yet supported; SQL Server will add native OFFSET+FETCH
+            // WITH APPROXIMATE support in the future.
+            case { Limit: not null, Offset: not null }:
+                throw new InvalidOperationException(SqlServerStrings.WithApproximateNotSupportedWithSkipAndTake);
+
+            // Already wrapped — calling WithApproximate() twice is a no-op.
+            case { Limit: WithApproximateExpression }:
+                return source;
+
+            // Normal case: WithApproximate() after Take() — wrap the Limit with WithApproximateExpression
+            case { Limit: { } limit }:
+#pragma warning disable EF1001 // Internal EF Core API usage.
+                selectExpression.SetLimit(new WithApproximateExpression(limit));
+#pragma warning restore EF1001 // Internal EF Core API usage.
+                return source;
+
+            // WithApproximate() without Take()
+            default:
+                throw new InvalidOperationException(SqlServerStrings.WithApproximateRequiresTake);
         }
     }
 

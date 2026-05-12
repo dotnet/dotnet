@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetVS)</TargetFramework>
-    <OutputType>library</OutputType>
     <IsShipping>false</IsShipping>
   </PropertyGroup>
 

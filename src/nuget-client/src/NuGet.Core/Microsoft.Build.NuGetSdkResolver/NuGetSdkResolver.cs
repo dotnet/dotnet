@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -88,7 +87,7 @@ namespace Microsoft.Build.NuGetSdkResolver
                 return factory.IndicateFailure(errors: new List<string>() { Strings.Error_DisabledSdkResolver }, warnings: null);
             }
 
-            if (NuGetEventSource.IsEnabled) TraceEvents.ResolveStart(sdkReference);
+            if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.ResolveStart(sdkReference.Name, sdkReference.Version);
 
             try
             {
@@ -108,7 +107,7 @@ namespace Microsoft.Build.NuGetSdkResolver
             }
             finally
             {
-                if (NuGetEventSource.IsEnabled) TraceEvents.ResolveStop(sdkReference);
+                if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.ResolveStop(sdkReference.Name, sdkReference.Version);
             }
         }
 
@@ -159,13 +158,13 @@ namespace Microsoft.Build.NuGetSdkResolver
                 // Cast the NuGet version since the caller does not want to consume NuGet classes directly
                 var parsedSdkVersion = (NuGetVersion)nuGetVersion;
 
-                if (NuGetEventSource.IsEnabled) TraceEvents.GetResultStart(sdk.Name, parsedSdkVersion.OriginalVersion);
+                if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.GetResultStart(sdk.Name, parsedSdkVersion.OriginalVersion);
 
                 SdkResult result = null;
 
                 try
                 {
-                    if (NuGetEventSource.IsEnabled) TraceEvents.LoadSettingsStart();
+                    if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.LoadSettingsStart();
 
                     // Load NuGet settings and a path resolver
                     ISettings settings;
@@ -183,7 +182,7 @@ namespace Microsoft.Build.NuGetSdkResolver
                     }
                     finally
                     {
-                        if (NuGetEventSource.IsEnabled) TraceEvents.LoadSettingsStop();
+                        if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.LoadSettingsStop();
                     }
 
                     var fallbackPackagePathResolver = new FallbackPackagePathResolver(NuGetPathContext.Create(settings));
@@ -201,7 +200,7 @@ namespace Microsoft.Build.NuGetSdkResolver
                             X509TrustStore.InitializeForDotNetSdk(logger);
 #endif
 
-                            if (NuGetEventSource.IsEnabled) TraceEvents.RestorePackageStart(libraryIdentity);
+                            if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.RestorePackageStart(libraryIdentity.Name, libraryIdentity.Version.OriginalVersion);
 
                             // Asynchronously run the restore without a commit which find the package on configured feeds, download, and unzip it without generating any other files
                             // This must be run in its own task because legacy project system evaluates projects on the UI thread which can cause RunWithoutCommit() to deadlock
@@ -213,7 +212,7 @@ namespace Microsoft.Build.NuGetSdkResolver
 
                             var results = restoreTask.Result;
 
-                            if (NuGetEventSource.IsEnabled) TraceEvents.RestorePackageStop(libraryIdentity);
+                            if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.RestorePackageStop(libraryIdentity.Name, libraryIdentity.Version.OriginalVersion);
 
                             fallbackPackagePathResolver = new FallbackPackagePathResolver(NuGetPathContext.Create(settings));
 
@@ -221,11 +220,11 @@ namespace Microsoft.Build.NuGetSdkResolver
                             foreach (RestoreResult restoreResult in results.Select(i => i.Result).Where(i => i.Success))
                             {
                                 // Find the information about the package that was installed.  In some cases, the version can be different than what was specified (like you specify 1.0 but get 1.0.0)
-                                var installedPackage = restoreResult.GetAllInstalled().FirstOrDefault(i => i == libraryIdentity);
+                                var installedPackage = restoreResult.LockFile.GetLibrary(libraryIdentity.Name, libraryIdentity.Version);
 
                                 if (installedPackage != null)
                                 {
-                                    if (TryGetMSBuildSdkPackageInfo(fallbackPackagePathResolver, installedPackage, out installedPath, out installedVersion))
+                                    if (TryGetMSBuildSdkPackageInfo(fallbackPackagePathResolver, libraryIdentity, out installedPath, out installedVersion))
                                     {
                                         break;
                                     }
@@ -266,7 +265,7 @@ namespace Microsoft.Build.NuGetSdkResolver
                 }
                 finally
                 {
-                    if (NuGetEventSource.IsEnabled) TraceEvents.GetResultStop(sdk.Name, parsedSdkVersion.OriginalVersion, result);
+                    if (SdkResolverEventSource.Instance.IsEnabled()) SdkResolverEventSource.Instance.GetResultStop(sdk.Name, parsedSdkVersion.OriginalVersion, result?.Path, result == null ? 0 : (result.Success ? 1 : 0));
                 }
             }
 
@@ -316,122 +315,6 @@ namespace Microsoft.Build.NuGetSdkResolver
 
                 return true;
             }
-        }
-
-        private static class TraceEvents
-        {
-            private const string EventNameGetResult = "SdkResolver/GetResult";
-            private const string EventNameLoadSettings = "SdkResolver/LoadSettings";
-            private const string EventNameResolve = "SdkResolver/Resolve";
-            private const string EventNameRestorePackage = "SdkResolver/RestorePackage";
-
-            public static void GetResultStart(string id, string version)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.SdkResolver,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameGetResult, eventOptions, new GetResultStartEventData(id, version));
-            }
-
-            public static void GetResultStop(string id, string version, SdkResult result)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.SdkResolver,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameGetResult, eventOptions, new GetResultStopEventData(id, version, InstallPath: result?.Path, Success: result == null ? false : result.Success));
-            }
-
-            public static void LoadSettingsStart()
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.SdkResolver,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameLoadSettings, eventOptions);
-            }
-
-            public static void LoadSettingsStop()
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.SdkResolver,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameLoadSettings, eventOptions);
-            }
-
-            public static void ResolveStart(SdkReference sdkReference)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.SdkResolver | NuGetEventSource.Keywords.Performance,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameResolve, eventOptions, new ResolveEventData(sdkReference.Name, sdkReference.Version));
-            }
-
-            public static void ResolveStop(SdkReference sdkReference)
-            {
-                var eventData = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.SdkResolver | NuGetEventSource.Keywords.Performance,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameResolve, eventData, new ResolveEventData(sdkReference.Name, sdkReference.Version));
-            }
-
-            public static void RestorePackageStart(LibraryIdentity libraryIdentity)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.SdkResolver,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameRestorePackage, eventOptions, new RestorePackageEventData(libraryIdentity.Name, libraryIdentity.Version.OriginalVersion));
-            }
-
-            public static void RestorePackageStop(LibraryIdentity libraryIdentity)
-            {
-                var eventOptions = new EventSourceOptions
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.SdkResolver,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameRestorePackage, eventOptions, new RestorePackageEventData(libraryIdentity.Name, libraryIdentity.Version.OriginalVersion));
-            }
-
-            [EventData]
-            private record struct GetResultStartEventData(string Id, string Version);
-
-            [EventData]
-            private record struct GetResultStopEventData(string Id, string Version, string InstallPath, bool Success);
-
-            [EventData]
-            private record struct ResolveEventData(string Name, string Version);
-
-            [EventData]
-            private record struct RestorePackageEventData(string Id, string Version);
         }
     }
 }

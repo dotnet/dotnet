@@ -94,7 +94,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
                 """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyComponent", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, MyComponentCSharpPath, saveFile: true, ControlledHangMitigatingCancellationToken);
 
         await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
@@ -110,8 +109,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "MyComponent.razor.cs", ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync("MyProperty", charsOffset: 0, occurrence: 2, extendSelection: false, selectBlock: false, ControlledHangMitigatingCancellationToken);
-
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyPage", ControlledHangMitigatingCancellationToken);
 
         await Task.Delay(500);
 
@@ -153,7 +150,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
 
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyComponent", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, MyComponentPath, saveFile: true, ControlledHangMitigatingCancellationToken);
 
         await TestServices.SolutionExplorer.AddFileAsync(RazorProjectConstants.BlazorProjectName,
@@ -210,7 +206,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyComponent", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.SolutionExplorer.OpenFileAsync(RazorProjectConstants.BlazorProjectName, "MyComponent.cs", ControlledHangMitigatingCancellationToken);
@@ -263,7 +258,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyComponent", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
@@ -302,7 +296,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyComponent", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);
@@ -343,7 +336,6 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
             """,
             open: true,
             cancellationToken: ControlledHangMitigatingCancellationToken);
-        await TestServices.RazorProjectSystem.WaitForComponentTagNameAsync(RazorProjectConstants.BlazorProjectName, "MyComponent", ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync(position, ControlledHangMitigatingCancellationToken);

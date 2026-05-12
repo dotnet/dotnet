@@ -32,7 +32,7 @@ variables:
   value: DotNetCore
 
 - name: defaultContainerOptions
-  value: --privileged
+  value: --privileged --ulimit nofile=65536:65536
 
 - ${{ if eq(parameters.desiredIBC, 'Enabled') }}:
   - name: ibcEnabled
@@ -83,8 +83,8 @@ variables:
     value: true
   - name: signType
     value: real
-  # Only sign DACs if this is an official build of a release branch and is not a source-only build.
-  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  # Only sign DACs if this is an official build of a 1xx-band release branch and is not a source-only build.
+  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')), contains(variables['Build.SourceBranch'], '.0.1')) }}:
     - name: signDacEnabled
       value: true
   - ${{ else }}:
@@ -124,8 +124,8 @@ variables:
       value: true
     - name: signType
       value: real
-    # Only sign DACs if this is not a source-only build.
-    - ${{ if ne(parameters.buildSourceOnly, true) }}:
+    # Only sign DACs if this is not a source-only build and is a 1xx-band release branch.
+    - ${{ if and(ne(parameters.buildSourceOnly, true), contains(variables['Build.SourceBranch'], '.0.1')) }}:
       - name: signDacEnabled
         value: true
     - ${{ else }}:
@@ -142,6 +142,11 @@ variables:
     value: false
   - name: signDacEnabled
     value: false
+
+# opt in to node24 in pipelines agent to fix noisy warnings: https://github.com/microsoft/azure-pipelines-agent/issues/5464
+# can be removed once it is the default
+- name: AZP_AGENT_USE_NODE24_TO_START_CONTAINER
+  value: true
 
 - name: almaLinuxContainerName
   value: almaLinuxContainer
@@ -172,6 +177,11 @@ variables:
   value: ubuntuArmContainer
 - name: ubuntuArmContainerImage
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-24.04-arm64
+
+- name: azurelinuxBuildContainerName
+  value: azurelinuxBuildContainer
+- name: azurelinuxBuildContainerImage
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-build-amd64
 
 - name: azurelinuxX64CrossContainerName
   value: azurelinuxX64CrossContainer
@@ -259,9 +269,9 @@ variables:
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: defaultPoolName
-    value: NetCore-Public-XL
+    value: NetCore-Public-XL  # use hardcoded name since there is no servicing variant of the XL pool
   - name: shortStackPoolName
-    value: NetCore-Public
+    value: $(DncEngPublicBuildPool)
   - name: poolImage_Linux
     value: build.azurelinux.3.amd64.open
   - name: poolImage_LinuxArm64
@@ -278,9 +288,9 @@ variables:
       value: windows.vs2026.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
-    value: NetCore1ESPool-Internal
+    value: $(DncEngInternalBuildPool)
   - name: shortStackPoolName
-    value: NetCore1ESPool-Internal
+    value: $(DncEngInternalBuildPool)
   - name: poolImage_Linux
     value: build.azurelinux.3.amd64
   - name: poolImage_LinuxArm64
@@ -291,4 +301,5 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2026.amd64
+
 

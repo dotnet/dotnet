@@ -25,7 +25,7 @@
                         HtmlContent - (106:3,22 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (106:3,22 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                     ComponentAttribute - (59:2,28 [21] x:\dir\subdir\Test\TestComponent.cshtml) - Parameter - Parameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (59:2,28 [21] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new MyClass<string>()
+                        IntermediateToken - (59:2,28 [21] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new MyClass<string>()
     NamespaceDeclaration -  - __Blazor.MyApp.Components.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.MyApp.Components.TestComponent.TypeInference - CreateParentComponent_0

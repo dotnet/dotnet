@@ -1684,6 +1684,8 @@ ORDER BY c["OrderID"]
         AssertSql();
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task Reverse_after_orderby_thenby(bool async)
     {
         // Always throws for sync.

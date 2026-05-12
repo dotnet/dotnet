@@ -3,6 +3,9 @@
   "enabledManagers": [
     "custom.regex"
   ],
+  "vulnerabilityAlerts": {
+    "enabled": false
+  },
   "customManagers": [
     {
       "description": "Update the renovateVersion parameter in the Renovate stages template when a new Renovate Docker version is released.",

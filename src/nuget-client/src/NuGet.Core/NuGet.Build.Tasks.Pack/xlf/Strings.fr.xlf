@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../Strings.resx">
     <body>
+      <trans-unit id="AmbigiousFrameworkReferences">
+        <source>Ambiguous framework references. The following target frameworks are both declaring framework references for packing: {0}</source>
+        <target state="translated">Références d’infrastructure ambiguës. Les infrastructures cibles suivantes déclarent tous deux des références d’infrastructure pour l’empaquetage : {0}</target>
+        <note>0 - List of TargetFramework with framework refs</note>
+      </trans-unit>
+      <trans-unit id="AmbigiousPackageAssemblies">
+        <source>Ambiguous packaging content. The above frameworks have the same target path for {0}.</source>
+        <target state="translated">Contenu d’empaquetage ambigu. Les infrastructures mentionnées ci-dessus ont le même chemin d’accès cible pour {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AmbigiousPackageDependencies">
+        <source>Ambiguous package dependencies. The following target frameworks are both declaring package dependencies for packing: {0}</source>
+        <target state="translated">Dépendances de package ambiguës. Les infrastructures cibles suivantes déclarent toutes deux des dépendances de package pour l’empaquetage : {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
         <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
         <target state="translated">Le fichier d'actifs trouvé ne contient pas de spec de package valide. Réessayez de restaurer le projet. Emplacement du fichier d'actifs : {0}.</target>
@@ -11,6 +26,12 @@
         <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
         <target state="translated">Le fichier d'actifs produit par la restauration n'existe pas. Réessayez de restaurer le projet. Emplacement attendu du fichier d'actifs : {0}.</target>
         <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateFrameworks">
+        <source>This project is using aliased frameworks, the following TargetFramework properties map to the same effective frameworks '{0}' and pack is unable to disambiguate and create a single package. {1}</source>
+        <target state="translated">Ce projet utilise des infrastructures avec alias. Les propriétés TargetFramework suivantes mappent aux mêmes infrastructures effectives « {0} » et le pack ne peut pas les différencier pour créer un seul package. {1}</target>
+        <note>0 - details about which framework 
+1 - Additional details</note>
       </trans-unit>
       <trans-unit id="Error_FileNotFound">
         <source>The file '{0}' to be packed was not found on disk.</source>

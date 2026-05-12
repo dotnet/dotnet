@@ -40,15 +40,12 @@ internal class CSharpCodeActionProvider(LanguageServerFeatureOptions languageSer
         RazorPredefinedCodeFixProviderNames.ImplementAbstractClass,
         RazorPredefinedCodeFixProviderNames.ImplementInterface,
         RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable,
+        RazorPredefinedCodeFixProviderNames.GenerateMethod,
     ];
 
-    // We don't support any code actions in implicit expressions at the moment, but rather than simply returning early
-    // I thought it best to create an allow list, empty, so that we can easily add them later if we identify any big
-    // hitters that we want to enable.
-    // The one example commented out here should not be taken as an opinion as to what that allow list should look like.
     internal static readonly HashSet<string> SupportedImplicitExpressionCodeActionNames =
     [
-        // RazorPredefinedCodeFixProviderNames.RemoveUnusedVariable,
+         RazorPredefinedCodeFixProviderNames.GenerateMethod,
     ];
 
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;

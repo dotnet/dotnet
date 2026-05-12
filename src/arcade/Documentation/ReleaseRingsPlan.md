@@ -35,7 +35,6 @@ validation checks.
 * BinSkim validation
 * Packages validation
 * Symbols validation
-* Sourcelink validation
 * Checksum validation
 * Asset validation
 * Signing validation

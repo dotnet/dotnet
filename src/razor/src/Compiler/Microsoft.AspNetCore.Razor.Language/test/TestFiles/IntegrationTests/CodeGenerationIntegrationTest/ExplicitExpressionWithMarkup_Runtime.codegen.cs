@@ -25,20 +25,19 @@ namespace AspNetCoreGeneratedDocument
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("<div>");
-            Write(
+#nullable restore
+#line (1,15)-(1,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml"
+Write(
+
+#line default
+#line hidden
+#nullable disable
             item => new global::Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_template_writer) => {
                 PushWriter(__razor_template_writer);
                 WriteLiteral("</div>");
                 PopWriter();
             }
-            )
-#nullable restore
-#line (1,15)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ExplicitExpressionWithMarkup.cshtml"
-
-#line default
-#line hidden
-#nullable disable
-            );
+            ));
         }
         #pragma warning restore 1998
         #nullable restore

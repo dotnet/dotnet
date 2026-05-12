@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Frameworks;
@@ -32,7 +30,7 @@ namespace NuGet.ProjectModel
 
         public IEnumerable<LibraryDependency> TransitiveDependencies { get; }
 
-        public bool Equals(CentralTransitiveDependencyGroup other)
+        public bool Equals(CentralTransitiveDependencyGroup? other)
         {
             if (other == null)
             {
@@ -52,7 +50,7 @@ namespace NuGet.ProjectModel
             return false;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as CentralTransitiveDependencyGroup);
         }

@@ -7,6 +7,10 @@
 
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
+    <BuildServerShutdownTimeoutInMilliseconds Condition="'$(BuildServerShutdownTimeoutInMilliseconds)' == ''">300000</BuildServerShutdownTimeoutInMilliseconds>
+    <BuildServerShutdownTimeoutInSeconds Condition="'$(BuildServerShutdownTimeoutInSeconds)' == ''">$([MSBuild]::Divide($(BuildServerShutdownTimeoutInMilliseconds), 1000))</BuildServerShutdownTimeoutInSeconds>
+    <BuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--vbcscompiler' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Build server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</BuildServerShutdownCommand>
+    <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_build_server_shutdown_pid 2&gt;/dev/null) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
 
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
@@ -36,9 +40,9 @@
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'preview'">/p:DotNetFinalVersionKind=prerelease</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'release'">/p:DotNetFinalVersionKind=release</RepoDotNetFinalVersionKindArg>
-    <CommonArgs Condition="'$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
+    <CommonArgs Condition="'$(DisallowDotNetFinalVersionKindOverride)' != 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
 
-    <!-- Only pass these properites through when necessary to reduce command line noise. -->
+    <!-- Only pass these properties through when necessary to reduce command line noise. -->
     <CommonArgs Condition="'$(DotNetBuildTests)' == 'true' and '$(DotNetBuildTestsOptOut)' != 'true'">$(CommonArgs) /p:DotNetBuildTests=true</CommonArgs>
 
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(BuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</BuildArgs>
@@ -154,6 +158,7 @@
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.AddSourceToNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.RemoveInternetSourcesFromNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.RemoveBlockedAuditSourcesFromNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateNuGetConfigPackageSourcesMappings" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateNuGetConfig"
           DependsOnTargets="ResolveProjectReferences;GetRepositoryReferenceInfo"
@@ -182,6 +187,11 @@
       
       <AddPrebuiltFeeds>true</AddPrebuiltFeeds>
       <AddPrebuiltFeeds Condition="'$(DotNetSourceOnlyTestOnly)' == 'true' or '$(DotNetBuildSourceOnly)' != 'true'">false</AddPrebuiltFeeds>
+
+      <!-- Only clear disabledPackageSources in internal builds where feed credentials are available.
+           This prevents darc-int feeds (kept via KeepFeedPrefixes) from causing 401 errors in public CI. -->
+      <ClearDisabledPackageSources>false</ClearDisabledPackageSources>
+      <ClearDisabledPackageSources Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">true</ClearDisabledPackageSources>
     </PropertyGroup>
 
     <ItemGroup>
@@ -194,7 +204,12 @@
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       KeepFeedPrefixes="@(KeepFeedPrefixes)"
+      ClearDisabledPackageSources="$(ClearDisabledPackageSources)"
       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+
+    <RemoveBlockedAuditSourcesFromNuGetConfig
+      NuGetConfigFile="$(NuGetConfigFile)"
+      Condition="'$(RemoveBlockedAuditSources)' == 'true'" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PrebuiltNuGetSourceName)"
@@ -249,8 +264,8 @@
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       SourceBuildSources="@(_BuildSources)"
-      SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
-      SbrpCacheSourceName="$(SbrpCacheNuGetSourceName)"
+      SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
+      SbaCacheSourceName="$(SbaCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
       PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"
       SharedComponentsSourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
@@ -259,16 +274,16 @@
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
       Condition="'$(DotNetSourceOnlyTestOnly)' != 'true'" />
 
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-
     <ItemGroup>
       <!-- This is defined in this target to ensure the NuGet.config file is updated before it gets embedded. If this item
            was define globally, it would immediately get embedded with the original, unmodified version of the file. -->
       <EmbedInBinlog Include="$(NuGetConfigFile)" />
     </ItemGroup>
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <!-- Update the SDK version in the repo's global.json file.
@@ -276,7 +291,7 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateJson" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="UpdateGlobalJsonVersions"
           Condition="'$(GlobalJsonFile)' != ''"
-          DependsOnTargets="ResolveProjectReferences"
+          DependsOnTargets="ResolveProjectReferences;DiscoverBuiltSdkOverrides"
           Inputs="$(MSBuildProjectFullPath);$(MSBuildThisFileFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete">
     <ItemGroup>
@@ -293,6 +308,28 @@
     <UpdateJson JsonFilePath="$(GlobalJsonFile)"
                 PathToAttribute="tools:runtimes"
                 SkipUpdateIfMissingKey="true" />
+
+    <!-- Update bootstrap Arcade SDK version -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks:Microsoft.DotNet.Arcade.Sdk"
+                NewAttributeValue="$(ArcadeBootstrapVersion)"
+                Condition="'$(UseBootstrapArcade)' == 'true'" />
+
+    <ItemGroup Condition="'@(SourceBuiltSdkOverride)' != ''">
+      <_SourceBuiltSdkOverrideWithValue Include="@(SourceBuiltSdkOverride)" Value="%(Version)" />
+    </ItemGroup>
+
+    <!-- Update msbuild-sdks entries -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks"
+                ValuesToUpdate="@(_SourceBuiltSdkOverrideWithValue)"
+                Condition="'@(_SourceBuiltSdkOverrideWithValue)' != ''" />
+
+    <ItemGroup>
+      <!-- This is defined in this target to ensure the NuGet.config file is updated before it gets embedded. If this item
+           was define globally, it would immediately get embedded with the original, unmodified version of the file. -->
+      <EmbedInBinlog Include="$(GlobalJsonFile)" />
+    </ItemGroup>
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true">
@@ -349,9 +386,9 @@
     <!-- Validate that the shared component package versions don't override with the versions from the current properties, except
        for reference packages. -->
     <ItemGroup Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)' != '' and '@(_DependencyProducedPackage)' != ''">
-      <_CurrentNonSbrpPackages Include="@(_DependencyProducedPackage)" />
-      <_CurrentNonSbrpPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-reference-packages'))" />
-      <_ConflictingSharedComponentPackages Include="@(_CurrentNonSbrpPackages)" Condition="$(_PreviouslyBuiltSourceBuiltSharedComponentPackagesString.Contains(';%(Identity);'))" />
+      <_CurrentNonSbaPackages Include="@(_DependencyProducedPackage)" />
+      <_CurrentNonSbaPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-assets'))" />
+      <_ConflictingSharedComponentPackages Include="@(_CurrentNonSbaPackages)" Condition="$(_PreviouslyBuiltSourceBuiltSharedComponentPackagesString.Contains(';%(Identity);'))" />
     </ItemGroup>
 
     <Error Condition="'@(_ConflictingSharedComponentPackages)' != ''"
@@ -462,7 +499,7 @@
   <Target Name="DiscoverBuiltSdkOverrides" DependsOnTargets="GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses">
     <!--
       Discover the Arcade SDKs built from the live Arcade source and set them as overrides here.
-      This will automatically no-op for Arcade and SBRP, as these packages will not have been produced yet.
+      This will automatically no-op for Arcade and SBA, as these packages will not have been produced yet.
     -->
     <ItemGroup>
       <ArcadeBuiltArcadeSdk Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.DotNet.Arcade.Sdk'))" />
@@ -481,7 +518,7 @@
     </ItemGroup>
 
     <!--
-      Add Microsoft.Build.NoTargets and Microsoft.Build.Traversal SDK overrides, for all repos that have it built (ie. excluding SBRP as it builds the SDKs).
+      Add Microsoft.Build.NoTargets and Microsoft.Build.Traversal SDK overrides, for all repos that have it built (ie. excluding SBA as it builds the SDKs).
 
       We need to override all SDK packages that are used by repos, to prevent NuGet SDK Resolver from trying to
       restore these packages from online feeds. In offline build we only want to use local source-build feeds.
@@ -561,10 +598,10 @@
           Condition="'$(BuildCommand)' != ''"
           DependsOnTargets="ExtractToolPackagesForSkippedRepos;
                             UpdateNuGetConfig;
+                            DiscoverBuiltSdkOverrides;
                             UpdateGlobalJsonVersions;
                             UpdateEngCommonFiles;
                             CreateBuildInputProps;
-                            DiscoverBuiltSdkOverrides;
                             SetSourceBuiltSdkOverrides;
                             SetBuildProperties">
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)" />
@@ -697,8 +734,8 @@
       <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
       <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-reference-packages. -->
-      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-reference-packages'">$(ProjectDirectory)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-assets. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-assets'">$(ProjectDirectory)</SymbolsRoot>
     </PropertyGroup>
 
     <ItemGroup>
@@ -781,9 +818,11 @@
 
       Don't run when source building to prevent the build from hanging indefinitely - https://github.com/dotnet/source-build/issues/4796
     -->
-    <Exec Command="&quot;$(DotNetTool)&quot; build-server shutdown --vbcscompiler"
+    <!-- Use an external timeout wrapper so timeout failures are absorbed by IgnoreExitCode instead of logged as MSBuild task errors. -->
+    <Exec Command="$(BuildServerShutdownCommand)"
           Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
+          ContinueOnError="WarnAndContinue"
           IgnoreStandardErrorWarningFormat="true"
           IgnoreExitCode="true" />
 

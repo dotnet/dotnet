@@ -40,25 +40,9 @@ namespace Microsoft.SignCheck.Verification
             }
         }
 
-#if NET
         private static void ReadExactly(FileStream stream, byte[] buffer, int offset, int count)
         {
             stream.ReadExactly(buffer, offset, count);
         }
-#else
-        private static void ReadExactly(FileStream stream, byte[] buffer, int offset, int count)
-        {
-            while (count > 0)
-            {
-                int read = stream.Read(buffer, offset, count);
-                if (read <= 0)
-                {
-                    throw new EndOfStreamException();
-                }
-                offset += read;
-                count -= read;
-            }
-        }
-#endif
     }
 }

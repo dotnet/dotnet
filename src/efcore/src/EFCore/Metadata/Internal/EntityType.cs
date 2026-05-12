@@ -1451,16 +1451,14 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
             }
 
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(), duplicateNavigation.DeclaringEntityType.DisplayName()));
+                duplicateNavigation.FormatConflictingMemberMessage(name, this));
         }
 
         var duplicateProperty = FindMembersInHierarchy(name).FirstOrDefault();
         if (duplicateProperty != null)
         {
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(), ((IReadOnlyTypeBase)duplicateProperty.DeclaringType).DisplayName()));
+                duplicateProperty.FormatConflictingMemberMessage(name, this));
         }
 
         Check.DebugAssert(
@@ -1633,8 +1631,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         if (duplicateProperty != null)
         {
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(), duplicateProperty.DeclaringType.DisplayName()));
+                duplicateProperty.FormatConflictingMemberMessage(name, this));
         }
 
         if (memberInfo != null)
@@ -1924,8 +1921,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         Check.HasNoNulls(properties);
         EnsureMutable();
 
-        CheckIndexProperties(properties);
-
         var duplicateIndex = FindIndexesInHierarchy(properties).FirstOrDefault();
         if (duplicateIndex != null)
         {
@@ -1957,8 +1952,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         Check.NotEmpty(name);
         EnsureMutable();
 
-        CheckIndexProperties(properties);
-
         var duplicateIndex = FindIndexesInHierarchy(name).FirstOrDefault();
         if (duplicateIndex != null)
         {
@@ -1976,27 +1969,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         UpdatePropertyIndexes(properties, index);
 
         return (Index?)Model.ConventionDispatcher.OnIndexAdded(index.Builder)?.Metadata;
-    }
-
-    private void CheckIndexProperties(IReadOnlyList<Property> properties)
-    {
-        for (var i = 0; i < properties.Count; i++)
-        {
-            var property = properties[i];
-            for (var j = i + 1; j < properties.Count; j++)
-            {
-                if (property == properties[j])
-                {
-                    throw new InvalidOperationException(CoreStrings.DuplicatePropertyInIndex(properties.Format(), property.Name));
-                }
-            }
-
-            if (FindProperty(property.Name) != property
-                || !property.IsInModel)
-            {
-                throw new InvalidOperationException(CoreStrings.IndexPropertiesWrongEntity(properties.Format(), DisplayName()));
-            }
-        }
     }
 
     private static void UpdatePropertyIndexes(IReadOnlyList<Property> properties, Index index)
@@ -2311,9 +2283,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
         if (duplicateMember != null)
         {
             throw new InvalidOperationException(
-                CoreStrings.ConflictingPropertyOrNavigation(
-                    name, DisplayName(),
-                    ((IReadOnlyTypeBase)duplicateMember.DeclaringType).DisplayName()));
+                duplicateMember.FormatConflictingMemberMessage(name, this));
         }
 
         ValidateClrMember(name, memberInfo, false);
@@ -2640,7 +2610,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
                                 {
                                     value = propertyInfo.GetValue(rawSeed, [propertyBase.Name]);
                                 }
-                                catch
+                                catch (Exception ex) when (!ex.IsCritical())
                                 {
                                     // Swallow if the property value is not set on the seed data
                                 }
@@ -2811,16 +2781,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     /// </summary>
     public virtual IReadOnlyCollection<IQueryFilter> GetDeclaredQueryFilters()
         => (QueryFilterCollection?)this[CoreAnnotationNames.QueryFilter] ?? new QueryFilterCollection();
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    [Obsolete("Use GetDeclaredQueryFilters() instead.")]
-    public virtual LambdaExpression? GetQueryFilter()
-        => GetDeclaredQueryFilters()?.FirstOrDefault(f => f.IsAnonymous)?.Expression;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

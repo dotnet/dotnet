@@ -15,7 +15,7 @@ namespace NuGet.Packaging.Test
         public void Constructor_WhenPackageOwnersNull_Throws()
         {
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => new NuGetPackageOwners(packageOwners: null));
+                () => new NuGetPackageOwners(packageOwners: null!));
 
             Assert.Equal("packageOwners", exception.ParamName);
         }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +35,7 @@ namespace NuGet.Packaging.Core
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="NuGetVersion" />.</returns>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        Task<NuGetVersion> GetMinClientVersionAsync(CancellationToken cancellationToken);
+        Task<NuGetVersion?> GetMinClientVersionAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Asynchronously gets zero or more package types from the .nuspec.

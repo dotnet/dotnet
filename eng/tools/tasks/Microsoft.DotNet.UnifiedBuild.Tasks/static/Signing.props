@@ -22,7 +22,7 @@
     <ItemsToSign Include="@(SignableSourceBuiltAsset)" />
   </ItemGroup>
 
-  <Target Name="SetFileSignInfoForSourceAsset" BeforeTargets="Sign">
+  <Target Name="SetFileSignInfoForSourceAsset" BeforeTargets="Execute">
     <ItemGroup>
       <SourceBuiltSourceAsset Include="@(SignableSourceBuiltAsset)" Condition="$([System.String]::new('%(Filename)').StartsWith('$(SourceBuiltSourceArtifactName)'))"/>
     </ItemGroup>
@@ -42,6 +42,7 @@
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
 
     <!-- Sign 3rd party files that end up in the artifacts -->
+    <FileSignInfo Include="Antlr4.Runtime.Standard.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Humanizer.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Mono.Cecil.Mdb.dll" CertificateName="$(ExternalCertificateId)" />
@@ -50,6 +51,16 @@
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Spectre.Console.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Valleysoft.DockerCredsProvider.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Api.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Api.ProviderBuilderExtensions.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Exporter.InMemory.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Exporter.OpenTelemetryProtocol.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Extensions.Hosting.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Instrumentation.Http.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.Instrumentation.Runtime.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.PersistentStorage.Abstractions.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="OpenTelemetry.PersistentStorage.FileSystem.dll" CertificateName="$(ExternalCertificateId)" />
 
     <!--
         Skip warning on files that are marked as 3rd party but have .NET copyright:

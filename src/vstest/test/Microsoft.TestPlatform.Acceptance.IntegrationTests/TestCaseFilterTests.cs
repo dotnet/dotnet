@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
-
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -158,15 +156,11 @@ public class TestCaseFilterTests : AcceptanceTestBase
     /// </summary>
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource]
+    // MSTest v1 tests from dlls are only supported in .NET Framework runner, in and outside of VS
+    // via Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration.dll
+    [NetFullTargetFrameworkDataSource(useCoreRunner: false)]
     public void DiscoverMstestV1TestsWithAndOperatorTrait(RunnerInfo runnerInfo)
     {
-        if (runnerInfo.IsNetRunner)
-        {
-            Assert.Inconclusive("Mstest v1 tests not supported with .NET Core runner.");
-            return;
-        }
-
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var arguments = PrepareArguments(
@@ -184,36 +178,43 @@ public class TestCaseFilterTests : AcceptanceTestBase
         ValidateTestsNotDiscovered(listOfNotDiscoveredTests);
     }
 
-    /// <summary>
-    /// Discover tests using tmi adapter with test case filters.
-    /// </summary>
     [TestMethod]
-    [TestCategory("Windows-Review")]
-    [Ignore("Temporary ignoring, because of incomplete interop work for legacy TP")]
-    [NetFullTargetFrameworkDataSource]
-    public void DiscoverTmiTestsWithOnlyPropertyValue(RunnerInfo runnerInfo)
+    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
+    [NetCoreTargetFrameworkDataSource]
+    public void RunSelectedTestsWithNoneTestCategoryFilterMatchesUncategorizedTests(RunnerInfo runnerInfo)
     {
-        if (runnerInfo.IsNetRunner)
-        {
-            Assert.Inconclusive("Tmi tests not supported with .NET Core runner.");
-            return;
-        }
-
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        string testAssemblyPath = _testEnvironment.GetTestAsset("MstestV1UnitTestProject.dll");
         var arguments = PrepareArguments(
-            testAssemblyPath,
+            GetSampleTestAssembly(),
             GetTestAdapterPath(),
             string.Empty, FrameworkArgValue,
             runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        string testSettingsPath = Path.Combine(Path.GetDirectoryName(testAssemblyPath)!, "MstestV1UnitTestProjectTestSettings.testsettings");
-        arguments = string.Concat(arguments, " /listtests /TestCaseFilter:PassingTest /settings:", testSettingsPath);
-
+        // "None" is a reserved keyword that matches tests without any TestCategory attribute.
+        // In SimpleTestProject: PassingTest (no category) and SkippingTest (no category, ignored).
+        // FailingTest has TestCategory("CategoryA") and should NOT be matched.
+        arguments = string.Concat(arguments, " /TestCaseFilter:\"TestCategory=None\"");
         InvokeVsTest(arguments);
-        var listOfTests = new string[] { "MstestV1UnitTestProject.UnitTest1.PassingTest1", "MstestV1UnitTestProject.UnitTest1.PassingTest2" };
-        var listOfNotDiscoveredTests = new string[] { "MstestV1UnitTestProject.UnitTest1.FailingTest1", "MstestV1UnitTestProject.UnitTest1.FailingTest2", "MstestV1UnitTestProject.UnitTest1.SkippingTest" };
-        ValidateDiscoveredTests(listOfTests);
-        ValidateTestsNotDiscovered(listOfNotDiscoveredTests);
+        ValidateSummaryStatus(1, 0, 1);
     }
+
+    [TestMethod]
+    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
+    [NetCoreTargetFrameworkDataSource]
+    public void RunSelectedTestsWithNoneTestCategoryNotEqualFilterMatchesCategorizedTests(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var arguments = PrepareArguments(
+            GetSampleTestAssembly(),
+            GetTestAdapterPath(),
+            string.Empty, FrameworkArgValue,
+            runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        // NotEqual to "None" should match tests WITH categories.
+        // In SimpleTestProject: only FailingTest has TestCategory("CategoryA").
+        arguments = string.Concat(arguments, " /TestCaseFilter:\"TestCategory!=None\"");
+        InvokeVsTest(arguments);
+        ValidateSummaryStatus(0, 1, 0);
+    }
+
 }

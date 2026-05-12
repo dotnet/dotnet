@@ -10,4 +10,4 @@
                 Component - (0:0,0 [64] x:\dir\subdir\Test\TestComponent.cshtml) - ComponentWithEditorRequiredParameters
                     ComponentAttribute - (50:0,50 [10] x:\dir\subdir\Test\TestComponent.cshtml) - Property1 - Property1 - AttributeStructure.DoubleQuotes
                         HtmlContent - (50:0,50 [10] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (50:0,50 [10] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Some Value
+                            IntermediateToken - (50:0,50 [10] x:\dir\subdir\Test\TestComponent.cshtml) - Html - Some Value

@@ -35,6 +35,9 @@ namespace hanging_child
                 }
             }
 
+            // To make tests reliable this needs to survive the dump of itself and its child process being taken
+            // even on slow system. Otherwise we get inconsistent number of dumps. Shortening this time does not make sense.
+            // The process will get killed after we dump its memory.
             Thread.Sleep(30_000);
         }
         public static string GetFullPath(string fileName)

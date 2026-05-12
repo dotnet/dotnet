@@ -446,8 +446,8 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
 
         // Assert
         CollectionAssert.AreEquivalent(inputSource, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered).Count);
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered).Count);
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
     }
 
     [TestMethod]
@@ -466,7 +466,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
             LastDiscoveredTests = null,
             TotalTests = 1
         };
-        var completeMessage = new Message() { MessageType = MessageType.DiscoveryComplete, Payload = null };
+        var completeMessage = new Message() { MessageType = MessageType.DiscoveryComplete };
         mockTestDiscoveryEventsHandler.Setup(mh => mh.HandleDiscoveredTests(It.IsAny<IEnumerable<TestCase>>())).Callback(
             () =>
             {
@@ -601,7 +601,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
         });
 
         // Assert
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered).Count);
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
         CollectionAssert.AreEquivalent(
             new List<string> { "d" },
             _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
@@ -610,7 +610,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
             _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void HandleDiscoveryCompleteWhenAbortedNoPastDiscoveryAndNoLastCunkNotifiesWithCorrectDiscovery(bool trueIsEmptyFalseIsNull)
@@ -631,11 +631,11 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
         CollectionAssert.AreEquivalent(
             new[] { "a", "b" },
             _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered).Count);
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered).Count);
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.FullyDiscovered));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true)]
     [DataRow(false)]
     public void HandleDiscoveryCompleteWhenAbortedPastDiscoveryAndNoLastCunkNotifiesWithCorrectDiscovery(bool trueIsEmptyFalseIsNull)
@@ -664,7 +664,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
         CollectionAssert.AreEquivalent(
             new[] { "b" },
             _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered).Count);
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
     }
 
     [TestMethod]
@@ -724,7 +724,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
         CollectionAssert.AreEquivalent(
             new[] { "d" },
             _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.PartiallyDiscovered));
-        Assert.AreEqual(0, _discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered).Count);
+        Assert.IsEmpty(_discoveryDataAggregator.GetSourcesWithStatus(DiscoveryStatus.NotDiscovered));
     }
 
     private void InvokeAndVerifyDiscoverTests(bool skipDefaultAdapters)

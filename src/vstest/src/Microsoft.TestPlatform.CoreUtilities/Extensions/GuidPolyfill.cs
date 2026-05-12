@@ -9,7 +9,7 @@ internal static class GuidPolyfill
 {
     public static Guid Parse(string s, IFormatProvider? provider)
         => Guid.Parse(s
-#if NET7_0_OR_GREATER
+#if NET
             , System.Globalization.CultureInfo.InvariantCulture
 #endif
             );

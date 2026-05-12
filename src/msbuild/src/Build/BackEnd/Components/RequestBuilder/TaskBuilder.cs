@@ -240,7 +240,7 @@ namespace Microsoft.Build.BackEnd
         /// </summary>
         internal static IBuildComponent CreateComponent(BuildComponentType type)
         {
-            ErrorUtilities.VerifyThrow(type == BuildComponentType.TaskBuilder, "Cannot create components of type {0}", type);
+            ErrorUtilities.VerifyThrow(type == BuildComponentType.TaskBuilder, $"Cannot create components of type {type}");
             return new TaskBuilder();
         }
 
@@ -332,9 +332,7 @@ namespace Microsoft.Build.BackEnd
 #if FEATURE_APPDOMAIN
                         taskHost.AppDomainSetup,
 #endif
-#if !NET35
                         _buildRequestEntry.Request.HostServices,
-#endif
                         taskHost.IsOutOfProc,
                         _cancellationToken,
                         _buildRequestEntry.TaskEnvironment);

@@ -33,7 +33,7 @@ namespace NuGet.Packaging.Test
         public void Create_WhenCertificateNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => IssuerSerial.Create(certificate: null));
+                () => IssuerSerial.Create(certificate: null!));
 
             Assert.Equal("certificate", exception.ParamName);
         }

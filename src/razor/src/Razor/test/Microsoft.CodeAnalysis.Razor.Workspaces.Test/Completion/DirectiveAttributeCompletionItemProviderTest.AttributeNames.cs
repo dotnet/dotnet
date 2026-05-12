@@ -401,7 +401,7 @@ public partial class DirectiveAttributeCompletionItemProviderTest : RazorTooling
     internal RazorCompletionContext CreateRazorCompletionContext(TestCode testCode)
     {
         var codeDocument = GetCodeDocument(testCode.Text);
-        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredTagHelperRewrittenSyntaxTree();
         var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(testCode.Position, includeWhitespace: true, walkMarkersBack: true);

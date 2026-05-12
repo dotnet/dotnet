@@ -449,7 +449,7 @@ SELECT [p].[Id], [p].[Bool], [p].[Bools], [p].[DateTime], [p].[DateTimes], [p].[
 FROM [PrimitiveCollectionsEntity] AS [p]
 WHERE (
     SELECT COUNT(*)
-    FROM (VALUES (CAST(@i AS int))) AS [v]([Value])
+    FROM (VALUES (@i)) AS [v]([Value])
     WHERE [v].[Value] > [p].[Id]) = 1
 """);
     }
@@ -1229,6 +1229,54 @@ SELECT [t].[Id]
 FROM [TestEntity] AS [t]
 WHERE [t].[Id] IN (@ints1, @ints2, @ints3, @ints4, @ints5, @ints6, @ints7, @ints8, @ints9, @ints10, @ints11, @ints12, @ints13, @ints14, @ints15, @ints16, @ints17, @ints18, @ints19, @ints20)
 """);
+    }
+
+    public override async Task Parameter_collection_of_enum_Cast_from_different_enum_type(ParameterTranslationMode mode)
+    {
+        switch (mode)
+        {
+            case ParameterTranslationMode.Constant:
+            {
+                await base.Parameter_collection_of_enum_Cast_from_different_enum_type(mode);
+                AssertSql(
+                    """
+SELECT [t].[Id]
+FROM [TestEntity38008] AS [t]
+WHERE EXISTS (
+    SELECT 1
+    FROM (VALUES (CAST(2 AS int))) AS [f]([Value])
+    WHERE [f].[Value] = [t].[Status])
+""");
+                break;
+            }
+
+            case ParameterTranslationMode.Parameter:
+            {
+                await AssertCompatibilityLevelTooLow(
+                    () => base.Parameter_collection_Count_with_column_predicate_with_default_mode(mode));
+                break;
+            }
+
+            case ParameterTranslationMode.MultipleParameters:
+            {
+                await base.Parameter_collection_of_enum_Cast_from_different_enum_type(mode);
+                AssertSql(
+                    """
+@filter1='2'
+
+SELECT [t].[Id]
+FROM [TestEntity38008] AS [t]
+WHERE EXISTS (
+    SELECT 1
+    FROM (VALUES (@filter1)) AS [f]([Value])
+    WHERE [f].[Value] = [t].[Status])
+""");
+                break;
+            }
+
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     public override async Task Static_readonly_collection_List_of_ints_Contains_int()

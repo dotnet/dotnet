@@ -2,10 +2,9 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetSignCheckTaskAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\lib\net\Microsoft.DotNet.SignCheckTask.dll</MicrosoftDotNetSignCheckTaskAssembly>
-    <MicrosoftDotNetSignCheckTaskAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\lib\netframework\Microsoft.DotNet.SignCheckTask.dll</MicrosoftDotNetSignCheckTaskAssembly>
+    <MicrosoftDotNetSignCheckTaskAssembly>$(MSBuildThisFileDirectory)..\lib\net\Microsoft.DotNet.SignCheckTask.dll</MicrosoftDotNetSignCheckTaskAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="Microsoft.DotNet.SignCheckTask.SignCheckTask" AssemblyFile="$(MicrosoftDotNetSignCheckTaskAssembly)" />
+  <UsingTask TaskName="Microsoft.DotNet.SignCheckTask.SignCheckTask" AssemblyFile="$(MicrosoftDotNetSignCheckTaskAssembly)" Runtime="NET" />
 
 </Project>

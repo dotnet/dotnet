@@ -11,14 +11,12 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 [Export(typeof(IRazorCohostStartupService))]
 [method: ImportingConstructor]
 internal class RazorCohostDynamicRegistrationService(
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     [ImportMany] IEnumerable<Lazy<IDynamicRegistrationProvider>> lazyRegistrationProviders,
     ILoggerFactory loggerFactory)
     : IRazorCohostStartupService
@@ -34,18 +32,12 @@ internal class RazorCohostDynamicRegistrationService(
     }];
 
     private readonly ImmutableArray<Lazy<IDynamicRegistrationProvider>> _lazyRegistrationProviders = [.. lazyRegistrationProviders];
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorCohostDynamicRegistrationService>();
 
     public int Order => WellKnownStartupOrder.DynamicRegistration;
 
     public async Task StartupAsync(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
-        if (!_languageServerFeatureOptions.UseRazorCohostServer)
-        {
-            return;
-        }
-
         // We assume most registration providers will just return one, so whilst this isn't completely accurate, it's a
         // reasonable starting point
         using var registrations = new PooledArrayBuilder<Registration>(_lazyRegistrationProviders.Length);

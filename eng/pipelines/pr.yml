@@ -4,6 +4,13 @@
 # - dotnet-unified-build-full (public)
 #   https://dev.azure.com/dnceng-public/public/_build?definitionId=303
 #   Comment trigger only
+#   YML schedule trigger disabled by override in AzDO UI
+# - unified-build-pr (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1531
+#   YML schedule trigger disabled by override in AzDO UI
+# - unified-build-pr-full (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1532
+#   YML schedule trigger disabled by override in AzDO UI
 
 # Only run daily on schedule to save resources
 trigger: none
@@ -21,7 +28,7 @@ pr:
       - '*.md'
 
 schedules:
-  - cron: "0 14 * * *" # run at 14:00 (UTC)
+  - cron: "0 5 * * *" # run at 05:00 (UTC)
     branches:
       include:
       - main
@@ -78,7 +85,7 @@ stages:
               and(
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
-                  not(eq(variables['Build.RequestedFor'], 'dotnet-bot'))
+                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'release-pr-'))
               )
           )
   jobs:
@@ -90,6 +97,8 @@ stages:
       steps:
         - checkout: self
           fetchDepth: 0
+          persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
+          retryCountOnTaskFailure: 5
 
         - script: |
             set -ex

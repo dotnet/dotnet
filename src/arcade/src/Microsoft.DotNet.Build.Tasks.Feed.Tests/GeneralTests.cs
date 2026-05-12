@@ -38,6 +38,23 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         }
 
         [Theory]
+        [InlineData(8103)]
+        [InlineData(8104)]
+        [InlineData(8105)]
+        public void AspireChannelsAllowOnlyGetAspireCliInstallScripts(int channelId)
+        {
+            var channelConfig = PublishingConstants.ChannelInfos.Single(c => c.Id == channelId);
+
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/foo.zip")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/get-aspire-cli.ps1")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/get-aspire-cli.ps1.sha512")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/get-aspire-cli.sh")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/get-aspire-cli.sh.sha512")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/install-other-tool.ps1")).Should().BeFalse();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/install-other-tool.sh")).Should().BeFalse();
+        }
+
+        [Theory]
         [InlineData("foo/bar/baz/bop.symbols.nupkg", true)]
         [InlineData("foo/bar/baz/bop.symbols.nupkg.sha512", false)]
         [InlineData("foo/bar/baz/bip.snupkg.sha512", false)]

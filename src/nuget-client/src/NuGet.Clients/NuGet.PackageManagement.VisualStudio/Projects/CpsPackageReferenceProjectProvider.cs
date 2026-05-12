@@ -9,6 +9,7 @@ using Microsoft;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
 using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
@@ -80,16 +81,26 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             var fullProjectPath = vsProject.FullProjectPath;
-            var unconfiguredProject = GetUnconfiguredProject(vsProject.Project);
 
             var projectServices = new CpsProjectSystemServices(vsProject, _scriptExecutor);
+
+            // Ensure the EnvDTE.Project is initialized.
+            // Under the hood VSProjectAdapter actually has a Lazy<EnvDte.project>, which needs the UI thread to satisfy the cast.
+            // If PMC is actually the first one that wants the EnvDTE.Project, it would fail because it's being called from the pipeline thread.
+            // This is a workaround to make sure the EnvDTE.Project is initialized before any PMC code tries to use it.
+            _ = vsProject.Project;
+            var lazyUnconfiguredProject = new AsyncLazy<UnconfiguredProject>(async () =>
+            {
+                await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                return GetUnconfiguredProject(vsProject.Project);
+            }, NuGetUIThreadHelper.JoinableTaskFactory);
 
             return new CpsPackageReferenceProject(
                 vsProject.ProjectName,
                 vsProject.CustomUniqueName,
                 fullProjectPath,
                 _projectSystemCache,
-                unconfiguredProject,
+                lazyUnconfiguredProject,
                 projectServices,
                 vsProject.ProjectId);
         }

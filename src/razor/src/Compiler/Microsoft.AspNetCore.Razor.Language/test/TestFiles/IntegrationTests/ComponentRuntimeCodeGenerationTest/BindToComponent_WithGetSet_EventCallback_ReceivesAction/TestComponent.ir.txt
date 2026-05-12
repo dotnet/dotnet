@@ -10,13 +10,14 @@
                 Component - (0:0,0 [92] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            IntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
-                            LazyIntermediateToken - (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - value => ParentValue = value
+                            IntermediateToken - (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - value => ParentValue = value
                             IntermediateToken -  - CSharp - , ParentValue)
                     ComponentAttribute - (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - value => ParentValue = value
+                        CSharpExpression - (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml)
+                            IntermediateToken - (60:0,60 [28] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - value => ParentValue = value
             CSharpCode - (101:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (101:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public int ParentValue { get; set; } = 42;\n

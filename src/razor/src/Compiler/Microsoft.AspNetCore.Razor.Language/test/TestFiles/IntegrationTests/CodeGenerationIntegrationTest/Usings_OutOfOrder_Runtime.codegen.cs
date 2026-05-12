@@ -84,20 +84,18 @@ using System.Text
 #nullable disable
 
             WriteLiteral("\r\n<p>Path\'s full type name is ");
-            Write(
 #nullable restore
-#line (29,30)-(29,51) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-typeof(Path).FullName
+#line (29,30)-(29,51) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+Write(typeof(Path).FullName
 
 #line default
 #line hidden
 #nullable disable
             );
             WriteLiteral("</p>\r\n<p>Foo\'s actual full type name is ");
-            Write(
 #nullable restore
-#line (30,36)-(30,56) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-typeof(Foo).FullName
+#line (30,36)-(30,56) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+Write(typeof(Foo).FullName
 
 #line default
 #line hidden

@@ -41,15 +41,15 @@ public class DataCollectorTestsCoverlets : IntegrationTestBase
         // This assert check that we're sure that we've updated collector setting code base with full path,
         // otherwise without "custom coverlet code" inside ProxyExecutionManager coverlet dll won't be resolved inside testhost.
         var log = Directory.GetFiles(logPathDirectory, $"coverletcoverage.{logId}.log").Single();
-        Assert.IsTrue(File.ReadAllText(log).Contains("CoverletDataCollector in-process codeBase path"));
+        Assert.Contains("CoverletDataCollector in-process codeBase path", File.ReadAllText(log));
 
         // Verify out-of-proc coverlet collector load
         var dataCollectorLog = Directory.GetFiles(logPathDirectory, $"coverletcoverage.{logId}.datacollector*log").Single();
-        Assert.IsTrue(File.ReadAllText(dataCollectorLog).Contains("[coverlet]Initializing CoverletCoverageDataCollector"));
+        Assert.Contains("[coverlet]Initializing CoverletCoverageDataCollector", File.ReadAllText(dataCollectorLog));
 
         // Verify in-proc coverlet collector load
         var hostLog = Directory.GetFiles(logPathDirectory, $"coverletcoverage.{logId}.host*log").Single();
-        Assert.IsTrue(File.ReadAllText(hostLog).Contains("[coverlet]Initialize CoverletInProcDataCollector"));
+        Assert.Contains("[coverlet]Initialize CoverletInProcDataCollector", File.ReadAllText(hostLog));
 
         // Verify default coverage file is generated
         StdOutputContains("coverage.cobertura.xml");

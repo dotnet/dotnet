@@ -1211,7 +1211,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             }
         }
 
-        // TODO NK - this test is funky.
         [Fact]
         public async Task GetInstalledVersion_WithoutPackages_WithAssets_ReturnsEmpty()
         {

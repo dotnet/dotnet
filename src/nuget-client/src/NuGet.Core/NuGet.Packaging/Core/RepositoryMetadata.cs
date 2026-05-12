@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Shared;
 
@@ -30,19 +28,19 @@ namespace NuGet.Packaging.Core
 
         public string Commit { get; set; } = string.Empty;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as RepositoryMetadata);
         }
 
-        public static bool operator ==(RepositoryMetadata a, RepositoryMetadata b)
+        public static bool operator ==(RepositoryMetadata? a, RepositoryMetadata? b)
         {
             if (ReferenceEquals(a, b))
             {
                 return true;
             }
 
-            if (((object)a == null) || ((object)b == null))
+            if (a is null || b is null)
             {
                 return false;
             }
@@ -50,12 +48,12 @@ namespace NuGet.Packaging.Core
             return a.Equals(b);
         }
 
-        public static bool operator !=(RepositoryMetadata a, RepositoryMetadata b)
+        public static bool operator !=(RepositoryMetadata? a, RepositoryMetadata? b)
         {
             return !(a == b);
         }
 
-        public bool Equals(RepositoryMetadata other)
+        public bool Equals(RepositoryMetadata? other)
         {
             if (other == null)
             {

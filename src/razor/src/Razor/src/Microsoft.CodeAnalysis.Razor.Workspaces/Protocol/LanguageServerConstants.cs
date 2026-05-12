@@ -8,27 +8,10 @@ internal static class LanguageServerConstants
     public const string RazorDiagnosticSource = "Razor";
 
     public const string HtmlVirtualDocumentSuffix = "__virtual.html";
-    public const string CSharpVirtualDocumentSuffix = ".ide.g.cs";
-
-    public const string RazorLanguageQueryEndpoint = "razor/languageQuery";
-
-    public const string RazorBreakpointSpanEndpoint = "razor/breakpointSpan";
-
-    public const string RazorProximityExpressionsEndpoint = "razor/proximityExpressions";
 
     public const string RazorLanguageServerName = "Razor Language Server";
 
-    public const string RazorMapToDocumentRangesEndpoint = "razor/mapToDocumentRanges";
-
-    public const string RazorMapToDocumentEditsEndpoint = "razor/mapToDocumentEdits";
-
     public const string RazorCodeActionRunnerCommand = "razor/runCodeAction";
-
-    public const string RazorCompletionEndpointName = "razor/completion";
-
-    public const string RazorCompletionResolveEndpointName = "razor/completionItem/resolve";
-
-    public const string RazorGetFormattingOptionsEndpointName = "razor/formatting/options";
 
     // This needs to be the same as in Web Tools, that is used by the HTML editor, because
     // we actually respond to the Web Tools "Wrap With Div" command handler, which sends this message

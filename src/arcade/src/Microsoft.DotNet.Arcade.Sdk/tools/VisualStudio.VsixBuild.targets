@@ -19,8 +19,6 @@
          Writes a stub file to component intermediate directory.
   -->
 
-  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.VisualStudio.FinalizeInsertionVsixFile" AssemblyFile="$(ArcadeVisualStudioBuildTasksAssembly)" />
-
   <PropertyGroup>
     <!--
       TODO: Currently we need to erase Experimental flag from VSIXes that are inserted into VS.

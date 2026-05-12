@@ -1,7 +1,10 @@
 import glob
 import xml.etree.ElementTree
 from .result_format import ResultFormat
-from helix.public import TestResult, TestResultAttachment
+try:
+    from helix.public import TestResult, TestResultAttachment
+except ImportError:
+    from _helix_compat import TestResult, TestResultAttachment
 
 
 class TRXFormat(ResultFormat):
@@ -45,7 +48,13 @@ class TRXFormat(ResultFormat):
                 classname = test_classes[test_id]
                 method = test_methods[test_id]
 
-                name = classname + '.' + test_name
+                # xunit reports testName as the fully qualified name
+                # (ClassName.MethodName), while MSTest uses just the method name.
+                # Avoid duplicating the class prefix when it's already present.
+                if test_name.startswith(classname + '.'):
+                    name = test_name
+                else:
+                    name = classname + '.' + test_name
                 type_name = classname
                 duration = 0.0
                 result = "Pass"

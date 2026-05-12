@@ -32,7 +32,7 @@
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_0
                     DefaultTagHelperProperty - (74:5,21 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (74:5,21 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - CSharp - 1337
+                        IntermediateToken - (74:5,21 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - CSharp - 1337
                     DefaultTagHelperHtmlAttribute -  - data-content - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (99:6,19 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml)
                             LazyIntermediateToken - (99:6,19 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - CSharp - true
@@ -53,7 +53,7 @@
                     DefaultTagHelperBody - 
                     DefaultTagHelperCreate -  - TestNamespace.PTagHelper
                     DefaultTagHelperProperty - (186:10,11 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - age - int TestNamespace.PTagHelper.Age - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (186:10,11 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - CSharp - 1234
+                        IntermediateToken - (186:10,11 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml) - CSharp - 1234
                     PreallocatedTagHelperHtmlAttribute -  - __tagHelperAttribute_3
                     DefaultTagHelperExecute - 
                 HtmlContent - (221:11,15 [4] TagHelpersWithWeirdlySpacedAttributes.cshtml)

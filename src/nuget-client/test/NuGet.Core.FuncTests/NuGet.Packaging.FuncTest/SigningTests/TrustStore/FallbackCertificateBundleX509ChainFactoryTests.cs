@@ -21,7 +21,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
         {
         }
 
-        [CIOnlyFact]
+        [Fact]
         public void AdditionalContext_WhenRootCertificateIsUntrusted_ReturnsLogMessage()
         {
             using (TestDirectory directory = TestDirectory.Create())
@@ -30,9 +30,9 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                 Assert.True(FallbackCertificateBundleX509ChainFactory.TryCreate(
                     X509StorePurpose.CodeSigning,
                     certificateBundle.FullName,
-                    out FallbackCertificateBundleX509ChainFactory factory));
+                    out FallbackCertificateBundleX509ChainFactory? factory));
 
-                using (IX509Chain chain = factory.Create())
+                using (IX509Chain chain = factory!.Create())
                 {
                     X509Certificate2 certificate = Fixture.UntrustedTestCertificate.Cert;
 

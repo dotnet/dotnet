@@ -1,0 +1,21 @@
+<Project>
+
+  <Import Project="..\..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <!-- Force NoTargets to honor TFM-conditioned <ProjectReference> items. By default NoTargets
+         sets DoNotReferenceOutputAssemblies=true and skips the per-TFM ResolveProjectReferences
+         walk, which would cause our text packages with TFM-conditional P2Ps to referencePackage
+         csprojs (e.g. Microsoft.CodeAnalysis.Collections referencing
+         system.threading.tasks.extensions only on net9.0) to fail with NETSDK1005 when the
+         referenced project's restored assets file doesn't have an asset for the consumer's TFM. -->
+    <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+
+    <!-- Disable NU5128: text-only packages declare TFMs that have no lib/ref content
+         (workload manifests, source-only packages, etc.). NuGet flags this even though
+         it's the intentional layout. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+</Project>

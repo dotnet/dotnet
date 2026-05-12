@@ -22,7 +22,7 @@ namespace NuGet.Packaging.Test
         public void GetSignedPackageVerifierSettings_NullFallbackSettingsThrows()
         {
             // Arrange & Act
-            Action action = () => RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo: null, fallbackSettings: null);
+            Action action = () => RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo: null, fallbackSettings: null!);
 
             // Assert
             action.Should().Throw<ArgumentNullException>();
@@ -43,7 +43,7 @@ namespace NuGet.Packaging.Test
         {
             // Arrange
             var allSigned = true;
-            var repoSignatureInfo = new RepositorySignatureInfo(allSigned, repositoryCertificateInfos: null);
+            var repoSignatureInfo = new RepositorySignatureInfo(allSigned, repositoryCertificateInfos: Array.Empty<IRepositoryCertificateInfo>());
 
             // Act
             var settings = RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo, _defaultSettings);
@@ -67,7 +67,7 @@ namespace NuGet.Packaging.Test
         {
             // Arrange
             var allSigned = true;
-            var repoSignatureInfo = new RepositorySignatureInfo(allSigned, repositoryCertificateInfos: null);
+            var repoSignatureInfo = new RepositorySignatureInfo(allSigned, repositoryCertificateInfos: Array.Empty<IRepositoryCertificateInfo>());
 
             // Act
             var settings = RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo, _verifyCommandDefaultSettings);
@@ -90,7 +90,7 @@ namespace NuGet.Packaging.Test
         public void GetSignedPackageVerifierSettings_RepoSignatureInfoFalseAllSignedDoesNotSetAllowUnsigned()
         {
             // Arrange
-            var repoSignatureInfo = new RepositorySignatureInfo(allRepositorySigned: false, repositoryCertificateInfos: null);
+            var repoSignatureInfo = new RepositorySignatureInfo(allRepositorySigned: false, repositoryCertificateInfos: Array.Empty<IRepositoryCertificateInfo>());
 
             // Act
             var settings = RepositorySignatureInfoUtility.GetSignedPackageVerifierSettings(repoSignatureInfo, _defaultSettings);
@@ -103,7 +103,7 @@ namespace NuGet.Packaging.Test
         public void GetSignedPackageVerifierSettings_RepoSignatureInfoFalseAllSignedDoesNotClearAllowUnsigned()
         {
             // Arrange
-            var repoSignatureInfo = new RepositorySignatureInfo(allRepositorySigned: false, repositoryCertificateInfos: null);
+            var repoSignatureInfo = new RepositorySignatureInfo(allRepositorySigned: false, repositoryCertificateInfos: Array.Empty<IRepositoryCertificateInfo>());
 
 
             // Act

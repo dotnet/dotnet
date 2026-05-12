@@ -3,8 +3,9 @@
 
   <!-- Add targets here that run logic that depends on the merged asset manifest and published packages. -->
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
+  
   <Target Name="ReportPoisonUsage"
-          AfterTargets="DiscoverArtifacts"
+          AfterTargets="Execute"
           DependsOnTargets="CreatePrivateSourceBuiltArtifactsArchive"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
@@ -15,18 +16,18 @@
       <SdkArchive Include="$(ArtifactsAssetsDir)Sdk/**/dotnet-sdk-*$(ArchiveExtension)" />
       <!-- Include shipping nuget packages. -->
       <ShippingPackageToCheck Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" />
-      <!-- Add and mark SBRP packages to validate that they have the correct poison attribute. -->
-      <SbrpPackageToCheck Include="$(ReferencePackagesDir)**\*.nupkg" IsSourceBuildReferencePackage="true" />
+      <!-- Add and mark SBA packages to validate that they have the correct poison attribute. -->
+      <SbaPackageToCheck Include="$(ReferencePackagesDir)**\*.nupkg" IsSourceBuildReferencePackage="true" />
     </ItemGroup>
 
     <Error Condition="'@(SdkArchive)' == ''" Text="SDK will not be poison checked - this is unexpected!" />
     <Error Condition="'@(ShippingPackageToCheck)' == ''" Text="No shipping packages will be poison checked - this is unexpected!" />
-    <Error Condition="'@(SbrpPackageToCheck)' == ''" Text="No SBRP packages will be poison checked - this is unexpected!" />
+    <Error Condition="'@(SbaPackageToCheck)' == ''" Text="No SBA packages will be poison checked - this is unexpected!" />
 
     <ItemGroup>
       <PoisonFileToCheck Include="@(SdkArchive)" />
       <PoisonFileToCheck Include="@(ShippingPackageToCheck)" />
-      <PoisonFileToCheck Include="@(SbrpPackageToCheck)" />
+      <PoisonFileToCheck Include="@(SbaPackageToCheck)" />
     </ItemGroup>
 
     <!-- Check for prebuilt and source-built packages. -->
@@ -101,7 +102,7 @@
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
-          AfterTargets="Publish"
+          AfterTargets="Execute"
           DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
           Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
@@ -163,7 +164,7 @@
           SkipUnchangedFiles="true" />
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="Publish"
+             Targets="Execute"
              Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
@@ -182,7 +183,7 @@
   <Target Name="IncludeSharedComponentsAsArtifacts"
           AfterTargets="DiscoverArtifacts"
           DependsOnTargets="GetFilteredSharedComponentPackages"
-          Condition="'$(IsPublishPass2)' != 'true'">
+          Condition="'$(IsPublishPass2)' != 'true' and '$(ExcludeRestorePackageImports)' != 'true'">
 
     <ItemGroup>
       <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">
@@ -193,6 +194,7 @@
 
   <Target Name="DiscoverSourceBuiltArtifacts"
           AfterTargets="DiscoverArtifacts"
+          Condition="'$(ExcludeRestorePackageImports)' != 'true'"
           DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
 
     <PropertyGroup>

@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
-using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 
@@ -38,19 +36,10 @@ internal sealed class TestDocumentManager : TrackingLSPDocumentManager
 
     public override void UpdateVirtualDocument<TVirtualDocument>(Uri hostDocumentUri, IReadOnlyList<ITextChange> changes, int hostDocumentVersion, object? state)
     {
-        if (!_documents.TryGetValue(hostDocumentUri, out var documentSnapshot))
+        if (!_documents.TryGetValue(hostDocumentUri, out _))
         {
             return;
         }
-
-        if (!documentSnapshot.TryGetVirtualDocument<CSharpVirtualDocumentSnapshot>(out var virtualDocumentSnapshot))
-        {
-            return;
-        }
-
-        using var virtualDocument = new CSharpVirtualDocument(projectKey: default, virtualDocumentSnapshot.Uri, virtualDocumentSnapshot.Snapshot.TextBuffer, NoOpTelemetryReporter.Instance);
-        virtualDocument.Update(changes, hostDocumentVersion, state);
-        _documents[hostDocumentUri] = new TestLSPDocumentSnapshot(hostDocumentUri, documentSnapshot.Version, new[] { virtualDocument.CurrentSnapshot });
 
         UpdateVirtualDocumentCallCount++;
     }

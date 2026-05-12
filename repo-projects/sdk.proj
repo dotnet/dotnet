@@ -1,11 +1,8 @@
-﻿<Project Sdk="Microsoft.Build.NoTargets">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
     <!-- Tests are only building on Windows - https://github.com/dotnet/source-build/issues/4882 -->
     <DotNetBuildTestsOptOut Condition="'$(OS)' != 'Windows_NT'">true</DotNetBuildTestsOptOut>
-
-    <!-- May stabilize. -->
-    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
 
     <!-- sdk always wants to build portable on FreeBSD etc. -->
     <BuildArgs Condition="('$(TargetOS)' == 'freebsd' or '$(TargetOS)' == 'solaris') and '$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) /p:PortableBuild=true</BuildArgs>
@@ -40,14 +37,13 @@
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="sourcelink" />
     <RepositoryReference Include="symreader" />
-    <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
     <RepositoryReference Include="windowsdesktop" />
     <RepositoryReference Include="xdt" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-reference-packages" />
+    <RepositoryReference Include="source-build-assets" />
   </ItemGroup>
 
   <!--

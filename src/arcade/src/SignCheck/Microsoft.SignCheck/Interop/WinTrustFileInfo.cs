@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.SignCheck.Interop
 {
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct WinTrustFileInfo
     {
         public uint cbStruct;
-        [MarshalAs(UnmanagedType.LPTStr)]
+        [MarshalAs(UnmanagedType.LPWStr)]
         public string pcwszFilePath;
         public IntPtr hFile;
         public IntPtr pgKnownSubject;

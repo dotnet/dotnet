@@ -169,7 +169,7 @@ namespace NuGet.Build.Tasks
             // try project fallback frameworks
             foreach (var currentProjectTargetFramework in fallbackNuGetFrameworks)
             {
-                nearestNuGetFramework = packageSpec.GetNearestTargetFramework(currentProjectTargetFramework, targetAlias: null);
+                nearestNuGetFramework = packageSpec.GetNearestTargetFramework(currentProjectTargetFramework, targetAlias: CurrentProjectTargetFrameworkProperty);
 
                 if (nearestNuGetFramework.FrameworkName != null)
                 {

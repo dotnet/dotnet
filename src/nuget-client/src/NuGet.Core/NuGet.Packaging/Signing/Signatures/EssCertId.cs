@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using NuGet.Packaging.Signing.DerEncoding;
 
 namespace NuGet.Packaging.Signing
@@ -26,9 +24,9 @@ namespace NuGet.Packaging.Signing
     public sealed class EssCertId
     {
         public byte[] CertificateHash { get; }
-        public IssuerSerial IssuerSerial { get; }
+        public IssuerSerial? IssuerSerial { get; }
 
-        private EssCertId(byte[] hash, IssuerSerial issuerSerial)
+        private EssCertId(byte[] hash, IssuerSerial? issuerSerial)
         {
             CertificateHash = hash;
             IssuerSerial = issuerSerial;
@@ -45,7 +43,7 @@ namespace NuGet.Packaging.Signing
         {
             var sequenceReader = reader.ReadSequence();
             var hash = sequenceReader.ReadOctetString();
-            IssuerSerial issuerSerial = null;
+            IssuerSerial? issuerSerial = null;
 
             if (sequenceReader.HasData)
             {

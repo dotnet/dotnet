@@ -161,6 +161,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 property, type);
 
         /// <summary>
+        ///     The property '{property}' on type '{type}' is used in a constructor binding and cannot be configured as not auto-loaded. Constructor-bound properties must always be loaded.
+        /// </summary>
+        public static string AutoLoadedConstructorProperty(object? property, object? type)
+            => string.Format(
+                GetString("AutoLoadedConstructorProperty", nameof(property), nameof(type)),
+                property, type);
+
+        /// <summary>
         ///     The property '{property}' on type '{type}' is a discriminator and cannot be configured as not auto-loaded. Discriminator properties must always be loaded.
         /// </summary>
         public static string AutoLoadedDiscriminatorProperty(object? property, object? type)
@@ -639,20 +647,20 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType, collection);
 
         /// <summary>
-        ///     The ordinal {ordinal} is out of range for the complex type collection '{entityType}.{collection}' which has {count} element(s).
-        /// </summary>
-        public static string ComplexCollectionOrdinalOutOfRange(object? ordinal, object? entityType, object? collection, object? count)
-            => string.Format(
-                GetString("ComplexCollectionOrdinalOutOfRange", nameof(ordinal), nameof(entityType), nameof(collection), nameof(count)),
-                ordinal, entityType, collection, count);
-
-        /// <summary>
         ///     The value for the property '{complexType}.{property}' cannot be set, because it's on the complex type collection element '{collectionDeclaringType}.{collection}[{ordinal}]' that contains a 'null' value.
         /// </summary>
         public static string ComplexCollectionNullElementSetter(object? complexType, object? property, object? collectionDeclaringType, object? collection, object? ordinal)
             => string.Format(
                 GetString("ComplexCollectionNullElementSetter", nameof(complexType), nameof(property), nameof(collectionDeclaringType), nameof(collection), nameof(ordinal)),
                 complexType, property, collectionDeclaringType, collection, ordinal);
+
+        /// <summary>
+        ///     The ordinal {ordinal} is out of range for the complex type collection '{entityType}.{collection}' which has {count} element(s).
+        /// </summary>
+        public static string ComplexCollectionOrdinalOutOfRange(object? ordinal, object? entityType, object? collection, object? count)
+            => string.Format(
+                GetString("ComplexCollectionOrdinalOutOfRange", nameof(ordinal), nameof(entityType), nameof(collection), nameof(count)),
+                ordinal, entityType, collection, count);
 
         /// <summary>
         ///     The complex entry at the original ordinal '{ordinal}' for the collection '{declaringType}.{collection}' cannot be accessed as the containing entry is in the added state.
@@ -677,6 +685,38 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("ComplexCollectionWrongClrType", nameof(property), nameof(type), nameof(clrType), nameof(targetType)),
                 property, type, clrType, targetType);
+
+        /// <summary>
+        ///     The intermediate complex property '{member}' was not found on type '{type}'. When using dotted property names, all intermediate segments must refer to complex properties.
+        /// </summary>
+        public static string ComplexPropertyChainIntermediateNotFound(object? member, object? type)
+            => string.Format(
+                GetString("ComplexPropertyChainIntermediateNotFound", nameof(member), nameof(type)),
+                member, type);
+
+        /// <summary>
+        ///     The member '{member}' on type '{type}' is configured as a non-complex property and cannot be used as an intermediate in a chained property access. Configure it as a complex property first if that's the intention.
+        /// </summary>
+        public static string ComplexPropertyChainInvalidMember(object? member, object? type)
+            => string.Format(
+                GetString("ComplexPropertyChainInvalidMember", nameof(member), nameof(type)),
+                member, type);
+
+        /// <summary>
+        ///     The dotted property name '{dottedName}' contains an empty segment. Dotted property names must consist of non-empty segments separated by '.'.
+        /// </summary>
+        public static string ComplexPropertyChainInvalidSegment(object? dottedName)
+            => string.Format(
+                GetString("ComplexPropertyChainInvalidSegment", nameof(dottedName)),
+                dottedName);
+
+        /// <summary>
+        ///     The member '{member}' on type '{type}' is a complex collection property and cannot be traversed in a chained property access. Configure properties on complex collection element types using the 'ComplexCollection' method.
+        /// </summary>
+        public static string ComplexPropertyChainOnCollection(object? member, object? type)
+            => string.Format(
+                GetString("ComplexPropertyChainOnCollection", nameof(member), nameof(type)),
+                member, type);
 
         /// <summary>
         ///     Adding the complex property '{type}.{property}' as an indexer property isn't supported. See https://github.com/dotnet/efcore/issues/31244 for more information.
@@ -837,12 +877,20 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entity);
 
         /// <summary>
-        ///     The property or navigation '{member}' cannot be added to the '{type}' type because a property or navigation with the same name already exists on the '{conflictingType}' type.
+        ///     The member '{member}' cannot be added to the '{type}' type because a {conflictingMemberKind} with the same name already exists on the '{conflictingType}' type. Remove the existing {conflictingMemberKind} first.
         /// </summary>
-        public static string ConflictingPropertyOrNavigation(object? member, object? type, object? conflictingType)
+        public static string ConflictingPropertyOrNavigationOnBaseType(object? member, object? type, object? conflictingMemberKind, object? conflictingType)
             => string.Format(
-                GetString("ConflictingPropertyOrNavigation", nameof(member), nameof(type), nameof(conflictingType)),
-                member, type, conflictingType);
+                GetString("ConflictingPropertyOrNavigationOnBaseType", nameof(member), nameof(type), nameof(conflictingMemberKind), nameof(conflictingType)),
+                member, type, conflictingMemberKind, conflictingType);
+
+        /// <summary>
+        ///     The member '{member}' cannot be added to the '{type}' type because a {conflictingMemberKind} with the same name already exists. Remove the existing {conflictingMemberKind} first.
+        /// </summary>
+        public static string ConflictingPropertyOrNavigationWithKind(object? member, object? type, object? conflictingMemberKind)
+            => string.Format(
+                GetString("ConflictingPropertyOrNavigationWithKind", nameof(member), nameof(type), nameof(conflictingMemberKind)),
+                member, type, conflictingMemberKind);
 
         /// <summary>
         ///     The property '{entityType}.{property}' participates in several relationship chains that have conflicting conversions: '{valueConversion}' and '{conflictingValueConversion}'.
@@ -1219,6 +1267,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
         /// </summary>
         public static string EFConstantNotSupportedInPrecompiledQueries
             => GetString("EFConstantNotSupportedInPrecompiledQueries");
+
+        /// <summary>
+        ///     '{methodName}' is not supported when using compiled queries or query filters.
+        /// </summary>
+        public static string EFMethodNotSupportedInCompiledQueries(object? methodName)
+            => string.Format(
+                GetString("EFMethodNotSupportedInCompiledQueries", nameof(methodName)),
+                methodName);
 
         /// <summary>
         ///     The '{methodName}' method may only be used with an argument that can be evaluated client-side and does not contain any reference to database-side entities.
@@ -1742,12 +1798,28 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 expression);
 
         /// <summary>
+        ///     The number of indices provided ({indicesCount}) must match the number of array segments in the JSON path ({arraySegmentCount}).
+        /// </summary>
+        public static string InvalidStructuredJsonPathIndexCount(object? indicesCount, object? arraySegmentCount)
+            => string.Format(
+                GetString("InvalidStructuredJsonPathIndexCount", nameof(indicesCount), nameof(arraySegmentCount)),
+                indicesCount, arraySegmentCount);
+
+        /// <summary>
         ///     Unable to track an entity of type '{entityType}' because its primary key property '{keyProperty}' is null.
         /// </summary>
         public static string InvalidKeyValue(object? entityType, object? keyProperty)
             => string.Format(
                 GetString("InvalidKeyValue", nameof(entityType), nameof(keyProperty)),
                 entityType, keyProperty);
+
+        /// <summary>
+        ///     The expression '{expression}' is not a valid member access expression. The expression should represent a simple property or field access: 't =&gt; t.MyProperty' or a chain of member accesses through non-collection complex properties: 't =&gt; t.MyComplex.MyProperty'.
+        /// </summary>
+        public static string InvalidMemberAccessChainExpression(object? expression)
+            => string.Format(
+                GetString("InvalidMemberAccessChainExpression", nameof(expression)),
+                expression);
 
         /// <summary>
         ///     The expression '{expression}' is not a valid member access expression. The expression should represent a simple property or field access: 't =&gt; t.MyProperty'.
@@ -3292,6 +3364,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 navigation, entityType);
 
         /// <summary>
+        ///     The skip navigation '{navigation}' on entity type '{entityType}' cannot be set as its own inverse.
+        /// </summary>
+        public static string SkipNavigationSelfInverse(object? navigation, object? entityType)
+            => string.Format(
+                GetString("SkipNavigationSelfInverse", nameof(navigation), nameof(entityType)),
+                navigation, entityType);
+
+        /// <summary>
         ///     The skip navigation '{inverse}' declared on the entity type '{inverseEntityType}' cannot be set as the inverse of '{navigation}', which targets '{targetEntityType}'. The inverse navigation should be declared on the target entity type.
         /// </summary>
         public static string SkipNavigationWrongInverse(object? inverse, object? inverseEntityType, object? navigation, object? targetEntityType)
@@ -3795,6 +3875,56 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
             }
 
             return (EventDefinition<string, string>)definition;
+        }
+
+        /// <summary>
+        ///     A compiled model was found but it was built for the database provider '{compiledProviderName}'. The current context is using the database provider '{currentProviderName}'. The compiled model was ignored. Regenerate the compiled model with the correct provider.
+        /// </summary>
+        public static EventDefinition<string, string> LogCompiledModelProviderMismatch(IDiagnosticsLogger logger)
+        {
+            var definition = ((LoggingDefinitions)logger.Definitions).LogCompiledModelProviderMismatch;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((LoggingDefinitions)logger.Definitions).LogCompiledModelProviderMismatch,
+                    logger,
+                    static logger => new EventDefinition<string, string>(
+                        logger.Options,
+                        CoreEventId.CompiledModelProviderMismatchWarning,
+                        LogLevel.Warning,
+                        "CoreEventId.CompiledModelProviderMismatchWarning",
+                        level => LoggerMessage.Define<string, string>(
+                            level,
+                            CoreEventId.CompiledModelProviderMismatchWarning,
+                            _resourceManager.GetString("LogCompiledModelProviderMismatch")!)));
+            }
+
+            return (EventDefinition<string, string>)definition;
+        }
+
+        /// <summary>
+        ///     'EnsureCreated' was called on a context that is already tracking added, modified, or deleted entities. These tracked changes would be lost if a retry occurs due to a transient failure.
+        /// </summary>
+        public static EventDefinition LogEnsureCreatedWithTrackedEntities(IDiagnosticsLogger logger)
+        {
+            var definition = ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities,
+                    logger,
+                    static logger => new EventDefinition(
+                        logger.Options,
+                        CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
+                        LogLevel.Warning,
+                        "CoreEventId.EnsureCreatedWithTrackedEntitiesWarning",
+                        level => LoggerMessage.Define(
+                            level,
+                            CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
+                            _resourceManager.GetString("LogEnsureCreatedWithTrackedEntities")!)));
+            }
+
+            return (EventDefinition)definition;
         }
 
         /// <summary>
@@ -4717,31 +4847,6 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
                             level,
                             CoreEventId.OldModelVersionWarning,
                             _resourceManager.GetString("LogOldModelVersion")!)));
-            }
-
-            return (EventDefinition<string, string>)definition;
-        }
-
-        /// <summary>
-        ///     A compiled model was found but was built for the database provider '{compiledProviderName}'. The current context is using the database provider '{currentProviderName}'. The compiled model was ignored. Regenerate the compiled model to use the correct provider.
-        /// </summary>
-        public static EventDefinition<string, string> LogCompiledModelProviderMismatch(IDiagnosticsLogger logger)
-        {
-            var definition = ((LoggingDefinitions)logger.Definitions).LogCompiledModelProviderMismatch;
-            if (definition == null)
-            {
-                definition = NonCapturingLazyInitializer.EnsureInitialized(
-                    ref ((LoggingDefinitions)logger.Definitions).LogCompiledModelProviderMismatch,
-                    logger,
-                    static logger => new EventDefinition<string, string>(
-                        logger.Options,
-                        CoreEventId.CompiledModelProviderMismatchWarning,
-                        LogLevel.Warning,
-                        "CoreEventId.CompiledModelProviderMismatchWarning",
-                        level => LoggerMessage.Define<string, string>(
-                            level,
-                            CoreEventId.CompiledModelProviderMismatchWarning,
-                            _resourceManager.GetString("LogCompiledModelProviderMismatch")!)));
             }
 
             return (EventDefinition<string, string>)definition;

@@ -24,7 +24,7 @@ namespace NuGet.ProjectModel.Test
             var dependencies = nullDependencies ? null : Array.Empty<LibraryDependency>();
 
             // Act + Assert
-            Assert.Throws<ArgumentNullException>(() => new CentralTransitiveDependencyGroup(nuGetFramework, dependencies));
+            Assert.Throws<ArgumentNullException>(() => new CentralTransitiveDependencyGroup(nuGetFramework!, dependencies!));
         }
 
         [Fact]

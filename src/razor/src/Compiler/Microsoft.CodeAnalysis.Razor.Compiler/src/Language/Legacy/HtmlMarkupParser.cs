@@ -88,14 +88,14 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     // We were tracking a void element but we reached the end of the document without finding a matching end tag.
                     // So, close that element and move its content to its parent.
                     var children = builder.Consume();
-                    var voidElement = SyntaxFactory.MarkupElement(tracker.StartTag, EmptySyntaxList, endTag: null);
+                    var voidElement = SyntaxFactory.MarkupElement(tracker.StartTag, EmptySyntaxList, markupEndTag: null);
                     builder.AddRange(tracker.PreviousNodes);
                     builder.Add(voidElement);
                     builder.AddRange(children);
                 }
                 else
                 {
-                    var element = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), endTag: null);
+                    var element = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), markupEndTag: null);
                     builder.AddRange(tracker.PreviousNodes);
                     builder.Add(element);
                 }
@@ -322,7 +322,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         while (_tagTracker.Count > 0)
         {
             var tracker = _tagTracker.Pop();
-            var element = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), endTag: null);
+            var element = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), markupEndTag: null);
             builder.AddRange(tracker.PreviousNodes);
             builder.Add(element);
 
@@ -498,7 +498,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             if (tagMode == MarkupTagMode.SelfClosing || tagMode == MarkupTagMode.Invalid || tagMode == MarkupTagMode.Void)
             {
                 // For cases like <foo />, <input> or invalid cases like |<|<p>
-                var element = SyntaxFactory.MarkupElement(startTag, EmptySyntaxList, endTag: null);
+                var element = SyntaxFactory.MarkupElement(startTag, EmptySyntaxList, markupEndTag: null);
                 builder.Add(element);
                 return;
             }
@@ -532,7 +532,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (!TryRecoverStartTag(builder, endTagName, endTag))
                 {
                     // Could not recover.
-                    var element = SyntaxFactory.MarkupElement(startTag: null, body: EmptySyntaxList, endTag: endTag);
+                    var element = SyntaxFactory.MarkupElement(markupStartTag: null, body: EmptySyntaxList, markupEndTag: endTag);
                     builder.Add(element);
 
                     if (mode == ParseMode.MarkupInCodeBlock)
@@ -563,7 +563,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         while (_tagTracker.Count > 0)
         {
             var tracker = _tagTracker.Pop();
-            var unclosedElement = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), endTag: null);
+            var unclosedElement = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), markupEndTag: null);
             builder.AddRange(tracker.PreviousNodes);
             builder.Add(unclosedElement);
 
@@ -589,7 +589,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         {
             var tracker = _tagTracker.Pop();
             var children = builder.Consume();
-            var voidElement = SyntaxFactory.MarkupElement(tracker.StartTag, EmptySyntaxList, endTag: null);
+            var voidElement = SyntaxFactory.MarkupElement(tracker.StartTag, EmptySyntaxList, markupEndTag: null);
             builder.AddRange(tracker.PreviousNodes);
             builder.Add(voidElement);
             builder.AddRange(children);
@@ -612,7 +612,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             for (var i = 0; i < malformedTagCount; i++)
             {
                 var tracker = _tagTracker.Pop();
-                var malformedElement = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), endTag: null);
+                var malformedElement = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), markupEndTag: null);
                 builder.AddRange(tracker.PreviousNodes);
                 builder.Add(malformedElement);
             }
@@ -2149,7 +2149,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         while (_tagTracker.Count > 0)
         {
             var tracker = _tagTracker.Pop();
-            var element = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), endTag: null);
+            var element = SyntaxFactory.MarkupElement(tracker.StartTag, builder.Consume(), markupEndTag: null);
             builder.AddRange(tracker.PreviousNodes);
             builder.Add(element);
         }

@@ -2,11 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <dependencies>
       <group targetFramework="net8.0">
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
-        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
       </group>
 
       <group targetFramework="net462"></group>
@@ -15,6 +15,7 @@
 
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- Add a third party notice file -->
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
@@ -31,6 +32,7 @@
 
     <file src="net8.0\x86\msdia140.dll" target="lib\net8.0\x86\" />
     <file src="net8.0\x64\msdia140.dll" target="lib\net8.0\x64\" />
+    <file src="net8.0\arm64\msdia140.dll" target="lib\net8.0\arm64\" />
 
     <!--
           We move AnyCPU version of testhost.dll, at the moment we don't have native code that needs particular architecture inside testhost.dll.

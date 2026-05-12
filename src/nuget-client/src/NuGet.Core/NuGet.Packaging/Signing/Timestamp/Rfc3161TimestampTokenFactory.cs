@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -36,7 +34,7 @@ namespace NuGet.Packaging.Signing
                 throw new ArgumentNullException(nameof(encoded));
             }
 
-            IRfc3161TimestampToken iRfc3161TimestampToken = null;
+            IRfc3161TimestampToken iRfc3161TimestampToken;
 #if IS_DESKTOP
             iRfc3161TimestampToken = new Rfc3161TimestampTokenNet472Wrapper(
                 tstInfo,

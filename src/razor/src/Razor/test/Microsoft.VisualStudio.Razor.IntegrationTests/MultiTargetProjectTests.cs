@@ -14,21 +14,6 @@ public class MultiTargetProjectTests(ITestOutputHelper testOutputHelper) : Abstr
 
     protected override string TargetFrameworkElement => $"""<TargetFrameworks>{OtherTargetFramework};{TargetFramework}</TargetFrameworks>""";
 
-    [IdeFact(Skip = "Cohosting makes this test validation impossible")]
-    public async Task ValidateMultipleProjects()
-    {
-        // This just verifies that there are actually two projects present with the same file path:
-        // one for each target framework.
-
-        var projectKeyIds = await TestServices.RazorProjectSystem.GetProjectKeyIdsForProjectAsync(ProjectFilePath, ControlledHangMitigatingCancellationToken);
-
-        projectKeyIds = projectKeyIds.Sort();
-
-        Assert.Equal(2, projectKeyIds.Length);
-        Assert.Contains(OtherTargetFramework, projectKeyIds[0]);
-        Assert.Contains(TargetFramework, projectKeyIds[1]);
-    }
-
     [IdeFact]
     public async Task OpenExistingProject()
     {

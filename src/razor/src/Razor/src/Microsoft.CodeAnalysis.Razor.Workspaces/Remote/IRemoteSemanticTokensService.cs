@@ -15,7 +15,6 @@ internal interface IRemoteSemanticTokensService
         RazorPinnedSolutionInfoWrapper solutionInfo,
         DocumentId razorDocumentId,
         LinePositionSpan span,
-        bool colorBackground,
         Guid correlationId,
         CancellationToken cancellationToken);
 }

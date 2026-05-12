@@ -4,7 +4,7 @@
     <Name>PackageReferenceClassLibrary</Name>
     <Description>Template for class library projects</Description>
     <ProjectType>CSharp</ProjectType>
-    <RequiredFrameworkVersion>4.6</RequiredFrameworkVersion>
+    <RequiredFrameworkVersion>4.8</RequiredFrameworkVersion>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
     <DefaultName>ClassLibraryPR</DefaultName>

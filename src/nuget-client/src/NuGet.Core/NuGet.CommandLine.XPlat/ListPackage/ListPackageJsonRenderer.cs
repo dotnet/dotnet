@@ -51,9 +51,6 @@ namespace NuGet.CommandLine.XPlat.ListPackage
         protected readonly List<ReportProblem> _problems = new();
         protected TextWriter _writer;
 
-        private ListPackageJsonRenderer()
-        { }
-
         public ListPackageJsonRenderer(TextWriter textWriter = null)
         {
             _writer = textWriter ?? Console.Out;
@@ -200,7 +197,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
             {
                 writer.WriteStartObject();
                 writer.WritePropertyName(FrameworkProperty);
-                writer.WriteValue(reportFrameworkPackage.Framework);
+                writer.WriteValue(reportFrameworkPackage.TargetAlias);
                 WriteTopLevelPackages(writer, TopLevelPackagesProperty, reportFrameworkPackage.TopLevelPackages, listPackageArgs);
                 WriteTransitivePackages(writer, TransitivePackagesProperty, reportFrameworkPackage.TransitivePackages, listPackageArgs);
                 writer.WriteEndObject();

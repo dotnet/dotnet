@@ -101,9 +101,16 @@ namespace Microsoft.SignCheck.Interop.PortableExecutable
                 throw new ArgumentNullException("path");
             }
 
+            const int ImageDosHeaderSize = 64; // 30 × UInt16 + 1 × UInt32
             using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (BinaryReader reader = new BinaryReader(stream))
             {
+                if (stream.Length < ImageDosHeaderSize)
+                {
+                    throw new InvalidDataException(
+                        $"File '{path}' is too small ({stream.Length} bytes) to contain a valid IMAGE_DOS_HEADER.");
+                }
+
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
 
                 var _imageDOSHeader = new IMAGE_DOS_HEADER

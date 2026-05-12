@@ -7,6 +7,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:shell_controls="clr-namespace:Microsoft.VisualStudio.Shell.Controls;assembly=Microsoft.VisualStudio.Shell.Styles"
              mc:Ignorable="d"
              d:DesignHeight="150" d:DesignWidth="350">
   <UserControl.Resources>
@@ -35,7 +36,7 @@
             FontWeight="Bold"
             Text="{x:Static nuget:Resources.Label_Deprecated}"/>
         </StackPanel>
-        <TextBox
+        <shell_controls:TextBox
           Style="{DynamicResource SelectableTextBlockStyle}" 
           Margin="0,8,0,0"
           TextWrapping="WrapWithOverflow"

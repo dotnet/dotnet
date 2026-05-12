@@ -21,7 +21,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
         {
         }
 
-        [CIOnlyFact]
+        [Fact]
         public void AdditionalContext_WhenRootCertificateIsUntrusted_ReturnsLogMessage()
         {
             using (TestDirectory directory = TestDirectory.Create())
@@ -29,9 +29,9 @@ namespace NuGet.Packaging.FuncTest.SigningTests
                 FileInfo certificateBundle = CreateCertificateBundle(directory);
                 Assert.True(SystemCertificateBundleX509ChainFactory.TryCreate(
                     new[] { certificateBundle.FullName },
-                    out SystemCertificateBundleX509ChainFactory factory));
+                    out SystemCertificateBundleX509ChainFactory? factory));
 
-                using (IX509Chain chain = factory.Create())
+                using (IX509Chain chain = factory!.Create())
                 {
                     X509Certificate2 certificate = Fixture.UntrustedTestCertificate.Cert;
 

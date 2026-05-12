@@ -290,7 +290,7 @@ public class JobQueue<T> : IDisposable
     /// </summary>
     private void BackgroundJobProcessor(string threadName)
     {
-#if DEBUG && (NETFRAMEWORK || NET || NETSTANDARD2_0_OR_GREATER)
+#if DEBUG
         Thread.CurrentThread.Name = threadName;
 #endif
         bool shutdown = false;

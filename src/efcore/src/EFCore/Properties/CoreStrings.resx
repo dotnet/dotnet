@@ -168,6 +168,9 @@
   <data name="AutoLoadedConcurrencyTokenProperty" xml:space="preserve">
     <value>The property '{property}' on type '{type}' is a concurrency token and cannot be configured as not auto-loaded. Concurrency tokens must always be loaded.</value>
   </data>
+  <data name="AutoLoadedConstructorProperty" xml:space="preserve">
+    <value>The property '{property}' on type '{type}' is used in a constructor binding and cannot be configured as not auto-loaded. Constructor-bound properties must always be loaded.</value>
+  </data>
   <data name="AutoLoadedDiscriminatorProperty" xml:space="preserve">
     <value>The property '{property}' on type '{type}' is a discriminator and cannot be configured as not auto-loaded. Discriminator properties must always be loaded.</value>
   </data>
@@ -348,11 +351,11 @@
   <data name="ComplexCollectionNotInitialized" xml:space="preserve">
     <value>The complex type collection '{entityType}.{collection}' must be initialized to a non-null value before the elements can be accessed.</value>
   </data>
-  <data name="ComplexCollectionOrdinalOutOfRange" xml:space="preserve">
-    <value>The ordinal {ordinal} is out of range for the complex type collection '{entityType}.{collection}' which has {count} element(s).</value>
-  </data>
   <data name="ComplexCollectionNullElementSetter" xml:space="preserve">
     <value>The value for the property '{complexType}.{property}' cannot be set, because it's on the complex type collection element '{collectionDeclaringType}.{collection}[{ordinal}]' that contains a 'null' value.</value>
+  </data>
+  <data name="ComplexCollectionOrdinalOutOfRange" xml:space="preserve">
+    <value>The ordinal {ordinal} is out of range for the complex type collection '{entityType}.{collection}' which has {count} element(s).</value>
   </data>
   <data name="ComplexCollectionOriginalEntryAddedEntity" xml:space="preserve">
     <value>The complex entry at the original ordinal '{ordinal}' for the collection '{declaringType}.{collection}' cannot be accessed as the containing entry is in the added state.</value>
@@ -362,6 +365,18 @@
   </data>
   <data name="ComplexCollectionWrongClrType" xml:space="preserve">
     <value>The collection complex property '{property}' cannot be added to the type '{type}' because its CLR type '{clrType}' does not implement 'IEnumerable&lt;{targetType}&gt;'. Collection complex property must implement IEnumerable&lt;&gt; of the complex type.</value>
+  </data>
+  <data name="ComplexPropertyChainIntermediateNotFound" xml:space="preserve">
+    <value>The intermediate complex property '{member}' was not found on type '{type}'. When using dotted property names, all intermediate segments must refer to complex properties.</value>
+  </data>
+  <data name="ComplexPropertyChainInvalidMember" xml:space="preserve">
+    <value>The member '{member}' on type '{type}' is configured as a non-complex property and cannot be used as an intermediate in a chained property access. Configure it as a complex property first if that's the intention.</value>
+  </data>
+  <data name="ComplexPropertyChainInvalidSegment" xml:space="preserve">
+    <value>The dotted property name '{dottedName}' contains an empty segment. Dotted property names must consist of non-empty segments separated by '.'.</value>
+  </data>
+  <data name="ComplexPropertyChainOnCollection" xml:space="preserve">
+    <value>The member '{member}' on type '{type}' is a complex collection property and cannot be traversed in a chained property access. Configure properties on complex collection element types using the 'ComplexCollection' method.</value>
   </data>
   <data name="ComplexPropertyIndexer" xml:space="preserve">
     <value>Adding the complex property '{type}.{property}' as an indexer property isn't supported. See https://github.com/dotnet/efcore/issues/31244 for more information.</value>
@@ -423,8 +438,11 @@
   <data name="ConflictingKeylessAndPrimaryKeyAttributes" xml:space="preserve">
     <value>The entity type '{entity}' has both [Keyless] and [PrimaryKey] attributes; one must be removed.</value>
   </data>
-  <data name="ConflictingPropertyOrNavigation" xml:space="preserve">
-    <value>The property or navigation '{member}' cannot be added to the '{type}' type because a property or navigation with the same name already exists on the '{conflictingType}' type.</value>
+  <data name="ConflictingPropertyOrNavigationOnBaseType" xml:space="preserve">
+    <value>The member '{member}' cannot be added to the '{type}' type because a {conflictingMemberKind} with the same name already exists on the '{conflictingType}' type. Remove the existing {conflictingMemberKind} first.</value>
+  </data>
+  <data name="ConflictingPropertyOrNavigationWithKind" xml:space="preserve">
+    <value>The member '{member}' cannot be added to the '{type}' type because a {conflictingMemberKind} with the same name already exists. Remove the existing {conflictingMemberKind} first.</value>
   </data>
   <data name="ConflictingRelationshipConversions" xml:space="preserve">
     <value>The property '{entityType}.{property}' participates in several relationship chains that have conflicting conversions: '{valueConversion}' and '{conflictingValueConversion}'.</value>
@@ -572,6 +590,9 @@
   </data>
   <data name="EFConstantNotSupportedInPrecompiledQueries" xml:space="preserve">
     <value>The 'EF.Constant&lt;T&gt;' method is not supported when using precompiled queries.</value>
+  </data>
+  <data name="EFMethodNotSupportedInCompiledQueries" xml:space="preserve">
+    <value>'{methodName}' is not supported when using compiled queries or query filters.</value>
   </data>
   <data name="EFMethodWithNonEvaluatableArgument" xml:space="preserve">
     <value>The '{methodName}' method may only be used with an argument that can be evaluated client-side and does not contain any reference to database-side entities.</value>
@@ -775,8 +796,14 @@
   <data name="InvalidIncludeExpression" xml:space="preserve">
     <value>The expression '{expression}' is invalid inside an 'Include' operation, since it does not represent a property access: 't =&gt; t.MyProperty'. To target navigations declared on derived types, use casting ('t =&gt; ((Derived)t).MyProperty') or the 'as' operator ('t =&gt; (t as Derived).MyProperty'). Collection navigation access can be filtered by composing Where, OrderBy(Descending), ThenBy(Descending), Skip or Take operations. For more information on including related data, see https://go.microsoft.com/fwlink/?LinkID=746393.</value>
   </data>
+  <data name="InvalidStructuredJsonPathIndexCount" xml:space="preserve">
+    <value>The number of indices provided ({indicesCount}) must match the number of array segments in the JSON path ({arraySegmentCount}).</value>
+  </data>
   <data name="InvalidKeyValue" xml:space="preserve">
     <value>Unable to track an entity of type '{entityType}' because its primary key property '{keyProperty}' is null.</value>
+  </data>
+  <data name="InvalidMemberAccessChainExpression" xml:space="preserve">
+    <value>The expression '{expression}' is not a valid member access expression. The expression should represent a simple property or field access: 't =&gt; t.MyProperty' or a chain of member accesses through non-collection complex properties: 't =&gt; t.MyComplex.MyProperty'.</value>
   </data>
   <data name="InvalidMemberExpression" xml:space="preserve">
     <value>The expression '{expression}' is not a valid member access expression. The expression should represent a simple property or field access: 't =&gt; t.MyProperty'.</value>
@@ -919,6 +946,14 @@
   <data name="LogCollectionWithoutComparer" xml:space="preserve">
     <value>The property '{entityType}.{property}' is a collection or enumeration type with a value converter but with no value comparer. Set a value comparer to ensure the collection/enumeration elements are compared correctly.</value>
     <comment>Warning CoreEventId.CollectionWithoutComparer string string</comment>
+  </data>
+  <data name="LogCompiledModelProviderMismatch" xml:space="preserve">
+    <value>A compiled model was found but it was built for the database provider '{compiledProviderName}'. The current context is using the database provider '{currentProviderName}'. The compiled model was ignored. Regenerate the compiled model with the correct provider.</value>
+    <comment>Warning CoreEventId.CompiledModelProviderMismatchWarning string string</comment>
+  </data>
+  <data name="LogEnsureCreatedWithTrackedEntities" xml:space="preserve">
+    <value>'EnsureCreated' was called on a context that is already tracking added, modified, or deleted entities. These tracked changes would be lost if a retry occurs due to a transient failure. Call 'EnsureCreated' before making changes to the context, or disable this warning by using 'ConfigureWarnings(w =&gt; w.Ignore(CoreEventId.EnsureCreatedWithTrackedEntitiesWarning))'.</value>
+    <comment>Warning CoreEventId.EnsureCreatedWithTrackedEntitiesWarning</comment>
   </data>
   <data name="LogComplexElementPropertyChangeDetected" xml:space="preserve">
     <value>The unchanged property '{typePath}.{property}' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.</value>
@@ -1067,10 +1102,6 @@
   <data name="LogOldModelVersion" xml:space="preserve">
     <value>The model supplied in the context options was created with EF Core version '{oldVersion}', but the context is from version '{newVersion}'. Update the externally built model.</value>
     <comment>Warning CoreEventId.OldModelVersionWarning string string</comment>
-  </data>
-  <data name="LogCompiledModelProviderMismatch" xml:space="preserve">
-    <value>A compiled model was found but it was built for the database provider '{compiledProviderName}'. The current context is using the database provider '{currentProviderName}'. The compiled model was ignored. Regenerate the compiled model with the correct provider.</value>
-    <comment>Warning CoreEventId.CompiledModelProviderMismatchWarning string string</comment>
   </data>
   <data name="LogOptimisticConcurrencyException" xml:space="preserve">
     <value>{error}</value>
@@ -1724,6 +1755,9 @@
   </data>
   <data name="SkipNavigationNonCollection" xml:space="preserve">
     <value>The skip navigation '{1_entityType}.{0_navigation}' is not a collection. Only collection skip navigations are currently supported.</value>
+  </data>
+  <data name="SkipNavigationSelfInverse" xml:space="preserve">
+    <value>The skip navigation '{navigation}' on entity type '{entityType}' cannot be set as its own inverse.</value>
   </data>
   <data name="SkipNavigationWrongInverse" xml:space="preserve">
     <value>The skip navigation '{inverse}' declared on the entity type '{inverseEntityType}' cannot be set as the inverse of '{navigation}', which targets '{targetEntityType}'. The inverse navigation should be declared on the target entity type.</value>

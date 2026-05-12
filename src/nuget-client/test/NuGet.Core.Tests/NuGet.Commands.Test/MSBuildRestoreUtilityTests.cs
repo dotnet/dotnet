@@ -4873,6 +4873,52 @@ namespace NuGet.Commands.Test
             return new MSBuildItem(Guid.NewGuid().ToString(), properties);
         }
 
+        [Theory]
+        [InlineData("true", true)]
+        [InlineData("false", false)]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        public void MSBuildRestoreUtility_GetPackageSpec_RestoreDoNotWriteDependencyGraphSpec(
+            string propertyValue,
+            bool expectedValue)
+        {
+            using (var workingDir = TestDirectory.Create())
+            {
+                // Arrange
+                var project1Root = Path.Combine(workingDir, "a");
+                var project1Path = Path.Combine(project1Root, "a.csproj");
+
+                var items = new List<IDictionary<string, string>>();
+
+                var properties = new Dictionary<string, string>()
+                {
+                    { "Type", "ProjectSpec" },
+                    { "Version", "2.0.0" },
+                    { "ProjectName", "a" },
+                    { "ProjectStyle", "PackageReference" },
+                    { "ProjectUniqueName", "482C20DE-DFF9-4BD0-B90A-BD3201AA351A" },
+                    { "ProjectPath", project1Path },
+                    { "TargetFrameworks", "net46" },
+                };
+
+                if (propertyValue != null)
+                {
+                    properties["RestoreDoNotWriteDependencyGraphSpec"] = propertyValue;
+                }
+
+                items.Add(properties);
+
+                var wrappedItems = items.Select(CreateItems).ToList();
+
+                // Act
+                var dgSpec = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
+                var project1Spec = dgSpec.Projects.Single();
+
+                // Assert
+                project1Spec.RestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.Should().Be(expectedValue);
+            }
+        }
+
         private Dictionary<string, string> WithUniqueName(Dictionary<string, string> item, string uniqueName)
         {
             var newItem = new Dictionary<string, string>(item, StringComparer.OrdinalIgnoreCase);

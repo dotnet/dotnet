@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -46,7 +44,7 @@ namespace NuGet.Packaging
 
             try
             {
-                NupkgMetadataFile nupkgMetadata = JsonSerializer.Deserialize<NupkgMetadataFile>(stream, JsonContext.NupkgMetadataFile);
+                NupkgMetadataFile? nupkgMetadata = JsonSerializer.Deserialize<NupkgMetadataFile>(stream, JsonContext.NupkgMetadataFile);
                 if (nupkgMetadata == null)
                 {
                     throw new InvalidDataException();
@@ -76,7 +74,7 @@ namespace NuGet.Packaging
         {
             // Create the directory if it does not exist
             var fileInfo = new FileInfo(filePath);
-            fileInfo.Directory.Create();
+            fileInfo.Directory!.Create();
 
             using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             {

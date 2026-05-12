@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 
@@ -42,25 +40,25 @@ namespace NuGet.ContentModel
             Entry = entry;
         }
 
-        public SelectionCriteriaEntryBuilder this[string key, string value]
+        public SelectionCriteriaEntryBuilder this[string key, string? value]
         {
             get
             {
-                ContentPropertyDefinition propertyDefinition;
+                ContentPropertyDefinition? propertyDefinition;
                 if (!Builder.Properties.TryGetValue(key, out propertyDefinition))
                 {
                     throw new Exception("Undefined property used for criteria");
                 }
                 if (value == null)
                 {
-                    Entry.Properties[key] = null;
+                    Entry.Properties[key] = null!;
                 }
                 else
                 {
-                    object valueLookup;
+                    object? valueLookup;
                     if (propertyDefinition.TryLookup(value.AsMemory(), table: null, matchOnly: false, value: out valueLookup))
                     {
-                        Entry.Properties[key] = valueLookup;
+                        Entry.Properties[key] = valueLookup!;
                     }
                     else
                     {
@@ -75,7 +73,7 @@ namespace NuGet.ContentModel
         {
             get
             {
-                ContentPropertyDefinition propertyDefinition;
+                ContentPropertyDefinition? propertyDefinition;
                 if (!Builder.Properties.TryGetValue(key, out propertyDefinition))
                 {
                     throw new Exception("Undefined property used for criteria");

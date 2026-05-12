@@ -505,5 +505,56 @@ namespace NuGet.CommandLine.Test
 
             return signCommand;
         }
+
+        [Fact]
+        public void SignCommandArgParsing_AllowUntrustedRoot_SetsAllowUntrustedRoot()
+        {
+            // Arrange
+            var packagePath = @"\\path\package.nupkg";
+            var certificateFingerprint = Sha256Hash;
+            var mockConsole = new Mock<IConsole>();
+            mockConsole.Setup(c => c.Verbosity).Returns(Verbosity.Detailed);
+
+            var signCommand = new SignCommand
+            {
+                Console = mockConsole.Object,
+                CertificateFingerprint = certificateFingerprint,
+                NonInteractive = true,
+                AllowUntrustedRoot = true,
+            };
+
+            signCommand.Arguments.Add(packagePath);
+
+            // Act
+            var signArgs = signCommand.GetSignArgs();
+
+            // Assert
+            Assert.True(signArgs.AllowUntrustedRoot);
+        }
+
+        [Fact]
+        public void SignCommandArgParsing_DefaultAllowUntrustedRoot_IsFalse()
+        {
+            // Arrange
+            var packagePath = @"\\path\package.nupkg";
+            var certificateFingerprint = Sha256Hash;
+            var mockConsole = new Mock<IConsole>();
+            mockConsole.Setup(c => c.Verbosity).Returns(Verbosity.Detailed);
+
+            var signCommand = new SignCommand
+            {
+                Console = mockConsole.Object,
+                CertificateFingerprint = certificateFingerprint,
+                NonInteractive = true,
+            };
+
+            signCommand.Arguments.Add(packagePath);
+
+            // Act
+            var signArgs = signCommand.GetSignArgs();
+
+            // Assert
+            Assert.False(signArgs.AllowUntrustedRoot);
+        }
     }
 }

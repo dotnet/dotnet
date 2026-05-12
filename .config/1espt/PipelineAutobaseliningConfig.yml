@@ -1,27 +1,28 @@
 ## DO NOT MODIFY THIS FILE MANUALLY. This is part of auto-baselining from 1ES Pipeline Templates. Go to [https://aka.ms/1espt-autobaselining] for more details.
 
 pipelines:
-  1330:
+  '*':
     retail:
       source:
         credscan:
           lastModifiedDate: 2024-03-25
         eslint:
-          lastModifiedDate: 2024-03-25
+          lastModifiedDate: 2026-05-09
         psscriptanalyzer:
-          lastModifiedDate: 2024-03-25
+          lastModifiedDate: 2026-05-09
         armory:
-          lastModifiedDate: 2024-03-25
+          lastModifiedDate: 2026-05-09
         policheck:
-          lastModifiedDate: 2025-03-27
+          lastModifiedDate: 2026-05-09
       binary:
         credscan:
           lastModifiedDate: 2024-03-25
         binskim:
-          lastModifiedDate: 2025-10-03
+          lastModifiedDate: 2026-04-28
         spotbugs:
           lastModifiedDate: 2024-03-25
     usedBinskimScanAllExtensions: true
+    mainPipelineId: 1330
   1299:
     retail:
       source:
@@ -39,7 +40,7 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-12-20
         binskim:
-          lastModifiedDate: 2025-01-09
+          lastModifiedDate: 2026-04-28
   1219:
     retail:
       source:
@@ -57,7 +58,7 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-12-23
         binskim:
-          lastModifiedDate: 2025-01-09
+          lastModifiedDate: 2026-04-28
   1231:
     retail:
       source:
@@ -75,7 +76,7 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-10-17
         binskim:
-          lastModifiedDate: 2025-01-10
+          lastModifiedDate: 2026-04-28
         spotbugs:
           lastModifiedDate: 2024-10-17
   1301:
@@ -95,7 +96,7 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-10-24
         binskim:
-          lastModifiedDate: 2025-01-13
+          lastModifiedDate: 2026-04-28
         spotbugs:
           lastModifiedDate: 2024-10-24
   1447:
@@ -115,7 +116,7 @@ pipelines:
         credscan:
           lastModifiedDate: 2025-05-09
         binskim:
-          lastModifiedDate: 2025-05-09
+          lastModifiedDate: 2026-04-28
         spotbugs:
           lastModifiedDate: 2025-05-09
   1484:
@@ -127,7 +128,7 @@ pipelines:
           lastModifiedDate: 2025-08-06
       binary:
         binskim:
-          lastModifiedDate: 2025-08-06
+          lastModifiedDate: 2026-04-28
   1525:
     retail:
       source:
@@ -143,4 +144,4 @@ pipelines:
         credscan:
           lastModifiedDate: 2025-09-19
         binskim:
-          lastModifiedDate: 2025-09-19
+          lastModifiedDate: 2026-04-28

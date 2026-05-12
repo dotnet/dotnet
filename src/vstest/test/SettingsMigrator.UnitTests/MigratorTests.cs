@@ -93,7 +93,7 @@ public class MigratorTests
         Assert.IsNotNull(root);
         var dataCollectorNode = root.SelectNodes(@"/RunSettings/DataCollectionRunSettings/DataCollectors/DataCollector");
         Assert.IsNotNull(dataCollectorNode);
-        Assert.AreEqual(2, dataCollectorNode.Count, "Data collector is missing");
+        Assert.HasCount(2, dataCollectorNode, "Data collector is missing");
     }
 
     [TestMethod]
@@ -105,28 +105,33 @@ public class MigratorTests
     }
 
     [TestMethod]
-    [ExpectedException(typeof(XmlException))]
     public void InvalidSettingsThrowsException()
     {
         _oldTestsettingsPath = Path.Combine(Path.GetTempPath(), "oldTestsettings.testsettings");
+        try
+        {
+            File.WriteAllText(_oldTestsettingsPath, InvalidSettings);
+            File.WriteAllText(_newRunsettingsPath, string.Empty);
 
-        File.WriteAllText(_oldTestsettingsPath, InvalidSettings);
-        File.WriteAllText(_newRunsettingsPath, string.Empty);
-
-        _migrator.Migrate(_oldTestsettingsPath, _newRunsettingsPath);
-
-        File.Delete(_oldTestsettingsPath);
+            Assert.ThrowsExactly<XmlException>(() => _migrator.Migrate(_oldTestsettingsPath, _newRunsettingsPath));
+        }
+        finally
+        {
+            if (File.Exists(_oldRunsettingsPath))
+            {
+                File.Delete(_oldRunsettingsPath);
+            }
+        }
     }
 
     [TestMethod]
-    // On some systems this throws file not found, on some it throws directory not found,
-    // I don't know why and it does not matter for the test. As long as it throws.
-    [ExpectedException(typeof(IOException), AllowDerivedTypes = true)]
     public void InvalidPathThrowsException()
     {
         string oldTestsettingsPath = @"X:\generatedRun,settings.runsettings";
 
-        _migrator.Migrate(oldTestsettingsPath, _newRunsettingsPath);
+        // On some systems this throws file not found, on some it throws directory not found,
+        // I don't know why and it does not matter for the test. As long as it throws. 
+        Assert.Throws<IOException>(() => _migrator.Migrate(oldTestsettingsPath, _newRunsettingsPath));
     }
 
     private static void Validate(string newRunsettingsPath)

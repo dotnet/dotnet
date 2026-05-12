@@ -273,6 +273,23 @@ END = 1
 """);
     }
 
+    public override async Task IndexOf_with_non_string_column_using_double_cast()
+    {
+        await base.IndexOf_with_non_string_column_using_double_cast();
+
+        AssertSql(
+            """
+@pattern='5' (Size = 4000)
+
+SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
+FROM [BasicTypesEntities] AS [b]
+WHERE CAST(CHARINDEX(@pattern, CAST([b].[Int] AS nvarchar(max))) AS int) - CASE
+    WHEN @pattern = N'' THEN 0
+    ELSE 1
+END <> -1
+""");
+    }
+
     #endregion IndexOf
 
     #region Replace
@@ -322,6 +339,18 @@ WHERE [b].[String] <> N'' AND REPLACE([b].[String], [b].[String], N'') = N''
 SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
 FROM [BasicTypesEntities] AS [b]
 WHERE [b].[String] <> N'' AND REPLACE([b].[String], [b].[String], CONVERT(varchar(11), [b].[Int])) = CONVERT(varchar(11), [b].[Int])
+""");
+    }
+
+    public override async Task Replace_with_non_string_column_using_double_cast()
+    {
+        await base.Replace_with_non_string_column_using_double_cast();
+
+        AssertSql(
+            """
+SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
+FROM [BasicTypesEntities] AS [b]
+WHERE REPLACE(CAST([b].[Int] AS nvarchar(max)), N'8', N'3') = N'3'
 """);
     }
 
@@ -798,11 +827,43 @@ WHERE LTRIM([b].[String]) = N'Boston  '
 """);
     }
 
-    public override Task TrimStart_with_char_argument()
-        => AssertTranslationFailed(() => base.TrimStart_with_char_argument());
+    public override async Task TrimStart_with_char_argument()
+    {
+        if (TestEnvironment.IsFunctions2022Supported)
+        {
+            await base.TrimStart_with_char_argument();
 
-    public override Task TrimStart_with_char_array_argument()
-        => AssertTranslationFailed(() => base.TrimStart_with_char_array_argument());
+            AssertSql(
+                """
+SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
+FROM [BasicTypesEntities] AS [b]
+WHERE LTRIM([b].[String], N'S') = N'eattle'
+""");
+        }
+        else
+        {
+            await AssertTranslationFailed(() => base.TrimStart_with_char_argument());
+        }
+    }
+
+    public override async Task TrimStart_with_char_array_argument()
+    {
+        if (TestEnvironment.IsFunctions2022Supported)
+        {
+            await base.TrimStart_with_char_array_argument();
+
+            AssertSql(
+                """
+SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
+FROM [BasicTypesEntities] AS [b]
+WHERE LTRIM([b].[String], N'Se') = N'attle'
+""");
+        }
+        else
+        {
+            await AssertTranslationFailed(() => base.TrimStart_with_char_array_argument());
+        }
+    }
 
     #endregion TrimStart
 
@@ -820,11 +881,43 @@ WHERE RTRIM([b].[String]) = N'  Boston'
 """);
     }
 
-    public override Task TrimEnd_with_char_argument()
-        => AssertTranslationFailed(() => base.TrimEnd_with_char_argument());
+    public override async Task TrimEnd_with_char_argument()
+    {
+        if (TestEnvironment.IsFunctions2022Supported)
+        {
+            await base.TrimEnd_with_char_argument();
 
-    public override Task TrimEnd_with_char_array_argument()
-        => AssertTranslationFailed(() => base.TrimEnd_with_char_array_argument());
+            AssertSql(
+                """
+SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
+FROM [BasicTypesEntities] AS [b]
+WHERE RTRIM([b].[String], N'e') = N'Seattl'
+""");
+        }
+        else
+        {
+            await AssertTranslationFailed(() => base.TrimEnd_with_char_argument());
+        }
+    }
+
+    public override async Task TrimEnd_with_char_array_argument()
+    {
+        if (TestEnvironment.IsFunctions2022Supported)
+        {
+            await base.TrimEnd_with_char_array_argument();
+
+            AssertSql(
+                """
+SELECT [b].[Id], [b].[Bool], [b].[Byte], [b].[ByteArray], [b].[DateOnly], [b].[DateTime], [b].[DateTimeOffset], [b].[Decimal], [b].[Double], [b].[Enum], [b].[FlagsEnum], [b].[Float], [b].[Guid], [b].[Int], [b].[Long], [b].[Short], [b].[String], [b].[TimeOnly], [b].[TimeSpan]
+FROM [BasicTypesEntities] AS [b]
+WHERE RTRIM([b].[String], N'le') = N'Seatt'
+""");
+        }
+        else
+        {
+            await AssertTranslationFailed(() => base.TrimEnd_with_char_array_argument());
+        }
+    }
 
     #endregion TrimEnd
 

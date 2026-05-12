@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -199,17 +197,17 @@ namespace NuGet.RuntimeModel
         private static RuntimeDescription ReadRuntimeDescription(KeyValuePair<string, JToken> json)
         {
             var name = json.Key;
-            List<string> inheritedRuntimes = null;
-            List<RuntimeDependencySet> additionalDependencies = null;
+            List<string>? inheritedRuntimes = null;
+            List<RuntimeDependencySet>? additionalDependencies = null;
             foreach (var property in EachProperty(json.Value))
             {
                 if (property.Key == "#import")
                 {
-                    var imports = property.Value as JArray;
+                    var imports = (JArray)property.Value;
                     foreach (var import in imports)
                     {
                         inheritedRuntimes ??= new List<string>(imports.Count);
-                        inheritedRuntimes.Add(import.Value<string>());
+                        inheritedRuntimes.Add(import.Value<string>()!);
                     }
                 }
                 else
@@ -231,10 +229,10 @@ namespace NuGet.RuntimeModel
 
         private static RuntimePackageDependency ReadRuntimePackageDependency(KeyValuePair<string, JToken> json)
         {
-            return new RuntimePackageDependency(json.Key, VersionRange.Parse(json.Value.Value<string>()));
+            return new RuntimePackageDependency(json.Key, VersionRange.Parse(json.Value.Value<string>()!));
         }
 
-        private static IEnumerable<KeyValuePair<string, JToken>> EachProperty(JToken json)
+        private static IEnumerable<KeyValuePair<string, JToken>> EachProperty(JToken? json)
         {
             return (json as IEnumerable<KeyValuePair<string, JToken>>)
                    ?? Enumerable.Empty<KeyValuePair<string, JToken>>();

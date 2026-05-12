@@ -12,6 +12,11 @@ namespace NuGet.Protocol
 {
     internal static class PackageIdValidator
     {
+        private const string DisableValidationEnvVar = "NUGET_DISABLE_PACKAGEID_VALIDATION";
+
+        private static readonly Lazy<bool> IsValidationDisabled = new Lazy<bool>(() =>
+            IsPackageIdValidationDisabled(EnvironmentVariableWrapper.Instance));
+
         /// <summary>
         /// Validates the package ID content.
         /// </summary>
@@ -21,14 +26,11 @@ namespace NuGet.Protocol
         /// </exception>
         internal static void Validate(string packageId, IEnvironmentVariableReader env = null)
         {
-            if (env == null)
-            {
-                env = EnvironmentVariableWrapper.Instance;
-            }
+            bool isDisabled = env == null
+                ? IsValidationDisabled.Value
+                : IsPackageIdValidationDisabled(env);
 
-            string disableValidationEnvVarValue = env.GetEnvironmentVariable("NUGET_DISABLE_PACKAGEID_VALIDATION");
-
-            if (!string.Equals(disableValidationEnvVarValue, "true", StringComparison.OrdinalIgnoreCase))
+            if (!isDisabled)
             {
                 if (!Packaging.PackageIdValidator.IsValidPackageId(packageId))
                 {
@@ -36,5 +38,8 @@ namespace NuGet.Protocol
                 }
             }
         }
+
+        private static bool IsPackageIdValidationDisabled(IEnvironmentVariableReader env) =>
+            string.Equals(env.GetEnvironmentVariable(DisableValidationEnvVar), bool.TrueString, StringComparison.OrdinalIgnoreCase);
     }
 }

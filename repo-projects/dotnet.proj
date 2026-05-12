@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
-  <!-- This project file serves a couple of purpose.
-       - We conditionally include repos based on what works on different platforms/configurations.
+  <!-- This project doesn't build anything but serves a couple of purpose.
+       - Conditionally include repos based on what works on different platforms/configurations.
        - If we have a repo that is not in sdk's dependency tree, we can still build it by including it here. -->
 
   <PropertyGroup>
-    <!-- This is a wrapper project that doesn't build anything. -->
     <IsUtilityProject>true</IsUtilityProject>
   </PropertyGroup>
 

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
-internal sealed class RemoteDocumentContext : DocumentContext
+internal sealed class RemoteDocumentContext(Uri uri, RemoteDocumentSnapshot snapshot) : DocumentContext(uri, snapshot)
 {
     public TextDocument TextDocument => Snapshot.TextDocument;
 
@@ -14,10 +14,4 @@ internal sealed class RemoteDocumentContext : DocumentContext
 
     public ISolutionQueryOperations GetSolutionQueryOperations()
         => Snapshot.ProjectSnapshot.SolutionSnapshot;
-
-    public RemoteDocumentContext(Uri uri, RemoteDocumentSnapshot snapshot)
-        // HACK: Need to revisit projectContext here I guess
-        : base(uri, snapshot, projectContext: null)
-    {
-    }
 }

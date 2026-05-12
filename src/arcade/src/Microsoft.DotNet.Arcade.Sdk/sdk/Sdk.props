@@ -2,15 +2,27 @@
 <Project>
 
   <PropertyGroup>
-    <!-- 
-      When the bootstrapper script initializes a repo it restores an empty project that imports the toolset SDK.
-      It invokes WriteToolsetLocation target with __ToolsetLocationOutputFile set to the path where the location of 
-      SDK Build.proj entry point is to be stored. Suppress all other imports for that project.      
-    -->
-    <_SuppressSdkImports>false</_SuppressSdkImports>
-    <_SuppressSdkImports Condition="'$(__ToolsetLocationOutputFile)' != ''">true</_SuppressSdkImports>
+    <ArcadeSdkDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', 'tools'))</ArcadeSdkDir>
+
+    <_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets>$(CustomBeforeMicrosoftCommonTargets)</_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets>
+    <_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets>$(CustomBeforeMicrosoftCommonCrossTargetingTargets)</_ArcadeOverriddenCustomBeforeMicrosoftCommonCrossTargetingTargets>
+    <CustomBeforeMicrosoftCommonTargets>$(ArcadeSdkDir)BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
+    <CustomBeforeMicrosoftCommonCrossTargetingTargets>$(ArcadeSdkDir)BeforeCommonTargets.CrossTargeting.targets</CustomBeforeMicrosoftCommonCrossTargetingTargets>
+    <BeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets);$(ArcadeSdkDir)BeforeNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
+
+    <NETCORE_ENGINEERING_TELEMETRY Condition="'$(NETCORE_ENGINEERING_TELEMETRY)' == ''">$(_NETCORE_ENGINEERING_TELEMETRY)</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
-  <Import Project="..\tools\Settings.props" Condition="!$(_SuppressSdkImports)" />
+  <Import Project="$(ArcadeSdkDir)BuildTasks.props" />
+  <Import Project="$(ArcadeSdkDir)ProjectLayout.props" />
+  <Import Project="$(ArcadeSdkDir)DefaultVersions.props"/>
+  <Import Project="$(ArcadeSdkDir)StrongName.props"/>
+  <Import Project="$(ArcadeSdkDir)ProjectDefaults.props"/>
+  <Import Project="$(ArcadeSdkDir)Tests.props" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
+  <Import Project="$(ArcadeSdkDir)Workarounds.props"/>
+  <Import Project="$(ArcadeSdkDir)TargetFrameworkDefaults.props"/>
+
+  <Import Project="$(ArcadeSdkDir)Compiler.props" Condition="'$(UsingToolMicrosoftNetCompilers)' == 'true'" />
+  <Import Project="$(ArcadeSdkDir)VisualStudio.props" Condition="'$(UsingToolVSSDK)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'"/>
 
 </Project>

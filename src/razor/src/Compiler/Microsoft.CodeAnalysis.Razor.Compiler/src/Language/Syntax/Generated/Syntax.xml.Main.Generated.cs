@@ -306,7 +306,7 @@ internal partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
         => node.Update((MarkupTextLiteralSyntax)Visit(node.Prefix), (RazorBlockSyntax)Visit(node.Value));
 
     public override SyntaxNode VisitMarkupElement(MarkupElementSyntax node)
-        => node.Update((MarkupStartTagSyntax)Visit(node.StartTag), VisitList(node.Body), (MarkupEndTagSyntax)Visit(node.EndTag));
+        => node.Update((MarkupStartTagSyntax)Visit(node.MarkupStartTag), VisitList(node.Body), (MarkupEndTagSyntax)Visit(node.MarkupEndTag));
 
     public override SyntaxNode VisitMarkupStartTag(MarkupStartTagSyntax node)
         => node.Update((SyntaxToken)VisitToken(node.OpenAngle), (SyntaxToken)VisitToken(node.Bang), (SyntaxToken)VisitToken(node.Name), VisitList(node.Attributes), (SyntaxToken)VisitToken(node.ForwardSlash), (SyntaxToken)VisitToken(node.CloseAngle), node.IsMarkupTransition, node.ChunkGenerator, node.EditHandler);
@@ -315,7 +315,7 @@ internal partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
         => node.Update((SyntaxToken)VisitToken(node.OpenAngle), (SyntaxToken)VisitToken(node.ForwardSlash), (SyntaxToken)VisitToken(node.Bang), (SyntaxToken)VisitToken(node.Name), (MarkupMiscAttributeContentSyntax)Visit(node.MiscAttributeContent), (SyntaxToken)VisitToken(node.CloseAngle), node.IsMarkupTransition, node.ChunkGenerator, node.EditHandler);
 
     public override SyntaxNode VisitMarkupTagHelperElement(MarkupTagHelperElementSyntax node)
-        => node.Update((MarkupTagHelperStartTagSyntax)Visit(node.StartTag), VisitList(node.Body), (MarkupTagHelperEndTagSyntax)Visit(node.EndTag), node.TagHelperInfo);
+        => node.Update((MarkupTagHelperStartTagSyntax)Visit(node.TagHelperStartTag), VisitList(node.Body), (MarkupTagHelperEndTagSyntax)Visit(node.TagHelperEndTag), node.TagHelperInfo);
 
     public override SyntaxNode VisitMarkupTagHelperStartTag(MarkupTagHelperStartTagSyntax node)
         => node.Update((SyntaxToken)VisitToken(node.OpenAngle), (SyntaxToken)VisitToken(node.Bang), (SyntaxToken)VisitToken(node.Name), VisitList(node.Attributes), (SyntaxToken)VisitToken(node.ForwardSlash), (SyntaxToken)VisitToken(node.CloseAngle), node.ChunkGenerator, node.EditHandler);
@@ -532,8 +532,8 @@ internal static partial class SyntaxFactory
         => SyntaxFactory.MarkupDynamicAttributeValue(default(MarkupTextLiteralSyntax), value);
 
     /// <summary>Creates a new MarkupElementSyntax instance.</summary>
-    public static MarkupElementSyntax MarkupElement(MarkupStartTagSyntax startTag, SyntaxList<RazorSyntaxNode> body, MarkupEndTagSyntax endTag)
-        => (MarkupElementSyntax)InternalSyntax.SyntaxFactory.MarkupElement(startTag == null ? null : (InternalSyntax.MarkupStartTagSyntax)startTag.Green, body.Node.ToGreenList<InternalSyntax.RazorSyntaxNode>(), endTag == null ? null : (InternalSyntax.MarkupEndTagSyntax)endTag.Green).CreateRed();
+    public static MarkupElementSyntax MarkupElement(MarkupStartTagSyntax markupStartTag, SyntaxList<RazorSyntaxNode> body, MarkupEndTagSyntax markupEndTag)
+        => (MarkupElementSyntax)InternalSyntax.SyntaxFactory.MarkupElement(markupStartTag == null ? null : (InternalSyntax.MarkupStartTagSyntax)markupStartTag.Green, body.Node.ToGreenList<InternalSyntax.RazorSyntaxNode>(), markupEndTag == null ? null : (InternalSyntax.MarkupEndTagSyntax)markupEndTag.Green).CreateRed();
 
     /// <summary>Creates a new MarkupElementSyntax instance.</summary>
     public static MarkupElementSyntax MarkupElement(SyntaxList<RazorSyntaxNode> body = default(SyntaxList<RazorSyntaxNode>))
@@ -578,15 +578,12 @@ internal static partial class SyntaxFactory
         => SyntaxFactory.MarkupEndTag(SyntaxFactory.Token(SyntaxKind.OpenAngle), SyntaxFactory.Token(SyntaxKind.ForwardSlash), default(SyntaxToken), SyntaxFactory.Token(SyntaxKind.Text), default(MarkupMiscAttributeContentSyntax), SyntaxFactory.Token(SyntaxKind.CloseAngle), isMarkupTransition, chunkGenerator, editHandler);
 
     /// <summary>Creates a new MarkupTagHelperElementSyntax instance.</summary>
-    public static MarkupTagHelperElementSyntax MarkupTagHelperElement(MarkupTagHelperStartTagSyntax startTag, SyntaxList<RazorSyntaxNode> body, MarkupTagHelperEndTagSyntax endTag, TagHelperInfo tagHelperInfo)
-    {
-        ArgHelper.ThrowIfNull(startTag);
-        return (MarkupTagHelperElementSyntax)InternalSyntax.SyntaxFactory.MarkupTagHelperElement(startTag == null ? null : (InternalSyntax.MarkupTagHelperStartTagSyntax)startTag.Green, body.Node.ToGreenList<InternalSyntax.RazorSyntaxNode>(), endTag == null ? null : (InternalSyntax.MarkupTagHelperEndTagSyntax)endTag.Green, tagHelperInfo).CreateRed();
-    }
+    public static MarkupTagHelperElementSyntax MarkupTagHelperElement(MarkupTagHelperStartTagSyntax tagHelperStartTag, SyntaxList<RazorSyntaxNode> body, MarkupTagHelperEndTagSyntax tagHelperEndTag, TagHelperInfo tagHelperInfo)
+        => (MarkupTagHelperElementSyntax)InternalSyntax.SyntaxFactory.MarkupTagHelperElement(tagHelperStartTag == null ? null : (InternalSyntax.MarkupTagHelperStartTagSyntax)tagHelperStartTag.Green, body.Node.ToGreenList<InternalSyntax.RazorSyntaxNode>(), tagHelperEndTag == null ? null : (InternalSyntax.MarkupTagHelperEndTagSyntax)tagHelperEndTag.Green, tagHelperInfo).CreateRed();
 
     /// <summary>Creates a new MarkupTagHelperElementSyntax instance.</summary>
-    public static MarkupTagHelperElementSyntax MarkupTagHelperElement(MarkupTagHelperStartTagSyntax startTag, TagHelperInfo tagHelperInfo)
-        => SyntaxFactory.MarkupTagHelperElement(startTag, default(SyntaxList<RazorSyntaxNode>), default(MarkupTagHelperEndTagSyntax), tagHelperInfo);
+    public static MarkupTagHelperElementSyntax MarkupTagHelperElement(TagHelperInfo tagHelperInfo)
+        => SyntaxFactory.MarkupTagHelperElement(default(MarkupTagHelperStartTagSyntax), default(SyntaxList<RazorSyntaxNode>), default(MarkupTagHelperEndTagSyntax), tagHelperInfo);
 
     /// <summary>Creates a new MarkupTagHelperStartTagSyntax instance.</summary>
     public static MarkupTagHelperStartTagSyntax MarkupTagHelperStartTag(SyntaxToken openAngle, SyntaxToken bang, SyntaxToken name, SyntaxList<RazorSyntaxNode> attributes, SyntaxToken forwardSlash, SyntaxToken closeAngle, ISpanChunkGenerator chunkGenerator, SpanEditHandler editHandler)

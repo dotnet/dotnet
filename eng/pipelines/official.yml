@@ -83,6 +83,8 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
       binskimScanAllExtensions: true
       incrementalSDLBinaryAnalysis: true
@@ -111,10 +113,13 @@ extends:
         enabled: true
       tsa:
         enabled: true
+        useDynamicRouting: true
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
       componentgovernance:
         useExecutionTargetAsUserSteps: true
+      autobaseline:
+        isMainPipeline: true
 
     containers:
       ${{ variables.almaLinuxContainerName }}:
@@ -134,6 +139,9 @@ extends:
         options: ${{ variables.defaultContainerOptions }}
       ${{ variables.ubuntuArmContainerName }}:
         image: ${{ variables.ubuntuArmContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxBuildContainerName }}:
+        image: ${{ variables.azurelinuxBuildContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
       ${{ variables.azurelinuxX64CrossContainerName }}:
         image: ${{ variables.azurelinuxX64CrossContainerImage }}

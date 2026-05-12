@@ -1,6 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the License.txt file in the project root for more information.
+
+// Tests are skipped on non-Windows already.
+#pragma warning disable CA1416 // Validate platform compatibility
 
 using System;
 using System.IO;

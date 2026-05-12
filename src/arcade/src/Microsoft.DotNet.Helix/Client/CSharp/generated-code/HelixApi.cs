@@ -333,9 +333,7 @@ namespace Microsoft.DotNet.Helix.Client
             Response = new ResponseWrapper(response, responseContent);
         }
 
-#if NET
         [Obsolete]
-#endif
         protected RestApiException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -345,9 +343,7 @@ namespace Microsoft.DotNet.Helix.Client
             Response = JsonConvert.DeserializeObject<ResponseWrapper>(responseString, SerializerSettings);
         }
 
-#if NET
         [Obsolete]
-#endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -375,18 +371,14 @@ namespace Microsoft.DotNet.Helix.Client
             Body = body;
         }
 
-#if NET
         [Obsolete]
-#endif
         protected RestApiException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             Body = JsonConvert.DeserializeObject<T>(info.GetString("Body"));
         }
 
-#if NET
         [Obsolete]
-#endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)

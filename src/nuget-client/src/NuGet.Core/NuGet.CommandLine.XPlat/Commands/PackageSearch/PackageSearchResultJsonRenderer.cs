@@ -54,7 +54,7 @@ namespace NuGet.CommandLine.XPlat
                 Converters = { new SearchResultPackagesConverter(_verbosity, _exactMatch) },
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
-            var json = JsonSerializer.Serialize(_packageSearchMainOutput, options);
+            var json = JsonSerializer.Serialize(_packageSearchMainOutput, new PackageSearchJsonContext(options).SearchMainOutput);
             _logger.LogMinimal(json);
         }
 

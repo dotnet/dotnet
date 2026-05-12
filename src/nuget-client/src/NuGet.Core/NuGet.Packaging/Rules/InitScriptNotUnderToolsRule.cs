@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,7 +22,7 @@ namespace NuGet.Packaging.Rules
             foreach (var file in builder.GetFiles())
             {
                 var name = Path.GetFileName(file);
-                var dirName = Path.GetFileName(Path.GetDirectoryName(file));
+                var dirName = Path.GetFileName(Path.GetDirectoryName(file))!;
                 if (name.Equals("init.ps1", StringComparison.OrdinalIgnoreCase) && !dirName.Equals(PackagingConstants.Folders.Tools, StringComparison.OrdinalIgnoreCase))
                 {
                     yield return CreatePackageIssue(file);

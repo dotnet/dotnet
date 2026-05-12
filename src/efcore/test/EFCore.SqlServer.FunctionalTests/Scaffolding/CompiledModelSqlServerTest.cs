@@ -202,18 +202,20 @@ public class CompiledModelSqlServerTest(NonSharedFixture fixture) : CompiledMode
                 {
                     b.Property(e => e.Vector).HasColumnType("vector(3)");
                     b.HasVectorIndex(e => e.Vector)
-                        .UseMetric("cosine")
-                        .UseType("DiskANN");
+                        .HasMetric("cosine")
+                        .HasType("DiskANN");
                 });
 #pragma warning restore EF9105
             },
             model =>
             {
                 var entityType = model.FindEntityType(typeof(VectorIndexEntity))!;
+                var vectorProperty = entityType.FindProperty(nameof(VectorIndexEntity.Vector))!;
+                Assert.False(vectorProperty.IsAutoLoaded);
+
                 var index = entityType.GetIndexes().Single();
-                // Vector index annotations are not used at runtime, so they are not included in the compiled model
-                Assert.Null(index[SqlServerAnnotationNames.VectorIndexMetric]);
-                Assert.Null(index[SqlServerAnnotationNames.VectorIndexType]);
+                Assert.Equal("cosine", index[SqlServerAnnotationNames.VectorIndexMetric]);
+                Assert.Equal("DiskANN", index[SqlServerAnnotationNames.VectorIndexType]);
             },
             useContext: null,
             additionalSourceFiles: []);
@@ -228,10 +230,10 @@ public class CompiledModelSqlServerTest(NonSharedFixture fixture) : CompiledMode
                 modelBuilder.Entity<FullTextEntity>(b =>
                 {
                     b.HasFullTextIndex(e => e.Title)
-                        .HasKeyIndex("PK_FullTextEntity")
-                        .OnCatalog("MyCatalog")
-                        .WithChangeTracking(FullTextChangeTracking.Manual)
-                        .HasLanguage("Title", "English");
+                        .UseKeyIndex("PK_FullTextEntity")
+                        .UseCatalog("MyCatalog")
+                        .HasChangeTracking(FullTextChangeTracking.Manual)
+                        .UseLanguage("Title", "English");
                 });
             },
             model =>

@@ -149,11 +149,15 @@
     <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" />
     <Field Name="EditHandler" Type="SpanEditHandler" Optional="true" />
   </AbstractNode>
-  <Node Name="MarkupElementSyntax" Base="MarkupSyntaxNode">
+  <AbstractNode Name="BaseMarkupElementSyntax" Base="MarkupSyntaxNode">
+    <Field Name="StartTag" Type="BaseMarkupStartTagSyntax" Optional="true" />
+    <Field Name="EndTag" Type="BaseMarkupEndTagSyntax" Optional="true" />
+  </AbstractNode>
+  <Node Name="MarkupElementSyntax" Base="BaseMarkupElementSyntax">
     <Kind Name="MarkupElement" />
-    <Field Name="StartTag" Type="MarkupStartTagSyntax" Optional="true" />
+    <Field Name="MarkupStartTag" Type="MarkupStartTagSyntax" Optional="true" />
     <Field Name="Body" Type="SyntaxList&lt;RazorSyntaxNode&gt;" />
-    <Field Name="EndTag" Type="MarkupEndTagSyntax" Optional="true" />
+    <Field Name="MarkupEndTag" Type="MarkupEndTagSyntax" Optional="true" />
   </Node>
   <Node Name="MarkupStartTagSyntax" Base="BaseMarkupStartTagSyntax">
     <Kind Name="MarkupStartTag" />
@@ -199,11 +203,11 @@
     <Field Name="ChunkGenerator" Type="ISpanChunkGenerator" Optional="true" Override="true" />
     <Field Name="EditHandler" Type="SpanEditHandler" Optional="true" Override="true" />
   </Node>
-  <Node Name="MarkupTagHelperElementSyntax" Base="MarkupSyntaxNode">
+  <Node Name="MarkupTagHelperElementSyntax" Base="BaseMarkupElementSyntax">
     <Kind Name="MarkupTagHelperElement" />
-    <Field Name="StartTag" Type="MarkupTagHelperStartTagSyntax" />
+    <Field Name="TagHelperStartTag" Type="MarkupTagHelperStartTagSyntax" Optional="true" />
     <Field Name="Body" Type="SyntaxList&lt;RazorSyntaxNode&gt;" Optional="true" />
-    <Field Name="EndTag" Type="MarkupTagHelperEndTagSyntax" Optional="true" />
+    <Field Name="TagHelperEndTag" Type="MarkupTagHelperEndTagSyntax" Optional="true" />
     <Field Name="TagHelperInfo" Type="TagHelperInfo" />
   </Node>
   <Node Name="MarkupTagHelperStartTagSyntax" Base="BaseMarkupStartTagSyntax">

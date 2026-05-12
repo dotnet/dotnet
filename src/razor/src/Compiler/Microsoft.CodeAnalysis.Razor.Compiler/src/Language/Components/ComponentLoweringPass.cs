@@ -539,7 +539,12 @@ internal sealed class ComponentLoweringPass : ComponentIntermediateNodePassBase,
                     var attribute = _component.Component.BoundAttributes
                         .Where(a => string.Equals(a.Name, tagHelperNode.TagName, StringComparison.Ordinal))
                         .FirstOrDefault();
-                    _children.Add(RewriteChildContent(attribute, child.Source, child.Children));
+                    var rewrittenChildContent = RewriteChildContent(attribute, child.Source, child.Children);
+                    // Transfer diagnostics from the TagHelperIntermediateNode to the rewritten child content.
+                    // The resolution phase may have placed diagnostics on the tag helper node that need
+                    // to survive rewriting into a ComponentChildContentIntermediateNode.
+                    rewrittenChildContent.AddDiagnosticsFromNode(tagHelperNode);
+                    _children.Add(rewrittenChildContent);
                     continue;
                 }
 

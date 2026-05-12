@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <ProjectRoot>$(MSBuildThisFileDirectory)../../</ProjectRoot>
-    <ArcadeDir Condition="'$(SOURCE_BUILT_SDK_DIR_ARCADE)' != ''">$(SOURCE_BUILT_SDK_DIR_ARCADE)/tools/</ArcadeDir>
-    <ArcadeDir Condition="'$(ArcadeDir)' == ''">$(NuGetPackageRoot)/microsoft.dotnet.arcade.sdk/$(ARCADE_VERSION)/tools/</ArcadeDir>
+    <ArcadeDir Condition="'$(SOURCE_BUILT_SDK_DIR_ARCADE)' != ''">$(SOURCE_BUILT_SDK_DIR_ARCADE)/toolset/</ArcadeDir>
+    <ArcadeDir Condition="'$(ArcadeDir)' == ''">$(NuGetPackageRoot)/microsoft.dotnet.arcade.sdk/$(ARCADE_VERSION)/toolset/</ArcadeDir>
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
     <VersionPrefix>1.0.0</VersionPrefix>
   </PropertyGroup>
@@ -52,7 +52,7 @@
 
     <MSBuild Projects="$(ArcadeDir)Publish.proj"
              Properties="_NETCORE_ENGINEERING_TELEMETRY=Publish;@(_CommonProperties);@(_PublishProperties)"
-             Targets="Publish"
+             Targets="Execute"
              Condition="'$(DotNetBuildFromVMR)' == 'true'" />
   </Target>
 

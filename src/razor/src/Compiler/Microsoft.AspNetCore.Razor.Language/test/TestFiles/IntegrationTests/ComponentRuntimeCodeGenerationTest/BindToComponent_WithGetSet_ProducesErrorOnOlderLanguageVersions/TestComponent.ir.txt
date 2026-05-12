@@ -10,11 +10,12 @@
                 Component - (0:0,0 [75] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - Value - Value - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
+                            IntermediateToken - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - ParentValue
                     ComponentAttribute - (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml) - ValueChanged - ValueChanged - AttributeStructure.DoubleQuotes
                         CSharpExpression - 
-                            LazyIntermediateToken - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                            IntermediateToken - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
                     ComponentAttribute - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - bind-Value - Value - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
+                        CSharpExpression - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+                            IntermediateToken - (60:0,60 [11] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - UpdateValue
             CSharpCode - (84:1,7 [116] x:\dir\subdir\Test\TestComponent.cshtml)
                 LazyIntermediateToken - (84:1,7 [116] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public int ParentValue { get; set; } = 42;\n\n    public void UpdateValue(int value) => ParentValue = value;\n

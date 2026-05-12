@@ -5,16 +5,24 @@
 
 using System;
 using System.Security.Cryptography.X509Certificates;
-using NuGet.Common;
+#if NET5_0_OR_GREATER
+using System.Security.Principal;
+#endif
 
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 {
+    // On .NET 5+, root certificates are always added to both in-memory stores (code signing
+    // and timestamping) regardless of the requested purpose.  This matches the platform root
+    // store behavior where a single store serves all purposes.  When elevated, certificates
+    // are also added to the platform root store so that out-of-process tools (e.g. dotnet.exe,
+    // nuget.exe) spawned as child processes can find them.
     public static class X509StoreUtilities
     {
-        private static readonly IRootX509Store CodeSigningRootX509Store =
-            RuntimeEnvironmentHelper.IsWindows ? PlatformX509Store.Instance : new CodeSigningRootX509Store();
-        private static readonly IRootX509Store TimestampingRootX509Store =
-            RuntimeEnvironmentHelper.IsWindows ? PlatformX509Store.Instance : new TimestampingRootX509Store();
+#if NET5_0_OR_GREATER
+        private static readonly bool s_isElevated = GetIsElevated();
+        private static readonly IRootX509Store InMemoryCodeSigningRootX509Store = new CodeSigningRootX509Store();
+        private static readonly IRootX509Store InMemoryTimestampingRootX509Store = new TimestampingRootX509Store();
+#endif
         private static readonly IX509Store OtherX509Store = PlatformX509Store.Instance;
 
         public static void AddCertificateToStore(
@@ -30,19 +38,17 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 
             if (storeName == StoreName.Root)
             {
-                switch (storePurpose)
+#if NET5_0_OR_GREATER
+                InMemoryCodeSigningRootX509Store.Add(storeLocation, certificate);
+                InMemoryTimestampingRootX509Store.Add(storeLocation, certificate);
+
+                if (s_isElevated)
                 {
-                    case X509StorePurpose.CodeSigning:
-                        CodeSigningRootX509Store.Add(storeLocation, certificate);
-                        break;
-
-                    case X509StorePurpose.Timestamping:
-                        TimestampingRootX509Store.Add(storeLocation, certificate);
-                        break;
-
-                    default:
-                        throw new ArgumentException("Invalid value", nameof(storePurpose));
+                    PlatformX509Store.Instance.Add(storeLocation, certificate);
                 }
+#else
+                PlatformX509Store.Instance.Add(storeLocation, certificate);
+#endif
             }
             else
             {
@@ -63,24 +69,36 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 
             if (storeName == StoreName.Root)
             {
-                switch (storePurpose)
+#if NET5_0_OR_GREATER
+                InMemoryCodeSigningRootX509Store.Remove(storeLocation, certificate);
+                InMemoryTimestampingRootX509Store.Remove(storeLocation, certificate);
+
+                if (s_isElevated)
                 {
-                    case X509StorePurpose.CodeSigning:
-                        CodeSigningRootX509Store.Remove(storeLocation, certificate);
-                        break;
-
-                    case X509StorePurpose.Timestamping:
-                        TimestampingRootX509Store.Remove(storeLocation, certificate);
-                        break;
-
-                    default:
-                        throw new ArgumentException("Invalid value", nameof(storePurpose));
+                    PlatformX509Store.Instance.Remove(storeLocation, certificate);
                 }
+#else
+                PlatformX509Store.Instance.Remove(storeLocation, certificate);
+#endif
             }
             else
             {
                 OtherX509Store.Remove(storeLocation, storeName, certificate);
             }
         }
+
+#if NET5_0_OR_GREATER
+        private static bool GetIsElevated()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+
+            return false;
+        }
+#endif
     }
 }

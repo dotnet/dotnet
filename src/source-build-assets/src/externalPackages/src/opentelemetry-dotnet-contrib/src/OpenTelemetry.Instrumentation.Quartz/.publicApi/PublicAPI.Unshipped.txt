@@ -1,0 +1,15 @@
+const OpenTelemetry.Instrumentation.Quartz.OperationName.Job.Execute = "Quartz.Job.Execute" -> string!
+const OpenTelemetry.Instrumentation.Quartz.OperationName.Job.Veto = "Quartz.Job.Veto" -> string!
+OpenTelemetry.Instrumentation.Quartz.OperationName
+OpenTelemetry.Instrumentation.Quartz.OperationName.Job
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.Enrich.get -> System.Action<System.Diagnostics.Activity!, string!, object!>?
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.Enrich.set -> void
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.QuartzInstrumentationOptions() -> void
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.RecordException.get -> bool
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.RecordException.set -> void
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.TracedOperations.get -> System.Collections.Generic.HashSet<string!>!
+OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions.TracedOperations.set -> void
+OpenTelemetry.Trace.TraceProviderBuilderExtensions
+static OpenTelemetry.Trace.TraceProviderBuilderExtensions.AddQuartzInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Trace.TraceProviderBuilderExtensions.AddQuartzInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.Quartz.QuartzInstrumentationOptions!>? configure) -> OpenTelemetry.Trace.TracerProviderBuilder!

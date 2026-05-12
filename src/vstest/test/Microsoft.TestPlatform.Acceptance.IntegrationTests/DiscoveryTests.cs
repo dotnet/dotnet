@@ -32,8 +32,9 @@ public class DiscoveryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
+    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true, useVsixRunner: true)]
     [NetCoreTargetFrameworkDataSource]
+    [TestCategory("Smoke")]
     public void MultipleSourcesDiscoverAllTests(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -86,8 +87,8 @@ public class DiscoveryTests : AcceptanceTestBase
         arguments = string.Concat(arguments, " /logger:\"console;prefix=true\"");
         InvokeVsTest(arguments);
 
-        StringAssert.Contains(StdOut, "Warning: No test matches the given testcase filter `NonExistTestCaseName` in");
-        StringAssert.Contains(StdOut, "SimpleTestProject2.dll");
+        Assert.Contains("Warning: No test matches the given testcase filter `NonExistTestCaseName` in", StdOut);
+        Assert.Contains("SimpleTestProject2.dll", StdOut);
         ExitCodeEquals(0);
     }
 
@@ -135,7 +136,7 @@ public class DiscoveryTests : AcceptanceTestBase
         arguments = string.Concat(arguments, " /logger:\"console;prefix=true\"");
         InvokeVsTest(arguments);
 
-        StringAssert.Contains(StdOut, $"Skipping source: {nonTestDll} (.NETStandard,Version=v2.0,");
+        Assert.Contains($"Skipping source: {nonTestDll} (.NETStandard,Version=v2.0,", StdOut);
 
         ExitCodeEquals(0);
     }

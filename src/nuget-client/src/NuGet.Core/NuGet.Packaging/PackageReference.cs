@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using NuGet.Frameworks;
 using NuGet.Packaging.Core;
@@ -55,7 +54,7 @@ namespace NuGet.Packaging
         /// <param name="developmentDependency">True if the package is a development dependency</param>
         /// <param name="requireReinstallation">True if this package needs to be reinstalled</param>
         /// <param name="allowedVersions">Restrict package versions to the allowedVersions range</param>
-        public PackageReference(PackageIdentity identity, NuGetFramework targetFramework, bool userInstalled, bool developmentDependency, bool requireReinstallation, VersionRange allowedVersions)
+        public PackageReference(PackageIdentity identity, NuGetFramework targetFramework, bool userInstalled, bool developmentDependency, bool requireReinstallation, VersionRange? allowedVersions)
         {
             PackageIdentity = identity;
             AllowedVersions = allowedVersions;
@@ -74,11 +73,12 @@ namespace NuGet.Packaging
         /// The allowed range of versions that this package can be upgraded/downgraded to.
         /// </summary>
         /// <remarks>This is null if unbounded</remarks>
-        public VersionRange AllowedVersions { get; }
+        public VersionRange? AllowedVersions { get; }
 
         /// <summary>
         /// True if allowedVersions exists.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(AllowedVersions))]
         public bool HasAllowedVersions
         {
             get { return AllowedVersions != null; }

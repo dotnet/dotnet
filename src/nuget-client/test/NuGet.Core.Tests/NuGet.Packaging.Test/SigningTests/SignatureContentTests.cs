@@ -16,7 +16,7 @@ namespace NuGet.Packaging.Test
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new SignatureContent(
-                    signingSpecifications: null,
+                    signingSpecifications: null!,
                     hashAlgorithm: HashAlgorithmName.SHA384,
                     hashValue: "a"));
 
@@ -60,7 +60,7 @@ namespace NuGet.Packaging.Test
         public void Load_IfBytesIsNull_Throws()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureContent.Load(bytes: null, signingSpecifications: SigningSpecifications.V1));
+                () => SignatureContent.Load(bytes: null!, signingSpecifications: SigningSpecifications.V1));
 
             Assert.Equal("bytes", exception.ParamName);
         }
@@ -69,7 +69,7 @@ namespace NuGet.Packaging.Test
         public void Load_IfSigningSpecificationsIsNull_Throws()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureContent.Load(new byte[] { }, signingSpecifications: null));
+                () => SignatureContent.Load(new byte[] { }, signingSpecifications: null!));
 
             Assert.Equal("signingSpecifications", exception.ParamName);
         }

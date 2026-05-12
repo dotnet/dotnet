@@ -21,13 +21,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : CohostTestBase(testOutputHelper)
 {
-    private IClientSettingsManager? _clientSettingsManager;
     private VSCodeRemoteServiceInvoker? _remoteServiceInvoker;
     private IFilePathService? _filePathService;
     private ISemanticTokensLegendService? _semanticTokensLegendService;
 
     private protected override IRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
-    private protected override IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
     private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected ISemanticTokensLegendService SemanticTokensLegendService => _semanticTokensLegendService.AssumeNotNull();
 
@@ -45,12 +43,12 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         _remoteServiceInvoker = new VSCodeRemoteServiceInvoker(workspaceProvider, LoggerFactory);
         AddDisposable(_remoteServiceInvoker);
 
-        _clientSettingsManager = new ClientSettingsManager();
-
-        _filePathService = new VSCodeFilePathService(FeatureOptions);
+        _filePathService = new VSCodeFilePathService();
 
         _semanticTokensLegendService = new CohostSemanticTokensLegendService(new TestClientCapabilitiesService(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = false }));
     }
+
+    private protected override IClientSettingsManager CreateClientSettingsManager() => new ClientSettingsManager();
 
     private protected override RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions()
     {

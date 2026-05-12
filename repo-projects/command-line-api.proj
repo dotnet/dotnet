@@ -1,16 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
-  <PropertyGroup>
-    <!-- May stabilize. -->
-    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
-  </PropertyGroup>
-
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-reference-packages" />
+    <RepositoryReference Include="source-build-assets" />
   </ItemGroup>
 
 </Project>

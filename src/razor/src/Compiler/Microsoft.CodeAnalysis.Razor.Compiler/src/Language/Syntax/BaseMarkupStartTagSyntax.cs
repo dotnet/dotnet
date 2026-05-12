@@ -10,6 +10,8 @@ internal abstract partial class BaseMarkupStartTagSyntax
 {
     private SyntaxNode? _lazyChildren;
 
+    public BaseMarkupElementSyntax ParentElement => (BaseMarkupElementSyntax)Parent;
+
     public SyntaxList<RazorSyntaxNode> LegacyChildren
     {
         get
@@ -130,5 +132,6 @@ internal abstract partial class BaseMarkupStartTagSyntax
         }
     }
 
-    public abstract BaseMarkupEndTagSyntax? GetEndTag();
+    public BaseMarkupEndTagSyntax? GetEndTag()
+        => (Parent as BaseMarkupElementSyntax)?.EndTag;
 }

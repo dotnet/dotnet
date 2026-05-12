@@ -12,13 +12,13 @@ namespace NuGet.Packaging.Test
         [Fact]
         public void FrameworkReferenceGroup_ThrowsForNullTargetFramework()
         {
-            Assert.Throws<ArgumentNullException>(() => new FrameworkReferenceGroup(null, new FrameworkReference[] { }));
+            Assert.Throws<ArgumentNullException>(() => new FrameworkReferenceGroup(null!, new FrameworkReference[] { }));
         }
 
         [Fact]
         public void FrameworkReferenceGroup_ThrowsForNullFrameworkReferenceCollection()
         {
-            Assert.Throws<ArgumentNullException>(() => new FrameworkReferenceGroup(CommonFrameworks.NetCoreApp30, null));
+            Assert.Throws<ArgumentNullException>(() => new FrameworkReferenceGroup(CommonFrameworks.NetCoreApp30, null!));
         }
 
         [Fact]

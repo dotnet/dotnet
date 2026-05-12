@@ -75,11 +75,6 @@ variables:
     value: False
   - name: _ReleaseVersionKind
     value: ''
-  # Arcade is using global cache of nugets in non-windows build
-  # under some circumstances, but we don't respect that in our code and try to find them
-  # in .packages. Force the location of packages to that folder.
-  - name: NUGET_PACKAGES
-    value: '$(Build.SourcesDirectory)/.packages/'
   # Publish Logs seems to depend on this name of variable, so we define it
   # even when we don't use matrix.
   - name: _BuildConfig
@@ -194,10 +189,21 @@ extends:
                   -configuration Release
                   -ci
                   -nobl
-                  -integrationTest
-                  -performanceTest
                 name: Test
-                displayName: Test
+                displayName: Unit Test
+                env:
+                  DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
+              # -ci is allowing to import some environment variables and some required configurations
+              # -nobl avoid overwriting binlog of the main Build
+              - script: Test.cmd
+                  -configuration Release
+                  -ci
+                  -nobl
+                  -integrationTest
+                  -compatibilityTest
+                  -performanceTest
+                name: IntegrationTest
+                displayName: Integration Test
                 env:
                   DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
@@ -214,7 +220,9 @@ extends:
               # and some of them use dependencies that are now vulnerable.
               # We don't depend on those vulnerable versions anymore, but need to keep restoring them to ensure backwards compatibility.
               - pwsh: |
-                  Remove-Item -Path $(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets -Recurse -Force
+                  if (Test-Path -LiteralPath "$(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets") {
+                    Remove-Item -LiteralPath "$(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets" -Recurse -Force
+                  }
                 displayName: Remove artifacts/tmp/GeneratedTestAssets
 
             - task: 1ES.PublishBuildArtifacts@1
@@ -268,7 +276,10 @@ extends:
                 # and some of them use dependencies that are now vulnerable.
                 # We don't depend on those vulnerable versions anymore, but need to keep restoring them to ensure backwards compatibility.
                 - pwsh: |
-                    Remove-Item -Path $(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets -Recurse -Force
+                    $generatedAssetsPath = "$(Build.SourcesDirectory)/artifacts/tmp/GeneratedTestAssets"
+                    if (Test-Path -LiteralPath $generatedAssetsPath) {
+                      Remove-Item -LiteralPath $generatedAssetsPath -Recurse -Force
+                    }
                   displayName: Remove artifacts/tmp/GeneratedTestAssets
 
                 # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
@@ -349,10 +360,7 @@ extends:
             LclSource: lclFilesfromPackage
             LclPackageId: 'LCL-JUNO-PROD-VSTEST'
 
-    - template: eng\common\templates-official\post-build\post-build.yml@self
+    - template: eng/common/templates-official/post-build/post-build.yml@self
       parameters:
-        publishingInfraVersion: 3
-        SDLValidationParameters:
-          enable: false
-          continueOnError: false
-          params: ' -SourceToolsList @("policheck","credscan")'
+        # Temporarily skip validation until infra issues are resolved, based on advice from Arcade.
+        enableSigningValidation: false

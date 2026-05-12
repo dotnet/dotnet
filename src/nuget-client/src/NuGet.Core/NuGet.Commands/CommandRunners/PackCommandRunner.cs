@@ -300,6 +300,11 @@ namespace NuGet.Commands
             NuGetFramework framework,
             PackageBuilder builder)
         {
+            if (dependencies == null)
+            {
+                throw new ArgumentNullException(nameof(dependencies));
+            }
+
             ISet<PackageDependency> packageDependencies = new HashSet<PackageDependency>();
 
             foreach (LibraryDependency dependency in dependencies)

@@ -1,0 +1,10 @@
+#nullable enable
+OpenTelemetry.Extensions.AWS.AWSXRayIdGenerator
+OpenTelemetry.Extensions.AWS.Trace.AWSXRayPropagator
+OpenTelemetry.Extensions.AWS.Trace.AWSXRayPropagator.AWSXRayPropagator() -> void
+OpenTelemetry.Trace.TracerProviderBuilderExtensions
+override OpenTelemetry.Extensions.AWS.Trace.AWSXRayPropagator.Extract<T>(OpenTelemetry.Context.Propagation.PropagationContext context, T carrier, System.Func<T, string!, System.Collections.Generic.IEnumerable<string!>?>! getter) -> OpenTelemetry.Context.Propagation.PropagationContext
+override OpenTelemetry.Extensions.AWS.Trace.AWSXRayPropagator.Fields.get -> System.Collections.Generic.ISet<string!>!
+override OpenTelemetry.Extensions.AWS.Trace.AWSXRayPropagator.Inject<T>(OpenTelemetry.Context.Propagation.PropagationContext context, T carrier, System.Action<T, string!, string!>! setter) -> void
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddXRayTraceId(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddXRayTraceIdWithSampler(this OpenTelemetry.Trace.TracerProviderBuilder! builder, OpenTelemetry.Trace.Sampler! sampler) -> OpenTelemetry.Trace.TracerProviderBuilder!

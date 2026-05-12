@@ -10,8 +10,6 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal sealed record class HostProject
 {
-    public ProjectKey Key { get; }
-
     /// <summary>
     /// Gets the full path to the .csproj file for this project
     /// </summary>
@@ -43,8 +41,6 @@ internal sealed record class HostProject
         Configuration = configuration;
         RootNamespace = rootNamespace;
         DisplayName = displayName ?? Path.GetFileNameWithoutExtension(filePath);
-
-        Key = new(intermediateOutputPath);
     }
 
     public bool Equals(HostProject? other)

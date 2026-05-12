@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,7 +23,7 @@ namespace NuGet.Packaging
 
         public static Manifest ReadManifest(XDocument document)
         {
-            var metadataElement = document.Root.ElementsNoNamespace("metadata").FirstOrDefault();
+            var metadataElement = document.Root!.ElementsNoNamespace("metadata").FirstOrDefault();
             if (metadataElement == null)
             {
                 throw new InvalidDataException(
@@ -34,13 +32,13 @@ namespace NuGet.Packaging
 
             return new Manifest(
                 ReadMetadata(metadataElement),
-                ReadFilesList(document.Root.ElementsNoNamespace("files").FirstOrDefault()));
+                ReadFilesList(document.Root!.ElementsNoNamespace("files").FirstOrDefault()));
         }
 
         private static ManifestMetadata ReadMetadata(XElement xElement)
         {
             var manifestMetadata = new ManifestMetadata();
-            manifestMetadata.MinClientVersionString = (string)xElement.Attribute("minClientVersion");
+            manifestMetadata.MinClientVersionString = (string?)xElement.Attribute("minClientVersion");
 
             // we store all child elements under <metadata> so that we can easily check for required elements.
             var allElements = new HashSet<string>();
@@ -78,26 +76,26 @@ namespace NuGet.Packaging
 
             allElements.Add(element.Name.LocalName);
 
-            string value = null;
+            string? value = null;
             try
             {
-                value = element.Value.SafeTrim();
+                value = element.Value?.Trim();
                 switch (element.Name.LocalName)
                 {
                     case "id":
                         manifestMetadata.Id = value;
                         break;
                     case "version":
-                        if (NuGetVersion.TryParse(value, out NuGetVersion version))
+                        if (NuGetVersion.TryParse(value, out NuGetVersion? version))
                         {
                             manifestMetadata.Version = version;
                         }
                         break;
                     case "authors":
-                        manifestMetadata.Authors = value?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        manifestMetadata.Authors = value?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)!;
                         break;
                     case "owners":
-                        manifestMetadata.Owners = value?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        manifestMetadata.Owners = value?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)!;
                         break;
                     case "licenseUrl":
                         manifestMetadata.SetLicenseUrl(value);
@@ -109,10 +107,10 @@ namespace NuGet.Packaging
                         manifestMetadata.SetIconUrl(value);
                         break;
                     case "requireLicenseAcceptance":
-                        manifestMetadata.RequireLicenseAcceptance = XmlConvert.ToBoolean(value);
+                        manifestMetadata.RequireLicenseAcceptance = XmlConvert.ToBoolean(value!);
                         break;
                     case "developmentDependency":
-                        manifestMetadata.DevelopmentDependency = XmlConvert.ToBoolean(value);
+                        manifestMetadata.DevelopmentDependency = XmlConvert.ToBoolean(value!);
                         break;
                     case "description":
                         manifestMetadata.Description = value;
@@ -139,7 +137,7 @@ namespace NuGet.Packaging
                         manifestMetadata.Readme = value;
                         break;
                     case "serviceable":
-                        manifestMetadata.Serviceable = XmlConvert.ToBoolean(value);
+                        manifestMetadata.Serviceable = XmlConvert.ToBoolean(value!);
                         break;
                     case "dependencies":
                         manifestMetadata.DependencyGroups = ReadDependencyGroups(element);
@@ -182,9 +180,9 @@ namespace NuGet.Packaging
 
         private static LicenseMetadata ReadLicenseMetadata(XElement licenseNode)
         {
-            var type = licenseNode.Attribute(NuspecUtility.Type).Value.SafeTrim();
-            var license = licenseNode.Value.SafeTrim();
-            var versionValue = licenseNode.Attribute(NuspecUtility.Version)?.Value.SafeTrim();
+            var type = licenseNode.Attribute(NuspecUtility.Type)!.Value?.Trim();
+            var license = licenseNode.Value?.Trim();
+            var versionValue = licenseNode.Attribute(NuspecUtility.Version)?.Value?.Trim();
 
             if (!Enum.TryParse(type, ignoreCase: true, result: out LicenseType licenseType))
             {
@@ -196,14 +194,14 @@ namespace NuGet.Packaging
                 throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, Strings.NuGetLicense_MissingRequiredValue));
             }
 
-            Version version = null;
+            Version? version = null;
             if (string.IsNullOrWhiteSpace(versionValue))
             {
                 version = LicenseMetadata.EmptyVersion;
             }
             else
             {
-                if (!Version.TryParse(versionValue, out version))
+                if (!Version.TryParse(versionValue, out version!))
                 {
                     throw new PackagingException(NuGetLogCode.NU5034, string.Format(
                         CultureInfo.CurrentCulture,
@@ -220,8 +218,8 @@ namespace NuGet.Packaging
                     {
                         try
                         {
-                            var expression = NuGetLicenseExpression.Parse(license);
-                            return new LicenseMetadata(licenseType, license, expression, warningsAndErrors: null, version: version);
+                            var expression = NuGetLicenseExpression.Parse(license!);
+                            return new LicenseMetadata(licenseType, license!, expression, warningsAndErrors: null, version: version);
                         }
                         catch (NuGetLicenseExpressionParsingException e)
                         {
@@ -236,7 +234,7 @@ namespace NuGet.Packaging
                                    LicenseMetadata.CurrentVersion));
 
                 case LicenseType.File:
-                    return new LicenseMetadata(type: licenseType, license: license, expression: null, warningsAndErrors: null, version: LicenseMetadata.EmptyVersion);
+                    return new LicenseMetadata(type: licenseType, license: license!, expression: null, warningsAndErrors: null, version: LicenseMetadata.EmptyVersion);
 
                 default:
                     throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, Strings.NuGetLicense_InvalidLicenseType, type));
@@ -259,7 +257,7 @@ namespace NuGet.Packaging
                                    let flattenAttribute = element.Attribute("flatten")
                                    select new ManifestContentFiles
                                    {
-                                       Include = includeAttribute.Value.SafeTrim(),
+                                       Include = includeAttribute.Value.Trim(),
                                        Exclude = excludeAttribute == null ? null : excludeAttribute.Value,
                                        BuildAction = buildActionAttribute == null ? null : buildActionAttribute.Value,
                                        CopyToOutput = copyToOutputAttribute == null ? null : copyToOutputAttribute.Value,
@@ -301,8 +299,9 @@ namespace NuGet.Packaging
         public static List<string> ReadReference(XElement referenceElement, bool throwIfEmpty)
         {
             var references = referenceElement.ElementsNoNamespace("reference")
-                                             .Select(element => ((string)element.Attribute("file"))?.Trim())
+                                             .Select(element => ((string?)element.Attribute("file"))?.Trim())
                                              .Where(file => file != null)
+                                             .Select(file => file!)
                                              .ToList();
 
             if (throwIfEmpty && references.Count == 0)
@@ -323,10 +322,10 @@ namespace NuGet.Packaging
             return (from element in frameworkElement.ElementsNoNamespace("frameworkAssembly")
                     let assemblyNameAttribute = element.Attribute("assemblyName")
                     where assemblyNameAttribute != null && !string.IsNullOrEmpty(assemblyNameAttribute.Value)
-                    select new FrameworkAssemblyReference(assemblyNameAttribute.Value?.Trim(),
+                    select new FrameworkAssemblyReference(assemblyNameAttribute.Value!.Trim(),
                         string.IsNullOrEmpty(element.GetOptionalAttributeValue("targetFramework")) ?
                         new[] { NuGetFramework.AnyFramework } :
-                        new[] { NuGetFramework.Parse(element.GetOptionalAttributeValue("targetFramework")?.Trim()) })
+                        new[] { NuGetFramework.Parse(element.GetOptionalAttributeValue("targetFramework")!.Trim()) })
                     ).ToList();
         }
 
@@ -359,7 +358,7 @@ namespace NuGet.Packaging
                 return groups.Select(element =>
                 {
                     var targetFrameworkName = element.GetOptionalAttributeValue("targetFramework")?.Trim();
-                    NuGetFramework targetFramework = null;
+                    NuGetFramework? targetFramework = null;
 
                     if (targetFrameworkName != null)
                     {
@@ -390,7 +389,7 @@ namespace NuGet.Packaging
                               where idElement != null && !string.IsNullOrEmpty(idElement.Value)
                               let elementVersion = element.GetOptionalAttributeValue("version")
                               select new PackageDependency(
-                                  idElement.Value?.Trim(),
+                                  idElement.Value!.Trim(),
                                   // REVIEW: There isn't a PackageDependency constructor that allows me to pass in an invalid version
                                   elementVersion == null ? null : VersionRange.Parse(elementVersion.Trim()),
                                   element.GetOptionalAttributeValue("include")?.Trim()?.Split(',').Select(a => a.Trim()).ToArray(),
@@ -399,7 +398,7 @@ namespace NuGet.Packaging
             return new HashSet<PackageDependency>(dependency);
         }
 
-        private static List<ManifestFile> ReadFilesList(XElement xElement)
+        private static List<ManifestFile>? ReadFilesList(XElement? xElement)
         {
             if (xElement == null)
             {
@@ -416,14 +415,14 @@ namespace NuGet.Packaging
                 }
 
                 var slashes = new[] { '\\', '/' };
-                var target = file.GetOptionalAttributeValue("target").SafeTrim()?.TrimStart(slashes);
-                var exclude = file.GetOptionalAttributeValue("exclude").SafeTrim();
+                var target = file.GetOptionalAttributeValue("target")?.Trim()?.TrimStart(slashes);
+                var exclude = file.GetOptionalAttributeValue("exclude")?.Trim();
 
                 // Multiple sources can be specified by using semi-colon separated values. 
                 files.AddRange(srcElement.Value.Trim(';').Split(';').Select(s =>
                     new ManifestFile
                     {
-                        Source = s.SafeTrim(),
+                        Source = s?.Trim(),
                         Target = target,
                         Exclude = exclude
                     }));
@@ -431,7 +430,7 @@ namespace NuGet.Packaging
             return files;
         }
 
-        private static RepositoryMetadata ReadRepository(XElement element)
+        private static RepositoryMetadata? ReadRepository(XElement element)
         {
             var repositoryType = element.Attribute("type");
             var repositoryUrl = element.Attribute("url");
@@ -440,13 +439,13 @@ namespace NuGet.Packaging
             var repository = new RepositoryMetadata();
             if (!string.IsNullOrEmpty(repositoryType?.Value))
             {
-                repository.Type = repositoryType.Value;
+                repository.Type = repositoryType!.Value;
             }
             if (!string.IsNullOrEmpty(repositoryUrl?.Value))
             {
-                repository.Url = repositoryUrl.Value;
-                repository.Branch = repositoryBranch?.Value;
-                repository.Commit = repositoryCommit?.Value;
+                repository.Url = repositoryUrl!.Value;
+                repository.Branch = repositoryBranch?.Value ?? string.Empty;
+                repository.Commit = repositoryCommit?.Value ?? string.Empty;
             }
 
             // Ensure the value is valid before returning it.

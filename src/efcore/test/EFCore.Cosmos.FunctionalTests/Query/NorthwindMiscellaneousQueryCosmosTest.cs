@@ -1468,6 +1468,8 @@ ORDER BY c["id"]
         AssertSql();
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_shadow(bool async)
     {
         // Always throws for sync.
@@ -1484,6 +1486,8 @@ ORDER BY c["Title"], c["EmployeeID"]
         }
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_multiple(bool async)
     {
         // Always throws for sync.
@@ -2211,7 +2215,11 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
         => Fixture.NoSyncTest(
             async, async a =>
             {
-                await base.Select_expression_date_add_milliseconds_below_the_range(a);
+                await AssertQuery(
+                    a,
+                    ss => ss.Set<Order>().Where(o => o.OrderDate != null)
+                        .Select(o => new Order { OrderDate = o.OrderDate.Value.AddMilliseconds(-1000000000000) }),
+                    elementSorter: e => e.OrderDate);
 
                 AssertSql(
                     """
@@ -2307,6 +2315,8 @@ WHERE (((c["$type"] = "Order") AND (c["OrderDate"] != null)) AND (DateTimePart("
         );
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_skip_take(bool async)
     {
         // Always throws for sync.
@@ -3202,6 +3212,8 @@ WHERE (c["City"] != null)
 """);
             });
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task Entity_equality_orderby_descending_composite_key(bool async)
     {
         // Always throws for sync.
@@ -3287,6 +3299,8 @@ ORDER BY c["id"]
         AssertSql();
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderByDescending_ThenBy(bool async)
     {
         // Always throws for sync.
@@ -3304,6 +3318,8 @@ ORDER BY c["id"] DESC, c["Country"]
         }
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderByDescending_ThenByDescending(bool async)
     {
         // Always throws for sync.
@@ -3329,6 +3345,8 @@ ORDER BY c["id"] DESC, c["Country"] DESC
         );
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_ThenBy(bool async)
     {
         // Always throws for sync.
@@ -3346,6 +3364,8 @@ ORDER BY c["id"], c["Country"]
         }
     }
 
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/238 (ORDER BY with expressions/functions not supported)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override async Task OrderBy_ThenBy_predicate(bool async)
     {
         // Always throws for sync.
@@ -3676,7 +3696,17 @@ WHERE (c["Title"] = @value)
         => Fixture.NoSyncTest(
             async, async a =>
             {
-                await base.Checked_context_with_arithmetic_does_not_fail(async);
+                checked
+                {
+                    await AssertQuery(
+                        a,
+                        ss => ss.Set<OrderDetail>()
+                            .Where(w => w.Quantity + 1 == 5 && w.Quantity - 1 == 3 && w.Quantity * 1 == w.Quantity)
+                            .OrderBy(o => o.OrderID)
+                            .Select(o => o),
+                        elementSorter: e => (e.OrderID, e.ProductID),
+                        elementAsserter: (e, a2) => { AssertEqual(e, a2); });
+                }
 
                 AssertSql(
                     """
@@ -4347,7 +4377,10 @@ FROM root c
         => Fixture.NoSyncTest(
             async, async a =>
             {
-                await base.Convert_to_nullable_on_nullable_value_is_ignored(a);
+                await AssertQuery(
+                    a,
+                    ss => ss.Set<Order>().Select(o => new Order { OrderDate = o.OrderDate.Value }),
+                    elementSorter: e => e.OrderDate);
 
                 AssertSql(
                     """
@@ -4826,6 +4859,8 @@ WHERE ((c["$type"] = "Order") AND (((DateTimePart("ns", c["OrderDate"]) % 1000) 
     #region ToPageAsync
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/285 (MaxItemCount not respected)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public virtual async Task ToPageAsync()
     {
         await using var context = CreateContext();
@@ -4881,6 +4916,8 @@ ORDER BY c["id"]
     }
 
     [ConditionalFact]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/285 (MaxItemCount not respected)
+    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public virtual async Task ToPageAsync_with_scalar()
     {
         await using var context = CreateContext();

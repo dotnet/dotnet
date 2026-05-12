@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -46,7 +44,7 @@ namespace NuGet.Packaging.Rules
             Uri.TryCreate(nuspecReader.GetLicenseUrl(), UriKind.RelativeOrAbsolute, out var licenseUrl);
             if (licenseUrl == SampleLicenseUrl)
             {
-                yield return CreateIssueFor("licenseUrl", nuspecReader.GetLicenseUrl());
+                yield return CreateIssueFor("licenseUrl", nuspecReader.GetLicenseUrl()!);
             }
 
             Uri.TryCreate(nuspecReader.GetIconUrl(), UriKind.RelativeOrAbsolute, out var iconUrl);

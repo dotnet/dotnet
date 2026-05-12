@@ -16,13 +16,20 @@ namespace Microsoft.Deployment.DotNet.Releases
     {
         private static readonly SHA512 s_defaultHashAlgorithm = SHA512.Create();
 
+        private Uri _address;
+        private string _addressString;
+
         /// <summary>
         /// The URL from where to download the file.
         /// </summary>
         public Uri Address
         {
-            get;
-            private set;
+            get => _address ??= _addressString != null ? new Uri(_addressString) : null;
+            private set
+            {
+                _address = value;
+                _addressString = value?.OriginalString;
+            }
         }
 
         /// <summary>
@@ -63,7 +70,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// <param name="fileElement">The <see cref="JsonElement"/> to deserialize.</param>
         internal ReleaseFile(JsonElement fileElement)
         {
-            Address = fileElement.GetUriOrDefault("url");
+            _addressString = fileElement.GetStringOrDefault("url");
             Hash = fileElement.GetStringOrDefault("hash");
             Name = fileElement.GetStringOrDefault("name");
             Rid = fileElement.GetStringOrDefault("rid");
@@ -149,7 +156,7 @@ namespace Microsoft.Deployment.DotNet.Releases
                 Name == other.Name &&
                 Rid == other.Rid &&
                 Hash == other.Hash &&
-                Address == other.Address;
+                _addressString == other._addressString;
         }
 
         /// <summary>
@@ -157,7 +164,7 @@ namespace Microsoft.Deployment.DotNet.Releases
         /// </summary>
         /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode() =>
-            Hash.GetHashCode() ^ Name.GetHashCode() ^ Rid.GetHashCode() ^ Address.GetHashCode();
+            Hash.GetHashCode();
 
         internal static ReleaseFile Create(string hash, string name, string rid, string address) =>
             new ReleaseFile(new Uri(address), hash, name, rid);

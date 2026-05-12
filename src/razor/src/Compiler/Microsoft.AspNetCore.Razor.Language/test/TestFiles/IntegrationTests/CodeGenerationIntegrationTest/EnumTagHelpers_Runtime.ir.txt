@@ -28,7 +28,7 @@
                     DefaultTagHelperCreate -  - TestNamespace.CatchAllTagHelper
                     DefaultTagHelperProperty - (95:6,14 [15] EnumTagHelpers.cshtml) - value - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum TestNamespace.InputTagHelper.Value - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (96:6,15 [14] EnumTagHelpers.cshtml)
-                            LazyIntermediateToken - (96:6,15 [14] EnumTagHelpers.cshtml) - CSharp - MyEnum.MyValue
+                            IntermediateToken - (96:6,15 [14] EnumTagHelpers.cshtml) - CSharp - MyEnum.MyValue
                     DefaultTagHelperExecute - 
                 HtmlContent - (114:6,33 [2] EnumTagHelpers.cshtml)
                     LazyIntermediateToken - (114:6,33 [2] EnumTagHelpers.cshtml) - Html - \n
@@ -47,7 +47,7 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                     DefaultTagHelperCreate -  - TestNamespace.CatchAllTagHelper
                     DefaultTagHelperProperty - (171:8,14 [7] EnumTagHelpers.cshtml) - value - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum TestNamespace.InputTagHelper.Value - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (171:8,14 [7] EnumTagHelpers.cshtml) - CSharp - MyValue
+                        IntermediateToken - (171:8,14 [7] EnumTagHelpers.cshtml) - CSharp - MyValue
                     DefaultTagHelperExecute - 
                 HtmlContent - (182:8,25 [2] EnumTagHelpers.cshtml)
                     LazyIntermediateToken - (182:8,25 [2] EnumTagHelpers.cshtml) - Html - \n
@@ -56,9 +56,9 @@
                     DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
                     DefaultTagHelperCreate -  - TestNamespace.CatchAllTagHelper
                     DefaultTagHelperProperty - (198:9,14 [13] EnumTagHelpers.cshtml) - value - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum TestNamespace.InputTagHelper.Value - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (198:9,14 [13] EnumTagHelpers.cshtml) - CSharp - MySecondValue
+                        IntermediateToken - (198:9,14 [13] EnumTagHelpers.cshtml) - CSharp - MySecondValue
                     DefaultTagHelperProperty - (224:9,40 [7] EnumTagHelpers.cshtml) - catch-all - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum TestNamespace.CatchAllTagHelper.CatchAll - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (224:9,40 [7] EnumTagHelpers.cshtml) - CSharp - MyValue
+                        IntermediateToken - (224:9,40 [7] EnumTagHelpers.cshtml) - CSharp - MyValue
                     DefaultTagHelperExecute - 
                 HtmlContent - (234:9,50 [2] EnumTagHelpers.cshtml)
                     LazyIntermediateToken - (234:9,50 [2] EnumTagHelpers.cshtml) - Html - \n
@@ -68,10 +68,10 @@
                     DefaultTagHelperCreate -  - TestNamespace.CatchAllTagHelper
                     DefaultTagHelperProperty - (250:10,14 [10] EnumTagHelpers.cshtml) - value - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum TestNamespace.InputTagHelper.Value - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (251:10,15 [9] EnumTagHelpers.cshtml)
-                            LazyIntermediateToken - (251:10,15 [9] EnumTagHelpers.cshtml) - CSharp - enumValue
+                            IntermediateToken - (251:10,15 [9] EnumTagHelpers.cshtml) - CSharp - enumValue
                     DefaultTagHelperProperty - (273:10,37 [10] EnumTagHelpers.cshtml) - catch-all - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum TestNamespace.CatchAllTagHelper.CatchAll - HtmlAttributeValueStyle.DoubleQuotes
                         CSharpExpression - (274:10,38 [9] EnumTagHelpers.cshtml)
-                            LazyIntermediateToken - (274:10,38 [9] EnumTagHelpers.cshtml) - CSharp - enumValue
+                            IntermediateToken - (274:10,38 [9] EnumTagHelpers.cshtml) - CSharp - enumValue
                     DefaultTagHelperExecute - 
                 HtmlContent - (287:10,51 [2] EnumTagHelpers.cshtml)
                     LazyIntermediateToken - (287:10,51 [2] EnumTagHelpers.cshtml) - Html - \n

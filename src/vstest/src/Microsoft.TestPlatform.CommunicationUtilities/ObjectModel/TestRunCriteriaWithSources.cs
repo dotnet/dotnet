@@ -5,7 +5,9 @@ using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol;
 
-using Newtonsoft.Json;
+#if NETCOREAPP
+using System.Text.Json.Serialization;
+#endif
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
@@ -23,7 +25,9 @@ public class TestRunCriteriaWithSources
     /// </param>
     /// <param name="runSettings"> The run settings.  </param>
     /// <param name="testExecutionContext"> The test Execution Context. </param>
+#if NETCOREAPP
     [JsonConstructor]
+#endif
     public TestRunCriteriaWithSources(Dictionary<string, IEnumerable<string>> adapterSourceMap, string? package, string? runSettings, TestExecutionContext testExecutionContext)
     {
         AdapterSourceMap = adapterSourceMap;

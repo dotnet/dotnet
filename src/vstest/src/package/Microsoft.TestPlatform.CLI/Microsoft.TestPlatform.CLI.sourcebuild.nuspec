@@ -2,6 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     $CommonMetadataElements$
+    <readme>README.md</readme>
 
     <contentFiles>
       <files include="**/*.*" copyToOutput="true" flatten="false" buildAction="None" />
@@ -9,6 +10,7 @@
   </metadata>
   <files>
     $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
 
     <!-- Add a third party notice file -->
     <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
@@ -30,8 +32,6 @@
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Client.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Common.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
-
-    <file src="$SourceBuildTfmCurrent$\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
 
     <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
     <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />

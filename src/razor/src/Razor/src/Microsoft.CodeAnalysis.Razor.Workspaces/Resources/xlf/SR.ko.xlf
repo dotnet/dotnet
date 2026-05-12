@@ -79,6 +79,11 @@
         <target state="translated">공백이 아닌 콘텐츠를 추가하거나 삭제하기 때문에 형식 작업이 중단됩니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Formatting_Error">
+        <source>Formatting error. Abandoning further work to not corrupt the file, please report this issue. See: https://aka.ms/razor-formatting-issue</source>
+        <target state="translated">서식 오류입니다. 파일이 손상되지 않도록 추가 작업을 중단합니다. 이 문제를 보고하세요. 참조: https://aka.ms/razor-formatting-issue</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">
         <source>Generate Async Event Handler '{0}'</source>
         <target state="translated">비동기 이벤트 처리기 '{0}' 생성</target>

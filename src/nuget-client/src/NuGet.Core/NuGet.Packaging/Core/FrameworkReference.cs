@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Common;
@@ -19,12 +17,27 @@ namespace NuGet.Packaging
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
-        public int Compare(FrameworkReference x, FrameworkReference y)
+        public int Compare(FrameworkReference? x, FrameworkReference? y)
         {
+            if (ReferenceEquals(x, y))
+            {
+                return 0;
+            }
+
+            if (x is null)
+            {
+                return -1;
+            }
+
+            if (y is null)
+            {
+                return 1;
+            }
+
             return ComparisonUtility.FrameworkReferenceNameComparer.Compare(x.Name, y.Name);
         }
 
-        public bool Equals(FrameworkReference other)
+        public bool Equals(FrameworkReference? other)
         {
             if (other == null)
             {
@@ -39,7 +52,7 @@ namespace NuGet.Packaging
             return ComparisonUtility.FrameworkReferenceNameComparer.Equals(Name, other.Name);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as FrameworkReference);
         }
@@ -51,7 +64,7 @@ namespace NuGet.Packaging
             return combiner.CombinedHash;
         }
 
-        public int CompareTo(FrameworkReference other)
+        public int CompareTo(FrameworkReference? other)
         {
             return Compare(this, other);
         }

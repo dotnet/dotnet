@@ -21,7 +21,7 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@MicroBuildTemplate
   parameters:
     sdl:
-      sourceAnalysisPool: VSEngSS-MicroBuild2022-1ES
+      sourceAnalysisPool: VSEng-MicroBuildVSStable
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
@@ -39,7 +39,7 @@ extends:
           notificationAliases: $(TsaNotificationAliases)
     pool:
       name: AzurePipelines-EO
-      image: VSEngSS-MicroBuild2022-1ES
+      image: VSEng-MicroBuildVSStable
       os: windows
     stages:
     - stage: compliance
@@ -49,7 +49,7 @@ extends:
         displayName: "Static Analysis"
         timeoutInMinutes: 180
         pool:
-          name: VSEngSS-MicroBuild2022-1ES
+          name: VSEng-MicroBuildVSStable
         templateContext:
           inputs:
             - input: pipelineArtifact

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.Build.NoTargets</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>3.7.0</PackageVersion>
+    <AssemblyName>Microsoft.Build.NoTargets</AssemblyName>
+    <Description>Provides targets for projects that do not compile an assembly.</Description>
+    <PackageProjectUrl>https://github.com/Microsoft/MSBuildSdks</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>MSBuild MSBuildSdk notargets notarget</PackageTags>
+    <PackageType>MSBuildSdk</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Sdk/DisableCopyFilesMarkedCopyLocal.targets" Pack="true" PackagePath="Sdk" />
+    <None Include="Sdk/Sdk.props" Pack="true" PackagePath="Sdk" />
+    <None Include="Sdk/Sdk.targets" Pack="true" PackagePath="Sdk" />
+  </ItemGroup>
+
+</Project>

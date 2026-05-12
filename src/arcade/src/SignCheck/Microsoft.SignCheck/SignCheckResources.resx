@@ -168,6 +168,9 @@
   <data name="DetailSkippedUnsupportedFileType" xml:space="preserve">
     <value>Skipped (unsupported file type)</value>
   </data>
+  <data name="DetailVerificationError" xml:space="preserve">
+    <value>Verification error: {0}</value>
+  </data>
   <data name="DetailTimestamp" xml:space="preserve">
     <value>Timestamp: {0:MM/dd/yy H:mm:ss} ({1})</value>
   </data>

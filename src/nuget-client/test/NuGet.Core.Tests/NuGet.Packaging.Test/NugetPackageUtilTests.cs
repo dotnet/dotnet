@@ -617,7 +617,7 @@ namespace Commands.Test
             }
         }
 
-        [CIOnlyFact]
+        [Fact]
         public async Task Test_ExtractionHonorsFileTimestamp()
         {
             // Arrange

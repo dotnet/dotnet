@@ -60,7 +60,7 @@ internal class AssemblyMetadataProvider : IAssemblyMetadataProvider
             var assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
 
             var processorArchitecture =
-#if NET7_0_OR_GREATER
+#if NET
                 // AssemblyName doesn't include ProcessorArchitecture in net7.
                 // It will always be ProcessorArchitecture.None.
                 ProcessorArchitecture.None;

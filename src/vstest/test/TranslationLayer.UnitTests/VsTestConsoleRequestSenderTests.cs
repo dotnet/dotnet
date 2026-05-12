@@ -23,9 +23,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
-using Newtonsoft.Json.Linq;
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - suppressed for Moq setup patterns
 
-using Payloads = Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
+using Payloads= Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using TestResult = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult;
 
 namespace Microsoft.TestPlatform.VsTestConsole.TranslationLayer.UnitTests;
@@ -39,6 +39,8 @@ public class VsTestConsoleRequestSenderTests
     private readonly int _protocolVersion = 7;
     private readonly IDataSerializer _serializer = JsonDataSerializer.Instance;
     private readonly Mock<ITelemetryEventsHandler> _telemetryHandler;
+
+    public TestContext TestContext { get; set; } = null!;
 
     public VsTestConsoleRequestSenderTests()
     {
@@ -82,7 +84,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false));
 
         var portOutput = _requestSender.InitializeCommunication();
-        Assert.IsTrue(portOutput < 0, "Negative port number must be returned if Hosting Server fails.");
+        Assert.IsLessThan(0, portOutput, "Negative port number must be returned if Hosting Server fails.");
 
         var connectionSuccess = _requestSender.WaitForRequestHandlerConnection(_waitTimeout);
         Assert.IsFalse(connectionSuccess, "Connection must fail as server failed to host.");
@@ -100,7 +102,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false));
 
         var portOutput = await _requestSender.InitializeCommunicationAsync(_waitTimeout);
-        Assert.IsTrue(portOutput < 0, "Negative port number must be returned if Hosting Server fails.");
+        Assert.IsLessThan(0, portOutput, "Negative port number must be returned if Hosting Server fails.");
 
         _mockCommunicationManager.Verify(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0)), Times.Once);
         _mockCommunicationManager.Verify(cm => cm.AcceptClientAsync(), Times.Never);
@@ -114,7 +116,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessage()).Throws(new Exception("Fail"));
 
         var portOutput = _requestSender.InitializeCommunication();
@@ -153,7 +155,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var discoveryMessage = new Message() { MessageType = MessageType.StartDiscovery };
 
@@ -201,7 +203,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, dummyPortInput));
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
 
@@ -252,7 +254,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
 
@@ -260,7 +262,6 @@ public class VsTestConsoleRequestSenderTests
         var protocolError = new Message()
         {
             MessageType = MessageType.ProtocolError,
-            Payload = null
         };
 
         Action changedMessage =
@@ -296,7 +297,6 @@ public class VsTestConsoleRequestSenderTests
         var protocolError = new Message()
         {
             MessageType = MessageType.ProtocolError,
-            Payload = null
         };
 
         Action changedMessage =
@@ -330,7 +330,8 @@ public class VsTestConsoleRequestSenderTests
         var discoveryComplete = new Message()
         {
             MessageType = MessageType.DiscoveryComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DiscoveryComplete, payload, _protocolVersion)
         };
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(discoveryComplete));
 
@@ -352,7 +353,8 @@ public class VsTestConsoleRequestSenderTests
         var discoveryComplete = new Message()
         {
             MessageType = MessageType.DiscoveryComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DiscoveryComplete, payload, _protocolVersion)
         };
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(discoveryComplete));
 
@@ -375,14 +377,16 @@ public class VsTestConsoleRequestSenderTests
         var testsFound = new Message()
         {
             MessageType = MessageType.TestCasesFound,
-            Payload = JToken.FromObject(testCaseList)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestCasesFound, testCaseList, _protocolVersion)
         };
 
         var payload = new DiscoveryCompletePayload() { TotalTests = 1, LastDiscoveredTests = null, IsAborted = false };
         var discoveryComplete = new Message()
         {
             MessageType = MessageType.DiscoveryComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DiscoveryComplete, payload, _protocolVersion)
         };
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(testsFound));
@@ -408,14 +412,16 @@ public class VsTestConsoleRequestSenderTests
         var testsFound = new Message()
         {
             MessageType = MessageType.TestCasesFound,
-            Payload = JToken.FromObject(testCaseList)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestCasesFound, testCaseList, _protocolVersion)
         };
 
         var payload = new DiscoveryCompletePayload() { TotalTests = 1, LastDiscoveredTests = null, IsAborted = false };
         var discoveryComplete = new Message()
         {
             MessageType = MessageType.DiscoveryComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DiscoveryComplete, payload, _protocolVersion)
         };
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(testsFound));
@@ -442,14 +448,16 @@ public class VsTestConsoleRequestSenderTests
         var testsFound = new Message()
         {
             MessageType = MessageType.TestCasesFound,
-            Payload = JToken.FromObject(new List<TestCase> { testCase })
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestCasesFound, new List<TestCase> { testCase }, _protocolVersion)
         };
 
         var payload = new DiscoveryCompletePayload() { TotalTests = 1, LastDiscoveredTests = null, IsAborted = false, FullyDiscoveredSources = sources };
         var discoveryComplete = new Message()
         {
             MessageType = MessageType.DiscoveryComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DiscoveryComplete, payload, _protocolVersion)
         };
 
         DiscoveryCompleteEventArgs? receivedDiscoveryCompleteEventArgs = null;
@@ -465,7 +473,7 @@ public class VsTestConsoleRequestSenderTests
 
         mockHandler.Verify(mh => mh.HandleDiscoveryComplete(It.IsAny<DiscoveryCompleteEventArgs>(), null), Times.Once, "Discovery Complete must be called");
         Assert.IsNotNull(receivedDiscoveryCompleteEventArgs!.FullyDiscoveredSources);
-        Assert.AreEqual(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources.Count);
+        Assert.HasCount(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources);
     }
 
     [TestMethod]
@@ -482,14 +490,16 @@ public class VsTestConsoleRequestSenderTests
         var testsFound = new Message()
         {
             MessageType = MessageType.TestCasesFound,
-            Payload = JToken.FromObject(new List<TestCase>() { testCase })
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestCasesFound, new List<TestCase>() { testCase }, _protocolVersion)
         };
 
         var payload = new DiscoveryCompletePayload() { TotalTests = -1, LastDiscoveredTests = null, IsAborted = true, FullyDiscoveredSources = sources };
         var discoveryComplete = new Message()
         {
             MessageType = MessageType.DiscoveryComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DiscoveryComplete, payload, _protocolVersion)
         };
 
         DiscoveryCompleteEventArgs? receivedDiscoveryCompleteEventArgs = null;
@@ -508,9 +518,9 @@ public class VsTestConsoleRequestSenderTests
         // Assert
         mockHandler.Verify(mh => mh.HandleDiscoveryComplete(It.IsAny<DiscoveryCompleteEventArgs>(), null), Times.Once, "Discovery Complete must be called");
         Assert.IsNotNull(receivedDiscoveryCompleteEventArgs!.FullyDiscoveredSources);
-        Assert.AreEqual(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources.Count);
+        Assert.HasCount(1, receivedDiscoveryCompleteEventArgs.FullyDiscoveredSources);
         Assert.AreEqual(-1, receivedDiscoveryCompleteEventArgs.TotalCount);
-        Assert.AreEqual(true, receivedDiscoveryCompleteEventArgs.IsAborted);
+        Assert.IsTrue(receivedDiscoveryCompleteEventArgs.IsAborted);
     }
 
     [TestMethod]
@@ -542,7 +552,7 @@ public class VsTestConsoleRequestSenderTests
         _requestSender.DiscoverTests(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -580,7 +590,7 @@ public class VsTestConsoleRequestSenderTests
         await _requestSender.DiscoverTestsAsync(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -613,7 +623,7 @@ public class VsTestConsoleRequestSenderTests
         _requestSender.DiscoverTests(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -646,7 +656,7 @@ public class VsTestConsoleRequestSenderTests
         await _requestSender.DiscoverTestsAsync(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object);
 
         Assert.IsNotNull(receivedTestCases);
-        Assert.AreEqual(1, receivedTestCases.Count);
+        Assert.HasCount(1, receivedTestCases);
 
         // Verify that the traits are passed through properly.
         var traits = receivedTestCases.ToArray()[0].Traits;
@@ -1148,7 +1158,8 @@ public class VsTestConsoleRequestSenderTests
         var runprocessInfoPayload = new Message()
         {
             MessageType = MessageType.CustomTestHostLaunch,
-            Payload = JToken.FromObject(new TestProcessStartInfo())
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.CustomTestHostLaunch, new TestProcessStartInfo(), _protocolVersion),
         };
 
 
@@ -1209,7 +1220,8 @@ public class VsTestConsoleRequestSenderTests
         var runprocessInfoPayload = new Message()
         {
             MessageType = MessageType.CustomTestHostLaunch,
-            Payload = JToken.FromObject(new TestProcessStartInfo())
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.CustomTestHostLaunch, new TestProcessStartInfo(), _protocolVersion),
         };
 
 
@@ -1239,7 +1251,7 @@ public class VsTestConsoleRequestSenderTests
     }
 
     [TestMethod]
-    public void StartTestRunWithCustomHostShouldNotAbortAndSendErrorToVstestConsoleInErrorScenario()
+    public async Task StartTestRunWithCustomHostShouldNotAbortAndSendErrorToVstestConsoleInErrorScenario()
     {
         InitializeCommunication();
 
@@ -1267,59 +1279,11 @@ public class VsTestConsoleRequestSenderTests
         var mpayload = new TestMessagePayload() { MessageLevel = TestMessageLevel.Informational, Message = "Hello" };
         var message = CreateMessage(MessageType.TestMessage, mpayload);
 
-        Message runprocessInfoPayload = new VersionedMessage()
+        Message runprocessInfoPayload = new Message()
         {
             MessageType = MessageType.CustomTestHostLaunch,
-            Payload = JToken.FromObject(new TestProcessStartInfo())
-        };
-
-        var mockLauncher = new Mock<ITestHostLauncher>();
-        mockLauncher.Setup(ml => ml.LaunchTestHost(It.IsAny<TestProcessStartInfo>())).Throws(new Exception("BadError"));
-
-        _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(runprocessInfoPayload));
-
-        _mockCommunicationManager.Setup(cm => cm.SendMessage(It.IsAny<string>(), It.IsAny<object>(), _protocolVersion)).
-            Callback(() => _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(runComplete)));
-
-        _requestSender.StartTestRunWithCustomHost(new List<string>() { "1.dll" }, null, new TestPlatformOptions(), null, mockHandler.Object, _telemetryHandler.Object, mockLauncher.Object);
-
-        mockHandler.Verify(mh => mh.HandleTestRunComplete(It.IsAny<TestRunCompleteEventArgs>(),
-            It.IsAny<TestRunChangedEventArgs>(), null, null), Times.Once, "Run Complete must be called");
-    }
-
-    [TestMethod]
-    public async Task StartTestRunAsyncWithCustomHostShouldNotAbortAndSendErrorToVstestConsoleInErrorScenario()
-    {
-        await InitializeCommunicationAsync();
-
-        var mockHandler = new Mock<ITestRunEventsHandler>();
-
-        var testCase = new TestCase("hello", new Uri("world://how"), "1.dll");
-        var testResult = new TestResult(testCase);
-        testResult.Outcome = TestOutcome.Passed;
-
-        var dummyCompleteArgs = new TestRunCompleteEventArgs(null, false, false, null, null, null, TimeSpan.FromMilliseconds(1));
-        var dummyLastRunArgs = new TestRunChangedEventArgs(null, null, null);
-
-        var testsChangedArgs = new TestRunChangedEventArgs(null, new List<TestResult>() { testResult }, null);
-        var testsPayload = CreateMessage(MessageType.TestRunStatsChange, testsChangedArgs);
-
-        var payload = new TestRunCompletePayload()
-        {
-            ExecutorUris = null,
-            LastRunTests = dummyLastRunArgs,
-            RunAttachments = null,
-            TestRunCompleteArgs = dummyCompleteArgs
-        };
-        var runComplete = CreateMessage(MessageType.ExecutionComplete, payload);
-
-        var mpayload = new TestMessagePayload() { MessageLevel = TestMessageLevel.Informational, Message = "Hello" };
-        var message = CreateMessage(MessageType.TestMessage, mpayload);
-
-        Message runprocessInfoPayload = new VersionedMessage()
-        {
-            MessageType = MessageType.CustomTestHostLaunch,
-            Payload = JToken.FromObject(new TestProcessStartInfo())
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.CustomTestHostLaunch, new TestProcessStartInfo(), _protocolVersion),
         };
 
         var mockLauncher = new Mock<ITestHostLauncher>();
@@ -2068,7 +2032,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingComplete = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingComplete, payload, _protocolVersion)
         };
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(attachmentsProcessingComplete));
         _mockCommunicationManager.Setup(cm => cm.SendMessage(It.IsAny<string>(), It.IsAny<object>())).Callback((string _, object o) =>
@@ -2106,7 +2071,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingComplete = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingComplete, payload, _protocolVersion)
         };
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(attachmentsProcessingComplete));
@@ -2146,7 +2112,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingComplete = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingComplete, payload, _protocolVersion)
         };
 
         var mpayload = new TestMessagePayload() { MessageLevel = TestMessageLevel.Informational, Message = "Hello" };
@@ -2191,7 +2158,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingComplete = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingComplete,
-            Payload = JToken.FromObject(completePayload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingComplete, completePayload, _protocolVersion)
         };
 
         var progressPayload = new TestRunAttachmentsProcessingProgressPayload()
@@ -2202,7 +2170,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingProgress = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingProgress,
-            Payload = JToken.FromObject(progressPayload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingProgress, progressPayload, _protocolVersion)
         };
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(attachmentsProcessingProgress));
         _mockCommunicationManager.Setup(cm => cm.SendMessage(It.IsAny<string>(), It.IsAny<object>())).Callback((string _, object o) =>
@@ -2245,7 +2214,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingComplete = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingComplete, payload, _protocolVersion)
         };
 
         var mpayload = new TestMessagePayload() { MessageLevel = TestMessageLevel.Informational, Message = "Hello" };
@@ -2294,7 +2264,8 @@ public class VsTestConsoleRequestSenderTests
         var attachmentsProcessingComplete = new Message()
         {
             MessageType = MessageType.TestRunAttachmentsProcessingComplete,
-            Payload = JToken.FromObject(payload)
+            Version = _protocolVersion,
+            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestRunAttachmentsProcessingComplete, payload, _protocolVersion)
         };
 
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(attachmentsProcessingComplete));
@@ -2552,7 +2523,7 @@ public class VsTestConsoleRequestSenderTests
                 MessageType.CustomTestHostLaunchCallback,
                 It.IsAny<CustomHostLaunchAckPayload>(),
                 _protocolVersion))
-            .Callback((string messageType, object payload, int version) => Assert.AreEqual(((CustomHostLaunchAckPayload)payload).HostProcessId, TesthostPid));
+            .Callback((string messageType, object payload, int version) => Assert.AreEqual(TesthostPid, ((CustomHostLaunchAckPayload)payload).HostProcessId));
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<Message?>(launchMessage))
             .Callback(reconfigureAction);
@@ -2627,7 +2598,7 @@ public class VsTestConsoleRequestSenderTests
                 MessageType.CustomTestHostLaunchCallback,
                 It.IsAny<CustomHostLaunchAckPayload>(),
                 _protocolVersion))
-            .Callback((string messageType, object payload, int version) => Assert.AreEqual(((CustomHostLaunchAckPayload)payload).HostProcessId, TesthostPid));
+            .Callback((string messageType, object payload, int version) => Assert.AreEqual(TesthostPid, ((CustomHostLaunchAckPayload)payload).HostProcessId));
         _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.FromResult<Message?>(launchMessage))
             .Callback(reconfigureAction);
@@ -2822,10 +2793,10 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         _mockCommunicationManager.Setup(cm => cm.WaitForClientConnection(Timeout.Infinite))
-            .Callback((int timeout) => Task.Delay(200).Wait());
+            .Callback((int timeout) => Task.Delay(200, TestContext.CancellationToken).Wait());
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
-        var versionCheck = new Message() { MessageType = MessageType.VersionCheck, Payload = protocolVersion };
+        var versionCheck = new Message() { MessageType = MessageType.VersionCheck, Version = protocolVersion, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, protocolVersion, protocolVersion) };
 
         Action changedMessage = () => _mockCommunicationManager.Setup(cm => cm.ReceiveMessage()).Returns(versionCheck);
 
@@ -2874,7 +2845,7 @@ public class VsTestConsoleRequestSenderTests
         _mockCommunicationManager.Setup(cm => cm.AcceptClientAsync()).Returns(Task.FromResult(false)).Callback(() => { });
 
         var sessionConnected = new Message() { MessageType = MessageType.SessionConnected };
-        var versionCheck = new Message() { MessageType = MessageType.VersionCheck, Payload = protocolVersion };
+        var versionCheck = new Message() { MessageType = MessageType.VersionCheck, Version = protocolVersion, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, protocolVersion, protocolVersion) };
 
         Action changedMessage = () => _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(versionCheck));
 
@@ -2887,3 +2858,4 @@ public class VsTestConsoleRequestSenderTests
 
     #endregion
 }
+#pragma warning restore MSTEST0049

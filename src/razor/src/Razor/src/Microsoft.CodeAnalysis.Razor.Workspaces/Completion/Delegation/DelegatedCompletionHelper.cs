@@ -133,18 +133,9 @@ internal static class DelegatedCompletionHelper
     }
 
     public static RazorVSInternalCompletionList RewriteHtmlResponse(
-        RazorVSInternalCompletionList? delegatedResponse,
+        RazorVSInternalCompletionList delegatedResponse,
         RazorCompletionOptions completionOptions)
     {
-        if (delegatedResponse?.Items is null)
-        {
-            // If we don't get a response from the delegated server, we have to make sure to return an incomplete completion
-            // list. When a user is typing quickly, the delegated request from the first keystroke will fail to synchronize,
-            // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
-            // so we'd only ever return Razor completion items.
-            return new RazorVSInternalCompletionList() { IsIncomplete = true, Items = [] };
-        }
-
         var rewrittenResponse = s_delegatedHtmlCompletionResponseRewriter.Rewrite(
             delegatedResponse,
             completionOptions);
@@ -253,7 +244,7 @@ internal static class DelegatedCompletionHelper
         {
             for (var node = initialNode; node != null; node = node.Parent)
             {
-                if (node is MarkupElementSyntax elementNode)
+                if (node is BaseMarkupElementSyntax elementNode)
                 {
                     if (RazorSyntaxFacts.IsScriptOrStyleBlock(elementNode))
                     {
@@ -336,7 +327,10 @@ internal static class DelegatedCompletionHelper
                 }
                 else
                 {
-                    args[0] = documentContext.GetTextDocumentIdentifier();
+                    args[0] = new TextDocumentIdentifier()
+                    {
+                        DocumentUri = new(documentContext.Uri),
+                    };
                     args[1] = formattedTextEdit;
                     if (nextCursorPosition >= 0)
                     {

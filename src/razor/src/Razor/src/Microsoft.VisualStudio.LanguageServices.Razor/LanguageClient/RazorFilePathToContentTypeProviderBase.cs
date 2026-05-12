@@ -2,19 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Utilities;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
 internal abstract class RazorFilePathToContentTypeProviderBase(
     IContentTypeRegistryService contentTypeRegistryService,
-    ILspEditorFeatureDetector lspEditorFeatureDetector,
-    LanguageServerFeatureOptions options) : IFilePathToContentTypeProvider
+    ILspEditorFeatureDetector lspEditorFeatureDetector) : IFilePathToContentTypeProvider
 {
     private readonly IContentTypeRegistryService _contentTypeRegistryService = contentTypeRegistryService;
     private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector = lspEditorFeatureDetector;
-    private readonly LanguageServerFeatureOptions _options = options;
 
     public bool TryGetContentTypeForFilePath(string filePath, [NotNullWhen(true)] out IContentType? contentType)
     {
@@ -33,8 +30,7 @@ internal abstract class RazorFilePathToContentTypeProviderBase(
         // When cohosting is on, it's on for all non .NET Framework projects, regardless of feature flags or
         // project capabilities. If the file is not in a project (e.g. loose files, left side of diff), we
         // also want to use the LSP editor, even though the .NET capability check would fail.
-        if (_options.UseRazorCohostServer &&
-            _lspEditorFeatureDetector.IsDotNetCoreProject(filePath) is { } check &&
+        if (_lspEditorFeatureDetector.IsDotNetCoreProject(filePath) is { } check &&
             (!check.IsInProject || check.HasCapability))
         {
             return true;

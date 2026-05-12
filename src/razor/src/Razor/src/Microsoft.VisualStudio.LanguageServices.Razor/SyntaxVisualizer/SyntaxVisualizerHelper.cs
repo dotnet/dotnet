@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Protocol.DevTools;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Serialization;
 
 namespace Microsoft.VisualStudio.Razor.SyntaxVisualizer;
 
@@ -36,14 +35,14 @@ internal static class SyntaxVisualizerHelper
         return new RazorSyntaxNode(tree.Root);
     }
 
-    internal static ValueTask<FetchTagHelpersResult?> GetTagHelperDescriptorsAsync(IRemoteServiceInvoker remoteServiceInvoker, Uri hostDocumentUri, TagHelpersKind tagHelpersKind, Solution solution, CancellationToken cancellationToken)
+    internal static ValueTask<string?> GetTagHelperDescriptorsAsync(IRemoteServiceInvoker remoteServiceInvoker, Uri hostDocumentUri, TagHelpersKind tagHelpersKind, Solution solution, CancellationToken cancellationToken)
     {
         if (!solution.TryGetRazorDocument(hostDocumentUri, out var razorDocument))
         {
-            return new ValueTask<FetchTagHelpersResult?>();
+            return new ValueTask<string?>();
         }
 
-        return remoteServiceInvoker.TryInvokeAsync<IRemoteDevToolsService, FetchTagHelpersResult>(
+        return remoteServiceInvoker.TryInvokeAsync<IRemoteDevToolsService, string>(
             solution,
             (service, solutionInfo, cancellationToken) => service.GetTagHelpersJsonAsync(solutionInfo, razorDocument.Id, tagHelpersKind, cancellationToken),
             cancellationToken);

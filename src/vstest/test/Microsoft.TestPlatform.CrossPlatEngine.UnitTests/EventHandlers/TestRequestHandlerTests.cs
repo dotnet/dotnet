@@ -38,6 +38,8 @@ public class TestRequestHandlerTests
     private readonly TestHostConnectionInfo _testHostConnectionInfo;
     private readonly JobQueue<Action> _jobQueue;
 
+    public TestContext TestContext { get; set; }
+
     public TestRequestHandlerTests()
     {
         _mockCommunicationClient = new Mock<ICommunicationEndPoint>();
@@ -132,7 +134,7 @@ public class TestRequestHandlerTests
         var task = ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
 
         SendSessionEnd();
-        Assert.IsTrue(task.Wait(2000));
+        Assert.IsTrue(task.Wait(2000, TestContext.CancellationToken));
     }
 
     #region Version Check Protocol
@@ -140,7 +142,7 @@ public class TestRequestHandlerTests
     [TestMethod]
     public void ProcessRequestsVersionCheckShouldAckMinimumOfGivenAndHighestSupportedVersion()
     {
-        var message = new Message { MessageType = MessageType.VersionCheck, Payload = 1 };
+        var message = new Message { MessageType = MessageType.VersionCheck, Version = 1, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, 1, 1) };
         ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
 
         SendMessageOnChannel(message);
@@ -158,7 +160,7 @@ public class TestRequestHandlerTests
             return;
         }
         EqtTrace.ErrorOnInitialization = "non-existent-error";
-        var message = new Message { MessageType = MessageType.VersionCheck, Payload = 1 };
+        var message = new Message { MessageType = MessageType.VersionCheck, Version = 1, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, 1, 1) };
         ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
 
         SendMessageOnChannel(message);
@@ -486,9 +488,10 @@ public class TestRequestHandlerTests
 
     private void SendSessionEnd()
     {
-        SendMessageOnChannel(new Message { MessageType = MessageType.SessionEnd, Payload = string.Empty });
+        SendMessageOnChannel(new Message { MessageType = MessageType.SessionEnd, Version = 1, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.SessionEnd, string.Empty, 1) });
     }
 
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - helper methods not in test context
     private Task ProcessRequestsAsync()
     {
         return Task.Run(() => _requestHandler.ProcessRequests(new Mock<ITestHostManagerFactory>().Object));
@@ -498,10 +501,11 @@ public class TestRequestHandlerTests
     {
         return Task.Run(() => _requestHandler.ProcessRequests(testHostManagerFactory));
     }
+#pragma warning restore MSTEST0049
 
     private string Serialize(Message message)
     {
-        return _dataSerializer.SerializePayload(message.MessageType, message.Payload);
+        return message.RawMessage ?? _dataSerializer.SerializePayload(message.MessageType, null);
     }
 
     private void VerifyResponseMessageEquals(string message)
@@ -534,11 +538,11 @@ public class TestableTestRequestHandler : TestRequestHandler
 
     private static void OnLaunchAdapterProcessWithDebuggerAttachedAckReceived(Message message)
     {
-        Assert.AreEqual(message.MessageType, MessageType.LaunchAdapterProcessWithDebuggerAttachedCallback);
+        Assert.AreEqual(MessageType.LaunchAdapterProcessWithDebuggerAttachedCallback, message.MessageType);
     }
 
     private static void OnAttachDebuggerAckRecieved(Message message)
     {
-        Assert.AreEqual(message.MessageType, MessageType.AttachDebuggerCallback);
+        Assert.AreEqual(MessageType.AttachDebuggerCallback, message.MessageType);
     }
 }

@@ -43,9 +43,9 @@
                     LazyIntermediateToken - (113:7,2 [12] DesignTime.cshtml) - CSharp - Foo(Bar.Baz)
                 HtmlContent - (126:7,15 [2] DesignTime.cshtml)
                     LazyIntermediateToken - (126:7,15 [2] DesignTime.cshtml) - Html - \n
-                CSharpExpression - (129:8,1 [23] DesignTime.cshtml)
+                CSharpExpression - (129:8,1 [24] DesignTime.cshtml)
                     LazyIntermediateToken - (129:8,1 [4] DesignTime.cshtml) - CSharp - Foo(
-                    Template - (134:8,6 [18] DesignTime.cshtml)
+                    Template - (134:8,6 [19] DesignTime.cshtml)
                         HtmlContent - (134:8,6 [7] DesignTime.cshtml)
                             LazyIntermediateToken - (134:8,6 [2] DesignTime.cshtml) - Html - <p
                             LazyIntermediateToken - (136:8,8 [1] DesignTime.cshtml) - Html - >

@@ -40,7 +40,7 @@ namespace NuGet.CommandLine.XPlat
             }
             else
             {
-                packageSearchResultRenderer = new PackageSearchResultTableRenderer(packageSearchArgs.SearchTerm, packageSearchArgs.Logger, packageSearchArgs.Verbosity, packageSearchArgs.ExactMatch);
+                packageSearchResultRenderer = new PackageSearchResultTableRenderer(packageSearchArgs.SearchTerm, packageSearchArgs.Logger, packageSearchArgs.Verbosity, packageSearchArgs.ExactMatch, packageSearchArgs.ConsoleWidth);
             }
 
             packageSearchResultRenderer.Start();

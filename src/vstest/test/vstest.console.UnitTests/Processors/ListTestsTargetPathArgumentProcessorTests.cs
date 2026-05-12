@@ -49,15 +49,8 @@ public class ListTestsTargetPathArgumentProcessorTests
         var options = CommandLineOptions.Instance;
         ListTestsTargetPathArgumentExecutor executor = new(options);
 
-        try
-        {
-            executor.Initialize(null);
-        }
-        catch (Exception ex)
-        {
-            Assert.IsTrue(ex is CommandLineException);
-            StringAssert.Contains(ex.Message, "ListTestsTargetPath is required with ListFullyQualifiedTests!");
-        }
+        var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(null));
+        Assert.Contains("ListTestsTargetPath is required with ListFullyQualifiedTests!", ex.Message);
     }
 
     [TestMethod]

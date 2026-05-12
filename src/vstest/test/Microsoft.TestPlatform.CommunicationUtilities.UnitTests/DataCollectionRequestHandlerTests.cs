@@ -26,7 +26,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 
@@ -42,11 +41,12 @@ public class DataCollectionRequestHandlerTests
     private readonly Mock<IFileHelper> _mockFileHelper;
     private readonly Mock<IRequestData> _mockRequestData;
     private readonly Mock<IMetricsCollection> _mockMetricsCollection;
-    private readonly Message _afterTestRunEnd = new() { MessageType = MessageType.AfterTestRunEnd, Payload = "false" };
+    private readonly Message _afterTestRunEnd = new() { MessageType = MessageType.AfterTestRunEnd, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.AfterTestRunEnd, "false", 7) };
     private readonly Message _beforeTestRunStart = new()
     {
         MessageType = MessageType.BeforeTestRunStart,
-        Payload = JToken.FromObject(new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } })
+        Version = 7,
+        RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } }, 7)
     };
 
     public DataCollectionRequestHandlerTests()
@@ -68,22 +68,16 @@ public class DataCollectionRequestHandlerTests
         _mockDataCollectionManager.Setup(x => x.SessionStarted(It.IsAny<SessionStartEventArgs>())).Returns(true);
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, string.Empty);
-    }
-
     [TestMethod]
     public void CreateInstanceShouldThrowExceptionIfInstanceCommunicationManagerIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => DataCollectionRequestHandler.Create(null!, _mockMessageSink.Object));
+        Assert.ThrowsExactly<ArgumentNullException>(() => DataCollectionRequestHandler.Create(null!, _mockMessageSink.Object));
     }
 
     [TestMethod]
     public void CreateInstanceShouldThrowExceptinIfInstanceMessageSinkIsNull()
     {
-        Assert.ThrowsException<ArgumentNullException>(() => DataCollectionRequestHandler.Create(_mockCommunicationManager.Object, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => DataCollectionRequestHandler.Create(_mockCommunicationManager.Object, null!));
     }
 
     [TestMethod]
@@ -107,7 +101,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.SetupClientAsync(It.IsAny<IPEndPoint>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.InitializeCommunication(123));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.InitializeCommunication(123));
     }
 
     [TestMethod]
@@ -123,7 +117,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.WaitForServerConnection(It.IsAny<int>())).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.WaitForRequestSenderConnection(0));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.WaitForRequestSenderConnection(0));
     }
 
     [TestMethod]
@@ -142,7 +136,7 @@ public class DataCollectionRequestHandlerTests
         _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionMessage, It.IsAny<DataCollectionMessageEventArgs>())).Throws<Exception>();
         var message = new DataCollectionMessageEventArgs(TestMessageLevel.Error, "message");
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.SendDataCollectionMessage(message));
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.SendDataCollectionMessage(message));
     }
 
     [TestMethod]
@@ -158,7 +152,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.StopClient()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.Close());
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.Close());
     }
 
     [TestMethod]
@@ -176,7 +170,7 @@ public class DataCollectionRequestHandlerTests
         testHostLaunchedPayload.ProcessId = 1234;
 
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(_beforeTestRunStart)
-            .Returns(new Message() { MessageType = MessageType.TestHostLaunched, Payload = JToken.FromObject(testHostLaunchedPayload) })
+            .Returns(new Message() { MessageType = MessageType.TestHostLaunched, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestHostLaunched, testHostLaunchedPayload, 7) })
             .Returns(_afterTestRunEnd);
 
         _mockDataCollectionManager.Setup(x => x.SessionStarted(It.IsAny<SessionStartEventArgs>())).Returns(true);
@@ -208,7 +202,7 @@ public class DataCollectionRequestHandlerTests
     [TestMethod]
     public void ProcessRequestsShouldDisposeDataCollectorsOnAfterTestRunEnd()
     {
-        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(new Message() { MessageType = MessageType.AfterTestRunEnd, Payload = "false" });
+        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(new Message() { MessageType = MessageType.AfterTestRunEnd, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.AfterTestRunEnd, "false", 7) });
 
         _requestHandler.ProcessRequests();
 
@@ -225,7 +219,7 @@ public class DataCollectionRequestHandlerTests
         string runSettings = "<RunSettings><RunConfiguration><TestAdaptersPaths></TestAdaptersPaths></RunConfiguration></RunSettings>";
 
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(_beforeTestRunStart)
-            .Returns(new Message() { MessageType = MessageType.TestHostLaunched, Payload = JToken.FromObject(testHostLaunchedPayload) })
+            .Returns(new Message() { MessageType = MessageType.TestHostLaunched, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.TestHostLaunched, testHostLaunchedPayload, 7) })
             .Returns(_afterTestRunEnd);
 
         _mockDataCollectionManager.Setup(x => x.SessionStarted(It.IsAny<SessionStartEventArgs>())).Returns(true);
@@ -250,7 +244,7 @@ public class DataCollectionRequestHandlerTests
         _requestHandler.ProcessRequests();
 
         _mockFileHelper.Verify(x => x.EnumerateFiles($@"{temp}dir1", SearchOption.AllDirectories, @"Collector.dll"), Times.Once);
-        Assert.IsTrue(TestPluginCache.Instance.GetExtensionPaths(@"Collector.dll").Contains(Path.Combine(temp, "dir1", "abc.DataCollector.dll")));
+        Assert.Contains(Path.Combine(temp, "dir1", "abc.DataCollector.dll"), TestPluginCache.Instance.GetExtensionPaths(@"Collector.dll"));
     }
 
     [TestMethod]
@@ -258,7 +252,7 @@ public class DataCollectionRequestHandlerTests
     {
         _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Throws<Exception>();
 
-        Assert.ThrowsException<Exception>(() => _requestHandler.ProcessRequests());
+        Assert.ThrowsExactly<Exception>(() => _requestHandler.ProcessRequests());
     }
 
     [TestMethod]
@@ -276,8 +270,12 @@ public class DataCollectionRequestHandlerTests
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void ProcessRequestsShouldSetDefaultTimeoutIfNoEnvVarialbeSet()
     {
+        // Make sure to use do-not parallelize because you set non-default value to the env variable.
+        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, null);
+
         var beforeTestRunSTartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunSTartPayload);
@@ -288,10 +286,12 @@ public class DataCollectionRequestHandlerTests
     }
 
     [TestMethod]
+    [DoNotParallelize]
     public void ProcessRequestsShouldSetTimeoutBasedOnEnvVariable()
     {
         var timeout = 10;
-        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, timeout.ToString(CultureInfo.InvariantCulture));
+        // Make sure to use do-not parallelize because you set non-default value to the env variable.
+        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionTimeout, timeout.ToString(CultureInfo.InvariantCulture));
         var beforeTestRunSTartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunSTartPayload);
@@ -322,7 +322,7 @@ public class DataCollectionRequestHandlerTests
         var beforeTestRunStartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunStartPayload);
-        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Payload = JToken.FromObject(beforeTestRunStartPayload) };
+        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, beforeTestRunStartPayload, 7) };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(_afterTestRunEnd);
         _requestHandler.ProcessRequests();
 
@@ -335,7 +335,7 @@ public class DataCollectionRequestHandlerTests
         var beforeTestRunStartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunStartPayload);
-        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Payload = JToken.FromObject(beforeTestRunStartPayload) };
+        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, beforeTestRunStartPayload, 7) };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(_afterTestRunEnd);
         _requestHandler.ProcessRequests();
 
@@ -348,7 +348,7 @@ public class DataCollectionRequestHandlerTests
         var beforeTestRunStartPayload = new BeforeTestRunStartPayload { SettingsXml = "settingsxml", Sources = new List<string> { "test1.dll", "test2.dll" } };
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunStartPayload);
-        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Payload = JToken.FromObject(beforeTestRunStartPayload) };
+        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, beforeTestRunStartPayload, 7) };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(_afterTestRunEnd);
         _requestHandler.ProcessRequests();
 
@@ -364,7 +364,7 @@ public class DataCollectionRequestHandlerTests
         _mockRequestData.Setup(r => r.IsTelemetryOptedIn).Returns(false);
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunStartPayload);
-        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Payload = JToken.FromObject(beforeTestRunStartPayload) };
+        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, beforeTestRunStartPayload, 7) };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(_afterTestRunEnd);
         _requestHandler.ProcessRequests();
 
@@ -379,7 +379,7 @@ public class DataCollectionRequestHandlerTests
         _mockRequestData.Setup(r => r.IsTelemetryOptedIn).Returns(true);
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunStartPayload);
-        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Payload = JToken.FromObject(beforeTestRunStartPayload) };
+        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, beforeTestRunStartPayload, 7) };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(_afterTestRunEnd);
         _requestHandler.ProcessRequests();
 
@@ -394,7 +394,7 @@ public class DataCollectionRequestHandlerTests
         _mockRequestData.Setup(r => r.IsTelemetryOptedIn).Returns(false);
         _mockDataSerializer.Setup(x => x.DeserializePayload<BeforeTestRunStartPayload>(It.Is<Message>(y => y.MessageType == MessageType.BeforeTestRunStart)))
             .Returns(beforeTestRunStartPayload);
-        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Payload = JToken.FromObject(beforeTestRunStartPayload) };
+        var message = new Message() { MessageType = MessageType.BeforeTestRunStart, Version = 7, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.BeforeTestRunStart, beforeTestRunStartPayload, 7) };
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(message).Returns(_afterTestRunEnd);
         _requestHandler.ProcessRequests();
 

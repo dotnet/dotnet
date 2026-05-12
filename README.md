@@ -28,7 +28,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 ## Goals
 
 - The main purpose of the [dotnet/dotnet](https://github.com/dotnet/dotnet) repository is to have all source code necessary to build the .NET product available in one repository and identified by a single commit.
-- The VMR also aims to become the place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This should allow our partners and and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
+- The VMR also aims to become the place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This should allow our partners and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
 - Lastly, we hope to solve other problems that the current multi-repo setup brings:
   - Enable the standard [down-/up-stream open-source model](docs/VMR-Upstream-Downstream.md).
   - Fulfill requirements of .NET distro builders such as RedHat or Canonical to natively include .NET in their distribution repositories.

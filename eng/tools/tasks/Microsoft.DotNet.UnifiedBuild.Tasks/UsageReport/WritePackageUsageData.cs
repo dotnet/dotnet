@@ -4,8 +4,6 @@
 #nullable disable
 
 using Microsoft.Build.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using System;
@@ -14,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Task = Microsoft.Build.Utilities.Task;
 
@@ -188,44 +187,67 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                 assetFiles,
                 assetFile =>
                 {
-                    JObject jObj;
+                    using var jsonDoc = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(RootDir, assetFile)));
+                    var root = jsonDoc.RootElement;
 
-                    using (var file = File.OpenRead(Path.Combine(RootDir, assetFile)))
-                    using (var reader = new StreamReader(file))
-                    using (var jsonReader = new JsonTextReader(reader))
+                    var properties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                    // Collect property names from $.targets.* children
+                    if (root.TryGetProperty("targets", out var targets))
                     {
-                        jObj = (JObject)JToken.ReadFrom(jsonReader);
+                        foreach (var targetFramework in targets.EnumerateObject())
+                        {
+                            foreach (var package in targetFramework.Value.EnumerateObject())
+                            {
+                                properties.Add(package.Name);
+                            }
+                        }
                     }
 
-                    var properties = new HashSet<string>(
-                        jObj.SelectTokens("$.targets.*").Children()
-                            .Concat(jObj.SelectToken("$.libraries"))
-                            .Select(t => ((JProperty)t).Name)
-                            .Distinct(), 
-                        StringComparer.OrdinalIgnoreCase);
-
-                    var directDependencies = jObj.SelectTokens("$.project.frameworks.*.dependencies").Children().Select(dep =>
-                        new
+                    // Collect property names from $.libraries
+                    if (root.TryGetProperty("libraries", out var libraries))
+                    {
+                        foreach (var library in libraries.EnumerateObject())
                         {
-                            name = ((JProperty)dep).Name,
-                            target = dep.SelectToken("$..target")?.ToString(),
-                            version = VersionRange.Parse(dep.SelectToken("$..version")?.ToString()),
-                            autoReferenced = dep.SelectToken("$..autoReferenced")?.ToString() == "True",
-                        })
-                        .ToArray();
+                            properties.Add(library.Name);
+                        }
+                    }
+
+                    // Collect direct dependencies from $.project.frameworks.*.dependencies
+                    var directDependencies = new List<(string name, VersionRange version, bool autoReferenced)>();
+
+                    if (root.TryGetProperty("project", out var project) &&
+                        project.TryGetProperty("frameworks", out var frameworks))
+                    {
+                        foreach (var framework in frameworks.EnumerateObject())
+                        {
+                            if (framework.Value.TryGetProperty("dependencies", out var dependencies))
+                            {
+                                foreach (var dep in dependencies.EnumerateObject())
+                                {
+                                    string versionStr = dep.Value.TryGetProperty("version", out var versionProp)
+                                        ? versionProp.GetString() : null;
+                                    bool autoReferenced = dep.Value.TryGetProperty("autoReferenced", out var autoRefProp)
+                                        && autoRefProp.ValueKind == JsonValueKind.True;
+
+                                    directDependencies.Add((dep.Name, VersionRange.Parse(versionStr), autoReferenced));
+                                }
+                            }
+                        }
+                    }
 
                     foreach (var identity in toCheck
                         .Where(id => properties.Contains(id.Id + "/" + id.Version.OriginalVersion)))
                     {
-                        var directDependency =
-                            directDependencies?.FirstOrDefault(
-                                d => d.name == identity.Id && 
-                                     d.version.Satisfies(identity.Version));
+                        int idx = directDependencies.FindIndex(
+                            d => d.name == identity.Id &&
+                                 d.version.Satisfies(identity.Version));
+                        bool isDirect = idx >= 0;
                         usages.Add(Usage.Create(
                             assetFile,
                             identity,
-                            directDependency != null,
-                            directDependency?.autoReferenced == true,
+                            isDirect,
+                            isDirect && directDependencies[idx].autoReferenced,
                             possibleRids));
                     }
                 });
@@ -290,11 +312,14 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
         private static string[] ReadRidsFromRuntimeJson(string path)
         {
-            var root = JObject.Parse(File.ReadAllText(path));
-            return root["runtimes"]
-                .Values<JProperty>()
-                .Select(o => o.Name)
-                .ToArray();
+            using var jsonDoc = JsonDocument.Parse(File.ReadAllText(path));
+            if (jsonDoc.RootElement.TryGetProperty("runtimes", out var runtimes))
+            {
+                return runtimes.EnumerateObject()
+                    .Select(p => p.Name)
+                    .ToArray();
+            }
+            return Array.Empty<string>();
         }
     }
 }

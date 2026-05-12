@@ -103,7 +103,7 @@ public class TestIdProvider
             return _id;
         }
 
-#if NET6_0_OR_GREATER
+#if NET
         var hashSlice = GetHash().AsSpan().Slice(0, 16);
         _id = new Guid(hashSlice);
 #else

@@ -26,9 +26,9 @@
                     PreallocatedTagHelperProperty - (48:2,13 [8] DuplicateTargetTagHelper.cshtml) - __tagHelperAttribute_0 - type - Type
                     PreallocatedTagHelperProperty - (48:2,13 [8] DuplicateTargetTagHelper.cshtml) - __tagHelperAttribute_0 - type - Type
                     DefaultTagHelperProperty - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - checked - bool TestNamespace.InputTagHelper.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
+                        IntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
                     DefaultTagHelperProperty - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - checked - bool TestNamespace.CatchAllTagHelper.Checked - HtmlAttributeValueStyle.DoubleQuotes
-                        LazyIntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
+                        IntermediateToken - (67:2,32 [4] DuplicateTargetTagHelper.cshtml) - CSharp - true
                     DefaultTagHelperExecute - 
             Inject - 
             Inject - 

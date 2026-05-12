@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -45,7 +44,6 @@ internal sealed partial class RazorLSPTextViewConnectionListener(
     ILspEditorFeatureDetector editorFeatureDetector,
     IEditorOptionsFactoryService editorOptionsFactory,
     IClientSettingsManager editorSettingsManager,
-    LanguageServerFeatureOptions featureOptions,
     JoinableTaskContext joinableTaskContext,
     [ImportMany] IEnumerable<IInterceptedCommand> interceptedCommands) : ITextViewConnectionListener
 {
@@ -54,7 +52,6 @@ internal sealed partial class RazorLSPTextViewConnectionListener(
     private readonly ILspEditorFeatureDetector _editorFeatureDetector = editorFeatureDetector;
     private readonly IEditorOptionsFactoryService _editorOptionsFactory = editorOptionsFactory;
     private readonly IClientSettingsManager _editorSettingsManager = editorSettingsManager;
-    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly ImmutableArray<IInterceptedCommand> _interceptedCommands = [.. interceptedCommands];
     private IVsTextManager4? _textManager;
@@ -90,13 +87,6 @@ internal sealed partial class RazorLSPTextViewConnectionListener(
             throw new ArgumentNullException(nameof(textView));
         }
 
-        if (!_featureOptions.UseRazorCohostServer)
-        {
-            // This is a potential entry point for Razor start up, if a project is loaded with an editor already opened.
-            // So, we need to ensure that any Razor start up services are initialized.
-            RazorStartupInitializer.Initialize(_serviceProvider);
-        }
-
         var vsTextView = _editorAdaptersFactory.GetViewAdapter(textView);
 
         Assumes.NotNull(vsTextView);
@@ -124,9 +114,7 @@ internal sealed partial class RazorLSPTextViewConnectionListener(
             {
                 // We have to tell web tools which language server to send requests to for this buffer, but that changes
                 // if cohosting is enabled.
-                textView.TextBuffer.Properties[RazorLSPConstants.WebToolsWrapWithTagServerNameProperty] = _featureOptions.UseRazorCohostServer
-                    ? RazorLSPConstants.RoslynLanguageServerName
-                    : RazorLSPConstants.RazorLanguageServerName;
+                textView.TextBuffer.Properties[RazorLSPConstants.WebToolsWrapWithTagServerNameProperty] = RazorLSPConstants.RoslynLanguageServerName;
             }
 
             // Initialize the user's options and start listening for changes.

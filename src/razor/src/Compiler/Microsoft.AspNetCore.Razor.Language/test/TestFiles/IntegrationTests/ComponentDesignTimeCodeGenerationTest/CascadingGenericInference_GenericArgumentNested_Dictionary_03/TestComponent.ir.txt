@@ -22,8 +22,7 @@
                         HtmlContent - (64:1,18 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (64:1,18 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
                     ComponentAttribute - (12:0,12 [30] x:\dir\subdir\Test\TestComponent.cshtml) - Data - Data - AttributeStructure.DoubleQuotes
-                        CSharpExpression - (13:0,13 [29] x:\dir\subdir\Test\TestComponent.cshtml)
-                            LazyIntermediateToken - (14:0,14 [27] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new Dictionary<X, string>()
+                        LazyIntermediateToken - (14:0,14 [27] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new Dictionary<X, string>()
     NamespaceDeclaration -  - __Blazor.Test.TestComponent
         ClassDeclaration -  - internal static - TypeInference -  - 
             ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateGrid_0

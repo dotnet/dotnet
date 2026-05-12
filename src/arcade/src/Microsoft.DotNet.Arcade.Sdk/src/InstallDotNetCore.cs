@@ -16,16 +16,9 @@ using System.Text.Json;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
-#if NET472
-    [LoadInSeparateAppDomain]
-    public class InstallDotNetCore : AppDomainIsolatedTask
-    {
-        static InstallDotNetCore() => AssemblyResolution.Initialize();
-#else
     public class InstallDotNetCore : Microsoft.Build.Utilities.Task
     {
-#endif
-        private static readonly char[] s_keyTrimChars = [ '$', '(', ')' ];
+        private static readonly char[] s_keyTrimChars = ['$', '(', ')'];
 
         public string VersionsPropsPath { get; set; }
 
@@ -34,10 +27,12 @@ namespace Microsoft.DotNet.Arcade.Sdk
         [Required]
         public string GlobalJsonPath { get; set; }
         [Required]
+        public string DotNetPath { get; set; }
+        [Required]
         public string Platform { get; set; }
 
         public string RuntimeSourceFeed { get; set; }
-        
+
         public string RuntimeSourceFeedKey { get; set; }
 
         public override bool Execute()
@@ -125,7 +120,9 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
                                     if (version != null)
                                     {
-                                        string arguments = $"-runtime \"{runtimeItem.Key}\" -version \"{version.ToNormalizedString()}\"";
+                                        string normalizedVersion = version.ToNormalizedString();
+                                        string runtime = runtimeItem.Key;
+                                        string arguments = $"-runtime \"{runtime}\" -version \"{normalizedVersion}\"";
                                         if (!string.IsNullOrEmpty(architecture))
                                         {
                                             arguments += $" -architecture {architecture}";
@@ -140,6 +137,20 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                         if (!string.IsNullOrWhiteSpace(RuntimeSourceFeed) && !string.IsNullOrWhiteSpace(RuntimeSourceFeedKey))
                                         {
                                             arguments += $" -runtimeSourceFeedKey {RuntimeSourceFeedKey}";
+                                        }
+
+                                        // Null architecture means that the script should infer it, we don't want to re-implement too much logic here,
+                                        // so we skip the quick check.
+                                        if (architecture != null)
+                                        {
+                                            // Quickly check if the runtime is already installed, skipping double process hop,
+                                            // load of powershell, and load of tools.sh, or similar overhead for shell script.
+                                            // Saving about 1 second per runtime.
+                                            if (CheckRuntimeDotnetInstalled(DotNetPath, normalizedVersion, architecture, runtime))
+
+                                            {
+                                                continue;
+                                            }
                                         }
 
                                         Log.LogMessage(MessageImportance.Low, $"Executing: {DotNetInstallScript} {arguments}");
@@ -227,6 +238,43 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 items.Add(new KeyValuePair<string, string>(version.GetString(), architecture));
             }
             return items.ToArray();
+        }
+
+        private static bool CheckRuntimeDotnetInstalled(
+            string dotnetRoot,
+            string version,
+            string architecture,
+            string runtime)
+        {
+            // For performance this check is duplicated from InstallDotnet in tools.sh and tools.ps1
+            // if you are making changes here, consider if you need to make changes there as well.
+            if (string.IsNullOrEmpty(runtime) && runtime == "sdk")
+            {
+                throw new ArgumentException($"{nameof(InstallDotNetCore)} cannot be used for .NET SDK installation.");
+            }
+
+            if (!string.Equals(architecture, RuntimeInformation.OSArchitecture.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                // This istallation is not native to this OS, it will be installed into a subfolder with the architecture name.
+                // See eng/common/dotnet-install.sh and eng/common/dotnet-install.ps1
+                dotnetRoot = Path.Combine(dotnetRoot, architecture.ToLowerInvariant());
+            }
+
+            string runtimePath = runtime switch
+            {
+                "dotnet" => Path.Combine(dotnetRoot, "shared", "Microsoft.NETCore.App", version),
+                "aspnetcore" => Path.Combine(dotnetRoot, "shared", "Microsoft.AspNetCore.App", version),
+                "windowsdesktop" => Path.Combine(dotnetRoot, "shared", "Microsoft.WindowsDesktop.App", version),
+                _ => Path.Combine(dotnetRoot, "shared", version)
+            };
+
+            if (Directory.Exists(runtimePath))
+            {
+                Console.WriteLine($"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
+                return true;
+            }
+
+            return false;
         }
     }
 }

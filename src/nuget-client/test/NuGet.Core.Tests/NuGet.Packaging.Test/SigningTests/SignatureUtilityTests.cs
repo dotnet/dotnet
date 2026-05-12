@@ -40,7 +40,7 @@ namespace NuGet.Packaging.Test
         public void GetCertificateChain_WhenPrimarySignatureNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureUtility.GetCertificateChain(primarySignature: null));
+                () => SignatureUtility.GetCertificateChain(primarySignature: null!));
 
             Assert.Equal("primarySignature", exception.ParamName);
         }
@@ -74,7 +74,7 @@ namespace NuGet.Packaging.Test
 
                 using (var packageReader = new PackageArchiveReader(signedPackageFile.FullName))
                 {
-                    PrimarySignature signature = await packageReader.GetPrimarySignatureAsync(CancellationToken.None);
+                    PrimarySignature signature = (await packageReader.GetPrimarySignatureAsync(CancellationToken.None))!;
 
                     using (IX509CertificateChain certificates = SignatureUtility.GetCertificateChain(signature))
                     {
@@ -89,12 +89,12 @@ namespace NuGet.Packaging.Test
         public void GetCertificateChain_WithUnrelatedRepositoryCountersignature_Throws()
         {
             PrimarySignature primarySignature = PrimarySignature.Load(SigningTestUtility.GetResourceBytes(".signature.p7s"));
-            RepositoryCountersignature repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
+            RepositoryCountersignature? repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
             primarySignature = RemoveRepositoryCountersignature(primarySignature);
 
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => SignatureUtility.GetCertificateChain(primarySignature, repositoryCountersignature));
+                () => SignatureUtility.GetCertificateChain(primarySignature, repositoryCountersignature!));
 
             Assert.Equal("repositoryCountersignature", exception.ParamName);
             Assert.StartsWith("The primary signature and repository countersignature are unrelated.", exception.Message);
@@ -104,9 +104,9 @@ namespace NuGet.Packaging.Test
         public void GetCertificateChain_WithRepositoryCountersignature_ReturnsCertificates()
         {
             PrimarySignature primarySignature = PrimarySignature.Load(SigningTestUtility.GetResourceBytes(".signature.p7s"));
-            RepositoryCountersignature repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
+            RepositoryCountersignature? repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
-            using (IX509CertificateChain certificates = SignatureUtility.GetCertificateChain(primarySignature, repositoryCountersignature))
+            using (IX509CertificateChain certificates = SignatureUtility.GetCertificateChain(primarySignature, repositoryCountersignature!))
             {
                 Assert.Equal(3, certificates.Count);
                 Assert.Equal("8d8cc5bdf9e5f86b971d7fb961fe24b999486483", certificates[0].Thumbprint, StringComparer.OrdinalIgnoreCase);
@@ -119,7 +119,7 @@ namespace NuGet.Packaging.Test
         public void GetTimestampCertificateChain_WhenSignatureNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureUtility.GetTimestampCertificateChain(primarySignature: null));
+                () => SignatureUtility.GetTimestampCertificateChain(primarySignature: null!));
 
             Assert.Equal("primarySignature", exception.ParamName);
         }
@@ -156,12 +156,12 @@ namespace NuGet.Packaging.Test
         public void GetTimestampCertificateChain_WithUnrelatedRepositoryCountersignature_Throws()
         {
             PrimarySignature primarySignature = PrimarySignature.Load(SigningTestUtility.GetResourceBytes(".signature.p7s"));
-            RepositoryCountersignature repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
+            RepositoryCountersignature? repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
             primarySignature = RemoveRepositoryCountersignature(primarySignature);
 
             ArgumentException exception = Assert.Throws<ArgumentException>(
-                () => SignatureUtility.GetTimestampCertificateChain(primarySignature, repositoryCountersignature));
+                () => SignatureUtility.GetTimestampCertificateChain(primarySignature, repositoryCountersignature!));
 
             Assert.Equal("repositoryCountersignature", exception.ParamName);
             Assert.StartsWith("The primary signature and repository countersignature are unrelated.", exception.Message);
@@ -174,10 +174,10 @@ namespace NuGet.Packaging.Test
 
             primarySignature = RemoveRepositoryCountersignatureTimestamp(primarySignature);
 
-            RepositoryCountersignature repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
+            RepositoryCountersignature? repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
             SignatureException exception = Assert.Throws<SignatureException>(
-                () => SignatureUtility.GetTimestampCertificateChain(primarySignature, repositoryCountersignature));
+                () => SignatureUtility.GetTimestampCertificateChain(primarySignature, repositoryCountersignature!));
 
             Assert.Equal(NuGetLogCode.NU3000, exception.Code);
             Assert.Equal("The repository countersignature does not have a timestamp.", exception.Message);
@@ -187,9 +187,9 @@ namespace NuGet.Packaging.Test
         public void GetTimestampCertificateChain_WithRepositoryCountersignatureTimestamp_ReturnsCertificates()
         {
             PrimarySignature primarySignature = PrimarySignature.Load(SigningTestUtility.GetResourceBytes(".signature.p7s"));
-            RepositoryCountersignature repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
+            RepositoryCountersignature? repositoryCountersignature = RepositoryCountersignature.GetRepositoryCountersignature(primarySignature);
 
-            using (IX509CertificateChain certificates = SignatureUtility.GetTimestampCertificateChain(primarySignature, repositoryCountersignature))
+            using (IX509CertificateChain certificates = SignatureUtility.GetTimestampCertificateChain(primarySignature, repositoryCountersignature!))
             {
                 Assert.Equal(3, certificates.Count);
                 Assert.Equal("96b479acf63394f3bcc9928c396264afd60909ed", certificates[0].Thumbprint, StringComparer.OrdinalIgnoreCase);
@@ -202,7 +202,7 @@ namespace NuGet.Packaging.Test
         public void HasRepositoryCountersignature_WithNullPrimarySignature_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureUtility.HasRepositoryCountersignature(primarySignature: null));
+                () => SignatureUtility.HasRepositoryCountersignature(primarySignature: null!));
 
             Assert.Equal("primarySignature", exception.ParamName);
         }
@@ -264,7 +264,7 @@ namespace NuGet.Packaging.Test
         public void LogAdditionalContext_WhenChainIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureUtility.LogAdditionalContext(chain: null, new List<SignatureLog>()));
+                () => SignatureUtility.LogAdditionalContext(chain: null!, new List<SignatureLog>()));
 
             Assert.Equal("chain", exception.ParamName);
         }
@@ -273,7 +273,7 @@ namespace NuGet.Packaging.Test
         public void LogAdditionalContext_WhenIssuesIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => SignatureUtility.LogAdditionalContext(Mock.Of<IX509Chain>(), issues: null));
+                () => SignatureUtility.LogAdditionalContext(Mock.Of<IX509Chain>(), issues: null!));
 
             Assert.Equal("issues", exception.ParamName);
         }

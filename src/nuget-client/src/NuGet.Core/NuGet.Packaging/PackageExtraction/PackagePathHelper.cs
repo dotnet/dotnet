@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -94,7 +92,7 @@ namespace NuGet.Packaging
         {
             var packageId = packageIdentity.Id;
             var name = Path.GetFileNameWithoutExtension(path);
-            NuGetVersion parsedVersion;
+            NuGetVersion? parsedVersion;
 
             // When matching by pattern, we will always have a version token. Packages without versions would be matched early on by the version-less path resolver 
             // when doing an exact match.
@@ -160,7 +158,7 @@ namespace NuGet.Packaging
             return filesMatchingFullName;
         }
 
-        public static string GetInstalledPackageFilePath(PackageIdentity packageIdentity, PackagePathResolver packagePathResolver)
+        public static string? GetInstalledPackageFilePath(PackageIdentity packageIdentity, PackagePathResolver packagePathResolver)
         {
             var packageLookupPaths = GetPackageLookupPaths(packageIdentity, packagePathResolver);
             // TODO: Not handling nuspec-only scenarios

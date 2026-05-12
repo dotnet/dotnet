@@ -1,0 +1,339 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Diagnostics;
+#if NETFRAMEWORK
+using System.Net.Http;
+#endif
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using OpenTelemetry.Exporter.OpenTelemetryProtocol.Implementation;
+using OpenTelemetry.Internal;
+using OpenTelemetry.Trace;
+
+namespace OpenTelemetry.Exporter;
+
+/// <summary>
+/// OpenTelemetry Protocol (OTLP) exporter options.
+/// </summary>
+/// <remarks>
+/// Note: OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS,
+/// OTEL_EXPORTER_OTLP_TIMEOUT, and OTEL_EXPORTER_OTLP_PROTOCOL environment
+/// variables are parsed during object construction.
+/// </remarks>
+public class OtlpExporterOptions : IOtlpExporterOptions
+{
+    internal const string DefaultGrpcEndpoint = "http://localhost:4317";
+    internal const string DefaultHttpEndpoint = "http://localhost:4318";
+#if NETFRAMEWORK || NETSTANDARD2_0
+    internal const OtlpExportProtocol DefaultOtlpExportProtocol = OtlpExportProtocol.HttpProtobuf;
+#else
+    internal const OtlpExportProtocol DefaultOtlpExportProtocol = OtlpExportProtocol.Grpc;
+#endif
+
+    internal readonly Func<HttpClient> DefaultHttpClientFactory;
+    private static readonly string BaseUserAgent = $"OTel-OTLP-Exporter-Dotnet/{typeof(OtlpExporterOptions).Assembly.GetPackageVersion()}";
+    private static readonly KeyValuePair<string, string>[] DefaultHeaders =
+    [
+        new("User-Agent", BaseUserAgent)
+    ];
+
+    private OtlpExportProtocol? protocol;
+    private Uri? endpoint;
+    private int? timeoutMilliseconds;
+    private Func<HttpClient>? httpClientFactory;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OtlpExporterOptions"/> class.
+    /// </summary>
+    public OtlpExporterOptions()
+        : this(OtlpExporterOptionsConfigurationType.Default)
+    {
+    }
+
+    internal OtlpExporterOptions(
+        OtlpExporterOptionsConfigurationType configurationType)
+        : this(
+            configuration: new ConfigurationBuilder().AddEnvironmentVariables().Build(),
+            configurationType,
+            defaultBatchOptions: new())
+    {
+    }
+
+    internal OtlpExporterOptions(
+        IConfiguration configuration,
+        OtlpExporterOptionsConfigurationType configurationType,
+        BatchExportActivityProcessorOptions defaultBatchOptions)
+    {
+        this.ApplyConfiguration(configuration, configurationType);
+
+        this.DefaultHttpClientFactory = () =>
+        {
+            var timeout = TimeSpan.FromMilliseconds(this.TimeoutMilliseconds);
+
+#if NET
+            // If TLS configuration is enabled (mTLS or CA only), create a secure client
+            if (this.MtlsOptions?.IsEnabled == true)
+            {
+                return OtlpSecureHttpClientFactory.CreateSecureHttpClient(
+                    this.MtlsOptions,
+                    client => client.Timeout = timeout);
+            }
+#endif
+
+            return new HttpClient
+            {
+                Timeout = timeout,
+            };
+        };
+
+        this.BatchExportProcessorOptions = defaultBatchOptions;
+    }
+
+    /// <inheritdoc/>
+    public Uri Endpoint
+    {
+        get
+        {
+            if (this.endpoint == null)
+            {
+#pragma warning disable CS0618 // Suppressing gRPC obsolete warning
+                return this.Protocol == OtlpExportProtocol.Grpc
+#pragma warning restore CS0618 // Suppressing gRPC obsolete warning
+                    ? new Uri(DefaultGrpcEndpoint)
+                    : new Uri(DefaultHttpEndpoint);
+            }
+
+            return this.endpoint;
+        }
+
+        set
+        {
+            Guard.ThrowIfNull(value);
+
+            this.endpoint = value;
+            this.AppendSignalPathToEndpoint = false;
+        }
+    }
+
+    /// <inheritdoc/>
+    public string? Headers { get; set; }
+
+    /// <inheritdoc/>
+    public int TimeoutMilliseconds
+    {
+        get => this.timeoutMilliseconds ?? 10000;
+        set => this.timeoutMilliseconds = value;
+    }
+
+    /// <inheritdoc/>
+    public OtlpExportProtocol Protocol
+    {
+        get => this.protocol ?? DefaultOtlpExportProtocol;
+        set => this.protocol = value;
+    }
+
+    /// <summary>
+    /// Gets or sets a custom user agent identifier.
+    /// This will be prepended to the default user agent string.
+    /// </summary>
+    public string? UserAgentProductIdentifier { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the export processor type to be used with the OpenTelemetry Protocol Exporter. The default value is <see cref="ExportProcessorType.Batch"/>.
+    /// </summary>
+    /// <remarks>Note: This only applies when exporting traces.</remarks>
+    public ExportProcessorType ExportProcessorType { get; set; } = ExportProcessorType.Batch;
+
+    /// <summary>
+    /// Gets or sets the BatchExportProcessor options. Ignored unless ExportProcessorType is Batch.
+    /// </summary>
+    /// <remarks>Note: This only applies when exporting traces.</remarks>
+    public BatchExportProcessorOptions<Activity> BatchExportProcessorOptions { get; set; }
+
+    /// <inheritdoc/>
+    public Func<HttpClient> HttpClientFactory
+    {
+        get => this.httpClientFactory ?? this.DefaultHttpClientFactory;
+        set
+        {
+            Guard.ThrowIfNull(value);
+
+            this.httpClientFactory = value;
+        }
+    }
+
+    internal KeyValuePair<string, string>[] StandardHeaders =>
+        string.IsNullOrWhiteSpace(this.UserAgentProductIdentifier)
+            ? DefaultHeaders
+            : [new("User-Agent", $"{this.UserAgentProductIdentifier} {BaseUserAgent}")];
+
+    /// <summary>
+    /// Gets a value indicating whether or not the signal-specific path should
+    /// be appended to <see cref="Endpoint"/>.
+    /// </summary>
+    /// <remarks>
+    /// Note: Only applicable when <see cref="OtlpExportProtocol.HttpProtobuf"/>
+    /// is used.
+    /// </remarks>
+    internal bool AppendSignalPathToEndpoint { get; private set; } = true;
+
+#if NET
+    internal OtlpMtlsOptions? MtlsOptions { get; set; }
+#endif
+
+    internal bool HasData
+        => this.protocol.HasValue
+        || this.endpoint != null
+        || this.timeoutMilliseconds.HasValue
+        || this.httpClientFactory != null;
+
+    internal static OtlpExporterOptions CreateOtlpExporterOptions(
+        IServiceProvider serviceProvider,
+        IConfiguration configuration,
+        string name) => new(
+            configuration,
+            OtlpExporterOptionsConfigurationType.Default,
+            serviceProvider.GetRequiredService<IOptionsMonitor<BatchExportActivityProcessorOptions>>().Get(name));
+
+    internal void ApplyConfigurationUsingSpecificationEnvVars(
+        IConfiguration configuration,
+        string endpointEnvVarKey,
+        bool appendSignalPathToEndpoint,
+        string protocolEnvVarKey,
+        string headersEnvVarKey,
+        string timeoutEnvVarKey)
+    {
+        if (configuration.TryGetUriValue(OpenTelemetryProtocolExporterEventSource.Log, endpointEnvVarKey, out var endpoint))
+        {
+            this.endpoint = endpoint;
+            this.AppendSignalPathToEndpoint = appendSignalPathToEndpoint;
+        }
+
+        if (configuration.TryGetValue<OtlpExportProtocol>(
+                OpenTelemetryProtocolExporterEventSource.Log,
+                protocolEnvVarKey,
+                OtlpExportProtocolParser.TryParse,
+                out var protocol))
+        {
+            this.Protocol = protocol;
+        }
+
+        if (configuration.TryGetStringValue(headersEnvVarKey, out var headers))
+        {
+            this.Headers = headers;
+        }
+
+        if (configuration.TryGetIntValue(OpenTelemetryProtocolExporterEventSource.Log, timeoutEnvVarKey, out var timeout))
+        {
+            this.TimeoutMilliseconds = timeout;
+        }
+    }
+
+    internal OtlpExporterOptions ApplyDefaults(OtlpExporterOptions defaultExporterOptions)
+    {
+        this.protocol ??= defaultExporterOptions.protocol;
+
+        this.endpoint ??= defaultExporterOptions.endpoint;
+
+        // Note: We leave AppendSignalPathToEndpoint set to true here because we
+        // want to append the signal if the endpoint came from the default
+        // endpoint.
+
+        this.Headers ??= defaultExporterOptions.Headers;
+
+        this.timeoutMilliseconds ??= defaultExporterOptions.timeoutMilliseconds;
+
+        this.httpClientFactory ??= defaultExporterOptions.httpClientFactory;
+
+        return this;
+    }
+
+    private void ApplyConfiguration(
+        IConfiguration configuration,
+        OtlpExporterOptionsConfigurationType configurationType)
+    {
+        // Note: When using the "AddOtlpExporter" extensions configurationType
+        // never has a value other than "Default" because OtlpExporterOptions is
+        // shared by all signals and there is no way to differentiate which
+        // signal is being constructed.
+        if (configurationType == OtlpExporterOptionsConfigurationType.Default)
+        {
+            this.ApplyConfigurationUsingSpecificationEnvVars(
+                configuration,
+                OtlpSpecConfigDefinitions.DefaultEndpointEnvVarName,
+                appendSignalPathToEndpoint: true,
+                OtlpSpecConfigDefinitions.DefaultProtocolEnvVarName,
+                OtlpSpecConfigDefinitions.DefaultHeadersEnvVarName,
+                OtlpSpecConfigDefinitions.DefaultTimeoutEnvVarName);
+        }
+        else if (configurationType == OtlpExporterOptionsConfigurationType.Logs)
+        {
+            this.ApplyConfigurationUsingSpecificationEnvVars(
+                configuration,
+                OtlpSpecConfigDefinitions.LogsEndpointEnvVarName,
+                appendSignalPathToEndpoint: false,
+                OtlpSpecConfigDefinitions.LogsProtocolEnvVarName,
+                OtlpSpecConfigDefinitions.LogsHeadersEnvVarName,
+                OtlpSpecConfigDefinitions.LogsTimeoutEnvVarName);
+        }
+        else if (configurationType == OtlpExporterOptionsConfigurationType.Metrics)
+        {
+            this.ApplyConfigurationUsingSpecificationEnvVars(
+                configuration,
+                OtlpSpecConfigDefinitions.MetricsEndpointEnvVarName,
+                appendSignalPathToEndpoint: false,
+                OtlpSpecConfigDefinitions.MetricsProtocolEnvVarName,
+                OtlpSpecConfigDefinitions.MetricsHeadersEnvVarName,
+                OtlpSpecConfigDefinitions.MetricsTimeoutEnvVarName);
+        }
+        else if (configurationType == OtlpExporterOptionsConfigurationType.Traces)
+        {
+            this.ApplyConfigurationUsingSpecificationEnvVars(
+                configuration,
+                OtlpSpecConfigDefinitions.TracesEndpointEnvVarName,
+                appendSignalPathToEndpoint: false,
+                OtlpSpecConfigDefinitions.TracesProtocolEnvVarName,
+                OtlpSpecConfigDefinitions.TracesHeadersEnvVarName,
+                OtlpSpecConfigDefinitions.TracesTimeoutEnvVarName);
+        }
+        else
+        {
+            throw new NotSupportedException($"OtlpExporterOptionsConfigurationType '{configurationType}' is not supported.");
+        }
+
+#if NET
+        // Apply mTLS configuration from environment variables
+        this.ApplyMtlsConfiguration(configuration);
+#endif
+    }
+
+#if NET
+    private void ApplyMtlsConfiguration(IConfiguration configuration)
+    {
+        Debug.Assert(configuration != null, "configuration was null");
+
+        // Check and apply CA certificate path from environment variable
+        if (configuration.TryGetStringValue(OtlpSpecConfigDefinitions.CertificateEnvVarName, out var caCertPath))
+        {
+            this.MtlsOptions ??= new();
+            this.MtlsOptions.CaCertificatePath = caCertPath;
+        }
+
+        // Check and apply client certificate path from environment variable
+        if (configuration.TryGetStringValue(OtlpSpecConfigDefinitions.ClientCertificateEnvVarName, out var clientCertPath))
+        {
+            this.MtlsOptions ??= new();
+            this.MtlsOptions.ClientCertificatePath = clientCertPath;
+        }
+
+        // Check and apply client key path from environment variable
+        if (configuration.TryGetStringValue(OtlpSpecConfigDefinitions.ClientKeyEnvVarName, out var clientKeyPath))
+        {
+            this.MtlsOptions ??= new();
+            this.MtlsOptions.ClientKeyPath = clientKeyPath;
+        }
+    }
+#endif
+}

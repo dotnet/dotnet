@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -468,6 +466,8 @@ namespace NuGet.Packaging
 
                                     using (var packageReader = new PackageArchiveReader(nupkgStream))
                                     {
+                                        ValidateExpectedPackage(packageIdentity, packageReader);
+
                                         if (packageSaveMode.HasFlag(PackageSaveMode.Nuspec) || packageSaveMode.HasFlag(PackageSaveMode.Files))
                                         {
                                             telemetry.StartIntervalMeasure();
@@ -572,7 +572,7 @@ namespace NuGet.Packaging
 
                             File.Move(tempNupkgMetadataPath, nupkgMetadataFilePath);
 
-                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion, source, contentHash, targetPath));
+                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion!, source, contentHash, targetPath));
 
                             packageExtractionTelemetryEvent.SetResult(NuGetOperationStatus.Succeeded);
                             return true;
@@ -587,6 +587,22 @@ namespace NuGet.Packaging
                         }
                     },
                     token: token);
+            }
+        }
+
+        private static void ValidateExpectedPackage(PackageIdentity packageIdentity, PackageArchiveReader packageReader)
+        {
+            PackageIdentity actualIdentity = packageReader.GetIdentity();
+            if (!PackageIdentityComparer.Default.Equals(packageIdentity, actualIdentity))
+            {
+                string message = string.Format(
+                    CultureInfo.InvariantCulture,
+                    Strings.ErrorPackageIdentityDoesNotMatch,
+                    packageIdentity.Id,
+                    packageIdentity.Version,
+                    actualIdentity.Id,
+                    actualIdentity.Version);
+                throw new PackagingException(message);
             }
         }
 
@@ -606,7 +622,8 @@ namespace NuGet.Packaging
                 Directory.Delete(targetPath);
 
                 // delete the parent directory if it is empty
-                if (Directory.Exists(parent.FullName) &&
+                if (parent != null &&
+                    Directory.Exists(parent.FullName) &&
                     !parent.GetFiles().Any() &&
                     !parent.GetDirectories().Any())
                 {
@@ -758,7 +775,7 @@ namespace NuGet.Packaging
                                 var packageFileExtractor = new PackageFileExtractor(
                                     packageFiles,
                                     XmlDocFileSaveMode.None);
-                                var packageDirectoryPath = Path.GetDirectoryName(targetNuspec);
+                                var packageDirectoryPath = Path.GetDirectoryName(targetNuspec)!;
 
                                 var extractedNuspecFilePath = (await packageDownloader.CoreReader.CopyFilesAsync(
                                         packageDirectoryPath,
@@ -859,7 +876,7 @@ namespace NuGet.Packaging
 
                             File.Move(tempNupkgMetadataFilePath, nupkgMetadataFilePath);
 
-                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion, packageDownloader.Source, contentHash, targetPath));
+                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion!, packageDownloader.Source, contentHash, targetPath));
 
                             packageExtractionTelemetryEvent.SetResult(NuGetOperationStatus.Succeeded);
                             return true;
@@ -947,8 +964,9 @@ namespace NuGet.Packaging
             var nupkgFilePath = packagePathResolver.GetInstalledPackageFilePath(packageIdentity);
             if (File.Exists(nupkgFilePath))
             {
-                using (var packageReader = new PackageArchiveReader(nupkgFilePath))
+                using (var packageReader = new PackageArchiveReader(nupkgFilePath!))
                 {
+                    ValidateExpectedPackage(packageIdentity, packageReader);
                     return await CopySatelliteFilesAsync(
                         packageReader,
                         packagePathResolver,
@@ -998,7 +1016,7 @@ namespace NuGet.Packaging
 
                 // Now, add all the satellite files collected from the package to the runtime package folder(s)
                 satelliteFilesCopied = await packageReader.CopyFilesAsync(
-                    runtimePackageDirectory,
+                    runtimePackageDirectory!,
                     satelliteFiles,
                     packageFileExtractor.ExtractPackageFile,
                     packageExtractionContext.Logger,
@@ -1030,7 +1048,7 @@ namespace NuGet.Packaging
                     return;
                 }
 
-                IPackageSignatureVerifier signedPackageVerifier = null;
+                IPackageSignatureVerifier? signedPackageVerifier = null;
                 if (packageExtractionContext.SignedPackageVerifier != null)
                 {
                     // If we have a verifier in the extraction context it means is a test that wants to override it, so we take it blindly.
@@ -1050,7 +1068,7 @@ namespace NuGet.Packaging
                           emptyListErrorMessage: Strings.Error_NoClientAllowList,
                           noMatchErrorMessage: Strings.Error_NoMatchingClientCertificate));
 
-                    IEnumerable<KeyValuePair<string, HashAlgorithmName>> allowUntrustedRootList = null;
+                    IEnumerable<KeyValuePair<string, HashAlgorithmName>>? allowUntrustedRootList = null;
                     if (clientPolicyContext.AllowList != null && clientPolicyContext.AllowList.Any())
                     {
                         allowUntrustedRootList = clientPolicyContext.AllowList
@@ -1139,13 +1157,13 @@ namespace NuGet.Packaging
                 string.Format(CultureInfo.CurrentCulture, Strings.PackageSignatureVerificationLog, package, source, verifyResult.IsValid));
         }
 
-        private static RepositorySignatureInfo GetRepositorySignatureInfo(string source)
+        private static RepositorySignatureInfo? GetRepositorySignatureInfo(string? source)
         {
-            RepositorySignatureInfo repositorySignatureInfo = null;
+            RepositorySignatureInfo? repositorySignatureInfo = null;
 
             if (!string.IsNullOrEmpty(source))
             {
-                RepositorySignatureInfoProvider.Instance.TryGetRepositorySignatureInfo(source, out repositorySignatureInfo);
+                RepositorySignatureInfoProvider.Instance.TryGetRepositorySignatureInfo(source!, out repositorySignatureInfo);
             }
 
             return repositorySignatureInfo;

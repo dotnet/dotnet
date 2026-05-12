@@ -9,24 +9,8 @@ namespace MultitargetedNetFrameworkProject
 {
     public class UnitTest1
     {
-#if NET462
-        public string TargetFramework { get; } = "NET462";
-#endif
-
-#if NET47
-        public string TargetFramework { get; } = "NET47";
-#endif
-
-#if NET471
-        public string TargetFramework { get; } = "NET471";
-#endif
-
-#if NET472
-        public string TargetFramework { get; } = "NET472";
-#endif
-
-#if NET48
-        public string TargetFramework { get; } = "NET48";
+#if NET481
+        public string TargetFramework { get; } = "NET481";
 #endif
         [Fact]
         public void FailsUntilNet462ButPassesOnNewerNetFramework()

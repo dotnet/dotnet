@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using NuGet.Common;
@@ -16,7 +14,7 @@ namespace NuGet.Packaging
     /// </summary>
     public static class MinClientVersionUtility
     {
-        private static NuGetVersion _clientVersion;
+        private static NuGetVersion? _clientVersion;
 
         /// <summary>
         /// Check the package minClientVersion and throw if it is greater than the current client version.
@@ -37,7 +35,7 @@ namespace NuGet.Packaging
                 throw new MinClientVersionException(
                     string.Format(CultureInfo.CurrentCulture, Strings.PackageMinVersionNotSatisfied,
                         packageIdentity.Id + " " + packageIdentity.Version.ToNormalizedString(),
-                        packageMinClientVersion.ToNormalizedString(), clientVersion.ToNormalizedString()));
+                        packageMinClientVersion!.ToNormalizedString(), clientVersion.ToNormalizedString()));
             }
         }
 
@@ -83,7 +81,7 @@ namespace NuGet.Packaging
             {
                 var versionString = ClientVersionUtility.GetNuGetAssemblyVersion();
 
-                NuGetVersion clientVersion;
+                NuGetVersion? clientVersion;
                 if (!NuGetVersion.TryParse(versionString, out clientVersion))
                 {
                     throw new InvalidOperationException(Strings.UnableToParseClientVersion);

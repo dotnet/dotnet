@@ -42,7 +42,7 @@ namespace NuGet.Packaging.Test
                 byte[] bytes = CreateEssCertId(certificate);
                 EssCertId essCertId = EssCertId.Read(bytes);
 
-                Assert.Equal(1, essCertId.IssuerSerial.GeneralNames.Count);
+                Assert.Equal(1, essCertId.IssuerSerial!.GeneralNames.Count);
                 Assert.Equal(certificate.IssuerName.Name, essCertId.IssuerSerial.GeneralNames[0].DirectoryName.Name);
 
                 byte[] serialNumber = HexConverter.ToByteArray(certificate.SerialNumber);

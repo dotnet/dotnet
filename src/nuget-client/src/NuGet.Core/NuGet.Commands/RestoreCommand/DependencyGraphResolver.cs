@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -212,18 +211,18 @@ namespace NuGet.Commands
                     context,
                     token);
 
-                if (NuGetEventSource.IsEnabled)
+                if (CommandsEventSource.Instance.IsEnabled())
                 {
-                    TraceEvents.CreateRestoreTargetGraphStart(_request.Project.FilePath, frameworkRuntimeDefinition);
+                    CommandsEventSource.Instance.DependencyGraphResolver_CreateRestoreTargetGraphStart(_request.Project.FilePath, frameworkRuntimeDefinition.ToString());
                 }
 
                 // Now that the graph has been resolved, we need to create walk all of the defined dependencies again to detect any cycles and downgrades.  The RestoreTargetGraph stores all of the
                 // information about the graph including the nodes with their parent/child relationships, cycles, downgrades, and conflicts.
                 (bool wasRestoreTargetGraphCreationSuccessful, RestoreTargetGraph restoreTargetGraph) = await CreateRestoreTargetGraphAsync(frameworkRuntimeDefinition, runtimeGraph, isCentralPackageTransitivePinningEnabled, unresolvedPackages, resolvedPackages, resolvedDependencyGraphItems, context);
 
-                if (NuGetEventSource.IsEnabled)
+                if (CommandsEventSource.Instance.IsEnabled())
                 {
-                    TraceEvents.CreateRestoreTargetGraphStop(_request.Project.FilePath, frameworkRuntimeDefinition, wasRestoreTargetGraphCreationSuccessful, resolvedPackages.Count, unresolvedPackages.Count);
+                    CommandsEventSource.Instance.DependencyGraphResolver_CreateRestoreTargetGraphStop(_request.Project.FilePath, frameworkRuntimeDefinition.ToString(), wasRestoreTargetGraphCreationSuccessful ? 1 : 0, resolvedPackages.Count, unresolvedPackages.Count);
                 }
 
                 success &= wasRestoreTargetGraphCreationSuccessful;
@@ -916,9 +915,9 @@ namespace NuGet.Commands
             RemoteWalkContext context,
             CancellationToken token)
         {
-            if (NuGetEventSource.IsEnabled)
+            if (CommandsEventSource.Instance.IsEnabled())
             {
-                TraceEvents.ResolveDependencyGraphItemsStart(_request.Project.FilePath, pair);
+                CommandsEventSource.Instance.DependencyGraphResolver_ResolveDependencyGraphItemsStart(_request.Project.FilePath, pair.ToString());
             }
 
             // Stores the resolved dependency graph items
@@ -1000,10 +999,7 @@ namespace NuGet.Commands
                     {
                         IsCentrallyPinnedTransitivePackage = currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage,
                         IsRootPackageReference = currentDependencyGraphItem.IsRootPackageReference,
-                        Suppressions = new List<HashSet<LibraryDependencyIndex>>
-                        {
-                            currentDependencyGraphItem.Suppressions!
-                        }
+                        Suppressions = [currentDependencyGraphItem.Suppressions!],
                     };
 
                     resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
@@ -1147,10 +1143,7 @@ namespace NuGet.Commands
                         {
                             IsCentrallyPinnedTransitivePackage = currentDependencyGraphItem.IsCentrallyPinnedTransitivePackage,
                             IsRootPackageReference = currentDependencyGraphItem.IsRootPackageReference,
-                            Suppressions = new List<HashSet<LibraryDependencyIndex>>
-                            {
-                                currentDependencyGraphItem.Suppressions!
-                            },
+                            Suppressions = [currentDependencyGraphItem.Suppressions!],
                         };
 
                         resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
@@ -1207,10 +1200,7 @@ namespace NuGet.Commands
                             {
                                 IsCentrallyPinnedTransitivePackage = chosenResolvedItem.IsCentrallyPinnedTransitivePackage,
                                 IsRootPackageReference = chosenResolvedItem.IsRootPackageReference,
-                                Suppressions = new List<HashSet<LibraryDependencyIndex>>
-                                {
-                                    currentDependencyGraphItem.Suppressions,
-                                },
+                                Suppressions = [currentDependencyGraphItem.Suppressions],
                             };
 
                             resolvedDependencyGraphItems.Add(currentDependencyGraphItem.LibraryDependencyIndex, chosenResolvedItem);
@@ -1302,7 +1292,10 @@ namespace NuGet.Commands
                 // The list of suppressions should be an aggregate of all parent item's suppressions so add the parent suppressions to the list, otherwise just use the current item's suppressions
                 if (suppressions != null)
                 {
-                    suppressions.AddRange(currentDependencyGraphItem.Suppressions);
+                    if (currentDependencyGraphItem.Suppressions != null)
+                    {
+                        suppressions.AddRange(currentDependencyGraphItem.Suppressions);
+                    }
                 }
                 else
                 {
@@ -1405,9 +1398,9 @@ namespace NuGet.Commands
                 }
             }
 
-            if (NuGetEventSource.IsEnabled)
+            if (CommandsEventSource.Instance.IsEnabled())
             {
-                TraceEvents.ResolveDependencyGraphItemsStop(_request.Project.FilePath, pair, resolvedDependencyGraphItems.Count, restartCount, totalQueuedItemCount);
+                CommandsEventSource.Instance.DependencyGraphResolver_ResolveDependencyGraphItemsStop(_request.Project.FilePath, pair.ToString(), resolvedDependencyGraphItems.Count, restartCount, totalQueuedItemCount);
             }
 
             return resolvedDependencyGraphItems;
@@ -1451,74 +1444,6 @@ namespace NuGet.Commands
             runtimeGraph = ProjectRestoreCommand.GetRuntimeGraph(restoreTargetGraphForTargetFramework, localRepositories, projectRuntimeGraph: projectProviderRuntimeGraph, _logger);
 
             return true;
-        }
-
-        private static class TraceEvents
-        {
-            private const string EventNameCreateRestoreTargetGraph = "DependencyGraphResolver/CreateRestoreTargetGraph";
-            private const string EventNameResolveDependencyGraphItems = "DependencyGraphResolver/ResolveDependencyGraphItems";
-
-            public static void CreateRestoreTargetGraphStart(string projectFullPath, FrameworkRuntimeDefinition frameworkRutimeDefinition)
-            {
-                EventSourceOptions eventOptions = new()
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Tags = (EventTags)1,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStartEventData(projectFullPath, frameworkRutimeDefinition.ToString()));
-            }
-
-            public static void CreateRestoreTargetGraphStop(string projectFullPath, FrameworkRuntimeDefinition frameworkRuntimeDefinition, bool wasRestoreTargetGraphCreationSuccessful, int resolvedPackageCount, int unresolvedPackageCount)
-            {
-                EventSourceOptions eventOptions = new()
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameCreateRestoreTargetGraph, eventOptions, new CreateRestoreTargetGraphStopEventData(projectFullPath, frameworkRuntimeDefinition.ToString(), wasRestoreTargetGraphCreationSuccessful, resolvedPackageCount, unresolvedPackageCount));
-            }
-
-            public static void ResolveDependencyGraphItemsStart(string projectFullPath, FrameworkRuntimeDefinition frameworkRuntimeDefinition)
-            {
-                EventSourceOptions eventOptions = new()
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Tags = (EventTags)1,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Start
-                };
-
-                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStartEventData(projectFullPath, frameworkRuntimeDefinition.ToString()));
-            }
-
-            public static void ResolveDependencyGraphItemsStop(string projectFullPath, FrameworkRuntimeDefinition frameworkRuntimeDefinition, int resolvedPackagesCount, int restartCount, int totalQueuedItemCount)
-            {
-                EventSourceOptions eventOptions = new()
-                {
-                    ActivityOptions = EventActivityOptions.Detachable,
-                    Keywords = NuGetEventSource.Keywords.Performance | NuGetEventSource.Keywords.Restore,
-                    Opcode = EventOpcode.Stop
-                };
-
-                NuGetEventSource.Instance.Write(EventNameResolveDependencyGraphItems, eventOptions, new ResolveDependencyGraphItemsStopEventData(projectFullPath, frameworkRuntimeDefinition.ToString(), resolvedPackagesCount, restartCount, totalQueuedItemCount));
-            }
-
-            [EventData]
-            private record struct CreateRestoreTargetGraphStartEventData(string FilePath, string FrameworkRuntimeDefinition);
-
-            [EventData]
-            private record struct CreateRestoreTargetGraphStopEventData(string FilePath, string FrameworkRuntimeDefinition, bool Success, int ResolvedPackageCount, int UnresolvedPackageCount);
-
-            [EventData]
-            private record struct ResolveDependencyGraphItemsStartEventData(string FilePath, string FrameworkRuntimeDefinition);
-
-            [EventData]
-            private record struct ResolveDependencyGraphItemsStopEventData(string FilePath, string FrameworkRuntimeDefinition, int ResolvedPackagesCount, int RestartCount, int TotalQueuedItemCount);
         }
     }
 }

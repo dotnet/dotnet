@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,9 +35,9 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         public SignerInfo SignerInfo { get; }
 
-        public abstract byte[] GetSignatureValue();
+        public abstract byte[]? GetSignatureValue();
 
-        private IDictionary<HashAlgorithmName, string> _signingCertificateFingerprintLookup;
+        private IDictionary<HashAlgorithmName, string>? _signingCertificateFingerprintLookup;
 
         protected Signature(SignerInfo signerInfo, SignatureType type)
         {
@@ -73,7 +71,7 @@ namespace NuGet.Packaging.Signing
             HashAlgorithmName fingerprintAlgorithm,
             List<SignatureLog> issues,
             out SignatureVerificationStatusFlags verificationFlags,
-            out Timestamp validTimestamp)
+            out Timestamp? validTimestamp)
         {
             if (issues == null)
             {
@@ -222,10 +220,9 @@ namespace NuGet.Packaging.Signing
 
                     var statusFlags = CertificateChainUtility.DefaultObservedStatusFlags;
 
-                    IEnumerable<string> messages;
-                    if (CertificateChainUtility.TryGetStatusAndMessage(chainStatuses, statusFlags, out messages))
+                    if (CertificateChainUtility.TryGetStatusAndMessage(chainStatuses, statusFlags, out IEnumerable<string>? messages))
                     {
-                        foreach (var message in messages)
+                        foreach (string message in messages)
                         {
                             issues.Add(SignatureLog.Issue(!settings.AllowIllegal, NuGetLogCode.NU3012, string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, message)));
                         }
@@ -267,11 +264,11 @@ namespace NuGet.Packaging.Signing
                     {
                         if (settings.ReportUnknownRevocation)
                         {
-                            string unknownRevocationMessage = null;
+                            string? unknownRevocationMessage = null;
 
                             if (unknownRevocationErrors)
                             {
-                                unknownRevocationMessage = string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, unknownRevocationStatusMessages.First());
+                                unknownRevocationMessage = string.Format(CultureInfo.CurrentCulture, Strings.VerifyChainBuildingIssue, FriendlyName, unknownRevocationStatusMessages!.First());
                             }
 
                             if (settings.RevocationMode == RevocationMode.Offline)

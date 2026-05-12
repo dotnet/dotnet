@@ -6,8 +6,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -18,66 +18,119 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     // and updates that attribute with the new value provided. 
     public class UpdateJson : Task
     {
+        // Using a character that isn't allowed in the package id
+        private const char Delimiter = ':';
+
+        /// <summary>
+        /// Path to the json file to update.
+        /// </summary>
         [Required]
         public string JsonFilePath { get; set; }
 
         [Required]
         public string PathToAttribute { get; set; }
 
-        // New attribute value. May be null. If null,
-        // the token is removed.
+        /// <summary>
+        /// New attribute value. May be null. If null and
+        /// ValuesToUpdate is not provided, the token is removed.
+        /// </summary>
         public string NewAttributeValue { get; set; }
 
+        /// <summary>
+        /// Expects Identity and Value metadata per item. If provided, the value metadata is used to
+        /// replace the json value of PathToAttribute children elements based on a case-insensitive
+        /// Identity match.
+        /// </summary>
+        public ITaskItem[] ValuesToUpdate { get; set; }
+
+        /// <summary>
+        /// If true, if the key specified in PathToAttribute is not found, the update will be skipped.
+        /// If false, an exception will be thrown if the key is not found.
+        /// </summary>
         public bool SkipUpdateIfMissingKey { get; set; }
 
         public override bool Execute()
         {
-            // Using a character that isn't allowed in the package id
-            const char Delimiter = ':';
-
             string json = File.ReadAllText(JsonFilePath);
             string newLineChars = FileUtilities.DetectNewLineChars(json);
-            JObject jsonObj = JObject.Parse(json);
+            JsonNode jsonNode = JsonNode.Parse(json);
 
-            string[] escapedPathToAttributeParts = PathToAttribute.Split(Delimiter);
-            for (int i = 0; i < escapedPathToAttributeParts.Length; ++i)
+            if (!TryNavigateToObject(jsonNode, out JsonObject parent, out string lastKey))
             {
-                escapedPathToAttributeParts[i] = escapedPathToAttributeParts[i];
+                return true;
             }
-            UpdateAttribute(jsonObj, escapedPathToAttributeParts, NewAttributeValue);
 
-            File.WriteAllText(JsonFilePath, FileUtilities.NormalizeNewLineChars(jsonObj.ToString(), newLineChars));
+            if (ValuesToUpdate is { Length: > 0 })
+            {
+                if (parent[lastKey] is not JsonObject targetObj)
+                {
+                    throw new ArgumentException($"The node at '{PathToAttribute}' is not a JSON object.");
+                }
+
+                foreach (ITaskItem item in ValuesToUpdate)
+                {
+                    string matchingKey = targetObj
+                        .Select(kvp => kvp.Key)
+                        .FirstOrDefault(k => string.Equals(k, item.ItemSpec, StringComparison.OrdinalIgnoreCase));
+
+                    if (matchingKey != null)
+                    {
+                        targetObj[matchingKey] = item.GetMetadata("Value");
+                    }
+                }
+            }
+            else if (NewAttributeValue == null)
+            {
+                parent.Remove(lastKey);
+            }
+            else
+            {
+                parent[lastKey] = NewAttributeValue;
+            }
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(JsonFilePath, FileUtilities.NormalizeNewLineChars(jsonNode.ToJsonString(options), newLineChars));
             return true;
         }
 
-        private void UpdateAttribute(JToken jsonObj, string[] path, string newValue)
+        /// <summary>
+        /// Walks the path and returns the parent JsonObject and the final key segment.
+        /// Returns false (and logs/throws) if any intermediate segment is missing.
+        /// </summary>
+        private bool TryNavigateToObject(JsonNode node, out JsonObject parent, out string lastKey)
         {
-            string pathItem = path[0];
-            if (jsonObj[pathItem] == null)
+            string[] pathParts = PathToAttribute.Split(Delimiter);
+            parent = null;
+            lastKey = pathParts[^1];
+
+            JsonNode current = node;
+            foreach (string pathItem in pathParts[..^1])
             {
-                string message = $"Path item [{nameof(PathToAttribute)}] not found in json file.";
-                if (SkipUpdateIfMissingKey)
+                if (current is not JsonObject jsonObj || !jsonObj.ContainsKey(pathItem))
                 {
-                    Log.LogMessage(MessageImportance.Low, $"Skipping update: {message} {pathItem}");
-                    return;
+                    return HandleMissingKey(pathItem);
                 }
-                throw new ArgumentException(message, pathItem);
+                current = jsonObj[pathItem];
             }
 
-            if (path.Length == 1) 
+            if (current is not JsonObject parentObj || !parentObj.ContainsKey(lastKey))
             {
-                if (newValue == null)
-                {
-                    jsonObj[pathItem].Parent.Remove();
-                }
-                else
-                {
-                    jsonObj[pathItem] = newValue;
-                }
-                return;
+                return HandleMissingKey(lastKey);
             }
 
-            UpdateAttribute(jsonObj[pathItem], path.Skip(1).ToArray(), newValue);
+            parent = parentObj;
+            return true;
+        }
+
+        private bool HandleMissingKey(string pathItem)
+        {
+            string message = $"Path item [{nameof(PathToAttribute)}] not found in json file.";
+            if (SkipUpdateIfMissingKey)
+            {
+                Log.LogMessage(MessageImportance.Low, $"Skipping update: {message} {pathItem}");
+                return false;
+            }
+            throw new ArgumentException(message, pathItem);
         }
     }
 }

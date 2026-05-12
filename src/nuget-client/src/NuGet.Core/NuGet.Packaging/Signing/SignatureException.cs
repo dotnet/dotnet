@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Common;
@@ -15,9 +13,9 @@ namespace NuGet.Packaging.Signing
         /// <summary>
         /// Individual trust results.
         /// </summary>
-        public IReadOnlyList<PackageVerificationResult> Results { get; }
+        public IReadOnlyList<PackageVerificationResult>? Results { get; }
 
-        public PackageIdentity PackageIdentity { get; }
+        public PackageIdentity? PackageIdentity { get; }
 
         public TimeSpan VerifyDuration { get; set; }
 

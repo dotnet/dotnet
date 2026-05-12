@@ -7,27 +7,6 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     internal static class StreamHelpers
     {
-#if !NET
-        public static void ReadExactly(this Stream stream, byte[] buffer, int offset, int count)
-        {
-            while (count > 0)
-            {
-                int read = stream.Read(buffer, offset, count);
-                if (read == 0)
-                {
-                    throw new InvalidOperationException("Unexpected end of stream");
-                }
-                offset += read;
-                count -= read;
-            }
-        }
-
-        public static void Write(this Stream stream, byte[] buffer)
-        {
-            stream.Write(buffer, 0, buffer.Length);
-        }
-#endif
-
         public static Span<byte> ReadExactly(this Stream stream, int n)
         {
             byte[] buffer = new byte[n];

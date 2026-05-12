@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +13,7 @@ namespace NuGet.ContentModel.Infrastructure
     {
         private readonly List<Segment> _segments = new List<Segment>();
         private readonly Dictionary<string, object> _defaults;
-        private readonly PatternTable _table;
+        private readonly PatternTable? _table;
 
         public PatternExpression(PatternDefinition pattern)
         {
@@ -66,9 +64,9 @@ namespace NuGet.ContentModel.Infrastructure
             }
         }
 
-        internal ContentItem Match(string path, IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions)
+        internal ContentItem? Match(string path, IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions)
         {
-            ContentItem item = null;
+            ContentItem? item = null;
             var startIndex = 0;
             foreach (var segment in _segments)
             {
@@ -109,7 +107,7 @@ namespace NuGet.ContentModel.Infrastructure
 
         private abstract class Segment
         {
-            internal abstract bool TryMatch(ref ContentItem item, string path, IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions, int startIndex, out int endIndex);
+            internal abstract bool TryMatch(ref ContentItem? item, string path, IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions, int startIndex, out int endIndex);
         }
 
         [DebuggerDisplay("{_pattern.Substring(_start, _length)}")]
@@ -127,7 +125,7 @@ namespace NuGet.ContentModel.Infrastructure
             }
 
             internal override bool TryMatch(
-                ref ContentItem item,
+                ref ContentItem? item,
                 string path,
                 IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions,
                 int startIndex,
@@ -152,11 +150,11 @@ namespace NuGet.ContentModel.Infrastructure
             private readonly string _token;
             private readonly char _delimiter;
             private readonly bool _matchOnly;
-            private readonly PatternTable _table;
+            private readonly PatternTable? _table;
             private readonly bool _preserveRawValue = false;
-            private readonly string _rawToken;
+            private readonly string? _rawToken;
 
-            public TokenSegment(string token, char delimiter, bool matchOnly, PatternTable table, bool preserveRawValues)
+            public TokenSegment(string token, char delimiter, bool matchOnly, PatternTable? table, bool preserveRawValues)
             {
                 _token = token;
                 _delimiter = delimiter;
@@ -170,13 +168,13 @@ namespace NuGet.ContentModel.Infrastructure
             }
 
             internal override bool TryMatch(
-                ref ContentItem item,
+                ref ContentItem? item,
                 string path,
                 IReadOnlyDictionary<string, ContentPropertyDefinition> propertyDefinitions,
                 int startIndex,
                 out int endIndex)
             {
-                ContentPropertyDefinition propertyDefinition;
+                ContentPropertyDefinition? propertyDefinition;
                 if (!propertyDefinitions.TryGetValue(_token, out propertyDefinition))
                 {
                     throw new Exception(string.Format(CultureInfo.CurrentCulture, "Unable to find property definition for {{{0}}}", _token));
@@ -200,7 +198,7 @@ namespace NuGet.ContentModel.Infrastructure
                         break;
                     }
                     ReadOnlyMemory<char> substring = path.AsMemory(startIndex, delimiterIndex - startIndex);
-                    object value;
+                    object? value;
                     if (propertyDefinition.TryLookup(substring, _table, _matchOnly, out value))
                     {
                         if (!_matchOnly)
@@ -215,9 +213,9 @@ namespace NuGet.ContentModel.Infrastructure
                             }
                             if (_preserveRawValue)
                             {
-                                item.Add(_rawToken, substring.ToString());
+                                item.Add(_rawToken!, substring.ToString());
                             }
-                            item.Add(_token, value);
+                            item.Add(_token, value!);
                         }
                         endIndex = delimiterIndex;
                         return true;

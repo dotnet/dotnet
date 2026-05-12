@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 
 namespace NuGet.Packaging.Core
@@ -21,12 +19,12 @@ namespace NuGet.Packaging.Core
         /// <summary>
         /// Excluded files
         /// </summary>
-        public string Exclude { get; }
+        public string? Exclude { get; }
 
         /// <summary>
         /// Build action
         /// </summary>
-        public string BuildAction { get; }
+        public string? BuildAction { get; }
 
         /// <summary>
         /// If true the item will be copied to the output folder.
@@ -41,8 +39,8 @@ namespace NuGet.Packaging.Core
 
         public ContentFilesEntry(
             string include,
-            string exclude,
-            string buildAction,
+            string? exclude,
+            string? buildAction,
             bool? copyToOutput,
             bool? flatten)
         {

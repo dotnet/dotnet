@@ -140,8 +140,9 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                     List<ListReportPackage> frameworkTopLevelPackages = frameworkPackages.TopLevelPackages;
                     List<ListReportPackage> frameworkTransitivePackages = frameworkPackages.TransitivePackages;
 
-                    // If no packages exist for this framework, print the
-                    // appropriate message
+                    string frameworkHeader = frameworkPackages.TargetAlias;
+
+                    // If no packages exist for this framework, print the appropriate message
                     if (frameworkTopLevelPackages?.Any() != true && frameworkTransitivePackages?.Any() != true)
                     {
                         Console.ForegroundColor = ConsoleColor.Blue;
@@ -149,16 +150,16 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                         switch (listPackageArgs.ReportType)
                         {
                             case ReportType.Outdated:
-                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoUpdatesForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoUpdatesForFramework, frameworkHeader));
                                 break;
                             case ReportType.Deprecated:
-                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoDeprecationsForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoDeprecationsForFramework, frameworkHeader));
                                 break;
                             case ReportType.Vulnerable:
-                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoVulnerabilitiesForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoVulnerabilitiesForFramework, frameworkHeader));
                                 break;
                             case ReportType.Default:
-                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoPackagesForFramework, frameworkPackages.Framework));
+                                consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: " + Strings.ListPkg_NoPackagesForFramework, frameworkHeader));
                                 break;
                         }
 
@@ -168,7 +169,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
                     {
                         // Print name of the framework
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: ", frameworkPackages.Framework));
+                        consoleOut.WriteLine(string.Format(CultureInfo.CurrentCulture, "   [{0}]: ", frameworkHeader));
                         Console.ResetColor();
 
                         // Print top-level packages

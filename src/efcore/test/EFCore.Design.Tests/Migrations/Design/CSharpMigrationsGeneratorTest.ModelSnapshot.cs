@@ -142,14 +142,14 @@ namespace MyNamespace
             finalizedModel,
             "20240101120000_InitialCreate");
 
-        Assert.Contains("public override string LatestMigrationId => \"20240101120000_InitialCreate\";", modelSnapshotCode);
+        Assert.Contains("public override string LastMigrationId => \"20240101120000_InitialCreate\";", modelSnapshotCode);
         Assert.Contains("// If you encounter a merge conflict in the line below, it means you need to", modelSnapshotCode);
         Assert.Contains("// discard one of the migration branches and recreate its migrations on top of", modelSnapshotCode);
         Assert.Contains("// the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.", modelSnapshotCode);
 
         var snapshot = CompileModelSnapshot(modelSnapshotCode, "MyNamespace.MySnapshot", typeof(MyContext));
         Assert.NotNull(snapshot.Model);
-        Assert.Equal("20240101120000_InitialCreate", snapshot.LatestMigrationId);
+        Assert.Equal("20240101120000_InitialCreate", snapshot.LastMigrationId);
     }
 
     [ConditionalFact]
@@ -171,12 +171,12 @@ namespace MyNamespace
             "MySnapshot",
             finalizedModel);
 
-        Assert.DoesNotContain("LatestMigrationId", modelSnapshotCode);
+        Assert.DoesNotContain("LastMigrationId", modelSnapshotCode);
         Assert.DoesNotContain("merge conflict", modelSnapshotCode);
 
         var snapshot = CompileModelSnapshot(modelSnapshotCode, "MyNamespace.MySnapshot", typeof(MyContext));
         Assert.NotNull(snapshot.Model);
-        Assert.Null(snapshot.LatestMigrationId);
+        Assert.Null(snapshot.LastMigrationId);
     }
 
     [ConditionalFact]
@@ -2379,7 +2379,7 @@ namespace RootNamespace
 
                     b.ToTable("EntityWithOneProperty", "DefaultSchema");
 
-                    SqlServerEntityTypeBuilderExtensions.IsMemoryOptimized(b);
+                    b.ToTable(tb => tb.IsMemoryOptimized());
                 });
 """),
             o => Assert.True(o.GetEntityTypes().Single().IsMemoryOptimized()));
@@ -9110,7 +9110,6 @@ namespace RootNamespace
 
         var generator = new CSharpMigrationsGenerator(
             new MigrationsCodeGeneratorDependencies(
-                sqlServerTypeMappingSource,
                 sqlServerAnnotationCodeGenerator),
             new CSharpMigrationsGeneratorDependencies(
                 codeHelper,

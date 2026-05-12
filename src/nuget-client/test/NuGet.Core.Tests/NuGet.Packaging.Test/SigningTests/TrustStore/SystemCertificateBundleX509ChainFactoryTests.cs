@@ -38,7 +38,7 @@ namespace NuGet.Packaging.Test
 
             bool wasCreated = SystemCertificateBundleX509ChainFactory.TryCreate(
                 new[] { nonexistentFile.FullName },
-                out SystemCertificateBundleX509ChainFactory factory);
+                out SystemCertificateBundleX509ChainFactory? factory);
 
             Assert.False(wasCreated);
             Assert.Null(factory);
@@ -61,10 +61,10 @@ namespace NuGet.Packaging.Test
 
                 bool wasCreated = SystemCertificateBundleX509ChainFactory.TryCreate(
                     files.Select(file => file.FullName).ToArray(),
-                    out SystemCertificateBundleX509ChainFactory factory);
+                    out SystemCertificateBundleX509ChainFactory? factory);
 
                 Assert.True(wasCreated);
-                Assert.Equal(1, factory.Certificates.Count);
+                Assert.Equal(1, factory!.Certificates.Count);
                 Assert.Equal(certificate.Thumbprint, factory.Certificates[0].Thumbprint);
             }
         }
@@ -80,11 +80,11 @@ namespace NuGet.Packaging.Test
 
                 bool wasCreated = SystemCertificateBundleX509ChainFactory.TryCreate(
                     new[] { bundleFile.FullName },
-                    out SystemCertificateBundleX509ChainFactory factory);
+                    out SystemCertificateBundleX509ChainFactory? factory);
 
                 Assert.True(wasCreated);
 
-                using (IX509Chain chain = factory.Create())
+                using (IX509Chain chain = factory!.Create())
                 {
                     Assert.Equal(X509ChainTrustMode.CustomRootTrust, chain.ChainPolicy.TrustMode);
                     Assert.Equal(1, chain.ChainPolicy.CustomTrustStore.Count);

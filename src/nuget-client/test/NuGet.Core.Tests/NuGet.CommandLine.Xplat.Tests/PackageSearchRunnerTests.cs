@@ -55,7 +55,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 SearchTerm = "json",
                 Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
                 Verbosity = PackageSearchVerbosity.Normal,
-                Format = PackageSearchFormat.Table
+                Format = PackageSearchFormat.Table,
+                ConsoleWidth = Table.DefaultWindowWidth
             };
 
             // Act
@@ -101,7 +102,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 SearchTerm = "json",
                 Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
                 Verbosity = PackageSearchVerbosity.Minimal,
-                Format = PackageSearchFormat.Table
+                Format = PackageSearchFormat.Table,
+                ConsoleWidth = Table.DefaultWindowWidth
             };
 
             // Act
@@ -132,10 +134,11 @@ namespace NuGet.CommandLine.Xplat.Tests
             machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
             var expectedDefaultColorMessage =
-                "| Package ID           | Latest Version | Owners            | Total Downloads | Vulnerable | Deprecation                      | Project URL   | Description     |" +
-                "| -------------------- | -------------- | ----------------- | --------------- | ---------- | -------------------------------- | ------------- | --------------- |" +
-                "| Fake.Newtonsoft. | 12.0.3         | James Newton-King | 531,607,259     | N/A        | This package has been deprecated | http://myuri/ | My description. |" +
-                "| -------------------- | -------------- | ----------------- | --------------- | ---------- | -------------------------------- | ------------- | --------------- |";
+                "| Package ID       | Latest Version | Owners           | Total Downloads | Vulnerable | Deprecation      | Project URL   | Description     |" +
+                "| ---------------- | -------------- | ---------------- | --------------- | ---------- | ---------------- | ------------- | --------------- |" +
+                "| Fake.Newtonsoft. | 12.0.3         | James Newton-Kin | 531,607,259     | N/A        | This package has | http://myuri/ | My description. |" +
+                "|              |                | g                |                 |            |  been deprecated |               |                 |" +
+                "| ---------------- | -------------- | ---------------- | --------------- | ---------- | ---------------- | ------------- | --------------- |";
             var expectedRedColorMessage = "Json";
             PackageSearchArgs packageSearchArgs = new()
             {
@@ -147,7 +150,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 SearchTerm = "json",
                 Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
                 Verbosity = PackageSearchVerbosity.Detailed,
-                Format = PackageSearchFormat.Table
+                Format = PackageSearchFormat.Table,
+                ConsoleWidth = 162
             };
 
             // Act
@@ -322,10 +326,13 @@ namespace NuGet.CommandLine.Xplat.Tests
             else if (packageSearchVerbosity == PackageSearchVerbosity.Detailed)
             {
                 expectedDefaultColorMessage =
-                    "| Package ID      | Version | Owners | Total Downloads | Vulnerable | Deprecation | Project URL                     | Description                                                    |" +
-                    "| --------------- | ------- | ------ | --------------- | ---------- | ----------- | ------------------------------- | -------------------------------------------------------------- |" +
-                    "|  | 13.0.3  |        | N/A             | N/A        | N/A         | https://www.newtonsoft.com/json | Json.NET is a popular high-performance JSON framework for .NET |" +
-                    "| --------------- | ------- | ------ | --------------- | ---------- | ----------- | ------------------------------- | -------------------------------------------------------------- |";
+                    "| Package ID      | Version | Owners | Total Downloads | Vulnerable | Deprecation | Project URL         | Description         |" +
+                    "| --------------- | ------- | ------ | --------------- | ---------- | ----------- | ------------------- | ------------------- |" +
+                    "|  | 13.0.3  |        | N/A             | N/A        | N/A         | https://www.newtons | Json.NET is a popul |" +
+                    "|                 |         |        |                 |            |             | oft.com/json        | ar high-performance |" +
+                    "|                 |         |        |                 |            |             |                     |  JSON framework for |" +
+                    "|                 |         |        |                 |            |             |                     |  .NET               |" +
+                    "| --------------- | ------- | ------ | --------------- | ---------- | ----------- | ------------------- | ------------------- |";
             }
             var expectedRedColorMessage = "Newtonsoft.Json";
             PackageSearchArgs packageSearchArgs = new PackageSearchArgs()
@@ -335,7 +342,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 Logger = GetLogger(),
                 SearchTerm = "Newtonsoft.Json",
                 Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
-                Format = PackageSearchFormat.Table
+                Format = PackageSearchFormat.Table,
+                ConsoleWidth = 185
             };
 
             if (verbosity != null)

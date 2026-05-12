@@ -9,17 +9,14 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-#if NET
 using System.Formats.Tar;
-#endif
 
 namespace Microsoft.SignCheck
 {
     public static class Utils
     {
-#if NET
         private static readonly HttpClient s_client = new(new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(10) });
-#endif
+
         /// <summary>
         /// Generate a hash for a string value using a given hash algorithm.
         /// </summary>
@@ -191,9 +188,8 @@ namespace Microsoft.SignCheck
             }
         }
 
-#if NET
         /// <summary>
-        /// Download the Microsoft and Azure Linux public keys and import them into the keyring.
+        /// Download the Microsoft, Azure Linux, and .NET release public keys and import them into the keyring.
         /// </summary>
         public static void DownloadAndConfigurePublicKeys(string tempDir)
         {
@@ -202,7 +198,8 @@ namespace Microsoft.SignCheck
                 "https://packages.microsoft.com/keys/microsoft.asc", // Microsoft public key
                 "https://packages.microsoft.com/keys/microsoft-2025.asc", // Microsoft public key for distributions that do not allow SHA1
                 "https://packages.microsoft.com/keys/microsoft-rolling.asc", // Non-SHA1 Microsoft public keys for non-Azure Linux distributions
-                "https://raw.githubusercontent.com/microsoft/azurelinux/3.0/SPECS/azurelinux-repos/MICROSOFT-RPM-GPG-KEY" // Azure linux public key
+                "https://raw.githubusercontent.com/microsoft/azurelinux/3.0/SPECS/azurelinux-repos/MICROSOFT-RPM-GPG-KEY", // Azure linux public key
+                "https://dot.net/release-key-2023", // .NET release public key
             };
             foreach (string keyUrl in keyUrls)
             {
@@ -239,7 +236,6 @@ namespace Microsoft.SignCheck
                 return null;
             }
         }
-#endif
 
         /// <summary>
         /// Parses a code signing timestamp string into a DateTime object.

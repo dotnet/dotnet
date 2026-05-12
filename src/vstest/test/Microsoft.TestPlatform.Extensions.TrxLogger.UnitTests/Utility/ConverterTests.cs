@@ -75,7 +75,7 @@ public class ConverterTests
         _converter = new Converter(new FileHelper(), _trxFileHelper);
         List<CollectorDataEntry> collectorDataEntries = _converter.ToCollectionEntries(attachmentSets, testRun, testResultsDirectory);
 
-        Assert.AreEqual(2, collectorDataEntries[0].Attachments.Count);
+        Assert.HasCount(2, collectorDataEntries[0].Attachments);
         Assert.AreEqual($@"{Environment.MachineName}{Path.DirectorySeparatorChar}123.coverage", ((ObjectModel.UriDataAttachment)collectorDataEntries[0].Attachments[0]).Uri.OriginalString);
         Assert.AreEqual($@"{Environment.MachineName}{Path.DirectorySeparatorChar}123[1].coverage", ((ObjectModel.UriDataAttachment)collectorDataEntries[0].Attachments[1]).Uri.OriginalString);
 
@@ -181,7 +181,7 @@ public class ConverterTests
         attachmentSets[0].Attachments.Add(uriDataAttachment1);
 
         var resultFiles = _converter.ToResultFiles(attachmentSets, testRun, @"c:\temp", null!);
-        Assert.IsTrue(resultFiles[0].Contains("abc.txt"));
+        Assert.Contains("abc.txt", resultFiles[0]);
     }
 
     [TestMethod]

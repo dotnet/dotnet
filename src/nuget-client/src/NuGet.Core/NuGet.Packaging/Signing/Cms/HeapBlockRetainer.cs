@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -24,7 +22,7 @@ namespace NuGet.Packaging.Signing
                 throw new OverflowException();
             }
             var hBlock = new SafeLocalAllocHandle(Marshal.AllocHGlobal(cbSize));
-            _blocks.Add(hBlock);
+            _blocks!.Add(hBlock);
             return hBlock.DangerousGetHandle();
         }
 
@@ -52,6 +50,6 @@ namespace NuGet.Packaging.Signing
             _blocks = null;
         }
 
-        private List<SafeLocalAllocHandle> _blocks;
+        private List<SafeLocalAllocHandle>? _blocks;
     }
 }

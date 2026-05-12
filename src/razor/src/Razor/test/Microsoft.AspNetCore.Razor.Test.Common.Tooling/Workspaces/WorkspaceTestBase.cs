@@ -4,11 +4,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 using Xunit.Abstractions;
@@ -21,7 +19,6 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
     private HostServices? _hostServices;
     private Workspace? _workspace;
     private IWorkspaceProvider? _workspaceProvider;
-    private IProjectEngineFactoryProvider? _projectEngineFactoryProvider;
     private LanguageServerFeatureOptions? _languageServerFeatureOptions;
 
     protected HostServices HostServices
@@ -51,15 +48,6 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         }
     }
 
-    private protected IProjectEngineFactoryProvider ProjectEngineFactoryProvider
-    {
-        get
-        {
-            EnsureInitialized();
-            return _projectEngineFactoryProvider;
-        }
-    }
-
     private protected LanguageServerFeatureOptions LanguageServerFeatureOptions
     {
         get
@@ -68,12 +56,6 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             return _languageServerFeatureOptions;
         }
     }
-
-    private protected override TestProjectSnapshotManager CreateProjectSnapshotManager()
-        => CreateProjectSnapshotManager(ProjectEngineFactoryProvider, LanguageServerFeatureOptions);
-
-    private protected override TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => CreateProjectSnapshotManager(projectEngineFactoryProvider, LanguageServerFeatureOptions);
 
     protected virtual void ConfigureWorkspace(AdhocWorkspace workspace)
     {
@@ -87,7 +69,6 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
         nameof(_hostServices),
         nameof(_workspace),
         nameof(_workspaceProvider),
-        nameof(_projectEngineFactoryProvider),
         nameof(_languageServerFeatureOptions))]
     private void EnsureInitialized()
     {
@@ -96,12 +77,9 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             _hostServices.AssumeNotNull();
             _workspace.AssumeNotNull();
             _workspaceProvider.AssumeNotNull();
-            _projectEngineFactoryProvider.AssumeNotNull();
             _languageServerFeatureOptions.AssumeNotNull();
             return;
         }
-
-        _projectEngineFactoryProvider = TestProjectEngineFactoryProvider.Instance.AddConfigure(ConfigureProjectEngine);
 
         _hostServices = MefHostServices.DefaultHost;
         _workspace = TestWorkspace.Create(_hostServices, ConfigureWorkspace);

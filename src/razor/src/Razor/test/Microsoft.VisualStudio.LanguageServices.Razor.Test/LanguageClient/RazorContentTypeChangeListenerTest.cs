@@ -7,7 +7,6 @@ using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
 using Moq;
@@ -216,7 +215,6 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
 
         lspDocumentManager ??= Mock.Of<TrackingLSPDocumentManager>(MockBehavior.Strict);
         lspEditorFeatureDetector ??= Mock.Of<ILspEditorFeatureDetector>(detector =>
-            detector.IsLspEditorEnabled() == true &&
             detector.IsLspEditorSupported(It.IsAny<string>()) == true &&
             detector.IsRemoteClient() == false, MockBehavior.Strict);
         fileToContentTypeService ??= Mock.Of<IFileToContentTypeService>(detector => detector.GetContentTypeForFilePath(It.IsAny<string>()) == _razorContentType, MockBehavior.Strict);

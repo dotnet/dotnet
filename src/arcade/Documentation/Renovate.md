@@ -155,7 +155,10 @@ Start with this base configuration:
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "enabledManagers": [
     "custom.regex"
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": false
+  }
 }
 ```
 
@@ -213,6 +216,9 @@ Any existing dependencies that Renovate detects that should be updated will appe
 step's log as `Would create PR...` or `Would commit files to branch...`.
 Examine the log to determine whether it meets your expectation.
 See [Troubleshooting](#troubleshooting) for more information on investigating the Renovate log.
+Examine any warnings that are output as well.
+One example of a warning is a "Config migration necessary" message which means that Renovate automatically migrated your Renovate configuration file to the latest format.
+In its output it includes the migrated version of your config file; update your config file to use that format instead.
 
 ## Renovate Configuration Patterns
 
@@ -389,6 +395,17 @@ cat renovate.json | jq -s 'map(select(.msg | contains("DRY-RUN"))) | .[].msg'
 cat renovate.json | jq -s 'map(select(.msg == "PR created")) | .[] | {pr, prTitle}'
 ```
 
+#### Finding Errors in the Log
+
+Renovate logs errors as JSON objects with an `err` field containing structured error details. These entries indicate failures during execution, such as post-upgrade command failures or network errors.
+
+To extract all error entries from the log:
+
+```bash
+# Find all log entries that contain errors
+cat renovate.json | jq -s 'map(select(.err)) | .[] | {msg, repository, branch, err: {cmd: .err.cmd, stderr: .err.stderr, exitCode: .err.exitCode, message: .err.message}}'
+```
+
 ### Common Issues
 
 #### No Files Being Matched
@@ -417,3 +434,18 @@ For custom regex patterns:
 2. Ensure named capture groups are correct: `(?<depName>...)`, `(?<currentValue>...)`, etc.
 3. Check the log for `"manager": "regex"` entries to see what's being matched
 4. Verify `matchStrings` patterns don't have JSON escaping issues
+
+#### Post-Upgrade Task Failures
+
+If you have configured [post-upgrade tasks](https://docs.renovatebot.com/configuration-options/#postupgradetasks) (e.g., running a script after a dependency is updated) and the results are not what you expect, check the log for errors. Renovate treats post-upgrade task failures as non-fatal, meaning the pipeline will still complete successfully even if a post-upgrade command fails. This can make failures easy to miss.
+
+Look for errors in the log using the steps in [Finding Errors in the Log](#finding-errors-in-the-log).
+
+#### Changes Not Taking Effect
+
+Renovate operates on the contents of the target GitHub branch, not the AzDO pipeline branch. If you've made changes in your AzDO dev branch but Renovate doesn't seem to pick them up, it's likely because those changes don't exist in the GitHub branch that Renovate is scanning. This applies to:
+
+- Files containing versions you expect Renovate to update
+- Scripts or files referenced by [post-upgrade tasks](https://docs.renovatebot.com/configuration-options/#postupgradetasks)
+
+To test without pushing to a production branch, push a dev branch to the target GitHub repo and pass the `baseBranches` parameter in your Renovate pipeline run to target it.

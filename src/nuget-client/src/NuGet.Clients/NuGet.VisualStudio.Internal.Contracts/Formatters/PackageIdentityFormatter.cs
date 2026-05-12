@@ -40,8 +40,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         break;
                 }
             }
-
-            return new PackageIdentity(id, version);
+            if (id != null)
+            {
+                return new PackageIdentity(id, version);
+            }
+            return null;
         }
 
         protected override void SerializeCore(ref MessagePackWriter writer, PackageIdentity value, MessagePackSerializerOptions options)

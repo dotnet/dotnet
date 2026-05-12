@@ -23,7 +23,7 @@ namespace NuGet.Packaging.Signing
             return _nativeCms.GetPrimarySignatureSignatureValue();
         }
 
-        public byte[] GetRepositoryCountersignatureSignatureValue()
+        public byte[]? GetRepositoryCountersignatureSignatureValue()
         {
             return _nativeCms.GetRepositoryCountersignatureSignatureValue();
         }

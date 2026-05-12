@@ -16,9 +16,9 @@
             MethodDeclaration -  - protected override - void - BuildRenderTree
                 Component - (0:0,0 [49] x:\dir\subdir\Test\TestComponent.cshtml) - MyComponent
                     ComponentAttribute - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - MyParameter - MyParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
+                        IntermediateToken - (26:0,26 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
                     ComponentAttribute - (44:0,44 [1] x:\dir\subdir\Test\TestComponent.cshtml) - BoolParameter - BoolParameter - AttributeStructure.DoubleQuotes
-                        LazyIntermediateToken - (44:0,44 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
+                        IntermediateToken - (44:0,44 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - c
                 HtmlContent - (49:0,49 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (49:0,49 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (60:2,7 [42] x:\dir\subdir\Test\TestComponent.cshtml)

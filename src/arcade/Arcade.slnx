@@ -33,7 +33,6 @@
     <Project Path="src/Microsoft.DotNet.SignTool.Tests/Microsoft.DotNet.SignTool.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
-    <Project Path="src/Microsoft.DotNet.XUnitAssert/tests/Microsoft.DotNet.XUnitAssert.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitExtensions/tests/Microsoft.DotNet.XUnitExtensions.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/tests/Microsoft.DotNet.XUnitV3Extensions.Tests.csproj" />
     <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli.Tests/Microsoft.DotNet.VersionTools.Cli.Tests.csproj" />
@@ -61,7 +60,6 @@
   <Project Path="src/Microsoft.DotNet.Deployment.Tasks.Links/Microsoft.DotNet.Deployment.Tasks.Links.csproj" />
   <Project Path="src/Microsoft.DotNet.GenAPI/Microsoft.DotNet.GenAPI.csproj" />
   <Project Path="src/Microsoft.DotNet.GenFacades/Microsoft.DotNet.GenFacades.csproj" />
-  <Project Path="src/Microsoft.DotNet.Git.IssueManager/src/Microsoft.DotNet.Git.IssueManager.csproj" />
   <Project Path="src/Microsoft.DotNet.Internal.DependencyInjection.Testing/Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj" />
   <Project Path="src/Microsoft.DotNet.Internal.SymbolHelper/Microsoft.DotNet.Internal.SymbolHelper.csproj" />
   <Project Path="src/Microsoft.DotNet.MacOsPkg/Cli/Microsoft.DotNet.MacOsPkg.Cli.csproj" />
@@ -73,9 +71,7 @@
   <Project Path="src/Microsoft.DotNet.SignTool/Microsoft.DotNet.SignTool.csproj" />
   <Project Path="src/Microsoft.DotNet.SourceBuild/tasks/Microsoft.DotNet.SourceBuild.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.StrongName/Microsoft.DotNet.StrongName.csproj" />
-  <Project Path="src/Microsoft.DotNet.Tar/Microsoft.DotNet.Tar.csproj" />
   <Project Path="src/Microsoft.DotNet.XliffTasks/Microsoft.DotNet.XliffTasks.csproj" />
-  <Project Path="src/Microsoft.DotNet.XUnitAssert/src/Microsoft.DotNet.XUnitAssert.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitConsoleRunner/src/Microsoft.DotNet.XUnitConsoleRunner.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitExtensions.Shared/Microsoft.DotNet.XUnitExtensions.Shared.shproj" />
   <Project Path="src/Microsoft.DotNet.XUnitExtensions/src/Microsoft.DotNet.XUnitExtensions.csproj" />

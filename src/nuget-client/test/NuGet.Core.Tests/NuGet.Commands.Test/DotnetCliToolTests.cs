@@ -330,7 +330,7 @@ namespace NuGet.Commands.Test
                 {
                     var path = pathResolver.GetLockFilePath(
                         "a",
-                        version.MinVersion,
+                        version.MinVersion!,
                         NuGetFramework.Parse("netcoreapp1.0"));
 
                     Assert.True(File.Exists(path), $"{path} does not exist!");

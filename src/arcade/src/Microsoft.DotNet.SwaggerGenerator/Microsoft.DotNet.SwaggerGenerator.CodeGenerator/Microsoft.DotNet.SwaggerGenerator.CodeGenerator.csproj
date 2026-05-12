@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetMinimum);netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <RootNamespace>Microsoft.DotNet.SwaggerGenerator</RootNamespace>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
@@ -11,15 +11,6 @@
     <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="Microsoft.OpenApi.Readers" />
-    <PackageReference Include="System.Collections.Immutable" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
-    <PackageReference Include="System.Memory" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,8 +18,5 @@
           CopyToOutputDirectory="PreserveNewest"
           Pack="true" />
   </ItemGroup>
-
-  <!-- This project is a build task dependency and needs to follow desktop version requirements. -->
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.Packages.props" />
 
 </Project>

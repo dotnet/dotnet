@@ -211,5 +211,13 @@ namespace NuGet.PackageManagement.UI
                     }
                 });
         }
+
+        private void OnContextMenuResetFontSize(object sender, ContextMenuEventArgs e)
+        {
+            if (sender is System.Windows.Controls.TextBox textBox && textBox.ContextMenu != null)
+            {
+                textBox.ContextMenu.FontSize = FontSize;
+            }
+        }
     }
 }

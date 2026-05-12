@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Runtime.Versioning;
@@ -12,10 +10,8 @@ namespace NuGet.Packaging
 {
     public class PhysicalPackageFile : IPackageFile
     {
-        private readonly Func<Stream> _streamFactory;
-        private string _targetPath;
-        private FrameworkName _targetFramework;
-        private NuGetFramework _nugetFramework;
+        private readonly Func<Stream>? _streamFactory;
+        private string? _targetPath;
         private DateTimeOffset _lastWriteTime;
 
         public PhysicalPackageFile()
@@ -32,21 +28,21 @@ namespace NuGet.Packaging
             _streamFactory = streamFactory;
         }
 
-        private readonly MemoryStream _memoryStream;
+        private readonly MemoryStream? _memoryStream;
 
         /// <summary>
         /// Path on disk
         /// </summary>
-        public string SourcePath { get; set; }
+        public string? SourcePath { get; set; }
 
         /// <summary>
         /// Path in package
         /// </summary>
-        public string TargetPath
+        public required string TargetPath
         {
             get
             {
-                return _targetPath;
+                return _targetPath!;
             }
             set
             {
@@ -54,39 +50,27 @@ namespace NuGet.Packaging
                 {
                     _targetPath = value;
                     string effectivePath;
-                    _nugetFramework = FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(_targetPath, out effectivePath);
-                    if (_nugetFramework != null && _nugetFramework.Version.Major < 5)
+                    NuGetFramework = FrameworkNameUtility.ParseNuGetFrameworkFromFilePath(_targetPath!, out effectivePath);
+                    if (NuGetFramework != null && NuGetFramework.Version.Major < 5)
                     {
-                        _targetFramework = new FrameworkName(_nugetFramework.DotNetFrameworkName);
+                        TargetFramework = new FrameworkName(NuGetFramework.DotNetFrameworkName);
                     }
                     EffectivePath = effectivePath;
                 }
             }
         }
 
-        public string Path
-        {
-            get
-            {
-                return TargetPath;
-            }
-        }
+        public string Path => TargetPath;
 
-        public string EffectivePath
+        public string? EffectivePath
         {
             get;
             private set;
         }
 
-        public FrameworkName TargetFramework
-        {
-            get { return _targetFramework; }
-        }
+        public FrameworkName? TargetFramework { get; private set; }
 
-        public NuGetFramework NuGetFramework
-        {
-            get { return _nugetFramework; }
-        }
+        public NuGetFramework? NuGetFramework { get; private set; }
 
         public Stream GetStream()
         {
@@ -103,7 +87,7 @@ namespace NuGet.Packaging
             else
             {
                 _lastWriteTime = DateTimeOffset.UtcNow;
-                return _memoryStream;
+                return _memoryStream!;
             }
         }
 
@@ -115,12 +99,12 @@ namespace NuGet.Packaging
             }
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return TargetPath;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             var file = obj as PhysicalPackageFile;
 

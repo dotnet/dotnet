@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,12 +39,12 @@ namespace NuGet.RuntimeModel
             return hashCode.CombinedHash;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as CompatibilityProfile);
         }
 
-        public bool Equals(CompatibilityProfile other)
+        public bool Equals(CompatibilityProfile? other)
         {
             return other != null &&
                 string.Equals(Name, other.Name, StringComparison.Ordinal) &&

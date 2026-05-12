@@ -2,11 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable disable
-
 #if IS_DESKTOP
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
@@ -32,10 +29,6 @@ namespace NuGet.Packaging.Signing
             X509Certificate2Collection additionalCerts,
             byte[] encoded)
         {
-            Debug.Assert(tstInfo != null);
-            Debug.Assert(signerCertificate != null);
-            Debug.Assert(additionalCerts != null);
-
             TokenInfo = tstInfo;
             SignerCertificate = signerCertificate;
             AdditionalCerts = additionalCerts;
@@ -96,7 +89,7 @@ namespace NuGet.Packaging.Signing
             return token;
         }
 
-        private static Rfc3161TimestampToken CryptVerifyTimeStampSignature(byte[] encodedToken, byte[] data)
+        private static Rfc3161TimestampToken CryptVerifyTimeStampSignature(byte[] encodedToken, byte[]? data)
         {
             IntPtr pTsContext = IntPtr.Zero;
             IntPtr pTsSigner = IntPtr.Zero;
@@ -107,7 +100,7 @@ namespace NuGet.Packaging.Signing
                 if (!Rfc3161TimestampWin32.CryptVerifyTimeStampSignature(
                     encodedToken,
                     encodedToken.Length,
-                    data,
+                    data!,
                     data?.Length ?? 0,
                     IntPtr.Zero,
                     ref pTsContext,

@@ -1,6 +1,6 @@
 # This yml is used by these pipelines:
-# - dotnet-unified-build (internal)
-#   https://dev.azure.com/dnceng/internal/_build?definitionId=1330
+# - dotnet-unified-build-unofficial (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1484
 
 trigger: none
 
@@ -65,6 +65,8 @@ resources:
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
       incrementalSDLBinaryAnalysis: true
     sdl:
@@ -91,6 +93,9 @@ extends:
         options: ${{ variables.defaultContainerOptions }}
       ${{ variables.ubuntuArmContainerName }}:
         image: ${{ variables.ubuntuArmContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxBuildContainerName }}:
+        image: ${{ variables.azurelinuxBuildContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
       ${{ variables.azurelinuxX64CrossContainerName }}:
         image: ${{ variables.azurelinuxX64CrossContainerImage }}

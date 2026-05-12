@@ -822,7 +822,7 @@ namespace NuGet.Commands
         /// Clears a lock file group and replaces the first item with _._ if
         /// the group has items. Empty groups are left alone.
         /// </summary>
-        private static void ClearIfExists<T>(IList<T> group) where T : LockFileItem
+        private static void ClearIfExists<T>(IList<T> group, Func<string, T> factory) where T : LockFileItem
         {
             if (GroupHasNonEmptyItems(group))
             {
@@ -846,7 +846,7 @@ namespace NuGet.Commands
                 group.Clear();
 
                 // Create a new item with the _._ path
-                var emptyItem = (T)Activator.CreateInstance(typeof(T), new[] { emptyDir });
+                var emptyItem = factory(emptyDir);
 
                 // Copy over the properties from the first
                 foreach (var pair in firstItem.Properties)
@@ -949,7 +949,7 @@ namespace NuGet.Commands
 
             if ((dependencyType & groupType) == LibraryIncludeFlags.None)
             {
-                ClearIfExists<LockFileRuntimeTarget>(items);
+                ClearIfExists(items, static path => new LockFileRuntimeTarget(path));
             }
 
             return items;
@@ -1023,20 +1023,20 @@ namespace NuGet.Commands
         {
             if ((dependencyType & LibraryIncludeFlags.Runtime) == LibraryIncludeFlags.None)
             {
-                ClearIfExists(lockFileLib.RuntimeAssemblies);
+                ClearIfExists(lockFileLib.RuntimeAssemblies, static path => new LockFileItem(path));
                 lockFileLib.FrameworkAssemblies.Clear();
                 lockFileLib.ResourceAssemblies.Clear();
             }
 
             if ((dependencyType & LibraryIncludeFlags.Compile) == LibraryIncludeFlags.None)
             {
-                ClearIfExists(lockFileLib.CompileTimeAssemblies);
-                ClearIfExists(lockFileLib.EmbedAssemblies);
+                ClearIfExists(lockFileLib.CompileTimeAssemblies, static path => new LockFileItem(path));
+                ClearIfExists(lockFileLib.EmbedAssemblies, static path => new LockFileItem(path));
             }
 
             if ((dependencyType & LibraryIncludeFlags.Native) == LibraryIncludeFlags.None)
             {
-                ClearIfExists(lockFileLib.NativeLibraries);
+                ClearIfExists(lockFileLib.NativeLibraries, static path => new LockFileItem(path));
             }
 
             if ((dependencyType & LibraryIncludeFlags.ContentFiles) == LibraryIncludeFlags.None
@@ -1051,16 +1051,16 @@ namespace NuGet.Commands
                 (dependencyType & LibraryIncludeFlags.Build) == LibraryIncludeFlags.None)
             {
                 // If BuildTransitive is excluded then all build assets are cleared.
-                ClearIfExists(lockFileLib.Build);
-                ClearIfExists(lockFileLib.BuildMultiTargeting);
+                ClearIfExists(lockFileLib.Build, static path => new LockFileItem(path));
+                ClearIfExists(lockFileLib.BuildMultiTargeting, static path => new LockFileItem(path));
             }
             else if ((dependencyType & LibraryIncludeFlags.Build) == LibraryIncludeFlags.None)
             {
                 if (!lockFileLib.Build.Any(item => item.Path.StartsWith("buildTransitive/", StringComparison.OrdinalIgnoreCase)))
                 {
                     // all build assets are from /build folder so just clear them all.
-                    ClearIfExists(lockFileLib.Build);
-                    ClearIfExists(lockFileLib.BuildMultiTargeting);
+                    ClearIfExists(lockFileLib.Build, static path => new LockFileItem(path));
+                    ClearIfExists(lockFileLib.BuildMultiTargeting, static path => new LockFileItem(path));
                 }
                 else
                 {
