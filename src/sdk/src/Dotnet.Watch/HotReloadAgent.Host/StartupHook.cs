@@ -84,7 +84,7 @@ internal sealed class StartupHook
                 {
                     try
                     {
-                        await listener.SendResponseAsync(new HotReloadExceptionCreatedNotification(code, message), CancellationToken.None).ConfigureAwait(false);
+                        await listener.SendResponseAsync(new HotReloadExceptionCreatedNotification(code, message), CancellationToken.None);
                     }
                     catch
                     {
