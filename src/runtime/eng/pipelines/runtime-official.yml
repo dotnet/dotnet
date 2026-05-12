@@ -17,13 +17,6 @@ trigger:
     - PATENTS.TXT
     - THIRD-PARTY-NOTICES.TXT
 
-schedules:
-- cron: "0 9 * * *"
-  displayName: Daily SourceIndex
-  branches:
-    include:
-    - main
-
 # This is an official pipeline that should not be triggerable from a PR,
 # there is no public pipeline associated with it.
 pr: none
