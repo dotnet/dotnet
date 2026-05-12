@@ -346,6 +346,10 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>afdd413cee50c16318620252e4e64dc326e2d300</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.13.0-3.24613.7" Label="Manual">
+      <Uri>https://github.com/dotnet/roslyn</Uri>
+      <Sha>afdd413cee50c16318620252e4e64dc326e2d300</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.13.0-3.24613.7" Label="Manual">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>afdd413cee50c16318620252e4e64dc326e2d300</Sha>
