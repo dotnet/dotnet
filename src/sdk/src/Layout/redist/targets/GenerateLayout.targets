@@ -537,16 +537,29 @@
     </PropertyGroup>
 
     <!--
-      Publish via Exec in a separate process to avoid BuildManager caching/scheduling
-      interference in CI's multi-node parallel build context.
-      
-      The dotnet-aot project declares RuntimeIdentifier=$(TargetRid) so that centralized
-      NuGet restore (via sdk.slnx) generates the RID-specific target in project.assets.json.
-      Restore is NOT skipped here because runtime packs (e.g. Microsoft.NETCore.App.Runtime)
-      are only downloaded during a RID-aware restore, which the centralized restore may not cover.
+      Publish in-process via the MSBuild task so this participates in the outer build's
+      project graph and BuildManager cache.
+
+      The dotnet-aot project declares RuntimeIdentifier=$(TargetRid), so the centralized
+      restore (via sdk.slnx) already generates the RID-specific target in
+      project.assets.json and adds a PackageDownload for
+      Microsoft.NETCore.App.Runtime.NativeAOT.$(TargetRid) (verified in the SolutionRestore
+      evaluation's ProcessFrameworkReferences output) — no separate Restore call is
+      required here.
+
+      Do NOT Exec a child 'dotnet publish' process: a child process does not inherit the
+      outer build's MSBuild global properties (DotNetBuild, DotNetBuildFromVMR, Arcade /
+      source-build flags, DebugType, signing, version overrides, etc.). It would re-Build
+      this project's ProjectReferences (Microsoft.DotNet.Cli.Utils, Cli.CoreUtils,
+      NativeWrapper) from scratch with different evaluated properties, clobbering the PDBs
+      the outer build had already produced. The outer build then fails at Copy/Pack with
+      MSB3030 / NU5026 (see dnceng/internal dotnet-unified-build 2972531 — the dnceng
+      regression that prompted this fix).
     -->
-    <Exec Command="&quot;$(DotNetTool)&quot; publish &quot;$(RepoRoot)src/Cli/dotnet-aot/dotnet-aot.csproj&quot; -c $(Configuration) -r $(TargetRid) -o &quot;$(_DotnetAotPublishDir)&quot;"
-          IgnoreStandardErrorWarningFormat="true" />
+    <MSBuild
+      Targets="Publish"
+      Projects="$(RepoRoot)src/Cli/dotnet-aot/dotnet-aot.csproj"
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(TargetRid);PublishDir=$(_DotnetAotPublishDir)" />
 
     <!-- Verify the native library was produced -->
     <Error Condition="!Exists('$(_DotnetAotPublishDir)$(_DotnetAotNativeLibName)')"
