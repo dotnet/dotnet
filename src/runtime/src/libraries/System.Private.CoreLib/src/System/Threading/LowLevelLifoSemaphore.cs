@@ -178,9 +178,11 @@ namespace System.Threading
                     break;
                 }
 
-                // collision, try again.
-                Backoff.Exponential(collisionCount++);
+                if (!HasWaitersToWake(countsBeforeUpdate))
+                    break;
 
+                // CAS collision, but still have waters to wake, try again.
+                Backoff.Exponential(collisionCount++);
                 counts = _separated._counts;
             }
             while (HasWaitersToWake(counts));
@@ -329,7 +331,7 @@ namespace System.Threading
 
         private void WakeOne()
         {
-            // must use Interlocked as assignment must happen before trying to acquire the _blockerStackLock
+            // use Interlocked as assignment must happen before trying to acquire the _blockerStackLock
             int origWake = Interlocked.Exchange(ref _pendingWake, 1);
             Debug.Assert(origWake == 0);
             WakeOneCore();
@@ -365,10 +367,10 @@ namespace System.Threading
                     return;
                 }
 
-                // We support only one pending wake at a time and this is the only place when we clear it.
+                // We use only one pending wake at a time and this is the only place when we clear it.
                 // We are also holding the _blockerStackLock and whoever we are unparking cannot acknowledge
                 // the wake while we are holding the lock.
-                // Until the wake is acknowledged _pendingWake cannot change by any thread except the current.
+                // Until the wake is acknowledged _pendingWake cannot be changed by any thread except the current.
                 // Therefore we can use an ordinary --
                 Debug.Assert(_pendingWake == 1);
                 _pendingWake--;
