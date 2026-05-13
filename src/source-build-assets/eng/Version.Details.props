@@ -6,12 +6,12 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftBuildPackageVersion>18.7.0-preview-26256-105</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildUtilitiesCorePackageVersion>18.7.0-preview-26256-105</MicrosoftBuildUtilitiesCorePackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26256.105</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetGenAPITaskPackageVersion>11.0.100-preview.5.26256.105</MicrosoftDotNetGenAPITaskPackageVersion>
-    <MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.5.26256.105</MicrosoftNETCoreILAsmPackageVersion>
-    <MicrosoftNETCoreILDAsmPackageVersion>11.0.0-preview.5.26256.105</MicrosoftNETCoreILDAsmPackageVersion>
+    <MicrosoftBuildPackageVersion>18.8.0-preview-26261-101</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>18.8.0-preview-26261-101</MicrosoftBuildUtilitiesCorePackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26261.101</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>11.0.100-preview.5.26261.101</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.5.26261.101</MicrosoftNETCoreILAsmPackageVersion>
+    <MicrosoftNETCoreILDAsmPackageVersion>11.0.0-preview.5.26261.101</MicrosoftNETCoreILDAsmPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
