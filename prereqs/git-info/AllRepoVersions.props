@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.1.657407</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>1948d7ef8cfdb967c5ab4d0f07db00966873ef93</installerGitCommitHash>
+    <installerGitCommitHash>f06c8dfcc16c75c73a942d95aeb5e1203e3e75f1</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>7806cbf7b0fd91ea6ab55c2e42d8ed973114e197</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.49-servicing-25616-08</msbuildOutputPackageVersion>
@@ -37,8 +37,8 @@
     <runtimeOutputPackageVersion>8.0.26-servicing.26169.21</runtimeOutputPackageVersion>
     <sdkGitCommitHash>7ac62fa9407e981d68cf4b01ee890f7adc423811</sdkGitCommitHash>
     <sdkOutputPackageVersion>8.0.126-servicing.26170.5</sdkOutputPackageVersion>
-    <sourcebuildassetsGitCommitHash>a7c930004f706d64044b2bdda1b7086ff8e84078</sourcebuildassetsGitCommitHash>
-    <sourcebuildassetsOutputPackageVersion>8.0.0-alpha.1.26223.1</sourcebuildassetsOutputPackageVersion>
+    <sourcebuildassetsGitCommitHash>43fa27099796cf60357226180f279946dbb6495e</sourcebuildassetsGitCommitHash>
+    <sourcebuildassetsOutputPackageVersion>8.0.0-alpha.1.26262.3</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>7abd7043b258fe69233070da30f6a88438f4b293</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.26216.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>44b5b62182b48c34c4b6aef28943ec3f3e82f214</sourcebuildreferencepackagesGitCommitHash>
