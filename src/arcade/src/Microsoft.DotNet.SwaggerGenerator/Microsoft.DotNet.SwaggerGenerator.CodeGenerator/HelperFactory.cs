@@ -10,18 +10,15 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using HandlebarsDotNet;
-using JetBrains.Annotations;
 
 namespace Microsoft.DotNet.SwaggerGenerator
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [MeansImplicitUse(ImplicitUseKindFlags.Access)]
     public class HelperMethodAttribute : Attribute
     {
     }
 
     [AttributeUsage(AttributeTargets.Method)]
-    [MeansImplicitUse(ImplicitUseKindFlags.Access)]
     public class BlockHelperMethodAttribute : Attribute
     {
     }
