@@ -19,8 +19,6 @@ variables:
 - group: DotNet-DevDiv-Insertion-Workflow-Variables
 - name: _DevDivDropAccessToken
   value: $(dn-bot-devdiv-drop-rw-code-rw)
-
-- group: DotNet-Roslyn-Insertion-Variables
 - name: Razor.GitHubEmail
   value: dotnet-build-bot@microsoft.com
 - name: Razor.GitHubToken
@@ -437,7 +435,6 @@ extends:
             displayName: Get Branch Name
           - template: /eng/pipelines/insert.yml@self
             parameters:
-              devDivAzdoToken: $(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)
               dncEngAzureSubscription: 'DncEng Insertion: Roslyn and Razor'
               componentBuildProjectName: internal
               sourceBranch: "$(ComponentBranchName)"
