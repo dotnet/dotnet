@@ -9,12 +9,13 @@
     <DotNetSharedFrameworkTaskFile>$(DotNetSharedFrameworkTaskDir)Microsoft.DotNet.SharedFramework.Sdk.dll</DotNetSharedFrameworkTaskFile>
   </PropertyGroup>
 
-  <UsingTask TaskName="GenerateSharedFrameworkDepsFile" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
-  <UsingTask TaskName="GeneratePlatformManifestEntriesFromTemplate" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
-  <UsingTask TaskName="GeneratePlatformManifestEntriesFromFileList" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
-  <UsingTask TaskName="CreateFrameworkListFile" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
-  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
-  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
-  <UsingTask TaskName="ValidateFileVersions" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="GenerateSharedFrameworkDepsFile" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="GeneratePlatformManifestEntriesFromTemplate" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="GeneratePlatformManifestEntriesFromFileList" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="CreateFrameworkListFile" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="ValidateFileVersions" AssemblyFile="$(DotNetSharedFrameworkTaskFile)" Runtime="NET" Architecture="*" />
 
 </Project>
