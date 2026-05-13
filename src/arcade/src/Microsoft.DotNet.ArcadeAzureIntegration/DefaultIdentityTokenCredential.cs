@@ -69,7 +69,7 @@ public class DefaultIdentityTokenCredential : TokenCredential
         }
 
         // Add Managed Identity credential
-        tokenCredentials.Add(new ManagedIdentityCredential(options.ManagedIdentityClientId));
+        tokenCredentials.Add(new ManagedIdentityCredential(ManagedIdentityId.FromUserAssignedClientId(options.ManagedIdentityClientId)));
 
         // Add work load identity credential if the environment variables are set
         TokenCredential? workloadIdentityCredential = GetWorkloadIdentityCredentialForAzurePipelineTask();

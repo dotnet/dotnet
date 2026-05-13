@@ -5,6 +5,7 @@
     <MicrosoftDotNetDeploymentTasksLinksTaskAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="CreateAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="DeleteAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="CreateAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="DeleteAkaMSLinks" AssemblyFile="$(MicrosoftDotNetDeploymentTasksLinksTaskAssembly)" Runtime="NET" Architecture="*" />
 </Project>

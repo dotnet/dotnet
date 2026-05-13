@@ -22,7 +22,7 @@ stages:
         publish:
           artifacts: true
           logs: true
-      enableMicrobuild: true
+      enableMicrobuild: false
       microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
       enablePublishBuildAssets: true
       enableSourceIndex: true
