@@ -35,9 +35,9 @@
     <runtimeOutputPackageVersion>9.0.15-servicing.26175.22</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>c2069dde2cb60983e985c6ca397783cf23f2f603</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26256.3</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>ee36a870b9b1c84e71a4f83adc55ccf8c20b2a5e</sdkGitCommitHash>
-    <sourcebuildassetsGitCommitHash>23e11cbd47bfcb1aaee8284291a98c45cef2a5d7</sourcebuildassetsGitCommitHash>
-    <sourcebuildassetsOutputPackageVersion>9.0.0-alpha.1.26261.1</sourcebuildassetsOutputPackageVersion>
+    <sdkGitCommitHash>7e9cbbb0e80577e83362fe78ec5c7c9f6e88e3dd</sdkGitCommitHash>
+    <sourcebuildassetsGitCommitHash>3a687f7154d73a6425d98a1deeb40424bbd7cb38</sourcebuildassetsGitCommitHash>
+    <sourcebuildassetsOutputPackageVersion>9.0.0-alpha.1.26262.4</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>16c380d1ce5fa0b24e232251c31cb013bbf3365f</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.26055.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>a9cadb09ddcc99b1e535efb0648047634f0c4f40</sourcebuildreferencepackagesGitCommitHash>

@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "9.0.115",
+    "version": "9.0.116",
     "rollForward": "latestPatch",
     "paths": [
       ".dotnet",
@@ -9,10 +9,10 @@
     "errorMessage": "The required .NET SDK wasn't found. Please run ./eng/common/dotnet.cmd/sh to install it."
   },
   "tools": {
-    "dotnet": "9.0.115"
+    "dotnet": "9.0.116"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.26222.3",
+    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.26223.2",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }
