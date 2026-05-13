@@ -29,13 +29,18 @@ __SkipGenerateVersion=0
 __InstallRuntimes=0
 __PrivateBuild=0
 __Test=0
+__TestFilter=
 __UnprocessedBuildArgs=
 __UseCdac=0
+__NoFallback=0
+__TestInterpreter=0
 __LiveRuntimeDir=
 
 usage_list+=("-skipmanaged: do not build managed components.")
 usage_list+=("-skipnative: do not build native components.")
 usage_list+=("-test: run xunit tests")
+usage_list+=("-methodfilter: pass method filter to xunit runner (Namespace.ClassName.MethodName)")
+usage_list+=("-classfilter: pass class filter to xunit runner (Namespace.ClassName)")
 
 handle_arguments() {
     lowerI="$(echo "${1/--/-}" | tr "[:upper:]" "[:lower:]")"
@@ -105,8 +110,26 @@ handle_arguments() {
             __Test=1
             ;;
 
+        methodfilter|-methodfilter)
+            __TestFilter="-method $2"
+            __ShiftArgs=1
+            ;;
+        
+        classfilter|-classfilter)
+            __TestFilter="-class $2"
+            __ShiftArgs=1
+            ;;
+
         usecdac|-usecdac)
             __UseCdac=1
+            ;;
+
+        nofallback|-nofallback)
+            __NoFallback=1
+            ;;
+
+        testinterpreter|-testinterpreter)
+            __TestInterpreter=1
             ;;
 
         -warnaserror|-nodereuse)
@@ -121,6 +144,11 @@ handle_arguments() {
 }
 
 source "$__RepoRootDir"/eng/native/build-commons.sh
+
+if [[ "$__NoFallback" == 1 && "$__UseCdac" != 1 ]]; then
+    echo "-nofallback requires -usecdac to also be specified."
+    exit 1
+fi
 
 __LogsDir="$__RootBinDir/log/$__BuildType"
 __ConfigTriplet="$__TargetOS.$__TargetArch.$__BuildType"
@@ -302,6 +330,20 @@ if [[ "$__Test" == 1 ]]; then
           export SOS_TEST_CDAC="true"
       fi
 
+      if [[ "$__NoFallback" == 1 ]]; then
+          export SOS_TEST_CDAC_NO_FALLBACK="true"
+      fi
+
+      if [[ "$__TestInterpreter" == 1 ]]; then
+          export SOS_TEST_INTERPRETER="true"
+      fi
+
+      # Build the test filter argument if provided
+      __TestFilterArg=
+      if [[ -n "$__TestFilter" ]]; then
+          __TestFilterArg="/p:TestRunnerAdditionalArguments=\"$__TestFilter\""
+      fi
+
       # __CommonMSBuildArgs contains TargetOS property
       "$__RepoRootDir/eng/common/build.sh" \
         --test \
@@ -314,6 +356,7 @@ if [[ "$__Test" == 1 ]]; then
         /p:RuntimeSourceFeed="$__RuntimeSourceFeed" \
         /p:RuntimeSourceFeedKey="$__RuntimeSourceFeedKey" \
         /p:LiveRuntimeDir="$__LiveRuntimeDir" \
+        "$__TestFilterArg" \
         $__CommonMSBuildArgs
 
       if [ $? != 0 ]; then
