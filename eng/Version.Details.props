@@ -10,7 +10,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26230.102</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26230.102</MicrosoftDotNetBuildManifestPackageVersion>
-    <MicrosoftNETSdkPackageVersion>10.0.300-servicing.26230.102</MicrosoftNETSdkPackageVersion>
+    <MicrosoftNETSdkPackageVersion>10.0.107-servicing.26217.108</MicrosoftNETSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.7</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>10.0.7-servicing.26217.108</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
