@@ -38,6 +38,16 @@ safe-outputs:
     max: 3
     target: "*"
     hide-older-comments: true
+  push-to-pull-request-branch:
+    target: "*"
+    title-prefix: "[fix] "
+    max: 3
+    github-token: ${{ secrets.GH_AW_GITHUB_TOKEN }}
+  reply-to-pull-request-review-comment:
+    max: 10
+    target: "*"
+  resolve-pull-request-review-thread:
+    max: 10
   messages:
     footer: "> 🔧 *Iterated by [{workflow_name}]({run_url})*"
 
