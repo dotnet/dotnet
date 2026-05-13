@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -104,6 +105,9 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
             EqtTrace.Verbose($"ArtifactProcessingManager.CollectArtifacts: Saving data collectors artifacts for post process into {_processArtifactFolder}");
             Stopwatch watch = Stopwatch.StartNew();
             TPDebug.Assert(_testSessionProcessArtifactFolder is not null, "_testSessionProcessArtifactFolder is null");
+            TPDebug.Assert(_processArtifactFolder is not null, "_processArtifactFolder is null");
+
+            CreateDirectoryWithUserOnlyAccess(_processArtifactFolder);
             _fileHelper.CreateDirectory(_testSessionProcessArtifactFolder);
             EqtTrace.Verbose($"ArtifactProcessingManager.CollectArtifacts: Persist runsettings \n{runSettingsXml}");
             _fileHelper.WriteAllTextToFile(Path.Combine(_testSessionProcessArtifactFolder, RunsettingsFileName), runSettingsXml);
@@ -246,4 +250,36 @@ internal class ArtifactProcessingManager : IArtifactProcessingManager
     }
 
     private static bool IsTelemetryOptedIn() => Environment.GetEnvironmentVariable("VSTEST_TELEMETRY_OPTEDIN")?.Equals("1", StringComparison.Ordinal) == true;
+
+    /// <summary>
+    /// Creates a directory with permissions restricted to the current user on Unix.
+    /// </summary>
+    internal /* for testing */ void CreateDirectoryWithUserOnlyAccess(string path)
+    {
+        _fileHelper.CreateDirectory(path);
+#if !NETFRAMEWORK
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Directory.Exists(path))
+        {
+            SetUnixDirectoryPermissions(path);
+        }
+#endif
+    }
+
+#if !NETFRAMEWORK
+    private static void SetUnixDirectoryPermissions(string path)
+    {
+        // 0700 octal = owner read/write/execute only
+        const int ownerFullAccess = 0x1C0;
+
+        int result = NativeChmod(path, ownerFullAccess);
+        if (result != 0)
+        {
+            int error = Marshal.GetLastWin32Error();
+            throw new InvalidOperationException($"Failed to set permissions on '{path}', errno: {error}");
+        }
+    }
+
+    [DllImport("libc", EntryPoint = "chmod", SetLastError = true)]
+    private static extern int NativeChmod(string pathname, int mode);
+#endif
 }
