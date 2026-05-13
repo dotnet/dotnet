@@ -153,6 +153,21 @@ gh pr list --repo ${{ github.repository }} \
 - **Your action needed**: N PRs to review/merge
 - **Waiting on authors**: N PRs
 - **Repo health**: ✅ green / ⚠️ issues found
+
+## Issues Backlog — YYYY-MM-DD
+
+| Category | Count |
+|---|---|
+| Total open issues | N |
+| Untriaged (`Needs: Triage :mag:`) | N |
+| Waiting for info (`Needs: Additional Info`) | N |
+| Blocked / Design needed | N |
+| Actionable bugs (has repro, no linked PR) | N |
+| Agent-created fix PRs in flight | N |
+
+**Today's pick**: The Issue Triage agent is working on #NNN — [brief title]. Check for a draft fix PR later today.
+
+**Trend**: ↓ N issues closed this week / ↑ N new issues opened
 ```
 
 If there are zero open PRs and everything is green:
