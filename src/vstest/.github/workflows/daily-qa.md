@@ -5,7 +5,7 @@ description: |
   The maintainer's morning briefing — one place, zero fluff.
 
 on:
-  schedule: daily
+  schedule: "0 4 * * *"
   workflow_dispatch:
 
 timeout-minutes: 20
@@ -167,3 +167,4 @@ If there are zero open PRs and everything is green:
 - The one exception: it may comment on PRs to nudge authors about conflicts or CI failures.
 - It may create draft PRs for trivial fixes (typos, dead code).
 - Keep the digest scannable — the maintainer should know what to do in 30 seconds.
+- **Tables must be valid GitHub Markdown.** Every table row must have the same number of `|` separators as the header row. Always include the `|---|` separator row. Verify column counts before outputting.

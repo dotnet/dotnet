@@ -154,12 +154,15 @@ The PR description should include:
 - What the fix does
 - Test that verifies the fix
 
-After creating the PR, make sure the PR Iteration workflow can find it using a **shared, queryable signal**:
-- Apply a stable label such as `agent:auto-fix`
-- Include the issue link in the PR description
-- If another machine-readable marker is available in PR metadata, set it as well
+After creating the PR, **register it in cache-memory** so the PR Iteration workflow knows to follow up:
 
-Do **not** rely on workflow-local cache-memory to register the PR for follow-up.
+```json
+// Read existing cache first, then update
+// Key: "auto-fix-prs"
+// Value: array of { "pr": <number>, "issue": <number>, "created": "<date>" }
+```
+
+Write to cache-memory key `auto-fix-prs`, appending the new PR to the existing array.
 
 **If the fix is too complex or risky:**
 - Comment on the issue with your analysis of the root cause

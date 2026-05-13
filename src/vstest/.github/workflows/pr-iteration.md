@@ -53,21 +53,25 @@ You are the PR Iteration agent for `${{ github.repository }}`. Your job is to **
 
 ## Ownership Check
 
-Before doing anything, check cache-memory key `auto-fix-prs` to get the list of PRs you own. **Only act on PRs in that list.** If the triggering PR is not in the list, invoke noop and exit.
+Check cache-memory key `auto-fix-prs` to get the list of PRs you own. **Also check for open PRs whose title starts with `[fix]`** — these are agent-created PRs that may predate cache-memory registration. Add any `[fix]` PRs you find to the cache so they're tracked going forward.
 
-If triggered by `schedule` or `workflow_dispatch`, check ALL PRs in the list and iterate on any that need attention.
+A PR is yours if it's in the cache-memory list OR has a `[fix]` title prefix.
+
+If the triggering PR is not yours, invoke noop and exit.
+
+If triggered by `schedule` or `workflow_dispatch`, check ALL your PRs and iterate on any that need attention.
 
 ## Anti-Noise Rules
 
 - **Never push more than 3 iterations per PR per day.** If you've pushed 3 times and it's still failing, comment on the PR explaining what's blocking and stop.
 - **Never comment if a human commented in the last 48 hours** — they're handling it.
-- **Prefer a small number of clear follow-up commits** over many tiny commits, and **do not rewrite PR branch history**.
+- **Prefer a small number of clear follow-up commits** over rewriting PR history; do not amend/rebase or force-push PR branches.
 
 ## Process
 
 ### On `pull_request_review` or `issue_comment`
 
-1. Read cache-memory key `auto-fix-prs`. If this PR number is not in the list, noop.
+1. Read cache-memory key `auto-fix-prs`. Also check if the PR title starts with `[fix]`. If neither matches, noop.
 2. Read the review comments or issue comment.
 3. If the review requests changes:
    a. Read AGENTS.md for repo conventions
