@@ -104,7 +104,6 @@ namespace NuGet.PackageManagement.Telemetry
     {
         ActionsExecuted,
         CacheUpdated,
-        RestoreCompleted,
         CheckboxPrereleaseChanged,
         ClearSearch,
         ExecuteAction,

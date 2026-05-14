@@ -3654,7 +3654,6 @@ EndProject";
                                 name: "NuGetAuditSuppress",
                                 identity: advisoryUrl1,
                                 framework: NuGetFramework.AnyFramework,
-                                properties: new Dictionary<string, string>(),
                                 attributes: new Dictionary<string, string>());
             xmlA.Save(projectA.ProjectPath);
 
@@ -3665,7 +3664,6 @@ EndProject";
                                 name: "NuGetAuditSuppress",
                                 identity: advisoryUrl2,
                                 framework: NuGetFramework.AnyFramework,
-                                properties: new Dictionary<string, string>(),
                                 attributes: new Dictionary<string, string>());
             xmlB.Save(projectB.ProjectPath);
 

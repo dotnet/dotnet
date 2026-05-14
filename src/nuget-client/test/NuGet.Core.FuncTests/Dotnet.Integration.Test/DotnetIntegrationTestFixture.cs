@@ -11,11 +11,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using FluentAssertions;
-using Microsoft.Build.Locator;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
 using NuGet.Common;
@@ -56,9 +53,6 @@ namespace Dotnet.Integration.Test
 
             SdkDirectory = new DirectoryInfo(sdkPath);
             MsBuildSdksPath = Path.Combine(sdkPath, "Sdks");
-
-            // https://github.com/NuGet/Home/issues/14823: This can be removed when we migrate to `dotnet.exe`-only integration tests for file-based apps.
-            MSBuildLocator.RegisterMSBuildPath(sdkPath);
 
             _templateDirectory = new SimpleTestPathContext();
             TestDotnetCLiUtility.WriteGlobalJson(_templateDirectory.WorkingDirectory);
@@ -359,18 +353,6 @@ namespace Dotnet.Integration.Test
             }
 
             return RunDotnet(workingDirectory, $"msbuild {file} {args}", expectSuccess, testOutputHelper: testOutputHelper);
-        }
-
-        internal (string Content, string ProjectPath, string FilePath) GetFileBasedAppVirtualProject(string entryPointFileFullPath, ITestOutputHelper testOutputHelper)
-        {
-            var runApi = RunDotnetExpectSuccess(Path.GetDirectoryName(entryPointFileFullPath), "run-api", testOutputHelper: testOutputHelper, inputAction: writer =>
-            {
-                writer.Write($$"""{ "$type": "GetProject", "EntryPointFileFullPath": {{JsonSerializer.Serialize(entryPointFileFullPath)}} }""");
-            });
-            var node = JsonNode.Parse(runApi.AllOutput);
-            return (Content: node["Content"].GetValue<string>(),
-                ProjectPath: node["ProjectPath"].GetValue<string>(),
-                FilePath: entryPointFileFullPath);
         }
 
         internal TestDirectory CreateTestDirectory()

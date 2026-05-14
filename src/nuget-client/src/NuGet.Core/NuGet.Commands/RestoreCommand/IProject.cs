@@ -28,5 +28,14 @@ namespace NuGet.Commands.Restore
         /// The inner build  <see langword="null"/>
         /// </summary>
         public IReadOnlyDictionary<string, ITargetFramework> TargetFrameworks { get; }
+
+        /// <summary>
+        /// Get the value for a global property in the project.
+        /// Global properties represent values set via command line arguments (e.g. /p:Property=Value),
+        /// which take highest priority over properties defined in the project file.
+        /// </summary>
+        /// <param name="propertyName">The name of the global property.</param>
+        /// <returns>The value of the requested global property, or <see langword="null"/> if the property was not set as a global property.</returns>
+        string? GetGlobalProperty(string propertyName);
     }
 }

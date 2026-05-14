@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Net.Http;
@@ -40,8 +38,8 @@ namespace NuGet.Protocol
             }
             else
             {
-                var temporaryFile = Path.Combine(context.RootTempFolder, Path.GetRandomFileName());
-                var newTemporaryFile = Path.Combine(context.RootTempFolder, Path.GetRandomFileName());
+                var temporaryFile = Path.Combine(context.RootTempFolder!, Path.GetRandomFileName());
+                var newTemporaryFile = Path.Combine(context.RootTempFolder!, Path.GetRandomFileName());
 
                 return new HttpCacheResult(
                     context.MaxAge,
@@ -53,13 +51,13 @@ namespace NuGet.Protocol
         public static async Task CreateCacheFileAsync(
             HttpCacheResult result,
             HttpResponseMessage response,
-            Action<Stream> ensureValidContents,
+            Action<Stream>? ensureValidContents,
             CancellationToken cancellationToken)
         {
             // Get the cache file directories, so we can make sure they are created before writing
             // files to them.
-            var newCacheFileDirectory = Path.GetDirectoryName(result.NewFile);
-            var cacheFileDirectory = Path.GetDirectoryName(result.CacheFile);
+            var newCacheFileDirectory = Path.GetDirectoryName(result.NewFile)!;
+            var cacheFileDirectory = Path.GetDirectoryName(result.CacheFile)!;
 
             // Make sure the new cache file directory is created before writing a file to it.
             Directory.CreateDirectory(newCacheFileDirectory);

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 
@@ -16,9 +14,14 @@ namespace NuGet.Protocol
 
         public Guid Version { get; private set; } = Guid.NewGuid();
 
-        public string GetToken(Uri sourceUri)
+        public string? GetToken(Uri sourceUri)
         {
-            string token;
+            if (sourceUri == null)
+            {
+                throw new ArgumentNullException(nameof(sourceUri));
+            }
+
+            string? token;
             if (_tokenCache.TryGetValue(sourceUri, out token))
             {
                 return token;
@@ -35,6 +38,16 @@ namespace NuGet.Protocol
 
         public void AddToken(Uri sourceUri, string token)
         {
+            if (sourceUri == null)
+            {
+                throw new ArgumentNullException(nameof(sourceUri));
+            }
+
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
             StoreToken(sourceUri, token);
 
             var rootUri = GetRootUri(sourceUri);

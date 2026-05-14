@@ -6,20 +6,28 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Utility;
+using NuGet.Shared;
 
 namespace NuGet.Protocol
 {
     public class RepositorySignatureResourceProvider : ResourceProvider
     {
-        public RepositorySignatureResourceProvider()
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
+
+        public RepositorySignatureResourceProvider() : this(null) { }
+
+        internal RepositorySignatureResourceProvider(IEnvironmentVariableReader environmentVariableReader)
            : base(typeof(RepositorySignatureResource),
                  nameof(RepositorySignatureResource),
                  NuGetResourceProviderPositions.Last)
         {
+            _environmentVariableReader = environmentVariableReader;
         }
 
         public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
@@ -80,9 +88,20 @@ namespace NuGet.Protocol
                             },
                             async httpSourceResult =>
                             {
-                                var json = await httpSourceResult.Stream.AsJObjectAsync(token);
-
-                                return new RepositorySignatureResource(json, source);
+                                if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
+                                    || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                                {
+                                    var model = await JsonSerializer.DeserializeAsync(
+                                        httpSourceResult.Stream,
+                                        RepositorySignatureJsonContext.Default.RepositorySignatureModel,
+                                        token);
+                                    return new RepositorySignatureResource(model, source);
+                                }
+                                else
+                                {
+                                    var json = await httpSourceResult.Stream.AsJObjectAsync(token);
+                                    return new RepositorySignatureResource(json, source);
+                                }
                             },
                             log,
                             token);

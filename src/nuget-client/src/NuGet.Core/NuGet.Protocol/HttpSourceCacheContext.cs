@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 
@@ -10,7 +8,7 @@ namespace NuGet.Protocol.Core.Types
 {
     public class HttpSourceCacheContext
     {
-        private HttpSourceCacheContext(string rootTempFolder, TimeSpan maxAge, bool directDownload, SourceCacheContext cacheContext)
+        private HttpSourceCacheContext(string? rootTempFolder, TimeSpan maxAge, bool directDownload, SourceCacheContext cacheContext)
         {
             if (maxAge <= TimeSpan.Zero)
             {
@@ -40,7 +38,7 @@ namespace NuGet.Protocol.Core.Types
         /// A suggested root folder to drop temporary files under, it will get cleared by the
         /// disposal of the <see cref="SourceCacheContext"/> that was used to create this instance.
         /// </summary>
-        public string RootTempFolder { get; }
+        public string? RootTempFolder { get; }
 
         /// <summary>
         /// Inner cache context.

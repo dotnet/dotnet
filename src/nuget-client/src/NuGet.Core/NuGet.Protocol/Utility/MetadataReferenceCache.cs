@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Versioning;
@@ -22,7 +20,7 @@ namespace NuGet.Protocol
         /// If so, returns the cached instance.
         /// If not, caches <paramref name="s"/> and returns it.
         /// </summary>
-        public string GetString(string s)
+        public string? GetString(string? s)
         {
             if (ReferenceEquals(s, null))
             {
@@ -34,7 +32,7 @@ namespace NuGet.Protocol
                 return string.Empty;
             }
 
-            string cachedValue;
+            string? cachedValue;
 
             if (!_stringCache.TryGetValue(s, out cachedValue))
             {
@@ -55,14 +53,14 @@ namespace NuGet.Protocol
                 return NuGetVersion.Parse(s);
             }
 
-            NuGetVersion version;
+            NuGetVersion? version;
             if (!_versionCache.TryGetValue(s, out version))
             {
                 version = NuGetVersion.Parse(s);
                 _versionCache.Add(s, version);
             }
 
-            return version;
+            return version!;
         }
 
         /// <summary>
