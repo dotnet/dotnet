@@ -15,12 +15,19 @@ namespace System.Threading
     /// </summary>
     internal sealed partial class LowLevelLifoSemaphore
     {
+        // The spin count is chosen to be in the range of typical thread wake latency and some additional overhead,
+        // all assuming a single spin is calibrated to around 35 nanoseconds.
+        // The thread wake latency commonly measures at 2-10 microsecond (year 2026) and unlikely to drastically change.
         private const int DefaultSemaphoreSpinCountLimit = 256;
+        // The cooldown roughly serves as detection that the thread did not spend time being blocked.
+        // If it woke in under 4 microseconds, it was likely a fast/trivial wake without blocking.
+        private const int DefaultWakeCooldown = 4;
 
         private CacheLineSeparatedCounts _separated;
 
         private readonly int _maximumSignalCount;
-        private readonly int _maxSpinCount;
+        private readonly short _maxSpinCount;
+        private readonly short _threadWakeCooldownUsec;
         private readonly Action _onWait;
 
         // When we need to block threads we use a linked list of per-thread blockers.
@@ -60,16 +67,17 @@ namespace System.Threading
             _maximumSignalCount = maximumSignalCount;
             _onWait = onWait;
 
-            _maxSpinCount = AppContextConfigHelper.GetInt32ComPlusOrDotNetConfig(
+            _maxSpinCount = AppContextConfigHelper.GetInt16ComPlusOrDotNetConfig(
                 "System.Threading.ThreadPool.UnfairSemaphoreSpinLimit",
                 "ThreadPool_UnfairSemaphoreSpinLimit",
                 DefaultSemaphoreSpinCountLimit,
                 false);
 
-            // Do not accept unreasonably huge _maxSpinCount value to prevent overflows.
-            // Also, 1+ minute spins do not make sense.
-            if (_maxSpinCount > 1000000)
-                _maxSpinCount = DefaultSemaphoreSpinCountLimit;
+            _threadWakeCooldownUsec = AppContextConfigHelper.GetInt16ComPlusOrDotNetConfig(
+                "System.Threading.ThreadPool.UnfairSemaphoreWakeCooldown",
+                "ThreadPool_UnfairSemaphoreWakeCooldown",
+                DefaultWakeCooldown,
+                false);
         }
 
         public bool Wait(int timeoutMs)
@@ -214,7 +222,7 @@ namespace System.Threading
                 // and are hard to avoid completely.
                 // So, if a fast wake happened when parking was desired, we hold up the thread a bit
                 // before releasing.
-                long cooldown = Stopwatch.Frequency * 4 / 1000000;
+                long cooldown = Stopwatch.Frequency * _threadWakeCooldownUsec / 1000000;
                 while (Stopwatch.GetTimestamp() - waitStartTick < cooldown)
                 {
                     Thread.UninterruptibleSleep0();
