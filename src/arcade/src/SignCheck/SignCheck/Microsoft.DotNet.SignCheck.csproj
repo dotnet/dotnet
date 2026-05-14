@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildThisFileDirectory)..\Microsoft.SignCheck\ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <OutputType>Exe</OutputType>
     <SignAssembly>false</SignAssembly>
     <IsPackable>true</IsPackable>

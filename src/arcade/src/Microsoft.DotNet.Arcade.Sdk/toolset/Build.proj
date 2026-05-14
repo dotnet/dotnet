@@ -14,8 +14,6 @@
     DotNetBuildFromVMR              Identifies that the the repo is built from within the VMR.
     DotNetBuildPass                 While building the repo as part of the entire .NET stack, this parameter specifies which build pass the current build is part of.
     DotNetBuildSourceOnly           Build the repo as as part of the .NET stack in source-only mode, with no external dependencies.
-    DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
-    DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
     DotNetSymbolExpirationInDays    Symbol expiration time in days (defaults to 10 years).
     DotNetSignType                  Specifies the signing type: 'real' (default), 'test'.
     DotNetRuntimeSourceFeed         Storage account to lookup for the .Net runtime files
