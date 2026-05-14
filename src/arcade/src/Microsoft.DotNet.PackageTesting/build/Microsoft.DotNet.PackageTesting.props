@@ -5,8 +5,9 @@
     <DotNetPackageTestingAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.PackageTesting.dll</DotNetPackageTestingAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="GetCompatiblePackageTargetFrameworks" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" />
-  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" />
-  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="GetCompatiblePackageTargetFrameworks" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="VerifyClosure" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="VerifyTypes" AssemblyFile="$(DotNetPackageTestingAssembly)" Runtime="NET" Architecture="*" />
 
 </Project>

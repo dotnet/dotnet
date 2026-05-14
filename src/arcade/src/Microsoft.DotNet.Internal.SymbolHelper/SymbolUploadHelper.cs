@@ -32,7 +32,7 @@ namespace Microsoft.DotNet.Internal.SymbolHelper;
 public sealed class SymbolUploadHelper
 {
     public const string ConversionFolderName = "_convertedPdbs";
-    private const string AzureDevOpsResource = "499b84ac-1321-427f-aa17-267ca6975798";
+    private const string AzureDevOpsResource = "499b84ac-1321-427f-aa17-267ca6975798/.default";
     private const string PathEnvVarName = "AzureDevOpsToken";
     private static readonly FrozenSet<string> s_validExtensions = FrozenSet.ToFrozenSet(["", ".exe", ".dll", ".pdb", ".so", ".dbg", ".dylib", ".dwarf", ".r2rmap"]);
     private readonly ScopedTracerFactory _tracerFactory;
