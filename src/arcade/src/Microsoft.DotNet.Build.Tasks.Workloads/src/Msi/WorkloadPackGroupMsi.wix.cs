@@ -27,7 +27,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             _package = package;
         }
 
-        public override string Create() => "";
+        public override string Create()
+        {
+            using WixDocument productDoc = CreateProduct();
+
+            return "";
+        }
 
         public  ITaskItem Build2(string outputPath, ITaskItem[] iceSuppressions)
         {

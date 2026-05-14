@@ -19,7 +19,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         protected override string BaseOutputName => _package.ShortName;
 
-        public WorkloadPackMsi(WorkloadPackPackage package, string platform, IBuildEngine buildEngine, 
+        public WorkloadPackMsi(WorkloadPackPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediatOutputPath) :
             base(MsiMetadata.Create(package), buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
@@ -38,7 +38,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public override string Create()
         {
-            using WixDocument productDoc = CreateProduct();            
+            using WixDocument productDoc = CreateProduct();
 
             // Add the default installation directory based on the workload pack kind.
             string directoryReference = "InstallDir";
@@ -62,7 +62,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             return "";
         }
 
-        public  ITaskItem Build2(string outputPath, ITaskItem[]? iceSuppressions = null)
+        public ITaskItem Build2(string outputPath, ITaskItem[]? iceSuppressions = null)
         {
             //Create();
             //Directory.CreateDirectory(SourcePath);
