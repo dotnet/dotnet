@@ -8,6 +8,8 @@ using System.ComponentModel.Composition;
 using Microsoft;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Utilities;
+using NuGet.Commands.Restore.Utility;
+using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
@@ -27,6 +29,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private readonly IVsProjectThreadingService _threadingService;
         private readonly Lazy<IScriptExecutor> _scriptExecutor;
+        private readonly bool _usePackageSpecFactory;
 
         public RuntimeTypeHandle ProjectType => typeof(LegacyPackageReferenceProject).TypeHandle;
 
@@ -36,20 +39,24 @@ namespace NuGet.PackageManagement.VisualStudio
             Lazy<IScriptExecutor> scriptExecutor)
             : this(AsyncServiceProvider.GlobalProvider,
                    threadingService,
-                   scriptExecutor)
+                   scriptExecutor,
+                   EnvironmentVariableWrapper.Instance)
         { }
 
         public LegacyPackageReferenceProjectProvider(
             IAsyncServiceProvider vsServiceProvider,
             IVsProjectThreadingService threadingService,
-            Lazy<IScriptExecutor> scriptExecutor)
+            Lazy<IScriptExecutor> scriptExecutor,
+            IEnvironmentVariableReader environmentVariableReader)
         {
             Assumes.Present(vsServiceProvider);
             Assumes.Present(threadingService);
             Assumes.Present(scriptExecutor);
+            Assumes.Present(environmentVariableReader);
 
             _threadingService = threadingService;
             _scriptExecutor = scriptExecutor;
+            _usePackageSpecFactory = !bool.FalseString.Equals(PackageSpecFactory.EnvironmentVariableName, StringComparison.OrdinalIgnoreCase);
         }
 
         public NuGetProject TryCreateNuGetProject(
@@ -75,13 +82,14 @@ namespace NuGet.PackageManagement.VisualStudio
                 vsProjectAdapter.ProjectId,
                 projectServices,
                 _threadingService,
-                targetFramework);
+                targetFramework,
+                _usePackageSpecFactory);
         }
 
         /// <summary>
         /// Is this project a non-CPS package reference based csproj?
         /// </summary>
-        private INuGetProjectServices TryCreateProjectServices(
+        private VsManagedLanguagesProjectSystemServices TryCreateProjectServices(
             IVsProjectAdapter vsProjectAdapter, bool forceCreate)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

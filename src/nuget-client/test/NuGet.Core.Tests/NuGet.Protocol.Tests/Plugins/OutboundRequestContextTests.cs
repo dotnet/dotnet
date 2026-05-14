@@ -17,11 +17,10 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new OutboundRequestContext<HandshakeResponse>(
                     connection: null,
-                    request: new Message(
+                    request: MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
-                        method: MessageMethod.Handshake,
-                        payload: null),
+                        method: MessageMethod.Handshake),
                     timeout: TimeSpan.FromMinutes(1),
                     isKeepAlive: true,
                     cancellationToken: CancellationToken.None));
@@ -49,11 +48,10 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new OutboundRequestContext<HandshakeResponse>(
                     Mock.Of<IConnection>(),
-                    new Message(
+                    MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
-                        method: MessageMethod.Handshake,
-                        payload: null),
+                        method: MessageMethod.Handshake),
                     TimeSpan.FromMinutes(1),
                     isKeepAlive: true,
                     cancellationToken: CancellationToken.None,
@@ -295,11 +293,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 CancellationTokenSource = new CancellationTokenSource();
                 Connection = new Mock<IConnection>(MockBehavior.Strict);
                 Logger = new Mock<IPluginLogger>(MockBehavior.Strict);
-                Request = new Message(
+                Request = MessageUtilities.Create(
                     requestId: "a",
                     type: MessageType.Request,
-                    method: MessageMethod.Handshake,
-                    payload: null);
+                    method: MessageMethod.Handshake);
                 Context = new OutboundRequestContext<HandshakeResponse>(
                     Connection.Object,
                     Request,

@@ -9,6 +9,8 @@
     <Compile Include="$(SharedDirectory)\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
     <Compile Remove="$(SharedDirectory)\IsExternalInit.cs" />
     <Compile Remove="$(SharedDirectory)\RequiredModifierAttributes.cs" />
+    <Compile Remove="$(SharedDirectory)\AotCompatibilityAttributes.cs" />
+    <Compile Remove="$(SharedDirectory)\NuGetFeatureFlags.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />

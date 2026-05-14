@@ -37,6 +37,8 @@
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
+    <!-- MSBuild has a dependency on a vulnerable version of System.Security.Cryptography.Xml. Once MSBuild no longer has a transitive dependency on a vulnerable version, this can be removed -->
+    <PackageReference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
 
   <ItemGroup>

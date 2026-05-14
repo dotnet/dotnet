@@ -445,7 +445,7 @@ NuGet.Commands.ResolverRequest
 ~NuGet.Commands.ResolverRequest.Requestor.get -> NuGet.LibraryModel.LibraryIdentity
 ~NuGet.Commands.ResolverRequest.ResolverRequest(NuGet.LibraryModel.LibraryIdentity requestor, NuGet.LibraryModel.LibraryRange request) -> void
 NuGet.Commands.Restore.IItem
-NuGet.Commands.Restore.IItem.GetMetadata(string! name) -> string!
+NuGet.Commands.Restore.IItem.GetMetadata(string! name) -> string?
 NuGet.Commands.Restore.IItem.Identity.get -> string!
 NuGet.Commands.Restore.IProject
 NuGet.Commands.Restore.IProject.Directory.get -> string!
@@ -454,7 +454,7 @@ NuGet.Commands.Restore.IProject.OuterBuild.get -> NuGet.Commands.Restore.ITarget
 NuGet.Commands.Restore.IProject.TargetFrameworks.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.Commands.Restore.ITargetFramework!>!
 NuGet.Commands.Restore.ITargetFramework
 NuGet.Commands.Restore.ITargetFramework.GetItems(string! itemType) -> System.Collections.Generic.IReadOnlyList<NuGet.Commands.Restore.IItem!>!
-NuGet.Commands.Restore.ITargetFramework.GetProperty(string! propertyName) -> string!
+NuGet.Commands.Restore.ITargetFramework.GetProperty(string! propertyName) -> string?
 NuGet.Commands.Restore.Utility.PackageSpecFactory
 NuGet.Commands.RestoreArgs
 ~NuGet.Commands.RestoreArgs.AdditionalMessages.get -> System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage>

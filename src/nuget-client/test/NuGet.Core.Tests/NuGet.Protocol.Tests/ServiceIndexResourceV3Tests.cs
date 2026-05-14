@@ -3,31 +3,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Newtonsoft.Json.Linq;
-using Xunit;
 using NuGet.Protocol.Events;
+using NuGet.Protocol.Utility;
+using Xunit;
 
 namespace NuGet.Protocol.Tests
 {
     public class ServiceIndexResourceV3Tests
     {
-        [Fact]
-        public void Constructor_InitializesProperties()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Constructor_InitializesProperties(bool useStj)
         {
             var serviceIndex = CreateServiceIndex();
-            var expectedJson = serviceIndex.ToString();
             var expectedRequestTime = DateTime.UtcNow;
-            var resource = new ServiceIndexResourceV3(serviceIndex, expectedRequestTime);
+            var resource = CreateResource(serviceIndex, useStj, expectedRequestTime);
 
-            Assert.Equal(expectedJson, resource.Json);
             Assert.Equal(expectedRequestTime, resource.RequestTime);
             Assert.Equal(1, resource.Entries.Count);
             Assert.Equal("a", resource.Entries[0].Type);
             Assert.Equal("http://unit.test/b", resource.Entries[0].Uri.ToString());
         }
 
-        [Fact]
-        public void GetServiceEntries_InvokesDiagnosticEventForSourceResources()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetServiceEntries_InvokesDiagnosticEventForSourceResources(bool useStj)
         {
             // Arrange
             int eventInvokeCount = 0;
@@ -43,7 +47,7 @@ namespace NuGet.Protocol.Tests
             var content = CreateServiceIndexWithFourResourceTypesTwoHTTP();
 
             var expectedRequestTime = DateTime.UtcNow;
-            var resource = new ServiceIndexResourceV3(content, expectedRequestTime, new Configuration.PackageSource(source));
+            var resource = CreateResource(content, useStj, expectedRequestTime, new Configuration.PackageSource(source));
 
             // Act
             var result = resource.GetServiceEntries(ServiceTypes.SearchQueryService);
@@ -59,6 +63,21 @@ namespace NuGet.Protocol.Tests
 
             Assert.Equal(2, httpResourceCapture);
             Assert.Equal(2, eventInvokeCount);
+        }
+
+        private static ServiceIndexResourceV3 CreateResource(
+            JObject jObject,
+            bool useStj,
+            DateTime requestTime = default,
+            Configuration.PackageSource? packageSource = null)
+        {
+            if (useStj)
+            {
+                var model = JsonSerializer.Deserialize(jObject.ToString(), JsonContext.Default.ServiceIndexModel)!;
+                return new ServiceIndexResourceV3(model, requestTime, packageSource);
+            }
+
+            return new ServiceIndexResourceV3(jObject, requestTime, packageSource);
         }
 
         private static JObject CreateServiceIndexWithFourResourceTypesTwoHTTP()

@@ -64,10 +64,16 @@ namespace NuGet.Versioning
             switch (c)
             {
                 case 'P':
-                    PrettyPrint(builder, range, useParentheses: true);
+                    PrettyPrint(builder, range, useParentheses: true, showFloating: false);
                     break;
                 case 'p':
-                    PrettyPrint(builder, range, useParentheses: false);
+                    PrettyPrint(builder, range, useParentheses: false, showFloating: false);
+                    break;
+                case 'F':
+                    PrettyPrint(builder, range, useParentheses: true, showFloating: true);
+                    break;
+                case 'f':
+                    PrettyPrint(builder, range, useParentheses: false, showFloating: true);
                     break;
                 case 'L':
                     if (range.HasLowerBound)
@@ -241,7 +247,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// A pretty print representation of the VersionRange.
         /// </summary>
-        private static void PrettyPrint(StringBuilder builder, VersionRange range, bool useParentheses)
+        private static void PrettyPrint(StringBuilder builder, VersionRange range, bool useParentheses, bool showFloating)
         {
             if (!range.HasLowerBound
                 && !range.HasUpperBound)
@@ -269,7 +275,7 @@ namespace NuGet.Versioning
                 // normal case with a lower, upper, or both.
                 if (range.HasLowerBound)
                 {
-                    PrettyPrintBound(builder, range.MinVersion, range.IsMinInclusive, ">");
+                    PrettyPrintBound(builder, range.MinVersion, range.IsMinInclusive, ">", range.IsFloating && showFloating ? range.Float : null);
                 }
 
                 if (range.HasLowerAndUpperBounds)
@@ -279,7 +285,7 @@ namespace NuGet.Versioning
 
                 if (range.HasUpperBound)
                 {
-                    PrettyPrintBound(builder, range.MaxVersion, range.IsMaxInclusive, "<");
+                    PrettyPrintBound(builder, range.MaxVersion, range.IsMaxInclusive, "<", floatRange: null);
                 }
             }
 
@@ -289,7 +295,7 @@ namespace NuGet.Versioning
             }
         }
 
-        private static void PrettyPrintBound(StringBuilder builder, NuGetVersion version, bool inclusive, string boundChar)
+        private static void PrettyPrintBound(StringBuilder builder, NuGetVersion version, bool inclusive, string boundChar, FloatRange? floatRange)
         {
             builder.Append(boundChar);
 
@@ -302,7 +308,14 @@ namespace NuGet.Versioning
                 builder.Append(' ');
             }
 
-            VersionFormatter.AppendNormalized(builder, version);
+            if (floatRange != null)
+            {
+                floatRange.ToString(builder);
+            }
+            else
+            {
+                VersionFormatter.AppendNormalized(builder, version);
+            }
         }
     }
 }

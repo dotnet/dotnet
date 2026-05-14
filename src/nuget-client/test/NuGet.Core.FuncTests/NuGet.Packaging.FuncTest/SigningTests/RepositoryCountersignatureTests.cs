@@ -43,7 +43,7 @@ namespace NuGet.Packaging.FuncTest
             Assert.Equal("primarySignature", exception.ParamName);
         }
 
-        [Fact]
+        [NetFxCIOnlyFact]
         public async Task GetRepositoryCountersignature_WithNoCountersignatures_ReturnsNull()
         {
             using (var test = await Test.CreateWithoutRepositoryCountersignatureAsync(_fixture.TrustedTestCertificate.Source.Cert))
@@ -54,7 +54,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [NetFxCIOnlyFact]
         public async Task GetRepositoryCountersignature_WithRepositoryCountersignature_ReturnsInstance()
         {
             using (var test = await Test.CreateAsync(_fixture.TrustedTestCertificate.Source.Cert))
@@ -72,7 +72,7 @@ namespace NuGet.Packaging.FuncTest
             }
         }
 
-        [Fact]
+        [NetFxCIOnlyFact]
         public async Task GetSignatureValue_WithSha256_ReturnsValue()
         {
             using (var test = await Test.CreateAsync(_fixture.TrustedTestCertificate.Source.Cert))
