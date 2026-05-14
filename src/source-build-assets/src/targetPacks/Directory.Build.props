@@ -1,0 +1,29 @@
+<Project>
+
+  <Import Project="..\..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <NuGetAudit>false</NuGetAudit>
+    <RestoreIlTooling>true</RestoreIlTooling>
+
+    <IsShippingPackage>false</IsShippingPackage>
+    <ArtifactsNonShippingPackagesDir>$(ArtifactsReferenceOnlyPackagesDir)</ArtifactsNonShippingPackagesDir>
+
+    <Serviceable>true</Serviceable>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+
+    <!-- Disable NU5131: unclear warning caused by ref-only (https://github.com/NuGet/Home/issues/8684) -->
+    <NoWarn>$(NoWarn);NU5131</NoWarn>
+    <!-- Disable NU5128: NETStandard.Library 2.0.3 has dependency groups for ancient TFMs that
+         are filtered out by ExcludeTargetFrameworks; NuGet then warns about the mismatch. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- Disable NU5129: NuGet expects build/*.props, doesn't seem to consider build/{tfm}/*.props.
+         NETStandard.Library.NETFramework.2.0.1 only. -->
+    <NoWarn>$(NoWarn);NU5129</NoWarn>
+    <!-- Disable NU5109, NU5127: NuGet has some expectations and hints for _._ usage,
+         but NETStandard.Library.NETFramework.2.0.1 has a non-standard layout we replicate. -->
+    <NoWarn>$(NoWarn);NU5109;NU5127</NoWarn>
+  </PropertyGroup>
+
+</Project>

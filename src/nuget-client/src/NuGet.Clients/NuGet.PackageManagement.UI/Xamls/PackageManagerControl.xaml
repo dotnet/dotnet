@@ -1,0 +1,167 @@
+<UserControl
+  x:Class="NuGet.PackageManagement.UI.PackageManagerControl"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:nuget="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:imagingTheme="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
+  Background="{DynamicResource {x:Static nuget:Brushes.HeaderBackground}}"
+  Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+  imagingTheme:ImageThemingUtilities.ImageBackgroundColor="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource BrushToColorConverter}}"
+  x:Name="_self"
+  mc:Ignorable="d"
+  d:DesignHeight="523"
+  d:DesignWidth="900"
+  AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackageManager}">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <nuget:SharedResources/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <UserControl.CommandBindings>
+    <CommandBinding
+      Command="{x:Static nuget:Commands.FocusOnSearchBox}"
+      Executed="FocusOnSearchBox_Executed" />
+    <CommandBinding
+      Command="{x:Static nuget:Commands.UninstallPackageCommand}"
+      Executed="ExecuteUninstallPackageCommand" />
+    <CommandBinding
+      Command="{x:Static nuget:Commands.InstallPackageCommand}"
+      Executed="ExecuteInstallPackageCommand" />
+    <CommandBinding
+      Command="{x:Static nuget:Commands.RestartSearchCommand}" 
+      Executed="ExecuteRestartSearchCommand"/>
+    <CommandBinding
+      Command="{x:Static nuget:Commands.SearchPackageCommand}"
+      Executed="ExecuteSearchPackageCommand"/>
+    <CommandBinding
+      Command="{x:Static nuget:PackageManagerControlCommands.OpenExternalLink}"
+      Executed="ExecuteOpenExternalLink" />
+  </UserControl.CommandBindings>
+  <UserControl.InputBindings>
+    <KeyBinding
+      Command="{x:Static nuget:Commands.FocusOnSearchBox}"
+      Gesture="CTRL+L" />
+  </UserControl.InputBindings>
+
+  <ScrollViewer
+    VerticalScrollBarVisibility="Disabled"
+    HorizontalScrollBarVisibility="Auto">
+    <DockPanel
+      x:Name="_root"
+      LastChildFill="True"
+      Width="{Binding ActualWidth, ElementName=_self}"
+      KeyboardNavigation.TabNavigation="Cycle">
+      <DockPanel.MinWidth>
+        <MultiBinding Converter="{StaticResource AdditionConverter}">
+          <Binding Path="MinWidth" ElementName="_leftSideGridColumn" />
+          <Binding Path="Width" ElementName="_gridSplitter" />
+          <Binding Path="MinWidth" ElementName="_rightSideGridColumn" />
+        </MultiBinding>
+      </DockPanel.MinWidth>
+
+    <nuget:PackageManagerTopPanel
+      DockPanel.Dock="Top"
+      x:Name="_topPanel"
+      Margin="0,0,24,17"
+      SettingsButtonClicked="SettingsButtonClicked"
+      FilterChanged="Filter_SelectionChanged"
+      PrereleaseCheckChanged="CheckboxPrerelease_CheckChanged"
+      VulnerabilitiesCheckChanged="CheckboxVulnerabilties_CheckChanged"
+      SourceRepoListSelectionChanged="SourceRepoList_SelectionChanged" />
+
+    <Border
+      DockPanel.Dock="Top"
+      BorderThickness="0,1,0,0"
+      BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+      VerticalAlignment="Stretch">
+        <Grid
+          Width="{Binding ActualWidth, ElementName=_root}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition
+              x:Name="_leftSideGridColumn"
+              Width="67*">
+              <ColumnDefinition.MaxWidth>
+                <MultiBinding Converter="{StaticResource SubstractionConverter}">
+                  <Binding Path="ActualWidth" ElementName="_root" />
+                  <Binding Path="Width" ElementName="_gridSplitter" />
+                  <Binding Path="MinWidth" ElementName="_rightSideGridColumn" />
+                </MultiBinding>
+              </ColumnDefinition.MaxWidth>
+            </ColumnDefinition>
+            <ColumnDefinition Width="224*"/>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition
+              x:Name="_rightSideGridColumn"
+              Width="157*"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- left side -->
+          <Grid
+            Name="_leftSide"
+            Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <nuget:InfiniteScrollList
+              Grid.Row="0"
+              x:Name="_packageList"
+              AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackagesList}"
+              SelectionChanged="PackageList_SelectionChanged"
+              GroupExpansionChanged="PackageList_GroupExpansionChanged"
+              UpdateButtonClicked="PackageList_UpdateButtonClicked"
+              Width="{Binding ActualWidth, ElementName=_leftSide}"/>
+
+            <Border
+              Grid.Row="2"
+              BorderThickness="0,1,0,0"
+              x:Name="_legalDisclaimer"
+              BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+              Background="{DynamicResource {x:Static nuget:Brushes.LegalMessageBackground}}"
+              Width="{Binding ActualWidth, ElementName=_leftSide}">
+              <TextBlock
+                TextWrapping="Wrap"
+                Margin="24,12,24,12">
+                <Run
+                  x:Name="_legalDisclaimerText"
+                  Text="{x:Static nuget:Resources.Text_LegalDisclaimer}" />
+                <LineBreak />
+                <CheckBox
+                  Margin="0,12,0,12"
+                  AutomationProperties.LabeledBy="{Binding ElementName=_legalDisclaimerText}"
+                  Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
+                  Content="{x:Static nuget:Resources.DoNotShowThisAgain}"
+                  Checked="SuppressDisclaimerChecked" />
+              </TextBlock>
+            </Border>
+          </Grid>
+
+          <GridSplitter
+            x:Name="_gridSplitter"
+            Grid.Column="2"
+            Width="4"
+            HorizontalAlignment="Center"
+            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_ThumbName}"
+            AutomationProperties.HelpText="{x:Static nuget:Resources.Accessibility_ThumbHelp}"
+            Background="{DynamicResource {x:Static nuget:Brushes.SplitterBackgroundKey}}"
+            BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+            BorderThickness="1,0" />
+
+          <!-- right side -->
+          <nuget:DetailControl
+            x:Name="_packageDetail"
+            AutomationProperties.Name="{x:Static nuget:Resources.Accessibility_PackagesDetails}"
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            Margin="4,0,0,0" />
+        </Grid>
+      </Border>
+    </DockPanel>
+  </ScrollViewer>
+</UserControl>

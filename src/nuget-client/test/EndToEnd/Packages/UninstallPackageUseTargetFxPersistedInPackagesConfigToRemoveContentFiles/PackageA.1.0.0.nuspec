@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.0.0</version>
+    <authors>dotnetjunky</authors>
+    <owners />
+    <id>PackageA</id>
+    <title />
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>My package description.</description>
+    <dependencies>
+        <group targetFramework="net40">
+             <dependency id="PackageB" />
+        </group>
+    </dependencies>
+  </metadata>
+  <files>
+     <file src="content\net40\testA4.txt" target="content\net40\testA4.txt" />
+     <file src="content\net30\testA3.txt" target="content\net30\testA3.txt" />
+  </files>
+</package>

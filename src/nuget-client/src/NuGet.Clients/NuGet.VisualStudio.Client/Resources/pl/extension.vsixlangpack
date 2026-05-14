@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VsixLanguagePack Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema-lp/2010">
+  <LocalizedName>Menedżer pakietów NuGet</LocalizedName>
+  <LocalizedDescription>Kolekcja narzędzi umożliwiających zautomatyzowanie procesu instalacji, uaktualniania, konfiguracji i usuwania pakietów z projektu programu VS.</LocalizedDescription>
+  <MoreInfoUrl>https://github.com/NuGet/NuGet.Client</MoreInfoUrl>
+</VsixLanguagePack>

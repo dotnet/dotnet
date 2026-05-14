@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+    <readme>README.md</readme>
+  </metadata>
+
+  <files>
+    $CommonFileElements$
+    <file src="$ProjectDirectory$\README.md" target="" />
+    <file src="$ProjectDirectory$\Condition.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/Condition.g.cs" />
+    <file src="$ProjectDirectory$\EmbeddedAttribute.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/EmbeddedAttribute.g.cs" />
+    <file src="$ProjectDirectory$\FastFilter.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/FastFilter.g.cs" />
+    <file src="$ProjectDirectory$\FilterExpression.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/FilterExpression.g.cs" />
+    <file src="$ProjectDirectory$\FilterExpressionWrapper.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/FilterExpressionWrapper.g.cs" />
+    <file src="$ProjectDirectory$\FilterHelper.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/FilterHelper.g.cs" />
+    <file src="$ProjectDirectory$\TestCaseFilterExpression.cs" target="contentFiles/cs/netstandard2.0/VSTestFilterSource/TestCaseFilterExpression.g.cs" />
+  </files>
+</package>

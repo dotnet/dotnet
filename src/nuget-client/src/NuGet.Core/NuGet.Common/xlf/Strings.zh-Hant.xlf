@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">引數不能為 Null 或空白</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}</source>
+        <target state="translated">值必須大於或等於 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredEnvVar">
+        <source>Required environment variable '{0}' is not set. Try setting '{0}' and running the operation again.</source>
+        <target state="translated">未設定所需的環境變數 '{0}'。請嘗試設定 '{0}'，並再執行一次該作業。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredEnvVarsDotnet">
+        <source>Required environment variable '{0}' is not set. Try setting '{1}' or '{0}' and running the operation</source>
+        <target state="translated">未設定所需的環境變數 '{0}'。請嘗試設定 '{1}' 或 '{0}'，並執行作業</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimeUnits_Hour">
+        <source>{0:0.##} hr</source>
+        <target state="translated">{0:0.##} 小時</target>
+        <note>{0:0.##} is number of hours, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Millisecond">
+        <source>{0:0.##} ms</source>
+        <target state="translated">{0:0.##} 毫秒</target>
+        <note>{0:0.##} is number of milliseconds, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Minute">
+        <source>{0:0.##} min</source>
+        <target state="translated">{0:0.##} 分鐘</target>
+        <note>{0:0.##} is number of minutes, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Second">
+        <source>{0:0.##} sec</source>
+        <target state="translated">{0:0.##} 秒</target>
+        <note>{0:0.##} is number of seconds, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="UnableToDetemineClientVersion">
+        <source>Unable to determine the current NuGet client version.</source>
+        <target state="translated">無法判斷目前的 NuGet 用戶端版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToSetNuGetTempFolderPermission">
+        <source>User is unable to set permission to 700 while creating {0}, errno={1}.</source>
+        <target state="translated">使用者無法在建立 {0} 時將權限設定為 700，errno={1}。</target>
+        <note>{0} is a file path; {1} is an error code.</note>
+      </trans-unit>
+      <trans-unit id="UnauthorizedLockFail">
+        <source>Unable to obtain lock file access on '{0}' for operations on '{1}'. This may mean that a different user or administrator is holding this lock and that this process does not have permission to access it. If no other process is currently performing an operation on this file it may mean that an earlier NuGet process crashed and left an inaccessible lock file, in this case removing the file '{0}' will allow NuGet to continue.</source>
+        <target state="translated">無法為 '{1}' 上的作業取得 '{0}' 的鎖定檔案存取權。這可能表示有其他使用者或系統管理員正持有此鎖定，導致此處理序沒有權限加以存取。如果目前沒有其他處理序在此檔案上執行作業，則可能表示稍早有 NuGet 處理序損毀，讓鎖定檔案停留在無法存取的狀態，在這種情況下，移除檔案 '{0}' 可讓 NuGet 繼續執行。</target>
+        <note>{0} and {1} are both file paths.</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.</source>
+        <target state="translated">不支援雜湊演算法 '{0}'。支援的演算法包括: SHA512 和 SHA256。</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithmName">
+        <source>Hash algorithm '{0}' is unsupported.</source>
+        <target state="translated">不支援雜湊演算法 '{0}'。</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedSignatureAlgorithmName">
+        <source>Signature algorithm '{0}' is unsupported.</source>
+        <target state="translated">不支援簽章演算法 '{0}'。</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

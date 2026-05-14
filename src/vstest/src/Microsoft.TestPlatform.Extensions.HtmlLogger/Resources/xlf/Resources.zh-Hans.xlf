@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="HtmlFilePath">
+        <source>Html test results file : {0}</source>
+        <target state="translated">HTML 测试结果文件: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HtmlLoggerError">
+        <source>Html Logger Error : {0}</source>
+        <target state="translated">HTML 记录器错误: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrefixAndNameProvidedError">
+        <source>The parameters LogFileName and LogFilePrefix cannot be given together.</source>
+        <target state="translated">参数 LogFileName 和 LogFilePrefix 不能一起使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotGenerateUniqueFilePath">
+        <source>Cannot generate a unique file name for name '{0}' on path '{1}'.</source>
+        <target state="translated">无法为路径“{1}”上的名称“{0}”生成唯一的文件名。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

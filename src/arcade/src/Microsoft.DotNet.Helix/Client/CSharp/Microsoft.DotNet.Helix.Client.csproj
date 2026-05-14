@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Treat this as a tooling library. -->
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <Description>This package provides access to the Helix Api located at https://helix.dot.net/</Description>
+    <SwaggerDocumentUri>https://helix.dot.net/api/openapi.json</SwaggerDocumentUri>
+    <SwaggerClientName>HelixApi</SwaggerClientName>
+    <ExcludeFromSwaggerOutputDirectory>README.md</ExcludeFromSwaggerOutputDirectory>
+    <!-- For opt-in GenerateSwaggerCode target. Re-generate code under generated-code via `dotnet build /t:GenerateSwaggerCode`. -->
+    <UsingInTreeToolSwaggerGeneratorMSBuild>true</UsingInTreeToolSwaggerGeneratorMSBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Core" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(RepoRoot)LICENSE.TXT;$(RepoRoot)THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

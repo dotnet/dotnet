@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FileList Redist="Microsoft-Windows-CLRCoreComp.4.5" Name=".NET Framework Core 4.5" RuntimeVersion="4.5" ToolsVersion="4.0">
+  <File AssemblyName="System.Net" Version="3.9.0.0" PublicKeyToken="b03f5f7f11d50a3a" Culture="neutral" ProcessorArchitecture="MSIL" InGac="true" />
+  <File AssemblyName="System.ServiceModel" Version="3.9.0.0" PublicKeyToken="b77a5c561934e089" Culture="neutral" ProcessorArchitecture="MSIL" InGac="true" />
+  <File AssemblyName="System.Windows" Version="2.0.6.0" PublicKeyToken="7cec85d7bea7798e" Culture="neutral" ProcessorArchitecture="MSIL" InGac="true" />
+</FileList>

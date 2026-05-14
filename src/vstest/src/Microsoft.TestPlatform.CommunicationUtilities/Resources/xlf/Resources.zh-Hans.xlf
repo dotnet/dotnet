@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="AbortedTestRun">
+        <source>The active test run was aborted. Reason: {0}</source>
+        <target state="translated">活动的测试运行已中止。原因: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionClosed">
+        <source>An existing connection was forcibly closed by the remote host.</source>
+        <target state="translated">现有连接被远程主机强制关闭。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestDiscovery">
+        <source>The active test discovery was aborted.</source>
+        <target state="translated">活动的测试发现已中止。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestDiscoveryWithReason">
+        <source>The active test discovery was aborted. Reason: {0}</source>
+        <target state="translated">活动的测试发现已中止。原因: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessDidNotStartErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process failed to start, this might happen because of  antivirus preventing it from starting.</source>
+        <target state="translated">{0} 进程在等待 {2} 秒后仍未能连接到 {1} 进程。进程启动失败，这可能是由于防病毒软件阻止了其启动。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutProcessExitedErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. The process {3} - {4}, exited with exitCode {5}, and error output: \n{6}</source>
+        <target state="translated">{0} 进程在等待 {2} 秒后仍未能连接到 {1} 进程。进程 {3} - {4}，已退出，退出代码为 {5}，错误输出: \n{6}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutWithDetailsErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. When the timeout happened, the process {3} -{4} was still running. This most often happens because of machine slowness, please set environment variable {5} to increase timeout.</source>
+        <target state="translated">{0} 进程在等待 {2} 秒后仍未能连接到 {1} 进程。发生超时时，进程 {3} -{4} 仍在运行。这通常是由于计算机运行缓慢，请设置环境变量 {5} 以提高超时时间。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToCommunicateToTestHost">
+        <source>Unable to communicate with test host process.</source>
+        <target state="translated">无法与测试宿主进程通信。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedMessage">
+        <source>Unexpected message received. Expected MessageType : {0} Actual MessageType: {1}</source>
+        <target state="translated">收到意外消息。意外 MessageType: {0} 实际 MessageType: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionCheckFailed">
+        <source>Protocol version check failed. Make sure test runner and host are compatible.</source>
+        <target state="translated">协议版本检查失败。请确保测试运行程序和主机兼容。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionCheckTimedout">
+        <source>Failed to negotiate protocol, waiting for response timed out after {0} seconds. This may occur due to machine slowness, please set environment variable {1} to increase timeout.</source>
+        <target state="translated">未能协商协议，等待响应在 {0} 秒后超时。出现此问题可能是因为计算机性能较低，请设置环境变量 {1}，增加超时时间值。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionTimeoutErrorMessage">
+        <source>{0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout.</source>
+        <target state="translated">{0} 进程未能在 {2} 秒后连接到 {1} 进程。出现此问题可能是因为计算机性能较低，请设置环境变量 {3}，增加超时时间值。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestHostProcessCrashed">
+        <source>Test host process crashed</source>
+        <target state="translated">测试主机进程崩溃</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
+        <source>Cannot attach the debugger to the default test host.</source>
+        <target state="translated">无法将调试程序附加到默认测试主机。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

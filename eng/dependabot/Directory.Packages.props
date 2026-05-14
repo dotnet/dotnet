@@ -1,0 +1,10 @@
+<Project>
+
+  <!-- These are package versions updated by dependabot. They need to be in a separate directory
+       because it can't handle global.json due to https://github.com/dependabot/dependabot-core/issues/11479 -->
+
+  <ItemGroup>
+    <PackageVersion Include="Octokit" Version="14.0.0" />
+  </ItemGroup>
+
+</Project>

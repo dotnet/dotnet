@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Variables.wxi?>
+  <Fragment>
+    <Feature Id="F_RegistryKeys" Absent="disallow" AllowAdvertise="no" Description="Registry keys."
+             Display="hidden" InstallDefault="local" Level="1" Title="Workload Pack Registration" TypicalDefault="install">
+      <Component Id="C_InstalledPack" Win64="$(var.Win64)" Directory="TARGETDIR">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\dotnet\$(var.InstallationRecordKey)\$(var.Platform)\$(var.PackageId)\$(var.PackageVersion)">
+          <RegistryValue Name="DependencyProviderKey" Type="string" Value="$(var.DependencyProviderKeyName)" KeyPath="yes"/>
+          <RegistryValue Name="ProductCode" Type="string" Value="$(var.ProductCode)"/>
+          <RegistryValue Name="UpgradeCode" Type="string" Value="$(var.UpgradeCode)"/>
+          <RegistryValue Name="ProductVersion" Type="string" Value="$(var.ProductVersion)" />
+          <RegistryValue Name="ProductLanguage" Type="integer" Value="$(var.ProductLanguage)" />
+        </RegistryKey>
+      </Component>
+    </Feature>
+  </Fragment>
+</Wix>

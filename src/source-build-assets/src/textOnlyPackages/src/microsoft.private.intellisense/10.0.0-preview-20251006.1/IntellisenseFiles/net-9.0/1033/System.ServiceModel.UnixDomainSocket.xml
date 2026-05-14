@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.ServiceModel.UnixDomainSocket</name>
+  </assembly>
+  <members>
+    <member name="T:System.ServiceModel.Channels.UnixDomainSocketConnectionPoolSettings" />
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketConnectionPoolSettings.GroupName" />
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketConnectionPoolSettings.IdleTimeout" />
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketConnectionPoolSettings.LeaseTimeout" />
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketConnectionPoolSettings.MaxOutboundConnectionsPerEndpoint" />
+    <member name="T:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement" />
+    <member name="M:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.#ctor" />
+    <member name="M:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.#ctor(System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement)">
+      <param name="elementToBeCloned" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <param name="context" />
+      <typeparam name="TChannel" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.Clone" />
+    <member name="M:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <param name="context" />
+      <typeparam name="T" />
+    </member>
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.ConnectionPoolSettings" />
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.ExtendedProtectionPolicy" />
+    <member name="P:System.ServiceModel.Channels.UnixDomainSocketTransportBindingElement.Scheme" />
+    <member name="T:System.ServiceModel.Channels.UnixPosixIdentityBindingElement" />
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.#ctor" />
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.#ctor(System.ServiceModel.Channels.UnixPosixIdentityBindingElement)">
+      <param name="elementToBeCloned" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.BuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <param name="context" />
+      <typeparam name="TChannel" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.BuildClientStreamUpgradeProvider(System.ServiceModel.Channels.BindingContext)">
+      <param name="context" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.CanBuildChannelFactory``1(System.ServiceModel.Channels.BindingContext)">
+      <param name="context" />
+      <typeparam name="TChannel" />
+    </member>
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.Clone" />
+    <member name="M:System.ServiceModel.Channels.UnixPosixIdentityBindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)">
+      <param name="context" />
+      <typeparam name="T" />
+    </member>
+    <member name="T:System.ServiceModel.UnixDomainSocketBinding" />
+    <member name="M:System.ServiceModel.UnixDomainSocketBinding.#ctor" />
+    <member name="M:System.ServiceModel.UnixDomainSocketBinding.#ctor(System.ServiceModel.UnixDomainSocketSecurityMode)">
+      <param name="securityMode" />
+    </member>
+    <member name="M:System.ServiceModel.UnixDomainSocketBinding.CreateBindingElements" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.EnvelopeVersion" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.MaxBufferPoolSize" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.MaxBufferSize" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.MaxConnections" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.MaxReceivedMessageSize" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.ReaderQuotas" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.Scheme" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.Security" />
+    <member name="P:System.ServiceModel.UnixDomainSocketBinding.TransferMode" />
+    <member name="T:System.ServiceModel.UnixDomainSocketClientCredentialType" />
+    <member name="F:System.ServiceModel.UnixDomainSocketClientCredentialType.Certificate" />
+    <member name="F:System.ServiceModel.UnixDomainSocketClientCredentialType.Default" />
+    <member name="F:System.ServiceModel.UnixDomainSocketClientCredentialType.None" />
+    <member name="F:System.ServiceModel.UnixDomainSocketClientCredentialType.PosixIdentity" />
+    <member name="F:System.ServiceModel.UnixDomainSocketClientCredentialType.Windows" />
+    <member name="T:System.ServiceModel.UnixDomainSocketSecurity" />
+    <member name="M:System.ServiceModel.UnixDomainSocketSecurity.#ctor" />
+    <member name="P:System.ServiceModel.UnixDomainSocketSecurity.Mode" />
+    <member name="P:System.ServiceModel.UnixDomainSocketSecurity.Transport" />
+    <member name="T:System.ServiceModel.UnixDomainSocketSecurityMode" />
+    <member name="F:System.ServiceModel.UnixDomainSocketSecurityMode.None" />
+    <member name="F:System.ServiceModel.UnixDomainSocketSecurityMode.Transport" />
+    <member name="F:System.ServiceModel.UnixDomainSocketSecurityMode.TransportCredentialOnly" />
+    <member name="T:System.ServiceModel.UnixDomainSocketTransportSecurity" />
+    <member name="M:System.ServiceModel.UnixDomainSocketTransportSecurity.#ctor" />
+    <member name="P:System.ServiceModel.UnixDomainSocketTransportSecurity.ClientCredentialType" />
+    <member name="P:System.ServiceModel.UnixDomainSocketTransportSecurity.ExtendedProtectionPolicy" />
+    <member name="P:System.ServiceModel.UnixDomainSocketTransportSecurity.ProtectionLevel" />
+    <member name="P:System.ServiceModel.UnixDomainSocketTransportSecurity.SslProtocols" />
+  </members>
+</doc>

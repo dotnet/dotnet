@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="es">
+    <body>
+      <trans-unit id="CleanupException">
+        <source>An exception occurred while collecting final entries from the event log '{0}': {1}</source>
+        <target state="translated">Excepción al recopilar las entradas finales del registro de eventos "{0}": {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ContextNotFoundException">
+        <source>Event Log DataCollector did not find eventLogContext for DataCollectionContext: {0}</source>
+        <target state="translated">La propiedad DataCollector del registro de eventos no encontró eventLogContext para el contexto de DataCollectionContext: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostWarning">
+        <source>The '{0}' event log may have been cleared during collection; some events may not have been collected</source>
+        <target state="translated">Es posible que el registro de eventos "{0}" se haya borrado durante la recopilación; algunos eventos pueden no haberse recopilado</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadError">
+        <source>Unable to read event log '{0}' from computer '{1}'</source>
+        <target state="translated">No se puede leer el registro de eventos "{0}" desde el equipo "{1}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostError">
+        <source>The '{0}' event log has encountered an exception, some events might get lost. Error : {1}</source>
+        <target state="translated">El registro de eventos "{0}" ha encontrado una excepción; algunos eventos pueden haberse perdido. Error: {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

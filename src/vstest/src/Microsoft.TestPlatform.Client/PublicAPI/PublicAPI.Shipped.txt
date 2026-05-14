@@ -1,0 +1,90 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.ConnectToClientAndProcessRequests(int port, Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager! testRequestManager) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.DesignModeClient() -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.HandleParentProcessExit() -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.LaunchCustomHost(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo! testProcessStartInfo, System.Threading.CancellationToken cancellationToken) -> int
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.onAttachDebuggerAckRecieved -> System.Action<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message!>?
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.onCustomTestHostLaunchAckReceived -> System.Action<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message!>?
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.SendRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.SendTestMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.TestRunMessageHandler(object? sender, Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestRunMessageEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar.DesignModeTestEventsRegistrar(Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient! designModeClient) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar.LogWarning(string? message) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar.RegisterDiscoveryEvents(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IDiscoveryRequest! discoveryRequest) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar.RegisterTestRunEvents(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestRunRequest! testRunRequest) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar.UnregisterDiscoveryEvents(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IDiscoveryRequest! discoveryRequest) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestEventsRegistrar.UnregisterTestRunEvents(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestRunRequest! testRunRequest) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestHostLauncherFactory
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient.ConnectToClientAndProcessRequests(int port, Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager! testRequestManager) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient.HandleParentProcessExit() -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient.LaunchCustomHost(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo! defaultTestHostStartInfo, System.Threading.CancellationToken cancellationToken) -> int
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient.SendRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient.SendTestMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.Abort() -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.DiscoverAsync() -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.DiscoveryCriteria.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCriteria!
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.HandleDiscoveredTests(System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>? discoveredTestCases) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.HandleDiscoveryComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCompleteEventArgs! discoveryCompleteEventArgs, System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase!>? lastChunk) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.HandleLogMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.HandleRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.OnDiscoveredTests -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveredTestsEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.OnDiscoveryComplete -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCompleteEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.OnDiscoveryMessage -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestRunMessageEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.OnDiscoveryStart -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryStartEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Discovery.DiscoveryRequest.OnRawMessageReceived -> System.EventHandler<string!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.Abort() -> void
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.CancelAsync() -> void
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.DataCollectionMessage -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.DataCollectionMessageEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.ExecuteAsync() -> int
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.HandleLogMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.HandleRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.HandleTestRunComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCompleteEventArgs! runCompleteArgs, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs? lastChunkArgs, System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>? runContextAttachments, System.Collections.Generic.ICollection<string!>? executorUris) -> void
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.LaunchProcessWithDebuggerAttached(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProcessStartInfo! testProcessStartInfo) -> int
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.OnRawMessageReceived -> System.EventHandler<string!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.OnRunCompletion -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCompleteEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.OnRunStart -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunStartEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.OnRunStatsChange -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.State.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunState
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.TestRunConfiguration.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestRunConfiguration!
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.TestRunCriteria.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCriteria!
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.TestRunMessage -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestRunMessageEventArgs!>?
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.WaitForCompletion(int timeout) -> bool
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.AbortTestRun() -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.CancelDiscovery() -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.CancelTestRun() -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.CancelTestRunAttachmentsProcessing() -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.DiscoverTests(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryRequestPayload! discoveryPayload, Microsoft.VisualStudio.TestPlatform.Common.Interfaces.ITestDiscoveryEventsRegistrar! disoveryEventsRegistrar, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ProtocolConfig! protocolConfig) -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.InitializeExtensions(System.Collections.Generic.IEnumerable<string!>? pathToAdditionalExtensions, bool skipExtensionFilters) -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.ProcessTestRunAttachments(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunAttachmentsProcessingPayload! testRunAttachmentsProcessingPayload, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestRunAttachmentsProcessingEventsHandler! testRunAttachmentsProcessingEventsHandler, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ProtocolConfig! protocolConfig) -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.ResetOptions() -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestPlatformFactory
+Microsoft.VisualStudio.TestPlatform.Client.TestPlatformFactory.TestPlatformFactory() -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler.HandleLogMessage(Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestMessageLevel level, string? message) -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler.HandleProcessedAttachmentsChunk(System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>! attachments) -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler.HandleRawMessage(string! rawMessage) -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler.HandleTestRunAttachmentsProcessingComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunAttachmentsProcessingCompleteEventArgs! attachmentsProcessingCompleteEventArgs, System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>? lastChunk) -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler.HandleTestRunAttachmentsProcessingProgress(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunAttachmentsProcessingProgressEventArgs! attachmentsProcessingProgressEventArgs) -> void
+Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing.TestRunAttachmentsProcessingEventsHandler.TestRunAttachmentsProcessingEventsHandler(Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationManager! communicationManager) -> void
+static Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.Initialize() -> void
+static Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.Instance.get -> Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient?
+static Microsoft.VisualStudio.TestPlatform.Client.TestPlatformFactory.GetTestPlatform() -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestPlatform!
+virtual Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.Dispose(bool disposing) -> void
+virtual Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.HandleTestRunStatsChange(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunChangedEventArgs? testRunChangedArgs) -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.StopTestSession(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload! payload, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler! eventsHandler, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ProtocolConfig! protocolConfig) -> void
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.AttachDebuggerToProcess(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.AttachDebuggerInfo! attachDebuggerInfo, System.Threading.CancellationToken cancellationToken) -> bool
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient.AttachDebuggerToProcess(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.AttachDebuggerInfo! attachDebuggerInfo, System.Threading.CancellationToken cancellationToken) -> bool
+Microsoft.VisualStudio.TestPlatform.Client.Execution.TestRunRequest.AttachDebuggerToProcess(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.AttachDebuggerInfo! attachDebuggerInfo) -> bool
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.RunTests(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunRequestPayload! testRunRequestPayLoad, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.ITestHostLauncher3? customTestHostLauncher, Microsoft.VisualStudio.TestPlatform.Common.Interfaces.ITestRunEventsRegistrar! testRunEventsRegistrar, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ProtocolConfig! protocolConfig) -> void
+Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager.StartTestSession(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload! payload, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.ITestHostLauncher3? testHostLauncher, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler! eventsHandler, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ProtocolConfig! protocolConfig) -> void
+static Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeTestHostLauncherFactory.GetCustomHostLauncherForTestRun(Microsoft.VisualStudio.TestPlatform.Client.DesignMode.IDesignModeClient! designModeClient, bool debuggingEnabled) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.ITestHostLauncher3!
+Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.TestRequestManager.get -> Microsoft.VisualStudio.TestPlatform.Client.RequestHelper.ITestRequestManager?

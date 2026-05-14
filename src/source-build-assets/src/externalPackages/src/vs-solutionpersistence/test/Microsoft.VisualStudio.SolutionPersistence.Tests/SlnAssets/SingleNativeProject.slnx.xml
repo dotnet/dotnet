@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="Mobile" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="SingleNativeProject.vcxproj">
+    <Platform Solution="*|Mobile" Project="ARM64" />
+    <Build Solution="*|ARM64" Project="false" />
+  </Project>
+</Solution>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="fr">
+    <body>
+      <trans-unit id="CleanupException">
+        <source>An exception occurred while collecting final entries from the event log '{0}': {1}</source>
+        <target state="translated">Une exception s'est produite durant la collecte des entrées finales dans le journal des événements '{0}' : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ContextNotFoundException">
+        <source>Event Log DataCollector did not find eventLogContext for DataCollectionContext: {0}</source>
+        <target state="translated">Le DataCollector du journal des événements n'a pas trouvé eventLogContext pour DataCollectionContext : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostWarning">
+        <source>The '{0}' event log may have been cleared during collection; some events may not have been collected</source>
+        <target state="translated">Le journal des événements '{0}' a peut-être été effacé durant la collecte. Il est possible que certains événements n'aient pas été collectés</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadError">
+        <source>Unable to read event log '{0}' from computer '{1}'</source>
+        <target state="translated">Impossible de lire le journal des événements '{0}' de l'ordinateur '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostError">
+        <source>The '{0}' event log has encountered an exception, some events might get lost. Error : {1}</source>
+        <target state="translated">Le journal des événements '{0}' a rencontré une exception, certains événements risquent d'être perdus. Erreur : {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

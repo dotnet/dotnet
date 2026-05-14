@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <version>1.0.0</version>
+    <authors>kinhln</authors>
+    <owners />
+    <id>TestTargetFxInvalidInitScript</id>
+    <title />
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>My package description.</description>
+  </metadata>
+  <files>
+    <file src="content\test.txt" target="content\test.txt" />
+    <file src="tools\net30\init.ps1" target="tools\net30\init.ps1" />
+    <file src="tools\net30\install.ps1" target="tools\net30\install.ps1" />
+    <file src="tools\net30\uninstall.ps1" target="tools\net30\uninstall.ps1" />
+    <file src="tools\silverlight\init.ps1" target="tools\silverlight\init.ps1" />
+    <file src="tools\silverlight\install.ps1" target="tools\silverlight\install.ps1" />
+    <file src="tools\silverlight\uninstall.ps1" target="tools\silverlight\uninstall.ps1" />
+  </files>
+</package>

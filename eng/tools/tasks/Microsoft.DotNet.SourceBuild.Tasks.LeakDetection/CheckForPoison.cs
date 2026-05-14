@@ -1,0 +1,410 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+#nullable disable
+
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
+
+namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
+{
+    public class CheckForPoison : Task
+    {
+        /// <summary>
+        /// The files to check for poison and/or hash matches.  Zips and
+        /// nupkgs will be extracted and checked recursively.
+        /// %(Identity): Path to the initial set of files.
+        /// Add SourceBuildReferencePackage metadata and set to true to
+        /// indicate that the file comes from SBRP.
+        /// </summary>
+        [Required]
+        public ITaskItem[] FilesToCheck { get; set; }
+
+        /// <summary>
+        /// The path of the project directory to the FilesToCheck.
+        /// </summary>
+        [Required]
+        public string ProjectDirPath { get; set; }
+
+        /// <summary>
+        /// The output path for an XML poison report, if desired.
+        /// </summary>
+        public string PoisonReportOutputFilePath { get; set; }
+
+        /// <summary>
+        /// The paths of previously-generated file hash catalogs, if
+        /// hash checked is desired.  If not, only assembly attributes
+        /// and package marker files checks will be done.
+        /// </summary>
+        public ITaskItem[] HashCatalogFilePaths { get; set; }
+
+        /// <summary>
+        /// The marker file names to check for in poisoned nupkg files.
+        /// </summary>
+        public ITaskItem[] MarkerFileNames { get; set; }
+
+        /// <summary>
+        /// If true, fails the build if any poisoned files are found.
+        /// </summary>
+        public bool FailOnPoisonFound { get; set; }
+
+        /// <summary>
+        /// Use this directory instead of the system temp directory for staging.
+        /// Intended for Linux systems with limited /tmp space, like Azure VMs.
+        /// </summary>
+        public string OverrideTempPath { get; set; }
+
+        private static readonly string[] ZipFileExtensions =
+        {
+            ".zip",
+            ".nupkg",
+        };
+
+        private static readonly string[] TarFileExtensions =
+        {
+            ".tar",
+        };
+
+        private static readonly string[] TarGzFileExtensions =
+        {
+            ".tgz",
+            ".tar.gz",
+        };
+
+        private const string PoisonMarker = "POISONED";
+
+        private const string SbrpAttributeType = "System.Reflection.AssemblyMetadataAttribute";
+
+        private const string SbrpMetadataName = "IsSourceBuildReferencePackage";
+
+        private record CandidateFileEntry(string ExtractedPath, string DisplayPath, bool IsSourceBuildReferencePackage);
+
+        public override bool Execute()
+        {
+            IEnumerable<PoisonedFileEntry> poisons = GetPoisonedFiles(FilesToCheck, HashCatalogFilePaths, MarkerFileNames);
+
+            // if we should write out the poison report, do that
+            if (!string.IsNullOrWhiteSpace(PoisonReportOutputFilePath))
+            {
+                File.WriteAllText(PoisonReportOutputFilePath, (new XElement("PrebuiltLeakReport", poisons.OrderBy(p => p.Path).Select(p => p.ToXml()))).ToString());
+            }
+
+            if (FailOnPoisonFound && poisons.Count() > 0)
+            {
+                Log.LogError($"Forced build error: {poisons.Count()} marked files leaked to output.  See complete report '{PoisonReportOutputFilePath}' for details.");
+                return false;
+            }
+            else if (poisons.Count() > 0)
+            {
+                Log.LogMessage($"{poisons.Count()} marked files leaked to output.  See complete report '{PoisonReportOutputFilePath}' for details.");
+            }
+
+            return !Log.HasLoggedErrors;
+        }
+
+        /// <summary>
+        /// Internal helper to allow other tasks to check for poisoned files.
+        /// </summary>
+        /// <param name="initialCandidates">Initial queue of candidate files (will be cleared when done)</param>
+        /// <param name="catalogedPackagesFilePaths">File paths to the file hash catalog</param>
+        /// <param name="markerFileNames">Marker file names to check for in poisoned nupkgs</param>
+        /// <returns>List of poisoned packages and files found and reasons for each</returns>
+        internal IEnumerable<PoisonedFileEntry> GetPoisonedFiles(IEnumerable<ITaskItem> initialCandidates, IEnumerable<ITaskItem> catalogedPackagesFilePaths, IEnumerable<ITaskItem> markerFileNames)
+        {
+            IEnumerable<CatalogPackageEntry> catalogedPackages = catalogedPackagesFilePaths.SelectMany(file => ReadCatalog(file.ItemSpec));
+            var poisons = new List<PoisonedFileEntry>();
+            var candidateQueue = new Queue<CandidateFileEntry>(initialCandidates.Select(candidate =>
+                new CandidateFileEntry(candidate.ItemSpec,
+                    Utility.MakeRelativePath(candidate.ItemSpec, ProjectDirPath),
+                    candidate.GetMetadata(SbrpMetadataName) == "true")));
+
+            if (!string.IsNullOrWhiteSpace(OverrideTempPath))
+            {
+                Directory.CreateDirectory(OverrideTempPath);
+            }
+            var tempDirName = Path.GetRandomFileName();
+            var tempDir = Directory.CreateDirectory(Path.Combine(OverrideTempPath ?? Path.GetTempPath(), tempDirName));
+
+            while (candidateQueue.Any())
+            {
+                var candidate = candidateQueue.Dequeue();
+
+                // if this is a zip or NuPkg, extract it, check for the poison marker, and
+                // add its contents to the list to be checked.
+                if (ZipFileExtensions.Concat(TarFileExtensions).Concat(TarGzFileExtensions).Any(e => candidate.ExtractedPath.ToLowerInvariant().EndsWith(e)))
+                {
+                    Log.LogMessage($"Zip or NuPkg file to check: {candidate.ExtractedPath}");
+
+                    var tempCheckingDir = Path.Combine(tempDir.FullName, Path.GetFileNameWithoutExtension(candidate.ExtractedPath));
+                    PoisonedFileEntry result = ExtractAndCheckZipFileOnly(catalogedPackages, candidate, markerFileNames, tempCheckingDir, candidateQueue);
+                    if (result != null)
+                    {
+                        poisons.Add(result);
+                    }
+                }
+                else
+                {
+                    PoisonedFileEntry result = CheckSingleFile(catalogedPackages, candidate);
+                    if (result != null)
+                    {
+                        poisons.Add(result);
+                    }
+                }
+            }
+
+            tempDir.Delete(true);
+
+            return poisons;
+        }
+
+        private PoisonedFileEntry CheckSingleFile(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate)
+        {
+            // skip some common files that get copied verbatim from nupkgs - LICENSE, _._, etc as well as
+            // file types that we never care about - text files, .gitconfig, etc.
+            var fileToCheck = candidate.ExtractedPath;
+
+            var poisonEntry = new PoisonedFileEntry();
+            poisonEntry.Path = candidate.DisplayPath;
+
+            // There seems to be some weird issues with using file streams both for hashing and assembly loading.
+            // Copy everything into a memory stream to avoid these problems.
+            var memStream = new MemoryStream();
+            using (var stream = File.OpenRead(fileToCheck))
+            {
+                stream.CopyTo(memStream);
+            }
+
+            memStream.Seek(0, SeekOrigin.Begin);
+            using (var sha = SHA256.Create())
+            {
+                poisonEntry.Hash = sha.ComputeHash(memStream);
+            }
+
+            foreach (var p in catalogedPackages)
+            {
+                foreach (var matchingCatalogedFile in p.Files.Where(f => f.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false))
+                {
+                    poisonEntry.Type |= PoisonType.Hash;
+                    var match = new PoisonMatch
+                    {
+                        File = matchingCatalogedFile.Path,
+                        Package = Utility.MakeRelativePath(p.Path, ProjectDirPath),
+                        PackageId = p.Id,
+                        PackageVersion = p.Version,
+                    };
+                    poisonEntry.Matches.Add(match);
+                }
+            }
+
+            try
+            {
+                AssemblyName asm = AssemblyName.GetAssemblyName(fileToCheck);
+                if (!candidate.IsSourceBuildReferencePackage && IsAssemblyFromSbrp(fileToCheck))
+                {
+                    poisonEntry.Type |= PoisonType.SourceBuildReferenceAssembly;
+                }
+                else if (IsAssemblyPoisoned(fileToCheck))
+                {
+                    poisonEntry.Type |= PoisonType.AssemblyAttribute;
+                }
+            }
+            catch
+            {
+                // this is fine, it's just not an assembly.
+            }
+
+            return poisonEntry.Type != PoisonType.None ? poisonEntry : null;
+        }
+
+        private static bool IsAssemblyPoisoned(string path)
+        {
+            byte[] buffer = File.ReadAllBytes(path);
+            byte[] marker = Encoding.UTF8.GetBytes(PoisonMarker);
+
+            // Start at end of file and go backwards
+            // Marker is likely at the end and this saves time when
+            // we encounter a poisoned file.
+            for (int j = buffer.Length - marker.Length; j >= 0; j--)
+            {
+                int i;
+                for (i = 0; i < marker.Length && buffer[j + i] == marker[i]; i++) ;
+                if (i == marker.Length)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsAssemblyFromSbrp(string assemblyPath)
+        {
+            using var stream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var peReader = new PEReader(stream);
+
+            MetadataReader reader = peReader.GetMetadataReader();
+            return reader.CustomAttributes
+                    .Select(attrHandle => reader.GetCustomAttribute(attrHandle))
+                    .Any(attr => IsAttributeSbrp(reader, attr));
+        }
+
+        private static bool IsAttributeSbrp(MetadataReader reader, CustomAttribute attr)
+        {
+            string attributeType = string.Empty;
+
+            if (attr.Constructor.Kind == HandleKind.MemberReference)
+            {
+                var mref = reader.GetMemberReference((MemberReferenceHandle)attr.Constructor);
+                if (mref.Parent.Kind == HandleKind.TypeReference)
+                {
+                    var tref = reader.GetTypeReference((TypeReferenceHandle)mref.Parent);
+                    attributeType = $"{reader.GetString(tref.Namespace)}.{reader.GetString(tref.Name)}";
+                }
+                else if (mref.Parent.Kind == HandleKind.TypeDefinition)
+                {
+                    var tdef = reader.GetTypeDefinition((TypeDefinitionHandle)mref.Parent);
+                    attributeType = $"{reader.GetString(tdef.Namespace)}.{reader.GetString(tdef.Name)}";
+                }
+            }
+            else if (attr.Constructor.Kind == HandleKind.MethodDefinition)
+            {
+                var mdef = reader.GetMethodDefinition((MethodDefinitionHandle)attr.Constructor);
+                var tdef = reader.GetTypeDefinition(mdef.GetDeclaringType());
+                attributeType = $"{reader.GetString(tdef.Namespace)}.{reader.GetString(tdef.Name)}";
+            }
+
+            if (attributeType == SbrpAttributeType)
+            {
+                var decodedValue = attr.DecodeValue(DummyAttributeTypeProvider.Instance);
+                try
+                {
+                    return decodedValue.FixedArguments[0].Value?.ToString() == "source" && decodedValue.FixedArguments[1].Value?.ToString() == "source-build-reference-packages";
+                }
+                catch
+                {
+                    throw new InvalidOperationException($"{SbrpAttributeType} is not formatted properly with a key, value pair.");
+                }
+            }
+
+            return false;
+        }
+
+        private static PoisonedFileEntry ExtractAndCheckZipFileOnly(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate, IEnumerable<ITaskItem> markerFileNames, string tempDir, Queue<CandidateFileEntry> futureFilesToCheck)
+        {
+            var poisonEntry = new PoisonedFileEntry();
+            var zipToCheck = candidate.ExtractedPath;
+            poisonEntry.Path = zipToCheck;
+
+            using (var sha = SHA256.Create())
+            using (var stream = File.OpenRead(zipToCheck))
+            {
+                poisonEntry.Hash = sha.ComputeHash(stream);
+            }
+
+            // first check for a matching hash match
+            foreach (var matchingCatalogedPackage in catalogedPackages.Where(c => c.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false))
+            {
+                poisonEntry.Type |= PoisonType.Hash;
+                var match = new PoisonMatch
+                {
+                    Package = matchingCatalogedPackage.Path,
+                    PackageId = matchingCatalogedPackage.Id,
+                    PackageVersion = matchingCatalogedPackage.Version,
+                };
+                poisonEntry.Matches.Add(match);
+            }
+
+            // now extract and look for the marker file
+            if (ZipFileExtensions.Any(e => zipToCheck.ToLowerInvariant().EndsWith(e)))
+            {
+                ZipFile.ExtractToDirectory(zipToCheck, tempDir, true);
+            }
+            else if (TarFileExtensions.Any(e => zipToCheck.ToLowerInvariant().EndsWith(e)))
+            {
+                Directory.CreateDirectory(tempDir);
+                var psi = new ProcessStartInfo("tar", $"xf {zipToCheck} -C {tempDir}");
+                Process.Start(psi).WaitForExit();
+            }
+            else if (TarGzFileExtensions.Any(e => zipToCheck.ToLowerInvariant().EndsWith(e)))
+            {
+                Directory.CreateDirectory(tempDir);
+                var psi = new ProcessStartInfo("tar", $"xzf {zipToCheck} -C {tempDir}");
+                Process.Start(psi).WaitForExit();
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException($"Don't know how to decompress {zipToCheck}");
+            }
+
+            if (markerFileNames.Any(markerFileName => HasMarkerFile(tempDir, markerFileName.ItemSpec)))
+            {
+                poisonEntry.Type |= PoisonType.NupkgFile;
+            }
+
+            foreach (var child in Directory.EnumerateFiles(tempDir, "*", SearchOption.AllDirectories))
+            {
+                string displayPath = $"{candidate.DisplayPath}/{child.Replace(tempDir, string.Empty).TrimStart(Path.DirectorySeparatorChar)}";
+
+                futureFilesToCheck.Enqueue(new CandidateFileEntry(child, displayPath, candidate.IsSourceBuildReferencePackage));
+            }
+
+            return poisonEntry.Type != PoisonType.None ? poisonEntry : null;
+        }
+
+        private static IEnumerable<CatalogPackageEntry> ReadCatalog(string hashCatalogFilePath)
+        {
+            // catalog is optional, we can also just check assembly properties or nupkg marker files
+            if (string.IsNullOrWhiteSpace(hashCatalogFilePath))
+            {
+                return Enumerable.Empty<CatalogPackageEntry>();
+            }
+
+            var doc = new XmlDocument();
+            using (var stream = File.OpenRead(hashCatalogFilePath))
+            {
+                doc.Load(stream);
+            }
+            var packages = new List<CatalogPackageEntry>();
+            var catalog = doc.FirstChild;
+            foreach (XmlElement p in catalog.ChildNodes)
+            {
+                var package = new CatalogPackageEntry
+                {
+                    Id = p.Attributes["Id"].Value,
+                    Version = p.Attributes["Version"].Value,
+                    PoisonedHash = p.Attributes["PoisonedHash"]?.Value?.ToBytes(),
+                    Path = p.Attributes["Path"].Value,
+                };
+                packages.Add(package);
+                foreach (XmlNode f in p.ChildNodes)
+                {
+                    var fEntry = new CatalogFileEntry
+                    {
+                        PoisonedHash = f.Attributes["PoisonedHash"]?.Value?.ToBytes(),
+                        Path = f.Attributes["Path"].Value,
+                    };
+                    package.Files.Add(fEntry);
+                }
+            }
+            return packages;
+        }
+
+        private static bool HasMarkerFile(string nugetPackageDir, string markerFileName)
+            => !string.IsNullOrWhiteSpace(markerFileName) && File.Exists(Path.Combine(nugetPackageDir, markerFileName));
+    }
+}

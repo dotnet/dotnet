@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../GeneralOptionControl.resx">
+    <body>
+      <trans-unit id="BindingRedirectsHeader.Text">
+        <source>Binding Redirects</source>
+        <target state="translated">Bağlama Yeniden Yönlendirmeleri</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagementHeader.Text">
+        <source>Package Management</source>
+        <target state="translated">Paket Yönetimi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreHeader.Text">
+        <source>Package Restore</source>
+        <target state="translated">Paket Geri Yükleme</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.AccessibleName">
+        <source>Default Package Management Format</source>
+        <target state="translated">Varsayılan Paket Yönetim Biçimi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items1">
+        <source>PackageReference</source>
+        <target state="translated">PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatLabel.Text">
+        <source>Default package management format:</source>
+        <target state="translated">Varsayılan paket yönetim biçimi:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandButton.Text">
+        <source>&amp;Clear All NuGet Storage</source>
+        <target state="translated">NuGet Depolama Alanının Tamamını &amp;Temizle</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandStatusText.Text">
+        <source>http://example.com/help/locals</source>
+        <target state="translated">http://example.com/help/locals</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreAutomaticCheckBox.Text">
+        <source>Auto&amp;matically check for missing packages during build in Visual Studio</source>
+        <target state="translated">Visual Studio'da yapı oluşturulurken eksik paketleri &amp;otomatik olarak denetle</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreConsentCheckBox.Text">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">NuGet'in &amp;eksik paketleri indirmesine izin ver</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="showPackageManagementChooser.Text">
+        <source>Prompt for &amp;format selection on first package install</source>
+        <target state="translated">İlk paket yüklemesinde &amp;biçim seçimi istemi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="skipBindingRedirects.Text">
+        <source>Skip applying &amp;binding redirects</source>
+        <target state="translated">Uygulama ve &amp;bağlama yeniden yönlendirmelerini atla</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

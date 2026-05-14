@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="HtmlFilePath">
+        <source>Html test results file : {0}</source>
+        <target state="translated">HTML 테스트 결과 파일: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HtmlLoggerError">
+        <source>Html Logger Error : {0}</source>
+        <target state="translated">HTML 로거 오류: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrefixAndNameProvidedError">
+        <source>The parameters LogFileName and LogFilePrefix cannot be given together.</source>
+        <target state="translated">LogFileName 및 LogFilePrefix 매개 변수는 함께 제공할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotGenerateUniqueFilePath">
+        <source>Cannot generate a unique file name for name '{0}' on path '{1}'.</source>
+        <target state="translated">‘{1}’ 경로에서 ‘{0}’ 이름에 대한 고유 파일 이름을 생성할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

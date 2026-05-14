@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.AI.OpenAI</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.AI.OpenAIClientExtensions">
+      <summary>Provides extension methods for working with <see cref="T:OpenAI.OpenAIClient" />s.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsIChatClient(OpenAI.Assistants.AssistantClient,OpenAI.Assistants.Assistant,System.String)">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.IChatClient" /> for use with this <see cref="T:OpenAI.Assistants.AssistantClient" />.</summary>
+      <param name="assistantClient">The <see cref="T:OpenAI.Assistants.AssistantClient" /> instance to be accessed as an <see cref="T:Microsoft.Extensions.AI.IChatClient" />.</param>
+      <param name="assistant">The <see cref="T:OpenAI.Assistants.Assistant" /> with which to interact.</param>
+      <param name="threadId">
+            An optional existing thread identifier for the chat session. This serves as a default, and may be overridden per call to
+            <see cref="M:Microsoft.Extensions.AI.IChatClient.GetResponseAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatOptions,System.Threading.CancellationToken)" /> or <see cref="M:Microsoft.Extensions.AI.IChatClient.GetStreamingResponseAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatOptions,System.Threading.CancellationToken)" /> via the <see cref="P:Microsoft.Extensions.AI.ChatOptions.ConversationId" />
+            property. If no thread ID is provided via either mechanism, a new thread will be created for the request.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="assistant" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.IChatClient" /> instance configured to interact with the specified agent and thread.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsIChatClient(OpenAI.Assistants.AssistantClient,System.String,System.String)">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.IChatClient" /> for use with this <see cref="T:OpenAI.Assistants.AssistantClient" />.</summary>
+      <param name="assistantClient">The <see cref="T:OpenAI.Assistants.AssistantClient" /> instance to be accessed as an <see cref="T:Microsoft.Extensions.AI.IChatClient" />.</param>
+      <param name="assistantId">The unique identifier of the assistant with which to interact.</param>
+      <param name="threadId">
+            An optional existing thread identifier for the chat session. This serves as a default, and may be overridden per call to
+            <see cref="M:Microsoft.Extensions.AI.IChatClient.GetResponseAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatOptions,System.Threading.CancellationToken)" /> or <see cref="M:Microsoft.Extensions.AI.IChatClient.GetStreamingResponseAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatOptions,System.Threading.CancellationToken)" /> via the <see cref="P:Microsoft.Extensions.AI.ChatOptions.ConversationId" />
+            property. If no thread ID is provided via either mechanism, a new thread will be created for the request.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="assistantId" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.ArgumentException">
+        <paramref name="assistantId" /> is empty or composed entirely of whitespace.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.IChatClient" /> instance configured to interact with the specified agent and thread.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsIChatClient(OpenAI.Chat.ChatClient)">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.IChatClient" /> for use with this <see cref="T:OpenAI.Chat.ChatClient" />.</summary>
+      <param name="chatClient">The client.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="chatClient" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.IChatClient" /> that can be used to converse via the <see cref="T:OpenAI.Chat.ChatClient" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsIChatClient(OpenAI.Responses.OpenAIResponseClient)">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.IChatClient" /> for use with this <see cref="T:OpenAI.Responses.OpenAIResponseClient" />.</summary>
+      <param name="responseClient">The client.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="responseClient" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.IChatClient" /> that can be used to converse via the <see cref="T:OpenAI.Responses.OpenAIResponseClient" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsIEmbeddingGenerator(OpenAI.Embeddings.EmbeddingClient,System.Nullable{System.Int32})">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.IEmbeddingGenerator`2" /> for use with this <see cref="T:OpenAI.Embeddings.EmbeddingClient" />.</summary>
+      <param name="embeddingClient">The client.</param>
+      <param name="defaultModelDimensions">The number of dimensions to generate in each embedding.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="embeddingClient" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.IEmbeddingGenerator`2" /> that can be used to generate embeddings via the <see cref="T:OpenAI.Embeddings.EmbeddingClient" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsIImageGenerator(OpenAI.Images.ImageClient)">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.IImageGenerator" /> for use with this <see cref="T:OpenAI.Images.ImageClient" />.</summary>
+      <param name="imageClient">The client.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="imageClient" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.IImageGenerator" /> that can be used to generate images via the <see cref="T:OpenAI.Images.ImageClient" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.OpenAIClientExtensions.AsISpeechToTextClient(OpenAI.Audio.AudioClient)">
+      <summary>Gets an <see cref="T:Microsoft.Extensions.AI.ISpeechToTextClient" /> for use with this <see cref="T:OpenAI.Audio.AudioClient" />.</summary>
+      <param name="audioClient">The client.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="audioClient" /> is <see langword="null" />.</exception>
+      <returns>An <see cref="T:Microsoft.Extensions.AI.ISpeechToTextClient" /> that can be used to transcribe audio via the <see cref="T:OpenAI.Audio.AudioClient" />.</returns>
+    </member>
+    <member name="T:OpenAI.Assistants.MicrosoftExtensionsAIAssistantsExtensions">
+      <summary>Provides extension methods for working with content associated with OpenAI.Assistants.</summary>
+    </member>
+    <member name="M:OpenAI.Assistants.MicrosoftExtensionsAIAssistantsExtensions.AsOpenAIAssistantsFunctionToolDefinition(Microsoft.Extensions.AI.AIFunctionDeclaration)">
+      <summary>Creates an OpenAI <see cref="T:OpenAI.Assistants.FunctionToolDefinition" /> from an <see cref="T:Microsoft.Extensions.AI.AIFunctionDeclaration" />.</summary>
+      <param name="function">The function to convert.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="function" /> is <see langword="null" />.</exception>
+      <returns>An OpenAI <see cref="T:OpenAI.Assistants.FunctionToolDefinition" /> representing <paramref name="function" />.</returns>
+    </member>
+    <member name="T:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions">
+      <summary>Provides extension methods for working with content associated with OpenAI.Chat.</summary>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsChatMessages(System.Collections.Generic.IEnumerable{OpenAI.Chat.ChatMessage})">
+      <summary>Creates a sequence of <see cref="T:Microsoft.Extensions.AI.ChatMessage" /> instances from the specified input messages.</summary>
+      <param name="messages">The input messages to convert.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="messages" /> is <see langword="null" />.</exception>
+      <returns>A sequence of Microsoft.Extensions.AI chat messages.</returns>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsChatResponse(OpenAI.Chat.ChatCompletion,OpenAI.Chat.ChatCompletionOptions)">
+      <summary>Creates a Microsoft.Extensions.AI <see cref="T:Microsoft.Extensions.AI.ChatResponse" /> from a <see cref="T:OpenAI.Chat.ChatCompletion" />.</summary>
+      <param name="chatCompletion">The <see cref="T:OpenAI.Chat.ChatCompletion" /> to convert to a <see cref="T:Microsoft.Extensions.AI.ChatResponse" />.</param>
+      <param name="options">The options employed in the creation of the response.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="chatCompletion" /> is <see langword="null" />.</exception>
+      <returns>A converted <see cref="T:Microsoft.Extensions.AI.ChatResponse" />.</returns>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsChatResponseUpdatesAsync(System.Collections.Generic.IAsyncEnumerable{OpenAI.Chat.StreamingChatCompletionUpdate},OpenAI.Chat.ChatCompletionOptions,System.Threading.CancellationToken)">
+      <summary>
+            Creates a sequence of Microsoft.Extensions.AI <see cref="T:Microsoft.Extensions.AI.ChatResponseUpdate" /> instances from the specified
+            sequence of OpenAI <see cref="T:OpenAI.Chat.StreamingChatCompletionUpdate" /> instances.</summary>
+      <param name="chatCompletionUpdates">The update instances.</param>
+      <param name="options">The options employed in the creation of the response.</param>
+      <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to monitor for cancellation requests. The default is <see cref="P:System.Threading.CancellationToken.None" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="chatCompletionUpdates" /> is <see langword="null" />.</exception>
+      <returns>A sequence of converted <see cref="T:Microsoft.Extensions.AI.ChatResponseUpdate" /> instances.</returns>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsOpenAIChatCompletion(Microsoft.Extensions.AI.ChatResponse)">
+      <summary>Creates an OpenAI <see cref="T:OpenAI.Chat.ChatCompletion" /> from a <see cref="T:Microsoft.Extensions.AI.ChatResponse" />.</summary>
+      <param name="response">The <see cref="T:Microsoft.Extensions.AI.ChatResponse" /> to convert to a <see cref="T:OpenAI.Chat.ChatCompletion" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="response" /> is <see langword="null" />.</exception>
+      <returns>A converted <see cref="T:OpenAI.Chat.ChatCompletion" />.</returns>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsOpenAIChatMessages(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatOptions)">
+      <summary>Creates a sequence of OpenAI <see cref="T:OpenAI.Chat.ChatMessage" /> instances from the specified input messages.</summary>
+      <param name="messages">The input messages to convert.</param>
+      <param name="options">The options employed while processing <paramref name="messages" />.</param>
+      <returns>A sequence of OpenAI chat messages.</returns>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsOpenAIChatTool(Microsoft.Extensions.AI.AIFunctionDeclaration)">
+      <summary>Creates an OpenAI <see cref="T:OpenAI.Chat.ChatTool" /> from an <see cref="T:Microsoft.Extensions.AI.AIFunctionDeclaration" />.</summary>
+      <param name="function">The function to convert.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="function" /> is <see langword="null" />.</exception>
+      <returns>An OpenAI <see cref="T:OpenAI.Chat.ChatTool" /> representing <paramref name="function" />.</returns>
+    </member>
+    <member name="M:OpenAI.Chat.MicrosoftExtensionsAIChatExtensions.AsOpenAIStreamingChatCompletionUpdatesAsync(System.Collections.Generic.IAsyncEnumerable{Microsoft.Extensions.AI.ChatResponseUpdate},System.Threading.CancellationToken)">
+      <summary>
+            Creates a sequence of OpenAI <see cref="T:OpenAI.Chat.StreamingChatCompletionUpdate" /> instances from the specified
+            sequence of <see cref="T:Microsoft.Extensions.AI.ChatResponseUpdate" /> instances.</summary>
+      <param name="responseUpdates">The update instances.</param>
+      <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to monitor for cancellation requests. The default is <see cref="P:System.Threading.CancellationToken.None" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="responseUpdates" /> is <see langword="null" />.</exception>
+      <returns>A sequence of converted <see cref="T:Microsoft.Extensions.AI.ChatResponseUpdate" /> instances.</returns>
+    </member>
+    <member name="T:OpenAI.Realtime.MicrosoftExtensionsAIRealtimeExtensions">
+      <summary>Provides extension methods for working with content associated with OpenAI.Realtime.</summary>
+    </member>
+    <member name="M:OpenAI.Realtime.MicrosoftExtensionsAIRealtimeExtensions.AsOpenAIConversationFunctionTool(Microsoft.Extensions.AI.AIFunctionDeclaration)">
+      <summary>Creates an OpenAI <see cref="T:OpenAI.Realtime.ConversationFunctionTool" /> from an <see cref="T:Microsoft.Extensions.AI.AIFunctionDeclaration" />.</summary>
+      <param name="function">The function to convert.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="function" /> is <see langword="null" />.</exception>
+      <returns>An OpenAI <see cref="T:OpenAI.Realtime.ConversationFunctionTool" /> representing <paramref name="function" />.</returns>
+    </member>
+    <member name="T:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions">
+      <summary>Provides extension methods for working with content associated with OpenAI.Responses.</summary>
+    </member>
+    <member name="M:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions.AsChatMessages(System.Collections.Generic.IEnumerable{OpenAI.Responses.ResponseItem})">
+      <summary>Creates a sequence of <see cref="T:Microsoft.Extensions.AI.ChatMessage" /> instances from the specified input items.</summary>
+      <param name="items">The input messages to convert.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="items" /> is <see langword="null" />.</exception>
+      <returns>A sequence of <see cref="T:Microsoft.Extensions.AI.ChatMessage" /> instances.</returns>
+    </member>
+    <member name="M:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions.AsChatResponse(OpenAI.Responses.OpenAIResponse,OpenAI.Responses.ResponseCreationOptions)">
+      <summary>Creates a Microsoft.Extensions.AI <see cref="T:Microsoft.Extensions.AI.ChatResponse" /> from an <see cref="T:OpenAI.Responses.OpenAIResponse" />.</summary>
+      <param name="response">The <see cref="T:OpenAI.Responses.OpenAIResponse" /> to convert to a <see cref="T:Microsoft.Extensions.AI.ChatResponse" />.</param>
+      <param name="options">The options employed in the creation of the response.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="response" /> is <see langword="null" />.</exception>
+      <returns>A converted <see cref="T:Microsoft.Extensions.AI.ChatResponse" />.</returns>
+    </member>
+    <member name="M:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions.AsChatResponseUpdatesAsync(System.Collections.Generic.IAsyncEnumerable{OpenAI.Responses.StreamingResponseUpdate},OpenAI.Responses.ResponseCreationOptions,System.Threading.CancellationToken)">
+      <summary>
+            Creates a sequence of Microsoft.Extensions.AI <see cref="T:Microsoft.Extensions.AI.ChatResponseUpdate" /> instances from the specified
+            sequence of OpenAI <see cref="T:OpenAI.Responses.StreamingResponseUpdate" /> instances.</summary>
+      <param name="responseUpdates">The update instances.</param>
+      <param name="options">The options employed in the creation of the response.</param>
+      <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> to monitor for cancellation requests. The default is <see cref="P:System.Threading.CancellationToken.None" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="responseUpdates" /> is <see langword="null" />.</exception>
+      <returns>A sequence of converted <see cref="T:Microsoft.Extensions.AI.ChatResponseUpdate" /> instances.</returns>
+    </member>
+    <member name="M:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions.AsOpenAIResponse(Microsoft.Extensions.AI.ChatResponse,Microsoft.Extensions.AI.ChatOptions)">
+      <summary>Creates an OpenAI <see cref="T:OpenAI.Responses.OpenAIResponse" /> from a <see cref="T:Microsoft.Extensions.AI.ChatResponse" />.</summary>
+      <param name="response">The response to convert.</param>
+      <param name="options">The options employed in the creation of the response.</param>
+      <returns>The created <see cref="T:OpenAI.Responses.OpenAIResponse" />.</returns>
+    </member>
+    <member name="M:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions.AsOpenAIResponseItems(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.ChatMessage},Microsoft.Extensions.AI.ChatOptions)">
+      <summary>Creates a sequence of OpenAI <see cref="T:OpenAI.Responses.ResponseItem" /> instances from the specified input messages.</summary>
+      <param name="messages">The input messages to convert.</param>
+      <param name="options">The options employed while processing <paramref name="messages" />.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="messages" /> is <see langword="null" />.</exception>
+      <returns>A sequence of OpenAI response items.</returns>
+    </member>
+    <member name="M:OpenAI.Responses.MicrosoftExtensionsAIResponsesExtensions.AsOpenAIResponseTool(Microsoft.Extensions.AI.AIFunctionDeclaration)">
+      <summary>Creates an OpenAI <see cref="T:OpenAI.Responses.ResponseTool" /> from an <see cref="T:Microsoft.Extensions.AI.AIFunctionDeclaration" />.</summary>
+      <param name="function">The function to convert.</param>
+      <exception cref="T:System.ArgumentNullException">
+        <paramref name="function" /> is <see langword="null" />.</exception>
+      <returns>An OpenAI <see cref="T:OpenAI.Responses.ResponseTool" /> representing <paramref name="function" />.</returns>
+    </member>
+  </members>
+</doc>

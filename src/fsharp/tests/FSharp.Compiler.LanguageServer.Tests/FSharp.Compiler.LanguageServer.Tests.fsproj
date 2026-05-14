@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>$(FSharpNetCoreProductTargetFramework)</TargetFramework>
+		<!-- xUnit3 requires test projects to be executable -->
+		<OutputType>Exe</OutputType>
+		<IsPackable>false</IsPackable>
+		<!-- Let xUnit3 generate the entry point -->
+		<GenerateProgramFile>false</GenerateProgramFile>
+		<DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+		<ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+		<Optimize>false</Optimize>
+		<Tailcalls>false</Tailcalls>
+		<OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
+		<NoWarn>$(NoWarn);FS0988</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Protocol.fs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="resources\**" CopyToOutputDirectory="Never" CopyToPublishDirectory="PreserveNewest" />
+		<EmbeddedResource Remove="Properties\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="17.13.6-preview" />
+	</ItemGroup>
+
+	<ItemGroup>
+
+		<ProjectReference Include="$(FSharpTestsRoot)\FSharp.Test.Utilities\FSharp.Test.Utilities.fsproj" />
+		<ProjectReference Include="$(FSharpSourcesRoot)\FSharp.Compiler.LanguageServer\FSharp.Compiler.LanguageServer.fsproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(FSHARPCORE_USE_PACKAGE)' != 'true'">
+		<ProjectReference Include="$(FSharpSourcesRoot)\FSharp.Core\FSharp.Core.fsproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(FSHARPCORE_USE_PACKAGE)' == 'true'">
+		<PackageReference Include="FSharp.Core" Version="$(FSharpCoreShippedPackageVersionValue)" />
+	</ItemGroup>
+
+
+</Project>

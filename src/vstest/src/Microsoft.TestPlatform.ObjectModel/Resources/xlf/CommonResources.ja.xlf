@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="ja">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">パラメーターを null または空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">テストの実行で、別のフレームワークとプラットフォームのバージョンを使用する DLL が検出されました。以下の DLL は、現在の設定と一致しません。現在のフレームワーク: {0}、プラットフォーム: {1}。{2}これらの設定の管理について詳しくは、{3} にアクセスしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">提供されたどのテスト コンテナーも、テスト実行のプラットフォーム アーキテクチャおよび .NET Framework 設定に一致しません。プラットフォーム: {0}、.NET Framework: {1}。これらの設定の管理方法の詳細については、http://go.microsoft.com/fwlink/?LinkID=330428 にアクセスしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">指定された設定ファイルは、必要な形式に準拠していません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0} では、フレームワーク {1} と プラットフォーム {2} が使用されます。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

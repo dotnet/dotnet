@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.TestPlatform.QTools.Assets</id>
+    <version>2.0.0</version>
+    <title>Microsoft.TestPlatform.QTools.Assets</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE_MIT.txt</license>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>MSDia typelib for reading debug symbols from managed code.</description>
+    <copyright>Copyright © Microsoft Corporation</copyright>
+    <contentFiles>
+      <!-- Include Assets as Content -->
+      <files include="**/*.*" buildAction="None" copyToOutput="true" flatten="false" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="package\licenses\LICENSE_MIT.txt" target="" />
+    <file src="BingWebTest\bin\*.*" target="contentFiles\any\any\WebTestAssets" />
+  </files>
+</package>

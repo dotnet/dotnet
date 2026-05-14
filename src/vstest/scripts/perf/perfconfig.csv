@@ -1,0 +1,4 @@
+payload;adapter;runners;discoverygoal;executiongoal
+"MSTest10kPassing"; "MsTest"; ("vstest.console"); (3500); (9500)
+"NUnit10kPassing"; "nUnit"; ("vstest.console","nunit.consolerunner"); (6500, 3500); (45000,40000)
+"XUnit10kPassing"; "xUnit"; ("vstest.console","xunit.runner.console"); (6500, 0); (50000, 38000)

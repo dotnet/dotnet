@@ -1,0 +1,9 @@
+# Contains the list of template PackageReference entries to exclude from version comparison
+# between the MSFT & SB SDK.
+#
+# Format: nupkgId,projPath,PackageName
+# Suffix (msft or sb) can be appended after a pipe character to limit to one SDK type.
+#
+# This list is processed using Microsoft.Extensions.FileSystemGlobbing.Matcher
+#
+# '*' in exclusions match zero or more characters.

@@ -1,0 +1,422 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
+using System.IO;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Shared;
+using Microsoft.Build.Tasks;
+using Xunit;
+
+#nullable disable
+
+namespace Microsoft.Build.UnitTests
+{
+    /// <summary>
+    /// Test FileState utility class
+    /// </summary>
+    public class FileStateTests
+    {
+        /// <summary>
+        /// Helper to create AbsolutePath for tests, bypassing rooted check for test paths.
+        /// </summary>
+        private static AbsolutePath TestPath(string path) => new AbsolutePath(path, ignoreRootedCheck: true);
+
+        [Fact]
+        public void BadNoName()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                new FileState(TestPath(""));
+            });
+        }
+        [Fact]
+        public void BadCharsCtorOK()
+        {
+            new FileState(TestPath("|"));
+        }
+
+        [Fact]
+        public void BadTooLongCtorOK()
+        {
+            new FileState(TestPath(new String('x', 5000)));
+        }
+
+        [WindowsFullFrameworkOnlyFact(additionalMessage: ".NET Core 2.1+ no longer validates paths: https://github.com/dotnet/corefx/issues/27779#issuecomment-371253486. On Unix there is no invalid file name characters.")]
+        public void BadChars()
+        {
+            var state = new FileState(TestPath("|"));
+            Assert.Throws<ArgumentException>(() => { var time = state.LastWriteTime; });
+        }
+
+        [LongPathSupportDisabledFact]
+        public void BadTooLongLastWriteTime()
+        {
+            Helpers.VerifyAssertThrowsSameWay(
+                delegate () { var x = new FileInfo(new String('x', 5000)).LastWriteTime; },
+                delegate () { var x = new FileState(TestPath(new String('x', 5000))).LastWriteTime; });
+        }
+
+        [Fact]
+        public void Exists()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.Exists, state.FileExists);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void Name()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.FullName, state.Path);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void IsDirectoryTrue()
+        {
+            var state = new FileState(TestPath(Path.GetTempPath()));
+
+            Assert.True(state.IsDirectory);
+        }
+
+        [Fact]
+        public void LastWriteTime()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.LastWriteTime, state.LastWriteTime);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void LastWriteTimeUtc()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.LastWriteTimeUtc, state.LastWriteTimeUtcFast);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void Length()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.Length, state.Length);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void ReadOnly()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.IsReadOnly, state.IsReadOnly);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void ExistsReset()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.Exists, state.FileExists);
+                File.Delete(file);
+                Assert.True(state.FileExists);
+                state.Reset();
+                Assert.False(state.FileExists);
+            }
+            finally
+            {
+                if (File.Exists(file))
+                {
+                    File.Delete(file);
+                }
+            }
+        }
+
+        [Fact]
+        public void NameReset()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.FullName, state.Path);
+                string originalName = info.FullName;
+                string oldFile = file;
+                file = oldFile + "2";
+                File.Move(oldFile, file);
+                Assert.Equal(originalName, state.Path);
+                state.Reset();
+                Assert.Equal(originalName, state.Path); // Name is from the constructor, didn't change
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void LastWriteTimeReset()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.LastWriteTime, state.LastWriteTime);
+
+                var time = new DateTime(2111, 1, 1);
+                info.LastWriteTime = time;
+
+                Assert.NotEqual(time, state.LastWriteTime);
+                state.Reset();
+                Assert.Equal(time, state.LastWriteTime);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void LastWriteTimeUtcReset()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.LastWriteTimeUtc, state.LastWriteTimeUtcFast);
+
+                var time = new DateTime(2111, 1, 1);
+                info.LastWriteTime = time;
+
+                Assert.NotEqual(time.ToUniversalTime(), state.LastWriteTimeUtcFast);
+                state.Reset();
+                Assert.Equal(time.ToUniversalTime(), state.LastWriteTimeUtcFast);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "netcore-osx-failing")]
+        [Trait("Category", "netcore-linux-failing")]
+        public void LengthReset()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.Length, state.Length);
+                File.WriteAllText(file, "x");
+
+                Assert.Equal(info.Length, state.Length);
+                state.Reset();
+                info.Refresh();
+                Assert.Equal(info.Length, state.Length);
+            }
+            finally
+            {
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void ReadOnlyReset()
+        {
+            string file = null;
+
+            try
+            {
+                file = FileUtilities.GetTemporaryFile();
+                FileInfo info = new FileInfo(file);
+                FileState state = new FileState(TestPath(file));
+
+                Assert.Equal(info.IsReadOnly, state.IsReadOnly);
+                info.IsReadOnly = !info.IsReadOnly;
+                state.Reset();
+                Assert.True(state.IsReadOnly);
+            }
+            finally
+            {
+                (new FileInfo(file)).IsReadOnly = false;
+                File.Delete(file);
+            }
+        }
+
+        [Fact]
+        public void ExistsButDirectory()
+        {
+            Assert.Equal(new FileInfo(Path.GetTempPath()).Exists, new FileState(TestPath(Path.GetTempPath())).FileExists);
+            Assert.True(new FileState(TestPath(Path.GetTempPath())).IsDirectory);
+        }
+
+        [Fact]
+        public void ReadOnlyOnDirectory()
+        {
+            Assert.Equal(new FileInfo(Path.GetTempPath()).IsReadOnly, new FileState(TestPath(Path.GetTempPath())).IsReadOnly);
+        }
+
+        [Fact]
+        public void LastWriteTimeOnDirectory()
+        {
+            Assert.Equal(new FileInfo(Path.GetTempPath()).LastWriteTime, new FileState(TestPath(Path.GetTempPath())).LastWriteTime);
+        }
+
+        [Fact]
+        public void LastWriteTimeUtcOnDirectory()
+        {
+            Assert.Equal(new FileInfo(Path.GetTempPath()).LastWriteTimeUtc, new FileState(TestPath(Path.GetTempPath())).LastWriteTimeUtcFast);
+        }
+
+        [Fact]
+        public void LengthOnDirectory()
+        {
+            Helpers.VerifyAssertThrowsSameWay(delegate () { var x = new FileInfo(Path.GetTempPath()).Length; }, delegate () { var x = new FileState(TestPath(Path.GetTempPath())).Length; });
+        }
+
+        [Fact]
+        [Trait("Category", "netcore-osx-failing")]
+        [Trait("Category", "netcore-linux-failing")]
+        public void DoesNotExistLastWriteTime()
+        {
+            string file = Guid.NewGuid().ToString("N");
+
+            Assert.Equal(new FileInfo(file).LastWriteTime, new FileState(TestPath(file)).LastWriteTime);
+        }
+
+        [Fact]
+        [Trait("Category", "netcore-osx-failing")]
+        [Trait("Category", "netcore-linux-failing")]
+        public void DoesNotExistLastWriteTimeUtc()
+        {
+            string file = Guid.NewGuid().ToString("N");
+
+            Assert.Equal(new FileInfo(file).LastWriteTimeUtc, new FileState(TestPath(file)).LastWriteTimeUtcFast);
+        }
+
+        [Fact]
+        public void DoesNotExistLength()
+        {
+            string file = Guid.NewGuid().ToString("N"); // presumably doesn't exist
+
+            Helpers.VerifyAssertThrowsSameWay(delegate () { var x = new FileInfo(file).Length; }, delegate () { var x = new FileState(TestPath(file)).Length; });
+        }
+
+        [Fact]
+        public void DoesNotExistIsDirectory()
+        {
+            Assert.Throws<FileNotFoundException>(() =>
+            {
+                string file = Guid.NewGuid().ToString("N"); // presumably doesn't exist
+
+                var x = new FileState(TestPath(file)).IsDirectory;
+            });
+        }
+        [Fact]
+        public void DoesNotExistDirectoryOrFileExists()
+        {
+            string file = Guid.NewGuid().ToString("N"); // presumably doesn't exist
+
+            Assert.Equal(Directory.Exists(file), new FileState(TestPath(file)).DirectoryExists);
+        }
+
+        [Fact]
+        public void DoesNotExistParentFolderNotFound()
+        {
+            string file = Guid.NewGuid().ToString("N") + "\\x"; // presumably doesn't exist
+
+            Assert.False(new FileState(TestPath(file)).FileExists);
+            Assert.False(new FileState(TestPath(file)).DirectoryExists);
+        }
+    }
+}

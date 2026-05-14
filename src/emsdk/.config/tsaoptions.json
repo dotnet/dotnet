@@ -1,0 +1,10 @@
+{
+    "instanceUrl": "https://devdiv.visualstudio.com/",
+    "template": "TFSDEVDIV",
+    "projectName": "DEVDIV",
+    "areaPath": "DevDiv\\NET Runtime\\WebAssembly",
+    "iterationPath": "DevDiv",
+    "notificationAliases": [ "runtimerepo-infra@microsoft.com" ],
+    "repositoryName": "emsdk",
+    "codebaseName": "emsdk"
+}

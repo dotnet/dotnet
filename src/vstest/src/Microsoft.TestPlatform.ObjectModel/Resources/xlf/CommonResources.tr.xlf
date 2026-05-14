@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="tr">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Parametre null veya boş olamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">Test çalıştırması, farklı çerçeve ve platform sürümlerini kullanan DLL’ler algıladı. Aşağıdaki DLL’ler, {0} çerçevesi ve {1} platformu olarak seçilmiş geçerli ayarlarla eşleşmiyor. {2}Bu ayarları yönetme hakkında daha fazla ayrıntı için {3} bölümüne gidin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">Belirtilen test kapsayıcılarının hiçbiri test çalıştırmasına ait Platform Mimarisi ve .NET Framework ayarlarıyla eşleşmiyor. Platform: {0} .NET Framework: {1}. Bu ayarları yönetmeye ilişkin ayrıntılar için bkz. http://go.microsoft.com/fwlink/?LinkID=330428.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">Belirtilen ayarlar dosyası, gerekli biçime uymuyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0}, {1} Çerçevesini ve {2} Platformunu kullanır.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

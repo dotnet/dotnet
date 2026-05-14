@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
+  <PropertyGroup>
+    <GetVsixSourceItemsDependsOn>$(GetVsixSourceItemsDependsOn);_IncludeVsixLocalOnlyItems</GetVsixSourceItemsDependsOn>
+    <GetVsixSourceItemsDependsOn>$(GetVsixSourceItemsDependsOn);_IncludeNuGetResolvedAssets</GetVsixSourceItemsDependsOn>
+
+    <!-- 
+      Transitive references get passed to all VS command line tools related to VSIX, VSCT, etc ... processsing. 
+      These tools don't have RSP files and the full set of transitive references end up overflowing the allowed 
+      command line length for Windows. These projects must manually specify references to avoid this overflow.
+    -->
+    <DisableTransitiveProjectReferences Condition="'$(IsVsixProject)' == 'true'">true</DisableTransitiveProjectReferences>
+
+    <!-- Setting this to the same as CreateVsixContainer ensures that the VS SDK doesn't try to look for a source.extension.vsixmanifest
+         when we don't have one. -->
+    <CopyVsixManifestToOutput>$(CreateVsixContainer)</CopyVsixManifestToOutput>
+    <SetupProductArch Condition="'$(SetupProductArch)' == ''">Neutral</SetupProductArch>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <VSIXSourceItem>
+      <Visible>false</Visible>
+    </VSIXSourceItem>
+  </ItemDefinitionGroup>
+  
+  <!-- CPS doesn't show these items by default, but we want to show them. -->
+  <ItemGroup>
+    <AvailableItemName Include="VSCTCompile" />
+  </ItemGroup>
+
+  <Target Name="_IncludeVsixLocalOnlyItems">
+    <!-- This is shamelessly ripped from Microsoft.VsSDK.targets -->
+    <ItemGroup>
+      <VSIXSourceItemLocalOnly Include="@(Content)" Condition="'%(Content.IncludeInVSIXLocalOnly)' == 'true' and '%(Content.VSIXSubPath)' == ''">
+        <!-- Sets VSIXSubPath for content items that are nonlinked files -->
+        <VSIXSubPath Condition="'%(Content.Link)' == ''">%(Content.RelativeDir)</VSIXSubPath>
+        <!-- Sets VSIXSubPath for content items that are linked files -->
+        <VSIXSubPath Condition="'%(Content.Link)' != ''">$([System.IO.Path]::GetDirectoryName(%(Content.Link)))</VSIXSubPath>
+      </VSIXSourceItemLocalOnly>
+
+      <VSIXSourceItemLocalOnly Include="@(Content)" Condition="'%(Content.IncludeInVSIXLocalOnly)' == 'true' and '%(Content.VSIXSubPath)' != ''" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Disable auto-including referenced libraries to VSIX by default.
+    Instead, set ForceIncludeInVsix="true" on PackageReference items to include them.
+  -->
+
+  <PropertyGroup>
+    <IncludeCopyLocalReferencesInVSIXContainer>false</IncludeCopyLocalReferencesInVSIXContainer>
+  </PropertyGroup>
+
+  <Target Name="_IncludeNuGetResolvedAssets"
+          DependsOnTargets="ResolvePackageDependenciesForBuild"
+          BeforeTargets="GeneratePkgDef">
+    <!--
+      We join PackageReference list with ReferenceCopyLocalPaths items to get the list of dlls to include in the VSIX.
+    -->
+    <ItemGroup>
+      <_NuGetPackageToIncludeInVsix Include="@(PackageReference)" Condition="'%(PackageReference.ForceIncludeInVsix)' == 'true' or '%(PackageReference.PkgDefEntry)' != ''"/>
+      
+      <_RuntimeAssetsByPackageId Include="@(ReferenceCopyLocalPaths->'%(NuGetPackageId)')" Condition="%(ReferenceCopyLocalPaths.AssetType) == 'runtime'">
+        <Path>%(ReferenceCopyLocalPaths.Identity)</Path>
+      </_RuntimeAssetsByPackageId>
+    </ItemGroup>
+
+    <JoinItems Left="@(_RuntimeAssetsByPackageId)" LeftKey="" LeftMetadata="*"
+               Right="@(_NuGetPackageToIncludeInVsix)" RightKey="" RightMetadata="*">
+      <Output TaskParameter="JoinResult" ItemName="_RuntimeAssetsWithMetadata" />
+    </JoinItems>
+
+    <ItemGroup>
+      <!-- Include runtime assets in the VSIX -->
+      <VSIXCopyLocalReferenceSourceItem Include="@(_RuntimeAssetsWithMetadata->'%(Path)')" Condition="'%(_RuntimeAssetsWithMetadata.ForceIncludeInVsix)' == 'true'">
+        <ForceIncludeInVsix>true</ForceIncludeInVsix>
+        <Private>true</Private>
+        <Ngen Condition="'%(_RuntimeAssetsWithMetadata.Optimization)' == 'true'">true</Ngen>
+        <NgenArchitecture Condition="'%(_RuntimeAssetsWithMetadata.Optimization)' == 'true'">All</NgenArchitecture>
+        <NgenPriority Condition="'%(_RuntimeAssetsWithMetadata.Optimization)' == 'true'">3</NgenPriority>
+      </VSIXCopyLocalReferenceSourceItem>
+
+      <!-- Add PkgDef* items for assets that specify PkgDefEntry -->
+      <PkgDefBindingRedirect Include="@(_RuntimeAssetsWithMetadata->'%(Path)')" Condition="'%(_RuntimeAssetsWithMetadata.PkgDefEntry)' == 'BindingRedirect'" />
+      <PkgDefCodeBase Include="@(_RuntimeAssetsWithMetadata->'%(Path)')" Condition="'%(_RuntimeAssetsWithMetadata.PkgDefEntry)' == 'CodeBase'" />
+
+      <!-- Check that _NuGetPackageToIncludeInVsix doesn't list unreferenced package -->
+      <_UnknownAssets Include="@(_NuGetPackageToIncludeInVsix)" Condition="'%(_NuGetPackageToIncludeInVsix.ForceIncludeInVsix)' == 'true'" />
+      <_UnknownAssets Remove="@(_RuntimeAssetsWithMetadata)" />
+    </ItemGroup>
+
+    <Error Text="PackageReferences with IncludeInVsix=true have no runtime assets applicable to $(TargetFramework): @(_UnknownAssets)"
+           Condition="'@(_UnknownAssets)' != ''"/>
+  </Target>
+
+  <!-- Microsoft.VisualStudio.SDK.EmbedInteropTypes sets a bunch of EmbedInteropTypes attributes, but Roslyn is somewhat special
+       and has to do things differently. After the NuGet package does its thing, do further changes. -->
+  <Target Name="FixVSSDKEmbeddableAssemblies" AfterTargets="LinkVSSDKEmbeddableAssemblies" BeforeTargets="FindReferenceAssembliesForReferences">
+    <ItemGroup>
+      <!-- The official NuGet package tries to embed EnvDTE, which is problematic because we implement the interfaces and use
+           them in generic type parameters. Because of this, we can't embed them. -->
+      <ReferencePath Condition="'%(FileName)' == 'EnvDTE80'
+                             or '%(FileName)' == 'EnvDTE90'
+                             or '%(FileName)' == 'EnvDTE100'">
+        <EmbedInteropTypes>false</EmbedInteropTypes>
+      </ReferencePath>
+
+      <!-- The official NuGet package for Microsoft.VisualStudio.Shell.Design references this DLL in non-NoPIA way, so we can't embed it either -->
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.VisualStudio.Designer.Interfaces'">
+        <EmbedInteropTypes>false</EmbedInteropTypes>
+      </ReferencePath>
+
+      <!-- We reference Microsoft.VisualStudio.CodeAnalysis.Sdk.UI, which requires us to reference these DLLs non-NoPIA way -->
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.VisualStudio.Shell.Interop.10.0'
+                             or '%(FileName)' == 'Microsoft.VisualStudio.Shell.Interop.11.0'">
+        <EmbedInteropTypes>false</EmbedInteropTypes>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+
+  <!-- Add License and Third Party Notices files into each VSIX. -->
+  <ItemGroup Condition="'$(CreateVsixContainer)' == 'true'">
+    <Content Include="$(MSBuildThisFileDirectory)\..\..\src\Setup\Roslyn.VsixLicense\EULA.rtf">
+      <Link>EULA.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)\..\..\src\Setup\Roslyn.ThirdPartyNotices\ThirdPartyNotices.rtf">
+      <Link>ThirdPartyNotices.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+
+    <PackageReference Include="Microsoft.DiaSymReader.Native" ExcludeAssets="all"/>
+  </ItemGroup>
+
+  <Target Name="_CheckDeploymentTargetVisualStudioVersion"
+          Condition="'$(DeployExtension)' == 'true' and '$(CreateVsixContainer)' == 'true'"
+          BeforeTargets="DeployVsixExtensionFiles"
+          DependsOnTargets="GetVsixDeploymentPath">
+
+    <Error Text="Deployment to Dev16 is not supported in this *-vs-deps branch. Use the corresponding non-VS branch." 
+           Condition="$([MSBuild]::ValueOrDefault('$(ExtensionsPath)', '').Contains('16.0'))"/>
+  </Target>
+
+  <Import Project="GeneratePkgDef.targets" Condition="'$(MSBuildRuntimeType)' != 'Core' and '$(GeneratePkgDefFile)' == 'true' and '$(BuildingForLiveUnitTesting)' != 'true'" />
+
+  <!-- Import workarounds for the fast up to date check, but only if VsSdkTargetsImported is set which is set in the VS SDK targets themselves;
+       if we don't have that condition, we might try to include it when we don't have some targets we depend on, and things will break -->
+  <Import Project="VisualStudio.FastUpToDateCheckWorkarounds.targets" Condition="'$(VsSdkTargetsImported)' == 'true'"/>
+
+  <!--
+    Workaround for missing dependency publishing feature in the VS SDK.
+    
+    Relies on the following convention: When a project reference publish outputs (i.e. more than standard build outputs) need to be packaged into a VSIX,
+    the project should define PublishedProjectOutputGroup target and include it in ProjectRefrence.IncludeOutputGroupsInVSIX.
+
+    PublishedProjectOutputGroup target may gather all the publishing items to be packaged into the VSIX using PublishItemsOutputGroup target,
+    but should not depend on Publish target (i.e. invoking PublishedProjectOutputGroup target should not trigger actual publishing).
+
+    Target PublishProjectReferencesForVsixCreation will take care of publishing for all ProjectReferences with PublishedProjectOutputGroup.
+  -->
+  
+  <PropertyGroup>
+    <CreateVsixContainerDependsOn>$(CreateVsixContainerDependsOn);PublishProjectReferencesForVsixCreation</CreateVsixContainerDependsOn>
+    <CollectUpToDateCheckInputDesignTimeDependsOn>$(CollectUpToDateCheckInputDesignTimeDependsOn);AddUpToDateCheckItemsForPublishProjectReferences</CollectUpToDateCheckInputDesignTimeDependsOn>
+  </PropertyGroup>
+
+  <Target Name="PublishProjectReferencesForVsixCreation">
+    <ItemGroup>
+      <_ProjectsToPublish Include="@(ProjectReference)" Condition="$([MSBuild]::ValueOrDefault('%(ProjectReference.IncludeOutputGroupsInVSIX)', '').Contains('PublishedProjectOutputGroup'))"/>
+    </ItemGroup>
+
+    <MSBuild Projects="@(_ProjectsToPublish)"
+             BuildInParallel="$(BuildInParallel)"
+             Properties="%(_ProjectsToPublish.SetConfiguration);%(_ProjectsToPublish.SetPlatform);%(_ProjectsToPublish.SetTargetFramework)"
+             Targets="PublishVsixItems"
+             RebaseOutputs="true" />
+  </Target>
+
+  <Target Name="AddUpToDateCheckItemsForPublishProjectReferences">
+    <ItemGroup>
+      <_ProjectsToPublishForUpToDateCheck Include="@(ProjectReference)" Condition="$([MSBuild]::ValueOrDefault('%(ProjectReference.IncludeOutputGroupsInVSIX)', '').Contains('PublishedProjectOutputGroup'))"/>
+    </ItemGroup>
+    <MSBuild Projects="@(_ProjectsToPublishForUpToDateCheck)"
+           BuildInParallel="$(BuildInParallel)"
+           Properties="%(_ProjectsToPublishForUpToDateCheck.SetConfiguration);%(_ProjectsToPublishForUpToDateCheck.SetPlatform);%(_ProjectsToPublishForUpToDateCheck.SetTargetFramework)"
+           Targets="PublishItemsOutputGroup"
+           RebaseOutputs="true"
+           ContinueOnError="$(ContinueOnError)">
+      <Output TaskParameter="TargetOutputs" ItemName="_PublishUpToDateInputs" />
+    </MSBuild>
+
+    <ItemGroup>
+      <UpToDateCheckInput Include="@(_PublishUpToDateInputs)" Set="VsixItems" />
+    </ItemGroup>
+  </Target>
+</Project>

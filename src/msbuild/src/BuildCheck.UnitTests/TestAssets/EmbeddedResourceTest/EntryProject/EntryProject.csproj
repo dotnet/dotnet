@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(LatestDotNetCoreForMSBuild)</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<EnableCustomCulture>true</EnableCustomCulture>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReferencedProject\ReferencedProject.csproj" />
+  </ItemGroup>
+
+</Project>

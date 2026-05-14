@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.Build.NoTargets" DefaultTargets="PublishToBuildAssetRegistry">
+  <!--
+    =================================================================
+    Publish NuGet builds to the .NET Core build asset registry (BAR).
+    =================================================================
+  -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <ArtifactsLogDir Condition="'$(ArtifactsLogDir)' == ''">$(MSBuildThisFileDirectory)PublishToBuildAssetRegistryLogs</ArtifactsLogDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Maestro.Tasks" />
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
+  </ItemGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToBuildStorage" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PublishBuildToMaestro" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
+
+  <Target Name="PublishToBuildAssetRegistry">
+    <PropertyGroup>
+      <AssetManifestFileName>nuget.client.xml</AssetManifestFileName>
+      <AssetManifestPath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestPath>
+
+      <SymbolPackageBaseRelativeBlobPath>assets/symbols/</SymbolPackageBaseRelativeBlobPath>
+      <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
+      <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(RepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(RepositoryName)/</SymbolPackageBaseRelativeBlobPath>
+      <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_BUILDNUMBER)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
+    </PropertyGroup>
+
+    <Error Condition="'$(NuGetClientNupkgsDirectoryPath)' == ''" Text="The property '$(NuGetClientNupkgsDirectoryPath)' is required.  Set it at the command-line with /property:&lt;NuGetClientNupkgsDirectoryPath&gt;" />
+    <Error Condition="!Exists($(NuGetClientNupkgsDirectoryPath))" Text="The package directory path '$(NuGetClientNupkgsDirectoryPath)' does not exist." />
+    <Error Condition="Exists($(AssetManifestPath))" Text="The manifest file '$(AssetManifestPath)' already exists." />
+
+    <ItemGroup>
+      <_NonSymbolPackages Include="$(NuGetClientNupkgsDirectoryPath)/*.nupkg" Exclude="$(NuGetClientNupkgsDirectoryPath)/*.symbols.nupkg;$(NuGetClientNupkgsDirectoryPath)/NuGet.Packaging.Core.*" Kind="Package" />
+      <_SymbolPackages Include="$(NuGetClientNupkgsDirectoryPath)/*.symbols.nupkg" />
+      <_SymbolPackagesWithMetadata Include="@(_SymbolPackages)">
+      <!-- Update the kind of the symbol packages to blob -->
+        <Kind>Blob</Kind>
+        <!-- Set the category to Symbols (otherwise it will inherit the original package category -->
+        <Category>Symbols</Category>
+        <RelativeBlobPath>$(SymbolPackageBaseRelativeBlobPath)%(Filename)%(Extension)</RelativeBlobPath>
+      </_SymbolPackagesWithMetadata>
+      <ItemsToPush Include="@(_NonSymbolPackages);@(_SymbolPackagesWithMetadata)" />
+    </ItemGroup>
+
+    <Error Condition="@(ItemsToPush->Count()) == 0" Text="There were no packages found at '$(NuGetClientNupkgsDirectoryPath)'." />
+    <Error Condition="'$(BUILD_BUILDNUMBER)' == ''" Text="The BUILD_BUILDNUMBER property is required." />
+    <Error Condition="'$(ArtifactsLogDir)' == ''" Text="The ArtifactsLogDir property is required." />
+    <Error Condition="'$(BUILD_SOURCEBRANCH)' == ''" Text="The BUILD_SOURCEBRANCH property is required." />
+    <Error Condition="'$(BUILD_SOURCEVERSION)' == ''" Text="The BUILD_SOURCEVERSION property is required." />
+    <Error Condition="'$(BUILD_REPOSITORY_URI)' == ''" Text="The BUILD_REPOSITORY_URI property is required." />
+    <Error Condition="'$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)' == ''" Text="The SYSTEM_TEAMFOUNDATIONCOLLECTIONURI property is required." />
+    <Error Condition="'$(SYSTEM_TEAMPROJECT)' == ''" Text="The SYSTEM_TEAMPROJECT property is required." />
+    <Error Condition="'$(BUILD_BUILDID)' == ''" Text="The BUILD_BUILDID property is required." />
+    <Error Condition="'$(SYSTEM_DEFINITIONID)' == ''" Text="The SYSTEM_DEFINITIONID property is required." />
+
+    <Message Text="Publishing %(ItemsToPush.Identity)" Importance="normal" />
+
+    <ItemGroup>
+      <ManifestBuildData Include="InitialAssetsLocation=$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$(SYSTEM_TEAMPROJECT)/_apis/build/builds/$(BUILD_BUILDID)/artifacts" />
+      <ManifestBuildData Include="AzureDevOpsBuildId=$(BUILD_BUILDID)" />
+      <ManifestBuildData Include="AzureDevOpsBuildDefinitionId=$(SYSTEM_DEFINITIONID)" />
+      <ManifestBuildData Include="AzureDevOpsProject=$(SYSTEM_TEAMPROJECT)" />
+      <ManifestBuildData Include="AzureDevOpsBuildNumber=$(BUILD_BUILDNUMBER)" />
+      <ManifestBuildData Include="AzureDevOpsRepository=$(BUILD_REPOSITORY_URI)" />
+      <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
+    </ItemGroup>
+
+    <PushToBuildStorage
+      ItemsToPush="@(ItemsToPush)"
+      ManifestBuildData="@(ManifestBuildData)"
+      ManifestRepoUri="$(BUILD_REPOSITORY_NAME)"
+      ManifestBranch="$(BUILD_SOURCEBRANCH)"
+      ManifestBuildId="$(BUILD_BUILDNUMBER)"
+      ManifestCommit="$(BUILD_SOURCEVERSION)"
+      AssetManifestPath="$(AssetManifestPath)"
+      PublishingVersion="3" />
+
+    <PublishBuildToMaestro
+      MaestroApiEndpoint="$(MaestroApiEndpoint)"
+      ManifestsPath="$(ArtifactsLogDir)AssetManifest\"
+      AssetVersion="$(Version)" />
+  </Target>
+</Project>

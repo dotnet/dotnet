@@ -1,0 +1,434 @@
+<feed xml:base="https://www.nuget.org/api/v2" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <m:count>9</m:count>
+  <id>http://schemas.datacontract.org/2004/07/</id>
+  <title/>
+  <updated>2017-01-06T22:30:01Z</updated>
+  <link rel="self" href="https://www.nuget.org/api/v2/Packages"/>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Ciao',Version='1.1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Ciao',Version='1.1.0')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Ciao',Version='1.1.0')"/>
+    <title type="text">Ciao</title>
+    <summary type="text">MSBuild targets for Continuous Integration</summary>
+    <updated>2014-07-30T17:15:32Z</updated>
+    <author>
+      <name>Chris Eldredge</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Ciao/1.1.0"/>
+    <m:properties>
+      <d:Id>Ciao</d:Id>
+      <d:Version>1.1.0</d:Version>
+      <d:NormalizedVersion>1.1.0</d:NormalizedVersion>
+      <d:Authors>Chris Eldredge</d:Authors>
+      <d:Copyright>Copyright 2014 The Motley Fool, LLC</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-07-30T17:15:32.717Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>Provides targets for building .NET projects from scratch. Ciao bootstraps the build environment by fetching the latest version of the NuGet.exe command-line client, restoring NuGet packages for your solution, injecting version metadata into your assemblies, compiling the solution, running unit tests and building NuGet packages from your nuspecs. See the project URL for information on integrating Ciao with your projects.Note: do not install this package into projects. Install it at the Solution level.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1660</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Ciao/1.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2014-07-30T17:15:32.717Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-07-30T17:15:32.717Z</d:Published>
+      <d:PackageHash>QEZrMBBdM9q6y/bze0coGzHg6+gkEwOXWWEy57jebW9svdea0BIQjXHGoRX3DtzIbC0iKgPRiJOASenZMGm1qw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">11965</d:PackageSize>
+      <d:ProjectUrl>https://github.com/themotleyfool/Ciao/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Ciao/1.1.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>See https://github.com/themotleyfool/Ciao/releases</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>MSBuild targets for Continuous Integration</d:Summary>
+      <d:Tags>msbuild continuous integration</d:Tags>
+      <d:Title>Ciao</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1129</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>https://github.com/themotleyfool/Ciao/blob/master/LICENSE.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Microsoft.VisualStudio.Services.NuGet.CredentialProvider',Version='0.23.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Microsoft.VisualStudio.Services.NuGet.CredentialProvider',Version='0.23.0')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Microsoft.VisualStudio.Services.NuGet.CredentialProvider',Version='0.23.0')"/>
+    <title type="text">Microsoft.VisualStudio.Services.NuGet.CredentialProvider</title>
+    <updated>2016-11-10T18:23:33Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Microsoft.VisualStudio.Services.NuGet.CredentialProvider/0.23.0"/>
+    <m:properties>
+      <d:Id>Microsoft.VisualStudio.Services.NuGet.CredentialProvider</d:Id>
+      <d:Version>0.23.0</d:Version>
+      <d:NormalizedVersion>0.23.0</d:NormalizedVersion>
+      <d:Authors>Microsoft</d:Authors>
+      <d:Copyright>© Microsoft Corporation. All rights reserved.</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-11-10T18:23:33.15Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>The NuGet Credential Provider enables NuGet.exe 3.3+ to connect to Visual Studio Team Services Package Management NuGet feeds. See the NuGet docs for more info: https://docs.nuget.org/Consume/Credential-Providers</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">33994</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Microsoft.VisualStudio.Services.NuGet.CredentialProvider/0.23.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkId=615568</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2016-11-10T18:23:33.15Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-11-10T18:23:33.15Z</d:Published>
+      <d:PackageHash>5avKuTUNvokYfOB1bDHMoUsY9e5ImjgMyaLwPbjXi2H6JdxwY/4M1wznIdHvaHKcyoZEM7ZanRkt+uDrRO3s9w==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5088129</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=623217</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Microsoft.VisualStudio.Services.NuGet.CredentialProvider/0.23.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Summary/>
+      <d:Tags>Microsoft Visual Studio Team Services VSTS VSO VisualStudio Package Management NuGet</d:Tags>
+      <d:Title>Microsoft Visual Studio Team Services Credential Provider for NuGet</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">7599</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=329770</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='Mono.NuGet',Version='2.8.5-beta-1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='Mono.NuGet',Version='2.8.5-beta-1')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='Mono.NuGet',Version='2.8.5-beta-1')"/>
+    <title type="text">Mono.NuGet</title>
+    <updated>2015-06-02T18:43:52Z</updated>
+    <author>
+      <name>Outercurve Foundation</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/Mono.NuGet/2.8.5-beta-1"/>
+    <m:properties>
+      <d:Id>Mono.NuGet</d:Id>
+      <d:Version>2.8.5-beta-1</d:Version>
+      <d:NormalizedVersion>2.8.5-beta-1</d:NormalizedVersion>
+      <d:Authors>Outercurve Foundation</d:Authors>
+      <d:Copyright>Copyright 2013 Microsoft. NuGet is made possible by the Outercurve Foundation's open source project.</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-06-02T18:43:52.793Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>NuGet.exe with patches for Mono.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">183</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/Mono.NuGet/2.8.5-beta-1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2015-06-02T18:43:52.793Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-06-02T18:43:52.793Z</d:Published>
+      <d:PackageHash>sY617oB9UQa8hP04BtWuaNkCu2DxaGFzmOGhmS0Pklu2/6vRmV/vhraCZDBcgZWt8oiW5D40kpFtr9xwNej/sw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">507746</d:PackageSize>
+      <d:ProjectUrl>http://nuget.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/Mono.NuGet/2.8.5-beta-1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary/>
+      <d:Tags>nuget</d:Tags>
+      <d:Title>Mono.NuGet</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">183</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:type="Edm.DateTime">2015-06-04T21:49:09.403Z</d:LastEdited>
+      <d:LicenseUrl>http://www.microsoft.com/web/webpi/eula/nuget_release_eula.htm</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NuGet.Analyze',Version='2.0.0-alpha')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NuGet.Analyze',Version='2.0.0-alpha')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NuGet.Analyze',Version='2.0.0-alpha')"/>
+    <title type="text">NuGet.Analyze</title>
+    <summary type="text">Provides source code repository analysis functionality in terms of NuGet package dependencies.</summary>
+    <updated>2013-07-26T10:39:03Z</updated>
+    <author>
+      <name>Xavier Decoster,  Maarten Balliauw</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NuGet.Analyze/2.0.0-alpha"/>
+    <m:properties>
+      <d:Id>NuGet.Analyze</d:Id>
+      <d:Version>2.0.0-alpha</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha</d:NormalizedVersion>
+      <d:Authors>Xavier Decoster,  Maarten Balliauw</d:Authors>
+      <d:Copyright m:null="true"/>
+      <d:Created m:type="Edm.DateTime">2013-07-26T10:39:03.773Z</d:Created>
+      <d:Dependencies>NuGet.InstallCommandLineExtension:1.0:</d:Dependencies>
+      <d:Description>Adds an "Analyze" command to NuGet.exe, allowing you to analyze NuGet package dependencies directly from source control, even when no packages checked in.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1703</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NuGet.Analyze/2.0.0-alpha</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2013-07-26T10:39:03.79Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-07-26T10:39:03.79Z</d:Published>
+      <d:PackageHash>dL/NIXedLoNIFrzLrUtteGcxuabl1URDOJ6xVapxKZnkuDuX8V0bwV18PsLCicU9VOPXDykSsPOH7a+EsfqKdw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">249553</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xavierdecoster/NuGet.Analyze</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NuGet.Analyze/2.0.0-alpha/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Provides source code repository analysis functionality in terms of NuGet package dependencies.</d:Summary>
+      <d:Tags>extension nuget analyse tfs commandline ConsoleExtension</d:Tags>
+      <d:Title>NuGet Analyze</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">155</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>https://github.com/xavierdecoster/NuGet.Analyze/blob/master/COPYRIGHT.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NuGet.exe',Version='3.4.3')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NuGet.exe',Version='3.4.3')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NuGet.exe',Version='3.4.3')"/>
+    <title type="text">NuGet.exe</title>
+    <updated>2016-05-18T14:39:08Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NuGet.exe/3.4.3"/>
+    <m:properties>
+      <d:Id>NuGet.exe</d:Id>
+      <d:Version>3.4.3</d:Version>
+      <d:NormalizedVersion>3.4.3</d:NormalizedVersion>
+      <d:Authors>Microsoft</d:Authors>
+      <d:Copyright>� .NET Foundation. All rights reserved.</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-05-18T14:39:08.327Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>NuGet Command Line Tool with props file.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">750</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NuGet.exe/3.4.3</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2016-05-18T14:39:08.327Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-05-18T14:39:08.327Z</d:Published>
+      <d:PackageHash>8H39qmux/JD7OPFtvDqbTW/rJlJSZBXVVNktDCZ3xAUfsRK6DfwadkQxhey1wRtsHhW4UyLsOLkZcpOA9jJRKg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1210594</d:PackageSize>
+      <d:ProjectUrl>https://github.com/NuGet/NuGet.Client</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NuGet.exe/3.4.3/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary/>
+      <d:Tags>NuGet</d:Tags>
+      <d:Title>NuGet executable</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">750</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl>https://raw.githubusercontent.com/NuGet/NuGet.Client/dev/LICENSE.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='AddConsoleExtension',Version='1.0.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='AddConsoleExtension',Version='1.0.1')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='AddConsoleExtension',Version='1.0.1')"/>
+    <title type="text">AddConsoleExtension</title>
+    <summary type="text">Adds an "AddExtension" command to NuGet.exe.      To use this package, install the package using NuGet.exe to %LocalAppData%\NuGet\Commands      NuGet.exe Install /ExcludeVersion /OutputDir %LocalAppData%\NuGet\Commands AddConsoleExtension.</summary>
+    <updated>2011-10-07T16:56:34Z</updated>
+    <author>
+      <name>pranavkm</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/AddConsoleExtension/1.0.1"/>
+    <m:properties>
+      <d:Id>AddConsoleExtension</d:Id>
+      <d:Version>1.0.1</d:Version>
+      <d:NormalizedVersion>1.0.1</d:NormalizedVersion>
+      <d:Authors>pranavkm</d:Authors>
+      <d:Copyright m:null="true"/>
+      <d:Created m:type="Edm.DateTime">2011-10-07T16:56:33.677Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>Adds an "AddExtension" command to NuGet.exe.      To use this package, install the package using NuGet.exe to %LocalAppData%\NuGet\Commands      NuGet.exe Install /ExcludeVersion /OutputDir %LocalAppData%\NuGet\Commands AddConsoleExtension.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3215</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/AddConsoleExtension/1.0.1</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2011-10-07T16:56:34.373Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2011-10-07T16:56:34.373Z</d:Published>
+      <d:PackageHash>8CmjX7ksgmfVy2/bXVrJpZtm5AFp92xRtYr2UZURQpjHVYwIPp7PXCHfcf/30hUUqDTnBY2CZv8JS7O25fW9qw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">7638</d:PackageSize>
+      <d:ProjectUrl/>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/AddConsoleExtension/1.0.1/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Adds an "AddExtension" command to NuGet.exe.      To use this package, install the package using NuGet.exe to %LocalAppData%\NuGet\Commands      NuGet.exe Install /ExcludeVersion /OutputDir %LocalAppData%\NuGet\Commands AddConsoleExtension.</d:Summary>
+      <d:Tags xml:space="preserve"> ConsoleExtension </d:Tags>
+      <d:Title>NuGet Extend</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">2712</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl/>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='NuGet.Extensions',Version='1.2.71.14')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='NuGet.Extensions',Version='1.2.71.14')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='NuGet.Extensions',Version='1.2.71.14')"/>
+    <title type="text">NuGet.Extensions</title>
+    <updated>2014-07-06T11:50:52Z</updated>
+    <author>
+      <name>Ben Phegan</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/NuGet.Extensions/1.2.71.14"/>
+    <m:properties>
+      <d:Id>NuGet.Extensions</d:Id>
+      <d:Version>1.2.71.14</d:Version>
+      <d:NormalizedVersion>1.2.71.14</d:NormalizedVersion>
+      <d:Authors>Ben Phegan</d:Authors>
+      <d:Copyright m:null="true"/>
+      <d:Created m:type="Edm.DateTime">2014-07-06T11:50:52.82Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>A set of command line extensions for NuGet.exe.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">2428</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/NuGet.Extensions/1.2.71.14</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2014-07-06T11:50:52.82Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-07-06T11:50:52.82Z</d:Published>
+      <d:PackageHash>UpkD+Kx8dXKGxIHfIVwyJVmT22r3eAzEHJMRTpjpA3CQBEYs1Yd/HGz609cub6ggjAhaH9mUdYZhp+ZYtGpmcQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">316109</d:PackageSize>
+      <d:ProjectUrl m:null="true"/>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/NuGet.Extensions/1.2.71.14/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary/>
+      <d:Tags/>
+      <d:Title>NuGet.Extensions</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">607</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl m:null="true"/>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='OctopusContrib.NewRelic',Version='1.1.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='OctopusContrib.NewRelic',Version='1.1.0.0')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='OctopusContrib.NewRelic',Version='1.1.0.0')"/>
+    <title type="text">OctopusContrib.NewRelic</title>
+    <updated>2014-07-10T20:02:00Z</updated>
+    <author>
+      <name>Jasper Nygaard</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/OctopusContrib.NewRelic/1.1.0.0"/>
+    <m:properties>
+      <d:Id>OctopusContrib.NewRelic</d:Id>
+      <d:Version>1.1.0.0</d:Version>
+      <d:NormalizedVersion>1.1.0</d:NormalizedVersion>
+      <d:Authors>Jasper Nygaard</d:Authors>
+      <d:Copyright m:null="true"/>
+      <d:Created m:type="Edm.DateTime">2014-07-10T20:02:00.73Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>OctopusContrib.NewRelicOctopusContrib.NewRelic is a package for creating an Octopus Deploy release candidate for installing New Relic. The package can install the New Relic Server Monitor and the New Relic .NET Agent.How to get started:Step 1: Download OctopusContrib.NewRelicDownload the OctopusContrib.NewRelic NuGet package from NuGet.Org or download directly from github.Step 2: Alter NuSpecAlter the NuSpec file and give it an ID that matches your application. You can have a single package for all your Octopus projects, a more secure approach is to let each project generate their own New Relic package, hence avoiding unwanted installationsStep 3: Create Octopus VariablesThe installation script (deploy.ps1) supports a number of variables:NewRelicAgentApiKey: Mandatory. The New Relic API keyNewRelicApplicationName: Optional. By convention the installation script will concat the Octopus project name and the Environment. E.g. 'MyApp Staging". If NewRelicApplicationName is set, this will be used instead. Note that this name will be configured in the newrelic.xml configuration file. If you host more than 1 application on the IIS, then add the AppSetting NewRelic.AppName with your application name. For more information se the New Relic documentation https://newrelic.com/docs/dotnet/AgentDocumentation.NewRelicIisReset: Optional. If set to 'true' the package will perform an IIS reset after installing New Relic. Note this is required, to let New Relic hook into the IIS. If not specified, an IIS reset will not be performed.Step 4: Replace installersOptionally replace the New Relic Server Monitor and Agent installer with the newest version.Step 5: Create Octopus Release CandidateInvoke CreateOctopusPackage.ps1 (or just use NuGet.exe) to create the Octopus Release Candidate. This script will optionally let you upload to your Octopus Release Candidate NuGet repository</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1081</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/OctopusContrib.NewRelic/1.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2014-07-10T20:02:00.887Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-07-10T20:02:00.887Z</d:Published>
+      <d:PackageHash>BcldW72ShdrdeBgfziP4RiI1Be0Pv4o98tZrsH8M8cPexMsWgUpppXJgShJtdHvjJ/ZwmOPwEd15NetkodggEA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">8327653</d:PackageSize>
+      <d:ProjectUrl>https://github.com/octopuscontrib/OctopusContrib.NewRelic</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/OctopusContrib.NewRelic/1.1.0/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes>1.0.4: Added support for new configuration file newrelic.config. Added New Relic Agent v.2.14.53.0 installer.1.1.0: Added auto repair option upon startup, to fix conflicts with software such as Microsoft SCOM. Added .Net Agent 3.2.113.0</d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary/>
+      <d:Tags/>
+      <d:Title>OctopusContrib.NewRelic</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">446</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:type="Edm.DateTime">2014-07-10T20:04:18.85Z</d:LastEdited>
+      <d:LicenseUrl m:null="true"/>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='gfoidl.NuGet.PackOnBuild',Version='1.13.4')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme"/>
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='gfoidl.NuGet.PackOnBuild',Version='1.13.4')"/>
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='gfoidl.NuGet.PackOnBuild',Version='1.13.4')"/>
+    <title type="text">gfoidl.NuGet.PackOnBuild</title>
+    <summary type="text">Packs a NuGet-package after a successful build</summary>
+    <updated>2016-05-30T11:56:24Z</updated>
+    <author>
+      <name>gfoidl</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/gfoidl.NuGet.PackOnBuild/1.13.4"/>
+    <m:properties>
+      <d:Id>gfoidl.NuGet.PackOnBuild</d:Id>
+      <d:Version>1.13.4</d:Version>
+      <d:NormalizedVersion>1.13.4</d:NormalizedVersion>
+      <d:Authors>gfoidl</d:Authors>
+      <d:Copyright>(c) 2016 gfoidl</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-05-30T11:56:24.22Z</d:Created>
+      <d:Dependencies/>
+      <d:Description>Packs a NuGet-package after a successful build in 'Release' to solution-root\NuGet-packed.NuGet.exe has to be installed and on the PATH.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">472</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/gfoidl.NuGet.PackOnBuild/1.13.4</d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"/>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true"/>
+      <d:LastUpdated m:type="Edm.DateTime">2016-05-30T11:56:24.22Z</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2016-05-30T11:56:24.22Z</d:Published>
+      <d:PackageHash>l+XqMTt4tNSd0PwhameM1DDYz++wZLbGwsElINuUoDXuHiusGRfU/j2nEmLzKg1jKHErx4VfFzU7j5muoImBSw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">5199</d:PackageSize>
+      <d:ProjectUrl>https://bitbucket.org/gfoidl/nuget.packonbuild</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/packages/gfoidl.NuGet.PackOnBuild/1.13.4/ReportAbuse</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true"/>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>Packs a NuGet-package after a successful build</d:Summary>
+      <d:Tags>NuGet Pack Release MsBuild</d:Tags>
+      <d:Title>Pack on build</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">160</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true"/>
+      <d:LastEdited m:null="true"/>
+      <d:LicenseUrl m:null="true"/>
+      <d:LicenseNames m:null="true"/>
+      <d:LicenseReportUrl m:null="true"/>
+    </m:properties>
+  </entry>
+</feed>

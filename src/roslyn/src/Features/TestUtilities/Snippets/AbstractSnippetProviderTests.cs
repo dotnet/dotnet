@@ -1,0 +1,173 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Shared.Extensions;
+using Microsoft.CodeAnalysis.Shared.Extensions.ContextQuery;
+using Microsoft.CodeAnalysis.Snippets;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
+using Roslyn.Test.Utilities;
+using Xunit;
+
+namespace Microsoft.CodeAnalysis.Test.Utilities.Snippets;
+
+[UseExportProvider]
+public abstract class AbstractSnippetProviderTests
+{
+    protected abstract string SnippetIdentifier { get; }
+
+    protected abstract string LanguageName { get; }
+
+    protected async Task VerifySnippetAsync(
+        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string markupBeforeCommit,
+        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string markupAfterCommit,
+        string? editorconfig = null,
+        ReferenceAssemblies? referenceAssemblies = null)
+    {
+        using var workspace = new TestWorkspace(FeaturesTestCompositions.Features);
+
+        referenceAssemblies ??= ReferenceAssemblies.Default;
+        var metadataReferences = await referenceAssemblies.ResolveAsync(LanguageName, CancellationToken.None);
+        var project = workspace.CurrentSolution.
+            AddProject("TestProject", "TestAssembly", LanguageName)
+            .WithMetadataReferences(metadataReferences);
+
+        TestFileMarkupParser.GetPosition(markupBeforeCommit, out markupBeforeCommit, out var snippetRequestPosition);
+        var document = project.AddDocument(
+            "TestDocument",
+            SourceText.From(markupBeforeCommit, Encoding.UTF8, SourceHashAlgorithms.Default),
+            filePath: Path.Combine(TempRoot.Root, "TestDocument"));
+
+        if (editorconfig is not null)
+        {
+            var editorConfigDoc = document.Project.AddAnalyzerConfigDocument(
+                ".editorconfig",
+                SourceText.From(editorconfig, Encoding.UTF8, SourceHashAlgorithms.Default),
+                filePath: Path.Combine(TempRoot.Root, ".editorconfig"));
+
+            document = editorConfigDoc.Project.GetDocument(document.Id)!;
+        }
+
+        var snippetServiceInterface = document.GetRequiredLanguageService<ISnippetService>();
+        var snippetService = Assert.IsAssignableFrom<AbstractSnippetService>(snippetServiceInterface);
+
+        snippetService.EnsureSnippetsLoaded(LanguageName);
+        var snippetProvider = snippetService.GetSnippetProvider(SnippetIdentifier);
+
+        var syntaxContextService = document.GetRequiredLanguageService<ISyntaxContextService>();
+        var semanticModel = await document.GetRequiredSemanticModelAsync(CancellationToken.None);
+        var syntaxContext = syntaxContextService.CreateContext(document, semanticModel, snippetRequestPosition, CancellationToken.None);
+
+        var snippetContext = new SnippetContext(syntaxContext);
+        var isValidSnippetLocation = snippetProvider.IsValidSnippetLocation(snippetContext, CancellationToken.None);
+        Assert.True(isValidSnippetLocation, "Snippet is unexpectedly invalid on a given position");
+
+        var snippetChange = await snippetProvider.GetSnippetChangeAsync(document, snippetRequestPosition, CancellationToken.None);
+        var documentSourceText = await document.GetTextAsync();
+        var originalText = documentSourceText.WithChanges(snippetChange.TextChanges).ToString();
+        // Normalize line endings so snippet output (which may use \r\n) matches expected text on all platforms
+        var documentTextAfterSnippet = originalText.NormalizeLineEndings();
+
+        // Normalize expected markup to \r\n as well before extracting positions
+        markupAfterCommit = markupAfterCommit.NormalizeLineEndings();
+        TestFileMarkupParser.GetPositionAndSpans(markupAfterCommit, out markupAfterCommit, out int finalCaretPosition, out ImmutableDictionary<string, ImmutableArray<TextSpan>> placeholderLocations);
+        Assert.Equal(markupAfterCommit, documentTextAfterSnippet);
+
+        var placeholderLocationsArray = new ImmutableArray<TextSpan>[placeholderLocations.Count];
+        var snippetPlaceholders = snippetChange.Placeholders;
+        Assert.Equal(placeholderLocationsArray.Length, snippetPlaceholders.Length);
+
+        foreach (var placeholderLocationPair in placeholderLocations)
+        {
+            if (!int.TryParse(placeholderLocationPair.Key, out var locationIndex))
+            {
+                Assert.Fail("Expected placeholder locations contains span with invalid annotation");
+                return;
+            }
+
+            placeholderLocationsArray[locationIndex] = placeholderLocationPair.Value;
+        }
+
+        for (var i = 0; i < placeholderLocationsArray.Length; i++)
+        {
+            if (placeholderLocationsArray[i].IsDefault)
+            {
+                Assert.Fail($"Placeholder location for index {i} was not specified");
+            }
+        }
+
+        for (var i = 0; i < snippetPlaceholders.Length; i++)
+        {
+            var expectedSpans = placeholderLocationsArray[i];
+            var (placeholderText, placeholderPositions) = snippetPlaceholders[i];
+
+            Assert.Equal(expectedSpans.Length, placeholderPositions.Length);
+
+            // Remap snippet positions from original text offsets to normalized text offsets
+            var normalizedPositions = placeholderPositions.Select(p => AdjustPositionForNormalization(originalText, p)).ToImmutableArray();
+            for (var j = 0; j < normalizedPositions.Length; j++)
+            {
+                var expectedSpan = expectedSpans[j];
+                Assert.Contains(expectedSpan.Start, normalizedPositions);
+                Assert.Equal(documentTextAfterSnippet.Substring(expectedSpan.Start, expectedSpan.Length), placeholderText);
+            }
+        }
+
+        var normalizedCaretPosition = AdjustPositionForNormalization(originalText, snippetChange.FinalCaretPosition);
+        Assert.Equal(finalCaretPosition, normalizedCaretPosition);
+    }
+
+    /// <summary>
+    /// Maps a position in the original text to the corresponding position in the \r\n-normalized text.
+    /// Each bare \n (not preceded by \r) gets a \r inserted before it, shifting subsequent positions.
+    /// </summary>
+    private static int AdjustPositionForNormalization(string originalText, int position)
+    {
+        var adjustment = 0;
+        for (var i = 0; i < position && i < originalText.Length; i++)
+        {
+            if (originalText[i] == '\n' && (i == 0 || originalText[i - 1] != '\r'))
+                adjustment++;
+        }
+
+        return position + adjustment;
+    }
+
+    protected async Task VerifySnippetIsAbsentAsync(
+        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string markup,
+        ReferenceAssemblies? referenceAssemblies = null)
+    {
+        using var workspace = new TestWorkspace(FeaturesTestCompositions.Features);
+
+        referenceAssemblies ??= ReferenceAssemblies.Default;
+        var metadataReferences = await referenceAssemblies.ResolveAsync(LanguageName, CancellationToken.None);
+        var project = workspace.CurrentSolution.
+            AddProject("TestProject", "TestAssembly", LanguageName)
+            .WithMetadataReferences(metadataReferences);
+
+        TestFileMarkupParser.GetPosition(markup, out markup, out var snippetRequestPosition);
+        var document = project.AddDocument("TestDocument", SourceText.From(markup, Encoding.UTF8, SourceHashAlgorithms.Default));
+
+        var snippetServiceInterface = document.GetRequiredLanguageService<ISnippetService>();
+        var snippetService = Assert.IsAssignableFrom<AbstractSnippetService>(snippetServiceInterface);
+
+        snippetService.EnsureSnippetsLoaded(LanguageName);
+        var snippetProvider = snippetService.GetSnippetProvider(SnippetIdentifier);
+
+        var syntaxContextService = document.GetRequiredLanguageService<ISyntaxContextService>();
+        var semanticModel = await document.GetRequiredSemanticModelAsync(CancellationToken.None);
+        var syntaxContext = syntaxContextService.CreateContext(document, semanticModel, snippetRequestPosition, CancellationToken.None);
+
+        var snippetContext = new SnippetContext(syntaxContext);
+        var isValidSnippetLocation = snippetProvider.IsValidSnippetLocation(snippetContext, CancellationToken.None);
+        Assert.False(isValidSnippetLocation, "Snippet is unexpectedly valid on a given position");
+    }
+}

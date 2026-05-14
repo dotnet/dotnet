@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
+    <ProjectReference Include="..\src\Microsoft.DotNet.Build.Tasks.Templating.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="testassets\**"
+             CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="testassets\Directory.Build.props.malformedbraces.in" />
+    <None Remove="testassets\Directory.Build.props.nobraces.in" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,2135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xml:base="https://www.nuget.org/api/v2" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <m:count>44</m:count>
+  <id>http://schemas.datacontract.org/2004/07/</id>
+  <title />
+  <updated>2016-02-17T19:53:40Z</updated>
+  <link rel="self" href="https://www.nuget.org/api/v2/Packages" />
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1624')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1624')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1624')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1624" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1624</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1624</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2013-04-05T16:37:36.617</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1624</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download.codeplex.com/Download?ProjectName=xunit&amp;DownloadId=365445</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-04-05T16:37:36.617</d:Published>
+      <d:PackageHash>0D68zSsOmcwM5TNSmOmvJERA7aYNscBH/Lk7qwBQHo5MfH0ZvnKk75Sw/jzdTophoofBM6UlY0uTF9oBCEYRKA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">67306</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1624</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary m:null="true" />
+      <d:Tags m:null="true" />
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">171</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.2.0-beta1-build3239')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.2.0-beta1-build3239')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.2.0-beta1-build3239')" />
+    <title type="text">xunit</title>
+    <updated>2015-12-20T22:10:46Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.2.0-beta1-build3239" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.2.0-beta1-build3239</d:Version>
+      <d:NormalizedVersion>2.2.0-beta1-build3239</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-12-20T22:10:46.077</d:Created>
+      <d:Dependencies>xunit.core:[2.2.0-beta1-build3239]:|xunit.assert:[2.2.0-beta1-build3239]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.2.0-beta1-build3239</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-12-20T22:10:46.077</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-12-20T22:10:46.077</d:Published>
+      <d:PackageHash>j/MqJK2vBsTqdcGQCrMw0pQKbwQF1o9BeFRZ1BNlHe2W1/5ixqJFon/dr55MAnFgQrb4Euabonmn5JNluK4qeQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">3017</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.2.0-beta1-build3239</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary m:null="true" />
+      <d:Tags m:null="true" />
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">6539</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:10:26Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0</d:Version>
+      <d:NormalizedVersion>2.1.0</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-09-27T18:29:32.007</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0]:|xunit.assert:[2.1.0]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:10:26.483</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-09-27T18:29:32.007</d:Published>
+      <d:PackageHash>u/7VQSOSXa7kSG4iK6Lcn7RqKZQ3hk7cnyMNVMpXHSP0RI5VQEtc44hvkG3LyWOVsx1dhUDD3rPAHAxyOUDQJw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">2986</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary m:null="true" />
+      <d:Tags m:null="true" />
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">212201</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.7.0.1540')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.7.0.1540')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.7.0.1540')" />
+    <title type="text">xunit</title>
+    <summary type="text">xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</summary>
+    <updated>2015-09-23T07:55:17Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/1.7.0.1540" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>1.7.0.1540</d:Version>
+      <d:NormalizedVersion>1.7.0.1540</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright>Copyright (C) 2011 Microsoft Corporation</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2011-01-31T02:02:54.803</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/1.7.0.1540</d:GalleryDetailsUrl>
+      <d:IconUrl>https://hg01.codeplex.com/xunit/raw-file/default/xunit-nuget-logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-23T07:55:17.877</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2011-01-31T08:53:57.49</d:Published>
+      <d:PackageHash>2RREz4k606mZMrJw42dLzpX+o9Qe/9iM4to7wYGS92Vr0uus0Nes3pVxIcUxUAcN1WfWAqozo6V0AgGt/aaFMA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">53903</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/1.7.0.1540</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Summary>
+      <d:Tags>xunit unit testing tdd</d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">13034</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.8.0.1545')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.8.0.1545')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.8.0.1545')" />
+    <title type="text">xunit</title>
+    <summary type="text">xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</summary>
+    <updated>2015-09-21T20:23:47Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/1.8.0.1545" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>1.8.0.1545</d:Version>
+      <d:NormalizedVersion>1.8.0.1545</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright>Copyright (C) 2011 Microsoft Corporation</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2011-04-12T19:31:09.927</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/1.8.0.1545</d:GalleryDetailsUrl>
+      <d:IconUrl>https://hg01.codeplex.com/xunit/raw-file/default/xunit-nuget-logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-21T20:23:47.007</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2011-04-12T19:35:45.067</d:Published>
+      <d:PackageHash>AKCOT5PxIZz2+mZco/goOaEX1yZ6XoePrm9LcYfvyCzV9WLjcW100atC9+P8LFmKloMbOj4KO95UuNx6QsauLw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">55212</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/1.8.0.1545</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Summary>
+      <d:Tags>xunit unit testing tdd</d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">11786</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.8.0.1549')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.8.0.1549')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.8.0.1549')" />
+    <title type="text">xunit</title>
+    <summary type="text">xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</summary>
+    <updated>2015-09-18T18:29:30Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/1.8.0.1549" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>1.8.0.1549</d:Version>
+      <d:NormalizedVersion>1.8.0.1549</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright>Copyright 2011 Microsoft Corporation</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2011-09-13T15:13:52.31</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/1.8.0.1549</d:GalleryDetailsUrl>
+      <d:IconUrl>https://hg01.codeplex.com/xunit/raw-file/default/xunit-nuget-logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-18T18:29:30.153</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2011-09-13T15:15:51.417</d:Published>
+      <d:PackageHash>0FkTJLB/NwvRX9pGqYdFalFCc319YC2uHuMx2iThdqVL5gjiN27/DDR0GhQdGxfK4tvcSr8RH7R8MYBRtUYw+A==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/1.8.0.1549</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Summary>
+      <d:Tags>xunit unit-testing</d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">39527</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1611')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1611')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1611')" />
+    <title type="text">xunit</title>
+    <updated>2015-08-11T09:28:18Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1611" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1611</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1611</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2012-08-06T16:02:20.58</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1611</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download.codeplex.com/Download?ProjectName=xunit&amp;DownloadId=365445</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-08-11T09:28:18.76</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2012-08-06T16:02:24.313</d:Published>
+      <d:PackageHash>+xD5+pRi0Br4kFh12qfmlpLmE0swHm7iaMUJrRw2Ct/VV4rPh2CrgmKtOoLm4ODgLK6CfFLpv/zJ1LnGo97Vcw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1611</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">4723</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1631')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1631')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1631')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1631" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1631</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1631</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-04-08T18:20:57.647</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1631</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download.codeplex.com/Download?ProjectName=xunit&amp;DownloadId=365445</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-04-08T18:20:57.647</d:Published>
+      <d:PackageHash>lMkHo8WSmDDB62SbrHLNDDQ3S51CqPszsCJHGDRukuuWl3u9TAvAVSIO9LNctCL3/gURb4MYWOgUd6ACkyyaGg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1631</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">165</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1644')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1644')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1644')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1644" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1644</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1644</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-04-14T02:37:54.377</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha, 2.1):</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1644</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-04-14T02:37:54.377</d:Published>
+      <d:PackageHash>5R4GjnMFlDvqG3uTet6yqFENfHV4yKvBUXJ8izOX7EIT7TKCs7IRO107FQogXLoYamST6nB02Zrcjpt4Ty74fQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1644</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">145</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1648')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1648')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1648')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1648" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1648</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1648</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-04-18T22:40:43.16</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha, 2.1):</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1648</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-04-18T22:40:43.16</d:Published>
+      <d:PackageHash>avCeXcW9TypeKgzS9wi2XCNaEd2d46Vi3VgKCsTp5ZQ/BdFsiYfnbgM/19dMNtZh9UAiS4XDKhBfcckX3xNYgg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1648</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">170</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1650')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1650')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1650')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-13T17:27:42Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1650" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1650</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1650</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-04-24T22:19:56.337</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha, 2.1):</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1650</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-13T17:27:42.11</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-04-24T22:19:56.337</d:Published>
+      <d:PackageHash>snphQJ+1Z0M9V4IKuAL47QdabAtEEuTFjWjJO3PCrLprwWt8BcIpgu8UC1adA6B3SLrUcC8CR8nqOezSQslQ9Q==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1650</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">319</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1654')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1654')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1654')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1654" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1654</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1654</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-05-19T18:51:49.31</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha, 2.1):</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1654</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-05-19T18:51:49.31</d:Published>
+      <d:PackageHash>Sfl7we9I4368f4VYoZaLtCdCJ1Q9b9T23RxMuY5hZ9mSzAI/YTMQirUnLORM2Eo8SPvec+Mz36WMOcLKzO4XgQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1654</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">497</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1657')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1657')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build1657')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build1657" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build1657</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build1657</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-07-13T23:20:39.93</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha, 2.1):</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build1657</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-07-13T23:20:39.93</d:Published>
+      <d:PackageHash>2i4v3vGHxAPGiRlb3nTjX2qsH4ou9DL/xc9wc23m9q6mG9aEgTuPd76oM6XRjHiVOzr12RbQdCIg43y2VR9tgg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build1657</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">203</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2503')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2503')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2503')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2503" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2503</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2503</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-07-23T21:04:12.233</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha, 2.1):</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2503</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-07-23T21:04:12.233</d:Published>
+      <d:PackageHash>Lup2oeXtqQbwzGIbeootX55wYrf1tVWtTmPK3eGQ1/DrdPa5bO7uwn0oNkVQarXNY1GcjHq15gFelVye6Rnr9w==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2503</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">456</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.1')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.1')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.1')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/1.9.1" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>1.9.1</d:Version>
+      <d:NormalizedVersion>1.9.1</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2012-07-04T22:44:28.887</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/1.9.1</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download.codeplex.com/Download?ProjectName=xunit&amp;DownloadId=365445</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:15:27.047</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2012-07-04T22:44:31.077</d:Published>
+      <d:PackageHash>2WGRT1V01V/h2WalziNlC0Pd0rCCrjeFJk+X6E6VkVaVh5AkCJkYM+eGSfetuAIqnF2nwBbY+vkAfT8HV3QPVA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/1.9.1</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">194912</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2510')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2510')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2510')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2510" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2510</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2510</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-08-19T00:23:50.05</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha-build2510]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2510</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-08-19T00:23:50.05</d:Published>
+      <d:PackageHash>xTfNgyhv0gni8XqiWMX6Ivn//csc03cCm1WqQQpuv0pqPlB+iG1VtI7Hp3CWURPTn6XE4D15C+lXaTgE7HGBDw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2510</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">779</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2521')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2521')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2521')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-22T05:18:45Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2521" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2521</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2521</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-09-22T00:16:50.337</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha-build2521]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2521</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-22T05:18:45.337</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-09-22T00:16:50.337</d:Published>
+      <d:PackageHash>FzI4yvsM1w7zEfGLJ4Yhszclbn8KkvbOQbQel0sTPa8WWLLQiO/9t+LG/Kv6+J3JZ9y1AqVNvHPGzbYMBCcrCA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2521</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">471</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2529')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2529')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2529')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2529" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2529</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2529</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-10-26T23:47:03.803</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha-build2529]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2529</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-10-26T23:47:03.803</d:Published>
+      <d:PackageHash>JXb7XZfy2yKKTuyoktPqXCQyyu1MNPUGJQD8hDFPgu4Q07I4LtwgIPigRSBaJ81/UXsiL6aMQMfheWtrBBpd2Q==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2529</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">175</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2533')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2533')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2533')" />
+    <title type="text">xunit</title>
+    <updated>2015-08-07T10:53:33Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2533" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2533</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2533</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-11-04T01:33:40.897</d:Created>
+      <d:Dependencies>xunit.abstractions:[2.0.0-alpha-build2533]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2533</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-08-07T10:53:33.71</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-11-04T01:33:40.897</d:Published>
+      <d:PackageHash>B/5RDnrrT+wsS7FgbgeZ3pESIzi/d33mJRmjTJFYe8G1a8KnkHYKoL57l63ekrVl1G02es8VF9AqwfmxVc3vmQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2533</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">398</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2548')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2548')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2548')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-15T19:58:09Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2548" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2548</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2548</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-11-25T01:18:34.553</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2548]:|xunit.assert:[2.0.0-alpha-build2548]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2548</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-15T19:58:09.727</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-11-25T01:18:34.553</d:Published>
+      <d:PackageHash>xHpedh7Jv0vBcN8vOa7tbtNve0Wjm1F2FmhJ5zblrT1QyzN1Xnt49S04EPIWCJGAgHwoSYMxkG5CgXmi5eiTEg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2548</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">368</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2552')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2552')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2552')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2552" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2552</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2552</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-12-08T01:15:07.697</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2552]:|xunit.assert:[2.0.0-alpha-build2552]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2552</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-12-08T01:15:07.697</d:Published>
+      <d:PackageHash>QO2pjIbdPNzTxx3W9+CYUGMQx1W9J8wSLCfQ7vPsem4xtIfLPRp71dcjv+4gdvyXVXnXjes7PvjYcm6yassJLg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2552</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">257</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2562')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2562')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2562')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-28T09:55:48Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2562" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2562</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2562</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-01-03T23:11:31.437</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2562]:|xunit.assert:[2.0.0-alpha-build2562]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2562</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-28T09:55:48.927</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-01-03T23:11:31.437</d:Published>
+      <d:PackageHash>9hyCGjBKEKOHY4Kol8IHw5dTSZzgwFFFC2Xd3DKBepvO5riwR+STyH2ECrmlvxGK9wSY1AeeqoN7zVBR2GMICg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2562</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">222</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2569')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2569')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2569')" />
+    <title type="text">xunit</title>
+    <updated>2015-04-12T01:52:07Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2569" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2569</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2569</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-01-17T22:45:56.987</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2569]:|xunit.assert:[2.0.0-alpha-build2569]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2569</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-04-12T01:52:07.57</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-01-17T22:45:56.987</d:Published>
+      <d:PackageHash>KmG1x3xxI6kTuigRvMktTWAoWU2ppsTJ9hk5SiYaM2lh+yPhQ+Ke3wmU+Y34RN7sReoj9p3cGFa3gvo1tKQ0rw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2569</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">91</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2576')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2576')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2576')" />
+    <title type="text">xunit</title>
+    <updated>2015-08-17T08:07:11Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2576" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2576</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2576</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-01-19T00:16:50.753</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2576]:|xunit.assert:[2.0.0-alpha-build2576]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2576</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-08-17T08:07:11.483</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-01-19T00:16:50.753</d:Published>
+      <d:PackageHash>73d6qwNEPmjzMuMCmfyNN+xFkr/fEQaVOyAsD4o+Umtz4GhfBPJivJn11alktnwEQHhv7CR56ClTEvIGu8R5qw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2576</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">7823</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2595')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2595')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2595')" />
+    <title type="text">xunit</title>
+    <updated>2015-05-04T14:26:05Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2595" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2595</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2595</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-03-09T23:17:39.197</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2595]:|xunit.assert:[2.0.0-alpha-build2595]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2595</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-05-04T14:26:05.043</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-03-09T23:17:39.197</d:Published>
+      <d:PackageHash>OQwa3rGP3OWc0s2enTdb4Vi31na84+4BUTvXArGciMRTOKBXfmvEZeXxC2CyZqyU7eVw3YhU2h5G2kMyqkMGDA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2595</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">398</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2606')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2606')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-alpha-build2606')" />
+    <title type="text">xunit</title>
+    <updated>2015-05-01T23:20:35Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-alpha-build2606" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-alpha-build2606</d:Version>
+      <d:NormalizedVersion>2.0.0-alpha-build2606</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-03-16T00:52:28.313</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-alpha-build2606]:|xunit.assert:[2.0.0-alpha-build2606]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-alpha-build2606</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download-codeplex.sec.s-msft.com/Download?ProjectName=xunit&amp;DownloadId=662625</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-05-01T23:20:35.467</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-03-16T00:52:28.313</d:Published>
+      <d:PackageHash>S/i5gcaJNJglxe2NAp05ovFZoWB4Xvqt44g+ImeyODcFAzzWDuwN4ORghuLmVB0ibVg91KlUan5otjaIwj7mhw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-alpha-build2606</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">200</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2616')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2616')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2616')" />
+    <title type="text">xunit</title>
+    <updated>2015-05-04T20:01:21Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-beta-build2616" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-beta-build2616</d:Version>
+      <d:NormalizedVersion>2.0.0-beta-build2616</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-03-22T23:37:52.293</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-beta-build2616]:|xunit.assert:[2.0.0-beta-build2616]:</d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-beta-build2616</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-05-04T20:01:21.887</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-03-22T23:37:52.293</d:Published>
+      <d:PackageHash>hBGYV18sSDuOHJutabWLurbC/Gzqhqbn9sS0saSiWCERY1wVmvzeiablcFVpCZ3mgAD69cGpiUgdspH9KmvhtA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-beta-build2616</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">616</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2650')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2650')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2650')" />
+    <title type="text">xunit</title>
+    <updated>2015-05-04T11:43:42Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-beta-build2650" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-beta-build2650</d:Version>
+      <d:NormalizedVersion>2.0.0-beta-build2650</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-04-29T03:05:16.603</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-beta-build2650]:|xunit.assert:[2.0.0-beta-build2650]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-beta-build2650</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-05-04T11:43:42.007</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-04-29T03:05:16.603</d:Published>
+      <d:PackageHash>wvhbb+QAuNoP8ArmS0ThG+6+HPLbLZm0OLx/QTgciESdO/nbDvORisnfg1YBtLIxbFBad2eCQdQy8+TIae18Rw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-beta-build2650</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1552</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2700')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2700')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta-build2700')" />
+    <title type="text">xunit</title>
+    <updated>2015-08-07T10:58:46Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-beta-build2700" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-beta-build2700</d:Version>
+      <d:NormalizedVersion>2.0.0-beta-build2700</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-06-30T16:18:55.03</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-beta-build2700]:|xunit.assert:[2.0.0-beta-build2700]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-beta-build2700</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-08-07T10:58:46.41</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-06-30T16:18:55.03</d:Published>
+      <d:PackageHash>ToDREKy9wvStHOCLxL6le5Z9znHwFseA6COjoHG+sr4uf6dCV3/CFXmwL1l7uo0iKjyvJtKa2FqcoBpNXNUsDw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-beta-build2700</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1522</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta4-build2738')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta4-build2738')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta4-build2738')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:04:50Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-beta4-build2738" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-beta4-build2738</d:Version>
+      <d:NormalizedVersion>2.0.0-beta4-build2738</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-08-10T21:41:07.023</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-beta4-build2738]:|xunit.assert:[2.0.0-beta4-build2738]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-beta4-build2738</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:04:50.27</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-08-10T21:41:07.023</d:Published>
+      <d:PackageHash>Fv9/nrIaNdz6I+esBzx7CBI/seKTToaCm0lTKbLFN0qVFhhRggfpOZbsoArZrn+ATrBMayFCArxKXcSVKcY5fg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-beta4-build2738</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">8776</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta5-build2785')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta5-build2785')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-beta5-build2785')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-21T18:58:21Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-beta5-build2785" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-beta5-build2785</d:Version>
+      <d:NormalizedVersion>2.0.0-beta5-build2785</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2014-11-20T01:38:10.533</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-beta5-build2785]:|xunit.assert:[2.0.0-beta5-build2785]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-beta5-build2785</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-21T18:58:21.637</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2014-11-20T01:38:10.533</d:Published>
+      <d:PackageHash>bNycxZe/83M7o7j0IbGp3/daiPLi17hZgYZB6xttgCVDnxgAuw/TP1zetiUTW1yVUPASnAjlkBeJayv/G2Crsw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-beta5-build2785</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">33739</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc1-build2826')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc1-build2826')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc1-build2826')" />
+    <title type="text">xunit</title>
+    <updated>2015-05-04T20:26:53Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-rc1-build2826" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-rc1-build2826</d:Version>
+      <d:NormalizedVersion>2.0.0-rc1-build2826</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-01-20T05:05:19.683</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-rc1-build2826]:|xunit.assert:[2.0.0-rc1-build2826]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-rc1-build2826</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-05-04T20:26:53.067</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-01-20T05:05:19.683</d:Published>
+      <d:PackageHash>u4NYcanIDR11Xn9ijMTeeaCIixOZE+uxh/Hu+YreNqy+/0ksoH2R2h8mckEZ8DnDGFJVpwfADsP/AjmyU8JjnQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-rc1-build2826</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">5016</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc2-build2857')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc2-build2857')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc2-build2857')" />
+    <title type="text">xunit</title>
+    <updated>2015-08-10T13:35:30Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-rc2-build2857" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-rc2-build2857</d:Version>
+      <d:NormalizedVersion>2.0.0-rc2-build2857</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-02-17T18:34:10.487</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-rc2-build2857]:|xunit.assert:[2.0.0-rc2-build2857]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-rc2-build2857</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-08-10T13:35:30.907</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-02-17T18:34:10.487</d:Published>
+      <d:PackageHash>XrPy1J5utfTmiPN/WSWhPoYq+nwd8ljMBdO5Ya6T2utsiirDhl0oX0GI477iTYtCHPFZRx784Ap4ow0yklY9Wg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-rc2-build2857</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">1682</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc3-build2880')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc3-build2880')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc3-build2880')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:08:11Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-rc3-build2880" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-rc3-build2880</d:Version>
+      <d:NormalizedVersion>2.0.0-rc3-build2880</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-02-23T18:39:54.607</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-rc3-build2880]:|xunit.assert:[2.0.0-rc3-build2880]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-rc3-build2880</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:08:11.913</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-02-23T18:39:54.607</d:Published>
+      <d:PackageHash>jcqsYbeP8xyDNdby4ynGQ+68yxVQxFgiHTB9yZVf6skNn+lGfTja93ROPZG3ZFhAppe1cwm1geHtpFeEe/vzSQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-rc3-build2880</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">5648</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.0.1566')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.0.1566')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.0.1566')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-21T12:26:04Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/1.9.0.1566" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>1.9.0.1566</d:Version>
+      <d:NormalizedVersion>1.9.0.1566</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2012-01-02T23:33:21.947</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/1.9.0.1566</d:GalleryDetailsUrl>
+      <d:IconUrl>https://hg01.codeplex.com/xunit/raw-file/default/xunit-nuget-logo.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language></d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-21T12:26:04.573</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2012-01-02T23:33:22.09</d:Published>
+      <d:PackageHash>gTB3hsr/9WdQdwv+4B7I0GzJq2XYiJXI71LV+j/KITieLxzF9vRj2o3nN0BtmFUYo/TIQ5uU9e3DByfzn/YjnQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>http://xunit.codeplex.com/</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/1.9.0.1566</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">247634</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.2')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.2')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='1.9.2')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/1.9.2" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>1.9.2</d:Version>
+      <d:NormalizedVersion>1.9.2</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2013-08-24T19:45:34.093</d:Created>
+      <d:Dependencies></d:Dependencies>
+      <d:Description>xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/1.9.2</d:GalleryDetailsUrl>
+      <d:IconUrl>http://download.codeplex.com/Download?ProjectName=xunit&amp;DownloadId=365445</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:15:27.047</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2013-08-24T19:45:34.113</d:Published>
+      <d:PackageHash>c1wppJtYPUGPHVP9U1wjmfii4553MuQSXkAt8rudkXW+eUFJxOOfDvhBJ6S0YHHDMFEJwiMN770AT4Lno8EBpw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/1.9.2</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">494636</d:VersionDownloadCount>
+      <d:MinClientVersion></d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime">2014-04-06T05:05:23.923</d:LastEdited>
+      <d:LicenseUrl>http://xunit.codeplex.com/license</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc4-build2924')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc4-build2924')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0-rc4-build2924')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-18T17:24:06Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0-rc4-build2924" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0-rc4-build2924</d:Version>
+      <d:NormalizedVersion>2.0.0-rc4-build2924</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-03-09T21:58:31.64</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0-rc4-build2924]:|xunit.assert:[2.0.0-rc4-build2924]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0-rc4-build2924</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-18T17:24:06.427</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-03-09T21:58:31.64</d:Published>
+      <d:PackageHash>SjCcMUj+qtD8irExW21Ky1kRUkpkBzveONoMJqc2bXOTEtIm3MfT6lsi7+hDOa6LUgfwXaf0D+gfd1+2xsRHwg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0-rc4-build2924</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">2158</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.1</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta1-build2945')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta1-build2945')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta1-build2945')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-21T11:20:41Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-beta1-build2945" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0-beta1-build2945</d:Version>
+      <d:NormalizedVersion>2.1.0-beta1-build2945</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-03-21T23:51:11.017</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0-beta1-build2945]:|xunit.assert:[2.1.0-beta1-build2945]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-beta1-build2945</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-21T11:20:41.96</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-03-21T23:51:11.017</d:Published>
+      <d:PackageHash>XNaeokPy5IxkaNc9rPi2jyI46awTCnVrK9nB/OGF6Ae4IJJIullc7PnbS/jnFwkaRxA8wXw35famc+1ZP77vAg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-beta1-build2945</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">8672</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta2-build2981')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta2-build2981')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta2-build2981')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-21T16:27:29Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-beta2-build2981" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0-beta2-build2981</d:Version>
+      <d:NormalizedVersion>2.1.0-beta2-build2981</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-05-03T21:20:44.94</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0-beta2-build2981]:|xunit.assert:[2.1.0-beta2-build2981]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-beta2-build2981</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-21T16:27:29.87</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-05-03T21:20:44.94</d:Published>
+      <d:PackageHash>qTzY4x9uJ+CXDpS7/mm+rmz4YvpwY4IwTgRs6bk9R71G2yXneuuSJ+XaZ5V8ytGHgXeIWfwp3h4sg8uRi2GNxw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-beta2-build2981</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">10544</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta3-build3029')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta3-build3029')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta3-build3029')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-21T21:19:06Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-beta3-build3029" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0-beta3-build3029</d:Version>
+      <d:NormalizedVersion>2.1.0-beta3-build3029</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-06-30T21:43:35.27</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0-beta3-build3029]:|xunit.assert:[2.1.0-beta3-build3029]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-beta3-build3029</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-21T21:19:06.793</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-06-30T21:43:35.27</d:Published>
+      <d:PackageHash>NMFXV0ePe/GrfhMSPGAlWmiUZCzjaatpdAGcavf2B6vYTRyMTpyJT01LI6jemMV/VSDXLrtHp0Ov9xZyR1cLLg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-beta3-build3029</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">14120</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta4-build3109')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta4-build3109')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta4-build3109')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-05T07:23:28Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-beta4-build3109" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0-beta4-build3109</d:Version>
+      <d:NormalizedVersion>2.1.0-beta4-build3109</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-08-05T00:22:08.687</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0-beta4-build3109]:|xunit.assert:[2.1.0-beta4-build3109]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-beta4-build3109</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-05T07:23:28.98</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-08-05T00:22:08.687</d:Published>
+      <d:PackageHash>mbZVcx4H/rDoiPOaiR9TRQgiBTXiStvjBRemGn96jTEePu7jUS3RDMU7EN0CkrVbw4GNXOqMdafblEOo6U4/NA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-beta4-build3109</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">13867</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-rc1-build3168')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-rc1-build3168')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-rc1-build3168')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:08:11Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-rc1-build3168" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0-rc1-build3168</d:Version>
+      <d:NormalizedVersion>2.1.0-rc1-build3168</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-09-06T22:07:30.087</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0-rc1-build3168]:|xunit.assert:[2.1.0-rc1-build3168]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-rc1-build3168</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:08:11.913</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-09-06T22:07:30.087</d:Published>
+      <d:PackageHash>dVnDKBCIpLE5GaxLALnbnobqtDyTTDKJSRbqhLGrx0Ptc/n3VQRUby/CDx6v+y7xNVPqtqj0XMeDO1DVT8E3tA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-rc1-build3168</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">15919</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.0.0')" />
+    <title type="text">xunit</title>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>James Newkirk,  Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.0.0" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.0.0</d:Version>
+      <d:NormalizedVersion>2.0.0</d:NormalizedVersion>
+      <d:Authors>James Newkirk,  Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-03-16T21:10:06.303</d:Created>
+      <d:Dependencies>xunit.core:[2.0.0]:|xunit.assert:[2.0.0]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-10-09T16:15:27.047</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-03-16T21:10:06.303</d:Published>
+      <d:PackageHash>R3ff9uIPUm5/ZxG0GzNzezftMwAtYYBKFZn/iVWPPvugq96WCaFt+ItC32cqIWpFsxkxChQAcWQSJOKazaGW+A==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.0.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">226952</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.1</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-rc2-build3176')</id>
+    <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-rc2-build3176')" />
+    <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-rc2-build3176')" />
+    <title type="text">xunit</title>
+    <updated>2015-09-27T18:29:32Z</updated>
+    <author>
+      <name>James Newkirk, Brad Wilson</name>
+    </author>
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-rc2-build3176" />
+    <m:properties>
+      <d:Id>xunit</d:Id>
+      <d:Version>2.1.0-rc2-build3176</d:Version>
+      <d:NormalizedVersion>2.1.0-rc2-build3176</d:NormalizedVersion>
+      <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+      <d:Copyright></d:Copyright>
+      <d:Created m:type="Edm.DateTime">2015-09-20T20:30:15.507</d:Created>
+      <d:Dependencies>xunit.core:[2.1.0-rc2-build3176]:|xunit.assert:[2.1.0-rc2-build3176]:</d:Dependencies>
+      <d:Description>
+        xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+
+        Installing this package installs xunit.core and xunit.assert.
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-rc2-build3176</d:GalleryDetailsUrl>
+      <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language>en-US</d:Language>
+      <d:LastUpdated m:type="Edm.DateTime">2015-09-27T18:29:32.007</d:LastUpdated>
+      <d:Published m:type="Edm.DateTime">2015-09-20T20:30:15.507</d:Published>
+      <d:PackageHash>VDTmsLhIbHt0G3b2Izb2v3nHF/WeoCdv8m57RIBNzm/UCNHcJ8ucwFbaFnlD3TtHNE4kc7jDtCiJSux2LNAT6w==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+      <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-rc2-build3176</d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Summary></d:Summary>
+      <d:Tags></d:Tags>
+      <d:Title>xUnit.net</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">3155</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.5</d:MinClientVersion>
+      <d:LastEdited m:null="true" />
+      <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+      <d:LicenseNames></d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+</feed>

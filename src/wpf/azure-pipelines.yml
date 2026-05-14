@@ -1,0 +1,53 @@
+# This pipeline does not do any real building of assets. It just publishing commit info to Maestro, which is used to trigger codeflow to the VMR.
+# All building of assets happens in the VMR.
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+    - internal/release/*
+    - experimental/*
+  paths:
+    exclude:
+    - Documentation/*
+pr: none
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: NetCore1ESPool-Internal
+      image: 1es-windows-2022
+      os: windows
+    stages:
+    - stage: build
+      displayName: Build
+      jobs:
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            MirrorRepo: wpf
+            LclSource: lclFilesfromPackage
+            LclPackageId: 'LCL-JUNO-PROD-WPF'
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishBuildArtifacts: true
+          enablePublishBuildAssets: false
+          enablePublishTestResults: false
+          publishAssetsImmediately: true
+          isAssetlessBuild: true
+          enableTelemetry: true
+          enableSourceIndex: true
+          sourceIndexParams:
+            condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+            binlogPath: artifacts/log/Debug/x86/Build.binlog
+            pool:
+              name: NetCore1ESPool-Internal
+              demands: ImageOverride -equals windows.vs2026preview.scout.amd64

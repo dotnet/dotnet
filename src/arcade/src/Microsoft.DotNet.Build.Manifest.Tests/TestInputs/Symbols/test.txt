@@ -1,0 +1,35 @@
+{
+   "count":1,
+   "value":[
+      {
+         "id":2124,
+         "name":"PackageArtifacts",
+         "source":"testSource",
+         "resource":{
+            "type":"Container",
+            "data":"#/1234/PackageArtifacts",
+            "properties":{
+               "localpath":"D:\\workspace\\_work\\1\\s\\artifacts\\output\\packages",
+               "artifactsize":"7644905"
+            },
+            "url":"https://dev.azure.com/dnceng/url",
+            "downloadUrl":"https://dev.azure.com/dnceng/_apis/build/builds/buildId/artifacts?artifactName=PackageArtifacts&api-version=6.0&%24format=zip"
+         }
+      },
+      {
+         "id":2123,
+         "name":"BlobArtifacts",
+         "source":"testSource",
+         "resource":{
+            "type":"Container",
+            "data":"#/1/BlobArtifacts",
+            "properties":{
+               "localpath":"D:\\workspace\\_work\\1\\s\\artifacts\\output\\packages",
+               "artifactsize":"7644905"
+            },
+            "url":"https://dev.azure.com/dnceng/_apis/build/builds/buildId/artifacts?artifactName=BlobArtifacts&api-version=6.0",
+            "downloadUrl":"https://dev.azure.com/dnceng/_apis/build/builds/buildId/artifacts?artifactName=PackageArtifacts&api-version=6.0&%24format=zip"
+         }
+      }
+   ]
+}

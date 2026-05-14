@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="A:0.5.0" Label="A:0.5.0" />
+    <Node Id="A:0.6.0-beta" Label="A:0.6.0-beta" />
+  </Nodes>
+</DirectedGraph>

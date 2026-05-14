@@ -1,0 +1,31 @@
+﻿{
+  "keys": [
+    {
+      "kty": "EC",
+      "alg": "ES256",
+      "use": "sig",
+      "crv": "P-256",
+      "kid": "JsonWebKeyEcdsa256",
+      "x": "luR290c8sXxbOGhNquQ3J3rh763Os4D609cHK-L_5fA",
+      "y": "tUqUwtaVHwc7_CXnuBrCpMQTF5BJKdFnw9_JkSIXWpQ"
+    },
+    {
+      "kty": "EC",
+      "alg": "ES384",
+      "use": "sig",
+      "crv": "P-384",
+      "kid": "JsonWebKeyEcdsa384",
+      "x": "5mn3HaDoUgdNTFCACaWIvrpriQTloEbMbx4eUu_XvB4pyExig45VIozMnj7FedJg",
+      "y": "Vh872HVKNHrzlVu0Ko-3dN-eHoDYBeZgdGLAqenyZ0_X_TctwT6MVLxcAvwbJG5l"
+    },
+    {
+      "kty": "EC",
+      "alg": "ES521",
+      "use": "sig",
+      "crv": "P-521",
+      "kid": "JsonWebKeyEcdsa521",
+      "x": "AX0BXx6mpDjvGk-NLTwobKNjfAP4QCRjtKi8UQsuPqQ2sRKITAcSti3UMn0COcrG_FVgEDNPyPVlSi5LnUl0dREr",
+      "y": "AZ8DlNxsA6eCj_JL9Rz8uU4eacd-XX--ek8-VCOgv3YNRPeN_2PJauJL7q9Pg1MSe8zEaLIRhM4SGWJ4SI1rMhlW"
+    }
+  ]
+}

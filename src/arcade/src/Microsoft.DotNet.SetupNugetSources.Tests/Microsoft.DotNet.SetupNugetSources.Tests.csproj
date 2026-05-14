@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AwesomeAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
+  </ItemGroup>
+
+  <!-- Refined includes: only required scaffold files with correct relative placement under RepoScaffold/eng/common -->
+  <ItemGroup>
+    <None Include="..\..\global.json" TargetPath="RepoScaffold\global.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\eng\common\SetupNugetSources.*" TargetPath="RepoScaffold\eng\common\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\eng\common\pipeline-logging-functions.*" TargetPath="RepoScaffold\eng\common\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\eng\common\tools.*" TargetPath="RepoScaffold\eng\common\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Variables.wxi?>
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)"
+           Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+
+    <Package InstallerVersion="$(var.InstallerVersion)" Compressed="yes" InstallScope="perMachine" />
+
+    <!-- MajorUpgrade element doesn't support setting the language attribute in the upgrade table -->
+    <Upgrade Id="$(var.UpgradeCode)">
+      <UpgradeVersion Maximum="$(var.ProductVersion)" MigrateFeatures="yes" IncludeMinimum="no" Property="WIX_UPGRADE_DETECTED" />
+      <UpgradeVersion Minimum="$(var.ProductVersion)" IncludeMinimum="no" OnlyDetect="yes" Property="WIX_DOWNGRADE_DETECTED" />
+    </Upgrade>
+
+    <!-- The new MSI is installed before the older version is removed. This is the fastest upgrade option. -->
+    <InstallExecuteSequence>
+      <!-- See https://docs.microsoft.com/en-us/windows/win32/msi/removeexistingproducts-action for other options -->
+      <RemoveExistingProducts After="InstallFinalize" />
+    </InstallExecuteSequence>
+
+    <Condition Message="A newer version of [ProductName] is alread installed.">
+      NOT WIX_DOWNGRADE_DETECTED
+    </Condition>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.ProgramFilesFolder)">
+        <Directory Id="DOTNETHOME" Name="dotnet">
+          <Directory Id="SdkManifestsDir" Name="sdk-manifests">
+            <Directory Id="SdkFeatureBandVersionDir" Name="$(var.SdkFeatureBandVersion)">
+              <Directory Id="ManifestIdDir" Name="$(var.ManifestId)">
+                <?ifdef ManifestVersion ?>
+                <Directory Id="ManifestVersionDir" Name="$(var.ManifestVersion)" />
+                <?endif?>
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <?if $(var.Platform)~=x64?>
+    <CustomActionRef Id="Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" />
+    <?endif?>
+
+    <MediaTemplate CompressionLevel="high" EmbedCab="yes" />
+
+    <!-- Record the original package used to generate the MSI -->
+    <Property Id="PackageId" Value="$(var.PackageId)" />
+    <Property Id="PackageVersion" Value="$(var.PackageVersion)" />
+
+    <Feature Id="F_PackageContents">
+      <ComponentGroupRef Id="CG_PackageContents"/>
+      <?if $(var.IncludePackGroupJson) = "true" ?>
+      <ComponentGroupRef Id="CG_PackGroupJson"/>
+      <?endif?>
+    </Feature>
+
+    <FeatureRef Id="F_DependencyProvider" />
+    <FeatureRef Id="F_RegistryKeys" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.EulaRtf)" />
+    <UIRef Id="WixUI_Minimal"/>
+  </Product>
+</Wix>

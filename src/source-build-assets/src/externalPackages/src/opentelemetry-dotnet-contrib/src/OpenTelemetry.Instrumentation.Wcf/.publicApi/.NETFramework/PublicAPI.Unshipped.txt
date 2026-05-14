@@ -1,0 +1,15 @@
+const OpenTelemetry.Instrumentation.Wcf.WcfEnrichEventNames.AfterReceiveRequest = "AfterReceiveRequest" -> string!
+const OpenTelemetry.Instrumentation.Wcf.WcfEnrichEventNames.BeforeSendReply = "BeforeSendReply" -> string!
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehaviorExtensionElement
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehaviorExtensionElement.TelemetryEndpointBehaviorExtensionElement() -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehavior
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription! serviceDescription, System.ServiceModel.ServiceHostBase! serviceHostBase, System.Collections.ObjectModel.Collection<System.ServiceModel.Description.ServiceEndpoint!>! endpoints, System.ServiceModel.Channels.BindingParameterCollection! bindingParameters) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription! serviceDescription, System.ServiceModel.ServiceHostBase! serviceHostBase) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehavior.TelemetryServiceBehavior() -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription! serviceDescription, System.ServiceModel.ServiceHostBase! serviceHostBase) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehaviorExtensionElement
+OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehaviorExtensionElement.TelemetryServiceBehaviorExtensionElement() -> void
+override OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehaviorExtensionElement.BehaviorType.get -> System.Type!
+override OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehaviorExtensionElement.CreateBehavior() -> object!
+override OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehaviorExtensionElement.BehaviorType.get -> System.Type!
+override OpenTelemetry.Instrumentation.Wcf.TelemetryServiceBehaviorExtensionElement.CreateBehavior() -> object!

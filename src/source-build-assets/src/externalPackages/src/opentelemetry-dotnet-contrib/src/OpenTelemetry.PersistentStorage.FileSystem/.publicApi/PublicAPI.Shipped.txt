@@ -1,0 +1,16 @@
+#nullable enable
+OpenTelemetry.PersistentStorage.FileSystem.FileBlob
+OpenTelemetry.PersistentStorage.FileSystem.FileBlob.FileBlob(string! fullPath) -> void
+OpenTelemetry.PersistentStorage.FileSystem.FileBlob.FullPath.get -> string!
+OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider
+OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.Dispose() -> void
+OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.FileBlobProvider(string! path, long maxSizeInBytes = 52428800, int maintenancePeriodInMilliseconds = 120000, long retentionPeriodInMilliseconds = 172800000, int writeTimeoutInMilliseconds = 60000) -> void
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryDelete() -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryLease(int leasePeriodMilliseconds) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryRead(out byte[]? buffer) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryWrite(byte[]! buffer, int leasePeriodMilliseconds = 0) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnGetBlobs() -> System.Collections.Generic.IEnumerable<OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob!>!
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryCreateBlob(byte[]! buffer, int leasePeriodMilliseconds, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryCreateBlob(byte[]! buffer, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryGetBlob(out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+virtual OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.Dispose(bool disposing) -> void

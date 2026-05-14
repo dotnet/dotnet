@@ -1,0 +1,8 @@
+<Solution>
+    <Folder Name="/Folder/">
+        <Project Path="foo.csproj" />
+    </Folder>
+    <Properties Name="PostLoad" Scope="PostLoad">
+        <Property Name="name" Value="value" />
+    </Properties>
+</Solution>

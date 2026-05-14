@@ -1,0 +1,47 @@
+root = true
+
+[*]
+insert_final_newline = true
+charset = utf-8
+indent_style = space
+
+[*.{sh}]
+end_of_line = lf
+indent_size = 2
+tab_width = 2
+
+[*.{ps1}]
+indent_size = 2
+tab_width = 2
+
+[*.{*proj,xml,props,targets,tasks}]
+indent_size = 2
+tab_width = 2
+
+[*.cs]
+indent_size = 4
+tab_width = 4
+
+# New line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+# Indentation preferences
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
+csharp_indent_switch_labels = true
+csharp_indent_labels = one_less_than_current
+
+# Modifier preferences
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion
+
+# IDE0073: The file header is missing or not located at the top of the file
+file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
+dotnet_diagnostic.IDE0073.severity = error

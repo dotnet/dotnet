@@ -1,0 +1,800 @@
+StyleSheet
+    CComment
+        OpenCComment    /*
+        CommentText    *************************************************
+
+MOZILLA.ORG
+Enhanced Screen Styles
+(Only applicable if JavaScript is enabled)
+
+Created by the friendly folks at Happy Cog
+http://www.happycog.com/
+
+*************************************************
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #quick-search
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    label
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    left
+                Colon    :
+                UnitValue
+                    Number    48
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    14
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    text-transform
+                Colon    :
+                Identifier    uppercase
+                Semicolon    ;
+            Declaration
+                Identifier    font-weight
+                Colon    :
+                Identifier    bold
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #dddfe0
+                Semicolon    ;
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    85
+                    Units    %
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    14px x 0.85 = 12px
+                CloseCComment    */
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    community feed
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #community-sub
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    rows
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+                ClassSelector
+                    Dot    .
+                    Identifier    over
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background-color
+                Colon    :
+                HexColorValue
+                    HashName    #f5f6f6
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #community-sub
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    200
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    project carousel
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                HexColorValue
+                    HashName    #CBCCCC
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /images/template/screen/bg_project_carousel.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-y
+                Identifier    right
+                Identifier    top
+                Semicolon    ;
+            Declaration
+                Identifier    margin-right
+                Colon    :
+                UnitValue
+                    Number    -461
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                UnitValue
+                    Number    6
+                    Units    px
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    6
+                    Units    px
+                UnitValue
+                    Number    6
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    pagination
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    471
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                UnitValue
+                    Number    1
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    padding-right
+                Colon    :
+                UnitValue
+                    Number    47
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    prev
+            Comma    ,
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    next
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    21
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    float
+                Colon    :
+                Identifier    left
+                Semicolon    ;
+            Declaration
+                Identifier    overflow
+                Colon    :
+                Identifier    hidden
+                Semicolon    ;
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /images/template/widgets/carousel-arrows.png
+                    CloseFunctionBrace    )
+                Identifier    no-repeat
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    -21
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    text-indent
+                Colon    :
+                UnitValue
+                    Number    -999
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    prev
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+            Comma    ,
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    next
+                PseudoClassSelector
+                    Colon    :
+                    Identifier    hover
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    border-bottom
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    prev
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    19
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    right
+                Colon    :
+                UnitValue
+                    Number    18
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    next
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background-position
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                UnitValue
+                    Number    -21
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    width
+                Colon    :
+                UnitValue
+                    Number    19
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    next
+                ClassSelector
+                    Dot    .
+                    Identifier    disabled
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background-position
+                Colon    :
+                UnitValue
+                    Number    -18
+                    Units    px
+                Identifier    top
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-carousel
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    prev
+                ClassSelector
+                    Dot    .
+                    Identifier    disabled
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background-position
+                Colon    :
+                Identifier    left
+                Identifier    top
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects-wrap
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                HexColorValue
+                    HashName    #dee0e1
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /images/template/screen/bg_projects.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-y
+                Identifier    right
+                Identifier    center
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    14
+                    Units    em
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects-wrap
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects-fade-left
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /images/template/widgets/carousel-fade.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-y
+                NumericalValue
+                    Number    0
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                NumericalValue
+                    Number    0
+                NumericalValue
+                    Number    0
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    100
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects-wrap
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects-fade-right
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    transparent
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    /images/template/widgets/carousel-fade.png
+                    CloseFunctionBrace    )
+                Identifier    repeat-y
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    100
+                    Units    %
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    absolute
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                NumericalValue
+                    Number    0
+                NumericalValue
+                    Number    0
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    z-index
+                Colon    :
+                NumericalValue
+                    Number    100
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    background
+                Colon    :
+                Identifier    none
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                UnitValue
+                    Number    451
+                    Units    px
+                NumericalValue
+                    Number    0
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    overflow
+                Colon    :
+                Identifier    hidden
+                Semicolon    ;
+            Declaration
+                Identifier    padding
+                Colon    :
+                UnitValue
+                    Number    2
+                    Units    em
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    overflow
+                Colon    :
+                Identifier    visible
+                Semicolon    ;
+            Declaration
+                Identifier    height
+                Colon    :
+                Identifier    auto
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    project-first
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    padding-left
+                Colon    :
+                UnitValue
+                    Number    20
+                    Units    px
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    project carousel
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                IdSelector
+                    HashName    #home
+            SimpleSelector
+                IdSelector
+                    HashName    #sub
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    position
+                Colon    :
+                Identifier    relative
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    browser specific css
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    border-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    -moz-border-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    -webkit-border-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    projects-wrap
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    border-radius
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    -moz-border-radius
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    -webkit-border-radius
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    border-top-right-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    -moz-border-top-right-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    -webkit-border-top-right-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    border-bottom-right-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    -moz-border-bottom-right-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    -webkit-border-bottom-right-radius
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    debug
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    #sub { display:none; }
+        CloseCComment    */

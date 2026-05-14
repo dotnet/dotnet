@@ -1,0 +1,40 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!-- Repositories using the arcade SDK can stay up to date with their target framework more easily using the properties in this file.
+
+       Examples:
+       <TargetFramework>$(NetCurrent)</TargetFramework>
+       <TargetFrameworks>$(NetCurrent);$(NetFrameworkCurrent)</TargetFrameworks>
+       <TargetFrameworks>$(NetCurrent);$(NetMinimum);netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
+  -->
+
+  <PropertyGroup>
+    <!-- The TFM of the major release of .NET that the Arcade SDK aligns with.
+         IMPORTANT: To target the SDK bundled TFM, use the `$(BundledNETCoreAppTargetFramework)`
+                    property instead which is defined by the SDK and works outside of arcadified repos. 
+                    The use of `$(NetCurrent)` is only necessary for a small set of repos. -->
+    <NetCurrent>net11.0</NetCurrent>
+
+    <!-- The previously released version of .NET.
+         Undefined when NetMinimum and NetPrevious are identical, otherwise identical with
+         NetCurrent when building from source. -->
+    <NetPrevious/>
+    <NetPrevious Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(NetPrevious)' != ''">$(NetCurrent)</NetPrevious>
+
+    <!-- Lowest supported version of .NET at the time of the release of NetCurrent.
+         Identical with NetCurrent when building from source. -->
+    <NetMinimum>net10.0</NetMinimum>
+    <NetMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetMinimum>
+
+    <!-- The TFM of the latest version of .NET Framework. -->
+    <NetFrameworkCurrent>net481</NetFrameworkCurrent>
+
+    <!-- Lowest supported version of .NET Framework the time of the release of NetCurrent. -->
+    <NetFrameworkMinimum>net462</NetFrameworkMinimum>
+
+    <!-- The version of .NET Framework that tools (i.e. msbuild tasks) should target. -->
+    <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>
+  </PropertyGroup>
+
+</Project>

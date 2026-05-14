@@ -1,0 +1,48 @@
+﻿항목
+    about_NuGet
+    
+짧은 설명
+    NuGet 패키지 관리자 명령에 대한 정보를 제공합니다.
+           
+긴 설명
+    이 항목에서는 NuGet 패키지 관리자 명령에 대해 설명합니다. NuGet은 .NET 프로젝트에 
+    라이브러리 및 도구를 추가하는 통합 패키지 관리 도구입니다.
+
+                 
+    포함된 NuGet cmdlet는 다음과 같습니다.
+
+        Cmdlet					설명
+        ------------------		----------------------------------------------
+        Get-Package				설치된 패키지 집합을 가져옵니다.  -ListAvailable을 사용하면 
+                                패키지 원본에서 사용할 수 있는 패키지 집합을 가져옵니다.
+
+        Install-Package			프로젝트에 패키지와 해당 종속성을 설치합니다.
+
+        Uninstall-Package		패키지를 제거합니다. 다른 패키지가 이 패키지에 종속되어 있는 경우 
+                                –Force 옵션을 지정하지 않으면 명령이 실패합니다.
+
+        Update-Package			패키지와 해당 종속성을 최신 버전으로 업데이트합니다.
+
+        Add-BindingRedirect		프로젝트의 출력 경로 내에 있는 모든 어셈블리를 검토하고
+                                필요한 경우 응용 프로그램 또는 웹 구성 파일에 바인딩 리디렉션을 
+                                추가합니다.
+                            
+        Get-Project				지정된 프로젝트에 대한 참조를 DTE(개발 도구 환경)에 
+                                반환합니다. none이 지정된 경우 
+                                패키지 관리자 콘솔에서 선택한 기본 프로젝트를 반환합니다.
+
+        Open-PackagePage        지정된 패키지의 ProjectUrl, LicenseUrl 또는 
+                                ReportAbuseUrl을 가리키는 브라우저를 엽니다.
+
+        Register-TabExpansion	명령 매개 변수에 대한 탭 확장을 등록합니다.
+
+참고 항목
+    온라인 설명서: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

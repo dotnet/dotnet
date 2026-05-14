@@ -1,0 +1,12 @@
+;; Exclusions for SignCheck. Corresponds to info in Signing.props.
+;; Format: https://github.com/dotnet/arcade/blob/397316e195639450b6c76bfeb9823b40bee72d6d/src/SignCheck/Microsoft.SignCheck/Verification/Exclusion.cs#L23-L35
+;;
+;; This issue tracks a way to implement exclusions via Signing.props and avoid this extra file: https://github.com/dotnet/arcade/issues/2888
+
+;; Examples:
+;;  *apphost.exe;;Template, https://github.com/dotnet/core-setup/pull/7549
+;;  *apphosttemplateapphostexe.exe;;Template, https://github.com/dotnet/core-setup/pull/7549
+*launcher.exe;;Template
+*MessagePack.dll;;Non-Microsoft binary
+*MessagePack.Annotations.dll;;Non-Microsoft binary
+*Nerdbank.Streams.dll;;Non-Microsoft binary

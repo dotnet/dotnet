@@ -1,0 +1,28 @@
+<Project>
+
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/*.tmp</DefaultItemExcludes>
+    <XUnitDesktopSettingsFile>$(MSBuildThisFileDirectory)xunit.runner.json</XUnitDesktopSettingsFile>
+    <XUnitCoreSettingsFile>$(MSBuildThisFileDirectory)xunit.runner.json</XUnitCoreSettingsFile>
+  </PropertyGroup>
+
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+
+    <!-- NU5125 The licenseUrl element is being replaced by the license element. -->
+    <!-- NU5123 Don't warn about long filenames in packages, we bundle test assets that have long paths
+         (ie HelloWorldWithSubDirs) -->
+    <NoWarn>$(NoWarn);NU5125;NU5123</NoWarn>
+
+    <!-- XUnit.V3 migration is incremental. Enabling MTP will come in a later phase (https://github.com/dotnet/sdk/issues/52914).  -->
+    <UseMicrosoftTestingPlatformRunner>false</UseMicrosoftTestingPlatformRunner>
+
+    <DebugType>embedded</DebugType>
+
+    <!-- Don't generate separate symbol packages for the test packages -->
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+</Project>

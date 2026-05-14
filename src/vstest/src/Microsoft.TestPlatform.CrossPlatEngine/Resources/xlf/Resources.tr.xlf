@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="tr">
+    <body>
+      <trans-unit id="DiscovererInstantiationException">
+        <source>Exception occurred while instantiating discoverer : {0}</source>
+        <target state="translated">Bulucu örneği oluşturulurken özel durum oluştu: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateAdaptersFound">
+        <source>Multiple test adapters with the same uri '{0}' were found. Ignoring adapter '{1}'. Please uninstall the conflicting adapter(s) to avoid this warning.</source>
+        <target state="translated">Aynı '{0}' URI’sine sahip birden fazla test bağdaştırıcısı bulundu. '{1}' bağdaştırıcısı yoksayılıyor. Bu uyarıyı önlemek için lütfen çakışan bağdaştırıcıları kaldırın.</target>
+        <note>{0} is the unique identifier of test adapter. {1} is the name of the test adapter that shares a unique identifier with a previously loaded adapter.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateSource">
+        <source>Ignoring the specified duplicate source '{0}'.</source>
+        <target state="translated">Belirtilen '{0}' yinelenen kaynağı yoksayılıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromLoadTests">
+        <source>An exception occurred while test discoverer '{0}' was loading tests. Exception: {1}</source>
+        <target state="translated">'{0}' test bulucusu testleri yüklerken bir özel durum oluştu. Özel durum: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromRunTests">
+        <source>An exception occurred while invoking executor '{0}': {1}</source>
+        <target state="translated">'{0}' yürütücüsü çağrılırken bir özel durum oluştu: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotFound">
+        <source>Could not find file {0}.</source>
+        <target state="translated">{0} dosyası bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HostDebuggerWarning">
+        <source>Host debugging is enabled. Please attach debugger to testhost process to continue.</source>
+        <target state="translated">Konak hata ayıklaması etkin. Devam etmek için lütfen hata ayıklayıcısını testhost işlemine ekleyin.</target>
+        <note>Host, testhost are key words, it should not be localized</note>
+      </trans-unit>
+      <trans-unit id="IgnoringExecutorAsNoDefaultExecutorUriAttribute">
+        <source>Ignoring the test executor corresponding to test discoverer {0} because the discoverer does not have the DefaultExecutorUri attribute . You might need to re-install the test adapter add-in.</source>
+        <target state="translated">Bulucu DefaultExecutorUri özniteliğine sahip olmadığından {0} test bulucusuna karşılık gelen test yürütücüsü yoksayılıyor. Test bağdaştırıcısı eklentisini yeniden yüklemeniz gerekebilir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitializationFailed">
+        <source>Failed to initialize client proxy: could not connect to test process.</source>
+        <target state="translated">İstemci ara sunucusu başlatılamadı: Test işlemine bağlanılamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LaunchDebugProcessNotAllowedForANonDebugRun">
+        <source>This operation is not allowed in the context of a non-debug run.</source>
+        <target state="translated">Bu işlem hata ayıklama dışındaki bir çalıştırmanın bağlamında yapılamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingExecutor">
+        <source>Could not find test executor with URI '{0}'.  Make sure that the test executor is installed and supports .net runtime version {1}.</source>
+        <target state="translated">URI’si '{0}' olan test yürütücüsü bulunamadı. Test yürütücüsünün yüklendiğinden ve .NET çalışma zamanı {1} sürümünü desteklediğinden emin olun.</target>
+        <note>{0} - Executor uri String {1}-  Version - .net Version Eg:-2.0.50727.00</note>
+      </trans-unit>
+      <trans-unit id="NoValidSourceFoundForDiscovery">
+        <source>None of the specified source(s) '{0}' is valid. Fix the above errors/warnings and then try again. </source>
+        <target state="translated">Belirtilen '{0}' kaynaklarının hiçbiri geçerli değil. Yukarıdaki hataları/uyarıları düzeltin ve yeniden deneyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringSeperator">
+        <source>, </source>
+        <target state="translated">, </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPropertiesInTestCaseFilter">
+        <source>No tests matched the filter because it contains one or more properties that are not valid ({0}). Specify filter expression containing valid properties ({1}).</source>
+        <target state="translated">Geçerli olmayan bir veya daha fazla özellik içerdiğinden filtre ile eşleşen test yok ({0}). Geçerli değerleri ({1}) içeren bir filtre ifadesi belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find {0}. Make sure that the dotnet is installed on the machine.</source>
+        <target state="translated">{0} bulunamadı. Makinede dotnet’in yüklü olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestHostExitedWithError">
+        <source>Testhost process for source(s) '{0}' exited with error: {1}. Please check the diagnostic logs for more information.</source>
+        <target state="translated">'{0}' kaynağı için testhost işleminden şu hatayla çıkıldı: {1}. Daha fazla bilgi edinmek için lütfen tanılama günlüklerini denetleyin.</target>
+        <note>{0} a source, or very rarely list of sources, {1} the output error.</note>
+      </trans-unit>
+      <trans-unit id="DataCollectorDebuggerWarning">
+        <source>DataCollector debugging is enabled. Please attach debugger to datacollector process to continue.</source>
+        <target state="translated">DataCollector hata ayıklaması etkin. Devam etmek için lütfen hata ayıklayıcısını datacollector işlemine ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestRunFailed_NoDiscovererFound_NoTestsAreAvailableInTheSources">
+        <source>No test is available in {0}. Make sure that test discoverer &amp; executors are registered and platform &amp; framework version settings are appropriate and try again.</source>
+        <target state="translated">{0} içinde hiç test yok. Test bulucuları ile yürütücülerinin kayıtlı olduğundan ve platform ile çerçeve sürümü ayarlarının uygun olduğundan emin olun ve yeniden deneyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TesthostDiagLogOutputFile">
+        <source>Logging TestHost Diagnostics in file: {0}</source>
+        <target state="translated">TestHost Tanılamaları şu dosyadaki günlüğe kaydediliyor: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLaunchTestHost">
+        <source>Failed to launch testhost with error: {0}</source>
+        <target state="translated">Testhost başlatılamadı. Şu hata alındı: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutionThreadApartmentStateNotSupportedForFramework">
+        <source>ExecutionThreadApartmentState option not supported for framework: {0}.</source>
+        <target state="translated">ExecutionThreadApartmentState seçeneği {0} çerçevesi için desteklenmiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OldTestHostIsGettingUsed">
+        <source>You are using an older version of Microsoft.NET.Test.Sdk. Kindly move to a version equal or greater than 15.3.0.</source>
+        <target state="translated">Eski bir Microsoft.NET.Test.Sdk sürümü kullanıyorsunuz. Lütfen 15.3.0 veya daha yeni bir sürüme geçin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NonExistingExtensions">
+        <source>Could not find extensions: {0}</source>
+        <target state="translated">Dosya uzantıları bulunamadı: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedAdapterPath">
+        <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
+        <target state="translated">Bağdaştırıcı arama değiştiriliyor. Ayrıntılar için lütfen https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap bağlantısını takip edin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableForGivenTestCaseFilter">
+        <source>No test matches the given testcase filter `{0}` in {1}</source>
+        <target state="translated">{1} içinde sunulan test çalışması filtresi `{0}` ile eşleşen test yok</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestDiscoveryCancelled">
+        <source>Discovery of tests cancelled.</source>
+        <target state="translated">Test bulma iptal edildi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
+        <source>Cannot attach the debugger to the default test host with process ID: {0}.</source>
+        <target state="translated">Hata ayıklayıcı, {0} işlem kimliğine sahip varsayılan test ana bilgisayarına eklenemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges.</source>
+        <target state="translated">{0} Belirtilen konumda "TestResults" klasörü oluşturulmaya çalışılırken erişim engellendi. Yazma erişimi gerektiren bir klasörden vstest.console.exe çalıştırdığınız için bu özel durumu aldınız. Sorunu çözmek için lütfen yazma ayrıcalıklarına sahip olduğunuz bir klasörden vstest.console.exe dosyasını çalıştırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoAvailableProxyForDeque">
+        <source>Could not find an available proxy to deque.</source>
+        <target state="translated">İki uçtan erişimli kuyruğa yönelik kullanılabilir ara sunucu bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuchProxyId">
+        <source>Proxy with id {0} is not managed by the current session manager.</source>
+        <target state="translated">{0} kimliğine sahip ara sunucu, geçerli oturum yöneticisi tarafından yönetilmiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProxyIsAlreadyAvailable">
+        <source>Proxy with id {0} is already available and cannot be re-enqueued.</source>
+        <target state="translated">{0} kimliğine sahip ara sunucu zaten var ve yeniden kuyruğa alınamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider was found for any source in this run.</source>
+        <target state="translated">Bu çalıştırmadaki hiçbir kaynak için uygun bir test çalışma zamanı sağlayıcısı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProxyMatchesDescription">
+        <source>The runsettings changed between the time when the test session was established and the time of the current run/discovery request.</source>
+        <target state="translated">runsettings, test oturumunun kurulduğu zamanla mevcut çalıştırma/keşif isteği zamanı arasında değişti.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentOutputFormat">
+        <source>  {0}</source>
+        <target state="translated">  {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentsBanner">
+        <source>Attachments:</source>
+        <target state="translated">Ekler:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuitableRuntimeProviderFound">
+        <source>No suitable test runtime provider was found:</source>
+        <target state="translated">Uygun bir test çalışma zamanı sağlayıcısı bulunamadı:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SkippingSource">
+        <source>Skipping source:</source>
+        <target state="translated">Kaynak atlanıyor:</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

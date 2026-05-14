@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>$(FSharpNetCoreProductTargetFramework);net472</TargetFrameworks>
+    <FSharpCoreImplicitPackageVersion>$(FSharpCoreShippedPackageVersionValue)</FSharpCoreImplicitPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\ProvidedTypes\ProvidedTypes.fsi">
+      <Link>ProvidedTypes\ProvidedTypes.fsi</Link>
+    </Compile>
+    <Compile Include="..\..\ProvidedTypes\ProvidedTypes.fs">
+      <Link>ProvidedTypes\ProvidedTypes.fs</Link>
+    </Compile>
+    <Compile Include="ComboProvider.fs" />
+  </ItemGroup>
+
+</Project>

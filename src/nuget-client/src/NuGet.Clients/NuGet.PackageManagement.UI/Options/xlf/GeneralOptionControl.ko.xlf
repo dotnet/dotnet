@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../GeneralOptionControl.resx">
+    <body>
+      <trans-unit id="BindingRedirectsHeader.Text">
+        <source>Binding Redirects</source>
+        <target state="translated">바인딩 리디렉션</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagementHeader.Text">
+        <source>Package Management</source>
+        <target state="translated">패키지 관리</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreHeader.Text">
+        <source>Package Restore</source>
+        <target state="translated">패키지 복원</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.AccessibleName">
+        <source>Default Package Management Format</source>
+        <target state="translated">기본 패키지 관리 형식</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items1">
+        <source>PackageReference</source>
+        <target state="translated">PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatLabel.Text">
+        <source>Default package management format:</source>
+        <target state="translated">기본 패키지 관리 형식:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandButton.Text">
+        <source>&amp;Clear All NuGet Storage</source>
+        <target state="translated">모든 NuGet 스토리지 지우기(&amp;C)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandStatusText.Text">
+        <source>http://example.com/help/locals</source>
+        <target state="translated">http://example.com/help/locals</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreAutomaticCheckBox.Text">
+        <source>Auto&amp;matically check for missing packages during build in Visual Studio</source>
+        <target state="translated">Visual Studio에서 빌드 시 누락된 패키지를 자동으로 확인(&amp;M)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreConsentCheckBox.Text">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">NuGet이 누락된 패키지를 다운로드하도록 허용(&amp;A)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="showPackageManagementChooser.Text">
+        <source>Prompt for &amp;format selection on first package install</source>
+        <target state="translated">첫 번째 패키지 설치 시 서식 선택에 대한 프롬프트(&amp;F)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="skipBindingRedirects.Text">
+        <source>Skip applying &amp;binding redirects</source>
+        <target state="translated">바인딩 리디렉션 적용 건너뛰기(&amp;B)</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

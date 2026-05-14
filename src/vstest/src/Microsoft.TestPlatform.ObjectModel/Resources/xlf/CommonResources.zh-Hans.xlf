@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">参数不能为 NULL 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">测试运行检测到将使用不同框架和平台版本的 DLL。后面的 DLL 与当前设置(即 {0} 框架和 {1} 平台)不匹配。{2}要了解如何管理这些设置的更多详细信息，请转到 {3}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">提供的所有测试容器均与用于测试运行的平台体系结构和 .Net Framework 设置不匹配。平台: {0}。.Net Framework: {1}。有关管理这些设置的详细信息，请转到http://go.microsoft.com/fwlink/?LinkID=330428。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">提供的设置文件不符合格式要求。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0} 将使用 {1} 框架和 {2} 平台。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

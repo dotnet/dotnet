@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VsixLanguagePack Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema-lp/2010">
+  <LocalizedName>NuGet Paket Yöneticisi</LocalizedName>
+  <LocalizedDescription>Bir VS Projesinde paketleri yükleme, yükseltme, yapılandırma ve kaldırma sürecini otomatik hale getirmek için bir araç koleksiyonu.</LocalizedDescription>
+  <MoreInfoUrl>https://github.com/NuGet/NuGet.Client</MoreInfoUrl>
+</VsixLanguagePack>

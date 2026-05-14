@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="es">
+    <body>
+      <trans-unit id="InvalidRunSettingsXml">
+        <source>Run settings XML does not contain "RunSettings" node.</source>
+        <target state="translated">El archivo XML de parámetros de ejecución no contiene el nodo "RunSettings".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsIncorrectValue">
+        <source>Invalid setting '{0}'. Invalid value '{1}' specified for '{2}'.</source>
+        <target state="translated">Parámetro '{0}' no válido. Se ha especificado un valor no válido ({1}) para '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRunSettingsNode">
+        <source>Could not find 'RunSettings' node.</source>
+        <target state="translated">No se encuentra el nodo 'RunSettings'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoRunSettingsNodeFound">
+        <source>Could not find 'RunSettings' node.</source>
+        <target state="translated">No se encuentra el nodo 'RunSettings'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsParseError">
+        <source>An error occurred while loading the settings.  Error: {0}.</source>
+        <target state="translated">Error al cargar la configuración. Error: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnExpectedSettingsFile">
+        <source>Unexpected settings file specified.</source>
+        <target state="translated">Se ha especificado un archivo de configuración no esperado.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>$(ToolsFramework)</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <!-- Reference the outputs for the dependency nodes calculation. -->
+    <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="symbols\pdb\Mono.Cecil.Pdb.csproj" PrivateAssets="all" />
+    <ProjectReference Include="Mono.Cecil.csproj" PrivateAssets="all" />
+    <ProjectReference Include="symbols\mdb\Mono.Cecil.Mdb.csproj" PrivateAssets="all" />
+    <ProjectReference Include="rocks\Mono.Cecil.Rocks.csproj" PrivateAssets="all" />
+  </ItemGroup>
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('PrivateAssets', 'All'))" />
+    </ItemGroup>
+  </Target>
+</Project>

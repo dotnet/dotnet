@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+    <Results>
+        <UnitTestResult testName="HelixReporter.TRX.Pass2" duration="00:00:00.0001620" outcome="Passed" testId="2">
+            <Output>
+                <StdOut>hello</StdOut>
+            </Output>
+        </UnitTestResult>
+        <UnitTestResult testName="HelixReporter.TRX.Skip2" outcome="NotExecuted" testId="3">
+            <Output></Output>
+        </UnitTestResult>
+        <UnitTestResult testName="HelixReporter.TRX.Fail2" duration="00:00:00.0358100" outcome="Failed" testId="1">
+            <Output>
+                <StdOut>hello</StdOut>
+                <ErrorInfo>
+                    <Message>
+                        This failure is expected and is not the reason why your PR failed. This test is always failing in order to test failure reporting infrastructure. If your PR is blocked there must be another test or build error that is blocking your PR.
+                    </Message>
+                    <StackTrace>   at tests.UnitTest1.TestMethod4() in UnitTest1.cs:line 26</StackTrace>
+                </ErrorInfo>
+            </Output>
+        </UnitTestResult>
+    </Results>
+    <TestDefinitions>
+        <UnitTest name="HelixReporter.TRXTests.Pass2" id="2">
+            <TestMethod className="HelixReporter.TRXTests" name="HelixReporter.TRXTests.Pass2" />
+        </UnitTest>
+        <UnitTest name="HelixReporter.TRXTests.Fail2" id="1">
+            <TestMethod className="HelixReporter.TRXTests" name="HelixReporter.TRXTests.Fail2" />
+        </UnitTest>
+        <UnitTest name="HelixReporter.TRXTests.Skip2" id="3">
+            <TestMethod className="HelixReporter.TRXTests" name="HelixReporter.TRXTests.Skip2" />
+        </UnitTest>
+    </TestDefinitions>
+</TestRun>
+

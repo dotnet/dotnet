@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Localized.ja-JP</id>
+    <version>2.0</version>
+    <authors>test</authors>
+    <language>ja-JP</language>
+    <description>Localized package</description>
+    <dependencies>
+        <dependency id="Localized" version="[2.0]" /> 
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net40\ja-JP\Main.2.0.resources.dll" target="lib\net40\ja-JP\Main.2.0.resources.dll" />
+  </files>
+</package>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>NuGet.Client.EndToEnd.TestData</id>
+    <version>1.0.0</version>
+    <title>Test data for NuGet.Client EndToEnd tests</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <license type="expression">Apache-2.0</license>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <projectUrl>https://aka.ms/nugetprj</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/NuGet/Media/master/Images/MainLogo/256x256/nuget_256.png</iconUrl>
+    <description>This package provides test data that is used during the execution of the NuGet.Client EndToEnd tests.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>nuget endtoend testdata</tags>
+  </metadata>
+  <files>
+    <file src="Packages\**\*.*" target="content\Packages" />
+  </files>
+</package>

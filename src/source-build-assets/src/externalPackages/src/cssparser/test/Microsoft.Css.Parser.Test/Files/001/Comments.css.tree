@@ -1,0 +1,332 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    html
+            CComment
+                OpenCComment    /*
+                CommentText    1234
+                CloseCComment    */
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            CComment
+                OpenCComment    /*
+                CommentText    1234
+                CloseCComment    */
+            SimpleSelector
+                Function (SimpleSelectorExpected:WholeItem)
+                    Function    lang(
+                    CComment
+                        OpenCComment    /*
+                        CommentText    1234
+                        CloseCComment    */
+                    FunctionArgument
+                        Identifier    fr-ca
+                    CComment
+                        OpenCComment    /*
+                        CommentText    1234
+                        CloseCComment    */
+                    CloseFunctionBrace    )
+        CComment
+            OpenCComment    /*
+            CommentText    1234
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            CComment
+                OpenCComment    /*
+                CommentText    1234
+                CloseCComment    */
+            Declaration
+                Identifier    quotes
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                Colon    :
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                String    '� '
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                String    ' �'
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    html
+                PseudoClassFunctionSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            CComment
+                OpenCComment    /*
+                CommentText    1234
+                CloseCComment    */
+            SimpleSelector
+                Function (SimpleSelectorExpected:WholeItem)
+                    Function    lang(
+                    CComment
+                        OpenCComment    /*
+                        CommentText    1234
+                        CloseCComment    */
+                    FunctionArgument
+                        Identifier    de
+                    CComment
+                        OpenCComment    /*
+                        CommentText    1234
+                        CloseCComment    */
+                    CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                String    '\2039'
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                String    '\203A'
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            CComment
+                OpenCComment    /*
+                CommentText    1234
+                CloseCComment    */
+            SimpleSelector
+                Function (SimpleSelectorExpected:WholeItem)
+                    Function    lang(
+                    FunctionArgument
+                        Identifier    fr
+                    CComment
+                        OpenCComment    /*
+                        CommentText    1234
+                        CloseCComment    */
+                    CloseFunctionBrace    )
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    Q
+        CComment
+            OpenCComment    /*
+            CommentText    1234
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    1234
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                String    '� '
+                String    ' �'
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    lang(
+                        CComment
+                            OpenCComment    /*
+                            CommentText    1234
+                            CloseCComment    */
+                        FunctionArgument
+                            Identifier    de
+                        CComment
+                            OpenCComment    /*
+                            CommentText    1234
+                            CloseCComment    */
+                        CComment
+                            OpenCComment    /*
+                            CommentText    1234
+                            CloseCComment    */
+                        CloseFunctionBrace    )
+                Greater    >
+            CComment
+                OpenCComment    /*
+                CommentText    1234
+                CloseCComment    */
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    Q
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    quotes
+                Colon    :
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                String    '�'
+                String    '�'
+                String    '\2039'
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    1234
+                    CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    http://www.example.com/redball.png
+                    CloseFunctionBrace    )
+                Identifier    disc
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    http://www.example.com/redball.png
+                    CComment
+                        OpenCComment    /*
+                        CommentText    123
+                        CloseCComment    */
+                    CloseFunctionBrace    )
+                Identifier    disc
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url    url(
+                    UnquotedUrlString    http://www.example.com/redball.png
+                    CComment
+                        OpenCComment    /*
+                        CommentText    123
+                        CloseCComment    */
+                    CloseFunctionBrace    )
+                Identifier    disc
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                UrlItem
+                    Url    url(
+                    String    "http://www.example.com/redball.png"
+                    CloseFunctionBrace    )
+                CComment
+                    OpenCComment    /*
+                    CommentText    "string in comments"
+                    CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                String    "/* comments in a string */"
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    li
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style
+                Colon    :
+                CComment
+                    OpenCComment    /*
+                    CommentText    /* nested comment
+                    CloseCComment    */
+                Asterisk (PropertyValueExpected:WholeItem)    *
+                Slash    /
+            CloseCurlyBrace    }

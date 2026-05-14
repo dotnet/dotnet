@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ja">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">パラメーターを null または空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineError">
+        <source>Error: {0}</source>
+        <target state="translated">エラー: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineInformational">
+        <source>Information: {0}</source>
+        <target state="translated">情報: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineWarning">
+        <source>Warning: {0}</source>
+        <target state="translated">警告: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsEmpty">
+        <source>The specified argument cannot be empty.</source>
+        <target state="translated">指定した引数を空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsNegative">
+        <source>The specified argument cannot be negative.</source>
+        <target state="translated">指定した引数を負の値にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotTypeOf">
+        <source>The specified argument must have the following type: {0}.</source>
+        <target state="translated">指定された引数は次の型でなければなりません: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsEmpty">
+        <source>The specified argument has the following property, which cannot be an empty string: {0}.</source>
+        <target state="translated">指定された引数には次のプロパティがあり、これを空の文字列にすることはできません: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNegative">
+        <source>The specified argument has the following property, which cannot be negative: {0}.</source>
+        <target state="translated">指定した引数には次のプロパティがあります。このプロパティを負の値にすることはできません: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNull">
+        <source>The specified argument has the following property, which cannot be null: {0}.</source>
+        <target state="translated">指定した引数には次のプロパティがあります。このプロパティを null にすることはできません: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyNotTypeOf">
+        <source>The specified argument has the following property: {0}. This property must have the following type: {1}.</source>
+        <target state="translated">指定された引数には次のプロパティがあります: {0}。このプロパティは次の型でなければなりません: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromJobProcessor">
+        <source>Unhandled exception occurred while processing a job from the '{0}' queue: {1}</source>
+        <target state="translated">'{0}' キューからジョブを処理中にハンドルされない例外が発生しました: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueueAlreadyDisposed">
+        <source>The {0} queue has already been disposed.</source>
+        <target state="translated">{0} キューは既に破棄されています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueuePausedDisposeError">
+        <source>The {0} queue cannot be disposed while paused.</source>
+        <target state="translated">{0} キューは一時停止中に破棄できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Utility_ProcessNameWhenCannotGetIt">
+        <source>Error getting process name.</source>
+        <target state="translated">プロセス名の取得エラーです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find '{0}' host. Make sure that '{0}' is installed on the machine and is available in PATH environment variable.</source>
+        <target state="translated">'{0}' ホストが見つかりませんでした。'{0}' がコンピューターにインストールされており、PATH 環境変数で使用できることを確認してください。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

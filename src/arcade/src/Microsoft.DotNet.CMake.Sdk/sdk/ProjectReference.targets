@@ -1,0 +1,123 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <MicrosoftDotNetCMakeSdkTaskAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.CMake.Sdk.dll</MicrosoftDotNetCMakeSdkTaskAssembly>
+  </PropertyGroup>
+
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.GetCMakeArtifactsFromFileApi" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" Architecture="*" />
+
+  <ItemDefinitionGroup>
+    <NativeProjectReference>
+      <CMakeProject></CMakeProject>
+    </NativeProjectReference>
+  </ItemDefinitionGroup>
+  
+  <Target Name="_RestoreNativeProjectReferences" DependsOnTargets="NormalizeNativeProjectReferences" BeforeTargets="_GenerateRestoreGraphProjectEntry">
+    <MSBuild Projects="%(NativeProjectReferenceNormalized.CMakeProject)" Targets="Restore" RemoveProperties="RestoreGraphProjectInput" />
+  </Target>
+
+  <Target Name="NormalizeNativeProjectReferences"
+          Condition="'@(NativeProjectReference)' != ''"
+          BeforeTargets="ConsolidateNativeProjectReference" >
+    <ItemGroup>
+      <NativeProjectReferenceNormalized Include="@(NativeProjectReference -> '%(FullPath)')" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_NormalizedDefaultCMakeProject>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory),$(DefaultCMakeProject)))</_NormalizedDefaultCMakeProject>
+    </PropertyGroup>
+
+    <Error Condition="'%(NativeProjectReferenceNormalized.CMakeProject)' != '' and !Exists('%(NativeProjectReferenceNormalized.CMakeProject)')" Text="The MSBuild CMake SDK project associated with the project reference to '%(NativeProjectReferenceNormalized.Identity)' does not exist." />
+    <Error Condition="!Exists('%(NativeProjectReferenceNormalized.Identity)')" Text="The CMakeLists.txt file at '%(NativeProjectReferenceNormalized.Identity)' does not exist." />
+
+    <Error Condition="'%(NativeProjectReferenceNormalized.CMakeProject)' == '' and '$(_NormalizedDefaultCMakeProject)' == '' and !Exists('$(_NormalizedDefaultCMakeProject)')"
+      Text="Each native project reference must be associated with an MSBuild CMake SDK project. Either set the 'CMakeProject' metadata on each ProjectReference item or set the 'DefaultCMakeProject' property." />
+
+    <ItemGroup>
+      <NativeProjectReferenceNormalized Condition="'%(CMakeProject)' == ''">
+          <CMakeProject>$(_NormalizedDefaultCMakeProject)</CMakeProject>
+      </NativeProjectReferenceNormalized>
+
+      <NativeProjectReferenceNormalized>
+          <CMakeListsFile>%(FullPath)</CMakeListsFile>
+      </NativeProjectReferenceNormalized>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ConsolidateNativeProjectReference"
+          BeforeTargets="Build" >
+
+    <ItemGroup>
+      <_NativeProjectReferenceToBuild Include="%(NativeProjectReferenceNormalized.CMakeProject)"
+                                      Condition="'%(NativeProjectReferenceNormalized.BuildNative)' == 'true'"
+                                      AdditionalProperties="%(NativeProjectReferenceNormalized.AdditionalProperties)" />
+    </ItemGroup>
+
+    <RemoveDuplicates Inputs="@(_NativeProjectReferenceToBuild)">
+      <Output TaskParameter="Filtered" ItemName="_UniqueNativeProjectReferenceToBuild" />
+    </RemoveDuplicates>
+    
+    <MSBuild Projects="@(_UniqueNativeProjectReferenceToBuild)" />
+
+    <Message Text= "Full native project references are :%(NativeProjectReferenceNormalized.Identity)" />
+
+    <MSBuild Projects="$(MSBuildProjectFile)" 
+             Targets="CopyNativeProjectBinariesFromFileApi"
+             Properties="ReferencedCMakeLists=%(NativeProjectReferenceNormalized.Identity);
+                         ReferencedCMakeProject=%(NativeProjectReferenceNormalized.CMakeProject);
+                         %(NativeProjectReferenceNormalized.AdditionalProperties)"
+             Condition="'@(NativeProjectReference)' != ''" />
+
+  </Target>
+
+  <Target Name="CopyNativeProjectBinariesFromFileApi">
+    <!-- Get CMakeOutputDir from the CMake project -->
+    <MSBuild Projects="$(ReferencedCMakeProject)"
+             Targets="GetCMakeOutputDirProperty">
+      <Output TaskParameter="TargetOutputs" PropertyName="_CMakeOutputDir" />
+    </MSBuild>
+
+    <!-- Get Configuration from the CMake project  -->
+    <MSBuild Projects="$(ReferencedCMakeProject)"
+             Targets="GetConfigurationProperty">
+      <Output TaskParameter="TargetOutputs" PropertyName="_Configuration" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <_SourceDirectory>$([System.IO.Path]::GetDirectoryName($(ReferencedCMakeLists)))</_SourceDirectory>
+    </PropertyGroup>
+
+    <!-- Get artifacts from File API -->
+    <GetCMakeArtifactsFromFileApi 
+      CMakeOutputDir="$(_CMakeOutputDir)"
+      SourceDirectory="$(_SourceDirectory)"
+      Configuration="$(_Configuration)">
+      <Output TaskParameter="Artifacts" ItemName="NativeProjectBinaries" />
+    </GetCMakeArtifactsFromFileApi>
+
+    <!-- Copy the binaries -->
+    <ItemGroup>
+      <_ArtifactsToCopy Include="@(NativeProjectBinaries)" Condition="Exists('%(Identity)')" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(_ArtifactsToCopy)"
+      DestinationFiles="@(_ArtifactsToCopy -> '$(OutDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+      OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+      Retries="$(CopyRetryCount)"
+      RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+      UseHardlinksIfPossible="$(CreateHardLinksForCopyFilesToOutputDirectoryIfPossible)">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+
+    <ItemGroup>
+      <FileWrites Include="@(_ArtifactsToCopy -> '$(OutDir)%(Filename)%(Extension)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyAllNativeProjectReferenceBinaries" DependsOnTargets="ResolveCMakeNativeProjectReference;ConsolidateNativeProjectReference" />
+
+</Project>

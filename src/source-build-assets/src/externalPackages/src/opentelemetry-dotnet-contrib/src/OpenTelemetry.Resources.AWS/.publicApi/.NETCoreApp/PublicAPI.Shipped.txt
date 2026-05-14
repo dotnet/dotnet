@@ -1,0 +1,2 @@
+static OpenTelemetry.Resources.AWSResourceBuilderExtensions.AddAWSECSDetector(this OpenTelemetry.Resources.ResourceBuilder! builder, System.Action<OpenTelemetry.Resources.AWS.AWSResourceBuilderOptions!>? configure = null) -> OpenTelemetry.Resources.ResourceBuilder!
+static OpenTelemetry.Resources.AWSResourceBuilderExtensions.AddAWSEKSDetector(this OpenTelemetry.Resources.ResourceBuilder! builder, System.Action<OpenTelemetry.Resources.AWS.AWSResourceBuilderOptions!>? configure = null) -> OpenTelemetry.Resources.ResourceBuilder!

@@ -1,0 +1,61 @@
+<Project>
+
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <ThirdPartyNotice Condition=" '$(ThirdPartyNotice)' == '' ">$(RepoRoot)THIRDPARTYNOTICES.txt</ThirdPartyNotice>
+    <AssemblyTitle>$(TargetFileName)</AssemblyTitle>
+    <Description Condition="'$(Description)' == ''">$(TargetFileName)</Description>
+  </PropertyGroup>
+
+  <!-- Disable package validation as source build filters out target frameworks. -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <EnablePackageValidation>false</EnablePackageValidation>
+  </PropertyGroup>
+
+  <!-- Add telemetry package to API compat search paths to suppress resolution warnings.
+       Microsoft.VisualStudio.Telemetry is referenced with PrivateAssets="all" in Framework,
+       so package validation can't resolve it when validating dependent packages. -->
+  <PropertyGroup Condition="'$(EnablePackageValidation)' == 'true'">
+    <ApiCompatAdditionalSearchPaths>$(ApiCompatAdditionalSearchPaths);$(NuGetPackageRoot)microsoft.visualstudio.telemetry\$(MicrosoftVisualStudioTelemetryVersion)\lib\$(FullFrameworkTFM)</ApiCompatAdditionalSearchPaths>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(IsPackable)' == 'true' ">
+    <None Include="$(ThirdPartyNotice)" Pack="true" PackagePath="notices" Visible="false" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Global Analyzer Config -->
+  <ItemGroup>
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng/Common.globalconfig" />
+  </ItemGroup>
+
+  <!-- Test Project Global Analyzer Config -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <!-- Include Common.Test.globalconfig for Test projects-->
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng/Common.Test.globalconfig" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="$(RepositoryEngineeringDir)packaging.targets" Condition="'$(IsPackable)' == 'true'" />
+
+  <!-- Put it after Sdk.targets imports to override values from StrongName.targets. It's needed to avoid NGEN validation issues on VS exp insertions.  -->
+  <PropertyGroup Condition="'$(SignType)' == 'test'">
+    <!-- Remove open source signing -->
+    <PublicSign>false</PublicSign>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+
+  <Target Name="DeleteDevPackage" AfterTargets="GenerateNuspec">
+    <!-- If package just built was already in global packages folder, delete it.  This helps support a local dev cycle where you are consuming
+         a package from another repo without having to update the package version each time. -->
+
+    <PropertyGroup>
+      <_PackageFolderInGlobalPackages>$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())\$(PackageVersion)</_PackageFolderInGlobalPackages>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(_PackageFolderInGlobalPackages)"
+               Condition="Exists('$(_PackageFolderInGlobalPackages)')" />
+  </Target>
+
+</Project>

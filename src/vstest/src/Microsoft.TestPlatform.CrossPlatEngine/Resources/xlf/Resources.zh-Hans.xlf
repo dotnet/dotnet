@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="DiscovererInstantiationException">
+        <source>Exception occurred while instantiating discoverer : {0}</source>
+        <target state="translated">实例化发现器时发生异常: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateAdaptersFound">
+        <source>Multiple test adapters with the same uri '{0}' were found. Ignoring adapter '{1}'. Please uninstall the conflicting adapter(s) to avoid this warning.</source>
+        <target state="translated">找到了多个具有同一 URI“{0}”的测试适配器。忽略适配器“{1}”。请卸载冲突的适配器以避免此警告。</target>
+        <note>{0} is the unique identifier of test adapter. {1} is the name of the test adapter that shares a unique identifier with a previously loaded adapter.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateSource">
+        <source>Ignoring the specified duplicate source '{0}'.</source>
+        <target state="translated">忽略指定的重复源“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromLoadTests">
+        <source>An exception occurred while test discoverer '{0}' was loading tests. Exception: {1}</source>
+        <target state="translated">测试发现器“{0}”加载测试时发生异常。异常: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromRunTests">
+        <source>An exception occurred while invoking executor '{0}': {1}</source>
+        <target state="translated">调用的执行器“{0}”时发生异常: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotFound">
+        <source>Could not find file {0}.</source>
+        <target state="translated">找不到文件 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HostDebuggerWarning">
+        <source>Host debugging is enabled. Please attach debugger to testhost process to continue.</source>
+        <target state="translated">启用主机调试。请将调试器附加到 testhost 进程以继续。</target>
+        <note>Host, testhost are key words, it should not be localized</note>
+      </trans-unit>
+      <trans-unit id="IgnoringExecutorAsNoDefaultExecutorUriAttribute">
+        <source>Ignoring the test executor corresponding to test discoverer {0} because the discoverer does not have the DefaultExecutorUri attribute . You might need to re-install the test adapter add-in.</source>
+        <target state="translated">忽略与测试发现器 {0} 对应的测试执行器，因为该发现器不具有 DefaultExecutorUri 特性。可能需要重新安装测试适配器外接程序。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitializationFailed">
+        <source>Failed to initialize client proxy: could not connect to test process.</source>
+        <target state="translated">未能初始化客户端代理: 无法连接到测试过程。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LaunchDebugProcessNotAllowedForANonDebugRun">
+        <source>This operation is not allowed in the context of a non-debug run.</source>
+        <target state="translated">非调试运行的上下文中不允许此操作。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingExecutor">
+        <source>Could not find test executor with URI '{0}'.  Make sure that the test executor is installed and supports .net runtime version {1}.</source>
+        <target state="translated">找不到 URI 为“{0}”的测试执行器。请确保安装了测试执行器且该执行器支持.net 运行时版本 {1}。</target>
+        <note>{0} - Executor uri String {1}-  Version - .net Version Eg:-2.0.50727.00</note>
+      </trans-unit>
+      <trans-unit id="NoValidSourceFoundForDiscovery">
+        <source>None of the specified source(s) '{0}' is valid. Fix the above errors/warnings and then try again. </source>
+        <target state="translated">无有效的指定源“{0}”。请修复以上错误/警告，然后重试。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringSeperator">
+        <source>, </source>
+        <target state="translated">，</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPropertiesInTestCaseFilter">
+        <source>No tests matched the filter because it contains one or more properties that are not valid ({0}). Specify filter expression containing valid properties ({1}).</source>
+        <target state="translated">没有与筛选器匹配的测试，因为该筛选器包含一个或多个无效属性 ({0})。请指定包含有效属性 ({1}) 的筛选器表达式。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find {0}. Make sure that the dotnet is installed on the machine.</source>
+        <target state="translated">找不到 {0}。请确保计算机上安装了 dotnet。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestHostExitedWithError">
+        <source>Testhost process for source(s) '{0}' exited with error: {1}. Please check the diagnostic logs for more information.</source>
+        <target state="translated">源“{0}”的 Testhost 进程已退出，但出现错误: {1}。请查看诊断日志以了解详细信息。</target>
+        <note>{0} a source, or very rarely list of sources, {1} the output error.</note>
+      </trans-unit>
+      <trans-unit id="DataCollectorDebuggerWarning">
+        <source>DataCollector debugging is enabled. Please attach debugger to datacollector process to continue.</source>
+        <target state="translated">启用 DataCollector 调试。请将调试器附加到 datacollector 进程以继续。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestRunFailed_NoDiscovererFound_NoTestsAreAvailableInTheSources">
+        <source>No test is available in {0}. Make sure that test discoverer &amp; executors are registered and platform &amp; framework version settings are appropriate and try again.</source>
+        <target state="translated">{0} 中没有可用测试。请确保已注册测试发现器和执行器且平台和框架版本设置合理，然后重试。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TesthostDiagLogOutputFile">
+        <source>Logging TestHost Diagnostics in file: {0}</source>
+        <target state="translated">在文件 {0} 中记录 TestHost 诊断</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLaunchTestHost">
+        <source>Failed to launch testhost with error: {0}</source>
+        <target state="translated">未能启动测试主机，错误为 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutionThreadApartmentStateNotSupportedForFramework">
+        <source>ExecutionThreadApartmentState option not supported for framework: {0}.</source>
+        <target state="translated">框架 {0} 不支持 ExecutionThreadApartmentState 选项。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OldTestHostIsGettingUsed">
+        <source>You are using an older version of Microsoft.NET.Test.Sdk. Kindly move to a version equal or greater than 15.3.0.</source>
+        <target state="translated">你使用的是旧版 Microsoft.NET.Test.Sdk。请迁移到 15.3.0 及更高版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NonExistingExtensions">
+        <source>Could not find extensions: {0}</source>
+        <target state="translated">找不到扩展名: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedAdapterPath">
+        <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
+        <target state="translated">适配器查找正在发生更改，请转到 https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap 了解详细信息。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableForGivenTestCaseFilter">
+        <source>No test matches the given testcase filter `{0}` in {1}</source>
+        <target state="translated">没有测试匹配 {1} 中的给定用例测试筛选器“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestDiscoveryCancelled">
+        <source>Discovery of tests cancelled.</source>
+        <target state="translated">已取消测试发现。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
+        <source>Cannot attach the debugger to the default test host with process ID: {0}.</source>
+        <target state="translated">无法将调试程序附加到进程 ID 为“{0}”的默认测试主机。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges.</source>
+        <target state="translated">{0} 尝试在所述位置创建 "TestResults" 文件夹时，访问被拒。你收到此异常是因为你正在从需要具有写入权限的文件夹运行 vstest.console.exe。若要解决此问题，请从你具有写入权限的文件夹运行 vstest.console.exe。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoAvailableProxyForDeque">
+        <source>Could not find an available proxy to deque.</source>
+        <target state="translated">找不到用于取消排队的可用代理。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuchProxyId">
+        <source>Proxy with id {0} is not managed by the current session manager.</source>
+        <target state="translated">ID 为 {0} 的代理不受当前会话管理器管理。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProxyIsAlreadyAvailable">
+        <source>Proxy with id {0} is already available and cannot be re-enqueued.</source>
+        <target state="translated">ID 为 {0} 的代理已可用，无法重新排队。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider was found for any source in this run.</source>
+        <target state="translated">在此运行中，没有为任何源找到合适的测试运行时提供程序。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProxyMatchesDescription">
+        <source>The runsettings changed between the time when the test session was established and the time of the current run/discovery request.</source>
+        <target state="translated">runsettings 在建立测试会话的时间和当前运行/发现请求的时间之间发生了更改。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentOutputFormat">
+        <source>  {0}</source>
+        <target state="translated">  {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentsBanner">
+        <source>Attachments:</source>
+        <target state="translated">附件:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuitableRuntimeProviderFound">
+        <source>No suitable test runtime provider was found:</source>
+        <target state="translated">找不到合适的测试运行时提供程序:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SkippingSource">
+        <source>Skipping source:</source>
+        <target state="translated">正在跳过源:</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

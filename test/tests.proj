@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <PropertyGroup>
+    <RunScenarioTests>true</RunScenarioTests>
+
+    <!-- Skip scenario tests if the host architecture is different from the target architecture since the tests
+        require the ability to execute the built SDK. But the CLI is not capable of running on a host with a
+        different architecture (i.e. "cannot execute binary file: Exec format error"). -->
+    <RunScenarioTests Condition="'$(BuildArchitecture.ToLowerInvariant())' != '$(TargetArchitecture.ToLowerInvariant())'">false</RunScenarioTests>
+
+    <!-- Skip scenario tests if the build OS (determined from the host machine) is different from the target OS
+        since the tests require the ability to execute the built SDK. An example of where this would be disabled is
+        cross-build of using Azure Linux to build for Alpine (linux vs linux-musl). -->
+    <RunScenarioTests Condition="'$(BuildOS)' != 'windows' and '$(DotNetBuildSourceOnly)' != 'true' and '$(BuildOS.ToLowerInvariant())' != '$(TargetOS.ToLowerInvariant())'">false</RunScenarioTests>
+
+    <!-- Short stack builds can't run scenario-tests as no SDK gets produced. -->
+    <RunScenarioTests Condition="'$(ShortStack)' == 'true' or '$(PgoInstrument)' == 'true'">false</RunScenarioTests>
+
+    <!-- Skip BuildPass>1 verticals as the live built SDK already got validated in the BuildPass=1 vertical. -->
+    <RunScenarioTests Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">false</RunScenarioTests>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" Condition="'$(RunScenarioTests)' == 'true'" />
+    <ProjectReference Include="Microsoft.DotNet.Tests\Microsoft.DotNet.Tests.csproj" />
+
+    <!-- Source-build specific tests. -->
+    <ProjectReference Include="Microsoft.DotNet.SourceBuild.Tests\Microsoft.DotNet.SourceBuild.Tests.csproj"
+                      Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+  </ItemGroup>
+
+  <!-- Download WASM packages for non-1xx source-only builds -->
+  <Target Name="DownloadWasmPackages" BeforeTargets="Test" Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(DotNetBuildSourceOnly)' == 'true'">
+    <PropertyGroup>
+      <TmpPackagesRoot>$(ArtifactsTmpDir)wasm-dependencies/</TmpPackagesRoot>
+      <WasmRestoreConfigFileArg Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">--configfile &quot;$(MSBuildThisFileDirectory)Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config&quot;</WasmRestoreConfigFileArg>
+    </PropertyGroup>
+    
+    <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; $(WasmRestoreConfigFileArg) -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
+          EnvironmentVariables="NUGET_PACKAGES=$(TmpPackagesRoot)" />
+    
+    <!-- Copy the nupkg files to the extra custom restore path for the tests -->
+    <ItemGroup>
+      <DownloadedNupkg Include="$(TmpPackagesRoot)**/*.nupkg" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(DownloadedNupkg)"
+          DestinationFolder="$(ExtraTestDependenciesRestoreSourcePath)" 
+          Condition="@(DownloadedNupkg->Count()) > 0" />
+  </Target>
+
+</Project>

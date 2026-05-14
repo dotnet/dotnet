@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: 88877424-b87d-45a2-8ab8-48321d99a5d2
+routing:
+  defaultAreaPath:
+    org: devdiv
+    path: DevDiv\Testing Platforms

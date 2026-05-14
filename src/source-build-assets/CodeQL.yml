@@ -1,0 +1,3 @@
+path_classifiers:
+  library:
+    - "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/**"

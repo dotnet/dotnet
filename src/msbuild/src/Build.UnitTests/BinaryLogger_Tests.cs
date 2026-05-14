@@ -1,0 +1,1092 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.Build.BackEnd.Logging;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Execution;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
+using Microsoft.Build.Shared;
+using Microsoft.Build.UnitTests.Shared;
+using Shouldly;
+using Xunit;
+
+#nullable disable
+
+namespace Microsoft.Build.UnitTests
+{
+    public class BinaryLoggerTests : IDisposable
+    {
+        private const string s_testProject = @"
+         <Project>
+            <PropertyGroup>
+               <TestProperty>Test</TestProperty>
+            </PropertyGroup>
+            <ItemGroup>
+               <TestItem Include=""Test"" />
+            </ItemGroup>
+            <Target Name='Target1'>
+               <Message Text='MessageOutputText'/>
+            </Target>
+            <Target Name='Target2' AfterTargets='Target1'>
+               <Exec Command='echo a'/>
+            </Target>
+         </Project>";
+
+        private const string s_testProject2 = @"
+        <Project>
+            <ItemGroup>
+            <Compile Include=""0.cs"" />
+            </ItemGroup>
+            <ItemDefinitionGroup>
+            <Compile>
+                <MetadataFromItemDefinition>fromItemDefinition%61%62%63&lt;&gt;</MetadataFromItemDefinition>
+            </Compile>
+            </ItemDefinitionGroup>
+            <Target Name=""Build"" Outputs=""@(CombinedOutput)"">
+            <ItemGroup>
+                <Compile Include=""1.cs"">
+                <MetadataName>MetadataValue1%61%62%63&lt;&gt;</MetadataName>
+                </Compile>
+                <Compile Remove=""1.cs"" />
+                <Compile Include=""2.cs"" />
+                <Compile Include=""3.cs"">
+                <CustomMetadata>custom%61%62%63&lt;&gt;</CustomMetadata>
+                </Compile>
+            </ItemGroup>
+            <Message Importance=""High"" Condition=""$(Test) != true"" Text=""Hello"" />
+            <CombinePath BasePath=""base"" Paths=""@(Compile)"">
+                <Output TaskParameter=""CombinedPaths"" ItemName=""CombinedOutput""/>
+            </CombinePath>
+            <ItemGroup>
+                <Compile Remove=""2.cs"" />
+            </ItemGroup>
+            </Target>
+        </Project>";
+
+        private readonly TestEnvironment _env;
+        private string _logFile;
+
+        public BinaryLoggerTests(ITestOutputHelper output)
+        {
+            _env = TestEnvironment.Create(output);
+
+            // this is needed to ensure the binary logger does not pollute the environment
+            _env.WithEnvironmentInvariant();
+
+            _logFile = _env.ExpectFile(".binlog").Path;
+        }
+
+        public enum BinlogRoundtripTestReplayMode
+        {
+            NoReplay,
+            Structured,
+            RawEvents
+        }
+
+        [Theory]
+        [InlineData(s_testProject, BinlogRoundtripTestReplayMode.NoReplay)]
+        [InlineData(s_testProject, BinlogRoundtripTestReplayMode.Structured)]
+        [InlineData(s_testProject, BinlogRoundtripTestReplayMode.RawEvents)]
+        [InlineData(s_testProject2, BinlogRoundtripTestReplayMode.NoReplay)]
+        [InlineData(s_testProject2, BinlogRoundtripTestReplayMode.Structured)]
+        [InlineData(s_testProject2, BinlogRoundtripTestReplayMode.RawEvents)]
+        public void TestBinaryLoggerRoundtrip(string projectText, BinlogRoundtripTestReplayMode replayMode)
+        {
+            // NOTE:
+            // We want both loggers to see the same value of EnableTargetOutputLogging, otherwise, the last assertion will fail.
+            // See logic around showTargetOutputs.
+            // In short, this controls whether or not the "Target output items:" part is shown.
+            // Traits.Instance is weird, it's not always a singleton, depending on whether or not BuildEnvironmentState.s_runningTests is true.
+            // In this case s_runningTests is true.
+            // When s_runningTests is true, we don't use a singleton, and in this case, what matters is the env variable value.
+            // So we set the env variable to 1 and clear at the end of test.
+            using var env = TestEnvironment.Create();
+            env.SetEnvironmentVariable("MSBUILDTARGETOUTPUTLOGGING", "1");
+
+            var binaryLogger = new BinaryLogger();
+
+            binaryLogger.Parameters = _logFile;
+
+            var mockLogFromBuild = new MockLogger();
+
+            var parallelFromBuildText = new StringBuilder();
+            var parallelFromBuild = new ParallelConsoleLogger(Framework.LoggerVerbosity.Diagnostic, t => parallelFromBuildText.Append(t), colorSet: null, colorReset: null);
+            parallelFromBuild.Parameters = "NOPERFORMANCESUMMARY";
+
+            // build and log into binary logger, mock logger and parallel console loggers
+            // no logging on evaluation
+            using (ProjectCollection collection = new())
+            {
+                Project project = ObjectModelHelpers.CreateInMemoryProject(collection, projectText);
+                project.Build(new ILogger[] { binaryLogger, mockLogFromBuild, parallelFromBuild }).ShouldBeTrue();
+            }
+
+            string fileToReplay;
+            switch (replayMode)
+            {
+                case BinlogRoundtripTestReplayMode.NoReplay:
+                    fileToReplay = _logFile;
+                    break;
+                case BinlogRoundtripTestReplayMode.Structured:
+                case BinlogRoundtripTestReplayMode.RawEvents:
+                    {
+                        var logReader = new BinaryLogReplayEventSource();
+                        fileToReplay = _env.ExpectFile(".binlog").Path;
+                        if (replayMode == BinlogRoundtripTestReplayMode.Structured)
+                        {
+                            // need dummy handler to force structured replay
+                            logReader.BuildFinished += (_, _) => { };
+                        }
+
+                        BinaryLogger outputBinlog = new BinaryLogger()
+                        {
+                            Parameters = fileToReplay
+                        };
+                        outputBinlog.Initialize(logReader);
+                        logReader.Replay(_logFile);
+                        outputBinlog.Shutdown();
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(replayMode), replayMode, null);
+            }
+
+            var mockLogFromPlayback = new MockLogger();
+
+            var parallelFromPlaybackText = new StringBuilder();
+            var parallelFromPlayback = new ParallelConsoleLogger(Framework.LoggerVerbosity.Diagnostic, t => parallelFromPlaybackText.Append(t), colorSet: null, colorReset: null);
+            parallelFromPlayback.Parameters = "NOPERFORMANCESUMMARY";
+
+            var binaryLogReader = new BinaryLogReplayEventSource();
+            mockLogFromPlayback.Initialize(binaryLogReader);
+            parallelFromPlayback.Initialize(binaryLogReader);
+
+            // read the binary log and replay into mockLogger2
+            binaryLogReader.Replay(fileToReplay);
+            mockLogFromPlayback.Shutdown();
+            parallelFromPlayback.Shutdown();
+
+            // the binlog will have more information than recorded by the text log
+            mockLogFromPlayback.FullLog.ShouldContainWithoutWhitespace(mockLogFromBuild.FullLog);
+
+            var parallelExpected = parallelFromBuildText.ToString();
+            var parallelActual = parallelFromPlaybackText.ToString();
+
+            parallelActual.ShouldContainWithoutWhitespace(parallelExpected);
+        }
+
+        /// <summary>
+        /// This test validate that binlog file content is identical upon replaying.
+        /// The identity can be defined via 3 ways:
+        ///   * byte-for-byte equality
+        ///   * byte-for-byte equality of unzipped content
+        ///   * structured equality of events
+        ///
+        /// They are ordered by their strength (the byte-for-byte equality implies the other two, etc.),
+        ///  but we mainly care about the structured equality. If the more strong equalities are broken -
+        ///  the assertions can be simply removed.
+        /// However the structured equality is important - it guarantees that binlog reading and writing functionality
+        ///  is not dropping or altering any information.
+        /// </summary>
+        /// <param name="projectText"></param>
+        /// <param name="replayMode"></param>
+        [Theory]
+        [InlineData(s_testProject, BinlogRoundtripTestReplayMode.Structured)]
+        [InlineData(s_testProject, BinlogRoundtripTestReplayMode.RawEvents)]
+        [InlineData(s_testProject2, BinlogRoundtripTestReplayMode.Structured)]
+        [InlineData(s_testProject2, BinlogRoundtripTestReplayMode.RawEvents)]
+        public void TestBinaryLoggerRoundtripEquality(string projectText, BinlogRoundtripTestReplayMode replayMode)
+        {
+            var binaryLogger = new BinaryLogger();
+
+            binaryLogger.Parameters = _logFile;
+
+            // build and log into binary logger
+            using (ProjectCollection collection = new())
+            {
+                Project project = ObjectModelHelpers.CreateInMemoryProject(collection, projectText);
+                // make sure the project file makes it to the binlog (it has file existence check)
+                File.WriteAllText(project.FullPath, projectText);
+                project.Build(new ILogger[] { binaryLogger }).ShouldBeTrue();
+                File.Delete(project.FullPath);
+            }
+
+            var logReader = new BinaryLogReplayEventSource();
+            string replayedLogFile = _env.ExpectFile(".binlog").Path;
+            if (replayMode == BinlogRoundtripTestReplayMode.Structured)
+            {
+                // need dummy handler to force structured replay
+                logReader.BuildFinished += (_, _) => { };
+            }
+
+            BinaryLogger outputBinlog = new BinaryLogger()
+            {
+                Parameters = $"LogFile={replayedLogFile};OmitInitialInfo"
+            };
+            outputBinlog.Initialize(logReader);
+            logReader.Replay(_logFile);
+            outputBinlog.Shutdown();
+
+            AssertBinlogsHaveEqualContent(_logFile, replayedLogFile);
+            // If this assertation complicates development - it can possibly be removed
+            // The structured equality above should be enough.
+            AssertFilesAreBinaryEqualAfterUnpack(_logFile, replayedLogFile);
+        }
+
+        private static void AssertFilesAreBinaryEqualAfterUnpack(string firstPath, string secondPath)
+        {
+            using var br1 = BinaryLogReplayEventSource.OpenReader(firstPath);
+            using var br2 = BinaryLogReplayEventSource.OpenReader(secondPath);
+            const int bufferSize = 4096;
+
+            int readCount = 0;
+            while (br1.ReadBytes(bufferSize) is { Length: > 0 } bytes1)
+            {
+                var bytes2 = br2.ReadBytes(bufferSize);
+
+                bytes1.SequenceEqual(bytes2).ShouldBeTrue(
+                    $"Buffers starting at position {readCount} differ. First:{Environment.NewLine}{string.Join(",", bytes1)}{Environment.NewLine}Second:{Environment.NewLine}{string.Join(",", bytes2)}");
+                readCount += bufferSize;
+            }
+
+            br2.ReadBytes(bufferSize).Length.ShouldBe(0, "Second buffer contains bytes after first file end");
+        }
+
+        private static void AssertBinlogsHaveEqualContent(string firstPath, string secondPath)
+        {
+            using var reader1 = BinaryLogReplayEventSource.OpenBuildEventsReader(firstPath);
+            using var reader2 = BinaryLogReplayEventSource.OpenBuildEventsReader(secondPath);
+
+            Dictionary<string, string> embedFiles1 = new();
+            Dictionary<string, string> embedFiles2 = new();
+
+            reader1.ArchiveFileEncountered += arg
+                => AddArchiveFile(embedFiles1, arg);
+
+            // This would be standard subscribe:
+            // reader2.ArchiveFileEncountered += arg
+            //    => AddArchiveFile(embedFiles2, arg);
+
+            // We however use the AddArchiveFileFromStringHandler - to exercise it
+            // and to assert it's equality with ArchiveFileEncountered handler
+            string currentFileName = null;
+            reader2.ArchiveFileEncountered +=
+                ((Action<StringReadEventArgs>)AddArchiveFileFromStringHandler).ToArchiveFileHandler();
+
+            int i = 0;
+            while (reader1.Read() is { } ev1)
+            {
+                i++;
+                var ev2 = reader2.Read();
+
+                ev1.Should().BeEquivalentTo(ev2,
+                    $"Binlogs ({firstPath} and {secondPath}) should be equal at event {i}");
+            }
+            // Read the second reader - to confirm there are no more events
+            //  and to force the embedded files to be read.
+            reader2.Read().ShouldBeNull($"Binlogs ({firstPath} and {secondPath}) are not equal - second has more events >{i + 1}");
+
+            Assert.Equal(embedFiles1, embedFiles2);
+
+            void AddArchiveFile(Dictionary<string, string> files, ArchiveFileEventArgs arg)
+            {
+                ArchiveFile embedFile = arg.ArchiveData.ToArchiveFile();
+                files.Add(embedFile.FullPath, embedFile.Content);
+            }
+
+            void AddArchiveFileFromStringHandler(StringReadEventArgs args)
+            {
+                if (currentFileName == null)
+                {
+                    currentFileName = args.OriginalString;
+                    return;
+                }
+
+                embedFiles2.Add(currentFileName, args.OriginalString);
+                currentFileName = null;
+            }
+        }
+
+        [Fact]
+        public void BinaryLoggerShouldSupportFilePathExplicitParameter()
+        {
+            var binaryLogger = new BinaryLogger();
+            binaryLogger.Parameters = $"LogFile={_logFile}";
+
+            ObjectModelHelpers.BuildProjectExpectSuccess(s_testProject, binaryLogger);
+        }
+
+        [Fact]
+        public void UnusedEnvironmentVariablesDoNotAppearInBinaryLog()
+        {
+            using (TestEnvironment env = TestEnvironment.Create())
+            {
+                env.SetEnvironmentVariable("EnvVar1", "itsValue");
+                env.SetEnvironmentVariable("EnvVar2", "value2");
+                env.SetEnvironmentVariable("EnvVar3", "value3");
+                string contents = @"
+<Project DefaultTargets=""PrintEnvVar"">
+
+<PropertyGroup>
+<MyProp1>value</MyProp1>
+<MyProp2>$(EnvVar2)</MyProp2>
+</PropertyGroup>
+
+<Target Name=""PrintEnvVar"">
+<Message Text=""Environment variable EnvVar3 has value $(EnvVar3)"" Importance=""High"" />
+</Target>
+
+</Project>";
+                TransientTestFolder logFolder = env.CreateFolder(createFolder: true);
+                TransientTestFile projectFile = env.CreateFile(logFolder, "myProj.proj", contents);
+
+                RunnerUtilities.ExecMSBuild($"{projectFile.Path} -bl:{_logFile}", out bool success);
+                success.ShouldBeTrue();
+
+                RunnerUtilities.ExecMSBuild($"{_logFile} -flp:logfile={Path.Combine(logFolder.Path, "logFile.log")};verbosity=diagnostic", out success);
+                success.ShouldBeTrue();
+
+                string text = File.ReadAllText(Path.Combine(logFolder.Path, "logFile.log"));
+                text.ShouldContain("EnvVar2");
+                text.ShouldContain("value2");
+                text.ShouldContain("EnvVar3");
+                text.ShouldContain("value3");
+                text.ShouldNotContain("EnvVar1");
+                text.ShouldNotContain("itsValue");
+            }
+        }
+
+        [WindowsFullFrameworkOnlyFact(additionalMessage: "Tests if the AppDomain used to load the task is included in the log text for the event, which is true only on Framework.")]
+        public void AssemblyLoadsDuringTaskRunLoggedWithAppDomain() => AssemblyLoadsDuringTaskRun("AppDomain: [Default]");
+
+        [DotNetOnlyFact(additionalMessage: "Tests if the AssemblyLoadContext used to load the task is included in the log text for the event, which is true only on Core.")]
+        public void AssemblyLoadsDuringTaskRunLoggedWithAssemblyLoadContext() => AssemblyLoadsDuringTaskRun("AssemblyLoadContext: Default");
+
+        private void AssemblyLoadsDuringTaskRun(string additionalEventText)
+        {
+            using (TestEnvironment env = TestEnvironment.Create())
+            {
+                string contents = $"""
+                    <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Hello">
+                      <!-- This simple inline task displays "Hello, world!" -->
+                      <UsingTask
+                        TaskName="HelloWorld"
+                        TaskFactory="RoslynCodeTaskFactory"
+                        AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+                        <ParameterGroup />
+                        <Task>
+                          <Using Namespace="System"/>
+                          <Using Namespace="System.IO"/>
+                          <Using Namespace="System.Reflection"/>
+                          <Code Type="Fragment" Language="cs">
+                    <![CDATA[
+                        // Display "Hello, world!"
+                        Log.LogMessage("Hello, world!");
+                    	//load assembly
+                    	var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    	var diagAssembly = Assembly.LoadFrom(Path.Combine(Path.GetDirectoryName(assemblies[0].Location), "System.Diagnostics.Debug.dll"));
+                    	Log.LogMessage("Loaded: " + diagAssembly);
+                    ]]>
+                          </Code>
+                        </Task>
+                      </UsingTask>
+
+                    <Target Name="Hello">
+                      <HelloWorld />
+                    </Target>
+                    </Project>
+                    """;
+                TransientTestFolder logFolder = env.CreateFolder(createFolder: true);
+                TransientTestFile projectFile = env.CreateFile(logFolder, "myProj.proj", contents);
+
+                env.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "1");
+                RunnerUtilities.ExecMSBuild($"{projectFile.Path} -nr:False -bl:{_logFile} -flp1:logfile={Path.Combine(logFolder.Path, "logFile.log")};verbosity=diagnostic -flp2:logfile={Path.Combine(logFolder.Path, "logFile2.log")};verbosity=normal", out bool success);
+                success.ShouldBeTrue();
+
+                string assemblyLoadedEventText =
+                    "Assembly loaded during TaskRun (InlineCode.HelloWorld): System.Diagnostics.Debug";
+                string text = File.ReadAllText(Path.Combine(logFolder.Path, "logFile.log"));
+                text.ShouldContain(assemblyLoadedEventText);
+                text.ShouldContain(additionalEventText);
+                // events should not be in logger with verbosity normal
+                string text2 = File.ReadAllText(Path.Combine(logFolder.Path, "logFile2.log"));
+                text2.ShouldNotContain(assemblyLoadedEventText);
+                text2.ShouldNotContain(additionalEventText);
+                RunnerUtilities.ExecMSBuild($"{_logFile} -flp1:logfile={Path.Combine(logFolder.Path, "logFile3.log")};verbosity=diagnostic -flp2:logfile={Path.Combine(logFolder.Path, "logFile4.log")};verbosity=normal", out success);
+                success.ShouldBeTrue();
+                text = File.ReadAllText(Path.Combine(logFolder.Path, "logFile3.log"));
+                text.ShouldContain(assemblyLoadedEventText);
+                text.ShouldContain(additionalEventText);
+                // events should not be in logger with verbosity normal
+                text2 = File.ReadAllText(Path.Combine(logFolder.Path, "logFile4.log"));
+                text2.ShouldNotContain(assemblyLoadedEventText);
+                text2.ShouldNotContain(additionalEventText);
+            }
+        }
+
+        [Fact]
+        public void BinaryLoggerShouldEmbedFilesViaTaskOutput()
+        {
+            using var buildManager = new BuildManager();
+            var binaryLogger = new BinaryLogger()
+            {
+                Parameters = $"LogFile={_logFile}",
+                CollectProjectImports = BinaryLogger.ProjectImportsCollectionMode.ZipFile,
+            };
+            var testProject = @"
+<Project>
+    <Target Name=""Build"">
+        <WriteLinesToFile File=""testtaskoutputfile.txt"" Lines=""abc;def;ghi""/>
+        <CreateItem Include=""testtaskoutputfile.txt"">
+            <Output TaskParameter=""Include"" ItemName=""EmbedInBinlog"" />
+        </CreateItem>
+    </Target>
+</Project>";
+            ObjectModelHelpers.BuildProjectExpectSuccess(testProject, binaryLogger);
+            var projectImportsZipPath = Path.ChangeExtension(_logFile, ".ProjectImports.zip");
+            using var fileStream = new FileStream(projectImportsZipPath, FileMode.Open);
+            using var zipArchive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+
+            // Can't just compare `Name` because `ZipArchive` does not handle unix directory separators well
+            // thus producing garbled fully qualified paths in the actual .ProjectImports.zip entries
+            zipArchive.Entries.ShouldContain(zE => zE.Name.EndsWith("testtaskoutputfile.txt"),
+                $"Embedded files: {string.Join(",", zipArchive.Entries)}");
+        }
+
+        [RequiresSymbolicLinksFact]
+        public void BinaryLoggerShouldEmbedSymlinkFilesViaTaskOutput()
+        {
+            string testFileName = "foobar.txt";
+            string symlinkName = "symlink1.txt";
+            string symlinkLvl2Name = "symlink2.txt";
+            string emptyFileName = "empty.txt";
+            TransientTestFolder testFolder = _env.DefaultTestDirectory.CreateDirectory("TestDir");
+            TransientTestFolder testFolder2 = _env.DefaultTestDirectory.CreateDirectory("TestDir2");
+            TransientTestFile testFile = testFolder.CreateFile(testFileName, string.Join(Environment.NewLine, new[] { "123", "456" }));
+            string symlinkPath = Path.Combine(testFolder2.Path, symlinkName);
+            string symlinkLvl2Path = Path.Combine(testFolder2.Path, symlinkLvl2Name);
+            string emptyFile = testFolder.CreateFile(emptyFileName).Path;
+
+            string errorMessage = string.Empty;
+            Assert.True(NativeMethodsShared.MakeSymbolicLink(symlinkPath, testFile.Path, ref errorMessage), errorMessage);
+            Assert.True(NativeMethodsShared.MakeSymbolicLink(symlinkLvl2Path, symlinkPath, ref errorMessage), errorMessage);
+
+            using var buildManager = new BuildManager();
+            var binaryLogger = new BinaryLogger()
+            {
+                Parameters = $"LogFile={_logFile}",
+                CollectProjectImports = BinaryLogger.ProjectImportsCollectionMode.ZipFile,
+            };
+            var testProjectFmt = @"
+<Project>
+    <Target Name=""Build"" Inputs=""{0}"" Outputs=""testtaskoutputfile.txt"">
+        <ReadLinesFromFile
+            File=""{0}"" >
+            <Output
+                TaskParameter=""Lines""
+                ItemName=""ItemsFromFile""/>
+        </ReadLinesFromFile>
+        <WriteLinesToFile File=""testtaskoutputfile.txt"" Lines=""@(ItemsFromFile);abc;def;ghi""/>
+        <CreateItem Include=""testtaskoutputfile.txt"">
+            <Output TaskParameter=""Include"" ItemName=""EmbedInBinlog"" />
+        </CreateItem>
+        <CreateItem Include=""{0}"">
+            <Output TaskParameter=""Include"" ItemName=""EmbedInBinlog"" />
+        </CreateItem>
+        <CreateItem Include=""{1}"">
+            <Output TaskParameter=""Include"" ItemName=""EmbedInBinlog"" />
+        </CreateItem>
+        <CreateItem Include=""{2}"">
+            <Output TaskParameter=""Include"" ItemName=""EmbedInBinlog"" />
+        </CreateItem>
+    </Target>
+</Project>";
+            var testProject = string.Format(testProjectFmt, symlinkPath, symlinkLvl2Path, emptyFile);
+            ObjectModelHelpers.BuildProjectExpectSuccess(testProject, binaryLogger);
+            var projectImportsZipPath = Path.ChangeExtension(_logFile, ".ProjectImports.zip");
+            using var fileStream = new FileStream(projectImportsZipPath, FileMode.Open);
+            using var zipArchive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+
+            // Can't just compare `Name` because `ZipArchive` does not handle unix directory separators well
+            // thus producing garbled fully qualified paths in the actual .ProjectImports.zip entries
+            zipArchive.Entries.ShouldContain(zE => zE.Name.EndsWith("testtaskoutputfile.txt"),
+                customMessage: $"Embedded files: {string.Join(",", zipArchive.Entries)}");
+            zipArchive.Entries.ShouldContain(zE => zE.Name.EndsWith(symlinkName),
+                customMessage: $"Embedded files: {string.Join(",", zipArchive.Entries)}");
+            zipArchive.Entries.ShouldContain(zE => zE.Name.EndsWith(symlinkLvl2Name),
+                customMessage: $"Embedded files: {string.Join(",", zipArchive.Entries)}");
+            zipArchive.Entries.ShouldContain(zE => zE.Name.EndsWith(emptyFileName),
+                customMessage: $"Embedded files: {string.Join(",", zipArchive.Entries)}");
+        }
+
+        [Fact]
+        public void BinaryLoggerShouldNotThrowWhenMetadataCannotBeExpanded()
+        {
+            var binaryLogger = new BinaryLogger
+            {
+                Parameters = $"LogFile={_logFile}"
+            };
+
+            const string project = @"
+<Project>
+<ItemDefinitionGroup>
+  <F>
+   <MetadataFileName>a\b\%(Filename).c</MetadataFileName>
+  </F>
+ </ItemDefinitionGroup>
+ <ItemGroup>
+  <F Include=""-in &quot;x\y\z&quot;"" />
+ </ItemGroup>
+ <Target Name=""X"" />
+</Project>";
+
+            ObjectModelHelpers.BuildProjectExpectSuccess(project, binaryLogger);
+        }
+
+        /// <summary>
+        /// Regression test for dotnet/dotnet#5433 — ClearCacheDirectory must not destroy the
+        /// ProjectImports archive before it is embedded in the binlog.
+        /// </summary>
+        [Fact]
+        public void BinlogEmbeddedImportsSurviveClearCacheDirectory()
+        {
+            string logFilePath = Path.Combine(_env.DefaultTestDirectory.Path, "test.binlog");
+
+            var collector = new ProjectImportsCollector(logFilePath, createFile: false, runOnBackground: false);
+            collector.AddFileFromMemory("testfile.proj", "<Project />");
+
+            // This is what XMake.cs does after EndBuild — wipes the cache directory.
+            FileUtilities.ClearCacheDirectory();
+
+            // ProcessResult must still read the archive after the cache dir is gone.
+            bool archiveRead = false;
+            collector.ProcessResult(
+                stream =>
+                {
+                    stream.Length.ShouldBeGreaterThan(0);
+                    archiveRead = true;
+                },
+                error => throw new InvalidOperationException(error));
+            archiveRead.ShouldBeTrue("Archive must be readable after ClearCacheDirectory");
+
+            // DeleteArchive must not throw (directory must still exist).
+            collector.DeleteArchive();
+
+            // Satisfy the fixture's expectation that _logFile exists.
+            File.WriteAllText(_logFile, string.Empty);
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/dotnet/msbuild/issues/6323.
+        /// </summary>
+        /// <remarks>
+        /// This isn't strictly a binlog test, but it fits here because
+        /// all log event types will be used when the binlog is attached.
+        /// </remarks>
+        [Fact]
+        public void MessagesCanBeLoggedWhenProjectsAreCached()
+        {
+            using var env = TestEnvironment.Create();
+
+            env.SetEnvironmentVariable("MSBUILDDEBUGFORCECACHING", "1");
+
+            using var buildManager = new BuildManager();
+
+            var binaryLogger = new BinaryLogger
+            {
+                Parameters = $"LogFile={_logFile}"
+            };
+
+            // To trigger #6323, there must be at least two project instances.
+            var referenceProject = _env.CreateTestProjectWithFiles("reference.proj", @"
+         <Project>
+            <Target Name='Target2'>
+               <Exec Command='echo a'/>
+            </Target>
+         </Project>");
+
+            var entryProject = _env.CreateTestProjectWithFiles("entry.proj", $@"
+         <Project>
+            <Target Name='BuildSelf'>
+               <Message Text='MessageOutputText'/>
+               <MSBuild Projects='{referenceProject.ProjectFile}' Targets='Target2' />
+               <MSBuild Projects='{referenceProject.ProjectFile}' Targets='Target2' /><!-- yes, again. That way it's a cached result -->
+            </Target>
+         </Project>");
+
+            buildManager.Build(new BuildParameters() { Loggers = new ILogger[] { binaryLogger } },
+                new BuildRequestData(entryProject.ProjectFile, new Dictionary<string, string>(), null, new string[] { "BuildSelf" }, null))
+                .OverallResult.ShouldBe(BuildResultCode.Success);
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/dotnet/msbuild/issues/7828
+        /// </summary>
+        /// <remarks>
+        /// This test verifies,
+        /// 1. When binary log and verbosity=diagnostic are both set, the equivalent command line is printed.
+        /// 2. When binary log and non-diag verbosity are set, the equivalent command line is NOT printed.
+        /// </remarks>
+        [Fact]
+        public void SuppressCommandOutputForNonDiagVerbosity()
+        {
+            using (TestEnvironment env = TestEnvironment.Create())
+            {
+                var contents = @"
+                    <Project>
+                        <Target Name='Target2'>
+                            <Exec Command='echo a'/>
+                        </Target>
+                    </Project>";
+
+
+                TransientTestFolder testFolder = env.CreateFolder(createFolder: true);
+
+                TransientTestFile projectFile1 = env.CreateFile(testFolder, "testProject01.proj", contents);
+                string consoleOutput1 = RunnerUtilities.ExecMSBuild($"{projectFile1.Path} -bl:{_logFile} -verbosity:diag -nologo", out bool success1);
+                success1.ShouldBeTrue();
+                var expected1 = $"-bl:{_logFile} -nologo -verbosity:diag {projectFile1.Path}";
+                consoleOutput1.ShouldContain(expected1);
+
+                foreach (var verbosity in new string[] { "q", "m", "n", "d" })
+                {
+                    TransientTestFile projectFile2 = env.CreateFile(testFolder, $"testProject_{verbosity}.proj", contents);
+                    string consoleOutput2 = RunnerUtilities.ExecMSBuild($"{projectFile2.Path} -bl:{_logFile} -verbosity:{verbosity} -nologo", out bool success2);
+                    success2.ShouldBeTrue();
+                    var expected2 = $"-bl:{_logFile} -nologo -verbosity:{verbosity} {projectFile2.Path}";
+                    consoleOutput2.ShouldNotContain(expected2);
+                }
+            }
+        }
+
+        [Theory]
+        // Wildcard - new scenario
+        [InlineData("mylog-{}-foo", "mylog-xxxxx-foo.binlog")]
+        [InlineData("mylog-{}-foo-{}", "mylog-xxxxx-foo-xxxxx.binlog")]
+        [InlineData("\"mylog-{}-foo\"", "mylog-xxxxx-foo.binlog")]
+        [InlineData("foo\\bar\\mylog-{}-foo.binlog", "foo\\bar\\mylog-xxxxx-foo.binlog")]
+        [InlineData("ProjectImports=None;LogFile=mylog-{}-foo", "mylog-xxxxx-foo.binlog")]
+        // No wildcard - pre-existing scenarios
+        [InlineData("mylog-foo.binlog", "mylog-foo.binlog")]
+        [InlineData("\"mylog-foo.binlog\"", "mylog-foo.binlog")]
+        [InlineData("foo\\bar\\mylog-foo.binlog", "foo\\bar\\mylog-foo.binlog")]
+        [InlineData("ProjectImports=None;LogFile=mylog-foo.binlog", "mylog-foo.binlog")]
+        public void BinlogFileNameParameterParsing(string parameters, string expectedBinlogFile)
+        {
+            var binaryLogger = new BinaryLogger
+            {
+                Parameters = parameters
+            };
+            string random = "xxxxx";
+            binaryLogger.PathParameterExpander = _ => random;
+
+            var eventSource = A.Fake<IEventSource>();
+
+            binaryLogger.Initialize(eventSource);
+            string expectedLog = Path.GetFullPath(expectedBinlogFile);
+            binaryLogger.FilePath.Should().BeEquivalentTo(expectedLog);
+            binaryLogger.Shutdown();
+            File.Exists(binaryLogger.FilePath).ShouldBeTrue();
+            FileUtilities.DeleteNoThrow(binaryLogger.FilePath);
+
+            // We need to create the file to satisfy the invariant set by the ctor of this testclass
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void BinlogFileNameWildcardGeneration()
+        {
+            var binaryLogger = new BinaryLogger
+            {
+                Parameters = "{}"
+            };
+
+            var eventSource = A.Fake<IEventSource>();
+
+            binaryLogger.Initialize(eventSource);
+            binaryLogger.FilePath.Should().EndWith(".binlog");
+            binaryLogger.FilePath.Length.ShouldBeGreaterThan(10);
+            binaryLogger.Shutdown();
+            File.Exists(binaryLogger.FilePath).ShouldBeTrue();
+            FileUtilities.DeleteNoThrow(binaryLogger.FilePath);
+
+            // We need to create the file to satisfy the invariant set by the ctor of this testclass
+            File.Create(_logFile).Dispose();
+        }
+
+        [Theory]
+        [InlineData("mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, false)]
+        [InlineData("LogFile=mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, false)]
+        [InlineData("\"mylog.binlog\"", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, false)]
+        [InlineData("LogFile=\"mylog.binlog\"", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, false)]
+        [InlineData("mylog.binlog;ProjectImports=None", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.None, false)]
+        [InlineData("ProjectImports=None;mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.None, false)]
+        [InlineData("ProjectImports=Embed;mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, false)]
+        [InlineData("ProjectImports=ZipFile;mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.ZipFile, false)]
+        [InlineData("mylog.binlog;OmitInitialInfo", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, true)]
+        [InlineData("OmitInitialInfo;mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.Embed, true)]
+        [InlineData("ProjectImports=None;OmitInitialInfo;mylog.binlog", "mylog.binlog", BinaryLogger.ProjectImportsCollectionMode.None, true)]
+        public void ParseParametersTests(string parametersString, string expectedLogFilePath, BinaryLogger.ProjectImportsCollectionMode expectedImportsMode, bool expectedOmitInitialInfo)
+        {
+            var result = BinaryLogger.ParseParameters(parametersString);
+
+            result.LogFilePath.ShouldBe(expectedLogFilePath);
+            result.ProjectImportsCollectionMode.ShouldBe(expectedImportsMode);
+            result.OmitInitialInfo.ShouldBe(expectedOmitInitialInfo);
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Theory]
+        [InlineData("{}")]  // Wildcard without extension
+        [InlineData("{}.binlog")]  // Wildcard with extension
+        [InlineData("mylog-{}.binlog")]  // Wildcard with prefix
+        [InlineData("LogFile={}.binlog")]  // Wildcard with LogFile= prefix
+        public void ParseParameters_WildcardPath_ReturnsNullPath(string parametersString)
+        {
+            using (TestEnvironment env = TestEnvironment.Create())
+            {
+                // Enable Wave17_12 to support wildcard parameters
+                ChangeWaves.ResetStateForTests();
+                env.SetEnvironmentVariable("MSBUILDDISABLEFEATURESFROMVERSION", "");
+                BuildEnvironmentHelper.ResetInstance_ForUnitTestsOnly();
+
+                var result = BinaryLogger.ParseParameters(parametersString);
+
+                result.LogFilePath.ShouldBeNull();
+            }
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ParseParameters_NullParameter_ThrowsLoggerException()
+        {
+            Should.Throw<LoggerException>(() => BinaryLogger.ParseParameters(null));
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Theory]
+        [InlineData("invalidparameter")]
+        [InlineData("mylog.txt")]  // Wrong extension
+        [InlineData("LogFile=mylog.txt")]  // Wrong extension with LogFile prefix
+        public void ParseParameters_InvalidParameter_ThrowsLoggerException(string parametersString)
+        {
+            Should.Throw<LoggerException>(() => BinaryLogger.ParseParameters(parametersString));
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        #region ExtractFilePathFromParameters Tests
+
+        [Theory]
+        [InlineData(null, "msbuild.binlog")]
+        [InlineData("", "msbuild.binlog")]
+        [InlineData("output.binlog", "output.binlog")]
+        [InlineData("LogFile=output.binlog", "output.binlog")]
+        [InlineData("output.binlog;ProjectImports=None", "output.binlog")]
+        [InlineData("ProjectImports=None;output.binlog", "output.binlog")]
+        [InlineData("ProjectImports=None;LogFile=output.binlog;OmitInitialInfo", "output.binlog")]
+        [InlineData("ProjectImports=None", "msbuild.binlog")]  // No path specified
+        [InlineData("OmitInitialInfo", "msbuild.binlog")]  // No path specified
+        public void ExtractFilePathFromParameters_ReturnsExpectedPath(string parameters, string expectedFileName)
+        {
+            string result = BinaryLogger.ExtractFilePathFromParameters(parameters);
+
+            // The method returns full paths, so check just the filename
+            Path.GetFileName(result).ShouldBe(expectedFileName);
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ExtractFilePathFromParameters_ReturnsFullPath()
+        {
+            string result = BinaryLogger.ExtractFilePathFromParameters("mylog.binlog");
+
+            // Should be a full path, not relative
+            Path.IsPathRooted(result).ShouldBeTrue();
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        #endregion
+
+        #region ExtractNonPathParameters Tests
+
+        [Theory]
+        [InlineData(null, "")]
+        [InlineData("", "")]
+        [InlineData("output.binlog", "")]  // Path only, no config
+        [InlineData("LogFile=output.binlog", "")]  // Path only, no config
+        [InlineData("ProjectImports=None", "ProjectImports=None")]
+        [InlineData("OmitInitialInfo", "OmitInitialInfo")]
+        [InlineData("output.binlog;ProjectImports=None", "ProjectImports=None")]
+        [InlineData("output.binlog;ProjectImports=None;OmitInitialInfo", "OmitInitialInfo;ProjectImports=None")]  // Sorted
+        [InlineData("OmitInitialInfo;output.binlog;ProjectImports=None", "OmitInitialInfo;ProjectImports=None")]  // Sorted
+        public void ExtractNonPathParameters_ReturnsExpectedConfig(string parameters, string expectedConfig)
+        {
+            string result = BinaryLogger.ExtractNonPathParameters(parameters);
+            result.ShouldBe(expectedConfig);
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        #endregion
+
+        #region ProcessParameters Tests
+
+        [Fact]
+        public void ProcessParameters_NullArray_ReturnsEmptyResult()
+        {
+            var result = BinaryLogger.ProcessParameters(null);
+
+            result.DistinctParameterSets.ShouldBeEmpty();
+            result.AdditionalFilePaths.ShouldBeEmpty();
+            result.DuplicateFilePaths.ShouldBeEmpty();
+            result.AllConfigurationsIdentical.ShouldBeTrue();
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_EmptyArray_ReturnsEmptyResult()
+        {
+            var result = BinaryLogger.ProcessParameters(Array.Empty<string>());
+
+            result.DistinctParameterSets.ShouldBeEmpty();
+            result.AdditionalFilePaths.ShouldBeEmpty();
+            result.DuplicateFilePaths.ShouldBeEmpty();
+            result.AllConfigurationsIdentical.ShouldBeTrue();
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_SingleParameter_ReturnsOneParameterSet()
+        {
+            var result = BinaryLogger.ProcessParameters(new[] { "output.binlog" });
+
+            result.DistinctParameterSets.Count.ShouldBe(1);
+            result.DistinctParameterSets[0].ShouldBe("output.binlog");
+            result.AdditionalFilePaths.ShouldBeEmpty();
+            result.DuplicateFilePaths.ShouldBeEmpty();
+            result.AllConfigurationsIdentical.ShouldBeTrue();
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_MultipleIdenticalConfigs_OptimizesWithAdditionalPaths()
+        {
+            var result = BinaryLogger.ProcessParameters(new[] { "1.binlog", "2.binlog", "3.binlog" });
+
+            result.DistinctParameterSets.Count.ShouldBe(3);
+            result.AllConfigurationsIdentical.ShouldBeTrue();
+            result.AdditionalFilePaths.Count.ShouldBe(2);  // 2.binlog and 3.binlog
+            result.DuplicateFilePaths.ShouldBeEmpty();
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_DifferentConfigs_NoOptimization()
+        {
+            var result = BinaryLogger.ProcessParameters(new[] { "1.binlog", "2.binlog;ProjectImports=None" });
+
+            result.DistinctParameterSets.Count.ShouldBe(2);
+            result.AllConfigurationsIdentical.ShouldBeFalse();
+            result.AdditionalFilePaths.ShouldBeEmpty();
+            result.DuplicateFilePaths.ShouldBeEmpty();
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_DuplicatePaths_FilteredOut()
+        {
+            var result = BinaryLogger.ProcessParameters(new[] { "1.binlog", "1.binlog", "2.binlog" });
+
+            result.DistinctParameterSets.Count.ShouldBe(2);  // 1.binlog and 2.binlog
+            result.DuplicateFilePaths.Count.ShouldBe(1);  // One duplicate of 1.binlog
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_DuplicatePaths_CaseInsensitive()
+        {
+            var result = BinaryLogger.ProcessParameters(new[] { "Output.binlog", "output.BINLOG", "other.binlog" });
+
+            result.DistinctParameterSets.Count.ShouldBe(2);  // Output.binlog and other.binlog
+            result.DuplicateFilePaths.Count.ShouldBe(1);  // One duplicate
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        [Fact]
+        public void ProcessParameters_MixedConfigsWithDuplicates_HandledCorrectly()
+        {
+            var result = BinaryLogger.ProcessParameters(new[] { 
+                "1.binlog", 
+                "2.binlog;ProjectImports=None", 
+                "1.binlog;ProjectImports=None"  // Different config but same path - filtered as duplicate
+            });
+
+            result.DistinctParameterSets.Count.ShouldBe(2);
+            result.AllConfigurationsIdentical.ShouldBeFalse();
+            result.DuplicateFilePaths.Count.ShouldBe(1);
+
+            // Create the expected log file to satisfy test environment expectations
+            File.Create(_logFile).Dispose();
+        }
+
+        #endregion
+
+        #region Forward Compatibility Replay Tests
+        // These tests exercise in-memory streams rather than .binlog files,
+        // but the fixture's _logFile must exist at Dispose time.
+
+        [Fact]
+        public void OpenBuildEventsReader_ThrowsForIncompatibleVersion()
+        {
+            // fileFormatVersion > current AND minimumReaderVersion > current => fatal
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(BinaryLogger.FileFormatVersion + 10); // fileFormatVersion
+            writer.Write(BinaryLogger.FileFormatVersion + 5);  // minimumReaderVersion (too high)
+            writer.Flush();
+            stream.Position = 0;
+
+            using var reader = new BinaryReader(stream);
+            Should.Throw<NotSupportedException>(() =>
+                BinaryLogReplayEventSource.OpenBuildEventsReader(reader, closeInput: false, allowForwardCompatibility: true));
+
+            CreateExpectedLogFile();
+        }
+
+        [Fact]
+        public void OpenBuildEventsReader_SucceedsForForwardCompatibleVersion()
+        {
+            // fileFormatVersion > current but minimumReaderVersion <= current => should succeed
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(BinaryLogger.FileFormatVersion + 5);         // fileFormatVersion (newer)
+            writer.Write(BinaryLogger.ForwardCompatibilityMinimalVersion); // minimumReaderVersion (compatible)
+            writer.Flush();
+            stream.Position = 0;
+
+            using var reader = new BinaryReader(stream);
+            using var eventsReader = BinaryLogReplayEventSource.OpenBuildEventsReader(reader, closeInput: false, allowForwardCompatibility: true);
+            eventsReader.ShouldNotBeNull();
+            eventsReader.FileFormatVersion.ShouldBe(BinaryLogger.FileFormatVersion + 5);
+
+            CreateExpectedLogFile();
+        }
+
+        [Fact]
+        public void OpenBuildEventsReader_ThrowsWithoutForwardCompatibility()
+        {
+            // fileFormatVersion > current, allowForwardCompatibility = false => fatal even if minimumReaderVersion is ok
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(BinaryLogger.FileFormatVersion + 5);         // fileFormatVersion (newer)
+            writer.Write(BinaryLogger.ForwardCompatibilityMinimalVersion); // minimumReaderVersion (compatible)
+            writer.Flush();
+            stream.Position = 0;
+
+            using var reader = new BinaryReader(stream);
+            Should.Throw<NotSupportedException>(() =>
+                BinaryLogReplayEventSource.OpenBuildEventsReader(reader, closeInput: false, allowForwardCompatibility: false));
+
+            CreateExpectedLogFile();
+        }
+
+        /// <summary>
+        /// Creates an empty placeholder so the fixture's Dispose doesn't fail
+        /// when the test didn't produce a real .binlog file.
+        /// </summary>
+        private void CreateExpectedLogFile() => File.Create(_logFile).Dispose();
+
+        [Fact]
+        public void FormatVersionMismatchWarning_NullForCurrentVersion()
+        {
+            _env.SetEnvironmentVariable("MSBUILDTARGETOUTPUTLOGGING", "1");
+
+            var binaryLogger = new BinaryLogger { Parameters = _logFile };
+
+            using (ProjectCollection collection = new())
+            {
+                Project project = ObjectModelHelpers.CreateInMemoryProject(collection, s_testProject);
+                project.Build(new ILogger[] { binaryLogger }).ShouldBeTrue();
+            }
+
+            var replayEventSource = new BinaryLogReplayEventSource();
+            replayEventSource.RecoverableReadError += _ => { };
+            replayEventSource.BuildFinished += (_, _) => { };
+            replayEventSource.Replay(_logFile);
+
+            replayEventSource.FormatVersionMismatchWarning.ShouldBeNull();
+        }
+
+        [Fact]
+        public void FormatVersionMismatchWarning_NonNullForNewerVersion()
+        {
+            int newerVersion = BinaryLogger.FileFormatVersion + 5;
+
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(newerVersion);                                     // fileFormatVersion
+            writer.Write(BinaryLogger.ForwardCompatibilityMinimalVersion);  // minimumReaderVersion
+            stream.WriteByte(0);                                            // EndOfFile record
+            writer.Flush();
+            stream.Position = 0;
+
+            using var binaryReader = new BinaryReader(stream);
+            using var eventsReader = BinaryLogReplayEventSource.OpenBuildEventsReader(binaryReader, closeInput: false, allowForwardCompatibility: true);
+
+            var replayEventSource = new BinaryLogReplayEventSource();
+            replayEventSource.RecoverableReadError += _ => { };
+            replayEventSource.BuildFinished += (_, _) => { };
+            replayEventSource.Replay(eventsReader, CancellationToken.None);
+
+            replayEventSource.FormatVersionMismatchWarning.ShouldNotBeNull();
+            replayEventSource.FormatVersionMismatchWarning.ShouldContain(newerVersion.ToString());
+            replayEventSource.FormatVersionMismatchWarning.ShouldContain(BinaryLogger.FileFormatVersion.ToString());
+
+            CreateExpectedLogFile();
+        }
+
+        #endregion
+
+        public void Dispose()
+        {
+            _env.Dispose();
+        }
+    }
+}

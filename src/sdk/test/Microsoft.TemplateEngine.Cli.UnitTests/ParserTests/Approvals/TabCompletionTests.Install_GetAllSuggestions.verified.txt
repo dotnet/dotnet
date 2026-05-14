@@ -1,0 +1,58 @@
+﻿[
+  {
+    Label: --add-source,
+    Kind: Keyword,
+    SortText: --add-source,
+    InsertText: --add-source,
+    Detail: Specifies a NuGet source to use.
+  },
+  {
+    Label: --diagnostics,
+    Kind: Keyword,
+    SortText: --diagnostics,
+    InsertText: --diagnostics,
+    Detail: Enables diagnostic output.
+  },
+  {
+    Label: --force,
+    Kind: Keyword,
+    SortText: --force,
+    InsertText: --force,
+    Detail: Allows installing template packages from the specified sources even if they would override a template package from another source.
+  },
+  {
+    Label: --interactive,
+    Kind: Keyword,
+    SortText: --interactive,
+    InsertText: --interactive,
+    Detail: Allows the command to stop and wait for user input or action (for example to complete authentication).
+  },
+  {
+    Label: --nuget-source,
+    Kind: Keyword,
+    SortText: --nuget-source,
+    InsertText: --nuget-source,
+    Detail: Specifies a NuGet source to use.
+  },
+  {
+    Label: --verbosity,
+    Kind: Keyword,
+    SortText: --verbosity,
+    InsertText: --verbosity,
+    Detail: Sets the verbosity level. Allowed values are q[uiet], m[inimal], n[ormal], and diag[nostic].
+  },
+  {
+    Label: -d,
+    Kind: Keyword,
+    SortText: -d,
+    InsertText: -d,
+    Detail: Enables diagnostic output.
+  },
+  {
+    Label: -v,
+    Kind: Keyword,
+    SortText: -v,
+    InsertText: -v,
+    Detail: Sets the verbosity level. Allowed values are q[uiet], m[inimal], n[ormal], and diag[nostic].
+  }
+]

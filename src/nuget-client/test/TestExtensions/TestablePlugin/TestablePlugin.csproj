@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
+    <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Plugin.Testable</AssemblyName>
+    <NoWarn>$(NoWarn);CS1701</NoWarn>
+    <Description>A sample cross platform plugin used for end-to-end tests.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
+  </ItemGroup>
+</Project>

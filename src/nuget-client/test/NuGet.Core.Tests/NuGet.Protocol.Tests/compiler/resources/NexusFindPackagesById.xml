@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<feed xml:base="http://nexus:8080/nexus/service/local/nuget/nuget-public/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">FindPackagesById</title>
+  <id>http://nexus:8080/nexus/service/local/nuget/nuget-public/FindPackagesById</id>
+  <updated>2016-04-06T15:10:08.792Z</updated>
+  <link rel="self" title="FindPackagesById" href="FindPackagesById"/>
+  <entry>
+    <id>http://nexus:8080/nexus/service/local/nuget/nuget-public/Packages(Id='PackageA',Version='1.0.0.99')</id>
+    <title type="text">PackageA</title>
+    <summary type="text">Some description</summary>
+    <updated>2016-04-06T12:46:30.942Z</updated>
+    <author>
+      <name>My Name</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='PackageA',Version='1.0.0.99')/$value" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='PackageA',Version='1.0.0.99')" />
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <content type="application/zip" src="http://nexus:8080/nexus/service/local/nuget/nuget-public/PackageA/1.0.0.99" />
+    <m:properties>
+      <d:Version>1.0.0.99</d:Version>
+      <d:Copyright>Copyright 2016</d:Copyright>
+      <d:Created m:type="Edm.DateTime">2016-04-06T12:46:30.942Z</d:Created>
+      <d:Dependencies>PackageB:null|EntityFramework:6.1.3|PackageC:3.7.0.15|PackageD:3.14.15:null</d:Dependencies>
+      <d:Description>Some description</d:Description>
+      <d:DownloadCount m:type="Edm.Int32">0</d:DownloadCount>
+      <d:GalleryDetailsUrl m:null="true"></d:GalleryDetailsUrl>
+      <d:IconUrl m:null="true"></d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Published m:type="Edm.DateTime">2016-04-06T12:46:30.942Z</d:Published>
+      <d:Language m:null="true"></d:Language>
+      <d:LastEdited m:type="Edm.DateTime">2017-04-06T12:46:30.942Z</d:LastEdited>
+      <d:LicenseUrl m:null="true"></d:LicenseUrl>
+      <d:PackageHash>aqIW4mRwo2ZXuknkKVM09X2on6INMwWd7ImzzZkenjUYNrEM+0XjL2uZlUg7tQpnUU2AzK0J3SNPWWiGuw4wgw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">8670</d:PackageSize>
+      <d:ProjectUrl m:null="true"></d:ProjectUrl>
+      <d:ReportAbuseUrl m:null="true"></d:ReportAbuseUrl>
+      <d:ReleaseNotes></d:ReleaseNotes>
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+      <d:Tags m:null="true"></d:Tags>
+      <d:Title>PackageA Helpers</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">0</d:VersionDownloadCount>
+    </m:properties>
+  </entry>
+</feed>

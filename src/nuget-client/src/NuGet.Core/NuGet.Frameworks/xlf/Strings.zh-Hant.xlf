@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">引數不可為 null 或空白。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkDoesNotSupportProfiles">
+        <source>.NET 5.0 and above does not support profiles.</source>
+        <target state="translated">.NET 5.0 及更新版本不支援設定檔。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkMismatch">
+        <source>Frameworks must have the same identifier, profile, and platform.</source>
+        <target state="translated">架構的識別碼、設定檔與平台必須一致。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkIdentifier">
+        <source>Invalid framework identifier '{0}'.</source>
+        <target state="translated">架構識別碼 '{0}' 無效。</target>
+        <note>{0} is the invalid framework identifier.</note>
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkVersion">
+        <source>Invalid framework version '{0}'.</source>
+        <target state="translated">架構版本 '{0}' 無效。</target>
+        <note>{0} is the invalid framework version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPlatformVersion">
+        <source>Invalid platform version '{0}'.</source>
+        <target state="translated">平台版本無效: '{0}'。</target>
+        <note>{0} is the invalid platform version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPortableFrameworksDueToHyphen">
+        <source>Invalid portable frameworks '{0}'. A hyphen may not be in any of the portable framework names.</source>
+        <target state="translated">可攜式架構 '{0}' 無效。任何可攜式架構名稱都不能有連字號。</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+      <trans-unit id="MissingPortableFrameworks">
+        <source>Invalid portable frameworks for '{0}'. A portable framework must have at least one framework in the profile.</source>
+        <target state="translated">'{0}' 的可攜式架構無效。可攜式架構在設定檔中必須至少有一個架構。</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

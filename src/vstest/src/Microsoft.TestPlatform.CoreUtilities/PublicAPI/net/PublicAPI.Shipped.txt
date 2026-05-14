@@ -1,0 +1,81 @@
+﻿#nullable enable
+const Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.MONOEXENAME = "mono" -> string!
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.AdapterDiscoveryStart(string! executorUri) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.AdapterDiscoveryStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.AdapterExecutionStart(string! executorUri) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.AdapterExecutionStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.AdapterSearchStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.AdapterSearchStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.DataCollectionStart(string! dataCollectorUri) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.DataCollectionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.DiscoveryRequestStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.DiscoveryRequestStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.DiscoveryStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.DiscoveryStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.ExecutionRequestStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.ExecutionRequestStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.ExecutionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.ExecutionStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.MetricsDisposeStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.MetricsDisposeStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.StartTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.StartTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.StopTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.StopTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestHostAppDomainCreationStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestHostAppDomainCreationStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestHostStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestHostStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestPlatformEventSource() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestRunAttachmentsProcessingRequestStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestRunAttachmentsProcessingRequestStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestRunAttachmentsProcessingStart(long numberOfAttachments) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TestRunAttachmentsProcessingStop(long numberOfAttachments) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerDiscoveryStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerDiscoveryStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerExecutionStart(long customTestHost, long sourcesCount, long testCasesCount, string! runSettings) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerExecutionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerInitializeStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerInitializeStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerStartTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerStartTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerStopTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerStopTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerTestRunAttachmentsProcessingStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.TranslationLayerTestRunAttachmentsProcessingStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.VsTestConsoleStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.VsTestConsoleStop() -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.DotnetHostHelper() -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.DotnetHostHelper(Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper! fileHelper, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment! environment) -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.GetDotnetPath() -> string!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.GetMonoPath() -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.CopyFile(string! sourcePath, string! destinationPath) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.CreateDirectory(string! path) -> System.IO.DirectoryInfo!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.Delete(string! path) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.DeleteEmptyDirectroy(string! dirPath) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.DeleteDirectory(string! directoryPath, bool recursive) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetTempPath() -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetFileLength(string! path) -> long
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.DirectoryExists(string? path) -> bool
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.EnumerateFiles(string! directory, System.IO.SearchOption searchOption, params string![]? endsWithSearchPatterns) -> System.Collections.Generic.IEnumerable<string!>!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.Exists(string? path) -> bool
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.FileHelper() -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetCurrentDirectory() -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetFileAttributes(string! path) -> System.IO.FileAttributes
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetFiles(string! path, string! searchPattern, System.IO.SearchOption searchOption) -> string![]!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetFileVersion(string! path) -> System.Version!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetFullPath(string! path) -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetStream(string! filePath, System.IO.FileMode mode, System.IO.FileAccess access = System.IO.FileAccess.ReadWrite) -> System.IO.Stream!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.GetStream(string! filePath, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) -> System.IO.Stream!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.MoveFile(string! sourcePath, string! destinationPath) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper.WriteAllTextToFile(string! filePath, string! content) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.CreateDirectory(string! path) -> System.IO.DirectoryInfo!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.EnumerateFiles(string! directory, System.IO.SearchOption searchOption, params string![]? endsWithSearchPatterns) -> System.Collections.Generic.IEnumerable<string!>!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetFileAttributes(string! path) -> System.IO.FileAttributes
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetFiles(string! path, string! searchPattern, System.IO.SearchOption searchOption) -> string![]!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetStream(string! filePath, System.IO.FileMode mode, System.IO.FileAccess access = System.IO.FileAccess.ReadWrite) -> System.IO.Stream!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetStream(string! filePath, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) -> System.IO.Stream!
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.TestPlatformEventSource.Instance.get -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource!

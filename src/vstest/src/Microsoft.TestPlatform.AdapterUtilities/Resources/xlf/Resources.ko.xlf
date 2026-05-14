@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="ErrorIncompleteManagedName">
+        <source>ManagedName is incomplete</source>
+        <target state="translated">ManagedName이 불완전함</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMethodArityMustBeNumeric">
+        <source>Method arity must be numeric.</source>
+        <target state="translated">메서드 인수 개수는 숫자여야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMethodNotFound">
+        <source>Method '{0}' not found on type '{1}'</source>
+        <target state="translated">'{0}' 메서드를 '{1}' 형식에서 찾을 수 없습니다.</target>
+        <note>{0} is the method name, {1} is the full type name.</note>
+      </trans-unit>
+      <trans-unit id="ErrorTypeNotFound">
+        <source>Type '{0}' not found</source>
+        <target state="translated">'{0}' 형식을 찾을 수 없습니다.</target>
+        <note>{0} is the full type name.</note>
+      </trans-unit>
+      <trans-unit id="ErrorUnexpectedCharactersAtEnd">
+        <source>Unexpected characters after the end of the ManagedName (pos: {0})</source>
+        <target state="translated">ManagedName의 끝 다음에 예기치 않은 문자가 있습니다(pos: {0}).</target>
+        <note>{0} is the position of unexpected characters</note>
+      </trans-unit>
+      <trans-unit id="ErrorWhitespaceNotValid">
+        <source>Whitespace is not valid in a ManagedName (pos: {0})</source>
+        <target state="translated">ManagedName에서 공백은 유효하지 않습니다(pos: {0}).</target>
+        <note>{0} is the position of invalid whitespace</note>
+      </trans-unit>
+      <trans-unit id="MethodNotImplementedOnPlatform">
+        <source>'{0}.{1}' is not implemented on this platform!</source>
+        <target state="translated">'{0}.{1}'이(가)이 플랫폼에서 구현되지 않았습니다.</target>
+        <note>'{className}.{methodName}' is not implemented on this platform!
+
+Example: 'System.Reflection.MethodBase' is not implemented on this platform!</note>
+      </trans-unit>
+      <trans-unit id="ErrorInvalidSequenceAt">
+        <source>Invalid escape sequence! (segment: {0}, pos: {1})</source>
+        <target state="translated">이스케이프 시퀀스가 잘못되었습니다. (세그먼트: {0}, pos: {1})</target>
+        <note>An escape sequence started with '\', but it wasn't legal. {0}: Invalid string, {1}: starting position of invalid sequence.</note>
+      </trans-unit>
+      <trans-unit id="ErrorNoClosingQuote">
+        <source>A closing single quote was expected at the end of the segment! (segment: {0})</source>
+        <target state="translated">세그먼트 끝에 닫는 작은따옴표가 있어야 합니다. (세그먼트: {0})</target>
+        <note>An error thrown when the type name ended but opened single quote was not matched.</note>
+      </trans-unit>
+      <trans-unit id="ErrorMethodExpectedAsAnArgument">
+        <source>Argument must be a method. (Argument name: {0})</source>
+        <target state="translated">인수는 메서드여야 합니다. (인수 이름: {0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorCannotAppendAfterHashCalculation">
+        <source>Cannot append to a TestIdProvider, after GetId or GetHash method is called.</source>
+        <target state="translated">GetId 또는 GetHash 메서드가 호출된 후에는 TestIdProvider에 추가할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

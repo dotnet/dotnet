@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="https://www.nuget.org/api/v2" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <id>https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta1-build2945')</id>
+  <category term="NuGetGallery.OData.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="edit" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta1-build2945')" />
+  <link rel="self" href="https://www.nuget.org/api/v2/Packages(Id='xunit',Version='2.1.0-beta1-build2945')" />
+  <title type="text">xunit</title>
+  <updated>2015-09-21T11:20:41Z</updated>
+  <author>
+    <name>James Newkirk, Brad Wilson</name>
+  </author>
+  <content type="application/zip" src="https://www.nuget.org/api/v2/package/xunit/2.1.0-beta1-build2945" />
+  <m:properties>
+    <d:Id>xunit</d:Id>
+    <d:Version>2.1.0-beta1-build2945</d:Version>
+    <d:NormalizedVersion>2.1.0-beta1-build2945</d:NormalizedVersion>
+    <d:Authors>James Newkirk, Brad Wilson</d:Authors>
+    <d:Copyright></d:Copyright>
+    <d:Created m:type="Edm.DateTime">2015-03-21T23:51:11.017</d:Created>
+    <d:Dependencies>xunit.core:[2.1.0-beta1-build2945]:|xunit.assert:[2.1.0-beta1-build2945]:</d:Dependencies>
+    <d:Description>
+      xUnit.net is a developer testing framework, built to support Test Driven Development, with a design goal of extreme simplicity and alignment with framework features.
+      Installing this package installs xunit.core and xunit.assert.
+    </d:Description>
+    <d:DownloadCount m:type="Edm.Int32">1592239</d:DownloadCount>
+    <d:GalleryDetailsUrl>https://www.nuget.org/packages/xunit/2.1.0-beta1-build2945</d:GalleryDetailsUrl>
+    <d:IconUrl>https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png</d:IconUrl>
+    <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+    <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+    <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+    <d:Language>en-US</d:Language>
+    <d:LastUpdated m:type="Edm.DateTime">2015-09-21T11:20:41.96</d:LastUpdated>
+    <d:Published m:type="Edm.DateTime">2015-03-21T23:51:11.017</d:Published>
+    <d:PackageHash>XNaeokPy5IxkaNc9rPi2jyI46awTCnVrK9nB/OGF6Ae4IJJIullc7PnbS/jnFwkaRxA8wXw35famc+1ZP77vAg==</d:PackageHash>
+    <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+    <d:PackageSize m:type="Edm.Int64">15368</d:PackageSize>
+    <d:ProjectUrl>https://github.com/xunit/xunit</d:ProjectUrl>
+    <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/xunit/2.1.0-beta1-build2945</d:ReportAbuseUrl>
+    <d:ReleaseNotes></d:ReleaseNotes>
+    <d:RequireLicenseAcceptance m:type="Edm.Boolean">false</d:RequireLicenseAcceptance>
+    <d:Summary></d:Summary>
+    <d:Tags></d:Tags>
+    <d:Title>xUnit.net</d:Title>
+    <d:VersionDownloadCount m:type="Edm.Int32">8672</d:VersionDownloadCount>
+    <d:MinClientVersion>2.8.3</d:MinClientVersion>
+    <d:LastEdited m:null="true" />
+    <d:LicenseUrl>https://raw.githubusercontent.com/xunit/xunit/master/license.txt</d:LicenseUrl>
+    <d:LicenseNames></d:LicenseNames>
+    <d:LicenseReportUrl></d:LicenseReportUrl>
+  </m:properties>
+</entry>

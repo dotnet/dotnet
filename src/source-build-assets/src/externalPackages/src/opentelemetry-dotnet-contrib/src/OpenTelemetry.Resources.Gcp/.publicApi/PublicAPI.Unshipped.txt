@@ -1,0 +1,2 @@
+OpenTelemetry.Resources.GcpResourceBuilderExtensions
+static OpenTelemetry.Resources.GcpResourceBuilderExtensions.AddGcpDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!

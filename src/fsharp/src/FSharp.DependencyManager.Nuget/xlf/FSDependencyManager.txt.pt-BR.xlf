@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../FSDependencyManager.resx">
+    <body>
+      <trans-unit id="cantReferenceSystemPackage">
+        <source>PackageManager cannot reference the System Package '{0}'</source>
+        <target state="new">PackageManager cannot reference the System Package '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="highestVersion">
+        <source>with the highest version</source>
+        <target state="translated">com a versão mais recente</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="invalidBooleanValue">
+        <source>Invalid value for boolean '{0}', valid values: true or false</source>
+        <target state="new">Invalid value for boolean '{0}', valid values: true or false</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="invalidTimeoutValue">
+        <source>Invalid value for timeout '{0}', valid values: none, -1 and integer milliseconds to wait</source>
+        <target state="translated">Valor inválido para o tempo limite '{0}'. Valores válidos: none,-1 e milissegundos inteiros de espera</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="loadNugetPackage">
+        <source>Load Nuget Package</source>
+        <target state="translated">Carregar Pacote NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="missingTimeoutValue">
+        <source>Missing value for timeout</source>
+        <target state="translated">Valor ausente para o tempo limite</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="notUsed">
+        <source>Not used</source>
+        <target state="translated">Não usado</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="requiresAValue">
+        <source>{0} requires a value</source>
+        <target state="translated">{0} requer um valor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="sourceDirectoryDoesntExist">
+        <source>The source directory '{0}' not found</source>
+        <target state="translated">O diretório de origem '{0}' não foi localizado</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="timedoutResolvingPackages">
+        <source>Timed out resolving packages, process: '{0}' '{1}'</source>
+        <target state="translated">Tempo limite atingido ao resolver os pacotes. Processo: '{0}' '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="unableToApplyImplicitArgument">
+        <source>Unable to apply implicit argument number {0}</source>
+        <target state="translated">Não é possível aplicar o número do argumento implícito {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="version">
+        <source>version</source>
+        <target state="translated">versão</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,90 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);Resources\*.cs</DefaultExcludesInProjectFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.Versioning" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\TestPackageA.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>TestPackageA.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageB.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>TestPackageB.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageC.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>TestPackageC.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageD.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>TestPackageD.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageE.1.0.0-beta.12345.1.nupkg">
+      <LogicalName>TestPackageE.1.0.0-beta.12345.1.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageF.1.0.0-beta.12345.1.nupkg">
+      <LogicalName>TestPackageF.1.0.0-beta.12345.1.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageG.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>TestPackageG.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageA.1.0.0-beta-final.nupkg">
+      <LogicalName>TestPackageA.1.0.0-beta-final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageB.1.0.0-beta-final.nupkg">
+      <LogicalName>TestPackageB.1.0.0-beta-final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageC.1.0.0-beta-final.nupkg">
+      <LogicalName>TestPackageC.1.0.0-beta-final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageD.1.0.0-beta-final.nupkg">
+      <LogicalName>TestPackageD.1.0.0-beta-final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageE.1.0.0-beta.final.nupkg">
+      <LogicalName>TestPackageE.1.0.0-beta.final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageF.1.0.0-beta.final.nupkg">
+      <LogicalName>TestPackageF.1.0.0-beta.final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageG.1.0.0-beta-final.nupkg">
+      <LogicalName>TestPackageG.1.0.0-beta-final.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageA.1.0.0.nupkg">
+      <LogicalName>TestPackageA.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageB.1.0.0.nupkg">
+      <LogicalName>TestPackageB.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageC.1.0.0.nupkg">
+      <LogicalName>TestPackageC.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageD.1.0.0.nupkg">
+      <LogicalName>TestPackageD.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageE.1.0.0.nupkg">
+      <LogicalName>TestPackageE.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageF.1.0.0.nupkg">
+      <LogicalName>TestPackageF.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TestPackageG.1.0.0.nupkg">
+      <LogicalName>TestPackageG.1.0.0.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Signed.1.2.3.nupkg">
+      <LogicalName>Signed.1.2.3.nupkg</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\DotnetTool.1.0.0-beta-12345-01.nupkg">
+      <LogicalName>DotnetTool.1.0.0-beta-12345-01.nupkg</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
+    <ProjectReference Include="..\tasks\Microsoft.DotNet.NuGetRepack.Tasks.csproj" />
+  </ItemGroup>
+
+</Project>

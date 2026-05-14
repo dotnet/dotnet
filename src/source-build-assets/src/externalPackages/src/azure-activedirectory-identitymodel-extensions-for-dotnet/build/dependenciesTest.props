@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <DotNetCoreAppRuntimeVersion>2.1.30</DotNetCoreAppRuntimeVersion>
+    <MicrosoftAzureKeyVaultCryptographyVersion>2.0.5</MicrosoftAzureKeyVaultCryptographyVersion>
+    <MicrosoftNETTestSdkVersion>16.10.0</MicrosoftNETTestSdkVersion>
+    <NetStandardVersion>2.0.3</NetStandardVersion>
+    <NewtonsoftVersion>13.0.3</NewtonsoftVersion>
+    <SystemSecurityClaimsVersion>4.3.0</SystemSecurityClaimsVersion>
+    <XunitVersion>2.4.0</XunitVersion>
+    <SystemTextJson>8.0.4</SystemTextJson>
+  </PropertyGroup>
+</Project>

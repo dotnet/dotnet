@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ru">
+    <body>
+      <trans-unit id="DataCollectionMessageFormat">
+        <source>Data collection : {0}</source>
+        <target state="translated">Сбор данных: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorMessageFormat">
+        <source>Data collector '{0}' message: {1}.</source>
+        <target state="translated">Сообщение сборщика данных "{0}": {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateExtensionUri">
+        <source>Duplicate test extension URI '{0}'.  Ignoring the duplicate extension.</source>
+        <target state="translated">Повторяющийся URI расширения теста "{0}". Повторяющееся расширение пропускается.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateSettingsName">
+        <source>Duplicate settings provider named '{0}'.  Ignoring the duplicate provider.</source>
+        <target state="translated">Повторяющийся поставщик параметров с именем "{0}". Повторяющийся поставщик пропускается.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateSettingsProvided">
+        <source>Duplicate run settings section named '{0}' found.  Ignoring the duplicate settings.</source>
+        <target state="translated">Обнаружен повторяющийся раздел параметров запуска с именем "{0}". Повторяющиеся параметры пропускаются.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EmptyParenthesis">
+        <source>Error: Empty parenthesis ( )</source>
+        <target state="translated">Ошибка: пустые круглые скобки ()</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCondition">
+        <source>Error: Invalid Condition '{0}'</source>
+        <target state="translated">Ошибка: недопустимое условие "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidExtensionUriFormat">
+        <source>Test Extension has an invalid URI '{0}': {1}</source>
+        <target state="translated">Расширение теста имеет недопустимый URI "{0}": {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidOperator">
+        <source>Error: Invalid operator '{0}'</source>
+        <target state="translated">Ошибка: недопустимый оператор "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerInitializationError">
+        <source>Exception occurred while initializing logger with {0}: '{1}'.  The logger will not be used.  Exception: {2}</source>
+        <target state="translated">Возникло исключение при инициализации средства ведения журнала с {0}: "{1}". Средство ведения журнала не будет использоваться. Исключение: {2}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerNotFound">
+        <source>Could not find a test logger with AssemblyQualifiedName, URI or FriendlyName '{0}'.</source>
+        <target state="translated">Не удалось найти средство ведения журнала тестирования с AssemblyQualifiedName, URI или FriendlyName "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingCloseParenthesis">
+        <source>Error: Missing ')'</source>
+        <target state="translated">Ошибка: отсутствует ")"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOpenParenthesis">
+        <source>Error: Missing '('</source>
+        <target state="translated">Ошибка: отсутствует "("</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOperand">
+        <source>Error: Missing operand</source>
+        <target state="translated">Ошибка: отсутствует операнд</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOperator">
+        <source>Missing Operator '|' or '&amp;'</source>
+        <target state="translated">Отсутствует оператор "|" или "&amp;"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsAlreadyLoaded">
+        <source>The Run Settings have already been loaded.</source>
+        <target state="translated">Параметры запуска уже загружены.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsParseError">
+        <source>An error occurred while loading the run settings.  Error: {0}</source>
+        <target state="translated">Произошла ошибка при загрузке параметров запуска. Ошибка: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsNodeInvalidName">
+        <source>Invalid settings node specified. The name property of the settings node must be non-empty.</source>
+        <target state="translated">Указан недопустимый узел параметров. Узел параметров должен иметь допустимое значение для свойства имени.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsProviderInitializationError">
+        <source>An error occurred while initializing the settings provider named '{0}'. Error: {1}</source>
+        <target state="translated">При инициализации поставщика параметров с именем "{0}" произошла ошибка. Ошибка: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsProviderNotFound">
+        <source>Settings Provider named '{0}' was not found.  The settings can not be loaded.</source>
+        <target state="translated">Поставщик параметров с именем "{0}" не найден. Невозможно загрузить параметры.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCaseFilterFormatException">
+        <source>Incorrect format for TestCaseFilter {0}. Specify the correct format and try again. Note that the incorrect format can lead to no test getting executed.</source>
+        <target state="translated">Неверный формат фильтра TestCaseFilter {0}. Задайте правильный формат и повторите попытку. Обратите внимание, что использование неверного формата может привести к тому, что ни один из тестов не будет выполнен.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorErrorOnGetVariable">
+        <source>Data collector '{0}' failed to provide initialization information. Error: {1}</source>
+        <target state="translated">Сборщик данных "{0}" не предоставил сведения для инициализации. Ошибка: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorInitializationError">
+        <source>Data collector '{0}' threw an exception during type loading, construction, or initialization: {1}.</source>
+        <target state="translated">В сборщике данных "{0}" возникло исключение во время загрузки типа, создания или инициализации: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorNotFound">
+        <source>Could not find data collector '{0}'</source>
+        <target state="translated">Не удалось найти сборщик данных "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
+        <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
+        <target state="translated">Сборщик данных "{0}" запросил, чтобы в окружении выполнения тестов была установлена переменная окружения "{1}" со значением "{2}", но другой сборщик данных "{3}" уже запросил эту переменную окружения со значением "{4}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IgnoredDuplicateConfiguration">
+        <source>There are multiple configurations that have data collector FriendlyName as '{0}'. Duplicate configurations will be ignored in the test run.</source>
+        <target state="translated">Существует несколько конфигураций со значением "{0}" для FriendlyName сборщика данных. Повторяющиеся конфигурации будут пропущены в тестовом запуске.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReportDataCollectorException">
+        <source>Data collector caught an exception of type '{0}': '{1}'. More details: {2}.</source>
+        <target state="translated">В сборщике данных возникло исключение типа "{0}": "{1}". Дополнительные сведения: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WrongDataCollectionContextType">
+        <source>Types deriving from the data collection context cannot be used for sending data and messages.  The DataCollectionContext used for sending data and messages must come from one of the events raised to the data collector.</source>
+        <target state="translated">Нельзя использовать типы, производные от контекста сбора данных, для отправки данных и сообщений.  Используемый для отправки данных и сообщений DataCollectionContext должен происходить от одного из событий, возникших для сборщика данных.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerUriInvalid">
+        <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
+        <target state="translated">URI средства ведения журнала тестирования "{0}" недопустимо. Это средство ведения журнала тестирования будет игнорироваться.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToFindInstalledUnitTestExtensions">
+        <source>Failed to find the list of installed unit test extensions. Reason: {0}</source>
+        <target state="translated">Не удалось найти список установленных расширений модульных тестов. Причина: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSInstallationNotFound">
+        <source>This option works only with vstest.console.exe installed as part of Visual Studio.</source>
+        <target state="translated">Этот параметр работает, только если в рамках Visual Studio установлена служебная программа vstest.console.exe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FastFilterException">
+        <source>An error occurred while creating Fast filter.</source>
+        <target state="translated">При создании быстрого фильтра произошла ошибка.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CancellationRequested">
+        <source>Cancelling the operation as requested.</source>
+        <target state="translated">Операция отменяется в соответствии с запросом.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFetchUriString">
+        <source>Unable to find a datacollector with friendly name '{0}'.</source>
+        <target state="translated">Не удается найти datacollector с понятным именем "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadAdapaterFile">
+        <source>Failed to load extensions from file '{0}'. Please use /diag for more information.</source>
+        <target state="translated">Не удалось загрузить расширения из файла "{0}". Для получения дополнительных сведений используйте /diag.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges. For more information, please look at the error message:</source>
+        <target state="translated">{0} Отказано в доступе при попытке создания папки "TestResults" в указанном расположении. Это исключение возникло, так как вы запускаете файл vstest.console.exe из папки, для которой требуется доступ на запись. Чтобы устранить эту проблему, запустите vstest.console.exe из папки, для которой у вас есть разрешения на запись. Дополнительные сведения см. в сообщении об ошибке:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InnerException">
+        <source>Inner exception:</source>
+        <target state="translated">Внутреннее исключение:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StackTrace">
+        <source>Stack trace:</source>
+        <target state="translated">Трассировка стека:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; не поддерживается для тестового запуска источников.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

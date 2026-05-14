@@ -1,0 +1,37 @@
+parameters:
+- name: isOfficialBuild
+  type: boolean
+- name: DartLabEnvironment
+  displayName: DartLab Environment
+  type: string
+  default: Production
+  values:
+  - Production
+  - Staging
+steps:
+- task: DownloadPipelineArtifact@2
+  displayName: "Download nupkgs"
+  name: DownloadNupkgs
+  inputs:
+    artifactName: "nupkgs - RTM"
+    downloadPath: "$(System.ArtifactsDirectory)/nupkgs"
+
+- task: PowerShell@2
+  name: check_nupkg_dependencies
+  displayName: Check package dependencies
+  inputs:
+    targetType: inline
+    script: |
+      $nupkgs = Get-ChildItem $(System.ArtifactsDirectory)/nupkgs/*.nupkg -Exclude *.symbols.nupkg,NuGet.CommandLine.XPlat.*
+      if ($nupkgs.Count -eq 0) { throw "Could not find nupkgs" }
+      "nupkgs:"
+      $nupkgs.FullName
+      ""
+      "Building validation tool"
+      dotnet build tools-local/ensure-nupkg-dependencies-on-source/
+      if ($LASTEXITCODE -ne 0) { throw "Build was not successful" }
+      ""
+      "Running validation tool"
+      dotnet run --project tools-local/ensure-nupkg-dependencies-on-source/ --no-build -- $nupkgs -s https://api.nuget.org/v3/index.json
+  condition: "and(succeededOrFailed(), or(eq(variables['SkipNupkgDependenciesCheck'], 'true'), eq(variables['SkipNupkgDependenciesCheck'], '')))"
+  continueOnError: ${{ parameters.isOfficialBuild }}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VsixLanguagePack Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema-lp/2010">
+  <LocalizedName>NuGet パッケージ マネージャー</LocalizedName>
+  <LocalizedDescription>VS プロジェクトに対するパッケージのインストール、アップグレード、構成、削除の処理を自動化するためのツールのコレクション。</LocalizedDescription>
+  <MoreInfoUrl>https://github.com/NuGet/NuGet.Client</MoreInfoUrl>
+</VsixLanguagePack>

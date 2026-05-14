@@ -1,0 +1,37 @@
+From 75791e299a84b72a68150cd3a6e5435c47886cbc Mon Sep 17 00:00:00 2001
+From: Tom Deseyn <tom.deseyn@gmail.com>
+Date: Mon, 6 Oct 2025 17:36:58 +0200
+Subject: [PATCH 1/1] Remove MicroBuild signing
+Backport: https://github.com/dotnet/arcade/issues/16057
+
+---
+ .../Microsoft.Build.Locator.csproj               | 16 ----------------
+ 1 file changed, 16 deletions(-)
+
+diff --git a/src/MSBuildLocator/Microsoft.Build.Locator.csproj b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
+index 5ade71c..07c935d 100644
+--- a/src/MSBuildLocator/Microsoft.Build.Locator.csproj
++++ b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
+@@ -23,20 +23,4 @@
+     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.12.2149" PrivateAssets="all" />
+     <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="15.0.36" PrivateAssets="all" />
+   </ItemGroup>
+-  <ItemGroup>
+-    <PackageReference Include="MicroBuild.Core" Version="0.3.0" PrivateAssets="all" />
+-    <Content Include="build\Microsoft.Build.Locator.props">
+-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+-      <PackagePath>build\</PackagePath>
+-    </Content>
+-    <Content Include="build\Microsoft.Build.Locator.targets">
+-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+-      <PackagePath>build\</PackagePath>
+-    </Content>
+-  </ItemGroup>
+-  <ItemGroup>
+-    <FilesToSign Include="$(OutDir)\Microsoft.Build.Locator.dll">
+-      <Authenticode>Microsoft400</Authenticode>
+-    </FilesToSign>
+-  </ItemGroup>
+ </Project>
+-- 
+2.51.0

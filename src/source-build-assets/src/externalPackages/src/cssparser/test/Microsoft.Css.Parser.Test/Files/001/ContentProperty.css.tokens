@@ -1,0 +1,69 @@
+Token Type           Length     Token Text
+Identifier           2          H1
+Colon                1          :
+Identifier           6          before
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+Function             8          counter(
+Identifier           4          chno
+Comma                1          ,
+Identifier           11         upper-latin
+CloseFunctionBrace   1          )
+String               4          ". "
+CloseCurlyBrace      1          }
+Identifier           2          H2
+Colon                1          :
+Identifier           6          before
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+Function             8          counter(
+Identifier           7          section
+Comma                1          ,
+Identifier           11         upper-roman
+CloseFunctionBrace   1          )
+String               5          " - "
+CloseCurlyBrace      1          }
+Identifier           10         BLOCKQUOTE
+Colon                1          :
+Identifier           5          after
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+String               4          " ["
+Function             8          counter(
+Identifier           2          bq
+Comma                1          ,
+Identifier           11         lower-greek
+CloseFunctionBrace   1          )
+String               3          "]"
+CloseCurlyBrace      1          }
+Identifier           3          DIV
+Dot                  1          .
+Identifier           4          note
+Colon                1          :
+Identifier           6          before
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+Function             8          counter(
+Identifier           8          notecntr
+Comma                1          ,
+Identifier           4          disc
+CloseFunctionBrace   1          )
+String               3          " "
+CloseCurlyBrace      1          }
+Identifier           1          P
+Colon                1          :
+Identifier           6          before
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+Function             8          counter(
+Identifier           1          p
+Comma                1          ,
+Identifier           4          none
+CloseFunctionBrace   1          )
+CloseCurlyBrace      1          }
+EndOfFile            0          

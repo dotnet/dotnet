@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../AnalysisResources.resx">
+    <body>
+      <trans-unit id="AssemblyDirectlyUnderLibWarning">
+        <source>The assembly '{0}' is placed directly under 'lib' folder. It is recommended that assemblies be placed inside a framework-specific folder. Move it into a framework-specific folder.</source>
+        <target state="translated">Sestavení {0} je umístěné přímo ve složce lib. Doporučujeme umísťovat sestavení do složky pro konkrétní rozhraní. Přesuňte ho do takové složky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyOutsideLibWarning">
+        <source>The assembly '{0}' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project. Move it into the 'lib' folder if it needs to be referenced.</source>
+        <target state="translated">Sestavení {0} není ve složce lib, a proto se nepřidá jako odkaz při instalaci balíčku do projektu. Přesuňte ho do složky lib, pokud je třeba na něj odkazovat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildConventionIsViolatedWarning">
+        <source>- At least one {0} file was found in '{1}', but '{2}' was not.</source>
+        <target state="translated">- V {1} se našel nejméně jeden soubor {0}, ale nenašel se: {2}.</target>
+        <note>0 - file extension (either .props or .targets)
+1 - directory that the file falls under
+2 - correct file path </note>
+      </trans-unit>
+      <trans-unit id="DefaultSpecValueWarning">
+        <source>The value "{0}" for {1} is a sample value and should be removed. Replace it with an appropriate value or remove it and rebuild your package.</source>
+        <target state="translated">Hodnota {0} pro {1} je ukázková hodnota a měla by se odebrat. Nahraďte ji odpovídající hodnotou nebo ji odeberte a sestavte svůj balíček znovu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToFiles">
+        <source>- Add lib or ref assemblies for the</source>
+        <target state="translated">- Přidat sestavení lib nebo ref pro</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToNuspec">
+        <source>- Add a dependency group for</source>
+        <target state="translated">- Přidat skupinu závislostí pro</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToFile">
+        <source>target framework</source>
+        <target state="translated">cílová architektura</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToNuspec">
+        <source>to the nuspec</source>
+        <target state="translated">do souboru nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasCompatMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder have compatible matches, but not exact matches in the other location. Unless intentional, consult the list of actions below:</source>
+        <target state="translated">Některé cílové architektury deklarované ve skupině závislostí v souboru nuspec a ve složce lib/ref mají kompatibilní, ale ne úplně přesné shody v jiném umístění. Pokud to tak není záměrně, projděte si níže uvedený seznam akcí:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasNoExactMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:</source>
+        <target state="translated">Některé cílové architektury deklarované ve skupině závislostí v souboru nuspec a ve složce lib/ref nemají přesné shody v jiném umístění. Projděte si níže uvedený seznam akcí:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="FilePathTooLongWarning">
+        <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</source>
+        <target state="translated">Cesta nebo název souboru {0} (případně obojí) jsou moc dlouhé. Bez podpory dlouhých cest souborů váš balíček možná nebude fungovat. Zkraťte prosím cestu nebo název souboru.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconUrlDeprecationWarning">
+        <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
+        <target state="translated">Element PackageIconUrl/iconUrl je zastaralý. Zvažte místo toho použití elementu PackageIcon/icon. Další informace najdete na https://aka.ms/deprecateIconUrl.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkWarning">
+        <source>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</source>
+        <target state="translated">Složka {0} ve složce lib není známa jako platný název rozhraní nebo podporovaný identifikátor jazykové verze. Přejmenujte ji na platný název rozhraní nebo identifikátor jazykové verze.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPlaceholderFileWarning">
+        <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</source>
+        <target state="translated">Soubor v {0} používá symbol pro prázdný adresář _._, ale nachází se v adresáři, který obsahuje i jiné soubory. Odeberte prosím tento soubor z adresářů, které obsahují ještě další soubory.</target>
+        <note>0 - file path ending in _._</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrereleaseDependencyWarning">
+        <source>A stable release of a package should not have a prerelease dependency. Either modify the version spec of dependency "{0}" or update the version field in the nuspec.</source>
+        <target state="translated">Stabilní verze balíčku by neměla obsahovat závislost na předběžné verzi. Buď upravte specifikaci verze závislosti {0} nebo aktualizujte pole verze v souboru nuspec.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInDependencyGroupsWarning">
+        <source>The following dependency group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Následující skupiny závislostí vyžadují tečky ve verzi rozhraní: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFilesWarning">
+        <source>The following packaged file folder(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Následující složky zabalených souborů vyžadují tečky ve verzi rozhraní: {0}</target>
+        <note>0 - comma-separated list of paths</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFrameworkAssemblyGroupsWarning">
+        <source>The following framework assembly group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Následující skupiny sestavení rozhraní vyžadují tečky ve verzi rozhraní: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInReferenceGroupsWarning">
+        <source>The following reference group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Následující složky skupiny odkazů vyžadují tečky ve verzi rozhraní: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkWarning">
+        <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
+        <target state="translated">Nejméně jeden specifikátor cílové architektury v balíčku nemá v číslech verzí svých rozhraní potřebné tečky. Od architektury .NET5.0 je musí mít. Přejmenujte prosím příslušné specifikátory tak, aby zahrnovaly požadované tečky (např. net50 na net5.0).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LegacyVersionWarning">
+        <source>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</source>
+        <target state="translated">Verze balíčku {0} používá SemVer 2.0.0 nebo komponenty SemVer 1.0.0, které se na starších klientech nepodporují. Změňte verzi balíčku na řetězec SemVer 1.0.0. Pokud verze obsahuje popisek vydané verze, musí začínat písmenem. Tuto zprávu lze ignorovat, pokud balíček není určený pro starší klienty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseUrlDeprecationWarning">
+        <source>The 'licenseUrl' element will be deprecated. Consider using the 'license' element instead.</source>
+        <target state="translated">Element licenseUrl se brzy přestane používat. Zvažte možnost použít element license.</target>
+        <note>Please don't localize the items in the ''. license and licenseUrl</note>
+      </trans-unit>
+      <trans-unit id="Migrator_AssemblyDirectlyUnderLibWarning">
+        <source>The assembly 'lib\{0}' will be ignored when the package is installed after the migration.</source>
+        <target state="translated">Sestavení lib\{0} se bude při instalaci balíčku po migraci ignorovat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasContentFolder">
+        <source>'content' assets will not be available when the package is installed after the migration.</source>
+        <target state="translated">Prostředky content nebudou dostupné, když se balíček nainstaluje po migraci.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasInstallScript">
+        <source>install.ps1 script will be ignored when the package is installed after the migration.</source>
+        <target state="translated">Skript install.ps1 se bude ignorovat, když se balíček nainstaluje po migraci.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_XdtTransformInPackage">
+        <source>XDT transform file '{0}' will not be applied when the package is installed after the migration.</source>
+        <target state="translated">Transformační soubor XDT {0} se nepoužije, když se balíček nainstaluje po migraci.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedInitScriptWarning">
+        <source>The file '{0}' will be ignored by NuGet because it is not directly under 'tools' folder. Place the file directly under 'tools' folder.</source>
+        <target state="translated">Soubor {0} bude balíčkem NuGet ignorován, protože není přímo ve složce tools. Přesuňte ho přímo do složky tools.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedTransformFileWarning">
+        <source>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</source>
+        <target state="translated">Transformační soubor {0} je mimo složku content, a nebude proto během instalace tohoto balíčku transformován. Přesuňte ho do složky content.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingReadmeInformation">
+        <source>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</source>
+        <target state="translated">V balíčku {0} chybí soubor readme. Přejděte na https://aka.ms/nuget/authoring-best-practices/readme a zjistěte, proč jsou soubory readme balíčků důležité.</target>
+        <note>0 - package identity</note>
+      </trans-unit>
+      <trans-unit id="NoRefOrLibFolderInPackage">
+        <source>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
+{1}</source>
+        <target state="translated">Tento balíček neobsahuje složku lib/ ani ref/, bude proto považován za kompatibilní pro všechny architektury. Vzhledem k tomu, že v adresáři build/ pro {0} byly nalezeny soubory specifické pro určitou architekturu, zvažte možnost vytvoření následujících prázdných souborů, aby se kompatibilita balíčku správně zúžila:
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlaceholderFileInPackageWarning">
+        <source>An empty folder placeholder file '{0}' is in a non-empty folder and should be removed.</source>
+        <target state="translated">Zástupný soubor prázdné složky {0} je ve složce, která není prázdná. Měli byste ho odebrat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarning">
+        <source>References were found in the nuspec, but some reference assemblies were not found in both the nuspec and ref folder. Add the following reference assemblies:</source>
+        <target state="translated">V souboru nuspec se našly reference, ale některá referenční sestavení se nenašla v souboru nuspec i složce ref. Přidejte následující referenční sestavení:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecListItemFormat">
+        <source>- Add {0} to the {1} reference group in the nuspec</source>
+        <target state="translated">- Přidat {0} do referenční skupiny {1} v souboru nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecNoTfmListItemFormat">
+        <source>- Add {0} to the references element in the nuspec</source>
+        <target state="translated">- Přidat {0} do elementu References v souboru nuspec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToRefListItemFormat">
+        <source>- Add {0} to the ref/{1}/ directory</source>
+        <target state="translated">- Přidat {0} do ref/{1}/adresáře</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScriptOutsideToolsWarning">
+        <source>The script file '{0}' is outside the 'tools' folder and hence will not be executed during installation of this package. Move it into the 'tools' folder.</source>
+        <target state="translated">Soubor skriptu {0} je mimo složku s nástroji (tools), a nebude proto při instalaci tohoto balíčku spuštěn. Přesuňte ho do složky tools.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedLicenseIdentifier">
+        <source>The license identifier '{0}' is not recognized by the current toolset.</source>
+        <target state="translated">Aktuální sada nástrojů nerozpoznala identifikátor licence {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedScriptWarning">
+        <source>The script file '{0}' is not recognized by NuGet and hence will not be executed during installation of this package. Rename it to install.ps1, uninstall.ps1 or init.ps1 and place it directly under 'tools'.</source>
+        <target state="translated">Soubor skriptu {0} nebyl rozpoznán balíčkem NuGet, a nebude proto při instalaci tohoto balíčku spuštěn. Přejmenujte ho na install.ps1, uninstall.ps1 nebo init.ps1 a umístěte ho přímo do složky tools.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnspecifiedDependencyVersionWarning">
+        <source>The version of dependency '{0}' is not specified. Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">Není zadaná verze závislosti {0}. Zadejte verzi závislosti a sestavte svůj balíček znovu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WinRTObsoleteWarning">
+        <source>The file at '{0}' uses the obsolete 'WinRT' as the framework folder. Replace 'WinRT' or 'WinRT45' with 'NetCore45'.</source>
+        <target state="translated">Soubor na {0} používá zastaralé WinRT jako složku rozhraní. Nahraďte WinRT nebo WinRT45 názvem NetCore45.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

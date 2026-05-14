@@ -1,0 +1,14 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Issue with ClickOnce in Visual Studio environment
+    url: https://docs.microsoft.com/en-us/visualstudio/ide/how-to-report-a-problem-with-visual-studio
+    about: Please open issues relating to ClickOnce in Visual Studio by following the steps.
+  - name: Issue with .NET runtime or core .NET libraries
+    url: https://github.com/dotnet/runtime/issues/new/choose
+    about: Please open issues relating to the .NET runtime or core .NET libraries in dotnet/runtime.
+  - name: Issue with .NET SDK
+    url: https://github.com/dotnet/sdk/issues/new/choose
+    about: Please open issues relating to the .NET SDK itself in dotnet/sdk.
+  - name: Issue with other .NET components
+    url: https://github.com/dotnet/core/blob/master/Documentation/core-repos.md
+    about: Having issues with other .NET components? Please find the correct location where to open an issue.

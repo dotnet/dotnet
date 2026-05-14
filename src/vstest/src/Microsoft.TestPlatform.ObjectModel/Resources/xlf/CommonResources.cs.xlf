@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="cs">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Parametr nemůže být null nebo prázdný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">Testovací běh zjistil knihovny DLL, které by používaly různé verze architektury a platformy. Následující knihovny DLL neodpovídají aktuálnímu nastavení architektury {0} a platformy {1}.{2}Pro další podrobnosti o správě těchto nastavení přejděte na {3}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">Žádný s poskytnutých kontejnerů testů neodpovídá nastavení architektury platformy a rozhraní .NET Framework pro testovací běh. Platforma: {0}  .NET Framework: {1}. Další podrobnosti o správě těchto nastavení najdete na adrese http://go.microsoft.com/fwlink/?LinkID=330428.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">Zadaný soubor nastavení neodpovídá požadovanému formátu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0} by používal architekturu {1} a platformu {2}.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

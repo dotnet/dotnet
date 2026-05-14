@@ -1,0 +1,78 @@
+###############################################################################
+# Set default behavior to:
+#   automatically normalize line endings on check-in
+###############################################################################
+*           text=auto
+
+###############################################################################
+# Set default behavior to:
+#   collapse these files in PRs
+###############################################################################
+*.xlf linguist-generated=true
+
+###############################################################################
+# Set default behavior to:
+#   don't collapse these files in PRs
+###############################################################################
+**/build/** linguist-generated=false
+
+###############################################################################
+# Set file behavior to:
+#   treat as text
+###############################################################################
+*.cmd       text
+*.config    text
+*.cs        text diff=csharp
+*.csproj    text
+*.groovy    text
+*.json      text
+*.md        text
+*.proj      text
+*.projitems text
+*.props     text
+*.ps1       text
+*.resx      text
+*.shproj    text
+*.sln       text
+*.targets   text
+*.txt       text
+*.xlf       text
+*.xml       text
+
+###############################################################################
+# Set file behavior to:
+#   treat as text
+#   normalize to Windows-style line endings on check-in
+###############################################################################
+*.sln        text       eol=crlf
+
+###############################################################################
+# Set file behavior to:
+#   treat as text
+#   normalize to Unix-style line endings on check-in
+###############################################################################
+*.sh        text        eol=lf
+
+###############################################################################
+# Set file behavior to:
+#   treat as binary
+###############################################################################
+*.snk       binary
+
+*.jpg  	binary
+*.png 	binary
+*.gif 	binary
+
+# VerifyTests
+*.verified.txt text eol=lf working-tree-encoding=UTF-8
+*.verified.xml text eol=lf working-tree-encoding=UTF-8
+*.verified.json text eol=lf working-tree-encoding=UTF-8
+*.verified.sh text eol=lf working-tree-encoding=UTF-8
+*.verified.zsh text eol=lf working-tree-encoding=UTF-8
+*.verified.nu text eol=lf working-tree-encoding=UTF-8
+*.verified.fish text eol=lf working-tree-encoding=UTF-8
+
+###############################################################################
+# Ensure files are included in git archive
+###############################################################################
+/template_feed/Microsoft.DotNet.Common.ItemTemplates/content/Gitattributes/.gitattributes -export-ignore

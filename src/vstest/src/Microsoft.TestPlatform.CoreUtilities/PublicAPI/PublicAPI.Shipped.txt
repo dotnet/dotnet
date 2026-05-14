@@ -1,0 +1,178 @@
+﻿#nullable enable
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.DatacollectorProcessName = "datacollector" -> string!
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.DotNetUserSpecifiedCulture = "DOTNET_CLI_UI_LANGUAGE" -> string!
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.StandardErrorMaxLength = 8192 -> int
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.TesthostProcessName = "testhost" -> string!
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.TestSourcesKeyName = "TestSources" -> string!
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.VstestConsoleProcessName = "vstest.console" -> string!
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.DefaultConnectionTimeout = 90 -> int
+const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.VstestConnectionTimeout = "VSTEST_CONNECTION_TIMEOUT" -> string!
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants.Constants() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions.StringBuilderExtensions
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions.StringExtensions
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.CommandLineArgumentsHelper
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.CommandLineArgumentsHelper.CommandLineArgumentsHelper() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.EnvironmentHelper() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.AdapterDiscoveryStart(string! executorUri) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.AdapterDiscoveryStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.AdapterExecutionStart(string! executorUri) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.AdapterExecutionStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.AdapterSearchStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.AdapterSearchStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.DataCollectionStart(string! dataCollectorUri) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.DataCollectionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.DiscoveryRequestStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.DiscoveryRequestStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.DiscoveryStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.DiscoveryStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.ExecutionRequestStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.ExecutionRequestStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.ExecutionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.ExecutionStop(long numberOfTests) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.MetricsDisposeStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.MetricsDisposeStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StartTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StartTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StopTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StopTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestHostAppDomainCreationStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestHostAppDomainCreationStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestHostStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestHostStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestRunAttachmentsProcessingRequestStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestRunAttachmentsProcessingRequestStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestRunAttachmentsProcessingStart(long numberOfAttachments) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TestRunAttachmentsProcessingStop(long numberOfAttachments) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerDiscoveryStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerDiscoveryStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerExecutionStart(long customTestHost, long sourcesCount, long testCasesCount, string! runSettings) -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerExecutionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerInitializeStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerInitializeStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStartTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStartTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStopTestSessionStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStopTestSessionStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerTestRunAttachmentsProcessingStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerTestRunAttachmentsProcessingStop() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.VsTestConsoleStart() -> void
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.VsTestConsoleStop() -> void
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.GetDotnetPath() -> string!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.GetMonoPath() -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace
+Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg
+Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArgProperty
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.CopyFile(string! sourcePath, string! destinationPath) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.Delete(string! path) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.DeleteEmptyDirectroy(string! directoryPath) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.DeleteDirectory(string! directoryPath, bool recursive) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetTempPath() -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetFileLength(string! path) -> long
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.DirectoryExists(string? path) -> bool
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.Exists(string? path) -> bool
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetCurrentDirectory() -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetFileVersion(string! path) -> System.Version!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.GetFullPath(string! path) -> string!
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.MoveFile(string! sourcePath, string! destinationPath) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper.WriteAllTextToFile(string! filePath, string! content) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.IOutput
+Microsoft.VisualStudio.TestPlatform.Utilities.IOutput.Write(string? message, Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel level) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.IOutput.WriteLine(string? message, Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel level) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.Dispose() -> void
+virtual Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.Dispose(bool disposing) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.Flush() -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.JobQueue(System.Action<T?>! processJob, string! displayName, int maxQueueLength, int maxQueueSize, bool enableBounds, System.Action<string!>! exceptionLogger) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.Pause() -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.QueueJob(T job, int jobSize) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.Resume() -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities
+Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel
+Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel.Error = 2 -> Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel
+Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel.Information = 0 -> Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel
+Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel.Warning = 1 -> Microsoft.VisualStudio.TestPlatform.Utilities.OutputLevel
+Microsoft.VisualStudio.TestPlatform.Utilities.TimeSpanParser
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions.StringBuilderExtensions.AppendSafeWithNewLine(this System.Text.StringBuilder! result, string? data) -> void
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions.StringExtensions.AddDoubleQuote(this string! value) -> string!
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.CommandLineArgumentsHelper.GetArgumentsDictionary(string![]? args) -> System.Collections.Generic.IDictionary<string!, string?>!
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.CommandLineArgumentsHelper.GetIntArgFromDict(System.Collections.Generic.IDictionary<string!, string?>! argsDictionary, string! fullname) -> int
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.CommandLineArgumentsHelper.GetStringArgFromDict(System.Collections.Generic.IDictionary<string!, string?>! argsDictionary, string! fullname) -> string?
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.CommandLineArgumentsHelper.TryGetIntArgFromDict(System.Collections.Generic.IDictionary<string!, string?>! argsDictionary, string! fullname, out int value) -> bool
+static Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.GetConnectionTimeout() -> int
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.DoNotInitailize.get -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.DoNotInitailize.set -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Error(string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Error(string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Error(System.Exception! exceptionToTrace) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorAssert(string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorIf(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorIf(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorOnInitialization.get -> string?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorOnInitialization.set -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorUnless(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorUnless(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel bumpLevel, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.ErrorUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel bumpLevel, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Fail(string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Fail(string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Info(string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Info(string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InfoIf(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InfoIf(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InfoUnless(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InfoUnless(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InfoUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel bumpLevel, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InfoUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel bumpLevel, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InitializeTrace(string? customLogFile, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel traceLevel) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.InitializeVerboseTrace(string? customLogFile) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.IsErrorEnabled.get -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.IsInfoEnabled.get -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.IsVerboseEnabled.get -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.IsWarningEnabled.get -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.LogFile.get -> string?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Verbose(string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Verbose(string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.VerboseIf(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.VerboseIf(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.VerboseUnless(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.VerboseUnless(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.VerboseUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel level, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.VerboseUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel level, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Warning(string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.Warning(string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.WarningIf(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.WarningIf(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.WarningUnless(bool condition, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.WarningUnless(bool condition, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.WarningUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel bumpLevel, string! format, params object?[]! args) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.WarningUnlessAlterTrace(bool condition, Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformTraceLevel bumpLevel, string? message) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.NotNegative(int arg, string! parameterName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.NotNegative(long arg, string! parameterName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.NotNull<T>(T? arg, string! parameterName) -> T
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.NotNullOrEmpty(string? arg, string! parameterName) -> string!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.NotNullOrEmpty<T>(System.Collections.Generic.IEnumerable<T>? arg, string! parameterName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.NotNullOrWhiteSpace(string? arg, string! parameterName) -> string!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg.TypeOf<T>(object? arg, string! parameterName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArgProperty.NotNegative(int arg, string! parameterName, string! propertyName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArgProperty.NotNull(object? arg, string! parameterName, string! propertyName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArgProperty.NotNullOrEmpty(string? arg, string! parameterName, string! propertyName) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArgProperty.TypeOf<T>(object? arg, string! parameterName, string! propertyName) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities.SafeInvoke(this System.Delegate? delegates, object? sender, System.EventArgs! args, string! traceDisplayName) -> void
+static Microsoft.VisualStudio.TestPlatform.Utilities.TimeSpanParser.Parse(string? time) -> System.TimeSpan
+static Microsoft.VisualStudio.TestPlatform.Utilities.TimeSpanParser.TryParse(string? time, out System.TimeSpan result) -> bool
+virtual Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.WaitForQueueToGetEmpty() -> bool
+static Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities.SafeInvoke(this System.Delegate? delegates, object? sender, object! args, string! traceDisplayName) -> void
+Microsoft.VisualStudio.TestPlatform.Utilities.JobQueue<T>.IsPaused.get -> bool
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.Default = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitecture | Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess | Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.GlobalInstallationLocation | Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DefaultInstallationLocation -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DefaultInstallationLocation = 8 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitecture = 1 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.DotnetRootArchitectureLess = 2 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy.GlobalInstallationLocation = 4 -> Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.DotnetHostHelper.TryGetDotnetPathByArchitecture(Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture targetArchitecture, Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy dotnetMuxerResolutionStrategy, out string? muxerPath) -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces.IDotnetHostHelper.TryGetDotnetPathByArchitecture(Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture targetArchitecture, Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.DotnetMuxerResolutionStrategy dotnetMuxerResolutionStrategy, out string? muxerPath) -> bool

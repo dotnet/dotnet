@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="fr">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Le paramètre ne peut pas avoir une valeur null ou être vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineError">
+        <source>Error: {0}</source>
+        <target state="translated">Erreur : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineInformational">
+        <source>Information: {0}</source>
+        <target state="translated">Informations : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineWarning">
+        <source>Warning: {0}</source>
+        <target state="translated">Avertissement : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsEmpty">
+        <source>The specified argument cannot be empty.</source>
+        <target state="translated">L'argument spécifié ne peut pas être vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsNegative">
+        <source>The specified argument cannot be negative.</source>
+        <target state="translated">L'argument spécifié ne peut pas être négatif.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotTypeOf">
+        <source>The specified argument must have the following type: {0}.</source>
+        <target state="translated">L'argument spécifié doit être du type suivant : {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsEmpty">
+        <source>The specified argument has the following property, which cannot be an empty string: {0}.</source>
+        <target state="translated">L'argument spécifié a la propriété suivante, laquelle ne peut pas être une chaîne vide : {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNegative">
+        <source>The specified argument has the following property, which cannot be negative: {0}.</source>
+        <target state="translated">L'argument spécifié a la propriété suivante, laquelle ne peut pas être négative : {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNull">
+        <source>The specified argument has the following property, which cannot be null: {0}.</source>
+        <target state="translated">L'argument spécifié a la propriété suivante, laquelle ne peut pas être une valeur null : {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyNotTypeOf">
+        <source>The specified argument has the following property: {0}. This property must have the following type: {1}.</source>
+        <target state="translated">L'argument spécifié a la propriété suivante : {0}. Cette propriété doit avoir le type suivant : {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromJobProcessor">
+        <source>Unhandled exception occurred while processing a job from the '{0}' queue: {1}</source>
+        <target state="translated">Une exception non prise en charge s'est produite durant le traitement d'un travail à partir de la file d'attente '{0}' : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueueAlreadyDisposed">
+        <source>The {0} queue has already been disposed.</source>
+        <target state="translated">La file d'attente {0} a déjà été supprimée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueuePausedDisposeError">
+        <source>The {0} queue cannot be disposed while paused.</source>
+        <target state="translated">Impossible de supprimer la file d'attente {0} pendant qu'elle est en pause.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Utility_ProcessNameWhenCannotGetIt">
+        <source>Error getting process name.</source>
+        <target state="translated">Erreur d'obtention du nom du processus.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find '{0}' host. Make sure that '{0}' is installed on the machine and is available in PATH environment variable.</source>
+        <target state="translated">L'hôte '{0}' est introuvable. Vérifiez que '{0}' est installé sur la machine et qu'il est disponible dans la variable d'environnement PATH.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

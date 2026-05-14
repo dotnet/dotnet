@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="ko">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">매개 변수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">테스트 실행에서 다른 프레임워크 및 플랫폼 버전용을 사용하는 DLL을 감지했습니다. 다음 DLL은 현재 설정({0} 프레임워크 및 {1} 플랫폼)과 일치하지 않습니다.{2}이 설정을 관리하는 방법에 대한 자세한 내용을 보려면 {3}(으)로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">제공된 테스트 컨테이너 중에 테스트 실행을 위한 플랫폼 아키텍처 및 .NET Framework 설정과 일치하는 것이 없습니다. 플랫폼: {0}, .NET Framework: {1}. 이러한 설정의 관리에 대한 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=330428을 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">제공된 설정 파일이 필요한 형식에 맞지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0}은(는) Framework {1} 및 Platform {2}을(를) 사용합니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

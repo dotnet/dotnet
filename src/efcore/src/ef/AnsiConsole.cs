@@ -1,0 +1,13 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace Microsoft.EntityFrameworkCore.Tools;
+
+internal static class AnsiConsole
+{
+    public static readonly AnsiTextWriter Out = new(Console.Out);
+    public static readonly AnsiTextWriter Error = new(Console.Error);
+
+    public static void WriteLine(string? text)
+        => Out.WriteLine(text);
+}

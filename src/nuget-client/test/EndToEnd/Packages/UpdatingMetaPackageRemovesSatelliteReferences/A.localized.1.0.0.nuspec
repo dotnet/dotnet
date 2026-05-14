@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <version>1.0.0</version>
+    <authors>Test</authors>
+    <id>A.localized</id>
+    <description>No description.</description>
+    <language>localized</language>
+    <dependencies>
+        <dependency id="A" version="[1.0.0]" />
+        <dependency id="A.fr" version="[1.0.0]" />
+        <dependency id="A.es" version="[1.0.0]" />
+    </dependencies>
+  </metadata>
+</package>

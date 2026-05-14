@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="B:2.0" Bounds="243,111.92,50,25.96" Label="B:2.0" />
+    <Node Id="B:1.0" Bounds="128.374622356495,75.1745015105741,50,25.96" Label="B:1.0" />
+    <Node Id="C:2.0" Bounds="243,55.96,50,25.96" Label="C:2.0" />
+    <Node Id="D:1.0" Bounds="81,0,50,25.96" Label="D:1.0" />
+    <Node Id="D:2.0" Bounds="162,0,50,25.96" Label="D:2.0" />
+  </Nodes>
+  <Links>
+    <Link Source="C:2.0" Target="B:2.0" Bounds="268,81.919998626709,0,21.0000013732911" />
+    <Link Source="D:1.0" Target="B:1.0" Bounds="114.179935777244,25.9599995422363,26.21634708124,41.6003492424905" />
+    <Link Source="D:2.0" Target="B:1.0" Bounds="162.855355809876,25.9599995422363,18.3387207668265,40.9989209637588" />
+    <Link Source="D:2.0" Target="C:2.0" Bounds="205.788055419922,25.9599990844727,36.0191497802734,24.8843383789063" />
+  </Links>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+  </Properties>
+</DirectedGraph>

@@ -1,0 +1,23 @@
+use vs
+
+package name=__VS_PACKAGE_NAME__
+        version=__VS_PACKAGE_VERSION__
+        vs.package.chip=__VS_PACKAGE_CHIP__
+        vs.package.productArch=__VS_PACKAGE_PRODUCT_ARCH__
+        vs.package.type=msi
+
+vs.installSize
+  SystemDrive=__VS_PACKAGE_INSTALL_SIZE_SYSTEM_DRIVE__
+  TargetDrive=0
+  SharedDrive=0
+
+vs.logFiles
+  vs.logFile pattern="dd_setup*__VS_PACKAGE_NAME__*.log"
+
+vs.msiProperties
+  vs.msiProperty name="MSIFASTINSTALL" value="7"
+  vs.msiProperty name="VSEXTUI" value="1"
+
+vs.payloads
+  vs.payload source=$(PayloadSource)
+             size=__VS_PAYLOAD_SIZE__

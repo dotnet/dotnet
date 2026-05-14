@@ -1,0 +1,59 @@
+name: Report an infrastructure known issue
+description: Report an infrastructure known issue causing build failures across multiple repositories
+labels: ["First Responder", "Known Build Error"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting an infrastructure build breaking issue to be investigated by the engineering services team.
+  - type: textarea
+    id: build
+    attributes:
+      label: Build
+      description: Enter link to at least one failing build, e.g. https://dev.azure.com/{organization}/{project}/_build/results?buildId={buildId} 
+    validations:
+      required: true
+  - type: input
+    id: build-leg
+    attributes:
+      label: Build leg reported
+      description: Enter the name of the stage/job where the build failed.
+  - type: input
+    id: pr
+    attributes:
+      label: Pull Request
+      description: Enter link to one pull request in which the issue is observed
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Known issue core information
+      description: |
+       Fill in the known issue information to match build breaks across multiple repositories.
+       Use ErrorMessage for String.Contains matches. Use ErrorPattern for regex matches (single line/no backtracking). Set BuildRetry to `true` to retry builds with this error. Set ExcludeConsoleLog to `true` to skip helix logs analysis.
+      value: |
+        Fill out the known issue JSON section by following the [step by step documentation on how to create a known issue](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssueJsonStepByStep.md#how-to-create-a-known-issue-step-by-step)
+
+        ```json
+         {
+            "ErrorMessage" : "",
+            "BuildRetry": false,
+            "ErrorPattern": "",
+            "ExcludeConsoleLog": false
+         }
+         ```
+
+         @dotnet/dnceng
+
+        <!-- DO NOT DELETE -->
+        <!-- For internal use only; put release notes here. -->
+        <!-- For guidance on writing good release notes, please see documentation here: https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/983/ReleaseNotesGuidance -->
+        <!-- Additionally, please specify the note category below. -->
+        ### Release Note Category
+        - [ ] Feature changes/additions 
+        - [ ] Bug fixes
+        - [ ] Internal Infrastructure Improvements
+        ### Release Note Description
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: Additional information about the issue reported
+      description: Provide any details that could help with the investigation.

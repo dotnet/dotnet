@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.0.0</version>
+    <authors>kinhln</authors>
+    <id>PackageA</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>My package description.</description>
+  </metadata>
+  <files>
+    <file src="content\a.txt" target="content\a.txt" />
+    <file src="tools\sl4\uninstall.ps1" target="tools\sl4\uninstall.ps1" />
+  </files>
+</package>

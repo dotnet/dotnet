@@ -1,0 +1,100 @@
+﻿{
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#",
+    "@base": "http://api.nuget.org/v3/registration0/"
+  },
+  "totalHits": 972,
+  "lastReopen": "2017-03-22T23:58:15.5787510Z",
+  "index": "v3-lucene0-v2v3-20170110",
+  "data": [
+    {
+      "@id": "http://api.nuget.org/v3/registration0/entityframework/index.json",
+      "@type": "Package",
+      "registration": "http://api.nuget.org/v3/registration0/entityframework/index.json",
+      "id": "EntityFramework",
+      "version": "6.1.3",
+      "description": "Entity Framework is Microsoft's recommended data access technology for new applications.",
+      "summary": "Entity Framework is Microsoft's recommended data access technology for new applications.",
+      "title": "EntityFramework",
+      "iconUrl": "http://go.microsoft.com/fwlink/?LinkID=386613",
+      "licenseUrl": "http://go.microsoft.com/fwlink/?LinkID=320539",
+      "projectUrl": "http://go.microsoft.com/fwlink/?LinkID=320540",
+      "tags": [ "Microsoft", "EF", "Database", "Data", "O/RM", "ADO.NET" ],
+      "authors": [ "Microsoft" ],
+      "totalDownloads": 28390569,
+      "verified": true,
+      "versions": [
+        {
+          "version": "4.1.10311",
+          "downloads": 64099,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.1.10311.json"
+        },
+        {
+          "version": "4.1.10331",
+          "downloads": 612084,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.1.10331.json"
+        },
+        {
+          "version": "4.1.10715",
+          "downloads": 763125,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.1.10715.json"
+        },
+        {
+          "version": "4.2.0",
+          "downloads": 392907,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.2.0.json"
+        },
+        {
+          "version": "4.3.0",
+          "downloads": 89777,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.3.0.json"
+        },
+        {
+          "version": "4.3.1",
+          "downloads": 465884,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.3.1.json"
+        },
+        {
+          "version": "5.0.0",
+          "downloads": 6798521,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/5.0.0.json"
+        },
+        {
+          "version": "6.0.0",
+          "downloads": 1841069,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.0.0.json"
+        },
+        {
+          "version": "6.0.1",
+          "downloads": 1010303,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.0.1.json"
+        },
+        {
+          "version": "6.0.2",
+          "downloads": 1659310,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.0.2.json"
+        },
+        {
+          "version": "6.1.0",
+          "downloads": 1614353,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.0.json"
+        },
+        {
+          "version": "6.1.1",
+          "downloads": 2548547,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.1.json"
+        },
+        {
+          "version": "6.1.2",
+          "downloads": 1367762,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.2.json"
+        },
+        {
+          "version": "6.1.3",
+          "downloads": 8211011,
+          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.3.json"
+        }
+      ]
+    }
+  ]
+}

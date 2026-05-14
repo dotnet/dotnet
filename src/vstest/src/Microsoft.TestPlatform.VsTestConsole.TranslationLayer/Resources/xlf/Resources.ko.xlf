@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="AbortedTestsRun">
+        <source>The active Tests Run was aborted.</source>
+        <target state="translated">활성 테스트 실행이 중단되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestsDiscovery">
+        <source>The active Tests Discovery was aborted.</source>
+        <target state="translated">활성 테스트 검색이 중단되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToReceiveMessage">
+        <source>Failed to receive message from vstest.console process</source>
+        <target state="translated">vstest.console 프로세스에서 메시지를 받지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VsTestProcessExitedAbnormally">
+        <source>vstest.console process exited abnormally</source>
+        <target state="translated">vstest.console 프로세스가 비정상적으로 종료되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFilePath">
+        <source>File {0} does not exists</source>
+        <target state="translated">{0} 파일이 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestRunAttachmentsProcessing">
+        <source>The active Test Run Attachments Processing was aborted.</source>
+        <target state="translated">활성 테스트 실행 첨부 파일 처리가 중단되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStartTestSession">
+        <source>The Start Test Session operation was aborted.</source>
+        <target state="translated">테스트 세션 시작 작업이 중단되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStopTestSession">
+        <source>The Stop Test Session operation was aborted.</source>
+        <target state="translated">테스트 세션 중지 작업이 중단되었습니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

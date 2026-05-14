@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="de">
+    <body>
+      <trans-unit id="IgnoringLegacySettings">
+        <source>Any LegacySettings node already present in the runsettings will be removed.</source>
+        <target state="translated">Bereits in RunSettings vorhandene LegacySettings-Knoten werden entfernt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoEmbeddedSettings">
+        <source>RunSettings does not contain an embedded testSettings, not migrating.</source>
+        <target state="translated">RunSettings enthält keine eingebetteten testSettings. Die Migration wird nicht durchgeführt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsCreated">
+        <source>The migrated RunSettings file has been created at: {0}</source>
+        <target state="translated">Die migrierte RunSettings-Datei wurde in folgendem Verzeichnis erstellt: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedAttributes">
+        <source>The attributes agentNotRespondingTimeout, deploymentTimeout, scriptTimeout of Timeouts node are not supported, so these will not be migrated.</source>
+        <target state="translated">Die Attribute "agentNotRespondingTimeout", "deploymentTimeout" und "scriptTimeout" des Knotens "Timeouts" werden nicht unterstützt und daher nicht migriert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ValidUsage">
+        <source>Valid usage:
+SettingsMigrator.exe &lt;Full path to testsettings file or runsettings file to be migrated&gt;
+SettingsMigrator.exe &lt;Full path to testsettings file or runsettings file to be migrated&gt; &lt;Full path to runsettings file to be created&gt;
+Examples:
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings</source>
+        <target state="translated">Gültige Syntax:
+SettingsMigrator.exe &lt;vollständiger Pfad zur TESTSETTINGS-Datei oder RUNSETTINGS-Datei für die Migration&gt;
+SettingsMigrator.exe &lt;vollständiger Pfad zur TESTSETTINGS-Datei oder RUNSETTINGS-Datei für die Migration&gt; &lt;vollständiger Pfad zur zu erstellenden RUNSETTINGS-Datei&gt;
+Beispiele:
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="pt-BR">
+    <body>
+      <trans-unit id="InvalidStateForExecution">
+        <source>The test run could not be executed because the initial state was invalid.</source>
+        <target state="translated">A execução de teste não pôde ser realizada porque o estado inicial era inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
+        <source>Wait for completion operation is not allowed when there is no active test run. </source>
+        <target state="translated">A operação esperar conclusão não é permitida quando não há nenhuma execução de teste ativa. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestSessionTimeoutMessage">
+        <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
+        <target state="translated">Anulando a execução de teste: o tempo limite da execução de teste de {0} milissegundos foi excedido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider found for this run.</source>
+        <target state="translated">Nenhum provedor de runtime de teste encontrado para esta execução.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <PackageType>MSBuildSdk</PackageType>
+    <Title>Packaging Targets and Tasks used by Dotnet repos</Title>
+    <PackageDescription>This package provides the following MSBuild tasks:
+
+- ApplyBaseLine
+- ApplyMetaPackages
+- ApplyPreReleaseSuffix
+- CreateTrimDependencyGroups
+- FilterUnknownPackages
+- GeneratePackageReport
+- GenerateRuntimeDependencies
+- GetApplicableAssetsFromPackageReports
+- GetApplicableAssetsFromPackages
+- GetAssemblyReferences
+- GetInboxFrameworks
+- GetLastStablePackage
+- GetLayoutFiles
+- GetMinimumNETStandard
+- GetPackageDescription
+- GetPackageDestination
+- GetPackageFromModule
+- GetPackageVersion
+- GetSupportedPackagesFromPackageReports
+- HarvestPackage
+- NuGetPack
+- PromoteDependencies
+- SplitDependenciesBySupport
+- SplitReferences
+- UpdatePackageIndex
+- ValidationTask</PackageDescription>
+    <BeforePack>$(BeforePack);AddRuntimeJson</BeforePack>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- nuget pack needs an actual empty file to use for placeholders for empty directories
+         so we must provide one.
+         nuget's pack task treats _._ as special, to pack it must be in a folder on its own -->
+    <None Include="build\content\_._"
+          Pack="true"
+          PackagePath="build\content\_._" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageDownload Include="Microsoft.NETCore.Platforms" Version="[$(MicrosoftNETCorePlatformsVersion)]" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NuGet.Commands" />
+    <PackageReference Include="NuGet.Packaging" />
+    <PackageReference Include="NuGet.ProjectModel" />
+  </ItemGroup>
+
+   <ItemGroup>
+    <Compile Include="..\..\Common\Internal\BuildTask.cs" />
+    <Compile Include="..\..\Common\Internal\EnumerableExtensions.cs" />
+  </ItemGroup>
+
+  <Target Name="AddRuntimeJson" AfterTargets="ResolveReferences">
+    <PropertyGroup>
+      <_runtimeJsonPath>$(NuGetPackageRoot)microsoft.netcore.platforms\$(MicrosoftNETCorePlatformsVersion)\runtime.json</_runtimeJsonPath>
+    </PropertyGroup>
+
+     <Error Condition="'$(_runtimeJsonPath)'==''" Text="Could not locate '$(_runtimeJsonPath)'." />
+
+     <ItemGroup>
+       <None Include="$(_runtimeJsonPath)"
+             CopyToOutputDirectory="PreserveNewest"
+             Pack="true"
+             PackagePath="build\runtime.json" />
+     </ItemGroup>
+  </Target>
+
+</Project>

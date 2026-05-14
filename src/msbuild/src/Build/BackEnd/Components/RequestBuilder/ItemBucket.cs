@@ -1,0 +1,209 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.Build.BackEnd.Logging;
+using Microsoft.Build.Collections;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Execution;
+using Microsoft.Build.Shared;
+using Microsoft.Build.Shared.FileSystem;
+
+#nullable disable
+
+namespace Microsoft.Build.BackEnd
+{
+    /// <summary>
+    /// This class represents a collection of items that are homogeneous w.r.t.
+    /// a certain set of metadata.
+    /// </summary>
+    internal struct ItemBucket : IComparable<ItemBucket>
+    {
+        #region Member data
+
+        /// <summary>
+        /// This single object contains all of the data necessary to perform expansion of metadata, properties,
+        /// and items.
+        /// </summary>
+        private Expander<ProjectPropertyInstance, ProjectItemInstance> _expander;
+
+        /// <summary>
+        /// Metadata in this bucket
+        /// </summary>
+        private readonly Dictionary<string, string> _metadata;
+
+        /// <summary>
+        /// The items for this bucket.
+        /// </summary>
+        private readonly Lookup _lookup;
+
+        /// <summary>
+        /// When buckets are being created for batching purposes, this indicates which order the
+        /// buckets were created in, so that the target/task being batched gets called with the items
+        /// in the same order as they were declared in the project file.  For example, the first
+        /// bucket created gets bucketSequenceNumber=0, the second bucket created gets
+        /// bucketSequenceNumber=1, etc.
+        /// </summary>
+        private readonly int _bucketSequenceNumber;
+
+        /// <summary>
+        /// The entry we enter when we create the bucket.
+        /// </summary>
+        private readonly Lookup.Scope _lookupEntry;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Private constructor for creating comparison bucket.
+        /// </summary>
+        private ItemBucket(Dictionary<string, string> metadata)
+        {
+            _metadata = metadata;
+            // do nothing
+        }
+
+        /// <summary>
+        /// Creates an instance of this class using the given bucket data.
+        /// </summary>
+        /// <param name="itemNames">Item types being batched on: null indicates no batching is occurring</param>
+        /// <param name="metadata">Hashtable of item metadata values: null indicates no batching is occurring</param>
+        /// <param name="lookup">The <see cref="Lookup"/> to use for the items in the bucket.</param>
+        /// <param name="bucketSequenceNumber">A sequence number indication what order the buckets were created in.</param>
+        internal ItemBucket(
+            FrozenSet<string> itemNames,
+            Dictionary<string, string> metadata,
+            Lookup lookup,
+            int bucketSequenceNumber)
+        {
+            ErrorUtilities.VerifyThrow(lookup != null, "Need lookup.");
+
+            // Create our own lookup just for this bucket
+            _lookup = lookup.Clone();
+
+            // Push down the items, so that item changes in this batch are not visible to parallel batches
+            _lookupEntry = _lookup.EnterScope("ItemBucket()");
+
+            // Truncate lookups for each of the item names, so that (unless items are added to this bucket) there are
+            // no item types visible in this bucket among the item types being batched on
+            _lookup.TruncateLookupsForItemTypes(itemNames);
+
+            _metadata = metadata;
+
+            _bucketSequenceNumber = bucketSequenceNumber;
+        }
+
+        /// <summary>
+        /// Updates the logging context that this bucket is going to use.
+        /// </summary>
+        /// <param name="loggingContext"></param>
+        internal void Initialize(LoggingContext loggingContext)
+        {
+            _expander = new Expander<ProjectPropertyInstance, ProjectItemInstance>(_lookup, _lookup, new StringMetadataTable(_metadata), FileSystems.Default, loggingContext);
+        }
+
+        #endregion
+
+        #region Comparison methods
+
+        /// <summary>
+        /// Compares this item bucket against the given one. The comparison is
+        /// solely based on the values of the item metadata in the buckets.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>
+        /// -1, if this bucket is "less than" the second one
+        ///  0, if this bucket is equivalent to the second one
+        /// +1, if this bucket is "greater than" the second one
+        /// </returns>
+        public int CompareTo(ItemBucket other)
+        {
+            return HashTableUtility.Compare(_metadata, other._metadata);
+        }
+
+        /// <summary>
+        /// Constructs a token bucket object that can be compared against other
+        /// buckets. This dummy bucket is a patently invalid bucket, and cannot
+        /// be used for any other operations besides comparison.
+        /// </summary>
+        /// <remarks>
+        /// PERF NOTE: A dummy bucket is intentionally very light-weight, and it
+        /// allocates a minimum of memory compared to a real bucket.
+        /// </remarks>
+        /// <returns>An item bucket that is invalid for everything except comparisons.</returns>
+        internal static ItemBucket GetDummyBucketForComparisons(Dictionary<string, string> metadata)
+        {
+            ItemBucket bucket = new ItemBucket(metadata);
+
+            return bucket;
+        }
+
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Returns the object that knows how to handle all kinds of expansion for this bucket.
+        /// </summary>
+        internal Expander<ProjectPropertyInstance, ProjectItemInstance> Expander
+        {
+            get
+            {
+                Debug.Assert(_expander != null, "ItemBucket.Initialize was not properly called");
+                return _expander;
+            }
+        }
+
+
+        /// <summary>
+        /// When buckets are being created for batching purposes, this indicates which order the
+        /// buckets were created in, so that the target/task being batched gets called with the items
+        /// in the same order as they were declared in the project file.  For example, the first
+        /// bucket created gets bucketSequenceNumber=0, the second bucket created gets
+        /// bucketSequenceNumber=1, etc.
+        /// </summary>
+        internal int BucketSequenceNumber
+        {
+            get
+            {
+                return _bucketSequenceNumber;
+            }
+        }
+
+        /// <summary>
+        /// The items for this bucket.
+        /// </summary>
+        internal Lookup Lookup
+        {
+            get
+            {
+                return _lookup;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Adds a new item to this bucket.
+        /// </summary>
+        internal void AddItem(ProjectItemInstance item)
+        {
+            _lookup.PopulateWithItem(item);
+        }
+
+        /// <summary>
+        /// Leaves the lookup scope created for this bucket.
+        /// </summary>
+        internal void LeaveScope()
+        {
+            _lookupEntry.LeaveScope();
+        }
+
+        #endregion
+    }
+}

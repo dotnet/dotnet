@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../TrxResource.resx" build-num="247625400">
+    <header>
+      <count-group name="BlackBox wordcount">
+        <count count-type="x-wordCount">134</count>
+        <count count-type="x-adjWordCount">113.9</count>
+        <count count-type="x-curAdjWordCount">113.9</count>
+        <count count-type="x-repeatAdjWordCount">0</count>
+        <count count-type="x-termWordCount">0</count>
+      </count-group>
+      <count-group name="BlackBox wordcount analysis">
+        <count count-type="x-match102%">0</count>
+        <count count-type="x-match101%">0</count>
+        <count count-type="x-match100%">0</count>
+        <count count-type="x-match99-90%">0</count>
+        <count count-type="x-match89-75%">0</count>
+        <count count-type="x-mt">134</count>
+        <count count-type="repetition">0</count>
+      </count-group>
+    </header>
+    <body>
+      <trans-unit id="TestOutcomeAborted">
+        <source>Aborted</source>
+        <target state="translated">已中止</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Abgebrochen</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeCompleted">
+        <source>Completed</source>
+        <target state="translated">已完成</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Abgeschlossen</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeDisconnected">
+        <source>Disconnected</source>
+        <target state="translated">已中斷連線</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Verbindung getrennt</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeError">
+        <source>Error</source>
+        <target state="translated">錯誤</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Fehler</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">失敗</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Fehler</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeInconclusive">
+        <source>Inconclusive</source>
+        <target state="translated">結果不明</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Nicht eindeutig</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeInProgress">
+        <source>In Progress</source>
+        <target state="translated">進行中</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">In Bearbeitung</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotExecuted">
+        <source>Not Executed</source>
+        <target state="translated">未執行</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Nicht ausgeführt</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotRunnable">
+        <source>Not Runnable</source>
+        <target state="translated">無法執行</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Nicht ausführbar</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">成功</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Übergeben</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePassedButRunAborted">
+        <source>Passed (run aborted)</source>
+        <target state="translated">成功 (執行已中止)</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Erfolgreich (Testlauf abgebrochen)</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePending">
+        <source>Pending</source>
+        <target state="translated">暫止</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Ausstehend</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeTimeout">
+        <source>Timeout</source>
+        <target state="translated">逾時</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Zeitlimit</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeWarning">
+        <source>Warning</source>
+        <target state="translated">警告</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Warnung</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="Common_CannotBeLessThanZero">
+        <source>The parameter cannot be less than 0.</source>
+        <target state="translated">參數不可少於 0。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Der Parameter darf nicht kleiner als 0 sein.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="7" adjWordcount="5.95" curWordcount="5.95"</note>
+      </trans-unit>
+      <trans-unit id="Common_CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">參數不可為 null 或空白。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Der Parameter darf nicht null oder leer sein.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="7" adjWordcount="5.95" curWordcount="5.95"</note>
+      </trans-unit>
+      <trans-unit id="Common_CannotGetNextIterationName">
+        <source>Cannot get free name for {0}(1),(2),... in directory {1}. Please clean up this directory.</source>
+        <target state="translated">無法在目錄 {1} 中為 {0} 取得可用的名稱 (1)、(2)...。請清除這個目錄。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Freien Name für {0}(1),(2),... in Verzeichnis ' {1} ' kann nicht abgerufen werden. Bereinigen Sie dieses Verzeichnis.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="15" adjWordcount="12.75" curWordcount="12.75"</note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunConfigInRun">
+        <source>Test Settings are not specified.</source>
+        <target state="translated">未指定測試設定。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Einstellungen sind nicht angegeben.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="5" adjWordcount="4.25" curWordcount="4.25"</note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunDeploymentRootInRunConfig">
+        <source>The active Test Settings do not define the Run Deployment Directory.</source>
+        <target state="translated">使用中的測試設定未定義回合部署目錄。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Aktive Testkonfigurationen definieren Bereitstellungsverzeichnis auszuführen.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="11" adjWordcount="9.35" curWordcount="9.35"</note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunInResult">
+        <source>The result is not associated with a test run. Use a result that was obtained from an in-progress or completed test run.</source>
+        <target state="translated">此結果未與測試回合相關聯。請使用從進行中或已完成的測試回合所取得的結果。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Das Ergebnis ist ein Testlauf nicht zugeordnet. Verwenden Sie ein Ergebnis aus einem laufenden oder abgeschlossenen Testlaufs.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="22" adjWordcount="18.7" curWordcount="18.7"</note>
+      </trans-unit>
+      <trans-unit id="Common_NothingLeftAfterReplaciingBadCharsInName">
+        <source>The specified file/directory name '{0}' is not valid.</source>
+        <target state="translated">指定的檔案/目錄名稱 '{0}' 無效。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Der angegebene Datei-/Verzeichnisname '{0}' ist ungültig.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="8" adjWordcount="6.8" curWordcount="6.8"</note>
+      </trans-unit>
+      <trans-unit id="Common_TestRunName">
+        <source>{0}@{1} {2}</source>
+        <target state="translated">{0}@{1} {2}</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">{0}@{1} {2}</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="FailureToAttach">
+        <source>Failed to attach files from: {0}
+Error Details: {1}:{2}</source>
+        <target state="translated">無法附加來自下列位置的檔案: {0}
+錯誤詳細資料: {1}:{2}</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Fehler beim Anfügen von Dateien: {0}
+Fehlerdetails: {1}: {2}</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="9" adjWordcount="7.65" curWordcount="7.65"</note>
+      </trans-unit>
+      <trans-unit id="MessageForSkippedTests">
+        <source>Test '{0}' was skipped in the test run.</source>
+        <target state="translated">已略過測試回合中的測試 '{0}'。</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Test "{0}" wurde im Testlauf übersprungen.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="8" adjWordcount="6.8" curWordcount="6.8"</note>
+      </trans-unit>
+      <trans-unit id="TrxLoggerResultsFile">
+        <source>Results File: {0}</source>
+        <target state="translated">結果檔案: {0}</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Datei: {0}</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="TS_AllResults">
+        <source>All Loaded Results</source>
+        <target state="translated">所有載入的結果</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Alle geladenen Ergebnisse</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="TS_UncategorizedResults">
+        <source>Results Not in a List</source>
+        <target state="translated">不在清單中的結果</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Ergebnisse nicht in einer Liste</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="5" adjWordcount="4.25" curWordcount="4.25"</note>
+      </trans-unit>
+      <trans-unit id="Common_DeploymentItem">
+        <source>deployment item '{0}'</source>
+        <target state="translated">部署項目 '{0}'</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Bereitstellungselement "{0}"</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="Common_DeploymentItemWithOutputDirectory">
+        <source>deployment item '{0}' (output directory '{1}')</source>
+        <target state="translated">部署項目 '{0}' (輸出目錄 '{1}')</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Bereitstellungselement "{0}' (Ausgabeverzeichnis '{1}')</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="6" adjWordcount="5.1" curWordcount="5.1"</note>
+      </trans-unit>
+      <trans-unit id="Common_NullInMessages">
+        <source>(null)</source>
+        <target state="translated">(null)</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">(null)</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TrxLoggerResultsFileOverwriteWarning">
+        <source>WARNING: Overwriting results file: {0}</source>
+        <target state="translated">警告: 將要覆寫結果檔案: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrefixAndNameProvidedError">
+        <source>The parameters LogFileName and LogFilePrefix cannot be used together. </source>
+        <target state="translated">不能同時使用參數 LogFileName 和 LogFilePrefix。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_CannotGetNextTimestampFileName">
+        <source>Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</source>
+        <target state="translated">無法在 {1} 中使用時間戳記格式 '{2}' 找到 {0} 的可用檔案名。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

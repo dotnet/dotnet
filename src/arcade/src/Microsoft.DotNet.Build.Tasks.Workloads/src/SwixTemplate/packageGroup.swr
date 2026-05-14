@@ -1,0 +1,7 @@
+use vs
+
+package name=__VS_PACKAGE_NAME__
+        version=__VS_PACKAGE_VERSION__
+        vs.package.type=group
+
+vs.dependencies

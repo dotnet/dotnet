@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ru">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Параметр не может быть пустым или иметь значение null.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineError">
+        <source>Error: {0}</source>
+        <target state="translated">Ошибка: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineInformational">
+        <source>Information: {0}</source>
+        <target state="translated">Сведения: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineWarning">
+        <source>Warning: {0}</source>
+        <target state="translated">Предупреждение: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsEmpty">
+        <source>The specified argument cannot be empty.</source>
+        <target state="translated">Указанный аргумент не может быть пустым.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsNegative">
+        <source>The specified argument cannot be negative.</source>
+        <target state="translated">Указанный аргумент не может быть отрицательным.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotTypeOf">
+        <source>The specified argument must have the following type: {0}.</source>
+        <target state="translated">Указанный аргумент должен иметь следующий тип: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsEmpty">
+        <source>The specified argument has the following property, which cannot be an empty string: {0}.</source>
+        <target state="translated">Указанный аргумент имеет следующее свойство, которое не может быть пустой строкой: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNegative">
+        <source>The specified argument has the following property, which cannot be negative: {0}.</source>
+        <target state="translated">Указанный аргумент имеет следующее свойство, которое не может быть отрицательным: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNull">
+        <source>The specified argument has the following property, which cannot be null: {0}.</source>
+        <target state="translated">Указанный аргумент имеет следующее свойство, которое не может иметь значение null: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyNotTypeOf">
+        <source>The specified argument has the following property: {0}. This property must have the following type: {1}.</source>
+        <target state="translated">Указанный аргумент имеет следующее свойство: {0}. Это свойство должно относиться к следующему типу: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromJobProcessor">
+        <source>Unhandled exception occurred while processing a job from the '{0}' queue: {1}</source>
+        <target state="translated">При обработке задания из очереди "{0}" возникло необработанное исключение: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueueAlreadyDisposed">
+        <source>The {0} queue has already been disposed.</source>
+        <target state="translated">Очередь {0} уже удалена.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueuePausedDisposeError">
+        <source>The {0} queue cannot be disposed while paused.</source>
+        <target state="translated">Нельзя удалить приостановленную очередь {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Utility_ProcessNameWhenCannotGetIt">
+        <source>Error getting process name.</source>
+        <target state="translated">Ошибка при получении имени процесса.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find '{0}' host. Make sure that '{0}' is installed on the machine and is available in PATH environment variable.</source>
+        <target state="translated">Не удалось найти хост "{0}". Убедитесь, что "{0}" установлен на компьютере и доступен в переменной среды PATH.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

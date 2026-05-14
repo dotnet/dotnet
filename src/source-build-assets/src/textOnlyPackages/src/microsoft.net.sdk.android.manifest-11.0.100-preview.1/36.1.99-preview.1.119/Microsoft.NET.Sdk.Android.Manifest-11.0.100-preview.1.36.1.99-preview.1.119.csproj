@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.NET.Sdk.Android.Manifest-11.0.100-preview.1</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>36.1.99-preview.1.119</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.Android.Manifest-11.0.100-preview.1</AssemblyName>
+    <Description>Microsoft.NET.Sdk.Android workload manifest. Please do not reference directly.</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.TXT</PackageLicenseFile>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageType>DotnetPlatform</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/WorkloadDependencies.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.targets" Pack="true" PackagePath="data" />
+    <None Include="LICENSE.TXT" Pack="true" PackagePath="" />
+    <None Include="THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

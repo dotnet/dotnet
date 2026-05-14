@@ -1,0 +1,63 @@
+﻿<options:AbstractOptionPageControl
+    x:Class="Microsoft.VisualStudio.LanguageServices.Implementation.Options.OptionPreviewControl"
+    x:ClassModifier="internal"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:options="clr-namespace:Microsoft.VisualStudio.LanguageServices.Implementation.Options"
+    xmlns:utilities="clr-namespace:Microsoft.VisualStudio.LanguageServices.Implementation.Utilities;assembly=Microsoft.VisualStudio.LanguageServices"
+    xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
+    xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
+    xmlns:imagingPlatformUI="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
+    mc:Ignorable="d" d:DesignHeight="279" d:DesignWidth="514">
+
+    <options:AbstractOptionPageControl.Resources>
+        <DataTemplate DataType="{x:Type options:AbstractCheckBoxViewModel}">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Uid="OptionCheckBox"
+                                        AutomationProperties.LabeledBy="{Binding ElementName=OptionText}"
+                                        IsChecked="{Binding IsChecked, Mode=TwoWay}" 
+                                        Width="Auto"
+                                        Focusable="False"
+                                        Margin="20, 0, 0, 0">
+                </CheckBox>
+                <TextBlock Name="OptionText" Text="{Binding Description}" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type options:HeaderItemViewModel}">
+            <TextBlock Text="{Binding Header}" Focusable="False"/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type options:AbstractRadioButtonViewModel}">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Uid="OptionRadioButton" 
+                                        IsChecked="{Binding IsChecked, Mode=TwoWay}" 
+                                        Width="Auto"
+                                        Focusable="False"
+                                        GroupName="{Binding GroupName, Mode=OneWay}"
+                                        PreviewKeyDown="Options_PreviewKeyDown"
+                                        Margin="20, 0, 0, 0">
+                    <TextBlock Text="{Binding Description}" Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"/>
+                </RadioButton>
+            </StackPanel>
+        </DataTemplate>
+    </options:AbstractOptionPageControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <options:CodeStyleNoticeTextBlock Grid.Row="0" Margin="5 0 5 5"/>
+        <ContentControl x:Name="listViewContentControl" Grid.Row="1" Grid.Column="0" IsTabStop="False"></ContentControl>
+        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1">
+            <!-- The AutomationDelegatingListView is referenced from the .xaml.cs, so we just provide 
+                 a container for it here. -->
+            <ContentControl Name="EditorControl" Content="{Binding TextViewHost, Mode=OneWay}" Focusable="False"></ContentControl>
+        </Border>
+    </Grid>
+</options:AbstractOptionPageControl>
+    

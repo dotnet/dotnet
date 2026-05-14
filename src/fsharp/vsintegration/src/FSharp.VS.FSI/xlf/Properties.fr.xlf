@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../Properties.resx">
+    <body>
+      <trans-unit id="FSharpInteractiveAnyCpu">
+        <source>Use fsiAnyCpu.exe</source>
+        <target state="translated">Use fsiAnyCpu.exe</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveAnyCpuDescr">
+        <source>If set to true, 'fsiAnyCpu.exe' is run as a platform neutral process. Otherwise, F# Interactive is a 32-bit process on X86/X64 or a native 64 bit process on Arm64 based systems.</source>
+        <target state="translated">Si la valeur est true, 'fsiAnyCpu.exe' est exécuté en tant que processus indépendant de la plateforme. Sinon, F# Interactive est un processus 32 bits sur X86/X64 ou un processus natif 64 bits sur des systèmes Arm64.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveMisc">
+        <source>Misc</source>
+        <target state="translated">Divers</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveOptions">
+        <source>F# Interactive options</source>
+        <target state="translated">Options de F# Interactive</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveOptionsDescr">
+        <source>Additional command line arguments passed to the F# Interactive executable by Visual Studio. (optimization and debug flags are ignored if script debugging is enabled)</source>
+        <target state="translated">Arguments supplémentaires de la ligne de commande passés à l'exécutable F# Interactive par Visual Studio. (les indicateurs d'optimisation et de débogage sont ignorés si le débogage de script est activé)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractivePreview">
+        <source>FSI Preview</source>
+        <target state="translated">Préversion FSI</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractivePreviewMode">
+        <source>Enable preview language features</source>
+        <target state="translated">Activer la préversion des fonctionnalités de langage</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractivePreviewModeDescr">
+        <source>Enable preview of in-development language features in F# Interactive</source>
+        <target state="translated">Activer la préversion des fonctionnalités de langage en développement dans F# Interactive</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveShadowCopy">
+        <source>Shadow copy assemblies</source>
+        <target state="translated">Assemblys de cliché instantané</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveShadowCopyDescr">
+        <source>Prevents referenced assemblies from being locked by the F# Interactive process.</source>
+        <target state="translated">Empêche le blocage des assemblys référencés par le processus de F# Interactive.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveDebugMode">
+        <source>Enable script debugging</source>
+        <target state="translated">Activer le débogage de script</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveDebugModeDescr">
+        <source>Enable debugging of F# scripts (may impact script performance, requires reset of F# Interactive)</source>
+        <target state="translated">Activer le débogage des scripts F# (peut avoir un impact sur la performance des scripts, requiert une réinitialisation de F# Interactive)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveDebugging">
+        <source>Debugging</source>
+        <target state="translated">Débogage</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveUseNetCore">
+        <source>Use .NET Core Scripting</source>
+        <target state="translated">Utiliser les scripts .NET Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FSharpInteractiveUseNetCoreDescr">
+        <source>Enable .NET Core script editing and execution for all F# scripts and the F# Interactive window</source>
+        <target state="translated">Activer l'édition et l'exécution de scripts .NET Core pour tous les scripts F# et la fenêtre F# Interactive</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

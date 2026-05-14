@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="fr">
+    <body>
+      <trans-unit id="AbortedTestRun">
+        <source>The active Test Run was aborted because the host process exited unexpectedly. Please inspect the call stack above, if available, to get more information about where the exception originated from.
+The test running when the crash occurred: 
+{0}
+This test may, or may not be the source of the crash.</source>
+        <target state="translated">La série de tests active a été abandonnée, car le processus hôte s'est arrêté de manière inattendue. Inspectez la pile des appels ci-dessus, le cas échéant, pour obtenir plus d'informations sur l'origine de l'exception.
+Test en cours d'exécution au moment du plantage : 
+{0}
+Ce test est éventuellement à l'origine du plantage.</target>
+        <note>{0} is a single test (or in rare cases multiple tests) that were running when test host crashed.</note>
+      </trans-unit>
+      <trans-unit id="ProcDumpEnvVarEmpty">
+        <source>Required environment variable PROCDUMP_PATH was null or empty. Set PROCDUMP_PATH to path of folder containing appropriate procdump executable.</source>
+        <target state="translated">La variable d'environnement exigée PROCDUMP_PATH était null ou vide. Affectez à PROCDUMP_PATH le chemin du dossier contenant l'exécutable procdump approprié.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DumpFileNotGeneratedErrorMessage">
+        <source>Collect dump was enabled but no dump file was generated.</source>
+        <target state="translated">La collecte de fichiers dump a été activée, mais aucun fichier dump n'a été généré.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlameParameterKeyIncorrect">
+        <source>The blame parameter key specified {0} is not valid. Ignoring this key.</source>
+        <target state="translated">La clé de paramètre blame spécifiée {0} n'est pas valide. Cette clé est ignorée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlameParameterValueIncorrect">
+        <source>The blame parameter key {0}, has incorrect value: {1}. Supported values are: {2}</source>
+        <target state="translated">La clé de paramètre de responsabilité {0}, a une valeur incorrecte : {1}. Les valeurs prises en charge sont les suivantes : {2}</target>
+        <note>{0} and {1} are single values referring to parameters such as BlameHang and Full. {2} is comma separated list of valid values, e.g. Full, Mini, None.</note>
+      </trans-unit>
+      <trans-unit id="ProcDumpCouldNotStart">
+        <source>Could not start process dump: {0}</source>
+        <target state="translated">Impossible de démarrer le fichier dump du processus : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProcDumpNotGenerated">
+        <source>CollectDump was enabled but dump file was not generated.</source>
+        <target state="translated">CollectDump a été activé, mais le fichier dump n'a pas été généré.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InactivityTimeout">
+        <source>The specified inactivity time of {0} {1} has elapsed. Collecting hang dumps from testhost and its child processes</source>
+        <target state="translated">Le délai d'inactivité spécifié ({0} {1}) s'est écoulé. Collecte d'images mémoire des plantages de l'hôte de test et de ses processus enfants</target>
+        <note>{0} value, {1} one of the unit strings below, Minutes/Seconds</note>
+      </trans-unit>
+      <trans-unit id="UnexpectedValueForInactivityTimespanValue">
+        <source>Unexpected value '{0}' provided as timeout. Please provide a value in this format: 1.5h / 90m / 5400s / 5400000ms / 5400000</source>
+        <target state="translated">Valeur inattendue '{0}' fournie en tant que délai d'expiration. Indiquez une valeur au format suivant : 1.5h / 90m / 5400s / 5400000ms / 5400000</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NotGeneratingSequenceFile">
+        <source>All tests finished running, Sequence file will not be generated</source>
+        <target state="translated">Tous les tests ont fini de s'exécuter. Le fichier de séquence ne sera pas généré</target>
+        <note>"Sequence" is the name of the file. No . at the end, because this is a blame message and the . will be added automatically.</note>
+      </trans-unit>
+      <trans-unit id="Dumping">
+        <source>Dumping {0} - {1}</source>
+        <target state="translated">Création d'une image mémoire {0} - {1}</target>
+        <note>as in creating a process dump, {0} process id, {1} process name</note>
+      </trans-unit>
+      <trans-unit id="DumpingTree">
+        <source>Dumping this process tree (from bottom)</source>
+        <target state="translated">Création d'une image mémoire de cette arborescence de processus (à partir du bas)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Minutes">
+        <source>minutes</source>
+        <target state="translated">minutes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Seconds">
+        <source>seconds</source>
+        <target state="translated">secondes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProcDumpNotFound">
+        <source>{0} could not be found, please make sure that the executable is available on PATH. Alternatively set PROCDUMP_PATH environment variable to a directory that contains {0} executable</source>
+        <target state="translated">{0} est introuvable, vérifiez que l’exécutable est disponible sur PATH. Vous pouvez également définir PROCDUMP_PATH variable d’environnement sur un répertoire qui contient l’exécutable {0}</target>
+        <note>0 is procDumpPath, a name of procdump executable such as procdump64.exe, 0 is used twice on purpose. PROCDUMP_PATH and PATH are literal and should not be localized.</note>
+      </trans-unit>
+      <trans-unit id="MonitorPostmortemDebuggerInvalidDumpDirectoryPathParameter">
+        <source>Invalid 'DumpDirectoryPath' for postmortem debugger monitor</source>
+        <target state="translated">'DumpDirectoryPath' non valide pour l’analyse du débogueur post-mortem</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

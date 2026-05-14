@@ -1,0 +1,31 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <XHarnessTestAppBundleName>Microsoft.Extensions.Configuration.CommandLine.Tests.app</XHarnessTestAppBundleName>
+    <XHarnessTestAppBundleUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/ios/test-app/ios-simulator-64/$(XHarnessTestAppBundleName).zip</XHarnessTestAppBundleUrl>
+  </PropertyGroup>
+
+  <!-- We're not set up currently to build app bundles as part of normal builds, so this downloads existing ones for now -->
+  <Target Name="Build" Returns="@(XHarnessAppBundleToTest)">
+    <Error Condition=" '$(ArtifactsTmpDir)' == ''" Text="Not downloading AppBundle because ArtifactsTmpDir property is unset" />
+    <DownloadFile SourceUrl="$(XHarnessTestAppBundleUrl)" DestinationFolder="$(ArtifactsTmpDir)XHarness.TestAppBundle" SkipUnchangedFiles="True" Retries="5">
+      <Output TaskParameter="DownloadedFile" ItemName="ZippedAppBundle" />
+    </DownloadFile>
+
+    <Message Text="Downloaded @(ZippedAppBundle) for XHarness Test purposes" Importance="High" />
+
+    <Exec Command="tar -xzf @(ZippedAppBundle) -C $(ArtifactsTmpDir)XHarness.TestAppBundle" />
+
+    <ItemGroup>
+      <XHarnessAppBundleToTest Include="$(ArtifactsTmpDir)XHarness.TestAppBundle/$(XHarnessTestAppBundleName)">
+        <TestTarget>ios-simulator-64</TestTarget>
+        <TestTimeout>00:05:00</TestTimeout>
+        <LaunchTimeout>00:03:30</LaunchTimeout>
+        <WorkItemTimeout>00:20:00</WorkItemTimeout>
+      </XHarnessAppBundleToTest>
+    </ItemGroup>
+  </Target>
+
+</Project>

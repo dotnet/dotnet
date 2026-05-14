@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <!-- Default targets and parallelization -->
+  <ItemDefinitionGroup>
+    <ProjectReference>
+      <Publish>false</Publish>
+      <BuildInParallel>false</BuildInParallel>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <!-- This needs to be executed first as subsequent projects may introduce binaries into the repo
+         which should not be considered as part of the binary scan. -->
+    <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
+                      Condition="'$(BuildOS)' != 'windows' and '$(SkipDetectBinaries)' != 'true'" />
+    
+    <ProjectReference Include="$(RepositoryEngineeringDir)clean-shared-components.proj"
+                      Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    
+    <!-- Pre-build: Init tools-->
+    <ProjectReference Include="$(RepositoryEngineeringDir)init-cross-build.proj"
+                      Condition="'$(BuildOS)' != 'windows' and '$(CrossBuild)' == 'true' and '$(ROOTFS_DIR)' == ''"
+                      BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)init-poison.proj"
+                      Condition="'$(EnablePoison)' == 'true'"
+                      BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)tools\tools.proj"
+                      BuildInParallel="true" />
+
+    <ProjectReference Include="$(RepoProjectsDir)dotnet.proj" />
+
+    <!-- Post-build: Source-only validation -->
+    <ProjectReference Include="$(RepositoryEngineeringDir)finish-source-only.proj" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+  </ItemGroup>
+
+  <!-- Test entrypoint -->
+  <ItemGroup Condition="'$(IsTestRun)' == 'true'">
+    <ProjectReference Remove="@(ProjectReference)" />
+    <ProjectReference Include="$(RepoRoot)test\tests.proj" />
+  </ItemGroup>
+
+  <Target Name="PrintInfo" BeforeTargets="Build">
+    <PropertyGroup>
+      <BuildModeInfoText Condition="'$(DotNetBuildSourceOnly)' == 'true'">source-build</BuildModeInfoText>
+      <BuildModeInfoText Condition="'$(DotNetBuildSourceOnly)' != 'true'">non-source-build</BuildModeInfoText>
+    </PropertyGroup>
+
+    <Message Text="Build Mode: $(BuildModeInfoText)" Importance="high" />
+    <Message Text="Build Pass: $(DotNetBuildPass)" Importance="high" Condition="'$(DotNetBuildPass)' != ''" />
+    <Message Text="Build Environment: $(TargetArchitecture) $(Configuration) $(TargetOS) $(TargetRid)" Importance="high" />
+    <Message Condition="'$(EnablePoison)' == 'true'" Text="Crossgen is disabled due to incompatibility with poison checks." Importance="high" />
+  </Target>
+
+  <Target Name="LogBuildOutputFolders"
+          AfterTargets="Build">
+    <Message Importance="high" Text="Shipping packages are located in '$(ArtifactsShippingPackagesDir)'." />
+    <Message Importance="high" Text="Shipping assets are located in '$(ArtifactsAssetsDir)'." />
+  </Target>
+
+</Project>

@@ -1,0 +1,17 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!-- Default settings for VSIX projects -->
+
+  <PropertyGroup>
+    <VsixSourceManifestPath>$(MSBuildProjectDirectory)\source.extension.vsixmanifest</VsixSourceManifestPath>
+    <IsVsixProject>false</IsVsixProject>
+    <IsVsixProject Condition="Exists('$(VsixSourceManifestPath)')">true</IsVsixProject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsVsixProject)' == 'true'">
+    <BuildForLiveUnitTesting>false</BuildForLiveUnitTesting>
+    <DeployExtension>false</DeployExtension>
+  </PropertyGroup>
+
+</Project>

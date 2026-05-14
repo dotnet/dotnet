@@ -1,0 +1,63 @@
+<Project>
+  <!-- Shared targets for acquiring and resolving ILAsm/ILDasm tooling. -->
+
+  <Target Name="GetILToolPackageReferences">
+    <PropertyGroup>
+      <MicrosoftNetCoreIlasmPackageName>runtime.$(NetCoreSdkRuntimeIdentifier).microsoft.netcore.ilasm</MicrosoftNetCoreIlasmPackageName>
+      <MicrosoftNetCoreIldasmPackageName>runtime.$(NetCoreSdkRuntimeIdentifier).microsoft.netcore.ildasm</MicrosoftNetCoreIldasmPackageName>
+
+      <!-- Allow manual override via properties -->
+      <IlasmDir Condition="'$(ILAsmToolPath)' != ''">$([MSBuild]::NormalizeDirectory($(ILAsmToolPath)))</IlasmDir>
+      <IldasmDir Condition="'$(ILDAsmToolPath)' != ''">$([MSBuild]::NormalizeDirectory($(ILDAsmToolPath)))</IldasmDir>
+    </PropertyGroup>
+
+    <!-- Add package references for tools that weren't manually overridden -->
+    <ItemGroup Condition="'$(ILAsmToolPath)' == ''">
+      <_IlToolPackageReference Include="$(MicrosoftNetCoreIlasmPackageName)" Version="$(MicrosoftNETCoreILAsmVersion)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(ILDAsmToolPath)' == ''">
+      <_IlToolPackageReference Include="$(MicrosoftNetCoreIldasmPackageName)" Version="$(MicrosoftNETCoreILDAsmVersion)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ResolveIlToolPaths"
+          DependsOnTargets="GetILToolPackageReferences">
+    <Error Condition="'@(_IlToolPackageReference)' == '' and '$(IlasmDir)' == '' and '$(IldasmDir)' == ''"
+           Text="Package items '_IlToolPackageReference' were not created and no manual tool paths were provided" />
+
+    <!-- Resolve paths to native executables in NuGet packages -->
+    <ItemGroup>
+      <_IlToolPackageReference NativePath="$(NuGetPackageRoot)%(Identity)\%(Version)\runtimes\$(NetCoreSdkRuntimeIdentifier)\native" />
+    </ItemGroup>
+
+    <!-- Validate that packages were restored -->
+    <Error Condition="'@(_IlToolPackageReference)' != '' and !Exists('%(_IlToolPackageReference.NativePath)')"
+           Text="Package %(_IlToolPackageReference.Identity)\%(_IlToolPackageReference.Version) was not restored. Path does not exist: %(_IlToolPackageReference.NativePath)" />
+
+    <!-- Set directory properties -->
+    <PropertyGroup>
+      <IlasmDir Condition="'$(IlasmDir)' == '' and '%(_IlToolPackageReference.Identity)' == '$(MicrosoftNetCoreIlasmPackageName)'">%(_IlToolPackageReference.NativePath)/</IlasmDir>
+      <IldasmDir Condition="'$(IldasmDir)' == '' and '%(_IlToolPackageReference.Identity)' == '$(MicrosoftNetCoreIldasmPackageName)'">%(_IlToolPackageReference.NativePath)/</IldasmDir>
+    </PropertyGroup>
+
+    <!-- Set full path properties with executable names -->
+    <PropertyGroup>
+      <IlasmPath Condition="'$(IlasmPath)' == '' and '$(IlasmDir)' != '' and $([MSBuild]::IsOSPlatform('windows'))">$(IlasmDir)ilasm.exe</IlasmPath>
+      <IlasmPath Condition="'$(IlasmPath)' == '' and '$(IlasmDir)' != '' and !$([MSBuild]::IsOSPlatform('windows'))">$(IlasmDir)ilasm</IlasmPath>
+
+      <IldasmPath Condition="'$(IldasmPath)' == '' and '$(IldasmDir)' != '' and $([MSBuild]::IsOSPlatform('windows'))">$(IldasmDir)ildasm.exe</IldasmPath>
+      <IldasmPath Condition="'$(IldasmPath)' == '' and '$(IldasmDir)' != '' and !$([MSBuild]::IsOSPlatform('windows'))">$(IldasmDir)ildasm</IldasmPath>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="AttachIlToolPackageReferences"
+          Condition="'$(RestoreIlTooling)' == 'true'"
+          BeforeTargets="CollectPackageReferences"
+          DependsOnTargets="GetILToolPackageReferences">
+    <!-- Add IL tool packages as PackageReferences for restore -->
+    <ItemGroup>
+      <PackageReference Include="@(_IlToolPackageReference)" ExcludeAssets="native" PrivateAssets="all" />
+    </ItemGroup>
+  </Target>
+
+</Project>

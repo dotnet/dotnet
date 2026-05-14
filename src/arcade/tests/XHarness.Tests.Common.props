@@ -1,0 +1,39 @@
+<Project>
+
+  <!-- See UnitTests.proj in above folder for why this is included directly-from-repo -->
+  <Import Project="$(MSBuildThisFileDirectory)\..\src\Microsoft.DotNet.Helix\Sdk\sdk\Sdk.props"/>
+
+  <!--
+    This is a set of common properties used in integration tests of the XHarness Helix SDK.
+   -->
+
+  <PropertyGroup>
+    <MicrosoftDotNetHelixSdkTasksAssembly>$(MSBuildThisFileDirectory)../artifacts/bin/Microsoft.DotNet.Helix.Sdk/$(Configuration)/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
+    <MicrosoftDotNetHelixSdkTasksFactory>TaskHostFactory</MicrosoftDotNetHelixSdkTasksFactory>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <HelixType>test/product/</HelixType>
+    <TestRunNamePrefix>$(AGENT_JOBNAME)</TestRunNamePrefix>
+    <IncludeXHarnessCli>true</IncludeXHarnessCli>
+    <EnableAzurePipelinesReporter>true</EnableAzurePipelinesReporter>
+    <HelixBaseUri>https://helix.dot.net</HelixBaseUri>
+  </PropertyGroup>
+
+  <!-- For non-ci local runs -->
+  <PropertyGroup Condition=" '$(AGENT_JOBNAME)' == '' ">
+    <EnableAzurePipelinesReporter>false</EnableAzurePipelinesReporter>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
+    <IsExternal>true</IsExternal>
+    <Creator>$(BUILD_SOURCEVERSIONAUTHOR)</Creator>
+    <Creator Condition=" '$(Creator)' == ''">anon</Creator>
+  </PropertyGroup>
+
+  <!-- Useless stuff to make Arcade SDK happy -->
+  <PropertyGroup>
+    <Language>msbuild</Language>
+  </PropertyGroup>
+
+</Project>

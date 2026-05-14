@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="fr">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Le paramètre ne peut pas avoir une valeur null ou être vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">La série de tests a détecté une ou plusieurs DLL qui utiliseraient d'autres versions de framework et de plateforme. La ou les DLL suivantes ne correspondent pas aux paramètres actuels : framework {0} et plateforme {1}.{2}Accédez à {3} pour plus d'informations sur la gestion de ces paramètres.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">Aucun des conteneurs de tests fournis ne correspond aux paramètres d'architecture de la plateforme et du .Net Framework pour la série de tests. Plateforme : {0} .Net Framework : {1}. Accédez à http://go.microsoft.com/fwlink/?LinkID=330428 pour plus de détails sur la gestion de ces paramètres.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">Le fichier de paramètres fourni n'est pas conforme au format requis.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0} utiliserait framework {1} et {2} plateforme.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

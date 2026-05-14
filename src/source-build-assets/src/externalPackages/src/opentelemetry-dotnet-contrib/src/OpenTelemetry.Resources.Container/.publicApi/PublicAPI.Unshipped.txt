@@ -1,0 +1,2 @@
+OpenTelemetry.Resources.ContainerResourceBuilderExtensions
+static OpenTelemetry.Resources.ContainerResourceBuilderExtensions.AddContainerDetector(this OpenTelemetry.Resources.ResourceBuilder! builder) -> OpenTelemetry.Resources.ResourceBuilder!

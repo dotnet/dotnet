@@ -1,0 +1,350 @@
+<!--
+***********************************************************************************************
+Microsoft.NET.Sdk.StaticWebAssets.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (c) .NET Foundation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="14.0">
+
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.GenerateStaticWebAssetsPropsFile"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.GenerateStaticWebAssetEndpointsPropsFile"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.StaticWebAssetsGeneratePackagePropsFile"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.StaticWebAssetsGeneratePackManifest"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.StaticWebAssetsReadPackManifest"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <!-- New tasks for JSON manifest packaging (.NET 11+) -->
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.GeneratePackageAssetsManifestFile"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <UsingTask
+    TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.GeneratePackageAssetsTargetsFile"
+    AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)"
+    Condition="'$(StaticWebAssetsSdkBuildTasksAssembly)' != ''" />
+
+  <PropertyGroup>
+
+    <!-- IsInnerBuild is only set up when we are in the context of a cross targeting build and we are building a given
+         target framework. There are specific targets to handle packing within cross targeting builds, so we avoid packing
+         in this case.
+    -->
+    <GenerateNuspecDependsOn Condition="$(IsInnerBuild) != 'true'">
+      IncludeStaticWebAssetsPackItems;
+      $(GenerateNuspecDependsOn);
+    </GenerateNuspecDependsOn>
+
+    <IncludeStaticWebAssetsPackItemsDependsOn>
+      ResolveStaticWebAssetsConfiguration;LoadStaticWebAssetsBuildManifest
+    </IncludeStaticWebAssetsPackItemsDependsOn>
+
+    <IncludeStaticWebAssetsPackItemsDependsOn Condition="'$(NoBuild)' != 'true' and '$(GeneratePackageOnBuild)' != 'true'">
+      Build;$(IncludeStaticWebAssetsPackItemsDependsOn);
+    </IncludeStaticWebAssetsPackItemsDependsOn>
+
+  </PropertyGroup>
+
+  <!-- This target generates a manifest with all static web assets for the current project that need to
+       be included in the package under the folder staticwebassets and generates MSBuild props files to
+       ensure that consuming packages can discover and use the static web assets.
+       This target generates a Microsoft.AspNetCore.StaticWebAssets.props file that
+       goes inside the build directory and describes the static web assets in the package as an
+       item group.
+       This target also generates a $(PackageId).props file under the build, buildMultiTargeting
+       and buildTransitive folders that are setup so that:
+       * buildTransitive\$(PackageId).props simply imports buildMultitargeting\$(PackageId).props
+       * buildMultitargeting\$(PackageId).props simply imports build\$(PackageId).props
+       * build\$(PackageId).props simply imports Microsoft.AspNetCore.StaticWebAssets.props
+
+       We do it this way to preserve the ability of package authors to customize the package in any way
+       they see fit and to make sure the package works in all scenarios. Authors including custom MSBuild
+       targets into their packages are expected to disable the generation of $(PackageId).props files and
+       to manually import build\Microsoft.AspNetCore.StaticWebAssets.props in their custom props files.
+   -->
+  <Target Name="GenerateStaticWebAssetsPackFiles" Condition="'$(IsPackable)' == 'true'" AfterTargets="GenerateStaticWebAssetsManifest">
+
+    <!-- ============================================================
+         OLD PATH: XML .props packaging (net10.0 and earlier)
+         ============================================================ -->
+    <ItemGroup Condition="'$(_UseJsonManifestPackaging)' != 'true'">
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedStaticWebAssetsPropsFile)" Condition="'$(DisableStaticWebAssetsBuildPropsFileGeneration)' == ''">
+        <PackagePath>build\Microsoft.AspNetCore.StaticWebAssets.props</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedStaticWebAssetEndpointsPropsFile)" Condition="'$(DisableStaticWebAssetEndpointsBuildPropsFileGeneration)' == ''">
+        <PackagePath>build\Microsoft.AspNetCore.StaticWebAssetEndpoints.props</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedBuildPropsFile)" Condition="'$(StaticWebAssetsDisableProjectBuildPropsFileGeneration)' == ''">
+        <PackagePath>build\$(PackageId).props</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedBuildMultitargetingPropsFile)" Condition="'$(StaticWebAssetsDisableProjectBuildMultiTargetingPropsFileGeneration)' == ''">
+        <PackagePath>buildMultiTargeting\$(PackageId).props</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedBuildTransitivePropsFile)" Condition="'$(StaticWebAssetsDisableProjectBuildTransitivePropsFileGeneration)' == ''">
+        <PackagePath>buildTransitive\$(PackageId).props</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <!-- All files potentially created within this target -->
+      <FileWrites Include="$(_GeneratedStaticWebAssetsPropsFile)" />
+      <FileWrites Include="$(_GeneratedStaticWebAssetEndpointsPropsFile)" />
+      <FileWrites Include="$(_GeneratedBuildPropsFile)" />
+      <FileWrites Include="$(_GeneratedBuildMultitargetingPropsFile)" />
+      <FileWrites Include="$(_GeneratedBuildTransitivePropsFile)" />
+      <FileWrites Include="$(StaticWebAssetPackManifestPath)" />
+
+    </ItemGroup>
+
+    <!-- ============================================================
+         NEW PATH: JSON manifest + .targets packaging (net11.0+)
+         ============================================================ -->
+    <ItemGroup Condition="'$(_UseJsonManifestPackaging)' == 'true'">
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedPackageAssetsManifestFile)" Condition="'$(DisableStaticWebAssetsBuildPropsFileGeneration)' == ''">
+        <PackagePath>build\$(PackageId).PackageAssets.json</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedStaticWebAssetsTargetsFile)" Condition="'$(DisableStaticWebAssetsBuildPropsFileGeneration)' == ''">
+        <PackagePath>build\Microsoft.AspNetCore.StaticWebAssets.targets</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedBuildTargetsFile)" Condition="'$(StaticWebAssetsDisableProjectBuildPropsFileGeneration)' == ''">
+        <PackagePath>build\$(PackageId).targets</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedBuildMultitargetingTargetsFile)" Condition="'$(StaticWebAssetsDisableProjectBuildMultiTargetingPropsFileGeneration)' == ''">
+        <PackagePath>buildMultiTargeting\$(PackageId).targets</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <StaticWebAssetPackageFile Include="$(_GeneratedBuildTransitiveTargetsFile)" Condition="'$(StaticWebAssetsDisableProjectBuildTransitivePropsFileGeneration)' == ''">
+        <PackagePath>buildTransitive\$(PackageId).targets</PackagePath>
+      </StaticWebAssetPackageFile>
+
+      <!-- All files potentially created within this target -->
+      <FileWrites Include="$(_GeneratedPackageAssetsManifestFile)" />
+      <FileWrites Include="$(_GeneratedStaticWebAssetsTargetsFile)" />
+      <FileWrites Include="$(_GeneratedBuildTargetsFile)" />
+      <FileWrites Include="$(_GeneratedBuildMultitargetingTargetsFile)" />
+      <FileWrites Include="$(_GeneratedBuildTransitiveTargetsFile)" />
+      <FileWrites Include="$(StaticWebAssetPackManifestPath)" />
+
+    </ItemGroup>
+
+    <!-- @(StaticWebAsset) is unfiltered at this point — group filtering is only applied to
+         the dev and endpoints manifests. All group variants ship in the nupkg so consumers
+         can select at restore time. -->
+    <ItemGroup>
+      <_PackStaticWebAssetCandidates Include="@(StaticWebAsset)" Exclude="@(_StaticWebAssetExcludedFromPack)" />
+    </ItemGroup>
+
+    <!-- Detect .targets convention file for asset groups -->
+    <ItemGroup Condition="Exists('$(MSBuildProjectDirectory)\StaticWebAssets.Groups.targets')">
+      <_StaticWebAssetGroupsConventionFile Include="$(MSBuildProjectDirectory)\StaticWebAssets.Groups.targets" />
+      <StaticWebAssetPackageFile Include="$(MSBuildProjectDirectory)\StaticWebAssets.Groups.targets">
+        <PackagePath>build\StaticWebAssets.Groups.targets</PackagePath>
+      </StaticWebAssetPackageFile>
+    </ItemGroup>
+
+    <!-- The logic for computing the static web assets to pack, is the same logic that we use to determine what assets we need
+      to provide when a referencing project asks for a list of static web assets on our current project. For example, this
+      avoids us including things like the transitive bundles for scoped css in the package.
+
+      AssetKind is set to Publish to prefer Publish assets over Build assets when available. Build assets, when present, can be
+      considered as development versions of an asset, for example unminified js files, the service worker file that we use during
+      development, or the untrimmed Blazor dlls.
+
+      This only affects cases where we have two or more assets targeting the same path and we need to select one of them to pack.
+      We can consider in the future packing both assets, which would allow people to include development versions of their assets
+      which would help with things like debugging during development.
+
+      For example, this would allow someone to include the unminified version of a JS library + source maps and allow consumers to
+      use those during local development using their package without that impacting their ability to use an optimize version transparently
+      when they publish their app.
+
+      There is obviously no "Publish" target/step for Razor Class Libraries, so the guidance is that any Publish asset in a Razor Class
+      Library needs to be computed as part of the build (This is expected and already accounted for as part of the Static Web Assets
+      pipeline).
+
+    -->
+    <ComputeReferenceStaticWebAssetItems
+      Assets="@(_PackStaticWebAssetCandidates)"
+      ProjectMode="$(StaticWebAssetProjectMode)"
+      AssetKind="Publish"
+      Source="$(PackageId)"
+      UpdateSourceType="false"
+    >
+      <Output TaskParameter="StaticWebAssets" ItemName="_PackStaticWebAssets" />
+    </ComputeReferenceStaticWebAssetItems>
+
+    <!-- This is similar to what we do when providing assets as reference. We use _PackStaticWebAssets as ComputeEndpointsForReferenceStaticWebAssets
+      discards any endpoint that doesn't have a matching asset, which acts as a filter to ensure we only provide the relevant endpoints.
+    -->
+    <ComputeEndpointsForReferenceStaticWebAssets
+      Assets="@(_PackStaticWebAssets)"
+      CandidateEndpoints="@(StaticWebAssetEndpoint)"
+    >
+      <Output TaskParameter="Endpoints" ItemName="_PackStaticWebAssetEndpoints" />
+    </ComputeEndpointsForReferenceStaticWebAssets>
+
+    <!-- Generates a props file that goes in build\Microsoft.AspNetCore.StaticWebAssets.props
+         and that describes the static web assets for the package.
+     -->
+    <GenerateStaticWebAssetsPropsFile
+      Condition="'$(_UseJsonManifestPackaging)' != 'true'"
+      StaticWebAssets="@(_PackStaticWebAssets)"
+      TargetPropsFilePath="$(_GeneratedStaticWebAssetsPropsFile)"
+      FrameworkPattern="$(StaticWebAssetFrameworkPattern)" />
+
+    <!-- Generates a props file that goes in build\Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+        that describes the static web asset endpoints associated with the assets in the package.
+    -->
+    <GenerateStaticWebAssetEndpointsPropsFile
+      Condition="'$(_UseJsonManifestPackaging)' != 'true'"
+      StaticWebAssets="@(_PackStaticWebAssets)"
+      StaticWebAssetEndpoints="@(_PackStaticWebAssetEndpoints)"
+      TargetPropsFilePath="$(_GeneratedStaticWebAssetEndpointsPropsFile)" />
+
+    <!-- Generates a props file the goes in build\$(PackageId).props and that simply imports
+         build\Microsoft.AspNetCore.StaticWebAssets.props
+     -->
+    <StaticWebAssetsGeneratePackagePropsFile
+      Condition="'$(_UseJsonManifestPackaging)' != 'true'"
+      PropsFileImport="$(_StaticWebAssetsPropsFileImportPath)"
+      BuildTargetPath="$(_GeneratedBuildPropsFile)"
+      AdditionalImports="$(_StaticWebAssetEndpointsPropsFileImportPath);@(_StaticWebAssetGroupsConventionFile->'StaticWebAssets.Groups.props')" />
+
+    <!-- Generates a props file the goes in buildMultiTargeting\$(PackageId).props and that simply imports
+         build\$(PackageId).props
+     -->
+    <StaticWebAssetsGeneratePackagePropsFile
+      Condition="'$(_UseJsonManifestPackaging)' != 'true'"
+      PropsFileImport="$(_StaticWebAssetsGeneratedBuildPropsFileImportPath)"
+      BuildTargetPath="$(_GeneratedBuildMultitargetingPropsFile)" />
+
+    <!-- Generates a props file the goes in buildTransitive\$(PackageId).props and that simply imports
+         buildMultiTargeting\$(PackageId)
+     -->
+    <StaticWebAssetsGeneratePackagePropsFile
+      Condition="'$(_UseJsonManifestPackaging)' != 'true'"
+      PropsFileImport="$(_StaticWebAssetsGeneratedBuildMultiTargetingPropsFileImportPath)"
+      BuildTargetPath="$(_GeneratedBuildTransitivePropsFile)" />
+
+    <!-- ============================================================
+         NEW PATH: JSON manifest + .targets file generation (net11.0+)
+         ============================================================ -->
+
+    <!-- Generate the JSON manifest containing both assets and endpoints -->
+    <GeneratePackageAssetsManifestFile
+      Condition="'$(_UseJsonManifestPackaging)' == 'true'"
+      StaticWebAssets="@(_PackStaticWebAssets)"
+      StaticWebAssetEndpoints="@(_PackStaticWebAssetEndpoints)"
+      TargetManifestPath="$(_GeneratedPackageAssetsManifestFile)"
+      FrameworkPattern="$(StaticWebAssetFrameworkPattern)" />
+
+    <!-- Generate the lightweight .targets file with StaticWebAssetPackageManifest item -->
+    <GeneratePackageAssetsTargetsFile
+      Condition="'$(_UseJsonManifestPackaging)' == 'true'"
+      PackageId="$(PackageId)"
+      TargetFilePath="$(_GeneratedStaticWebAssetsTargetsFile)"
+      ManifestFileName="$(PackageId).PackageAssets.json" />
+
+    <!-- Generate the import chain: build\$(PackageId).targets imports Microsoft.AspNetCore.StaticWebAssets.targets -->
+    <StaticWebAssetsGeneratePackagePropsFile
+      Condition="'$(_UseJsonManifestPackaging)' == 'true'"
+      PropsFileImport="$(_StaticWebAssetsTargetsFileImportPath)"
+      BuildTargetPath="$(_GeneratedBuildTargetsFile)"
+      AdditionalImports="@(_StaticWebAssetGroupsConventionFile->'StaticWebAssets.Groups.targets')" />
+
+    <!-- buildMultiTargeting\$(PackageId).targets imports build\$(PackageId).targets -->
+    <StaticWebAssetsGeneratePackagePropsFile
+      Condition="'$(_UseJsonManifestPackaging)' == 'true'"
+      PropsFileImport="$(_StaticWebAssetsGeneratedBuildTargetsFileImportPath)"
+      BuildTargetPath="$(_GeneratedBuildMultitargetingTargetsFile)" />
+
+    <!-- buildTransitive\$(PackageId).targets imports buildMultiTargeting\$(PackageId).targets -->
+    <StaticWebAssetsGeneratePackagePropsFile
+      Condition="'$(_UseJsonManifestPackaging)' == 'true'"
+      PropsFileImport="$(_StaticWebAssetsGeneratedBuildMultiTargetingTargetsFileImportPath)"
+      BuildTargetPath="$(_GeneratedBuildTransitiveTargetsFile)" />
+
+    <!-- We need to adjust the path for files without extension (LICENSE) for example. Otherwise, when they get packed, nuget creates an
+         additional folder for the file. -->
+    <ComputeStaticWebAssetsTargetPaths Assets="@(_PackStaticWebAssets)" PathPrefix="staticwebassets" AdjustPathsForPack="true">
+      <Output TaskParameter="AssetsWithTargetPath" ItemName="_PackStaticWebAssetWithTargetPath" />
+    </ComputeStaticWebAssetsTargetPaths>
+
+    <!-- The pack manifest captures all the information we need to successfully pack all the static web assets
+         into the project. We always build this manifest as part of the build process and it is used to drive
+         the pack process. This makes dealing with all the pack variants much easier, like 'generate package on
+         build' and 'no build' as well as multi targeting scenarios.
+
+         During the actual pack, we read the manifest and add the items as content with the appropriate package
+         paths.
+     -->
+    <StaticWebAssetsGeneratePackManifest
+      Assets="@(_PackStaticWebAssetWithTargetPath)"
+      AdditionalPackageFiles="@(StaticWebAssetPackageFile)"
+      ManifestPath="$(StaticWebAssetPackManifestPath)">
+    </StaticWebAssetsGeneratePackManifest>
+
+  </Target>
+
+  <!-- This target is invoked in cross targeting builds to resolve the paths for the pack and build manifests -->
+  <Target Name="ResolveStaticWebAssetsManifestPaths" Returns="@(_StaticWebAssetsManifestPaths)" DependsOnTargets="ResolveStaticWebAssetsConfiguration">
+    <ItemGroup>
+      <_StaticWebAssetsManifestPaths Include="$(MSBuildProjectName)">
+        <BuildManifest>$(StaticWebAssetBuildManifestPath)</BuildManifest>
+        <PackManifest>$(StaticWebAssetPackManifestPath)</PackManifest>
+      </_StaticWebAssetsManifestPaths>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="IncludeStaticWebAssetsPackItems"
+    DependsOnTargets="$(IncludeStaticWebAssetsPackItemsDependsOn)">
+
+    <!-- LoadStaticWebAssetsBuildManifest takes care of removing all the static web assets from existing item groups
+         if they were present already. That ensures no static web asset is mistakenly included as content even if it is
+         not an asset that needs to be included on the package. -->
+
+    <StaticWebAssetsReadPackManifest Condition="Exists('$(StaticWebAssetPackManifestPath)')" ManifestPath="$(StaticWebAssetPackManifestPath)">
+      <Output TaskParameter="Files" ItemName="_StaticWebAssetsFilesToPack" />
+    </StaticWebAssetsReadPackManifest>
+
+    <ItemGroup>
+      <Content Include="@(_StaticWebAssetsFilesToPack)"
+        Pack="true"
+        CopyToOutputDirectory="Never"
+        CopyToPublishDirectory="Never" />
+    </ItemGroup>
+
+  </Target>
+
+</Project>

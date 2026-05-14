@@ -1,0 +1,256 @@
+﻿<Project DefaultTargets="Build">
+
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsUnitTestProject)' != 'true'">
+    <StrongNameKeyId>Microsoft</StrongNameKeyId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsTestLibrary)' == 'true' or '$(IsUnitTestProject)' == 'true'">
+    <StrongNameKeyId>MSBuildTest</StrongNameKeyId>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Test.snk</AssemblyOriginatorKeyFile>
+    <PublicKey>002400000480000094000000060200000024000052534131000400000100010015c01ae1f50e8cc09ba9eac9147cf8fd9fce2cfe9f8dce4f7301c4132ca9fb50ce8cbf1df4dc18dd4d210e4345c744ecb3365ed327efdbc52603faa5e21daa11234c8c4a73e51f03bf192544581ebe107adee3a34928e39d04e524a9ce729d5090bfd7dad9d10c722c0def9ccc08ff0a03790e48bcd1f9b6c476063e1966a1c4</PublicKey>
+    <PublicKeyToken>9d77cc7ad39b68eb</PublicKeyToken>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsUnitTestProject)' == 'true'">
+    <!-- Respect the traits set up by PlatformSpecific attribute. -->
+    <XunitOptions Condition="$([MSBuild]::IsOSPlatform('windows'))">$(XunitOptions) --filter-not-trait Category=nonwindowstests</XunitOptions>
+
+    <XunitOptions Condition="$([MSBuild]::IsOSPlatform('linux'))">$(XunitOptions) --filter-not-trait Category=nonlinuxtests</XunitOptions>
+    <XunitOptions Condition="$([MSBuild]::IsOSPlatform('linux')) and '$(NetCoreBuild)'=='true'">$(XunitOptions) --filter-not-trait Category=netcore-linux-failing</XunitOptions>
+
+    <XunitOptions Condition="$([MSBuild]::IsOSPlatform('osx'))">$(XunitOptions) --filter-not-trait Category=nonosxtests</XunitOptions>
+    <XunitOptions Condition="$([MSBuild]::IsOSPlatform('osx')) and '$(NetCoreBuild)'=='true'">$(XunitOptions) --filter-not-trait Category=netcore-osx-failing</XunitOptions>
+
+    <!-- Replace with MSBuild::IsBsdLike once the initial msbuild knows about it -->
+    <XunitOptions Condition="$([MSBuild]::IsOSPlatform('FREEBSD')) Or $([MSBuild]::IsOSPlatform('NETBSD')) Or $([MSBuild]::IsOSPlatform('OPENBSD'))">$(XunitOptions) --filter-not-trait Category=nonfreebsdtests</XunitOptions>
+
+    <XunitOptions Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(XunitOptions) --filter-not-trait Category=nonnetcoreapptests</XunitOptions>
+    <XunitOptions Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(XunitOptions) --filter-not-trait Category=nonnetfxtests</XunitOptions>
+
+    <XunitOptions>$(XunitOptions) --filter-not-trait Category=failing</XunitOptions>
+    
+    <!-- Enable code coverage -->
+    <!-- There are separate runsettings files for Windows and non-Windows. -->
+    <!-- Some test projects hang on windows and hence coverage is disabled for these projects. -->
+    <!-- <XunitOptions Condition="$([MSBuild]::IsOSPlatform('windows'))">$(XunitOptions) - -coverage - -coverage-settings $(RepoRoot)CoverageWindowsFull.config</XunitOptions> -->
+    <XunitOptions Condition="!$([MSBuild]::IsOSPlatform('windows'))">$(XunitOptions) --coverage --coverage-settings $(RepoRoot)Coverage.config</XunitOptions>
+
+    <TestRunnerAdditionalArguments>$(XunitOptions)</TestRunnerAdditionalArguments>
+
+    <PackageOutputPath Condition="'$(IsVisualStudioInsertionPackage)' == 'true'">$(DevDivPackagesDir)</PackageOutputPath>
+
+    <!-- Arcade sdk also carries an xunit.runner.json which sometimes overrides the one in this repo. Assign a value to the arcade properties XUnitDesktopSettingsFile and XUnitCoreSettingsFile to prevent the arcade version of the file being added. -->
+    <XUnitDesktopSettingsFile>$(MSBuildThisFileDirectory)Shared\UnitTests\xunit.runner.json</XUnitDesktopSettingsFile>
+    <XUnitCoreSettingsFile>$(XUnitDesktopSettingsFile)</XUnitCoreSettingsFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
+    <!-- As of 17.3, one TF of Microsoft.NET.Test.Sdk depends on Newtonsoft.Json
+         9.0.1, causing it to be downloaded and flagged by component governance -->
+    <PackageReference Include="Newtonsoft.Json" />
+
+    <PackageReference Include="Microsoft.DotNet.XUnitV3Extensions" Condition="'$(DisableTestSharedFiles)' != 'true'" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+
+    <!-- Don't localize unit test projects -->
+    <PackageReference Remove="XliffTasks" />
+
+    <Compile Include="$(RepoRoot)src\Shared\UnitTests\TestAssemblyInfo.cs" Condition="'$(IsLibraryTestProject)' != 'true' AND '$(DisableTestSharedFiles)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Work around https://github.com/dotnet/sdk/issues/2204 by explicitly setting
+         PrivateAssets to keep this reference (auto-added when targeting netcoreapp*)
+         from making it into our NuGet packages. -->
+    <PackageReference Update="Microsoft.NETCore.App" PrivateAssets="All" />
+
+    <!-- Configure analyzer to forbid certain API calls -->
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" Condition=" '$(IsUnitTestProject)' != 'true' " />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(GenerateReferenceAssemblySource)' == 'true'">
+    <PublicApiTfm Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">net</PublicApiTfm>
+    <PublicApiTfm Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework' and $([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) == '3.5'">net35</PublicApiTfm>
+    <PublicApiTfm Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard'">netstandard</PublicApiTfm>
+    <PublicApiTfm Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp'">netstandard</PublicApiTfm>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(OutputType)' == 'Exe'">
+    <!-- Copy empty Directory.Build.props and Directory.Build.targets files to output directory to prevent
+         tests from picking up these files from the repo root. -->
+    <Content Include="$(RepoRoot)src\Shared\EmptyDirectoryBuildFiles\*" CopyToOutputDirectory="PreserveNewest"
+             Visible="false" Pack="false"/>
+  </ItemGroup>
+
+  <Target Name="SetResourceProperties" BeforeTargets="_GetEmbeddedResourcesWithSourceGeneration">
+    <ItemGroup>
+      <EmbeddedResource Update="@(EmbeddedResource)" Condition="'%(EmbeddedResource.NuGetPackageId)' == 'Microsoft.CodeAnalysis.Collections' AND '%(FileName)' == 'Strings'">
+        <GenerateSource>true</GenerateSource>
+        <Generator>MSBuild:_GenerateResxSource</Generator>
+        <ClassName>Microsoft.CodeAnalysis.Collections.SR</ClassName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RemoveSatelliteDllsFromBuildOutputInPackage"
+          BeforeTargets="GenerateNuspec"
+          Condition=" '$(IncludeSatelliteOutputInPack)' == 'false' ">
+    <!--
+      Could not find a way to tell NuGet to exclude the satellite assemblies from the NuGet package so this target
+      does it.
+    -->
+    <ItemGroup>
+      <_BuildOutputInPackage Remove="$(IntermediateOutputPath)%(_TargetFramework.Identity)\**\$(AssemblyName).resources.dll" />
+    </ItemGroup>
+  </Target>
+
+  <!-- This target creates type libraries (.tlb) for COM interop scenarios.
+       The .tlb is shipped in both Visual Studio and the .NET SDK (Windows only).
+       Runs against the net472 build output using tlbexp.exe from the .NET Framework SDK. -->
+  <Target Name="CreateTypeLib" BeforeTargets="AfterBuild" Inputs="$(TargetPath)" Outputs="$(TargetDir)$(TargetName).tlb"
+          Condition="'$(BuildingInsideVisualStudio)' != 'true' and '$(CreateTlb)' == 'true' and $([MSBuild]::IsOSPlatform('windows')) and '$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PropertyGroup>
+      <!-- Resolve tlbexp.exe from the .NET Framework SDK via registry, with a hardcoded fallback -->
+      <_NetFxToolsDir>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\NETFXSDK\4.8\WinSDK-NetFx40Tools', 'InstallationFolder', null, RegistryView.Registry32))</_NetFxToolsDir>
+      <_NetFxToolsDir Condition="'$(_NetFxToolsDir)' == ''">$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\</_NetFxToolsDir>
+      <TlbExpPath>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToDotNetFrameworkSdkFile('tlbexp.exe'))</TlbExpPath>
+      <TlbExpPath Condition="'$(TlbExpPath)' == ''">$(_NetFxToolsDir)TlbExp.exe</TlbExpPath>
+      <TlbExpVerbosity Condition="'$(VerboseTlbExp)' == 'true'">/verbose</TlbExpVerbosity>
+      <TlbExpVerbosity Condition="'$(VerboseTlbExp)' != 'true'">/silent</TlbExpVerbosity>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- Assembly probe paths for tlbexp dependency resolution.
+           TargetDir has the built assembly; TargetFrameworkDirectory has .NET Framework BCL (System.dll etc.) -->
+      <_TlbExpAssemblyPaths Include="$(TargetDir);$(TargetFrameworkDirectory)" />
+      <_TlbExpAssemblyPaths>
+        <SlashlessPath>$([System.String]::Copy('%(Identity)').TrimEnd('\'))</SlashlessPath>
+      </_TlbExpAssemblyPaths>
+      <TlbExpAssemblyPaths Include="@(_TlbExpAssemblyPaths->'%(SlashlessPath)')" />
+    </ItemGroup>
+
+    <Error Condition="!Exists('$(TlbExpPath)')"
+           Text="TlbExp was not found at '$(TlbExpPath)'. Ensure the .NET Framework SDK tools are installed." />
+
+    <!-- Generate x86 type library -->
+    <Exec Command="&quot;$(TlbExpPath)&quot; $(TlbExpVerbosity) /NOLOGO @(TlbExpAssemblyPaths->'/asmpath:&quot;%(Identity)&quot;', ' ') &quot;$(TargetPath)&quot; /out:&quot;$(TargetDir)$(TargetName).tlb&quot;" />
+    <!-- Generate x64 type library -->
+    <Exec Command="&quot;$(TlbExpPath)&quot; $(TlbExpVerbosity) /NOLOGO @(TlbExpAssemblyPaths->'/asmpath:&quot;%(Identity)&quot;', ' ') &quot;$(TargetPath)&quot; /out:&quot;$(TargetDir)x64\$(TargetName).tlb&quot; /win64" />
+  </Target>
+
+  <Import Project="$(BUILD_STAGINGDIRECTORY)\MicroBuild\Plugins\MicroBuild.Plugins.IBCMerge.*\**\build\MicroBuild.Plugins.*.targets" Condition="'$(BUILD_STAGINGDIRECTORY)' != '' and $(TargetFramework.StartsWith('net4')) and '$(MicroBuild_EnablePGO)' != 'false'" />
+
+  <PropertyGroup>
+    <UseFrozenMaintenancePackageVersions Condition="'$(UseFrozenMaintenancePackageVersions)' == '' AND '$(IsUnitTestProject)' != 'true' AND $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net472')) AND '$(OutputType)' != 'exe'">true</UseFrozenMaintenancePackageVersions>
+
+    <FrozenMicrosoftIORedistVersion>6.0.1</FrozenMicrosoftIORedistVersion>
+    <FrozenSystemMemoryVersion>4.5.5</FrozenSystemMemoryVersion>
+    <FrozenSystemRuntimeCompilerServicesUnsafeVersion>6.0.0</FrozenSystemRuntimeCompilerServicesUnsafeVersion>
+    <FrozenSystemThreadingTasksExtensionsVersion>4.5.4</FrozenSystemThreadingTasksExtensionsVersion>
+    <FrozenSystemBuffersVersion>4.5.1</FrozenSystemBuffersVersion>
+    <FrozenSystemNumericsVectorsVersion>4.5.0</FrozenSystemNumericsVectorsVersion>
+    <FrozenSystemTextJsonVersion>4.5.0</FrozenSystemTextJsonVersion>
+    <FrozenSystemThreadingChannelsVersion>4.7.1</FrozenSystemThreadingChannelsVersion>
+
+    <!-- In 10.x runtime packages started referencing live maintenance-packages outputs so pin several of them to 9.x -->
+    <FrozenRuntimeVersionFor9>9.0.11</FrozenRuntimeVersionFor9>
+    <FrozenMicrosoftMicrosoftBclAsyncInterfacesVersion>$(FrozenRuntimeVersionFor9)</FrozenMicrosoftMicrosoftBclAsyncInterfacesVersion>
+    <FrozenSystemDiagnosticsDiagnosticSourceVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemDiagnosticsDiagnosticSourceVersion>
+    <FrozenSystemCollectionsImmutableVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemCollectionsImmutableVersion>
+    <FrozenSystemIOPipelinesVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemIOPipelinesVersion>
+    <FrozenSystemReflectionMetadataVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemReflectionMetadataVersion>
+    <FrozenSystemReflectionMetadataLoadContextVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemReflectionMetadataLoadContextVersion>
+    <FrozenSystemFormatsNrbfVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemFormatsNrbfVersion>
+    <FrozenSystemResourcesExtensionsVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemResourcesExtensionsVersion>
+    <FrozenSystemTextEncodingsWebVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemTextEncodingsWebVersion>
+    <FrozenSystemTextJsonVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemTextJsonVersion>
+    <FrozenSystemThreadingChannelsVersion>$(FrozenRuntimeVersionFor9)</FrozenSystemThreadingChannelsVersion>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UseFrozenMaintenancePackageVersions)' == 'true'">
+    <PackageDownload Include="Microsoft.Bcl.AsyncInterfaces" Version="[$(FrozenMicrosoftMicrosoftBclAsyncInterfacesVersion)]" />
+    <PackageDownload Include="Microsoft.IO.Redist" Version="[$(FrozenMicrosoftIORedistVersion)]" />
+    <PackageDownload Include="System.Diagnostics.DiagnosticSource" Version="[$(FrozenSystemDiagnosticsDiagnosticSourceVersion)]" />
+    <PackageDownload Include="System.Collections.Immutable" Version="[$(FrozenSystemCollectionsImmutableVersion)]" />
+    <PackageDownload Include="System.IO.Pipelines" Version="[$(FrozenSystemIOPipelinesVersion)]" />
+    <PackageDownload Include="System.Memory" Version="[$(FrozenSystemMemoryVersion)]" />
+    <PackageDownload Include="System.Formats.Nrbf" Version="[$(FrozenSystemFormatsNrbfVersion)]" />
+    <PackageDownload Include="System.Reflection.Metadata" Version="[$(FrozenSystemReflectionMetadataVersion)]" />
+    <PackageDownload Include="System.Reflection.MetadataLoadContext" Version="[$(FrozenSystemReflectionMetadataLoadContextVersion)]" />
+    <PackageDownload Include="System.Resources.Extensions" Version="[$(FrozenSystemResourcesExtensionsVersion)]" />
+    <PackageDownload Include="System.Runtime.CompilerServices.Unsafe" Version="[$(FrozenSystemRuntimeCompilerServicesUnsafeVersion)]" />
+    <PackageDownload Include="System.Text.Encodings.Web" Version="[$(FrozenSystemTextEncodingsWebVersion)]" />
+    <PackageDownload Include="System.Text.Json" Version="[$(FrozenSystemTextJsonVersion)]" />
+    <PackageDownload Include="System.Threading.Channels" Version="[$(FrozenSystemThreadingChannelsVersion)]" />
+    <PackageDownload Include="System.Threading.Tasks.Extensions" Version="[$(FrozenSystemThreadingTasksExtensionsVersion)]" />
+    <PackageDownload Include="System.Buffers" Version="[$(FrozenSystemBuffersVersion)]" />
+    <PackageDownload Include="System.Numerics.Vectors" Version="[$(FrozenSystemNumericsVectorsVersion)]" />
+  </ItemGroup>
+
+  <!-- Work around maintenance-packages updates breaking stuff -->
+  <Target Name="ReplaceCompileReferencesWithOlderMaintenancePackagesVersions"
+          BeforeTargets="ResolveAssemblyReferences"
+          Condition="$(UseFrozenMaintenancePackageVersions) == 'true'">
+
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'Microsoft.IO.Redist' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenMicrosoftIORedistVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)microsoft.io.redist\$(FrozenMicrosoftIORedistVersion)\lib\net472\Microsoft.IO.Redist.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'Microsoft.Bcl.AsyncInterfaces' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenMicrosoftMicrosoftBclAsyncInterfacesVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)microsoft.bcl.asyncinterfaces\$(FrozenMicrosoftMicrosoftBclAsyncInterfacesVersion)\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Buffers' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemBuffersVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.buffers\$(FrozenSystemBuffersVersion)\lib\net461\System.Buffers.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Diagnostics.DiagnosticSource' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemDiagnosticsDiagnosticSourceVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.diagnostics.diagnosticsource\$(FrozenSystemDiagnosticsDiagnosticSourceVersion)\lib\net462\System.Diagnostics.DiagnosticSource.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Collections.Immutable' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemCollectionsImmutableVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.collections.immutable\$(FrozenSystemCollectionsImmutableVersion)\lib\net462\System.Collections.Immutable.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.IO.Pipelines' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemIOPipelinesVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.io.pipelines\$(FrozenSystemIOPipelinesVersion)\lib\net462\System.IO.Pipelines.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Memory' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemMemoryVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.memory\$(FrozenSystemMemoryVersion)\lib\net461\System.Memory.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Reflection.Metadata' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemReflectionMetadataVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.reflection.metadata\$(FrozenSystemReflectionMetadataVersion)\lib\netstandard2.0\System.Reflection.Metadata.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Reflection.MetadataLoadContext' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemReflectionMetadataLoadContextVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.reflection.metadataloadcontext\$(FrozenSystemReflectionMetadataLoadContextVersion)\lib\netstandard2.0\System.Reflection.MetadataLoadContext.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Formats.Nrbf' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemFormatsNrbfVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.formats.nrbf\$(FrozenSystemFormatsNrbfVersion)\lib\netstandard2.0\System.Formats.Nrbf.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Resources.Extensions' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemResourcesExtensionsVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.resources.extensions\$(FrozenSystemResourcesExtensionsVersion)\lib\netstandard2.0\System.Resources.Extensions.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Text.Encodings.Web' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemTextEncodingsWebVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.text.encodings.web\$(FrozenSystemTextEncodingsWebVersion)\lib\net462\System.Text.Encodings.Web.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Numerics.Vectors' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemNumericsVectorsVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.numerics.vectors\$(FrozenSystemNumericsVectorsVersion)\lib\net46\System.Numerics.Vectors.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Runtime.CompilerServices.Unsafe' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemRuntimeCompilerServicesUnsafeVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.runtime.compilerservices.unsafe\$(FrozenSystemRuntimeCompilerServicesUnsafeVersion)\lib\net461\System.Runtime.CompilerServices.Unsafe.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Threading.Channels' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemThreadingChannelsVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.threading.channels\$(FrozenSystemThreadingChannelsVersion)\lib\net462\System.Threading.Channels.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Threading.Tasks.Extensions' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemThreadingTasksExtensionsVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.threading.tasks.extensions\$(FrozenSystemThreadingTasksExtensionsVersion)\lib\net461\System.Threading.Tasks.Extensions.dll" />
+
+      <Reference Remove="@(Reference)" Condition="'%(Reference.NuGetPackageId)' == 'System.Text.Json' and $([MSBuild]::VersionGreaterThan(%(Reference.NuGetPackageVersion), '$(FrozenSystemTextJsonVersion)'))" />
+      <Reference Include="$(NuGetPackageRoot)system.text.json\$(FrozenSystemTextJsonVersion)\lib\net462\System.Text.Json.dll" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Import parent targets -->
+  <Import Project="..\Directory.Build.targets"/>
+
+</Project>

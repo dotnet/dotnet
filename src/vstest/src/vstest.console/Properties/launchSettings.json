@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "vstest.console": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "VSTEST_RUNNER_DEBUG_ATTACHVS": "1",
+        "VSTEST_DEBUG_NOBP": "1"
+      }
+    }
+  }
+}

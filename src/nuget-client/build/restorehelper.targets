@@ -1,0 +1,15 @@
+<Project ToolsVersion="15.0" DefaultTargets="Restore">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'common.props'))\common.props" />
+
+  <Target Name="BeforeRestore" BeforeTargets="Restore">
+	<Message Text="$(RestoreGraphProjectInput)" Importance="high" />
+  </Target>
+
+  <!-- Import the existing NuGet targets file -->
+  <PropertyGroup>
+    <VSNuGetTargetsExist Condition=" Exists('$(MSBuildExtensionsPath)\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets')">true</VSNuGetTargetsExist>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildExtensionsPath)/NuGet.targets" Condition=" '$(IsXPlat)' == 'true' OR '$(VSNuGetTargetsExist)' != 'true'" />
+  <Import Project="$(MSBuildExtensionsPath)\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets" Condition=" '$(IsXPlat)' != 'true' AND '$(VSNuGetTargetsExist)' == 'true'" />
+</Project>

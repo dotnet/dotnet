@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="es">
+    <body>
+      <trans-unit id="DataCollectionMessageFormat">
+        <source>Data collection : {0}</source>
+        <target state="translated">Recopilación de datos: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorMessageFormat">
+        <source>Data collector '{0}' message: {1}.</source>
+        <target state="translated">Mensaje del recopilador de datos "{0}": {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateExtensionUri">
+        <source>Duplicate test extension URI '{0}'.  Ignoring the duplicate extension.</source>
+        <target state="translated">URI de extensión de pruebas duplicado ({0}). Se omitirá la extensión duplicada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateSettingsName">
+        <source>Duplicate settings provider named '{0}'.  Ignoring the duplicate provider.</source>
+        <target state="translated">Proveedor de configuración duplicado con el nombre '{0}'. Se omitirá el proveedor duplicado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateSettingsProvided">
+        <source>Duplicate run settings section named '{0}' found.  Ignoring the duplicate settings.</source>
+        <target state="translated">Sección de parámetros de ejecución duplicada con el nombre "{0}". Se omitirán los parámetros duplicados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EmptyParenthesis">
+        <source>Error: Empty parenthesis ( )</source>
+        <target state="translated">Error: Paréntesis vacío ( )</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCondition">
+        <source>Error: Invalid Condition '{0}'</source>
+        <target state="translated">Error: Condición '{0}' no válida</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidExtensionUriFormat">
+        <source>Test Extension has an invalid URI '{0}': {1}</source>
+        <target state="translated">La extensión de pruebas tiene un URI no válido ({0}): {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidOperator">
+        <source>Error: Invalid operator '{0}'</source>
+        <target state="translated">Error: Operador no válido ({0})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerInitializationError">
+        <source>Exception occurred while initializing logger with {0}: '{1}'.  The logger will not be used.  Exception: {2}</source>
+        <target state="translated">Se produjo una excepción al inicializar el registrador con {0}: "{1}". No se usará el registrador. Excepción: {2}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerNotFound">
+        <source>Could not find a test logger with AssemblyQualifiedName, URI or FriendlyName '{0}'.</source>
+        <target state="translated">No se encuentra ningún registrador de pruebas con AssemblyQualifiedName, URI o FriendlyName "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingCloseParenthesis">
+        <source>Error: Missing ')'</source>
+        <target state="translated">Error: Falta ')'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOpenParenthesis">
+        <source>Error: Missing '('</source>
+        <target state="translated">Error: Falta '('</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOperand">
+        <source>Error: Missing operand</source>
+        <target state="translated">Error: Falta un operando</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOperator">
+        <source>Missing Operator '|' or '&amp;'</source>
+        <target state="translated">Falta el operador "|" o "&amp;"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsAlreadyLoaded">
+        <source>The Run Settings have already been loaded.</source>
+        <target state="translated">Los parámetros de ejecución ya se han cargado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsParseError">
+        <source>An error occurred while loading the run settings.  Error: {0}</source>
+        <target state="translated">Error al cargar los parámetros de ejecución. Error: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsNodeInvalidName">
+        <source>Invalid settings node specified. The name property of the settings node must be non-empty.</source>
+        <target state="translated">Se especificó un nodo de configuración no válido. La propiedad de nombre del nodo de configuración no debe estar vacía.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsProviderInitializationError">
+        <source>An error occurred while initializing the settings provider named '{0}'. Error: {1}</source>
+        <target state="translated">Error al inicializar el proveedor de configuración '{0}'. Error: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsProviderNotFound">
+        <source>Settings Provider named '{0}' was not found.  The settings can not be loaded.</source>
+        <target state="translated">No se encuentra el proveedor de configuración '{0}'. No se puede cargar la configuración.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCaseFilterFormatException">
+        <source>Incorrect format for TestCaseFilter {0}. Specify the correct format and try again. Note that the incorrect format can lead to no test getting executed.</source>
+        <target state="translated">Formato incorrecto de TestCaseFilter {0}. Especifique el formato correcto y vuelva a intentarlo. Tenga en cuenta que un formato incorrecto puede dar lugar a que no se ejecute ninguna prueba.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorErrorOnGetVariable">
+        <source>Data collector '{0}' failed to provide initialization information. Error: {1}</source>
+        <target state="translated">El recopilador de datos "{0}" no pudo proporcionar información de inicialización. Error: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorInitializationError">
+        <source>Data collector '{0}' threw an exception during type loading, construction, or initialization: {1}.</source>
+        <target state="translated">El recopilador de datos "{0}" produjo una excepción durante la carga, creación o inicialización del tipo: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorNotFound">
+        <source>Could not find data collector '{0}'</source>
+        <target state="translated">No se pudo encontrar el recopilador de datos "{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
+        <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
+        <target state="translated">El recopilador de datos "{0}" solicitó que la variable de entorno "{1}" con el valor "{2}" se estableciera en el entorno de ejecución de pruebas, pero otro recopilador de datos "{3}" ya ha solicitado la misma variable de entorno con otro valor "{4}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IgnoredDuplicateConfiguration">
+        <source>There are multiple configurations that have data collector FriendlyName as '{0}'. Duplicate configurations will be ignored in the test run.</source>
+        <target state="translated">Hay varias configuraciones que tienen el nombre descriptivo del recopilador de datos "{0}". Se omitirán las configuraciones duplicadas en la serie de pruebas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReportDataCollectorException">
+        <source>Data collector caught an exception of type '{0}': '{1}'. More details: {2}.</source>
+        <target state="translated">El recopilador de datos detectó una excepción de tipo "{0}": "{1}". Más detalles: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WrongDataCollectionContextType">
+        <source>Types deriving from the data collection context cannot be used for sending data and messages.  The DataCollectionContext used for sending data and messages must come from one of the events raised to the data collector.</source>
+        <target state="translated">Los tipos derivados del contexto de recolección de datos no se pueden usar para enviar datos y mensajes. El elemento DataCollectionContext usado para enviar datos y mensajes debe proceder de alguno de los eventos generados para el recolector de datos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerUriInvalid">
+        <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
+        <target state="translated">El URI de registrador de pruebas '{0}' no es válido. Se omitirá el registrador de pruebas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToFindInstalledUnitTestExtensions">
+        <source>Failed to find the list of installed unit test extensions. Reason: {0}</source>
+        <target state="translated">No se pudo encontrar la lista de extensiones de prueba unitaria instaladas. Motivo: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSInstallationNotFound">
+        <source>This option works only with vstest.console.exe installed as part of Visual Studio.</source>
+        <target state="translated">Esta opción funciona solo con vstest.console.exe instalado como parte de Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FastFilterException">
+        <source>An error occurred while creating Fast filter.</source>
+        <target state="translated">Error al crear el filtro rápido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CancellationRequested">
+        <source>Cancelling the operation as requested.</source>
+        <target state="translated">La operación se cancelará como se ha solicitado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFetchUriString">
+        <source>Unable to find a datacollector with friendly name '{0}'.</source>
+        <target state="translated">No se encuentra ningún objeto datacollector con el nombre descriptivo "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadAdapaterFile">
+        <source>Failed to load extensions from file '{0}'. Please use /diag for more information.</source>
+        <target state="translated">No se pudieron cargar las extensiones del archivo "{0}". Use /diag para obtener más información.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges. For more information, please look at the error message:</source>
+        <target state="translated">{0} Se denegó el acceso al intentar crear la carpeta "TestResults" en la ubicación mencionada. Está recibiendo esta excepción porque está ejecutando vstest.console.exe desde una carpeta que requiere acceso de escritura. Para solucionar el problema: ejecute vstest.console.exe desde una carpeta en la que tenga privilegios de escritura. Para obtener más información, consulte el mensaje de error:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InnerException">
+        <source>Inner exception:</source>
+        <target state="translated">Excepción interna:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StackTrace">
+        <source>Stack trace:</source>
+        <target state="translated">Seguimiento de la pila:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; no se admite para la serie de pruebas de orígenes.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

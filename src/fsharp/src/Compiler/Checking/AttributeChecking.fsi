@@ -1,0 +1,127 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information.
+
+/// Logic associated with checking "ObsoleteAttribute" and other attributes
+/// on items from name resolution
+module internal FSharp.Compiler.AttributeChecking
+
+open System.Collections.Generic
+open FSharp.Compiler.AbstractIL.IL
+open FSharp.Compiler
+open FSharp.Compiler.DiagnosticsLogger
+open FSharp.Compiler.Infos
+open FSharp.Compiler.TcGlobals
+open FSharp.Compiler.Text
+open FSharp.Compiler.TypedTree
+
+type AttribInfo =
+    | FSAttribInfo of TcGlobals * Attrib
+    | ILAttribInfo of TcGlobals * Import.ImportMap * ILScopeRef * ILAttribute * range
+
+    member ConstructorArguments: (TType * objnull) list
+    member NamedArguments: (TType * string * bool * objnull) list
+    member Range: range
+    member TyconRef: TyconRef
+
+val AttribInfosOfIL:
+    g: TcGlobals -> amap: Import.ImportMap -> scoref: ILScopeRef -> m: range -> attribs: ILAttributes -> AttribInfo list
+
+val GetAttribInfosOfEntity: g: TcGlobals -> amap: Import.ImportMap -> m: range -> tcref: TyconRef -> AttribInfo list
+
+val GetAttribInfosOfMethod: amap: Import.ImportMap -> m: range -> minfo: MethInfo -> AttribInfo list
+
+val GetAttribInfosOfProp: amap: Import.ImportMap -> m: range -> pinfo: PropInfo -> AttribInfo list
+
+val GetAttribInfosOfEvent: amap: Import.ImportMap -> m: range -> einfo: EventInfo -> AttribInfo list
+
+#if NO_TYPEPROVIDERS
+val TryBindMethInfoAttribute:
+    g: TcGlobals ->
+    m: range ->
+    BuiltinAttribInfo ->
+    minfo: MethInfo ->
+    f1: (ILAttribElem list * ILAttributeNamedArg list -> 'a option) ->
+    f2: (Attrib -> 'a option) ->
+    f3: _ ->
+        'a option
+#else
+val TryBindMethInfoAttribute:
+    g: TcGlobals ->
+    m: range ->
+    BuiltinAttribInfo ->
+    minfo: MethInfo ->
+    f1: (ILAttribElem list * ILAttributeNamedArg list -> 'a option) ->
+    f2: (Attrib -> 'a option) ->
+    f3: (obj option list * (string * obj option) list -> 'a option) ->
+        'a option
+#endif
+
+val TryFindMethInfoStringAttribute:
+    g: TcGlobals -> m: range -> attribSpec: BuiltinAttribInfo -> minfo: MethInfo -> string option
+
+val MethInfoHasAttribute: g: TcGlobals -> m: range -> attribSpec: BuiltinAttribInfo -> minfo: MethInfo -> bool
+
+[<Struct; NoEquality; NoComparison>]
+type WellKnownMethAttribute =
+    { ILFlag: WellKnownILAttributes
+      ValFlag: WellKnownValAttributes
+      AttribInfo: BuiltinAttribInfo }
+
+val MethInfoHasWellKnownAttribute:
+    g: TcGlobals ->
+    m: range ->
+    ilFlag: WellKnownILAttributes ->
+    valFlag: WellKnownValAttributes ->
+    attribSpec: BuiltinAttribInfo ->
+    minfo: MethInfo ->
+        bool
+
+val MethInfoHasWellKnownAttributeSpec:
+    g: TcGlobals -> m: range -> spec: WellKnownMethAttribute -> minfo: MethInfo -> bool
+
+val CheckFSharpAttributes: g: TcGlobals -> attribs: Attrib list -> m: range -> OperationResult<unit>
+
+val CheckILAttributesForUnseen: cattrs: ILAttributes -> bool
+
+val CheckILAttributesForUnseenStored: g: TcGlobals -> cattrsStored: ILAttributesStored -> bool
+
+val CheckFSharpAttributesForHidden: g: TcGlobals -> attribs: Attrib list -> bool
+
+val CheckFSharpAttributesForObsolete: g: TcGlobals -> attribs: Attrib list -> bool
+
+val CheckFSharpAttributesForUnseen: g: TcGlobals -> attribs: Attrib list -> allowObsolete: bool -> bool
+
+val CheckPropInfoAttributes: pinfo: PropInfo -> m: range -> OperationResult<unit>
+
+val CheckILFieldAttributes: g: TcGlobals -> finfo: ILFieldInfo -> m: range -> unit
+
+val CheckMethInfoAttributes:
+    g: TcGlobals -> m: range -> tyargsOpt: 'a option -> minfo: MethInfo -> OperationResult<unit>
+
+val MethInfoIsUnseen: g: TcGlobals -> m: range -> ty: TType -> minfo: MethInfo -> allowObsolete: bool -> bool
+
+val PropInfoIsUnseen: _m: 'a -> allowObsolete: bool -> pinfo: PropInfo -> bool
+
+val ILFieldInfoIsUnseen: finfo: ILFieldInfo -> bool
+
+val EventInfoIsUnseen: allowObsolete: bool -> einfo: EventInfo -> bool
+
+val CheckEntityAttributes: g: TcGlobals -> tcref: TyconRef -> m: range -> OperationResult<unit>
+
+val CheckUnionCaseAttributes: g: TcGlobals -> x: UnionCaseRef -> m: range -> OperationResult<unit>
+
+val CheckUnitOfMeasureAttributes: g: TcGlobals -> measure: Measure -> unit
+
+val CheckRecdFieldAttributes: g: TcGlobals -> x: RecdFieldRef -> m: range -> OperationResult<unit>
+
+val CheckValAttributes: g: TcGlobals -> x: ValRef -> m: range -> OperationResult<unit>
+
+val CheckRecdFieldInfoAttributes: g: TcGlobals -> x: RecdFieldInfo -> m: range -> OperationResult<unit>
+
+val IsSecurityAttribute:
+    g: TcGlobals -> amap: Import.ImportMap -> casmap: IDictionary<Stamp, bool> -> Attrib -> m: range -> bool
+
+val IsSecurityCriticalAttribute: g: TcGlobals -> Attrib -> bool
+
+val IsAssemblyVersionAttribute: g: TcGlobals -> Attrib -> bool
+
+val CheckILEventAttributes: g: TcGlobals -> tcref: TyconRef -> cattrs: ILAttributes -> m: range -> OperationResult<unit>

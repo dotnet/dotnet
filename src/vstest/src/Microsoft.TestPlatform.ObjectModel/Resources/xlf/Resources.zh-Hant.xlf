@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hant">
+    <body>
+      <trans-unit id="TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">失敗</target>
+        <note>Test result for failed test</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNone">
+        <source>None</source>
+        <target state="translated">無</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">成功</target>
+        <note>Test result for passed test</note>
+      </trans-unit>
+      <trans-unit id="BasicTestResultFormat">
+        <source>{0,-10}  {1}</source>
+        <target state="translated">{0,-10}  {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestResultMessageFormat">
+        <source>  {0}:
+{1}</source>
+        <target state="translated">  {0}:
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestResultTextMessagesFormat">
+        <source>  Test Messages:
+{0}</source>
+        <target state="translated">  測試訊息:
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestFailureMessageFormat">
+        <source>  Message: {0}</source>
+        <target state="translated">  訊息: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestFailureStackTraceFormat">
+        <source>  StackTrace:
+{0}</source>
+        <target state="translated">  StackTrace:
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NullString">
+        <source>(null)</source>
+        <target state="translated">(null)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_RegisteredTestPropertyHasDifferentValueType">
+        <source>Cannot register property '{0}' as value type '{1}' because it was already registered as '{2}'.</source>
+        <target state="translated">無法將屬性 '{0}' 登錄為值類型 '{1}'，因為它已登錄為 '{2}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyColumnNumberLabel">
+        <source>Column Number</source>
+        <target state="translated">欄號</target>
+        <note>The label of the test property ColumnNumber for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyExecutorUriLabel">
+        <source>Executor Uri</source>
+        <target state="translated">執行程式 URI</target>
+        <note>The label of the test property ExecutorUri for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertySourceLabel">
+        <source>Source</source>
+        <target state="translated">來源</target>
+        <note>The label of the test property Source for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyLineNumberLabel">
+        <source>Line Number</source>
+        <target state="translated">行號</target>
+        <note>The label of the test property LineNumber for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyNameLabel">
+        <source>Name</source>
+        <target state="translated">名稱</target>
+        <note>The label of the test property Name for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyComputerNameLabel">
+        <source>Computer Name</source>
+        <target state="translated">電腦名稱</target>
+        <note>The label of the test property ComputerName for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyDisplayNameLabel">
+        <source>TestResult Display Name</source>
+        <target state="translated">TestResult 顯示名稱</target>
+        <note>The label of TestResult.DisplayName, mainly used for parameterized data tests</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyDurationLabel">
+        <source>Duration</source>
+        <target state="translated">持續時間</target>
+        <note>The label of the test property Duration for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyEndTimeLabel">
+        <source>End Time</source>
+        <target state="translated">結束時間</target>
+        <note>The label of the test property EndTime for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorColumnNumberLabel">
+        <source>Error Column Number</source>
+        <target state="translated">錯誤欄號</target>
+        <note>The label of the test property ErrorColumnNumber for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorMessageLabel">
+        <source>Error Message</source>
+        <target state="translated">錯誤訊息</target>
+        <note>The label of the test property ErrorMessage for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorStackTraceLabel">
+        <source>Error Stack Trace</source>
+        <target state="translated">錯誤堆疊追蹤</target>
+        <note>The label of the test property ErrorStackTrace for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyOutcomeLabel">
+        <source>Outcome</source>
+        <target state="translated">結果</target>
+        <note>The label of the test property Outcome for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyStartTimeLabel">
+        <source>Start Time</source>
+        <target state="translated">開始時間</target>
+        <note>The label of the test property StartTime for test result.</note>
+      </trans-unit>
+      <trans-unit id="ConverterNotSupported">
+        <source>Cannot find TypeConverter for type {0}.</source>
+        <target state="translated">找不到類型 {0} 的 TypeConverter。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyFilePathLabel">
+        <source>File Path</source>
+        <target state="translated">檔案路徑</target>
+        <note>The label of the test property FilePath for test case.</note>
+      </trans-unit>
+      <trans-unit id="NotificationFrequencyIsNotPositive">
+        <source>Notification frequency need to be a positive value.</source>
+        <target state="translated">通知頻率必須為正值。</target>
+        <note>frequency for DiscoveryCriteria/TestRunCriteria needs to be a positive value</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyIdLabel">
+        <source>Id</source>
+        <target state="translated">識別碼</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsXmlAttribute">
+        <source>Invalid settings '{0}'. Unexpected XmlAttribute: '{1}'.</source>
+        <target state="translated">設定 '{0}' 無效。未預期的 XmlAttribute: '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsXmlElement">
+        <source>Invalid settings '{0}'. Unexpected XmlElement: '{1}'.</source>
+        <target state="translated">設定 '{0}' 無效。未預期的 XmlElement: '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDataCollectorAttributes">
+        <source>Invalid data collector settings. Expected attribute '{0}' is missing.  A typical data collector setting would look like &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;.</source>
+        <target state="translated">無效的資料收集器設定。預期的屬性 '{0}' 遺失。一般的資料收集器設定看起來像 &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotFound">
+        <source>NotFound</source>
+        <target state="translated">NotFound</target>
+        <note>Test result for not found test</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeSkipped">
+        <source>Skipped</source>
+        <target state="translated">略過</target>
+        <note>Test result for skipped test </note>
+      </trans-unit>
+      <trans-unit id="NotificationTimeoutIsZero">
+        <source>Notification timeout must be greater than zero.</source>
+        <target state="translated">通知逾時必須大於零。</target>
+        <note>Timeout used during test discovery and execution must be greater than zero.</note>
+      </trans-unit>
+      <trans-unit id="InvalidSettingsIncorrectValue">
+        <source>Invalid settings '{0}'.  Invalid value '{1}' specified for '{2}'.</source>
+        <target state="translated">設定 '{0}' 無效。為 '{2}' 指定的值 '{1}' 無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRunSettingsRootNode">
+        <source>The root node of the run settings must be named 'RunSettings'.</source>
+        <target state="translated">回合設定的根節點必須命名為 'RunSettings'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestCaseFilterForSpecificTests">
+        <source>Cannot specify TestCaseFilter for specific tests run. FilterCriteria is only for run with sources.</source>
+        <target state="translated">無法為特定測試回合指定 TestCaseFilter。FilterCriteria 只適用於以來源執行的狀況。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedTypeOfProperty">
+        <source>The test property type '{0}' of property '{1}' is not supported. Use one of the supported property type (primitive types, uri, string, string[]) and try again. </source>
+        <target state="translated">不支援屬性 '{1}' 的測試屬性類型 '{0}'。請使用其中一個支援的屬性類型 (基本類型、uri、string、string[])，並再試一次。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CouldNotFindXmlNode">
+        <source>Could not find '{0}' node</source>
+        <target state="translated">找不到 '{0}' 節點</target>
+        <note>Error message when the specified {0}  xml node can not be found in the run settings xml document</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyFullyQualifiedNameLabel">
+        <source>FullyQualifiedName</source>
+        <target state="translated">FullyQualifiedName</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyTraitsLabel">
+        <source>Traits</source>
+        <target state="translated">特性</target>
+        <note>The label of the test property Traits for test case.</note>
+      </trans-unit>
+      <trans-unit id="SolutionDirectoryNotExists">
+        <source>Solution directory '{0}' does not exists. Please make sure solution directory specified in runsettings exists and have read permissions for directory.</source>
+        <target state="translated">解決方案目錄 '{0}' 不存在。請確認 runsettings 中指定的解決方案目錄存在，並且具有目錄的讀取權限。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">參數不可為 null 或空白。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_FileNotExist">
+        <source>File {0} does not exist.</source>
+        <target state="translated">檔案 {0} 不存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_ObjectMustBeOfType">
+        <source>Object must be of type {0}.</source>
+        <target state="translated">物件必須為 {0} 類型。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeAborted">
+        <source>Aborted</source>
+        <target state="translated">已中止</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeCompleted">
+        <source>Completed</source>
+        <target state="translated">已完成</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeDisconnected">
+        <source>Disconnected</source>
+        <target state="translated">已中斷連線</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeError">
+        <source>Error</source>
+        <target state="translated">錯誤</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">失敗</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeInconclusive">
+        <source>Inconclusive</source>
+        <target state="translated">結果不明</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeInProgress">
+        <source>In Progress</source>
+        <target state="translated">進行中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeNotExecuted">
+        <source>Not Executed</source>
+        <target state="translated">未執行</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeNotRunnable">
+        <source>Not Runnable</source>
+        <target state="translated">無法執行</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">成功</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePassedButRunAborted">
+        <source>Passed (run aborted)</source>
+        <target state="translated">成功 (執行已中止)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePending">
+        <source>Pending</source>
+        <target state="translated">暫止</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeTimeout">
+        <source>Timeout</source>
+        <target state="translated">逾時</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeWarning">
+        <source>Warning</source>
+        <target state="translated">警告</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_CanNotReadStream">
+        <source>Unable to read from the provided stream.  Data from a stream cannot be sent unless the stream supports reading.</source>
+        <target state="translated">無法讀取提供的資料流。除非資料流支援讀取，否則無法傳送來自資料流的資料。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_InvalidFileNameCharacters">
+        <source>The provided file name '{0}' contains the following invalid characters: '{1}'.</source>
+        <target state="translated">提供的檔案名稱 '{0}' 含有下列無效的字元: '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_ReservedFilenameUsed">
+        <source>The provided file name '{0}' is reserved.</source>
+        <target state="translated">已保留提供的檔案名稱 '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToCreateDiaSession">
+        <source>Failed to Create msdia Session COM HResult '{0}'.</source>
+        <target state="translated">無法建立 msdia 工作階段 COM HResult '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadMsDia">
+        <source>Failed to load msdia</source>
+        <target state="translated">無法載入 msdia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDataCollectorUriInSettings">
+        <source>Invalid URI in data collector settings '{0}'.</source>
+        <target state="translated">資料收集器設定 '{0}' 中的 URI 無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUriInSettings">
+        <source>Invalid URI '{0}' in settings '{1}'.</source>
+        <target state="translated">設定 '{1}' 中的 URI '{0}' 無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingLoggerAttributes">
+        <source>Invalid settings '{0}'. Expected atleast one of the XmlAttribute among friendlyName, uri and assemblyQualifiedName.</source>
+        <target state="translated">設定 '{0}' 無效。在 friendlyName、URI assemblyQualifiedName 之間，至少要有一個 XmlAttribute。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCaseFilterEscapeException">
+        <source>Filter string '{0}' includes unrecognized escape sequence.</source>
+        <target state="translated">篩選字串 '{0}' 包含無法辨識的逸出序列。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

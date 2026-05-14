@@ -1,0 +1,20 @@
+<UserControl x:Class="NuGet.PackageManagement.UI.ProductUpdateBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:resx="clr-namespace:NuGet.PackageManagement.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="800">
+    <Border x:Name="UpdateBar" VerticalAlignment="Center" Visibility="Collapsed" BorderThickness="0,0,0,1">
+        <DockPanel Margin="0,4,0,6" LastChildFill="False">
+            <Button Click="OnDeclineUpdateLinkClick" BorderBrush="#00FFFFFF" Background="#00FFFFFF" Margin="8,0,5,0" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" ToolTip="{x:Static resx:Resources.IgnoreUpgrade}">
+                <Path Stretch="Fill" StrokeThickness="0.5" Stroke="#FF333333" Fill="#FF969696" Data="F1M2.28484E-07,1.33331L1.33333,0 4.00001,2.66669 6.66667,6.10352E-05 8,1.33331 5.33334,4 8,6.66669 6.66667,8 4,5.33331 1.33333,8 1.086E-07,6.66669 2.66667,4 2.28484E-07,1.33331z" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Button>
+            <Button DockPanel.Dock="Right" Content="{x:Static resx:Resources.DoNotShowThisAgain}" Click="OnDeclineUpdateLinkClickNoRemind" Margin="10,0,0,0" Padding="5,2,5,2" />
+
+            <TextBlock x:Name="StatusMessage" Text="{x:Static resx:Resources.AskForUpdateMessage}" DockPanel.Dock="Left" TextOptions.TextFormattingMode="Display" VerticalAlignment="Center" Margin="5,0,5,0" />
+            <Button DockPanel.Dock="Left" Content="{x:Static resx:Resources.ShowDetails}" Click="OnUpdateLinkClick" Margin="5,0,0,0" Padding="8,2,8,2" />
+        </DockPanel>
+    </Border>
+</UserControl>

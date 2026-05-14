@@ -1,0 +1,19 @@
+<Solution>
+    <Folder Name="/Solution Items/">
+        <File Path="../forwardslash.txt" />
+        <File Path="..\backslash.txt" />
+    </Folder>
+    <Project Path="folder/forwardslash.csproj" />
+    <Project Path="folder\backslash.csproj" />
+    <Project Path="folder\folder/mixed.csproj" />
+    <Project Path="referenceForward.csproj">
+        <BuildDependency Project="folder/forwardslash.csproj" />
+        <BuildDependency Project="folder\backslash.csproj" />
+        <BuildDependency Project="folder\folder/mixed.csproj" />
+    </Project>
+    <Project Path="referenceBack.csproj">
+        <BuildDependency Project="folder/forwardslash.csproj" />
+        <BuildDependency Project="folder\backslash.csproj" />
+        <BuildDependency Project="folder\folder/mixed.csproj" />
+    </Project>
+</Solution>

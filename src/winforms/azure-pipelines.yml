@@ -1,0 +1,62 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - release/*
+
+pr: none
+
+variables:
+  - name: _PublishUsingPipelines
+    value: false
+  - name: EnableLoc
+    value: ${{ contains(variables['Build.SourceBranch'], 'main') }}
+  - name: enableSourceIndex
+    value: ${{ contains(variables['Build.SourceBranch'], 'main') }}
+  - template: /eng/common/templates-official/variables/pool-providers.yml@self
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    sdl:
+      createAdoIssuesForJustificationsForDisablement: false
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+    stages:
+    - stage: build
+      displayName: Build
+      jobs:
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishBuildArtifacts: true
+          enablePublishBuildAssets: false
+          enablePublishTestResults: false
+          publishAssetsImmediately: true
+          isAssetlessBuild: true
+          enableTelemetry: true
+
+      - ${{ if eq(variables.enableSourceIndex, 'true') }}:
+        - template: /eng/common/templates-official/job/source-index-stage1.yml@self
+          parameters:
+            sourceIndexBuildCommand: eng\CIBuild.cmd -restore -build -configuration Release /p:Platform=x64 /p:TargetArchitecture=x64 /bl:msbuild.binlog
+            binlogPath: msbuild.binlog
+            pool:
+              name: $(DncEngInternalBuildPool)
+              demands: ImageOverride -equals windows.vs2026preview.scout.amd64
+
+      - ${{ if eq(variables['EnableLoc'], 'true') }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            MirrorRepo: winforms
+            UseCheckedInLocProjectJson: true
+            LclSource: lclFilesfromPackage
+            LclPackageId: 'LCL-JUNO-PROD-WINFORMS'

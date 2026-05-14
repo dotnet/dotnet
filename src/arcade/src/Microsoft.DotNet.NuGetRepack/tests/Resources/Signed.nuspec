@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Signed</id>
+    <version>1.2.3</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Signed</description>
+  </metadata>
+  <files>
+    <file src="EmptyBinary.dll" target="tools" />
+    <!-- Not a valid package signature, but good enough for testing -->
+    <file src=".signature.p7s" target="" />
+  </files>
+</package>

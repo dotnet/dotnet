@@ -1,0 +1,292 @@
+; EditorConfig to support per-solution formatting.
+; Use the EditorConfig VS add-in to make this work.
+; http://editorconfig.org/
+
+; This is the default for the codeline.
+root = true
+
+[*]
+; Don't use tabs for indentation.
+indent_style = space
+; (Please don't specify an indent_size here; that has too many unintended consequences.)
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Spell checker configuration
+spelling_exclusion_path = spelling.dic
+
+; Code files
+[*.{cs}]
+indent_size = 4
+
+; All XML-based file formats
+[*.{config,csproj,nuspec,props,resx,ruleset,targets,vsct,vsixmanifest,xaml,xml,vsmanproj,swixproj}]
+indent_size = 2
+
+; JSON files
+[*.json]
+indent_size = 2
+
+; PowerShell scripts
+[*.{ps1}]
+indent_size = 4
+
+[*.{sh}]
+indent_size = 4
+
+; Dotnet code style settings
+[*.{cs,vb}]
+; Sort using and Import directives with System.* appearing first
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+; IDE0003 Avoid "this." and "Me." if not necessary
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+
+; IDE0012 Use language keywords instead of framework type names for type references
+dotnet_style_predefined_type_for_locals_parameters_members = true:warning
+; IDE0013
+dotnet_style_predefined_type_for_member_access = true:warning
+
+; Suggest more modern language features when available
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_null_propagation = true:suggestion
+
+; Licence header
+file_header_template = Copyright (c) .NET Foundation. All rights reserved.\nLicensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+; CSharp code style settings
+[*.cs]
+; IDE0007 'var' preferences
+csharp_style_var_for_built_in_types = true:none
+csharp_style_var_when_type_is_apparent = true:none
+csharp_style_var_elsewhere = false:none
+
+; Prefer method-like constructs to have a block body
+csharp_style_expression_bodied_methods = false:none
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_operators = false:none
+
+; Prefer property-like constructs to have an expression-body
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_indexers = true:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+
+; Suggest more modern language features when available
+csharp_style_pattern_matching_over_is_with_cast_check = true:none
+csharp_style_pattern_matching_over_as_with_null_check = true:none
+csharp_style_inlined_variable_declaration = true:none
+csharp_style_throw_expression = true:none
+csharp_style_conditional_delegate_call = true:suggestion
+
+; Newline settings
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
+; Naming styles
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+; Naming rule: async methods end in Async
+dotnet_naming_style.async_method_style.capitalization  = pascal_case
+dotnet_naming_style.async_method_style.required_suffix = Async
+dotnet_naming_symbols.async_method_symbols.applicable_kinds = method
+dotnet_naming_symbols.async_method_symbols.required_modifiers = async
+dotnet_naming_rule.async_methods_rule.severity = suggestion
+dotnet_naming_rule.async_methods_rule.symbols = async_method_symbols
+dotnet_naming_rule.async_methods_rule.style = async_method_style
+
+; Naming rule: Interfaces must be pascal-cased prefixed with I
+dotnet_naming_style.interface_style.capitalization = pascal_case
+dotnet_naming_style.interface_style.required_prefix = I
+dotnet_naming_symbols.interface_symbols.applicable_kinds = interface
+dotnet_naming_symbols.interface_symbols.applicable_accessibilities = *
+dotnet_naming_rule.interfaces_rule.severity = warning
+dotnet_naming_rule.interfaces_rule.symbols  = interface_symbols
+dotnet_naming_rule.interfaces_rule.style = interface_style
+
+; Naming rule: All methods and properties must be pascal-cased
+dotnet_naming_symbols.method_and_property_symbols.applicable_kinds = method,property,class,struct,enum:property,namespace
+dotnet_naming_symbols.method_and_property_symbols.applicable_accessibilities = *
+dotnet_naming_rule.methods_and_properties_rule.severity = warning
+dotnet_naming_rule.methods_and_properties_rule.symbols  = method_and_property_symbols
+dotnet_naming_rule.methods_and_properties_rule.style = pascal_case_style
+
+; Naming rule: Static fields must be pascal-cased
+dotnet_naming_symbols.static_member_symbols.applicable_kinds = field
+dotnet_naming_symbols.static_member_symbols.applicable_accessibilities = *
+dotnet_naming_symbols.static_member_symbols.required_modifiers = static
+dotnet_naming_symbols.const_member_symbols.applicable_kinds = field
+dotnet_naming_symbols.const_member_symbols.applicable_accessibilities = *
+dotnet_naming_symbols.const_member_symbols.required_modifiers = const
+dotnet_naming_rule.static_fields_rule.severity = warning
+dotnet_naming_rule.static_fields_rule.symbols  = static_member_symbols
+dotnet_naming_rule.static_fields_rule.style = pascal_case_style
+
+; Naming rule: Private members must be camel-cased and prefixed with underscore
+dotnet_naming_style.private_member_style.capitalization = camel_case
+dotnet_naming_style.private_member_style.required_prefix = _
+dotnet_naming_symbols.private_field_symbols.applicable_kinds = field
+dotnet_naming_symbols.private_field_symbols.applicable_accessibilities = private,protected,internal
+dotnet_naming_rule.private_field_rule.severity = warning
+dotnet_naming_rule.private_field_rule.symbols  = private_field_symbols
+dotnet_naming_rule.private_field_rule.style = private_member_style
+
+; Diagnostics rule: Don't leave unnecessary suppressions
+dotnet_diagnostic.IDE0076.severity = warning
+dotnet_diagnostic.IDE0005.severity = warning
+
+; Diagnostics rule: Don't leave unused private methods
+dotnet_diagnostic.IDE0051.severity = warning
+
+# simplify linq expressions
+dotnet_diagnostic.IDE0120.severity = warning
+
+dotnet_diagnostic.VSTHRD200.severity = none
+
+# NuGet Code Analysis Rules
+# Code files under src/ folder
+[src/**/*.cs]
+dotnet_diagnostic.CA1000.severity = none
+dotnet_diagnostic.CA1001.severity = warning
+dotnet_diagnostic.CA1012.severity = warning
+dotnet_diagnostic.CA1016.severity = none
+dotnet_diagnostic.CA1018.severity = none
+dotnet_diagnostic.CA1028.severity = none
+dotnet_diagnostic.CA1030.severity = none
+dotnet_diagnostic.CA1031.severity = warning
+dotnet_diagnostic.CA1032.severity = none
+dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA1036.severity = none
+dotnet_diagnostic.CA1040.severity = none
+dotnet_diagnostic.CA1041.severity = none
+dotnet_diagnostic.CA1043.severity = none
+dotnet_diagnostic.CA1044.severity = none
+dotnet_diagnostic.CA1055.severity = none
+dotnet_diagnostic.CA1058.severity = none
+dotnet_diagnostic.CA1061.severity = none
+dotnet_code_quality.CA1062.null_check_validation_methods = Assumes
+dotnet_diagnostic.CA1064.severity = none
+dotnet_diagnostic.CA1065.severity = none
+dotnet_diagnostic.CA1066.severity = none
+dotnet_diagnostic.CA1068.severity = none
+dotnet_diagnostic.CA1200.severity = none
+dotnet_diagnostic.CA1303.severity = warning
+dotnet_diagnostic.CA1305.severity = warning
+dotnet_diagnostic.CA1401.severity = none
+dotnet_diagnostic.CA1501.severity = warning
+dotnet_diagnostic.CA1505.severity = warning
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1710.severity = none
+dotnet_diagnostic.CA1712.severity = none
+dotnet_diagnostic.CA1714.severity = none
+dotnet_diagnostic.CA1715.severity = none
+dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1717.severity = none
+dotnet_diagnostic.CA1720.severity = none
+dotnet_diagnostic.CA1721.severity = none
+dotnet_diagnostic.CA1724.severity = none
+dotnet_diagnostic.CA1801.severity = suggestion
+dotnet_diagnostic.CA1810.severity = none
+dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1820.severity = none
+dotnet_diagnostic.CA1821.severity = warning
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1824.severity = none
+dotnet_diagnostic.CA1825.severity = warning
+dotnet_diagnostic.CA1826.severity = none
+dotnet_diagnostic.CA1828.severity = none
+dotnet_diagnostic.CA1829.severity = error
+dotnet_diagnostic.CA2002.severity = none
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2008.severity = none
+dotnet_diagnostic.CA2009.severity = none
+dotnet_diagnostic.CA2010.severity = none
+dotnet_diagnostic.CA2016.severity = warning
+dotnet_diagnostic.CA2100.severity = none
+dotnet_diagnostic.CA2101.severity = none
+dotnet_diagnostic.CA2119.severity = none
+dotnet_diagnostic.CA2207.severity = none
+dotnet_diagnostic.CA2213.severity = warning
+dotnet_diagnostic.CA2214.severity = none
+dotnet_diagnostic.CA2216.severity = none
+dotnet_diagnostic.CA2219.severity = none
+dotnet_diagnostic.CA2226.severity = none
+dotnet_diagnostic.CA2229.severity = none
+dotnet_diagnostic.CA2231.severity = warning
+dotnet_diagnostic.CA2234.severity = none
+dotnet_diagnostic.CA2235.severity = none
+dotnet_diagnostic.CA2241.severity = none
+dotnet_diagnostic.CA2242.severity = none
+dotnet_diagnostic.CA2243.severity = none
+dotnet_diagnostic.CA2244.severity = none
+dotnet_diagnostic.CA2245.severity = none
+dotnet_diagnostic.CA2246.severity = none
+dotnet_diagnostic.CA2301.severity = warning
+dotnet_diagnostic.CA2302.severity = warning
+dotnet_diagnostic.CA2305.severity = warning
+dotnet_diagnostic.CA2311.severity = warning
+dotnet_diagnostic.CA2312.severity = warning
+dotnet_diagnostic.CA2315.severity = warning
+dotnet_diagnostic.CA2321.severity = warning
+dotnet_diagnostic.CA2322.severity = warning
+dotnet_diagnostic.CA3001.severity = warning
+dotnet_diagnostic.CA3061.severity = warning
+dotnet_diagnostic.CA3076.severity = warning
+dotnet_diagnostic.CA3077.severity = warning
+dotnet_diagnostic.CA3147.severity = warning
+dotnet_diagnostic.CA5351.severity = warning
+dotnet_diagnostic.CA5358.severity = warning
+dotnet_diagnostic.CA5359.severity = warning
+dotnet_diagnostic.CA5360.severity = none
+dotnet_diagnostic.CA5363.severity = none
+dotnet_diagnostic.CA5365.severity = none
+dotnet_diagnostic.CA5366.severity = none
+dotnet_diagnostic.CA5368.severity = none
+dotnet_diagnostic.CA5369.severity = none
+dotnet_diagnostic.CA5370.severity = none
+dotnet_diagnostic.CA5371.severity = none
+dotnet_diagnostic.CA5372.severity = none
+dotnet_diagnostic.CA5373.severity = none
+dotnet_diagnostic.CA5374.severity = none
+dotnet_diagnostic.CA5376.severity = none
+dotnet_diagnostic.CA5377.severity = none
+dotnet_diagnostic.CA5379.severity = none
+dotnet_diagnostic.CA5380.severity = none
+dotnet_diagnostic.CA5381.severity = none
+dotnet_diagnostic.CA5384.severity = none
+dotnet_diagnostic.CA5385.severity = none
+dotnet_diagnostic.CA5386.severity = warning
+dotnet_diagnostic.CA5397.severity = none
+dotnet_diagnostic.CA9999.severity = none
+dotnet_diagnostic.VSTHRD103.severity = silent
+dotnet_diagnostic.VSTHRD105.severity = silent
+dotnet_diagnostic.IDE0055.severity = warning
+
+# Code files under test/ folder
+[test/**/*.cs]
+dotnet_diagnostic.VSTHRD001.severity = none
+dotnet_diagnostic.VSTHRD002.severity = none
+dotnet_diagnostic.VSTHRD003.severity = none
+dotnet_diagnostic.VSTHRD010.severity = none
+dotnet_diagnostic.VSTHRD011.severity = none
+dotnet_diagnostic.VSTHRD012.severity = none
+dotnet_diagnostic.VSTHRD100.severity = none
+dotnet_diagnostic.VSTHRD101.severity = none
+dotnet_diagnostic.VSTHRD102.severity = none
+dotnet_diagnostic.VSTHRD103.severity = none
+dotnet_diagnostic.VSTHRD104.severity = none
+dotnet_diagnostic.VSTHRD105.severity = none
+dotnet_diagnostic.VSTHRD106.severity = none
+dotnet_diagnostic.IDE0055.severity = warning

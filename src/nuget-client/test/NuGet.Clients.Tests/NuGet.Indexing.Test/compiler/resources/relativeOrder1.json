@@ -1,0 +1,26 @@
+[
+  {
+    "@id": "https://api.nuget.org/v3/registration0/packageA/1.1.json",
+    "@type": "Package",
+    "id": "PackageA",
+    "totalDownloads": 3,
+    "version": "2.10.1",
+    "versions": [ ]
+  },
+  {
+    "@id": "https://api.nuget.org/v3/registration0/packageB/2.10.0.json",
+    "@type": "Package",
+    "id": "PackageB",
+    "totalDownloads": 2,
+    "version": "2.10.0",
+    "versions": [ ]
+  },
+  {
+    "@id": "https://api.nuget.org/v3/registration0/PackageC/1.0.136.json",
+    "@type": "Package",
+    "id": "PackageC",
+    "totalDownloads": 1,
+    "version": "1.0.136",
+    "versions": [ ]
+  }
+]

@@ -1,0 +1,10 @@
+<Solution>
+    <Properties Name="TestProperties">
+        <Property Name="Prop1" Value="Value1" />
+        <Property Name="Prop2" Value="Value2" />
+        <Property Name="Prop3" Value="Value3" />
+        <Property Name="Prop4" Value="Value4" />
+        <Property Name="Prop5" Value="Value5" />
+        <Property Name="Prop6" Value="Value6" />
+    </Properties>
+</Solution>

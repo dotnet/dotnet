@@ -1,0 +1,176 @@
+{
+  "format": 1,
+  "restore": {
+    "atool-netcoreapp2.0-[1.0.0, )": {},
+    "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj": {},
+    "f:\\validation\\test\\dg\\Project.Core\\Project\\Project.csproj": {}
+  },
+  "projects": {
+    "atool-netcoreapp2.0-[1.0.0, )": {
+      "restore": {
+        "projectUniqueName": "atool-netcoreapp2.0-[1.0.0, )",
+        "projectName": "DotnetCliToolReference-ATool",
+        "projectPath": "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj",
+        "packagesPath": "C:\\Users\\anmishr\\.nuget\\packages\\",
+        "projectStyle": "DotnetCliTool",
+        "fallbackFolders": [
+          "C:\\Users\\anmishr\\.dotnet\\NuGetFallbackFolder",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\anmishr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\anmishr\\.dotnet\\NuGetFallbackFolder": {},
+          "C:\\Users\\anmishr\\Source\\Repos\\ATool\\ATool\\bin\\Debug": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dotnet.myget.org/F/dotnet-core/api/v3/index.json": {},
+          "https://dotnet.myget.org/F/nuget-build/api/v3/index.json": {},
+          "https://dotnet.myget.org/F/roslyn/api/v3/index.json": {},
+          "https://www.myget.org/F/aspnet-contrib/api/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.0": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.0": {
+          "dependencies": {
+            "ATool": {
+              "target": "Package",
+              "version": "1.0.0"
+            }
+          }
+        }
+      }
+    },
+    "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj",
+        "projectName": "Project.Core",
+        "projectPath": "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj",
+        "packagesPath": "C:\\Users\\anmishr\\.nuget\\packages\\",
+        "outputPath": "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Users\\anmishr\\.dotnet\\NuGetFallbackFolder",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\anmishr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\anmishr\\.dotnet\\NuGetFallbackFolder": {},
+          "C:\\Users\\anmishr\\Source\\Repos\\ATool\\ATool\\bin\\Debug": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dotnet.myget.org/F/dotnet-core/api/v3/index.json": {},
+          "https://dotnet.myget.org/F/nuget-build/api/v3/index.json": {},
+          "https://dotnet.myget.org/F/roslyn/api/v3/index.json": {},
+          "https://www.myget.org/F/aspnet-contrib/api/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.0": {
+          "dependencies": {
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "2.0.0",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "f:\\validation\\test\\dg\\Project.Core\\Project\\Project.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "f:\\validation\\test\\dg\\Project.Core\\Project\\Project.csproj",
+        "projectName": "Project",
+        "projectPath": "f:\\validation\\test\\dg\\Project.Core\\Project\\Project.csproj",
+        "packagesPath": "C:\\Users\\anmishr\\.nuget\\packages\\",
+        "outputPath": "f:\\validation\\test\\dg\\Project.Core\\Project\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Users\\anmishr\\.dotnet\\NuGetFallbackFolder",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\anmishr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\anmishr\\.dotnet\\NuGetFallbackFolder": {},
+          "C:\\Users\\anmishr\\Source\\Repos\\ATool\\ATool\\bin\\Debug": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dotnet.myget.org/F/dotnet-core/api/v3/index.json": {},
+          "https://dotnet.myget.org/F/nuget-build/api/v3/index.json": {},
+          "https://dotnet.myget.org/F/roslyn/api/v3/index.json": {},
+          "https://www.myget.org/F/aspnet-contrib/api/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.0": {
+            "projectReferences": {
+              "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj": {
+                "projectPath": "f:\\validation\\test\\dg\\Project.Core\\Project.Core\\Project.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.0": {
+          "dependencies": {
+            "Microsoft.NETCore.App": {
+              "target": "Package",
+              "version": "2.0.0",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}

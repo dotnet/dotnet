@@ -1,0 +1,82 @@
+#nullable enable
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.ExecutionIdPropertyIdentifier = "ExecutionId" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.ExtensionUri = "logger://Microsoft/TestPlatform/HtmlLogger/v1" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.FriendlyName = "Html" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.HtmlFileExtension = "html" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.LogFileNameKey = "LogFileName" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.LogFilePrefixKey = "LogFilePrefix" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.ParentExecutionIdPropertyIdentifier = "ParentExecId" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.TestTypePropertyIdentifier = "TestType" -> string!
+const Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.XmlFileExtension = "xml" -> string!
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.FailedTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.HtmlFilePath.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.HtmlLogger() -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.HtmlLogger(Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper! fileHelper, Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.IHtmlTransformer! htmlTransformer, System.Runtime.Serialization.XmlObjectSerializer! dataContractSerializer) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents! events, string! testResultsDirPath) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents! events, System.Collections.Generic.Dictionary<string!, string?>! parameters) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.PassedTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.ResultCollectionDictionary.get -> System.Collections.Concurrent.ConcurrentDictionary<string!, Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.Results.get -> System.Collections.Concurrent.ConcurrentDictionary<System.Guid, Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.SkippedTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.TestMessageHandler(object? sender, Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestRunMessageEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.TestResultHandler(object? sender, Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestResultEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.TestResultsDirPath.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.TestRunCompleteHandler(object? sender, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestRunCompleteEventArgs! e) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.TestRunDetails.get -> Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.TotalTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger.XmlFilePath.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.IHtmlTransformer
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.IHtmlTransformer.Transform(string! xmlFile, string! htmlFile) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.DisplayName.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.DisplayName.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.Duration.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.Duration.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.ErrorMessage.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.ErrorMessage.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.ErrorStackTrace.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.ErrorStackTrace.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.FullyQualifiedName.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.FullyQualifiedName.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.InnerTestResults.get -> System.Collections.Generic.List<Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.InnerTestResults.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.ResultOutcome.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.ResultOutcome.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.TestResult() -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.TestResultId.get -> System.Guid
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult.TestResultId.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.FailedResultList.get -> System.Collections.Generic.List<Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.FailedResultList.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.Id.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.ResultList.get -> System.Collections.Generic.List<Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResult!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.ResultList.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.Source.get -> string!
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection.TestResultCollection(string! source) -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails.ResultCollectionList -> System.Collections.Generic.List<Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestResultCollection!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails.RunLevelMessageErrorAndWarning -> System.Collections.Generic.List<string!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails.RunLevelMessageInformational -> System.Collections.Generic.List<string!>?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails.Summary.get -> Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails.Summary.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunDetails.TestRunDetails() -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.FailedTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.FailedTests.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.PassedTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.PassedTests.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.PassPercentage.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.PassPercentage.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.SkippedTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.SkippedTests.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.TestRunSummary() -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.TotalRunTime.get -> string?
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.TotalRunTime.set -> void
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.TotalTests.get -> int
+Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel.TestRunSummary.TotalTests.set -> void
+static readonly Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.ExecutionIdProperty -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty!
+static readonly Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.OrderedTestTypeGuid -> System.Guid
+static readonly Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.ParentExecIdProperty -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty!
+static readonly Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants.TestTypeProperty -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty!

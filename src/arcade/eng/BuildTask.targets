@@ -1,0 +1,49 @@
+<Project>
+
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IsPackable>true</IsPackable>
+    <!-- Build Tasks should not include any dependencies -->
+    <SuppressDependenciesWhenPacking Condition="'$(SuppressDependenciesWhenPacking)' == ''">true</SuppressDependenciesWhenPacking>
+    <!-- Build Tasks should have this set per https://github.com/dotnet/arcade/blob/main/Documentation/CorePackages/Versioning.md#recommended-settings -->
+    <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+    <BuildTaskTargetFolder Condition="'$(BuildTaskTargetFolder)' == ''">tools</BuildTaskTargetFolder>
+    <BuildTaskTargetTfmSpecificFolder Condition="'$(BuildTaskTargetTfmSpecificFolder)' == ''">net</BuildTaskTargetTfmSpecificFolder>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddBuildOutputToPackage</TargetsForTfmSpecificContentInPackage>
+    <!-- Invoke publish before pack as packaging depends on published outputs. -->
+    <BeforePack Condition="'$(_SuppressAllTargets)' != 'true'">$(BeforePack);Publish</BeforePack>
+  </PropertyGroup>
+
+  <!--
+    Default to including all *.props and *.targets files
+    from the project directory into the NuGet package root
+  -->
+  <ItemGroup Condition="'$(EnableDefaultItems)' != 'false'">
+    <None Condition="'$(EnableDefaultNoneItems)' != 'false'"
+          Include="**/*.props;**/*.targets"
+          Pack="true"
+          PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true"/>
+    <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true"/>
+  </ItemGroup>
+
+  <!-- Don't redistribute MSBuild assemblies. -->
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Build" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build.Framework" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build.Tasks.Core" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build.Utilities.Core" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+  </ItemGroup>
+
+  <!-- Publish assets and include them in the package under $(BuildTaskTargetFolder) directory. -->
+  <Target Name="_AddBuildOutputToPackage">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(PublishDir)**"
+                              PackagePath="$(BuildTaskTargetFolder)/$(BuildTaskTargetTfmSpecificFolder)/%(RecursiveDir)%(FileName)%(Extension)"/>
+    </ItemGroup>
+  </Target>
+
+</Project>

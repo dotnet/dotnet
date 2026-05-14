@@ -1,0 +1,48 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Acquire WiX tools, if not present.
+
+    Adapted from https://github.com/dotnet/core-sdk/blob/6aed0cd3614f9b740cfb3f21fdb795bab53ef7e9/src/redist/targets/GenerateMSIs.targets#L80-L102
+  -->
+  <PropertyGroup>
+    <_WixIntermediateOutputPath>$(BaseIntermediateOutputPath)wix</_WixIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <WixVersion>3.14.1-11027.2914512</WixVersion>
+    <WixToolsDir>$(BaseIntermediateOutputPath)WixTools.$(WixVersion)/</WixToolsDir>
+
+    <WixDownloadFilename>Microsoft.Signed.Wix-$(WixVersion).zip</WixDownloadFilename>
+    <WixDownloadUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/wix/$(WixDownloadFilename)</WixDownloadUrl>
+    <WixDestinationPath>$(WixToolsDir)$(WixDownloadFilename)</WixDestinationPath>
+    <WixDownloadSentinel>$(WixToolsDir)$(WixDownloadFilename).sentinel</WixDownloadSentinel>
+  </PropertyGroup>
+
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" Runtime="NET" Architecture="*" />
+  <Target Name="AcquireWixCore"
+          Inputs="$(WixDownloadSentinel)"
+          Outputs="$(WixDestinationPath)"
+          Returns="$(WixToolsDir)">
+    <!-- Setup sentinel to take advantage of incrementality -->
+    <MakeDir Directories="$(WixToolsDir)" />
+    <WriteLinesToFile
+      File="$(WixDownloadSentinel)"
+      Lines="$(WixVersion)"
+      Overwrite="true"
+      Encoding="Unicode" />
+
+    <Microsoft.DotNet.Arcade.Sdk.DownloadFile
+      Uri="$(WixDownloadUrl)"
+      DestinationPath="$(WixDestinationPath)"
+      Overwrite="true"
+      TimeoutInSeconds="9999" />
+
+    <Unzip
+      SourceFiles="$(WixDestinationPath)"
+      DestinationFolder="$(WixToolsDir)" />
+  </Target>
+
+</Project>

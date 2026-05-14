@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="es">
+    <body>
+      <trans-unit id="IgnoringLegacySettings">
+        <source>Any LegacySettings node already present in the runsettings will be removed.</source>
+        <target state="translated">Se quitará cualquier nodo de LegacySettings que ya exista en el archivo RunSettings.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoEmbeddedSettings">
+        <source>RunSettings does not contain an embedded testSettings, not migrating.</source>
+        <target state="translated">RunSettings no contiene ningún valor de testSettings incrustado, por lo que no se migrará.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsCreated">
+        <source>The migrated RunSettings file has been created at: {0}</source>
+        <target state="translated">El archivo RunSettings migrado se ha creado a las {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedAttributes">
+        <source>The attributes agentNotRespondingTimeout, deploymentTimeout, scriptTimeout of Timeouts node are not supported, so these will not be migrated.</source>
+        <target state="translated">Los atributos agentNotRespondingTimeout, deploymentTimeout, scriptTimeout del nodo Timeouts no se admiten, por lo que no se migrarán.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ValidUsage">
+        <source>Valid usage:
+SettingsMigrator.exe &lt;Full path to testsettings file or runsettings file to be migrated&gt;
+SettingsMigrator.exe &lt;Full path to testsettings file or runsettings file to be migrated&gt; &lt;Full path to runsettings file to be created&gt;
+Examples:
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings</source>
+        <target state="translated">Uso válido:
+SettingsMigrator.exe &lt;Ruta completa al archivo testsettings o runsettings que se va a migrar&gt;
+SettingsMigrator.exe &lt;Ruta completa al archivo testsettings o runsettings que se va a migrar&gt; &lt;Ruta completa al archivo runsettings que se va a crear&gt;
+Ejemplos:
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyTestSettings.testsettings E:\MyTest\MyNewRunSettings.runsettings
+SettingsMigrator.exe  E:\MyTest\MyOldRunSettings.runsettings E:\MyTest\MyNewRunSettings.runsettings</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

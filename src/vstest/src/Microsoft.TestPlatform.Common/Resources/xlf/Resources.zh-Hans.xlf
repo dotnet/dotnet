@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="DataCollectionMessageFormat">
+        <source>Data collection : {0}</source>
+        <target state="translated">数据收集: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorMessageFormat">
+        <source>Data collector '{0}' message: {1}.</source>
+        <target state="translated">数据收集器“{0}”消息: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateExtensionUri">
+        <source>Duplicate test extension URI '{0}'.  Ignoring the duplicate extension.</source>
+        <target state="translated">测试扩展 URI“{0}”重复。忽略重复的扩展。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateSettingsName">
+        <source>Duplicate settings provider named '{0}'.  Ignoring the duplicate provider.</source>
+        <target state="translated">名为“{0}”的设置提供程序重复。忽略重复的提供程序。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateSettingsProvided">
+        <source>Duplicate run settings section named '{0}' found.  Ignoring the duplicate settings.</source>
+        <target state="translated">名为“{0}”的运行设置部分重复。请忽略重复的设置。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EmptyParenthesis">
+        <source>Error: Empty parenthesis ( )</source>
+        <target state="translated">错误: 空括号 ( )</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCondition">
+        <source>Error: Invalid Condition '{0}'</source>
+        <target state="translated">错误: 无效条件“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidExtensionUriFormat">
+        <source>Test Extension has an invalid URI '{0}': {1}</source>
+        <target state="translated">测试扩展具有无效的 URI“{0}”: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidOperator">
+        <source>Error: Invalid operator '{0}'</source>
+        <target state="translated">错误: 运算符“{0}”无效</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerInitializationError">
+        <source>Exception occurred while initializing logger with {0}: '{1}'.  The logger will not be used.  Exception: {2}</source>
+        <target state="translated">初始化带有 {0} 的记录器时发生异常: "{1}"。将不会使用该记录器。异常: {2}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerNotFound">
+        <source>Could not find a test logger with AssemblyQualifiedName, URI or FriendlyName '{0}'.</source>
+        <target state="translated">找不到 AssemblyQualifiedName、URI 或 FriendlyName 为 "{0}" 的测试记录器。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingCloseParenthesis">
+        <source>Error: Missing ')'</source>
+        <target state="translated">错误: 缺少 ")"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOpenParenthesis">
+        <source>Error: Missing '('</source>
+        <target state="translated">错误: 缺少 "("</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOperand">
+        <source>Error: Missing operand</source>
+        <target state="translated">错误: 缺少操作数</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingOperator">
+        <source>Missing Operator '|' or '&amp;'</source>
+        <target state="translated">缺少运算符 '|' 或 '&amp;'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsAlreadyLoaded">
+        <source>The Run Settings have already been loaded.</source>
+        <target state="translated">已加载运行设置。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RunSettingsParseError">
+        <source>An error occurred while loading the run settings.  Error: {0}</source>
+        <target state="translated">加载运行设置时出错。错误: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsNodeInvalidName">
+        <source>Invalid settings node specified. The name property of the settings node must be non-empty.</source>
+        <target state="translated">指定了无效的设置节点。设置节点的名称属性必须为非空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsProviderInitializationError">
+        <source>An error occurred while initializing the settings provider named '{0}'. Error: {1}</source>
+        <target state="translated">初始化名为“{0}”的设置提供程序时出错。错误: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsProviderNotFound">
+        <source>Settings Provider named '{0}' was not found.  The settings can not be loaded.</source>
+        <target state="translated">找不到名为“{0}”的设置提供程序。无法加载设置。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCaseFilterFormatException">
+        <source>Incorrect format for TestCaseFilter {0}. Specify the correct format and try again. Note that the incorrect format can lead to no test getting executed.</source>
+        <target state="translated">TestCaseFilter {0} 的格式不正确。请指定正确的格式并重试。请注意，格式不正确会导致不执行任何测试。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorErrorOnGetVariable">
+        <source>Data collector '{0}' failed to provide initialization information. Error: {1}</source>
+        <target state="translated">数据收集器“{0}”未能提供初始化信息。错误: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorInitializationError">
+        <source>Data collector '{0}' threw an exception during type loading, construction, or initialization: {1}.</source>
+        <target state="translated">在类型加载、构造或初始化期间，数据收集器“{0}”引发了异常: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorNotFound">
+        <source>Could not find data collector '{0}'</source>
+        <target state="translated">找不到数据收集器“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
+        <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
+        <target state="translated">数据收集器“{0}”已请求具有将在测试执行环境中设置的值“{2}”的环境变量“{1}”，但另一个数据收集器“{3}”已请求具有其他值“{4}”的同一环境变量。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IgnoredDuplicateConfiguration">
+        <source>There are multiple configurations that have data collector FriendlyName as '{0}'. Duplicate configurations will be ignored in the test run.</source>
+        <target state="translated">有多个配置的数据收集器 FriendlyName 为“{0}”。测试运行中将忽略重复的配置。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReportDataCollectorException">
+        <source>Data collector caught an exception of type '{0}': '{1}'. More details: {2}.</source>
+        <target state="translated">数据收集器已捕获类型为“{0}”的异常:“{1}”。更多详细信息: {2}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WrongDataCollectionContextType">
+        <source>Types deriving from the data collection context cannot be used for sending data and messages.  The DataCollectionContext used for sending data and messages must come from one of the events raised to the data collector.</source>
+        <target state="translated">从数据收集上下文派生的类型不能用于发送数据和消息。 用于发送数据和消息的 DataCollectionContext 必须来自向数据收集器引发的某个事件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoggerUriInvalid">
+        <source>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</source>
+        <target state="translated">测试记录器 URI“{0}”无效。将忽略该测试记录器。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToFindInstalledUnitTestExtensions">
+        <source>Failed to find the list of installed unit test extensions. Reason: {0}</source>
+        <target state="translated">找不到已安装的单元测试扩展列表。原因: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VSInstallationNotFound">
+        <source>This option works only with vstest.console.exe installed as part of Visual Studio.</source>
+        <target state="translated">此选项仅适用于作为 Visual Studio 一部分安装的 vstest.console.exe。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FastFilterException">
+        <source>An error occurred while creating Fast filter.</source>
+        <target state="translated">创建“快”筛选器时遇到错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CancellationRequested">
+        <source>Cancelling the operation as requested.</source>
+        <target state="translated">按要求取消该操作。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFetchUriString">
+        <source>Unable to find a datacollector with friendly name '{0}'.</source>
+        <target state="translated">找不到友好名称为“{0}”的 datacollector。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadAdapaterFile">
+        <source>Failed to load extensions from file '{0}'. Please use /diag for more information.</source>
+        <target state="translated">未能从文件 "{0}" 加载扩展。有关详细信息，请使用 /diag。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges. For more information, please look at the error message:</source>
+        <target state="translated">{0} 尝试在所述位置创建 "TestResults" 文件夹时，访问被拒。你收到此异常是因为你正在从需要具有写入权限的文件夹运行 vstest.console.exe。若要解决此问题，请从你具有写入权限的文件夹运行 vstest.console.exe。有关详细信息，请查看错误消息:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InnerException">
+        <source>Inner exception:</source>
+        <target state="translated">内部异常:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StackTrace">
+        <source>Stack trace:</source>
+        <target state="translated">堆栈跟踪:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SerialTestRunInvalidScenario">
+        <source>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</source>
+        <target state="translated">源测试运行不支持 &lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt;。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

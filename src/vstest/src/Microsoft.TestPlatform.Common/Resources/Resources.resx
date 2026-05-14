@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges. For more information, please look at the error message:</value>
+  </data>
+  <data name="CancellationRequested" xml:space="preserve">
+    <value>Cancelling the operation as requested.</value>
+  </data>
+  <data name="DataCollectionMessageFormat" xml:space="preserve">
+    <value>Data collection : {0}</value>
+  </data>
+  <data name="DataCollectorErrorOnGetVariable" xml:space="preserve">
+    <value>Data collector '{0}' failed to provide initialization information. Error: {1}</value>
+  </data>
+  <data name="DataCollectorInitializationError" xml:space="preserve">
+    <value>Data collector '{0}' threw an exception during type loading, construction, or initialization: {1}.</value>
+  </data>
+  <data name="DataCollectorMessageFormat" xml:space="preserve">
+    <value>Data collector '{0}' message: {1}.</value>
+  </data>
+  <data name="DataCollectorNotFound" xml:space="preserve">
+    <value>Could not find data collector '{0}'</value>
+  </data>
+  <data name="DataCollectorRequestedDuplicateEnvironmentVariable" xml:space="preserve">
+    <value>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</value>
+  </data>
+  <data name="DuplicateExtensionUri" xml:space="preserve">
+    <value>Duplicate test extension URI '{0}'.  Ignoring the duplicate extension.</value>
+  </data>
+  <data name="DuplicateSettingsName" xml:space="preserve">
+    <value>Duplicate settings provider named '{0}'.  Ignoring the duplicate provider.</value>
+  </data>
+  <data name="DuplicateSettingsProvided" xml:space="preserve">
+    <value>Duplicate run settings section named '{0}' found.  Ignoring the duplicate settings.</value>
+  </data>
+  <data name="EmptyParenthesis" xml:space="preserve">
+    <value>Error: Empty parenthesis ( )</value>
+  </data>
+  <data name="FailedToFindInstalledUnitTestExtensions" xml:space="preserve">
+    <value>Failed to find the list of installed unit test extensions. Reason: {0}</value>
+  </data>
+  <data name="FailedToLoadAdapaterFile" xml:space="preserve">
+    <value>Failed to load extensions from file '{0}'. Please use /diag for more information.</value>
+  </data>
+  <data name="FastFilterException" xml:space="preserve">
+    <value>An error occurred while creating Fast filter.</value>
+  </data>
+  <data name="IgnoredDuplicateConfiguration" xml:space="preserve">
+    <value>There are multiple configurations that have data collector FriendlyName as '{0}'. Duplicate configurations will be ignored in the test run.</value>
+  </data>
+  <data name="InnerException" xml:space="preserve">
+    <value>Inner exception:</value>
+  </data>
+  <data name="InvalidCondition" xml:space="preserve">
+    <value>Error: Invalid Condition '{0}'</value>
+  </data>
+  <data name="InvalidExtensionUriFormat" xml:space="preserve">
+    <value>Test Extension has an invalid URI '{0}': {1}</value>
+  </data>
+  <data name="InvalidOperator" xml:space="preserve">
+    <value>Error: Invalid operator '{0}'</value>
+  </data>
+  <data name="LoggerInitializationError" xml:space="preserve">
+    <value>Exception occurred while initializing logger with {0}: '{1}'.  The logger will not be used.  Exception: {2}</value>
+  </data>
+  <data name="LoggerNotFound" xml:space="preserve">
+    <value>Could not find a test logger with AssemblyQualifiedName, URI or FriendlyName '{0}'.</value>
+  </data>
+  <data name="LoggerUriInvalid" xml:space="preserve">
+    <value>The Test Logger URI '{0}' is not valid.  The Test Logger will be ignored.</value>
+  </data>
+  <data name="MissingCloseParenthesis" xml:space="preserve">
+    <value>Error: Missing ')'</value>
+  </data>
+  <data name="MissingOpenParenthesis" xml:space="preserve">
+    <value>Error: Missing '('</value>
+  </data>
+  <data name="MissingOperand" xml:space="preserve">
+    <value>Error: Missing operand</value>
+  </data>
+  <data name="MissingOperator" xml:space="preserve">
+    <value>Missing Operator '|' or '&amp;'</value>
+  </data>
+  <data name="ReportDataCollectorException" xml:space="preserve">
+    <value>Data collector caught an exception of type '{0}': '{1}'. More details: {2}.</value>
+  </data>
+  <data name="RunSettingsAlreadyLoaded" xml:space="preserve">
+    <value>The Run Settings have already been loaded.</value>
+  </data>
+  <data name="RunSettingsParseError" xml:space="preserve">
+    <value>An error occurred while loading the run settings.  Error: {0}</value>
+  </data>
+  <data name="SerialTestRunInvalidScenario" xml:space="preserve">
+    <value>&lt;ForceOneTestAtTimePerTestHost&gt;true&lt;/ForceOneTestAtTimePerTestHost&gt; is not supported for sources test run.</value>
+  </data>
+  <data name="SettingsNodeInvalidName" xml:space="preserve">
+    <value>Invalid settings node specified. The name property of the settings node must be non-empty.</value>
+  </data>
+  <data name="SettingsProviderInitializationError" xml:space="preserve">
+    <value>An error occurred while initializing the settings provider named '{0}'. Error: {1}</value>
+  </data>
+  <data name="SettingsProviderNotFound" xml:space="preserve">
+    <value>Settings Provider named '{0}' was not found.  The settings can not be loaded.</value>
+  </data>
+  <data name="StackTrace" xml:space="preserve">
+    <value>Stack trace:</value>
+  </data>
+  <data name="TestCaseFilterFormatException" xml:space="preserve">
+    <value>Incorrect format for TestCaseFilter {0}. Specify the correct format and try again. Note that the incorrect format can lead to no test getting executed.</value>
+  </data>
+  <data name="UnableToFetchUriString" xml:space="preserve">
+    <value>Unable to find a datacollector with friendly name '{0}'.</value>
+  </data>
+  <data name="VSInstallationNotFound" xml:space="preserve">
+    <value>This option works only with vstest.console.exe installed as part of Visual Studio.</value>
+  </data>
+  <data name="WrongDataCollectionContextType" xml:space="preserve">
+    <value>Types deriving from the data collection context cannot be used for sending data and messages.  The DataCollectionContext used for sending data and messages must come from one of the events raised to the data collector.</value>
+  </data>
+</root>

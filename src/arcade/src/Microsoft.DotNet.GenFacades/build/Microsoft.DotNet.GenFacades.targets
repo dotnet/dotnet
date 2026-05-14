@@ -1,0 +1,31 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <GenFacadesTargetAssemblyPath>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.GenFacades.dll</GenFacadesTargetAssemblyPath>
+  </PropertyGroup>
+
+  <Target Name="GetGenFacadesRoslynAssembliesPath">
+    <PropertyGroup Condition="'$(GenFacadesRoslynAssembliesPath)' == ''">
+      <!-- If a custom roslyn assemblies path isn't provided, the opt-in switch 'GenFacadesUseRoslynToolsetPackagePath' is set to true and
+           the roslyn toolset package is referenced, use the assemblies from that package. -->
+      <_UseRoslynToolsetPackageForGenFacades Condition="'$(GenFacadesUseRoslynToolsetPackagePath)' == 'true' and '@(PackageReference->AnyHaveMetadataValue('Identity', 'Microsoft.Net.Compilers.Toolset'))' == 'true'">true</_UseRoslynToolsetPackageForGenFacades>
+
+      <!-- CSharpCoreTargetsPath and VisualBasicCoreTargetsPath point to the same location, Microsoft.CodeAnalysis.CSharp and Microsoft.CodeAnalysis.VisualBasic
+           are on the same directory as Microsoft.CodeAnalysis. So there is no need to distinguish between csproj or vbproj. -->
+      <GenFacadesRoslynAssembliesPath Condition="'$(_UseRoslynToolsetPackageForGenFacades)' == 'true'">$([System.IO.Path]::GetDirectoryName('$(CSharpCoreTargetsPath)'))</GenFacadesRoslynAssembliesPath>
+      
+      <!-- Otherwise, default to the roslyn compiler provided by the SDK / Visual Studio. -->
+      <GenFacadesRoslynAssembliesPath Condition="'$(_UseRoslynToolsetPackageForGenFacades)' != 'true'">$(RoslynTargetsPath)</GenFacadesRoslynAssembliesPath>
+
+      <!-- The SDK stores the roslyn assemblies in the 'bincore' subdirectory. -->
+      <GenFacadesRoslynAssembliesPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$([System.IO.Path]::Combine('$(RoslynAssembliesPath)', 'bincore'))</GenFacadesRoslynAssembliesPath>
+    </PropertyGroup>
+  </Target>
+
+  <Import Project="Microsoft.DotNet.GenFacades.ClearVersion.targets" Condition="'$(GenFacadesForceZeroVersionSeeds)' == 'true'" />
+  <Import Project="Microsoft.DotNet.GenFacades.NotSupported.targets" Condition="'$(GeneratePlatformNotSupportedAssembly)' == 'true' or
+                                                                                '$(GeneratePlatformNotSupportedAssemblyMessage)' != ''" />
+  <Import Project="Microsoft.DotNet.GenFacades.PartialFacadeSource.targets" Condition="'$(IsPartialFacadeAssembly)' == 'true'" />
+
+</Project>

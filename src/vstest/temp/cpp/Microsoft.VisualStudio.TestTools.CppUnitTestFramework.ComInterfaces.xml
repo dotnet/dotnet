@@ -1,0 +1,336 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.Guids">
+            <summary>
+            Definition for the required guids.
+            </summary>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCaseEnumerator">
+            <summary>
+            Com interface for test case enumeration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCaseEnumerator.GetNext">
+            <summary>
+            Return the test case one by one. 
+            null will be returned when there is no more test case.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase">
+            <summary>
+            Com interface for test case.
+            </summary>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase.GetFilePath">
+            <summary>
+            Return the file path of the test binary.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase.GetName">
+            <summary>
+            Return the name of the test case.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase.GetSourceFile">
+            <summary>
+            Return the source file path containing this testcase
+            </summary>
+            <returns>source file path</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase.GetLineNumber">
+            <summary>
+            Return line number of this testcase
+            </summary>
+            <returns>line number</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase.GetAttributes(System.String[]@,System.String[]@)">
+            <summary>
+            Return the attributes of the test case.
+            Be noted that the entries in the names and values should be paired.
+            </summary>
+            <param name="names">the array of attribute names</param>
+            <param name="values">the array of attribute values</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase.GetAttribute(System.String)">
+            <summary>
+            Return the attribute value based on the attibute name.
+            </summary>
+            <param name="attributeName">the name of the attribute</param>
+            <returns>the value of the attribute</returns>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome">
+            <summary>
+            The test out come.
+            None is defined to be consistent with the test platform.
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome.Passed">
+            <summary>
+            Test Passed 
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome.Failed">
+            <summary>
+            Test Failed
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome.None">
+            <summary>
+            Stauts not clear
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome.Skipped">
+            <summary>
+            Test Not run
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome.NotFound">
+            <summary>
+            Test Not found
+            </summary>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult">
+            <summary>
+            Com interface for test result.
+            </summary>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.AddInfoMessage(System.String)">
+            <summary>
+            Adds a message to a list of additional information messages.
+            </summary>
+            <param name="additionalInfoMessage"></param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetMachineName(System.String)">
+            <summary>
+            Set the computer name where the test case runs.
+            </summary>
+            <param name="machineName">the name of the computer</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetStartTime(System.Int64)">
+            <summary>
+            Set the start time of the test case execution.
+            </summary>
+            <param name="ticks">the ticks</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetEndTime(System.Int64)">
+            <summary>
+            Set the end time of the test case execution.
+            </summary>
+            <param name="ticks">the ticks</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetErrorFilePath(System.String)">
+            <summary>
+            Set the file path where the error happenes.
+            </summary>
+            <param name="filePath">the file path</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetErrorLineNumber(System.Int32)">
+            <summary>
+            Set the line number where the error happenes.
+            </summary>
+            <param name="lineNumber">the line number</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetErrorMessage(System.String)">
+            <summary>
+            Set the error message.
+            Set it to null if the test outcome is passed.
+            </summary>
+            <param name="message">the error message</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetErrorStackTrace(System.String)">
+            <summary>
+            Set the error stack trace.
+            Set it to null if the test outcome is passed.
+            </summary>
+            <param name="stackTrace">the error stack trace</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.SetTestOutcome(Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome)">
+            <summary>
+            Set the outcome of the test result.
+            </summary>
+            <param name="testOutcome">test outcome</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetInfoMessages">
+            <summary>
+            Gets the list of additional informational messages logged during a test.
+            </summary>
+            <returns></returns>     
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetMachineName">
+            <summary>
+            Get the computer name where the test case runs.
+            </summary>
+            <returns>the computer name</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetStartTime">
+            <summary>
+            Get the stat time of the test case exectuion.
+            </summary>
+            <returns>the start time</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetEndTime">
+            <summary>
+            Get the end time of the test case execution.
+            </summary>
+            <returns>the end time</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetErrorFilePath">
+            <summary>
+            Get the file path where the error happenes.
+            </summary>
+            <returns>the file path</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetErrorLineNumber">
+            <summary>
+            Get the line number where the error happenes.
+            </summary>
+            <returns>the line number</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetErrorMessage">
+            <summary>
+            Return the error message.
+            Should be null if the test outcome is passed.
+            </summary>
+            <returns>the error message</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetErrorStackTrace">
+            <summary>
+            Return the stack trace.
+            Should be null if the test outcome is passed.
+            </summary>
+            <returns>the error stacktrace</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult.GetTestOutcome">
+            <summary>
+            Return the test outcome.
+            </summary>
+            <returns>test outcome</returns>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.IRunSettings">
+            <summary>
+            Com interfaces to get the run settings. 
+            The extension parses the run settings and pass them to the test engine through this interface.
+            </summary>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.IRunSettings.GetSettings(System.String[]@,System.String[]@)">
+            <summary>
+            Return the settings. 
+            Be noted that the entry of the settingNames should be paired with the entry in the settingValues.
+            </summary>
+            <param name="settingNames">the names of the settings</param>
+            <param name="settingValues">the values of the settings</param>
+            <returns>the number of setting pairs</returns>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestMessageLevel">
+            <summary>
+            Message level on logging.
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestMessageLevel.Informational">
+            <summary>
+            Informational messages
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestMessageLevel.Warning">
+            <summary>
+            Warning messages
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestMessageLevel.Error">
+            <summary>
+            Error messages
+            </summary>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog">
+            <summary>
+            Used to do the logging
+            </summary>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog.SendTestMessage(Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestMessageLevel,System.String)">
+            <summary>
+            Send the test message.
+            </summary>
+            <param name="messageLevel">Indicate the message is Informational, Warnining, or Error</param>
+            <param name="message">the message</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog.SendTestResult(Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase,Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestResult)">
+            <summary>
+            Used to send the test result back
+            </summary>
+            <param name="testCase">the test case</param>
+            <param name="testResult">the test result</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog.SendTestExecutionStart(Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase)">
+            <summary>
+            Used to indicate that the test case execution is started.
+            </summary>
+            <param name="testCase">the test case </param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog.SendTestExecutionEnd(Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCase,Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.TestOutcome)">
+            <summary>
+            Used to indicate that the test case execution is done.
+            </summary>
+            <param name="testCase">the test case</param>
+            <param name="outcome">the test outcome</param>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestEngine">
+            <summary>
+            Com interface for test engine which provides discoverer and executor services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestEngine.GetTestCases(System.String,Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog)">
+            <summary>
+            Return the test cases found in the file.
+            </summary>
+            <param name="filePath">the file path</param>
+            <param name="testLog">the test logger</param>
+            <returns>ITestCaseEnumerator instance</returns>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestEngine.RunTestCases(Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestCaseEnumerator,Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.IRunSettings,Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestLog)">
+            <summary>
+            Invoked to Run test cases passed in.
+            </summary>
+            <param name="testCases">The test cases.</param>
+            <param name="settings">the run settings</param>
+            <param name="testLog">the logger which is used to send the test result and message back</param>
+        </member>
+        <member name="M:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.ITestEngine.Cancel">
+            <summary>
+            Canche the run
+            </summary>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.BinaryPlatform">
+            <summary>
+            Test platform on which tests in test binary are to be executed
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.BinaryPlatform.Desktop">
+            <summary>
+            Desktop platform
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.BinaryPlatform.UniversalWindows">
+            <summary>
+            Universal Windows Platform
+            </summary>
+        </member>
+        <member name="T:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.UnmanagedTypeConstants">
+            <summary>
+            Unmanaged Type Constants.
+            </summary>
+        </member>
+        <member name="F:Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.UnmanagedTypeConstants.DefaultArrayType">
+            <summary>
+            Default Array Type.
+            </summary>
+        </member>
+    </members>
+</doc>

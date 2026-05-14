@@ -1,0 +1,451 @@
+<!--
+***********************************************************************************************
+Microsoft.NET.Sdk.StaticWebAssets.Compression.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (c) .NET Foundation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="14.0">
+
+  <UsingTask TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.BrotliCompress" AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.GZipCompress" AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.DiscoverPrecompressedAssets" AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.ResolveCompressedAssets" AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.AspNetCore.StaticWebAssets.Tasks.ApplyCompressionNegotiation" AssemblyFile="$(StaticWebAssetsSdkBuildTasksAssembly)" />
+
+  <PropertyGroup>
+
+    <EnableDefaultCompressedItems Condition="'$(EnableDefaultCompressedItems)' == '' and '$(_TargetingNET90OrLater)' == 'true'">true</EnableDefaultCompressedItems>
+    <!-- File extensions associated with formats that are not already compressed. -->
+    <CompressionIncludePatterns Condition="'$(EnableDefaultCompressedItems)' == 'true'">
+      $(CompressionIncludePatterns);
+      **/*.js;
+      **/*.css;
+      **/*.html;
+      **/*.json;
+      **/*.mjs;
+      **/*.xml;
+      **/*.htm;
+      **/*.wasm;
+      **/*.txt;
+      **/*.dll;
+      **/*.pdb;
+      **/*.dat;
+      **/*.jsx;
+      **/*.markdown;
+      **/*.md;
+      **/*.webmanifest;
+      **/*.bmp;
+      **/*.svg;
+      **/*.otf;
+      **/*.art;
+      **/*.cmx;
+      **/*.cod;
+      **/*.dib;
+      **/*.ico;
+      **/*.ief;
+      **/*.pbm;
+      **/*.pgm;
+      **/*.pnm;
+      **/*.ppm;
+      **/*.ras;
+      **/*.rf;
+      **/*.rgb;
+      **/*.tif
+      **/*.tiff;
+      **/*.wbmp;
+      **/*.xbm;
+      **/*.xpm;
+      **/*.xwd;
+      **/*.aif;
+      **/*.aifc;
+      **/*.aif;
+      **/*.au;
+      **/*.m3u;
+      **/*.mid;
+      **/*.midi;
+      **/*.ra;
+      **/*.ram;
+      **/*.smd;
+      **/*.smx;
+      **/*.smz;
+      **/*.wav;
+      **/*.323;
+      **/*.appcache;
+      **/*.asm;
+      **/*.bas;
+      **/*.c;
+      **/*.cnf;
+      **/*.cpp;
+      **/*.csv;
+      **/*.disco;
+      **/*.dlm;
+      **/*.dtd;
+      **/*.etx;
+      **/*.h;
+      **/*.hdml;
+      **/*.htc;
+      **/*.htt;
+      **/*.hxt;
+      **/*.ical;
+      **/*.icalendar;
+      **/*.ics;
+      **/*.ifb;
+      **/*.map;
+      **/*.mno;
+      **/*.odc;
+      **/*.rtx;
+      **/*.sct;
+      **/*.sgml;
+      **/*.tsv;
+      **/*.uls;
+      **/*.vbs;
+      **/*.vcf;
+      **/*.vcs;
+      **/*.vml;
+      **/*.wml;
+      **/*.wmls;
+      **/*.wsdl;
+      **/*.xdr;
+      **/*.xsd;
+      **/*.xsf;
+      **/*.xsl;
+      **/*.xslt;
+    </CompressionIncludePatterns>
+
+    <!-- File extensions that should not be compressed because the associated format is already compressed. -->
+    <CompressionExcludePatterns Condition="'$(EnableDefaultCompressedItems)' == 'true'">
+      $(CompressionExcludePatterns);
+      **/*.gz;
+      **/*.br;
+      **/*.jpeg;
+      **/*.jpg;
+      **/*.png;
+      **/*.gif;
+      **/*.webp;
+      **/*.woff;
+      **/*.woff2;
+      **/*.m4v;
+      **/*.mov;
+      **/*.movie;
+      **/*.mp2;
+      **/*.mp4;
+      **/*.mp4v;
+      **/*.mpa;
+      **/*.mpe;
+      **/*.mpeg;
+      **/*.mpg;
+      **/*.mpv2;
+      **/*.ogg;
+      **/*.ogv;
+      **/*.webm;
+      **/*.jfif;
+      **/*.svgz;
+      **/*.jpe;
+      **/*.pnz;
+      **/*.aac;
+      **/*.adt;
+      **/*.adts;
+      **/*.m4a;
+      **/*.mp3;
+      **/*.oga;
+      **/*.wax;
+      **/*.wma;
+    </CompressionExcludePatterns>
+
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnableDefaultCompressionFormats Condition="'$(EnableDefaultCompressionFormats)' == ''">true</EnableDefaultCompressionFormats>
+    <BuildCompressionFormats Condition="'$(EnableDefaultCompressionFormats)' == 'true'">$(BuildCompressionFormats);gzip</BuildCompressionFormats>
+    <PublishCompressionFormats Condition="'$(EnableDefaultCompressionFormats)' == 'true'">$(PublishCompressionFormats);gzip;brotli</PublishCompressionFormats>
+    <DisableBuildCompression Condition="'$(DisableBuildCompression)' == ''">false</DisableBuildCompression>
+    <CompressDiscoveredAssetsDuringBuild Condition="$(CompressDiscoveredAssetsDuringBuild) == ''">true</CompressDiscoveredAssetsDuringBuild>
+    <!-- Support passing in a custom compression level to brotli and respect the old internal flag for blazor -->
+    <BrotliCompressionLevel Condition="'$(_BlazorBrotliCompressionLevel)' != ''">$(_BlazorBrotliCompressionLevel)</BrotliCompressionLevel>
+
+    <!-- Attach weak ETag to compressed assets -->
+    <LinkAlternativeRepresentationsToOriginalResource Condition="'$(LinkAlternativeRepresentationsToOriginalResource)' == '' and '$(_TargetingNET100OrLater)' == 'true'">EndpointProperty</LinkAlternativeRepresentationsToOriginalResource>
+    <LinkAlternativeRepresentationsToOriginalResource Condition="'$(LinkAlternativeRepresentationsToOriginalResource)' == ''">ResponseHeader</LinkAlternativeRepresentationsToOriginalResource>
+  </PropertyGroup>
+
+  <PropertyGroup>
+
+    <!--
+      ResolveBuildRelatedStaticWebAssets
+        ResolveBuildCompressedStaticWebAssets
+          GenerateBuildCompressedStaticWebAssets
+            ResolveBuildCompressedStaticWebAssetsConfiguration
+     -->
+    <ResolveBuildRelatedStaticWebAssetsDependsOn Condition="'$(DisableBuildCompression)' != 'true'">
+      ResolveBuildCompressedStaticWebAssets;
+      $(ResolveBuildRelatedStaticWebAssetsDependsOn)
+    </ResolveBuildRelatedStaticWebAssetsDependsOn>
+    <ResolveBuildCompressedStaticWebAssetsDependsOn>
+      GenerateBuildCompressedStaticWebAssets;
+      $(ResolveBuildCompressedStaticWebAssetsDependsOn)
+    </ResolveBuildCompressedStaticWebAssetsDependsOn>
+    <GenerateBuildCompressedStaticWebAssetsDependsOn>
+      ResolveBuildCompressedStaticWebAssetsConfiguration;
+      $(GenerateBuildCompressedStaticWebAssetsDependsOn)
+    </GenerateBuildCompressedStaticWebAssetsDependsOn>
+
+    <!--
+      ResolvePublishRelatedStaticWebAssets
+        ResolvePublishCompressedStaticWebAssets
+          GeneratePublishCompressedStaticWebAssets
+            ResolvePublishCompressedStaticWebAssetsConfiguration
+     -->
+    <ResolvePublishRelatedStaticWebAssetsDependsOn>
+      ResolvePublishCompressedStaticWebAssets;
+      $(ResolvePublishRelatedStaticWebAssetsDependsOn)
+    </ResolvePublishRelatedStaticWebAssetsDependsOn>
+    <ResolvePublishCompressedStaticWebAssetsDependsOn>
+      GeneratePublishCompressedStaticWebAssets;
+      $(ResolvePublishCompressedStaticWebAssetsDependsOn)
+    </ResolvePublishCompressedStaticWebAssetsDependsOn>
+    <GeneratePublishCompressedStaticWebAssetsDependsOn>
+      ResolvePublishCompressedStaticWebAssetsConfiguration;
+      $(GeneratePublishCompressedStaticWebAssetsDependsOn)
+    </GeneratePublishCompressedStaticWebAssetsDependsOn>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DOTNET_HOST_PATH)' == ''">
+    <_DotNetHostDirectory>$(NetCoreRoot)</_DotNetHostDirectory>
+    <_DotNetHostFileName>dotnet</_DotNetHostFileName>
+    <_DotNetHostFileName Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</_DotNetHostFileName>
+  </PropertyGroup>
+
+<!-- Build -->
+
+  <Target Name="ResolveBuildCompressedStaticWebAssets" DependsOnTargets="$(ResolveBuildCompressedStaticWebAssetsDependsOn)">
+
+    <PropertyGroup>
+      <_ResolveBuildCompressedStaticWebAssetsCachePath Condition="'$(StaticWebAssetsCacheDefineStaticWebAssetsEnabled)' == 'true'">$(_StaticWebAssetsManifestBase)rbcswa.dswa.cache.json</_ResolveBuildCompressedStaticWebAssetsCachePath>
+    </PropertyGroup>
+
+    <DefineStaticWebAssets
+      CandidateAssets="@(_CompressedStaticWebAssets)"
+      CacheManifestPath="$(_ResolveBuildCompressedStaticWebAssetsCachePath)"
+    >
+      <Output TaskParameter="Assets" ItemName="_CompressionBuildStaticWebAsset" />
+    </DefineStaticWebAssets>
+
+    <DefineStaticWebAssetEndpoints
+      CandidateAssets="@(_CompressionBuildStaticWebAsset);@(_PrecompressedStaticWebAssets)"
+      ContentTypeMappings="@(StaticWebAssetContentTypeMapping)"
+    >
+      <Output TaskParameter="Endpoints" ItemName="_CompressionBuildStaticWebAssetEndpoint" />
+    </DefineStaticWebAssetEndpoints>
+
+    <ItemGroup>
+      <StaticWebAsset Include="@(_CompressionBuildStaticWebAsset)" />
+      <StaticWebAssetEndpoint Include="@(_CompressionBuildStaticWebAssetEndpoint)" />
+      <_CompressionCurrentProjectBuildAssets Include="@(StaticWebAsset)" />
+      <FileWrites Include="@(_ResolveBuildCompressedStaticWebAssetsCachePath)" />
+    </ItemGroup>
+
+    <ApplyCompressionNegotiation
+      CandidateEndpoints="@(StaticWebAssetEndpoint)"
+      CandidateAssets="@(_CompressionCurrentProjectBuildAssets)"
+      AttachWeakETagToCompressedAssets="$(LinkAlternativeRepresentationsToOriginalResource)"
+    >
+      <Output TaskParameter="UpdatedEndpoints" ItemName="_UpdatedCompressionBuildEndpoints" />
+    </ApplyCompressionNegotiation>
+
+    <ItemGroup>
+      <StaticWebAssetEndpoint Remove="@(_UpdatedCompressionBuildEndpoints)" />
+      <StaticWebAssetEndpoint Include="@(_UpdatedCompressionBuildEndpoints)" />
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="GenerateBuildCompressedStaticWebAssets" DependsOnTargets="$(GenerateBuildCompressedStaticWebAssetsDependsOn);$(CompressFilesDependsOn)">
+
+    <ItemGroup>
+      <_GZipCompressedStaticWebAssets Include="@(_CompressedStaticWebAssets)" Condition="'%(AssetTraitName)' == 'Content-Encoding' and '%(AssetTraitValue)' == 'gzip'" />
+      <_BrotliCompressedStaticWebAssets Include="@(_CompressedStaticWebAssets)" Condition="'%(AssetTraitName)' == 'Content-Encoding' and '%(AssetTraitValue)' == 'br'" />
+    </ItemGroup>
+
+    <GZipCompress Condition="'@(_GZipCompressedStaticWebAssets)' != ''"
+      FilesToCompress="@(_GZipCompressedStaticWebAssets)" />
+
+    <BrotliCompress Condition="'@(_BrotliCompressedStaticWebAssets)' != ''"
+      FilesToCompress="@(_BrotliCompressedStaticWebAssets)"
+      CompressionLevel="$(BrotliCompressionLevel)"
+      ToolAssembly="$(_StaticWebAssetsSdkToolAssembly)"
+      ToolExe="$(_DotNetHostFileName)"
+      ToolPath="$(_DotNetHostDirectory)" />
+
+    <ItemGroup>
+      <FileWrites Include="@(_GZipCompressedStaticWebAssets)" />
+      <FileWrites Include="@(_BrotliCompressedStaticWebAssets)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ResolveBuildCompressedStaticWebAssetsConfiguration" DependsOnTargets="ResolveStaticWebAssetsInputs;$(ResolveCompressedFilesDependsOn)">
+    <!-- There might be assets that are precompressed on packages or that are precompressed by other tools.
+         In this case, we need to detect those assets, remove them and their endpoints, adjust the asset definition
+         and recreate the endpoints for those assets as the original ones will not be correct.
+     -->
+    <DiscoverPrecompressedAssets CandidateAssets="@(StaticWebAsset)">
+      <Output TaskParameter="DiscoveredCompressedAssets" ItemName="_PrecompressedStaticWebAssets" />
+    </DiscoverPrecompressedAssets>
+
+    <FilterStaticWebAssetEndpoints Condition="'@(_PrecompressedStaticWebAssets)' != ''"
+      Endpoints="@(StaticWebAssetEndpoint)"
+      Assets="@(_PrecompressedStaticWebAssets)"
+      Filters=""
+    >
+      <Output TaskParameter="FilteredEndpoints" ItemName="_PrecompressedEndpointsToRemove" />
+    </FilterStaticWebAssetEndpoints>
+
+    <ItemGroup Condition="'@(_PrecompressedStaticWebAssets)' != ''">
+      <StaticWebAssetEndpoint Remove="@(_PrecompressedEndpointsToRemove)" />
+      <StaticWebAsset Remove="@(_PrecompressedStaticWebAssets)" />
+      <StaticWebAsset Include="@(_PrecompressedStaticWebAssets)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <StaticWebAssetBuildCompressAllAssets Condition="'$(StaticWebAssetBuildCompressAllAssets)' == '' and '$(StaticWebAssetProjectMode)' == 'Root'">true</StaticWebAssetBuildCompressAllAssets>
+      <StaticWebAssetBuildCompressAllAssets Condition="'$(StaticWebAssetBuildCompressAllAssets)' == ''">false</StaticWebAssetBuildCompressAllAssets>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(StaticWebAssetBuildCompressAllAssets)' == 'true'">
+      <_CandidateAssetsForBuild Include="@(StaticWebAsset)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(StaticWebAssetBuildCompressAllAssets)' != 'true'">
+      <_CandidateAssetsForBuild
+        Include="@(StaticWebAsset)"
+        Condition="'%(SourceType)' == 'Discovered' or '%(SourceType)' == 'Computed'" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(CompressDiscoveredAssetsDuringBuild)' != 'true'">
+      <_CandidateAssetsForBuild
+        Remove="@(_CandidateAssetsForBuild)"
+        Condition="'%(SourceType)' == 'Discovered'" />
+    </ItemGroup>
+
+    <ResolveCompressedAssets
+      CandidateAssets="@(_CandidateAssetsForBuild)"
+      Formats="$(BuildCompressionFormats)"
+      IncludePatterns="$(CompressionIncludePatterns)"
+      ExcludePatterns="$(CompressionExcludePatterns)"
+      ExplicitAssets="@(AssetToCompress)"
+      OutputPath="$(IntermediateOutputPath)compressed">
+
+      <Output
+        TaskParameter="AssetsToCompress"
+        ItemName="_CompressedStaticWebAssets" />
+
+    </ResolveCompressedAssets>
+
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+      <_StaticWebAssetExcludedFromPack Include="@(_CompressedStaticWebAssets)" />
+    </ItemGroup>
+
+  </Target>
+
+<!-- Publish -->
+
+  <Target Name="ResolvePublishCompressedStaticWebAssets" DependsOnTargets="$(ResolvePublishCompressedStaticWebAssetsDependsOn)">
+    <DefineStaticWebAssets
+      CandidateAssets="@(_CompressedStaticWebAssetsForPublish)"
+    >
+      <Output TaskParameter="Assets" ItemName="_CompressionPublishStaticWebAsset" />
+    </DefineStaticWebAssets>
+
+    <DefineStaticWebAssetEndpoints
+      CandidateAssets="@(_CompressionPublishStaticWebAsset)"
+      ExistingEndpoints="@(StaticWebAssetEndpoint)"
+      ContentTypeMappings="@(StaticWebAssetContentTypeMapping)"
+    >
+      <Output TaskParameter="Endpoints" ItemName="_CompressionPublishStaticWebAssetEndpoint" />
+    </DefineStaticWebAssetEndpoints>
+
+    <ItemGroup>
+      <StaticWebAsset Include="@(_CompressionPublishStaticWebAsset)" />
+      <StaticWebAssetEndpoint Include="@(_CompressionPublishStaticWebAssetEndpoint)" />
+      <_CompressionCurrentProjectPublishAssets Include="@(StaticWebAsset)" Condition="'%(AssetKind)' != 'Build'" />
+    </ItemGroup>
+
+    <ApplyCompressionNegotiation
+      CandidateEndpoints="@(StaticWebAssetEndpoint)"
+      CandidateAssets="@(_CompressionCurrentProjectPublishAssets)"
+      AttachWeakETagToCompressedAssets="$(LinkAlternativeRepresentationsToOriginalResource)">
+      <Output TaskParameter="UpdatedEndpoints" ItemName="_UpdatedCompressionPublishEndpoints" />
+    </ApplyCompressionNegotiation>
+
+    <ItemGroup>
+      <StaticWebAssetEndpoint Remove="@(_UpdatedCompressionPublishEndpoints)" />
+      <StaticWebAssetEndpoint Include="@(_UpdatedCompressionPublishEndpoints)" />
+    </ItemGroup>
+
+  </Target>
+
+  <Target Name="GeneratePublishCompressedStaticWebAssets" DependsOnTargets="$(CompressFilesForPublishDependsOn);$(GeneratePublishCompressedStaticWebAssetsDependsOn)">
+
+    <ItemGroup>
+      <_GZipCompressedStaticWebAssetsForPublish Include="@(_CompressedStaticWebAssetsForPublish)" Condition="'%(AssetTraitName)' == 'Content-Encoding' and '%(AssetTraitValue)' == 'gzip'" />
+      <_BrotliCompressedStaticWebAssetsForPublish Include="@(_CompressedStaticWebAssetsForPublish)" Condition="'%(AssetTraitName)' == 'Content-Encoding' and '%(AssetTraitValue)' == 'br'" />
+    </ItemGroup>
+
+    <GZipCompress Condition="'@(_GZipCompressedStaticWebAssetsForPublish)' != ''"
+      FilesToCompress="@(_GZipCompressedStaticWebAssetsForPublish)" />
+
+    <BrotliCompress Condition="'@(_BrotliCompressedStaticWebAssetsForPublish)' != ''"
+      FilesToCompress="@(_BrotliCompressedStaticWebAssetsForPublish)"
+      CompressionLevel="$(_BlazorBrotliCompressionLevel)"
+      ToolAssembly="$(_StaticWebAssetsSdkToolAssembly)"
+      ToolExe="$(_DotNetHostFileName)"
+      ToolPath="$(_DotNetHostDirectory)" />
+
+    <ItemGroup>
+      <FileWrites Include="@(_GZipCompressedStaticWebAssetsForPublish)" />
+      <FileWrites Include="@(_BrotliCompressedStaticWebAssetsForPublish)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ResolvePublishCompressedStaticWebAssetsConfiguration" DependsOnTargets="ResolvePublishStaticWebAssets;$(ResolveCompressedFilesForPublishDependsOn)">
+
+    <PropertyGroup>
+      <StaticWebAssetPublishCompressAllAssets Condition="'$(StaticWebAssetPublishCompressAllAssets)' == '' and '$(StaticWebAssetProjectMode)' == 'Root'">true</StaticWebAssetPublishCompressAllAssets>
+      <StaticWebAssetPublishCompressAllAssets Condition="'$(StaticWebAssetPublishCompressAllAssets)' == ''">false</StaticWebAssetPublishCompressAllAssets>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(StaticWebAssetPublishCompressAllAssets)' == 'true'">
+      <_CandidateAssetsForPublish
+        Include="@(StaticWebAsset)"
+        Condition="'%(AssetKind)' != 'Build'" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(StaticWebAssetPublishCompressAllAssets)' != 'true'">
+      <_CandidateAssetsForPublish
+        Include="@(StaticWebAsset)"
+        Condition="'%(AssetKind)' != 'Build' and ('%(SourceType)' == 'Discovered' or '%(SourceType)' == 'Computed')" />
+    </ItemGroup>
+
+    <ResolveCompressedAssets
+      CandidateAssets="@(_CandidateAssetsForPublish)"
+      Formats="$(PublishCompressionFormats)"
+      IncludePatterns="$(CompressionIncludePatterns)"
+      ExcludePatterns="$(CompressionExcludePatterns)"
+      ExplicitAssets="@(AssetToCompress)"
+      OutputPath="$(IntermediateOutputPath)compressed\publish">
+
+      <Output
+        TaskParameter="AssetsToCompress"
+        ItemName="_CompressedStaticWebAssetsForPublish" />
+
+    </ResolveCompressedAssets>
+
+  </Target>
+
+</Project>

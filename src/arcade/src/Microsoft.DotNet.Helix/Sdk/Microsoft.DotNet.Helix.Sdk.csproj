@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <PackageType>MSBuildSdk</PackageType>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NuGet.Versioning" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Services.Client" />
+    <PackageReference Include="Microsoft.Data.OData" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
+    <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="**\*.py;**\*.bat;**\*.sh"
+          Pack="true"
+          PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="tools\xharness-runner\xharness-event-processor.py;
+                               tools\xharness-runner\xharness-helix-job.apple.sh;
+                               tools\xharness-runner\xharness-runner.apple.sh;
+                               tools\xharness-runner\xharness-runner.android.ps1;
+                               tools\xharness-runner\xharness-helix-job.android.sh;
+                               tools\xharness-runner\xharness-helix-job.android.ps1"
+                      CopyToOutputDirectory="Never" />
+  </ItemGroup>
+
+</Project>

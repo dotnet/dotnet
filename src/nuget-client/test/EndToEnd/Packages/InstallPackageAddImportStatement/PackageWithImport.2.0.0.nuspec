@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>PackageWithImport</id>
+        <version>2.0.0</version>
+        <title />
+        <authors>dotnetjunky</authors>
+        <owners />
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>My package description.</description>
+    </metadata>
+    <files>
+        <file src="build\PackageWithImport.targets" target="build\PackageWithImport.targets" />
+        <file src="build\PackageWithImport.props" target="build\PackageWithImport.props" />
+        <file src="content\one.txt" target="content\one.txt" />
+        <file src="lib\net45\PackageWithImport.dll" target="lib\net45\PackageWithImport.dll" />
+    </files>
+</package>

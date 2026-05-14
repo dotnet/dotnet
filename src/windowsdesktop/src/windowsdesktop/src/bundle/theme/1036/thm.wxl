@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="fr-FR" Language="1036" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="Caption" Value="Programme d’installation de [WixBundleName]" />
+  <String Id="Title" Value="[BUNDLEMONIKER]" />
+  <String Id="ConfirmCancelMessage" Value="Voulez-vous vraiment annuler ?" />
+  <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Version précédente" />
+  <String Id="HelpHeader" Value="Aide sur l’installation" />
+  <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [directory] – permet d’installer, réparer, désinstaller ou créer une copie locale complète du pack dans un répertoire. L’installation constitue la valeur par défaut.  /passive | /quiet – permet d’afficher une interface utilisateur minimale sans aucune requête ou de n’afficher ni interface utilisateur, ni requêtes. Par défaut, l’interface utilisateur et toutes les requêtes sont affichées.  /norestart – permet de supprimer toutes les tentatives de redémarrage. Par défaut, l’interface utilisateur vous invite à redémarrer.  /log log.txt – permet d’enregistrer dans un fichier spécifique. Par défaut, un fichier journal est créé dans %TEMP%." />
+  <String Id="HelpCloseButton" Value="&amp;Fermer" />
+  <String Id="InstallAcceptCheckbox" Value="J’&amp;accepte les conditions générales de la licence" />
+  <String Id="InstallOptionsButton" Value="&amp;Options" />
+  <String Id="InstallInstallButton" Value="&amp;Installer" />
+  <String Id="InstallCloseButton" Value="&amp;Fermer" />
+  <String Id="ProgressHeader" Value="Progression de l’opération" />
+  <String Id="ProgressLabel" Value="Traitement :" />
+  <String Id="OverallProgressPackageText" Value="Initialisation en cours... Merci de patienter." />
+  <String Id="ProgressCancelButton" Value="&amp;Annuler" />
+  <String Id="ModifyHeader" Value="Modifier la configuration" />
+  <String Id="ModifyText" Value="Sélectionnez l’option Réparer pour réinstaller le produit ou désinstallez-le pour le supprimer." />
+  <String Id="ModifyRepairButton" Value="&amp;Réparer" />
+  <String Id="ModifyUninstallButton" Value="&amp;Désinstaller" />
+  <String Id="ModifyCloseButton" Value="&amp;Fermer" />
+  <String Id="SuccessRepairHeader" Value="Réparation correctement terminée" />
+  <String Id="SuccessUninstallHeader" Value="Désinstallation correctement terminée" />
+  <String Id="SuccessInstallHeader" Value="Installation correctement terminée" />
+  <String Id="SuccessHeader" Value="Installation réussie" />
+  <String Id="SuccessLaunchButton" Value="&amp;Lancement" />
+  <String Id="SuccessRestartText" Value="Vous devez redémarrer votre ordinateur avant de pouvoir utiliser le logiciel." />
+  <String Id="SuccessRestartButton" Value="&amp;Redémarrer" />
+  <String Id="SuccessCloseButton" Value="&amp;Fermer" />
+  <String Id="FailureHeader" Value="Nous n’avons pas pu effectuer l’installation" />
+  <String Id="FailureInstallHeader" Value="Nous n’avons pas pu effectuer l’installation" />
+  <String Id="FailureUninstallHeader" Value="Nous n’avons pas pu effectuer la désinstallation" />
+  <String Id="FailureRepairHeader" Value="Nous n’avons pas pu effectuer la réparation" />
+  <String Id="FailureHyperlinkLogText" Value="Un ou plusieurs problèmes ont provoqué l’échec de l’installation. Veuillez résoudre les problèmes, puis réessayer la configuration. Pour découvrir plus d’informations, consultez le &lt;a href=&quot;#&quot;&gt;fichier journal&lt;/a&gt;." />
+  <String Id="FailureRestartText" Value="Vous devez redémarrer votre ordinateur pour terminer l'opération de restauration du logiciel." />
+  <String Id="FailureRestartButton" Value="&amp;Redémarrer" />
+  <String Id="FailureCloseButton" Value="&amp;Fermer" />
+  <String Id="FailureNotSupportedCurrentOperatingSystem" Value="[PRODUCT_NAME] n'est pas pris en charge sur ce système d'exploitation. Pour plus d'informations, consultez [LINK_PREREQ_PAGE]." />
+  <String Id="FailureNotSupportedX86OperatingSystem" Value="[PRODUCT_NAME] n'est pas pris en charge sur les systèmes d'exploitation x86. Effectuez l'installation à l'aide du programme d'installation x86 correspondant." />
+  <String Id="FilesInUseTitle" Value="Fichiers en cours d’utilisation" />
+  <String Id="FilesInUseLabel" Value="Les applications suivantes utilisent des fichiers qui doivent être mis à jour :" />
+  <String Id="FilesInUseCloseRadioButton" Value="Fermer les &amp;applications et essayer de les redémarrer." />
+  <String Id="FilesInUseDontCloseRadioButton" Value="&amp;Ne fermez pas les applications. Un redémarrage sera nécessaire." />
+  <String Id="FilesInUseRetryButton" Value="&amp;Recommencer" />
+  <String Id="FilesInUseCancelButton" Value="&amp;Annuler" />
+  <String Id="WelcomeHeader" Value="Windows Desktop Runtime" />
+  <String Id="WelcomeDescription" Value="Le Runtime .NET Windows Desktop est utilisé pour exécuter les applications Windows Forms et WPF sur votre ordinateur. .NET est open source, multiplateforme et pris en charge par Microsoft. Nous espérons que cela vous plaira !" />
+  <String Id="LearnMoreTitle" Value="En savoir plus sur .NET" />
+  <String Id="SuccessInstallLocation" Value="L'élément suivant a été installé sur [DOTNETHOME]" />
+  <String Id="SuccessInstallProductName" Value=" - [BUNDLEMONIKER] " />
+  <String Id="ResourcesHeader" Value="Ressources" />
+  <String Id="DocumentationLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-docs&quot;&gt;Documentation&lt;/A&gt;" />
+  <String Id="ReleaseNotesLink" Value="&lt;A HREF=&quot;https://aka.ms/20-p2-rel-notes&quot;&gt; Notes de publication&lt;/A&gt;" />
+  <String Id="TutorialLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-tutorials&quot;&gt;Tutoriels&lt;/A&gt;" />
+  <String Id="TelemetryLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-cli-telemetry&quot;&gt;Télémétrie .NET&lt;/A&gt;" />
+  <String Id="PrivacyStatementLink" Value="&lt;A HREF=&quot;https://aka.ms/dev-privacy&quot;&gt;Déclaration de confidentialité&lt;/A&gt;" />
+  <String Id="EulaLink" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-license-windows&quot;&gt;Informations de licence pour .NET&lt;/A&gt;" />
+  <String Id="LicenseAssent" Value="En cliquant sur Installer, vous acceptez les conditions suivantes." />
+  <String Id="VisualStudioWarning" Value="Si vous envisagez d’utiliser .NET [VERSIONMAJOR].[VERSIONMINOR] avec Visual Studio, Visual Studio 2026 18.0 ou une version ultérieure est nécessaire. &lt;A HREF=&quot;https://aka.ms/dotnet[VERSIONMAJOR]-release-notes&quot;&gt;Découvrez plus d’informations&lt;/A&gt;." />
+  <!-- Success page strings -->
+  <String Id="FirstTimeWelcomeMessage" Value="Thank you for installing [BUNDLEMONIKER]! You can now run applications that require the .NET Windows Desktop Runtime." />
+  <String Id="NetDocumentationLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-docs&quot;&gt;Documentation .NET&lt;/A&gt;" />
+  <String Id="WindowsDesktopDocumentationLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-desktop-docs&quot;&gt;Documentation Windows Desktop&lt;/A&gt;" />
+  <String Id="ReleaseNotesLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet[VERSIONMAJOR]-release-notes&quot;&gt;Notes de publication&lt;/A&gt;" />
+  <String Id="TutorialsLinkText" Value="&lt;A HREF=&quot;https://aka.ms/dotnet-tutorials&quot;&gt;Tutoriels .NET&lt;/A&gt;" />
+  <!-- Additional success headers -->
+  <String Id="SuccessLayoutHeader" Value="Mise en page correctement terminée" />
+  <String Id="SuccessUnsafeUninstallHeader" Value="Désinstallation non sécurisée correctement terminée" />
+  <String Id="SuccessCacheHeader" Value="Cache correctement terminé" />
+  <String Id="SuccessModifyHeader" Value="Modification correctement terminée" />
+  <String Id="SuccessUninstallRestartText" Value="Vous devez redémarrer votre ordinateur pour terminer la désinstallation." />
+  <!-- Additional failure headers -->
+  <String Id="FailureLayoutHeader" Value="Échec de la mise en page" />
+  <String Id="FailureUnsafeUninstallHeader" Value="Nous n’avons pas pu effectuer désinstallation non sécurisée" />
+  <String Id="FailureCacheHeader" Value="Échec du cache" />
+  <String Id="FailureModifyHeader" Value="Nous n’avons pas pu effectuer la modification" />
+</WixLocalization>

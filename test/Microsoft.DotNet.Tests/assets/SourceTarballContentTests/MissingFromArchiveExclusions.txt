@@ -1,0 +1,19 @@
+# Exclusion patterns for files missing from git archive output.
+# Use glob patterns to exclude files from the comparison.
+# Lines starting with # are comments.
+#
+# Format: glob-pattern
+# Example: src/some-repo/**/test-data/**
+
+# The zlib sources are redistributed here which contain a .gitattributes file that explicitly
+# defines export-ignore for itself and some .gitignore files. So these are expected to be 
+# missing from the 'git archive' output. These files have no impact on the output of the build.
+src/runtime/src/native/external/zlib-ng/.gitattributes
+src/runtime/src/native/external/zlib-ng/.gitignore
+src/runtime/src/native/external/zlib-ng/arch/.gitignore
+
+# https://github.com/dotnet/sdk/issues/52307
+src/sdk/template_feed/Microsoft.DotNet.Common.ItemTemplates/content/Gitattributes/.gitattributes
+
+# https://github.com/dotnet/sdk/issues/52882
+src/sdk/test/dotnet-new.IntegrationTests/Approvals/AllCommonItemsCreate.-o#dotnet-gitattributes-file#-n#item.verified/dotnet-gitattributes-file/.gitattributes

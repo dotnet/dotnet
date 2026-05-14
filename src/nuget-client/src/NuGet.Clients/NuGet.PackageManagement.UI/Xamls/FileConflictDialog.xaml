@@ -1,0 +1,79 @@
+<vs:DialogWindow
+  x:Class="NuGet.PackageManagement.UI.FileConflictDialog"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:resx="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:ui="clr-namespace:NuGet.PackageManagement.UI"
+  xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+  Background="{DynamicResource {x:Static resx:Brushes.BackgroundBrushKey}}"
+  Foreground="{DynamicResource {x:Static resx:Brushes.UIText}}"
+  Title="{x:Static resx:Resources.WindowTitle_FileConflict}"
+  AutomationProperties.LabeledBy="{Binding ElementName=QuestionText}"
+  ShowInTaskbar="False"
+  WindowStartupLocation="CenterOwner"
+  MinHeight="180"
+  MinWidth="500"
+  MaxWidth="900"
+  Width="500"
+  Height="180"
+  mc:Ignorable="d"
+  d:DesignHeight="180"
+  d:DesignWidth="500">
+  <Window.Resources>
+    <Style
+      TargetType="{x:Type Button}">
+      <Setter
+        Property="Margin"
+        Value="6,6,6,2" />
+      <Setter
+        Property="Padding"
+        Value="10,3,10,3" />
+      <Setter
+        Property="MinWidth"
+        Value="75" />
+    </Style>
+  </Window.Resources>
+
+  <DockPanel
+    Margin="10">
+    <StackPanel
+      DockPanel.Dock="Bottom"
+      Margin="0,0,0,3"
+      Orientation="Horizontal"
+      HorizontalAlignment="Right">
+      <Button
+        Content="{x:Static resx:Resources.Button_Yes}"
+        Tag="Overwrite"
+        AutomationProperties.AutomationId="YesButton"
+        Click="Button_Click" />
+      <Button
+        Content="{x:Static resx:Resources.Button_YesToAll}"
+        Tag="OverwriteAll"
+        AutomationProperties.AutomationId="YesToAllButton"
+        Click="Button_Click" />
+      <Button
+        x:Name="NoButton"
+        Content="{x:Static resx:Resources.Button_No}"
+        Tag="Ignore"
+        AutomationProperties.AutomationId="NoButton"
+        IsDefault="True"
+        Click="Button_Click" />
+      <Button
+        Content="{x:Static resx:Resources.Button_NoToAll}"
+        Tag="IgnoreAll"
+        AutomationProperties.AutomationId="NoToAllButton"
+        Click="Button_Click" />
+    </StackPanel>
+
+    <TextBlock
+      x:Name="QuestionText"
+      x:FieldModifier="private"
+      DockPanel.Dock="Top"
+      Margin="0,3,0,3"
+      TextWrapping="Wrap"
+      VerticalAlignment="Top"
+      AutomationProperties.Name="{Binding Text}"/>
+  </DockPanel>
+</vs:DialogWindow>

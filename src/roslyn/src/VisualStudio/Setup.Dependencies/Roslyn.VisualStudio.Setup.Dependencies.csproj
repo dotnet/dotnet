@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Roslyn.VisualStudio.Setup.Dependencies</RootNamespace>
+    <TargetFramework>net472</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <IsShipping>false</IsShipping>
+
+    <!-- VSIX -->
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <ExtensionInstallationRoot>$(CommonExtensionInstallationRoot)</ExtensionInstallationRoot>
+    <ExtensionInstallationFolder>Microsoft\VBCSharp\Dependencies</ExtensionInstallationFolder>
+    <DeployExtension>true</DeployExtension>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--
+      Roslyn dependencies that are installed by other VS components. 
+      This project deploys them to RoslynDev hive to enable F5 scenario, 
+      but the resulting VSIX not inserted into VS.
+    -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.DiaSymReader" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.DiaSymReader.PortablePdb" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.Logging" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.Options" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Buffers" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.CodeDom" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Collections.Immutable" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    
+    <!-- Include certain other packages until the 9.0 version is included in Visual Studio. Our MSBuild support for ForceIncludeInVsix only looks at the direct contents
+         of that package and doesn't include any dependencies, which is unfortunate here: the main packages are a metapackages, and all the actual stuff is in other
+         packages. We workaround that here by listing all of the "real" packages. I'm using VersionOverride here rather than creating a bunch of new entries in
+         our Directories.props files, because eventually we can go and delete these and it keeps the hack self-contained. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" VersionOverride="$(MicrosoftExtensionsDependencyInjectionVersion)" />
+    <PackageReference Include="System.Composition.AttributedModel" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" VersionOverride="$(SystemCompositionVersion)" />
+    <PackageReference Include="System.Composition.Convention" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" VersionOverride="$(SystemCompositionVersion)" />
+    <PackageReference Include="System.Composition.Hosting" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" VersionOverride="$(SystemCompositionVersion)" />
+    <PackageReference Include="System.Composition.Runtime" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" VersionOverride="$(SystemCompositionVersion)" />
+    <PackageReference Include="System.Composition.TypedParts" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" VersionOverride="$(SystemCompositionVersion)" />
+    
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Diagnostics.EventLog" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.IO.Hashing" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.IO.Pipelines" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Memory" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Numerics.Vectors" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Reflection.Metadata" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Resources.Extensions" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Security.Permissions" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Text.Encoding.CodePages" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Text.Encodings.Web" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Text.Json" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Threading.Channels" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="Nerdbank.Streams" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+    <PackageReference Include="StreamJsonRpc" ForceIncludeInVsix="true" PkgDefEntry="BindingRedirect" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+  </ItemGroup>
+</Project>

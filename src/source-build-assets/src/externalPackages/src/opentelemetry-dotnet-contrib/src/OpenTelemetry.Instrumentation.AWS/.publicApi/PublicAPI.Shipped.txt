@@ -1,0 +1,16 @@
+#nullable enable
+OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions
+OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions.AWSClientInstrumentationOptions() -> void
+OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions.SemanticConventionVersion.get -> OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion
+OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions.SemanticConventionVersion.set -> void
+OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions.SuppressDownstreamInstrumentation.get -> bool
+OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions.SuppressDownstreamInstrumentation.set -> void
+OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion
+OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion.Latest = 0 -> OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion
+OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion.V1_28_0 = 1 -> OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion
+OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion.V1_29_0 = 2 -> OpenTelemetry.Instrumentation.AWS.SemanticConventionVersion
+OpenTelemetry.Metrics.MeterProviderBuilderExtensions
+OpenTelemetry.Trace.TracerProviderBuilderExtensions
+static OpenTelemetry.Metrics.MeterProviderBuilderExtensions.AddAWSInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddAWSInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.AWS.AWSClientInstrumentationOptions!>? configure) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddAWSInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!

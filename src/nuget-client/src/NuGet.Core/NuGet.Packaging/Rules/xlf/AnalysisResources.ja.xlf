@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../AnalysisResources.resx">
+    <body>
+      <trans-unit id="AssemblyDirectlyUnderLibWarning">
+        <source>The assembly '{0}' is placed directly under 'lib' folder. It is recommended that assemblies be placed inside a framework-specific folder. Move it into a framework-specific folder.</source>
+        <target state="translated">アセンブリ '{0}' は 'lib' フォルダーの直下に置かれています。アセンブリはフレームワーク固有のフォルダー内に置くことをお勧めします。このアセンブリをフレームワーク固有のフォルダーに移動してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyOutsideLibWarning">
+        <source>The assembly '{0}' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project. Move it into the 'lib' folder if it needs to be referenced.</source>
+        <target state="translated">アセンブリ '{0}' は 'lib' フォルダー内にないため、パッケージをプロジェクトにインストールするとき、このアセンブリは参照として追加されません。参照する必要がある場合は、'lib' フォルダー内に移動してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildConventionIsViolatedWarning">
+        <source>- At least one {0} file was found in '{1}', but '{2}' was not.</source>
+        <target state="translated">- '{1}' には 1 つ以上の {0} ファイルが見つかりましたが、'{2}' はありませんでした。</target>
+        <note>0 - file extension (either .props or .targets)
+1 - directory that the file falls under
+2 - correct file path </note>
+      </trans-unit>
+      <trans-unit id="DefaultSpecValueWarning">
+        <source>The value "{0}" for {1} is a sample value and should be removed. Replace it with an appropriate value or remove it and rebuild your package.</source>
+        <target state="translated">{1} の値 "{0}" はサンプル値であるため、削除する必要があります。適切な値に置き換えるか、この値を削除してから、パッケージをリビルドしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToFiles">
+        <source>- Add lib or ref assemblies for the</source>
+        <target state="translated">- ライブラリまたは参照アセンブリを追加します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToNuspec">
+        <source>- Add a dependency group for</source>
+        <target state="translated">- 依存関係グループを追加します</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToFile">
+        <source>target framework</source>
+        <target state="translated">ターゲット フレームワーク</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToNuspec">
+        <source>to the nuspec</source>
+        <target state="translated">Nuspec に</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasCompatMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder have compatible matches, but not exact matches in the other location. Unless intentional, consult the list of actions below:</source>
+        <target state="translated">Nuspec および lib/ref フォルダーの依存関係グループで宣言されているいくつかのターゲット フレームワークに、もう一方の場所での適合する一致がありますが、完全一致はありません。意図的でなければ、以下のアクションの一覧を参照してください:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasNoExactMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:</source>
+        <target state="translated">Nuspec および lib/ref フォルダーの依存関係グループで宣言されているいくつかのターゲット フレームワークに、もう一方の場所での完全一致がありません。以下のアクションの一覧を参照してください:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="FilePathTooLongWarning">
+        <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</source>
+        <target state="translated">ファイル '{0}' のパスと名前の両方またはいずれかが長すぎます。このパッケージは、長いファイル パスがサポートされていない場合は動作しない可能性があります。ファイルのパスまたはファイル名を短くしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconUrlDeprecationWarning">
+        <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
+        <target state="translated">'PackageIconUrl'/'iconUrl' 要素は使用されていません。代わりに 'PackageIcon'/'icon' 要素を使用することを検討してください。詳細については、https://aka.ms/deprecateIconUrl をご覧ください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkWarning">
+        <source>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</source>
+        <target state="translated">'lib' の下にあるフォルダー '{0}' は、有効なフレームワーク名またはサポートされているカルチャ識別子として認識されません。有効なフレームワーク名またはカルチャ識別子に名前を変更してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPlaceholderFileWarning">
+        <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</source>
+        <target state="translated">'{0}' のファイルは空のディレクトリにシンボル '_._' を使用していますが、その他のファイルを含むディレクトリに存在します。その他のファイルを含むディレクトリからこのファイルを削除してください。</target>
+        <note>0 - file path ending in _._</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrereleaseDependencyWarning">
+        <source>A stable release of a package should not have a prerelease dependency. Either modify the version spec of dependency "{0}" or update the version field in the nuspec.</source>
+        <target state="translated">パッケージの安定版リリースにリリース前の依存関係を含めることはできません。依存関係 "{0}" のバージョン指定を変更するか、nuspec のバージョン フィールドを更新してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInDependencyGroupsWarning">
+        <source>The following dependency group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">次の依存関係グループでは、フレームワーク バージョンにドットが必要です: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFilesWarning">
+        <source>The following packaged file folder(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">次のパッケージ化されたファイル フォルダーでは、フレームワーク バージョンにドットが必要です: {0}</target>
+        <note>0 - comma-separated list of paths</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFrameworkAssemblyGroupsWarning">
+        <source>The following framework assembly group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">次のフレームワーク アセンブリ グループでは、フレームワーク バージョンにドットが必要です: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInReferenceGroupsWarning">
+        <source>The following reference group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">次の参照グループでは、フレームワーク バージョンにドットが必要です: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkWarning">
+        <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
+        <target state="translated">パッケージ内の 1 つ以上のターゲット フレームワーク指定子で、フレームワークのバージョン番号に必要なドットがありません。これは、.NET5.0 以降必要です。必要に応じてドットを含む名前に変更してください (例: 'net50' から 'net5.0')。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LegacyVersionWarning">
+        <source>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</source>
+        <target state="translated">パッケージのバージョン '{0}' では、SemVer 2.0.0 を使用しているか、またはレガシ クライアントでサポートされていない SemVer 1.0.0 のコンポーネントを使用しています。パッケージのバージョンを SemVer 1.0.0 の文字列に変更してください。バージョンにリリースのラベルを含める場合は、英字で始める必要があります。パッケージが古いクライアントを対象としていない場合には、このメッセージは無視してかまいません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseUrlDeprecationWarning">
+        <source>The 'licenseUrl' element will be deprecated. Consider using the 'license' element instead.</source>
+        <target state="translated">'licenseUrl' 要素は非推奨になる予定です。代わりに 'license' 要素の使用をご検討ください。</target>
+        <note>Please don't localize the items in the ''. license and licenseUrl</note>
+      </trans-unit>
+      <trans-unit id="Migrator_AssemblyDirectlyUnderLibWarning">
+        <source>The assembly 'lib\{0}' will be ignored when the package is installed after the migration.</source>
+        <target state="translated">アセンブリ 'lib\{0}' は、移行後にパッケージをインストールするときには無視されます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasContentFolder">
+        <source>'content' assets will not be available when the package is installed after the migration.</source>
+        <target state="translated">'content' アセットは、移行後にパッケージをインストールした場合には利用することができません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasInstallScript">
+        <source>install.ps1 script will be ignored when the package is installed after the migration.</source>
+        <target state="translated">install.ps1 スクリプトは、移行後にパッケージをインストールした場合には無視されます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_XdtTransformInPackage">
+        <source>XDT transform file '{0}' will not be applied when the package is installed after the migration.</source>
+        <target state="translated">XDT 変換ファイル '{0}' は、移行後にパッケージをインストールした場合には適用されません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedInitScriptWarning">
+        <source>The file '{0}' will be ignored by NuGet because it is not directly under 'tools' folder. Place the file directly under 'tools' folder.</source>
+        <target state="translated">ファイル '{0}' は 'tools' フォルダーの直下にないため、NuGet により無視されます。このファイルを 'tools' フォルダーの直下に置いてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedTransformFileWarning">
+        <source>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</source>
+        <target state="translated">変換ファイル '{0}' は 'content' フォルダー外にあるため、このパッケージのインストール中に変換されません。このファイルを 'content' フォルダー内に移動してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingReadmeInformation">
+        <source>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</source>
+        <target state="translated">パッケージ {0} に readme がありません。https://aka.ms/nuget/authoring-best-practices/readme にアクセスして、パッケージ readmes が重要な理由を確認してください。</target>
+        <note>0 - package identity</note>
+      </trans-unit>
+      <trans-unit id="NoRefOrLibFolderInPackage">
+        <source>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
+{1}</source>
+        <target state="translated">このパッケージには lib/ や ref/ フォルダーが含まれていないため、すべてのフレームワークと互換性があるものとして扱われます。フレームワーク固有のファイルが {0} の build/ ディレクトリで見つかったため、次の空のファイルを作成して、パッケージの互換性を正しく狭めることをご検討ください。
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlaceholderFileInPackageWarning">
+        <source>An empty folder placeholder file '{0}' is in a non-empty folder and should be removed.</source>
+        <target state="translated">空のフォルダーのプレースホルダー ファイル '{0}' は空でないフォルダー内にあるため、削除する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarning">
+        <source>References were found in the nuspec, but some reference assemblies were not found in both the nuspec and ref folder. Add the following reference assemblies:</source>
+        <target state="translated">Nuspec に参照が見つかりましたが、参照アセンブリの一部が nuspec フォルダーと ref フォルダーのどちらにも見つかりませんでした。次の参照アセンブリを追加します:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecListItemFormat">
+        <source>- Add {0} to the {1} reference group in the nuspec</source>
+        <target state="translated">- Nuspec 内の {1} 参照グループに {0} を追加します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecNoTfmListItemFormat">
+        <source>- Add {0} to the references element in the nuspec</source>
+        <target state="translated">- Nuspec 内の 参照要素に {0} を追加します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToRefListItemFormat">
+        <source>- Add {0} to the ref/{1}/ directory</source>
+        <target state="translated">- ref/{1}/ ディレクトリに {0} を追加します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScriptOutsideToolsWarning">
+        <source>The script file '{0}' is outside the 'tools' folder and hence will not be executed during installation of this package. Move it into the 'tools' folder.</source>
+        <target state="translated">スクリプト ファイル '{0}' は、'tools' フォルダー外にあるため、このパッケージのインストール中に実行されません。このファイルを 'tools' フォルダー内に移動してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedLicenseIdentifier">
+        <source>The license identifier '{0}' is not recognized by the current toolset.</source>
+        <target state="translated">ライセンス識別子 '{0}' は現在のツールセットで認識されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedScriptWarning">
+        <source>The script file '{0}' is not recognized by NuGet and hence will not be executed during installation of this package. Rename it to install.ps1, uninstall.ps1 or init.ps1 and place it directly under 'tools'.</source>
+        <target state="translated">スクリプト ファイル '{0}' は NuGet によって認識されないため、このパッケージのインストール中には実行されません。名前を install.ps1、uninstall.ps1、または init.ps1 に変更し、'tools' の直下に置いてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnspecifiedDependencyVersionWarning">
+        <source>The version of dependency '{0}' is not specified. Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">依存関係 '{0}' のバージョンが指定されていません。依存関係のバージョンを指定してから、パッケージをリビルドしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WinRTObsoleteWarning">
+        <source>The file at '{0}' uses the obsolete 'WinRT' as the framework folder. Replace 'WinRT' or 'WinRT45' with 'NetCore45'.</source>
+        <target state="translated">'{0}' にあるファイルは、フレームワークのフォルダーとして使用されていない 'WinRT' を使用しています。'WinRT' または 'WinRT45' を 'NetCore45' と置き換えてください。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

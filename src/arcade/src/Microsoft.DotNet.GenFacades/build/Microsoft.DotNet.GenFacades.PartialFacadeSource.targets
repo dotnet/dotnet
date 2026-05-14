@@ -1,0 +1,41 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="GenPartialFacadeSource" AssemblyFile="$(GenFacadesTargetAssemblyPath)" Runtime="NET" Architecture="*" />
+
+  <PropertyGroup>
+    <GenFacadesReferencePathItemName Condition="'$(GenFacadesReferencePathItemName)' == ''">ReferencePath</GenFacadesReferencePathItemName>
+    <GenFacadesReferenceAssemblyItemName Condition="'$(GenFacadesReferenceAssemblyItemName)' == ''">ResolvedMatchingContract</GenFacadesReferenceAssemblyItemName>
+    <!-- Tell ResolveMatchingContract to run and resolve contract to project reference -->
+    <ResolveMatchingContract>true</ResolveMatchingContract>
+    <GeneratePartialFacadeSourceDependsOn>$(GeneratePartialFacadeSourceDependsOn);ResolveMatchingContract;GetGenFacadesRoslynAssembliesPath</GeneratePartialFacadeSourceDependsOn>
+    <CoreCompileDependsOn Condition="'$(DesignTimeBuild)' != 'true'">$(CoreCompileDependsOn);GeneratePartialFacadeSource</CoreCompileDependsOn>
+    <GenFacadesOutputSourcePath Condition="'$(GenFacadesOutputSourcePath)' == ''">$(IntermediateOutputPath)$(AssemblyTitle).Forwards.cs</GenFacadesOutputSourcePath>
+  </PropertyGroup>
+
+  <Target Name="GeneratePartialFacadeSource"
+          Inputs="$(MSBuildAllProjects);@($(GenFacadesReferenceAssemblyItemName));@($(GenFacadesReferencePathItemName));@(Compile->WithMetadataValue('ExcludeFromGenFacades', ''))"
+          Outputs="$(GenFacadesOutputSourcePath)"
+          DependsOnTargets="$(GeneratePartialFacadeSourceDependsOn)">
+    <GenPartialFacadeSource
+      ReferencePaths="@($(GenFacadesReferencePathItemName))"
+      ReferenceAssembly="@($(GenFacadesReferenceAssemblyItemName))"
+      CompileFiles="@(Compile->WithMetadataValue('ExcludeFromGenFacades', ''))"
+      DefineConstants="$(DefineConstants)"
+      LangVersion="$(LangVersion)"
+      IgnoreMissingTypes="$(GenFacadesIgnoreMissingTypes)"
+      IgnoreMissingTypesList="@(GenFacadesIgnoreMissingType)"
+      OmitTypes="@(GenFacadesOmitType)"
+      OutputSourcePath="$(GenFacadesOutputSourcePath)"
+      SeedTypePreferences="@(SeedTypePreference)"
+      RoslynAssembliesPath="$(GenFacadesRoslynAssembliesPath)" />
+
+    <ItemGroup Condition="'$(GenFacadesAutoIncludeCompileItem)' != 'false' and
+                          Exists('$(GenFacadesOutputSourcePath)')">
+      <Compile Include="$(GenFacadesOutputSourcePath)" />
+      <FileWrites Include="$(GenFacadesOutputSourcePath)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

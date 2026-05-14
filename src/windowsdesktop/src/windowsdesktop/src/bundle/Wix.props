@@ -1,0 +1,40 @@
+<Project>
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <Lang Condition="'$(Lang)' == ''">ENU</Lang>
+    <Cultures>en-US</Cultures>
+  </PropertyGroup>
+
+  <!-- Additional parameters for Light/Candle-->
+  <PropertyGroup>
+    <SuppressIces>ICE61</SuppressIces>
+    <SuppressWarnings>1033</SuppressWarnings>
+    <!-- Currently, WiX only supports 'full' for the -pdbType option. This
+         affects both bundle and package projects. -->
+    <DebugType>full</DebugType>
+    <!-- Use backwards compatible GUID generation for WiX v5 -->
+    <WixBackwardsCompatibleGuidGeneration>true</WixBackwardsCompatibleGuidGeneration>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineSolutionProperties>false</DefineSolutionProperties>
+    <!-- Namespace used to generate stable UUID3 GUIDs for bundle UpgradeCode, etc.
+         DO NOT CHANGE THESE. -->
+    <WindowsDesktopBundleNamespaceGuid>E1FD1271-E0F0-4B8B-B4BE-01F2EBA58F4E</WindowsDesktopBundleNamespaceGuid>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);files=$(MSBuildThisFileDirectory)files</DefineConstants>
+    <DefineConstants>$(DefineConstants);Culture=$(Cultures)</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Properties for light/lit command package drop generation -->
+  <PropertyGroup>
+    <!-- Directory for the unzipped directory -->
+    <WixCommandObjDir>$(ArtifactsObjDir)WixCommandPackages</WixCommandObjDir>
+    <!-- Directory for the zipped up wixpack command package -->
+    <WixCommandPackagesDir>$(InstallersOutputPath)</WixCommandPackagesDir>
+  </PropertyGroup>
+
+</Project>

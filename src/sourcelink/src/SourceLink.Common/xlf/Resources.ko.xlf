@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Resources.resx">
+    <body>
+      <trans-unit id="MustEndWithDirectorySeparator">
+        <source>{0} must end with a directory separator: '{1}'</source>
+        <target state="translated">{0}은(는) 디렉터리 구분 기호로 끝나야 합니다. '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustNotContainWildcard">
+        <source>{0} must not contain wildcard '*': '{1}'</source>
+        <target state="translated">{0}에는 와일드카드 '*'를 포함할 수 없습니다. '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustContainSingleWildcard">
+        <source>{0} must contain a single wildcard '*': '{1}'"</source>
+        <target state="translated">{0}에는 단일 와일드카드 '*'가 포함되어야 합니다. '{1}'"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsEmpty">
+        <source>{0} is empty: '{1}'</source>
+        <target state="translated">{0}이(가) 비어 있습니다. '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingToSourceLinkFile">
+        <source>Error writing to source link file '{0}': {1}</source>
+        <target state="translated">소스 링크 파일 '{0}'에 쓰는 동안 오류 발생: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceControlInformationIsNotAvailableGeneratedSourceLinkEmpty">
+        <source>Source control information is not available - the generated source link is empty.</source>
+        <target state="translated">소스 제어 정보를 사용할 수 없습니다. 생성된 소스 링크가 비어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkEmptyDeletingExistingFile">
+        <source>Source Link is empty, deleting existing file: '{0}'.</source>
+        <target state="translated">Source Link가 비어 있습니다. 기존 파일 '{0}'을(를) 삭제합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkEmptyNoExistingFile">
+        <source>Source Link is empty, file '{0}' does not exist.</source>
+        <target state="translated">Source Link가 비어 있습니다. 파일 '{0}'이(가) 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkFileUpToDate">
+        <source>Source Link file '{0}' is up-to-date.</source>
+        <target state="translated">Source Link 파일 '{0}'이(가) 최신 상태입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceLinkFileUpdated">
+        <source>Updating Source Link file '{0}'.</source>
+        <target state="translated">Source Link 파일 '{0}'을(를) 업데이트하는 중입니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

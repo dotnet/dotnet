@@ -1,0 +1,122 @@
+<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(DISABLE_ARCADE)' != 'true'"/>
+  <Import Project="eng\targets\Settings.props" Condition="'$(DISABLE_ARCADE)' != 'true'"/>
+
+  <PropertyGroup>
+    <BUILD_IN_FSHARP_REPOSITORY>true</BUILD_IN_FSHARP_REPOSITORY>
+  </PropertyGroup>
+
+  <!-- directory locations -->
+
+  <PropertyGroup Condition="'$(OS)' != 'Unix' and '$(DisableAutoSetFscCompilerPath)' != 'true' and '$(Configuration)' != 'Proto' and '$(DOTNET_HOST_PATH)' != ''">
+    <DisableAutoSetFscCompilerPath>true</DisableAutoSetFscCompilerPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BUILDING_USING_DOTNET)' == 'true'">
+    <DisableAutoSetFscCompilerPath>false</DisableAutoSetFscCompilerPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Proto'">
+    <FSCoreVersion>$(FSCoreShippedVersion)</FSCoreVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <FSharpSourcesRoot>$(RepoRoot)src</FSharpSourcesRoot>
+    <FSharpTestsRoot>$(RepoRoot)tests</FSharpTestsRoot>
+    <SymStoreDirectory>$(ArtifactsDir)\SymStore</SymStoreDirectory>
+    <ProtoOutputPath>$(ArtifactsDir)\Bootstrap</ProtoOutputPath>
+    <ValueTupleImplicitPackageVersion>4.4.0</ValueTupleImplicitPackageVersion>
+    <WarningsAsErrors>0025;$(WarningsAsErrors)</WarningsAsErrors>
+    <OtherFlags>$(OtherFlags) --nowarn:3384</OtherFlags>
+    <OtherFlags>$(OtherFlags) --times --nowarn:75</OtherFlags>
+    <OtherFlags Condition="$(AdditionalFscCmdFlags) != ''">$(OtherFlags) $(AdditionalFscCmdFlags)</OtherFlags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Proto'">
+    <OtherFlags>$(OtherFlags) --define:NO_TYPEPROVIDERS</OtherFlags>
+  </PropertyGroup>
+
+  <!-- nuget -->
+  <PropertyGroup>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)icon.png</PackageIconFullPath>
+
+    <!-- Point to artifacts folder as an additional nuget package source  -->
+    <RestoreAdditionalProjectSources Condition = "Exists('$(ArtifactsPackagesDir)') and '$(RestoreAdditionalProjectSources)' != ''">$(RestoreAdditionalProjectSources);$(ArtifactsPackagesDir)</RestoreAdditionalProjectSources>
+    <RestoreAdditionalProjectSources Condition = "Exists('$(ArtifactsPackagesDir)') and '$(RestoreAdditionalProjectSources)' == ''">$(ArtifactsPackagesDir)</RestoreAdditionalProjectSources>
+
+    <!-- default NuGet package restore location -->
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(NUGET_PACKAGES)</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' AND '$(OS)' == 'Windows_NT'">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == '' AND '$(OS)' != 'Windows_NT'">$(HOME)/.nuget/packages/</NuGetPackageRoot>
+
+    <!-- ensure there is a trailing slash -->
+    <NuGetPackageRoot Condition="!HasTrailingSlash('$(NuGetPackageRoot)') AND '$(OS)' == 'Windows_NT'">$(NuGetPackageRoot)\</NuGetPackageRoot>
+    <NuGetPackageRoot Condition="!HasTrailingSlash('$(NuGetPackageRoot)') AND '$(OS)' != 'Windows_NT'">$(NuGetPackageRoot)/</NuGetPackageRoot>
+
+    <!-- ensure all NuGet packages come from the `$(NuGetPackageRoot)` variable -->
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+  </PropertyGroup>
+
+  <!-- signing -->
+  <PropertyGroup>
+    <StrongNameKeyId>Microsoft</StrongNameKeyId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MonoPackaging)' == 'true'">
+    <AssemblyOriginatorKeyFile>$(FSharpSourcesRoot)\test.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <DefineConstants>STRONG_NAME_FSHARP_COMPILER_WITH_TEST_KEY;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <!-- localization -->
+  <PropertyGroup>
+    <EnableXlfLocalization Condition="'$(EnableXlfLocalization)' == '' AND ('$(Configuration)' == 'Proto' OR '$(MonoPackaging)' == 'true')">false</EnableXlfLocalization>    
+  </PropertyGroup>
+
+  <!-- Do not publish in source-only modes. This switch is present in both inner and outer builds. -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <PublishWindowsPdb>false</PublishWindowsPdb>
+  </PropertyGroup>
+
+  <!-- other -->
+  <PropertyGroup>
+    <NoWarn Condition="'$(Language)' == 'F#'">$(NoWarn);FS2003</NoWarn><!-- warning when AssemblyInformationalVersion looks like '1.2.3-dev' -->
+    <NoCompilerStandardLib>true</NoCompilerStandardLib><!-- necessary for resource generation using csc.exe -->
+    <DebugType>embedded</DebugType>
+    <MicroBuildAssemblyFileLanguage>fs</MicroBuildAssemblyFileLanguage>
+    <UseStandardResourceNames>false</UseStandardResourceNames>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OS)' == 'Unix'">
+    <DefineConstants>$(DefineConstants);TESTING_ON_LINUX</DefineConstants>
+  </PropertyGroup>
+
+
+  <!-- CompressAllMetadata is a switch set by the CI to do a test pass where we compress the metadata for the assemblies -->
+  <!-- We don't compress the proto-compiler yet, because no shipped compiler, and the arcade compiler don't yet support compression -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Proto' or '$(CompressAllMetadata)' != 'true'">
+      <CompressMetadata>false</CompressMetadata>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' != 'Proto' and '$(CompressAllMetadata)' == 'true'">
+      <CompressMetadata>true</CompressMetadata>
+  </PropertyGroup>
+
+  <!-- SDK targets override -->
+  <PropertyGroup Condition="'$(Configuration)' != 'Proto' AND '$(DisableCompilerRedirection)'!='true' AND Exists('$(ProtoOutputPath)')">
+    <FSharpTargetsPath>$(ProtoOutputPath)\fsc\Microsoft.FSharp.Targets</FSharpTargetsPath>
+    <FSharpPropsShim>$(ProtoOutputPath)\fsc\Microsoft.FSharp.NetSdk.props</FSharpPropsShim>
+    <FSharpTargetsShim>$(ProtoOutputPath)\fsc\Microsoft.FSharp.NetSdk.targets</FSharpTargetsShim>
+    <FSharpOverridesTargetsShim>$(ProtoOutputPath)\fsc\Microsoft.FSharp.Overrides.NetSdk.targets</FSharpOverridesTargetsShim>
+  </PropertyGroup>
+
+  <!-- use this to enable good debugging in the Proto bootstrap compiler -->
+  <!-- You'll have to remove it to get the actual compiler bo build because optimization is needed for some large methods -->
+  <!--
+    <PropertyGroup Condition="'$(Configuration)' == 'Proto'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <Tailcalls>true</Tailcalls>
+  </PropertyGroup>
+  -->
+</Project>

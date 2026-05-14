@@ -1,0 +1,58 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <_XUnitV3PublishTargetsPath>$(MSBuildThisFileDirectory)../xunit-runner/XUnitPublish.targets</_XUnitV3PublishTargetsPath>
+
+    <!-- Default to using Microsoft Testing Platform (MTP) runner for XUnit v3 projects.
+         MTP is the default in the Arcade SDK's XUnitV3.targets. -->
+    <UseMicrosoftTestingPlatformRunner Condition="'$(UseMicrosoftTestingPlatformRunner)' == ''">true</UseMicrosoftTestingPlatformRunner>
+  </PropertyGroup>
+
+  <Target Name="RestoreXUnitV3Projects"
+          Condition="'@(XUnitV3Project)' != ''"
+          BeforeTargets="Restore"
+          Outputs="%(XUnitV3Project.Identity)%(XUnitV3Project.AdditionalProperties)">
+    <MSBuild Projects="%(XUnitV3Project.Identity)"
+             Targets="Restore"
+             Properties="CustomAfterMicrosoftCommonTargets=$(_XUnitV3PublishTargetsPath);%(XUnitV3Project.AdditionalProperties)">
+    </MSBuild>
+  </Target>
+
+  <Target Name="BuildXUnitV3Projects"
+          Condition="'@(XUnitV3Project)' != ''"
+          BeforeTargets="CoreBuild"
+          Outputs="%(XUnitV3Project.Identity)%(XUnitV3Project.AdditionalProperties)">
+    <PropertyGroup>
+      <_CurrentXUnitV3Project>%(XUnitV3Project.Identity)</_CurrentXUnitV3Project>
+      <_CurrentXUnitV3AdditionalProperties>%(XUnitV3Project.AdditionalProperties)</_CurrentXUnitV3AdditionalProperties>
+    </PropertyGroup>
+    <MSBuild Projects="$(_CurrentXUnitV3Project)" Targets="PublishWithOutput" Properties="CustomAfterMicrosoftCommonTargets=$(_XUnitV3PublishTargetsPath);$(_CurrentXUnitV3AdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_XUnitV3PublishOutputDir" />
+    </MSBuild>
+    <MSBuild Projects="$(_CurrentXUnitV3Project)" Targets="GetTargetPath" Properties="CustomAfterMicrosoftCommonTargets=$(_XUnitV3PublishTargetsPath);$(_CurrentXUnitV3AdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_XUnitV3TargetPath" />
+    </MSBuild>
+
+    <ItemGroup>
+      <XUnitV3Project Condition="'%(Identity)' == '$(_CurrentXUnitV3Project)'">
+        <PublishDirectory>$(_XUnitV3PublishOutputDir)</PublishDirectory>
+        <TargetPath>$(_XUnitV3TargetPath)</TargetPath>
+      </XUnitV3Project>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    XUnit v3 tests are self-hosting executables. Unlike v2 tests which need an external
+    console runner, v3 test assemblies can be run directly with 'dotnet exec'.
+    Result output format depends on UseMicrosoftTestingPlatformRunner.
+  -->
+  <Target Name="CreateXUnitV3WorkItems"
+          Condition="'@(XUnitV3Project)' != ''"
+          BeforeTargets="CoreTest">
+    <CreateXUnitV3WorkItems XUnitV3Projects="@(XUnitV3Project)" IsPosixShell="$(IsPosixShell)" XUnitWorkItemTimeout="$(XUnitWorkItemTimeout)" UseMicrosoftTestingPlatformRunner="$(UseMicrosoftTestingPlatformRunner)">
+      <Output TaskParameter="XUnitV3WorkItems" ItemName="HelixWorkItem"/>
+    </CreateXUnitV3WorkItems>
+  </Target>
+
+</Project>

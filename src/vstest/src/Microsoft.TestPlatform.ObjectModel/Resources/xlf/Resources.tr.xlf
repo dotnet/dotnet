@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="tr">
+    <body>
+      <trans-unit id="TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">Başarısız</target>
+        <note>Test result for failed test</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNone">
+        <source>None</source>
+        <target state="translated">Yok</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">Başarılı</target>
+        <note>Test result for passed test</note>
+      </trans-unit>
+      <trans-unit id="BasicTestResultFormat">
+        <source>{0,-10}  {1}</source>
+        <target state="translated">{0,-10}  {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestResultMessageFormat">
+        <source>  {0}:
+{1}</source>
+        <target state="translated">  {0}:
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestResultTextMessagesFormat">
+        <source>  Test Messages:
+{0}</source>
+        <target state="translated">  Test İletileri:
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestFailureMessageFormat">
+        <source>  Message: {0}</source>
+        <target state="translated">  İleti: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestFailureStackTraceFormat">
+        <source>  StackTrace:
+{0}</source>
+        <target state="translated">  StackTrace:
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NullString">
+        <source>(null)</source>
+        <target state="translated">(null)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_RegisteredTestPropertyHasDifferentValueType">
+        <source>Cannot register property '{0}' as value type '{1}' because it was already registered as '{2}'.</source>
+        <target state="translated">'{0}' özelliği daha önce '{2}' olarak kaydedildiğinden '{1}' değer türü olarak kaydedilemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyColumnNumberLabel">
+        <source>Column Number</source>
+        <target state="translated">Sütun Numarası</target>
+        <note>The label of the test property ColumnNumber for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyExecutorUriLabel">
+        <source>Executor Uri</source>
+        <target state="translated">Yürütücü URI’si</target>
+        <note>The label of the test property ExecutorUri for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertySourceLabel">
+        <source>Source</source>
+        <target state="translated">Kaynak</target>
+        <note>The label of the test property Source for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyLineNumberLabel">
+        <source>Line Number</source>
+        <target state="translated">Satır Numarası</target>
+        <note>The label of the test property LineNumber for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyNameLabel">
+        <source>Name</source>
+        <target state="translated">Ad</target>
+        <note>The label of the test property Name for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyComputerNameLabel">
+        <source>Computer Name</source>
+        <target state="translated">Bilgisayar Adı</target>
+        <note>The label of the test property ComputerName for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyDisplayNameLabel">
+        <source>TestResult Display Name</source>
+        <target state="translated">TestResult Görünen Adı</target>
+        <note>The label of TestResult.DisplayName, mainly used for parameterized data tests</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyDurationLabel">
+        <source>Duration</source>
+        <target state="translated">Süre</target>
+        <note>The label of the test property Duration for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyEndTimeLabel">
+        <source>End Time</source>
+        <target state="translated">Bitiş Saati</target>
+        <note>The label of the test property EndTime for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorColumnNumberLabel">
+        <source>Error Column Number</source>
+        <target state="translated">Hata Sütun Numarası</target>
+        <note>The label of the test property ErrorColumnNumber for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorMessageLabel">
+        <source>Error Message</source>
+        <target state="translated">Hata İletisi</target>
+        <note>The label of the test property ErrorMessage for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorStackTraceLabel">
+        <source>Error Stack Trace</source>
+        <target state="translated">Hata Yığın İzlemesi</target>
+        <note>The label of the test property ErrorStackTrace for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyOutcomeLabel">
+        <source>Outcome</source>
+        <target state="translated">Sonuç</target>
+        <note>The label of the test property Outcome for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyStartTimeLabel">
+        <source>Start Time</source>
+        <target state="translated">Başlangıç Saati</target>
+        <note>The label of the test property StartTime for test result.</note>
+      </trans-unit>
+      <trans-unit id="ConverterNotSupported">
+        <source>Cannot find TypeConverter for type {0}.</source>
+        <target state="translated">{0} türü için TypeConverter bulunamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyFilePathLabel">
+        <source>File Path</source>
+        <target state="translated">Dosya Yolu</target>
+        <note>The label of the test property FilePath for test case.</note>
+      </trans-unit>
+      <trans-unit id="NotificationFrequencyIsNotPositive">
+        <source>Notification frequency need to be a positive value.</source>
+        <target state="translated">Bildirim sıklığı pozitif bir değer olmalıdır.</target>
+        <note>frequency for DiscoveryCriteria/TestRunCriteria needs to be a positive value</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyIdLabel">
+        <source>Id</source>
+        <target state="translated">Kimlik</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsXmlAttribute">
+        <source>Invalid settings '{0}'. Unexpected XmlAttribute: '{1}'.</source>
+        <target state="translated">'{0}' ayarları geçersiz. Beklenmeyen XmlAttribute: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsXmlElement">
+        <source>Invalid settings '{0}'. Unexpected XmlElement: '{1}'.</source>
+        <target state="translated">'{0}' ayarları geçersiz. Beklenmeyen XmlElement: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDataCollectorAttributes">
+        <source>Invalid data collector settings. Expected attribute '{0}' is missing.  A typical data collector setting would look like &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;.</source>
+        <target state="translated">Geçersiz veri toplayıcı ayarları. Beklenen '{0}' özniteliği eksik. Normal bir veri toplayıcı ayarı şöyle görünmelidir: &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotFound">
+        <source>NotFound</source>
+        <target state="translated">NotFound</target>
+        <note>Test result for not found test</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeSkipped">
+        <source>Skipped</source>
+        <target state="translated">Atlandı</target>
+        <note>Test result for skipped test </note>
+      </trans-unit>
+      <trans-unit id="NotificationTimeoutIsZero">
+        <source>Notification timeout must be greater than zero.</source>
+        <target state="translated">Bildirim zaman aşımı sıfırdan büyük olmalıdır.</target>
+        <note>Timeout used during test discovery and execution must be greater than zero.</note>
+      </trans-unit>
+      <trans-unit id="InvalidSettingsIncorrectValue">
+        <source>Invalid settings '{0}'.  Invalid value '{1}' specified for '{2}'.</source>
+        <target state="translated">'{0}' ayarları geçersiz. '{2}' için geçersiz '{1}' değeri belirtildi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRunSettingsRootNode">
+        <source>The root node of the run settings must be named 'RunSettings'.</source>
+        <target state="translated">Çalıştırma ayarlarının kök düğümü 'RunSettings' olarak adlandırılmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestCaseFilterForSpecificTests">
+        <source>Cannot specify TestCaseFilter for specific tests run. FilterCriteria is only for run with sources.</source>
+        <target state="translated">Belirli bir test çalıştırması için TestCaseFilter belirtilemiyor. FilterCriteria yalnızca kaynakları olan bir çalıştırma içindir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedTypeOfProperty">
+        <source>The test property type '{0}' of property '{1}' is not supported. Use one of the supported property type (primitive types, uri, string, string[]) and try again. </source>
+        <target state="translated">'{1}' özelliğinin '{0}' test özelliği türü desteklenmiyor. Desteklenen özellik türlerinden birini (temel türler, uri, string, string[]) seçin ve yeniden deneyin. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CouldNotFindXmlNode">
+        <source>Could not find '{0}' node</source>
+        <target state="translated">'{0}' düğümü bulunamadı</target>
+        <note>Error message when the specified {0}  xml node can not be found in the run settings xml document</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyFullyQualifiedNameLabel">
+        <source>FullyQualifiedName</source>
+        <target state="translated">FullyQualifiedName</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyTraitsLabel">
+        <source>Traits</source>
+        <target state="translated">Nitelikler</target>
+        <note>The label of the test property Traits for test case.</note>
+      </trans-unit>
+      <trans-unit id="SolutionDirectoryNotExists">
+        <source>Solution directory '{0}' does not exists. Please make sure solution directory specified in runsettings exists and have read permissions for directory.</source>
+        <target state="translated">'{0}' çözüm dizini yok. Lütfen runsettings içinde belirtilen çözüm dizininin mevcut olduğundan ve dizin için okuma izinlerine sahip olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Parametre null veya boş olamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_FileNotExist">
+        <source>File {0} does not exist.</source>
+        <target state="translated">{0} dosyası yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_ObjectMustBeOfType">
+        <source>Object must be of type {0}.</source>
+        <target state="translated">Nesne {0} türünde olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeAborted">
+        <source>Aborted</source>
+        <target state="translated">İptal edildi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeCompleted">
+        <source>Completed</source>
+        <target state="translated">Tamamlandı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeDisconnected">
+        <source>Disconnected</source>
+        <target state="translated">Bağlantı kesildi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeError">
+        <source>Error</source>
+        <target state="translated">Hata</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">Başarısız</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeInconclusive">
+        <source>Inconclusive</source>
+        <target state="translated">Sonuçsuz</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeInProgress">
+        <source>In Progress</source>
+        <target state="translated">Sürüyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeNotExecuted">
+        <source>Not Executed</source>
+        <target state="translated">Yürütülmedi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeNotRunnable">
+        <source>Not Runnable</source>
+        <target state="translated">Çalıştırılamıyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">Başarılı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePassedButRunAborted">
+        <source>Passed (run aborted)</source>
+        <target state="translated">Başarılı (çalıştırma iptal edildi)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePending">
+        <source>Pending</source>
+        <target state="translated">Bekliyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeTimeout">
+        <source>Timeout</source>
+        <target state="translated">Zaman aşımı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeWarning">
+        <source>Warning</source>
+        <target state="translated">Uyarı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_CanNotReadStream">
+        <source>Unable to read from the provided stream.  Data from a stream cannot be sent unless the stream supports reading.</source>
+        <target state="translated">Belirtilen akıştan okunamadı. Bir akış okumayı desteklemiyorsa, akıştaki veriler gönderilemez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_InvalidFileNameCharacters">
+        <source>The provided file name '{0}' contains the following invalid characters: '{1}'.</source>
+        <target state="translated">Belirtilen '{0}' dosya adı şu geçersiz karakterleri içeriyor: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_ReservedFilenameUsed">
+        <source>The provided file name '{0}' is reserved.</source>
+        <target state="translated">Belirtilen '{0}' dosya adı ayrılmış.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToCreateDiaSession">
+        <source>Failed to Create msdia Session COM HResult '{0}'.</source>
+        <target state="translated">Msdia Oturumu COM HResult '{0}' oluşturulamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadMsDia">
+        <source>Failed to load msdia</source>
+        <target state="translated">Msdia yüklenemedi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDataCollectorUriInSettings">
+        <source>Invalid URI in data collector settings '{0}'.</source>
+        <target state="translated">'{0}' veri toplayıcı ayarlarında geçersiz URI.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUriInSettings">
+        <source>Invalid URI '{0}' in settings '{1}'.</source>
+        <target state="translated">'{1}' ayarlarında geçersiz URI '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingLoggerAttributes">
+        <source>Invalid settings '{0}'. Expected atleast one of the XmlAttribute among friendlyName, uri and assemblyQualifiedName.</source>
+        <target state="translated">Geçersiz ayarlar '{0}'. FriendlyName, URI veya AssemblyQualifiedName değişkenlerinden en az biri bekleniyordu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCaseFilterEscapeException">
+        <source>Filter string '{0}' includes unrecognized escape sequence.</source>
+        <target state="translated">'{0}' filtre dizesi tanınmayan atlatma sırası içeriyor.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

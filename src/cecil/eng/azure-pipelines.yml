@@ -1,0 +1,76 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+
+variables:
+- name: _BuildConfig
+  value: Release
+- name: _DotNetArtifactsCategory
+  value: .NETCore
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableTelemetry: true # send helix telemetry
+      enablePublishUsingPipelines: true
+      enablePublishBuildArtifacts: true # publish build logs to pipeline storage
+      enablePublishTestResults: true
+      testResultsFormat: vstest
+      enablePublishBuildAssets: true # generate build manifests and publish to BAR in internal builds
+      enableMicrobuild: true # only affects internal builds
+      enableSourceBuild: true
+
+      jobs:
+      - job: Windows_NT
+        pool:
+          vmImage: windows-latest
+        variables:
+          - _SignType: test
+          - DotNetSignType: ${{ format('{0}', variables._SignType) }} # DotNetSignType defaults to real if not specified
+        steps:
+        - script: eng\common\cibuild.cmd -projects $(Build.SourcesDirectory)\Mono.Cecil.sln
+                  -configuration $(_BuildConfig)
+                  -integrationTest
+                  -nodeReuse "$false" # https://github.com/Microsoft/vstest/issues/1503
+          env:
+            # https://github.com/Microsoft/vstest/issues/1503#issuecomment-410732193
+            MSBUILDENSURESTDOUTFORTASKPROCESSES: 1
+            displayName: Build Mono.Cecil.sln $(_BuildConfig)
+
+      - job: Linux
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - script: eng/common/cibuild.sh --projects $(Build.SourcesDirectory)/Mono.Cecil.sln
+                  --configuration $(_BuildConfig)
+                  --integrationTest
+                  --nodeReuse false # https://github.com/Microsoft/vstest/issues/1503
+          env:
+            # https://github.com/Microsoft/vstest/issues/1503#issuecomment-410732193
+            MSBUILDENSURESTDOUTFORTASKPROCESSES: 1
+          displayName: Build Mono.Cecil.sln $(_BuildConfig)
+
+      - job: macOS
+        pool:
+            vmImage: macOS-latest
+        steps:
+        - script: eng/common/cibuild.sh --projects $(Build.SourcesDirectory)/Mono.Cecil.sln
+                  --configuration $(_BuildConfig)
+                  --integrationTest
+                  --nodeReuse false # https://github.com/Microsoft/vstest/issues/1503
+          env:
+            # https://github.com/Microsoft/vstest/issues/1503#issuecomment-410732193
+            MSBUILDENSURESTDOUTFORTASKPROCESSES: 1
+          displayName: Build Mono.Cecil.sln $(_BuildConfig)

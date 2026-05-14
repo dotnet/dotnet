@@ -1,0 +1,25 @@
+{
+  "sdk": {
+    "version": "11.0.100-preview.3.26170.106",
+    "paths": [
+      ".dotnet",
+      "$host$"
+    ],
+    "errorMessage": "The .NET SDK could not be found, please run ./build.cmd on Windows or ./build.sh on Linux and macOS.",
+    "rollForward": "minor",
+    "allowPrerelease": false,
+    "architecture": "x64"
+  },
+  "tools": {
+    "vs": {
+      "version": "17.8.0"
+    },
+    "dotnet": "11.0.100-preview.3.26170.106"
+  },
+  "msbuild-sdks": {
+    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.26211.1"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
+  }
+}

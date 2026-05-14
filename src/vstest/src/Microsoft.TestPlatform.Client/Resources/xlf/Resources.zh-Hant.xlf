@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hant">
+    <body>
+      <trans-unit id="InvalidStateForExecution">
+        <source>The test run could not be executed because the initial state was invalid.</source>
+        <target state="translated">因為初始狀態無效，所以無法執行測試回合。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
+        <source>Wait for completion operation is not allowed when there is no active test run. </source>
+        <target state="translated">沒有使用中的測試回合時，不允許等候完成作業。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestSessionTimeoutMessage">
+        <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
+        <target state="translated">正在中止測試回合: 超過了測試回合逾時 ({0} 毫秒)。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider found for this run.</source>
+        <target state="translated">找不到適用於此回合的測試執行階段提供者。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

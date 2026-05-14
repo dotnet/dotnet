@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <!-- don't produce any packages -->
+    <IsPackable>false</IsPackable>
+    <IsShipping>false</IsShipping>
+
+    <!-- use a fake version higher than the one produced by the product -->
+    <PackageVersion>4242.42.42</PackageVersion>
+  </PropertyGroup>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
+
+</Project>

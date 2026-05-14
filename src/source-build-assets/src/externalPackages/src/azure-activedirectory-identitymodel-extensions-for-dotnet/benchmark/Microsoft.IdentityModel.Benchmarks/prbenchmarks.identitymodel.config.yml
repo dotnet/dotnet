@@ -1,0 +1,22 @@
+﻿# multi-line script to build the project
+components:
+    jwt:
+        script: |
+            call dotnet build -c release --framework net8.0 .\src\Microsoft.IdentityModel.JsonWebTokens\Microsoft.IdentityModel.JsonWebTokens.csproj
+
+        arguments:
+            --application.options.outputFiles .\src\Microsoft.IdentityModel.JsonWebTokens\bin\release\net8.0\
+
+# default arguments that are always used on crank commands
+defaults: --config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/aspnet.profiles.standard.yml --application.framework net8.0  
+
+# the first vaule is the default if none is specified
+profiles:
+    windows:
+        description: INTEL/Windows 28 Cores
+        arguments: --profile aspnet-citrine-win     
+
+benchmarks:
+    NoMvcAuth:
+        description: NoMvcAuth
+        arguments: --config https://raw.githubusercontent.com/aspnet/Benchmarks/main/src/BenchmarksApps/Mvc/benchmarks.jwtapi.yml --scenario NoMvcAuth

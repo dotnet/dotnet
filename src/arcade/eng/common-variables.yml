@@ -1,0 +1,36 @@
+parameters:
+- name: signType
+  default: Test
+  type: string
+
+variables:
+  # Cannot use key:value syntax in root defined variables
+  - name: _TeamName
+    value: DotNetCore
+  - name: HelixApiAccessToken
+    value: ''
+  - name: _RunAsPublic
+    value: True
+  - name: _RunAsInternal
+    value: False
+  - name: _InternalBuildArgs
+    value: ''
+
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: _RunAsPublic
+      value: False
+    - name: _RunAsInternal
+      value: True
+    - name: _SignType
+      value: ${{ parameters.signType }}
+    # Publish-Build-Assets provides: BotAccount-dotnet-maestro-bot-PAT
+    # DotNet-HelixApi-Access provides: HelixApiAccessToken
+    - group: Publish-Build-Assets
+    - group: DotNet-HelixApi-Access
+    - group: SDL_Settings
+    - name: _InternalBuildArgs
+      value: /p:DotNetSignType=${{ parameters.signType }}
+        /p:TeamName=$(_TeamName)
+        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+    - name: PostBuildSign
+      value: true

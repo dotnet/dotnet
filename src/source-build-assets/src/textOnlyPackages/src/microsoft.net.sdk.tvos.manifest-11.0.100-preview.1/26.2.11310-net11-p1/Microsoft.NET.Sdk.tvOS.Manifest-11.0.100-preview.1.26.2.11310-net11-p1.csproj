@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.NET.Sdk.tvOS.Manifest-11.0.100-preview.1</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>26.2.11310-net11-p1</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.tvOS.Manifest-11.0.100-preview.1</AssemblyName>
+    <Description>.NET Workload for tvOS platforms</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageType>DotnetPlatform</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/WorkloadDependencies.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.targets" Pack="true" PackagePath="data" />
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

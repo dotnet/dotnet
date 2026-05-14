@@ -1,0 +1,806 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xml:base="https://www.nuget.org/api/v2/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+  <id>https://www.nuget.org/api/v2/Search</id>
+  <title type="text">Search</title>
+  <updated>2016-02-16T23:13:23Z</updated>
+  <link rel="self" title="Search" href="Search" />
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='4.2.1')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.2.1')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.2.1')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/4.2.1" />
+    <m:properties>
+      <d:Version>4.2.1</d:Version>
+      <d:NormalizedVersion>4.2.1</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2014-08-13T18:48:47.743</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.0:net40-Client|Newtonsoft.Json:5.0.6:net40-Client|Microsoft.Data.Services.Client:5.6.0:net40-Client|Microsoft.WindowsAzure.ConfigurationManager:1.8.0.0:net40-Client|Microsoft.Data.OData:5.6.0:win80|Microsoft.Data.OData:5.6.0:wp80|Newtonsoft.Json:5.0.6:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/4.2.1</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2014-08-13T18:48:47.743</d:Published>
+      <d:PackageHash>lw/P9BLjuOLfBNojOpJB2tpwyHGy687PQokvulkOBXAimKjhKelBfqXGHiV73L8v4RG2VtK+EYWFYRAMauaOPg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">971097</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/4.2.1</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">139443</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='4.3.0')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.3.0')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.3.0')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/4.3.0" />
+    <m:properties>
+      <d:Version>4.3.0</d:Version>
+      <d:NormalizedVersion>4.3.0</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2014-09-16T22:46:07.777</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.2:net40-Client|Newtonsoft.Json:5.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.2:net40-Client|Microsoft.WindowsAzure.ConfigurationManager:1.8.0.0:net40-Client|Microsoft.Data.OData:5.6.2:win80|Microsoft.Data.OData:5.6.2:wpa|Microsoft.Data.OData:5.6.2:wp80|Newtonsoft.Json:5.0.8:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/4.3.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2014-09-16T22:46:07.777</d:Published>
+      <d:PackageHash>7IQiKZKSNHK+cZzEZohOsFDezxrhyBrNoDl8ZQJPdPnitEbjJaq2LXv01iVe6PRBTZE23bKNUWLtH+dXQfbbuQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1212029</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/4.3.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">875381</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='4.3.1-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.3.1-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-04-20T12:41:14Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.3.1-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/4.3.1-preview" />
+    <m:properties>
+      <d:Version>4.3.1-preview</d:Version>
+      <d:NormalizedVersion>4.3.1-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2014-11-12T17:51:44.633</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.3:aspnetcore50|Microsoft.Data.Services.Client:5.6.3:aspnetcore50|System.Spatial:5.6.3:aspnetcore50|CoreCLR:1.0.0-beta1-10164:aspnetcore50|System.Collections:4.0.10-beta-22231:aspnetcore50|System.Collections.Concurrent:4.0.0-beta-22231:aspnetcore50|System.Collections.Specialized:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Debug:4.0.10-beta-22231:aspnetcore50|System.Diagnostics.Tools:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.TraceSource:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Tracing:4.0.10-beta-22231:aspnetcore50|System.Dynamic.Runtime:4.0.0-beta-22231:aspnetcore50|System.Globalization:4.0.10-beta-22231:aspnetcore50|System.IO:4.0.10-beta-22231:aspnetcore50|System.IO.FileSystem:4.0.0-beta-22231:aspnetcore50|System.IO.FileSystem.Primitives:4.0.0-beta-22231:aspnetcore50|System.Linq:4.0.0-beta-22231:aspnetcore50|System.Linq.Expressions:4.0.0-beta-22231:aspnetcore50|System.Linq.Queryable:4.0.0-beta-22231:aspnetcore50|System.Net.Http:4.0.0-beta-22231:aspnetcore50|System.Net.Primitives:4.0.10-beta-22231:aspnetcore50|System.Reflection:4.0.10-beta-22231:aspnetcore50|System.Reflection.Extensions:4.0.0-beta-22231:aspnetcore50|System.Reflection.TypeExtensions:4.0.0-beta-22231:aspnetcore50|System.Runtime:4.0.20-beta-22231:aspnetcore50|System.Runtime.Extensions:4.0.10-beta-22231:aspnetcore50|System.Runtime.InteropServices:4.0.20-beta-22231:aspnetcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-22231:aspnetcore50|System.Runtime.Serialization.Xml:4.0.10-beta-22231:aspnetcore50|System.Security.Cryptography.Encoding:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Encryption:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing.Algorithms:4.0.0-beta-22231:aspnetcore50|System.Text.Encoding:4.0.10-beta-22231:aspnetcore50|System.Text.Encoding.Extensions:4.0.10-beta-22231:aspnetcore50|System.Text.RegularExpressions:4.0.10-beta-22231:aspnetcore50|System.Threading:4.0.0-beta-22231:aspnetcore50|System.Threading.Tasks:4.0.10-beta-22231:aspnetcore50|System.Threading.Thread:4.0.0-beta-22231:aspnetcore50|System.Threading.ThreadPool:4.0.10-beta-22231:aspnetcore50|System.Threading.Timer:4.0.0-beta-22231:aspnetcore50|System.Xml.ReaderWriter:4.0.10-beta-22231:aspnetcore50|System.Xml.XDocument:4.0.0-beta-22231:aspnetcore50|System.Xml.XmlSerializer:4.0.0-beta-22231:aspnetcore50|Microsoft.Data.OData:5.6.3:aspnet50|Microsoft.Data.Services.Client:5.6.3:aspnet50|System.Spatial:5.6.3:aspnet50|CoreCLR:1.0.0-beta1-10164:aspnet50|Microsoft.Data.OData:5.6.2:net40-Client|Newtonsoft.Json:5.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.2:net40-Client|Microsoft.WindowsAzure.ConfigurationManager:1.8.0.0:net40-Client|Microsoft.Data.OData:5.6.2:win80|Microsoft.Data.OData:5.6.2:wpa|Microsoft.Data.OData:5.6.2:wp80|Newtonsoft.Json:5.0.8:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/4.3.1-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2014-11-12T17:51:44.633</d:Published>
+      <d:PackageHash>90DZjgC07x5KU1jEGfjujDni0HCamfwkl+7HP7YqQUHTV1p0wfka3ovO3P/O1jrzNkkBStCCXzAjMburAzfd9Q==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1673031</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/4.3.1-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">721</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='4.3.2-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.3.2-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-05T07:23:28Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.3.2-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/4.3.2-preview" />
+    <m:properties>
+      <d:Version>4.3.2-preview</d:Version>
+      <d:NormalizedVersion>4.3.2-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2014-11-12T22:19:16.297</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.3:aspnetcore50|Microsoft.Data.Services.Client:5.6.3:aspnetcore50|System.Spatial:5.6.3:aspnetcore50|System.Collections:4.0.10-beta-22231:aspnetcore50|System.Collections.Concurrent:4.0.0-beta-22231:aspnetcore50|System.Collections.Specialized:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Debug:4.0.10-beta-22231:aspnetcore50|System.Diagnostics.Tools:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.TraceSource:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Tracing:4.0.10-beta-22231:aspnetcore50|System.Dynamic.Runtime:4.0.0-beta-22231:aspnetcore50|System.Globalization:4.0.10-beta-22231:aspnetcore50|System.IO:4.0.10-beta-22231:aspnetcore50|System.IO.FileSystem:4.0.0-beta-22231:aspnetcore50|System.IO.FileSystem.Primitives:4.0.0-beta-22231:aspnetcore50|System.Linq:4.0.0-beta-22231:aspnetcore50|System.Linq.Expressions:4.0.0-beta-22231:aspnetcore50|System.Linq.Queryable:4.0.0-beta-22231:aspnetcore50|System.Net.Http:4.0.0-beta-22231:aspnetcore50|System.Net.Primitives:4.0.10-beta-22231:aspnetcore50|System.Reflection:4.0.10-beta-22231:aspnetcore50|System.Reflection.Extensions:4.0.0-beta-22231:aspnetcore50|System.Reflection.TypeExtensions:4.0.0-beta-22231:aspnetcore50|System.Runtime:4.0.20-beta-22231:aspnetcore50|System.Runtime.Extensions:4.0.10-beta-22231:aspnetcore50|System.Runtime.InteropServices:4.0.20-beta-22231:aspnetcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-22231:aspnetcore50|System.Runtime.Serialization.Xml:4.0.10-beta-22231:aspnetcore50|System.Security.Cryptography.Encoding:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Encryption:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing.Algorithms:4.0.0-beta-22231:aspnetcore50|System.Text.Encoding:4.0.10-beta-22231:aspnetcore50|System.Text.Encoding.Extensions:4.0.10-beta-22231:aspnetcore50|System.Text.RegularExpressions:4.0.10-beta-22231:aspnetcore50|System.Threading:4.0.0-beta-22231:aspnetcore50|System.Threading.Tasks:4.0.10-beta-22231:aspnetcore50|System.Threading.Thread:4.0.0-beta-22231:aspnetcore50|System.Threading.ThreadPool:4.0.10-beta-22231:aspnetcore50|System.Threading.Timer:4.0.0-beta-22231:aspnetcore50|System.Xml.ReaderWriter:4.0.10-beta-22231:aspnetcore50|System.Xml.XDocument:4.0.0-beta-22231:aspnetcore50|System.Xml.XmlSerializer:4.0.0-beta-22231:aspnetcore50|Microsoft.Data.OData:5.6.3:aspnet50|Microsoft.Data.Services.Client:5.6.3:aspnet50|System.Spatial:5.6.3:aspnet50|Microsoft.Data.OData:5.6.2:net40-Client|Newtonsoft.Json:5.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.2:net40-Client|Microsoft.WindowsAzure.ConfigurationManager:1.8.0.0:net40-Client|Microsoft.Data.OData:5.6.2:win80|Microsoft.Data.OData:5.6.2:wpa|Microsoft.Data.OData:5.6.2:wp80|Newtonsoft.Json:5.0.8:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/4.3.2-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2014-11-12T22:19:16.297</d:Published>
+      <d:PackageHash>kV8UfgKsmZiYxCMuwoSIwirFhi2jA2ndEo0k24yH9Cc0rnPOE3D8WxXtotAk0RhzwDagzrzkQAmohUk1+JeJzA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1673001</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/4.3.2-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">27598</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames>Apache-2.0</d:LicenseNames>
+      <d:LicenseReportUrl></d:LicenseReportUrl>
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='4.4.0-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.4.0-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:04:50Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.4.0-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/4.4.0-preview" />
+    <m:properties>
+      <d:Version>4.4.0-preview</d:Version>
+      <d:NormalizedVersion>4.4.0-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-04-29T22:10:41.32</d:Created>
+      <d:Dependencies>KRE-CoreCLR-x86:1.0.0-beta1:aspnetcore50|Microsoft.Data.OData:5.6.3:aspnetcore50|Microsoft.Data.Services.Client:5.6.3:aspnetcore50|System.Spatial:5.6.3:aspnetcore50|System.Collections:4.0.10-beta-22231:aspnetcore50|System.Collections.Concurrent:4.0.0-beta-22231:aspnetcore50|System.Collections.Specialized:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Debug:4.0.10-beta-22231:aspnetcore50|System.Diagnostics.Tools:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.TraceSource:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Tracing:4.0.10-beta-22231:aspnetcore50|System.Dynamic.Runtime:4.0.0-beta-22231:aspnetcore50|System.Globalization:4.0.10-beta-22231:aspnetcore50|System.IO:4.0.10-beta-22231:aspnetcore50|System.IO.FileSystem:4.0.0-beta-22231:aspnetcore50|System.IO.FileSystem.Primitives:4.0.0-beta-22231:aspnetcore50|System.Linq:4.0.0-beta-22231:aspnetcore50|System.Linq.Expressions:4.0.0-beta-22231:aspnetcore50|System.Linq.Queryable:4.0.0-beta-22231:aspnetcore50|System.Net.Http:4.0.0-beta-22231:aspnetcore50|System.Net.Primitives:4.0.10-beta-22231:aspnetcore50|System.Reflection:4.0.10-beta-22231:aspnetcore50|System.Reflection.Extensions:4.0.0-beta-22231:aspnetcore50|System.Reflection.TypeExtensions:4.0.0-beta-22231:aspnetcore50|System.Runtime:4.0.20-beta-22231:aspnetcore50|System.Runtime.Extensions:4.0.10-beta-22231:aspnetcore50|System.Runtime.InteropServices:4.0.20-beta-22231:aspnetcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-22231:aspnetcore50|System.Runtime.Serialization.Xml:4.0.10-beta-22231:aspnetcore50|System.Security.Cryptography.Encoding:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Encryption:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing.Algorithms:4.0.0-beta-22231:aspnetcore50|System.Text.Encoding:4.0.10-beta-22231:aspnetcore50|System.Text.Encoding.Extensions:4.0.10-beta-22231:aspnetcore50|System.Text.RegularExpressions:4.0.10-beta-22231:aspnetcore50|System.Threading:4.0.0-beta-22231:aspnetcore50|System.Threading.Tasks:4.0.10-beta-22231:aspnetcore50|System.Threading.Thread:4.0.0-beta-22231:aspnetcore50|System.Threading.ThreadPool:4.0.10-beta-22231:aspnetcore50|System.Threading.Timer:4.0.0-beta-22231:aspnetcore50|System.Xml.ReaderWriter:4.0.10-beta-22231:aspnetcore50|System.Xml.XDocument:4.0.0-beta-22231:aspnetcore50|System.Xml.XmlSerializer:4.0.0-beta-22231:aspnetcore50|KRE-CLR-x86:1.0.0-beta1:aspnet50|Microsoft.Data.OData:5.6.3:aspnet50|Microsoft.Data.Services.Client:5.6.3:aspnet50|System.Spatial:5.6.3:aspnet50|Microsoft.Data.OData:5.6.2:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.2:net40-Client|Microsoft.WindowsAzure.ConfigurationManager:1.8.0.0:net40-Client|Microsoft.Azure.KeyVault.Core:0.9.1-preview:net40-Client|Microsoft.Data.OData:5.6.2:win80|Microsoft.Data.OData:5.6.2:wpa|Microsoft.Data.OData:5.6.2:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:0.9.1-preview:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/4.4.0-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-04-29T22:10:41.32</d:Published>
+      <d:PackageHash>Oee0W8gpdYb6jacUzhWvBaeUS1uCLbyL4F++vhqh8LUJoIGjlDCiy5uWEYbUVcmwAKxzkJ6RI75tCaFW9VvZmQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">2198622</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/4.4.0-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">3297</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='4.4.1-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.4.1-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:08:11Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='4.4.1-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/4.4.1-preview" />
+    <m:properties>
+      <d:Version>4.4.1-preview</d:Version>
+      <d:NormalizedVersion>4.4.1-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-05-13T19:25:02.153</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.3:aspnetcore50|Microsoft.Data.Services.Client:5.6.3:aspnetcore50|System.Spatial:5.6.3:aspnetcore50|System.Collections:4.0.10-beta-22231:aspnetcore50|System.Collections.Concurrent:4.0.0-beta-22231:aspnetcore50|System.Collections.Specialized:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Debug:4.0.10-beta-22231:aspnetcore50|System.Diagnostics.Tools:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.TraceSource:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Tracing:4.0.10-beta-22231:aspnetcore50|System.Dynamic.Runtime:4.0.0-beta-22231:aspnetcore50|System.Globalization:4.0.10-beta-22231:aspnetcore50|System.IO:4.0.10-beta-22231:aspnetcore50|System.IO.FileSystem:4.0.0-beta-22231:aspnetcore50|System.IO.FileSystem.Primitives:4.0.0-beta-22231:aspnetcore50|System.Linq:4.0.0-beta-22231:aspnetcore50|System.Linq.Expressions:4.0.0-beta-22231:aspnetcore50|System.Linq.Queryable:4.0.0-beta-22231:aspnetcore50|System.Net.Http:4.0.0-beta-22231:aspnetcore50|System.Net.Primitives:4.0.10-beta-22231:aspnetcore50|System.Reflection:4.0.10-beta-22231:aspnetcore50|System.Reflection.Extensions:4.0.0-beta-22231:aspnetcore50|System.Reflection.TypeExtensions:4.0.0-beta-22231:aspnetcore50|System.Runtime:4.0.20-beta-22231:aspnetcore50|System.Runtime.Extensions:4.0.10-beta-22231:aspnetcore50|System.Runtime.InteropServices:4.0.20-beta-22231:aspnetcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-22231:aspnetcore50|System.Runtime.Serialization.Xml:4.0.10-beta-22231:aspnetcore50|System.Security.Cryptography.Encoding:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Encryption:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing.Algorithms:4.0.0-beta-22231:aspnetcore50|System.Text.Encoding:4.0.10-beta-22231:aspnetcore50|System.Text.Encoding.Extensions:4.0.10-beta-22231:aspnetcore50|System.Text.RegularExpressions:4.0.10-beta-22231:aspnetcore50|System.Threading:4.0.0-beta-22231:aspnetcore50|System.Threading.Tasks:4.0.10-beta-22231:aspnetcore50|System.Threading.Thread:4.0.0-beta-22231:aspnetcore50|System.Threading.ThreadPool:4.0.10-beta-22231:aspnetcore50|System.Threading.Timer:4.0.0-beta-22231:aspnetcore50|System.Xml.ReaderWriter:4.0.10-beta-22231:aspnetcore50|System.Xml.XDocument:4.0.0-beta-22231:aspnetcore50|System.Xml.XmlSerializer:4.0.0-beta-22231:aspnetcore50|Microsoft.Data.OData:5.6.3:aspnet50|Microsoft.Data.Services.Client:5.6.3:aspnet50|System.Spatial:5.6.3:aspnet50|Microsoft.Data.OData:5.6.2:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.2:net40-Client|Microsoft.WindowsAzure.ConfigurationManager:1.8.0.0:net40-Client|Microsoft.Azure.KeyVault.Core:0.9.1-preview:net40-Client|Microsoft.Data.OData:5.6.2:win80|Microsoft.Data.OData:5.6.2:wpa|Microsoft.Data.OData:5.6.2:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:0.9.1-preview:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/4.4.1-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-05-13T19:25:02.153</d:Published>
+      <d:PackageHash>Yea3N7FUEbq/wgH1yKKv1ku2zaL0AGGckX/oXVTck7XzWWUhyu6/fc/wcfRrTgg+k6TDChDDQgmq1/GMq1cjbg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">2197626</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/4.4.1-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">13738</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='5.0.0')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.0')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.0')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/5.0.0" />
+    <m:properties>
+      <d:Version>5.0.0</d:Version>
+      <d:NormalizedVersion>5.0.0</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-08-05T00:04:02.543</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Microsoft.Data.OData:5.6.4:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/5.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">1900-01-01T00:00:00</d:Published>
+      <d:PackageHash>Tvd7H7tNwiLv+TY8ALD5NYSTb37LzWLhO/WOjiry8LPJjuxz3/csKnjdfsyFlE7Qx2XNbheTw+eivMDMps8UNg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1138686</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/5.0.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">78401</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime">2015-09-02T01:13:53.273</d:LastEdited>
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='5.0.1-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.1-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:04:50Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.1-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/5.0.1-preview" />
+    <m:properties>
+      <d:Version>5.0.1-preview</d:Version>
+      <d:NormalizedVersion>5.0.1-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-08-05T00:04:55.293</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.3:aspnetcore50|Microsoft.Data.Services.Client:5.6.3:aspnetcore50|System.Spatial:5.6.3:aspnetcore50|System.Collections:4.0.10-beta-22231:aspnetcore50|System.Collections.Concurrent:4.0.0-beta-22231:aspnetcore50|System.Collections.Specialized:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Debug:4.0.10-beta-22231:aspnetcore50|System.Diagnostics.Tools:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.TraceSource:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Tracing:4.0.10-beta-22231:aspnetcore50|System.Dynamic.Runtime:4.0.0-beta-22231:aspnetcore50|System.Globalization:4.0.10-beta-22231:aspnetcore50|System.IO:4.0.10-beta-22231:aspnetcore50|System.IO.FileSystem:4.0.0-beta-22231:aspnetcore50|System.IO.FileSystem.Primitives:4.0.0-beta-22231:aspnetcore50|System.Linq:4.0.0-beta-22231:aspnetcore50|System.Linq.Expressions:4.0.0-beta-22231:aspnetcore50|System.Linq.Queryable:4.0.0-beta-22231:aspnetcore50|System.Net.Http:4.0.0-beta-22231:aspnetcore50|System.Net.Primitives:4.0.10-beta-22231:aspnetcore50|System.Reflection:4.0.10-beta-22231:aspnetcore50|System.Reflection.Extensions:4.0.0-beta-22231:aspnetcore50|System.Reflection.TypeExtensions:4.0.0-beta-22231:aspnetcore50|System.Runtime:4.0.20-beta-22231:aspnetcore50|System.Runtime.Extensions:4.0.10-beta-22231:aspnetcore50|System.Runtime.InteropServices:4.0.20-beta-22231:aspnetcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-22231:aspnetcore50|System.Runtime.Serialization.Xml:4.0.10-beta-22231:aspnetcore50|System.Security.Cryptography.Encoding:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Encryption:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing.Algorithms:4.0.0-beta-22231:aspnetcore50|System.Text.Encoding:4.0.10-beta-22231:aspnetcore50|System.Text.Encoding.Extensions:4.0.10-beta-22231:aspnetcore50|System.Text.RegularExpressions:4.0.10-beta-22231:aspnetcore50|System.Threading:4.0.0-beta-22231:aspnetcore50|System.Threading.Tasks:4.0.10-beta-22231:aspnetcore50|System.Threading.Thread:4.0.0-beta-22231:aspnetcore50|System.Threading.ThreadPool:4.0.10-beta-22231:aspnetcore50|System.Threading.Timer:4.0.0-beta-22231:aspnetcore50|System.Xml.ReaderWriter:4.0.10-beta-22231:aspnetcore50|System.Xml.XDocument:4.0.0-beta-22231:aspnetcore50|System.Xml.XmlSerializer:4.0.0-beta-22231:aspnetcore50|Microsoft.Data.OData:5.6.4:aspnet50|Microsoft.Data.Services.Client:5.6.4:aspnet50|System.Spatial:5.6.4:aspnet50|Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Microsoft.Data.OData:5.6.4:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/5.0.1-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">1900-01-01T00:00:00</d:Published>
+      <d:PackageHash>C3rl0SFDMMMq0TTNM9P8+GahqQwDEbxtJiHnzQmMXgHzJ5kAD+RchvACVmkFJKmmmUM10+HjLlZHPVDWcacw+A==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">1819137</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/5.0.1-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">6060</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime">2015-09-02T01:13:59.177</d:LastEdited>
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='5.0.2')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.2')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:15:27Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.2')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/5.0.2" />
+    <m:properties>
+      <d:Version>5.0.2</d:Version>
+      <d:NormalizedVersion>5.0.2</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-09-02T01:05:04.257</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Microsoft.Data.OData:5.6.4:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/5.0.2</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-09-02T01:05:04.257</d:Published>
+      <d:PackageHash>j8EJ1Quw3v1J79/+LQcr0IfZWfsEioI7F5g1kzkYxXN2Uf3EQQNchqvObkAK3zrX9kkuX1+C0FNWPgb7QcArvA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">3265879</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/5.0.2</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">94450</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='5.0.3-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.3-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-09T16:04:50Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='5.0.3-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/5.0.3-preview" />
+    <m:properties>
+      <d:Version>5.0.3-preview</d:Version>
+      <d:NormalizedVersion>5.0.3-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-09-02T01:07:11.883</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.3:aspnetcore50|Microsoft.Data.Services.Client:5.6.3:aspnetcore50|System.Spatial:5.6.3:aspnetcore50|System.Collections:4.0.10-beta-22231:aspnetcore50|System.Collections.Concurrent:4.0.0-beta-22231:aspnetcore50|System.Collections.Specialized:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Debug:4.0.10-beta-22231:aspnetcore50|System.Diagnostics.Tools:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.TraceSource:4.0.0-beta-22231:aspnetcore50|System.Diagnostics.Tracing:4.0.10-beta-22231:aspnetcore50|System.Dynamic.Runtime:4.0.0-beta-22231:aspnetcore50|System.Globalization:4.0.10-beta-22231:aspnetcore50|System.IO:4.0.10-beta-22231:aspnetcore50|System.IO.FileSystem:4.0.0-beta-22231:aspnetcore50|System.IO.FileSystem.Primitives:4.0.0-beta-22231:aspnetcore50|System.Linq:4.0.0-beta-22231:aspnetcore50|System.Linq.Expressions:4.0.0-beta-22231:aspnetcore50|System.Linq.Queryable:4.0.0-beta-22231:aspnetcore50|System.Net.Http:4.0.0-beta-22231:aspnetcore50|System.Net.Primitives:4.0.10-beta-22231:aspnetcore50|System.Reflection:4.0.10-beta-22231:aspnetcore50|System.Reflection.Extensions:4.0.0-beta-22231:aspnetcore50|System.Reflection.TypeExtensions:4.0.0-beta-22231:aspnetcore50|System.Runtime:4.0.20-beta-22231:aspnetcore50|System.Runtime.Extensions:4.0.10-beta-22231:aspnetcore50|System.Runtime.InteropServices:4.0.20-beta-22231:aspnetcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-22231:aspnetcore50|System.Runtime.Serialization.Xml:4.0.10-beta-22231:aspnetcore50|System.Security.Cryptography.Encoding:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Encryption:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing:4.0.0-beta-22231:aspnetcore50|System.Security.Cryptography.Hashing.Algorithms:4.0.0-beta-22231:aspnetcore50|System.Text.Encoding:4.0.10-beta-22231:aspnetcore50|System.Text.Encoding.Extensions:4.0.10-beta-22231:aspnetcore50|System.Text.RegularExpressions:4.0.10-beta-22231:aspnetcore50|System.Threading:4.0.0-beta-22231:aspnetcore50|System.Threading.Tasks:4.0.10-beta-22231:aspnetcore50|System.Threading.Thread:4.0.0-beta-22231:aspnetcore50|System.Threading.ThreadPool:4.0.10-beta-22231:aspnetcore50|System.Threading.Timer:4.0.0-beta-22231:aspnetcore50|System.Xml.ReaderWriter:4.0.10-beta-22231:aspnetcore50|System.Xml.XDocument:4.0.0-beta-22231:aspnetcore50|System.Xml.XmlSerializer:4.0.0-beta-22231:aspnetcore50|Microsoft.Data.OData:5.6.4:aspnet50|Microsoft.Data.Services.Client:5.6.4:aspnet50|System.Spatial:5.6.4:aspnet50|Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Microsoft.Data.OData:5.6.4:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/5.0.3-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-09-02T01:07:11.883</d:Published>
+      <d:PackageHash>X2VrTtloPFTP1l67jc7dRTaAE6DENQkJMR3/PzebhlzK6ZrTxjZthpB+3KaXQWzdCRIfYADfCvp+odQ4mEdaqw==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">4884923</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/5.0.3-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">4035</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.0.0')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.0.0')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-30T20:41:28Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.0.0')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.0.0" />
+    <m:properties>
+      <d:Version>6.0.0</d:Version>
+      <d:NormalizedVersion>6.0.0</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-09-30T00:41:48.987</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.0.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-09-30T00:41:48.987</d:Published>
+      <d:PackageHash>WcTLq32qe7r6g5SbtH++HAfSJPMxSbhc8wFc5sJrFVZNDyR18v0dmqbA6zQcz3fL/H/q9PqSlYzdGQBYQRLuow==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">4468878</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.0.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">76365</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.0.1-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.0.1-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-30T20:41:28Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.0.1-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.0.1-preview" />
+    <m:properties>
+      <d:Version>6.0.1-preview</d:Version>
+      <d:NormalizedVersion>6.0.1-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-09-30T00:42:19.07</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:dnxcore50|Microsoft.Data.Services.Client:5.6.4:dnxcore50|System.Spatial:5.6.4:dnxcore50|Newtonsoft.Json:6.0.8:dnxcore50|System.Collections:4.0.11-beta-23225:dnxcore50|System.Collections.Concurrent:4.0.11-beta-23225:dnxcore50|System.Collections.Specialized:4.0.0-beta-23109:dnxcore50|System.Diagnostics.Debug:4.0.11-beta-23225:dnxcore50|System.Diagnostics.Tools:4.0.1-beta-23225:dnxcore50|System.Diagnostics.TraceSource:4.0.0-beta-23225:dnxcore50|System.Diagnostics.Tracing:4.0.21-beta-23225:dnxcore50|System.Dynamic.Runtime:4.0.11-beta-23225:dnxcore50|System.Globalization:4.0.11-beta-23225:dnxcore50|System.IO:4.0.11-beta-23225:dnxcore50|System.IO.FileSystem:4.0.1-beta-23225:dnxcore50|System.IO.FileSystem.Primitives:4.0.1-beta-23225:dnxcore50|System.Linq:4.0.1-beta-23225:dnxcore50|System.Linq.Expressions:4.0.11-beta-23225:dnxcore50|System.Linq.Queryable:4.0.0-beta-23109:dnxcore50|System.Net.Http:4.0.1-beta-23225:dnxcore50|System.Net.Primitives:4.0.11-beta-23225:dnxcore50|System.Reflection:4.1.0-beta-23225:dnxcore50|System.Reflection.Extensions:4.0.1-beta-23225:dnxcore50|System.Reflection.TypeExtensions:4.0.1-beta-23225:dnxcore50|System.Runtime:4.0.20-beta-23109:dnxcore50|System.Runtime.Extensions:4.0.11-beta-23225:dnxcore50|System.Runtime.InteropServices:4.0.21-beta-23225:dnxcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-23109:dnxcore50|System.Runtime.Serialization.Xml:4.0.10-beta-23109:dnxcore50|System.Security.Cryptography.Encoding:4.0.0-beta-23225:dnxcore50|System.Security.Cryptography.Primitives:4.0.0-beta-23225:dnxcore50|System.Security.Cryptography.Algorithms:4.0.0-beta-23225:dnxcore50|System.Text.Encoding:4.0.11-beta-23225:dnxcore50|System.Text.Encoding.Extensions:4.0.11-beta-23225:dnxcore50|System.Text.RegularExpressions:4.0.11-beta-23225:dnxcore50|System.Threading:4.0.11-beta-23225:dnxcore50|System.Threading.Tasks:4.0.11-beta-23225:dnxcore50|System.Threading.Thread:4.0.0-beta-23225:dnxcore50|System.Threading.ThreadPool:4.0.10-beta-23225:dnxcore50|System.Threading.Timer:4.0.1-beta-23225:dnxcore50|System.Xml.ReaderWriter:4.0.11-beta-23225:dnxcore50|System.Xml.XDocument:4.0.11-beta-23225:dnxcore50|System.Xml.XmlSerializer:4.0.0-beta-23109:dnxcore50|Microsoft.Data.OData:5.6.4:dnx451|Microsoft.Data.Services.Client:5.6.4:dnx451|System.Spatial:5.6.4:dnx451|Newtonsoft.Json:6.0.8:dnx451|Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10|Newtonsoft.Json:6.0.8:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.0.1-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-09-30T00:42:19.07</d:Published>
+      <d:PackageHash>+ddroa41ok8IVm6+2ZZ6QaV4ACVJgOqG2QYiRALLtuoJ4YjKiGTq3zsX/r7keUg5h3vAFOnYSZzUfqwSBOaVUg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">7080857</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.0.1-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">3765</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.1.0')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.1.0')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-10-30T20:41:45Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.1.0')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.1.0" />
+    <m:properties>
+      <d:Version>6.1.0</d:Version>
+      <d:NormalizedVersion>6.1.0</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-10-30T20:41:28.217</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.1.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-10-30T20:41:28.217</d:Published>
+      <d:PackageHash>Ig7QbiWGC7vJzkr3aQ6G5nY+j8xkfj39j3GUm5Py5ZO4jlpJNKJJ0Uk9w5qnJHuuz37W+7UEBks7mKWR0dD2GA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">3002021</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.1.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">84984</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.1.1-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.1.1-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-11-18T14:58:45Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.1.1-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.1.1-preview" />
+    <m:properties>
+      <d:Version>6.1.1-preview</d:Version>
+      <d:NormalizedVersion>6.1.1-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-10-30T20:41:45.077</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:dnxcore50|Microsoft.Data.Services.Client:5.6.4:dnxcore50|System.Spatial:5.6.4:dnxcore50|Newtonsoft.Json:6.0.8:dnxcore50|System.Collections:4.0.11-beta-23225:dnxcore50|System.Collections.Concurrent:4.0.11-beta-23225:dnxcore50|System.Collections.Specialized:4.0.0-beta-23109:dnxcore50|System.Diagnostics.Debug:4.0.11-beta-23225:dnxcore50|System.Diagnostics.Tools:4.0.1-beta-23225:dnxcore50|System.Diagnostics.TraceSource:4.0.0-beta-23225:dnxcore50|System.Diagnostics.Tracing:4.0.21-beta-23225:dnxcore50|System.Dynamic.Runtime:4.0.11-beta-23225:dnxcore50|System.Globalization:4.0.11-beta-23225:dnxcore50|System.IO:4.0.11-beta-23225:dnxcore50|System.IO.FileSystem:4.0.1-beta-23225:dnxcore50|System.IO.FileSystem.Primitives:4.0.1-beta-23225:dnxcore50|System.Linq:4.0.1-beta-23225:dnxcore50|System.Linq.Expressions:4.0.11-beta-23225:dnxcore50|System.Linq.Queryable:4.0.0-beta-23109:dnxcore50|System.Net.Http:4.0.1-beta-23225:dnxcore50|System.Net.Primitives:4.0.11-beta-23225:dnxcore50|System.Reflection:4.1.0-beta-23225:dnxcore50|System.Reflection.Extensions:4.0.1-beta-23225:dnxcore50|System.Reflection.TypeExtensions:4.0.1-beta-23225:dnxcore50|System.Runtime:4.0.20-beta-23109:dnxcore50|System.Runtime.Extensions:4.0.11-beta-23225:dnxcore50|System.Runtime.InteropServices:4.0.21-beta-23225:dnxcore50|System.Runtime.Serialization.Primitives:4.0.0-beta-23109:dnxcore50|System.Runtime.Serialization.Xml:4.0.10-beta-23109:dnxcore50|System.Security.Cryptography.Encoding:4.0.0-beta-23225:dnxcore50|System.Security.Cryptography.Primitives:4.0.0-beta-23225:dnxcore50|System.Security.Cryptography.Algorithms:4.0.0-beta-23225:dnxcore50|System.Text.Encoding:4.0.11-beta-23225:dnxcore50|System.Text.Encoding.Extensions:4.0.11-beta-23225:dnxcore50|System.Text.RegularExpressions:4.0.11-beta-23225:dnxcore50|System.Threading:4.0.11-beta-23225:dnxcore50|System.Threading.Tasks:4.0.11-beta-23225:dnxcore50|System.Threading.Thread:4.0.0-beta-23225:dnxcore50|System.Threading.ThreadPool:4.0.10-beta-23225:dnxcore50|System.Threading.Timer:4.0.1-beta-23225:dnxcore50|System.Xml.ReaderWriter:4.0.11-beta-23225:dnxcore50|System.Xml.XDocument:4.0.11-beta-23225:dnxcore50|System.Xml.XmlSerializer:4.0.0-beta-23109:dnxcore50|Microsoft.Data.OData:5.6.4:dnx451|Microsoft.Data.Services.Client:5.6.4:dnx451|System.Spatial:5.6.4:dnx451|Newtonsoft.Json:6.0.8:dnx451|Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10|Newtonsoft.Json:6.0.8:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client. &#xD;
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt&#xD;
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.1.1-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-10-30T20:41:45.077</d:Published>
+      <d:PackageHash>sVnhkqoopDu4svSjYQEbMvPl3m7WJ/k/Tez7R+ztbDeshbGyKBQ+cnRI83mCZE9PaCbKfPk0b0HDniwDahOewA==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">4939218</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.1.1-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial dotnetcore</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">5894</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime">2015-11-18T14:58:45.6</d:LastEdited>
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.2.0')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.2.0')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-12-10T22:39:05Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.2.0')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.2.0" />
+    <m:properties>
+      <d:Version>6.2.0</d:Version>
+      <d:NormalizedVersion>6.2.0</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-12-10T22:39:05.103</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.2.0</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">true</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">false</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-12-10T22:39:05.103</d:Published>
+      <d:PackageHash>goOiCbpHmw/H3CJYhWorrQ9kbLYMyqPaUi4IXE8ke0rZXeA9VuzXZe8bjQAPuoJT84sPWuXMqu5rSUBQTXN0dQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">3005564</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.2.0</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">89071</d:VersionDownloadCount>
+      <d:MinClientVersion m:null="true" />
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.2.1-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.2.1-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-12-10T22:39:41Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.2.1-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.2.1-preview" />
+    <m:properties>
+      <d:Version>6.2.1-preview</d:Version>
+      <d:NormalizedVersion>6.2.1-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-12-10T22:39:41</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:dotnet54|Microsoft.Data.Services.Client:5.6.4:dotnet54|System.Spatial:5.6.4:dotnet54|Newtonsoft.Json:6.0.8:dotnet54|System.Collections:4.0.11-beta-23225:dotnet54|System.Collections.Concurrent:4.0.11-beta-23225:dotnet54|System.Collections.Specialized:4.0.0-beta-23109:dotnet54|System.Diagnostics.Debug:4.0.11-beta-23225:dotnet54|System.Diagnostics.Tools:4.0.1-beta-23225:dotnet54|System.Diagnostics.TraceSource:4.0.0-beta-23225:dotnet54|System.Diagnostics.Tracing:4.0.21-beta-23225:dotnet54|System.Dynamic.Runtime:4.0.11-beta-23225:dotnet54|System.Globalization:4.0.11-beta-23225:dotnet54|System.IO:4.0.11-beta-23225:dotnet54|System.IO.FileSystem:4.0.1-beta-23225:dotnet54|System.IO.FileSystem.Primitives:4.0.1-beta-23225:dotnet54|System.Linq:4.0.1-beta-23225:dotnet54|System.Linq.Expressions:4.0.11-beta-23225:dotnet54|System.Linq.Queryable:4.0.0-beta-23109:dotnet54|System.Net.Http:4.0.1-beta-23225:dotnet54|System.Net.Primitives:4.0.11-beta-23225:dotnet54|System.Reflection:4.1.0-beta-23225:dotnet54|System.Reflection.Extensions:4.0.1-beta-23225:dotnet54|System.Reflection.TypeExtensions:4.0.1-beta-23225:dotnet54|System.Runtime:4.0.20-beta-23109:dotnet54|System.Runtime.Extensions:4.0.11-beta-23225:dotnet54|System.Runtime.InteropServices:4.0.21-beta-23225:dotnet54|System.Runtime.Serialization.Primitives:4.0.0-beta-23109:dotnet54|System.Runtime.Serialization.Xml:4.0.10-beta-23109:dotnet54|System.Security.Cryptography.Encoding:4.0.0-beta-23225:dotnet54|System.Security.Cryptography.Primitives:4.0.0-beta-23225:dotnet54|System.Security.Cryptography.Algorithms:4.0.0-beta-23225:dotnet54|System.Text.Encoding:4.0.11-beta-23225:dotnet54|System.Text.Encoding.Extensions:4.0.11-beta-23225:dotnet54|System.Text.RegularExpressions:4.0.11-beta-23225:dotnet54|System.Threading:4.0.11-beta-23225:dotnet54|System.Threading.Tasks:4.0.11-beta-23225:dotnet54|System.Threading.Thread:4.0.0-beta-23225:dotnet54|System.Threading.ThreadPool:4.0.10-beta-23225:dotnet54|System.Threading.Timer:4.0.1-beta-23225:dotnet54|System.Xml.ReaderWriter:4.0.11-beta-23225:dotnet54|System.Xml.XDocument:4.0.11-beta-23225:dotnet54|System.Xml.XmlSerializer:4.0.0-beta-23109:dotnet54|Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10|Newtonsoft.Json:6.0.8:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.2.1-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">false</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-12-10T22:39:41</d:Published>
+      <d:PackageHash>t1brbdX7O1S9ZxjkXjfPjEqGUpR+ncomHAv+PZ/nm32bxqHHKbV5k4ZmdL4JK/aoXWo1eKfOeRBPxL1IZ1NIcQ==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">4212110</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.2.1-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">90</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+  <entry>
+    <id>https://www.nuget.org/api/v2/Packages(Id='WindowsAzure.Storage',Version='6.2.2-preview')</id>
+    <category term="NuGetGallery.V2FeedPackage" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+    <link rel="edit" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.2.2-preview')" />
+    <title type="text">WindowsAzure.Storage</title>
+    <summary type="text">A client library for working with Microsoft Azure storage services including blobs, files, tables, and queues.</summary>
+    <updated>2015-12-11T01:25:11Z</updated>
+    <author>
+      <name>Microsoft</name>
+    </author>
+    <link rel="edit-media" title="V2FeedPackage" href="Packages(Id='WindowsAzure.Storage',Version='6.2.2-preview')/$value" />
+    <content type="application/zip" src="https://www.nuget.org/api/v2/package/WindowsAzure.Storage/6.2.2-preview" />
+    <m:properties>
+      <d:Version>6.2.2-preview</d:Version>
+      <d:NormalizedVersion>6.2.2-preview</d:NormalizedVersion>
+      <d:Copyright m:null="true" />
+      <d:Created m:type="Edm.DateTime">2015-12-11T01:25:11.37</d:Created>
+      <d:Dependencies>Microsoft.Data.OData:5.6.4:dotnet54|Microsoft.Data.Services.Client:5.6.4:dotnet54|System.Spatial:5.6.4:dotnet54|Newtonsoft.Json:6.0.8:dotnet54|System.Collections:4.0.11-beta-23225:dotnet54|System.Collections.Concurrent:4.0.11-beta-23225:dotnet54|System.Collections.Specialized:4.0.0-beta-23109:dotnet54|System.Diagnostics.Debug:4.0.11-beta-23225:dotnet54|System.Diagnostics.Tools:4.0.1-beta-23225:dotnet54|System.Diagnostics.TraceSource:4.0.0-beta-23225:dotnet54|System.Diagnostics.Tracing:4.0.21-beta-23225:dotnet54|System.Dynamic.Runtime:4.0.11-beta-23225:dotnet54|System.Globalization:4.0.11-beta-23225:dotnet54|System.IO:4.0.11-beta-23225:dotnet54|System.IO.FileSystem:4.0.1-beta-23225:dotnet54|System.IO.FileSystem.Primitives:4.0.1-beta-23225:dotnet54|System.Linq:4.0.1-beta-23225:dotnet54|System.Linq.Expressions:4.0.11-beta-23225:dotnet54|System.Linq.Queryable:4.0.0-beta-23109:dotnet54|System.Net.Http:4.0.1-beta-23225:dotnet54|System.Net.Primitives:4.0.11-beta-23225:dotnet54|System.Reflection:4.1.0-beta-23225:dotnet54|System.Reflection.Extensions:4.0.1-beta-23225:dotnet54|System.Reflection.TypeExtensions:4.0.1-beta-23225:dotnet54|System.Runtime:4.0.20-beta-23109:dotnet54|System.Runtime.Extensions:4.0.11-beta-23225:dotnet54|System.Runtime.InteropServices:4.0.21-beta-23225:dotnet54|System.Runtime.Serialization.Primitives:4.0.0-beta-23109:dotnet54|System.Runtime.Serialization.Xml:4.0.10-beta-23109:dotnet54|System.Security.Cryptography.Encoding:4.0.0-beta-23225:dotnet54|System.Security.Cryptography.Primitives:4.0.0-beta-23225:dotnet54|System.Security.Cryptography.Algorithms:4.0.0-beta-23225:dotnet54|System.Text.Encoding:4.0.11-beta-23225:dotnet54|System.Text.Encoding.Extensions:4.0.11-beta-23225:dotnet54|System.Text.RegularExpressions:4.0.11-beta-23225:dotnet54|System.Threading:4.0.11-beta-23225:dotnet54|System.Threading.Tasks:4.0.11-beta-23225:dotnet54|System.Threading.Thread:4.0.0-beta-23225:dotnet54|System.Threading.ThreadPool:4.0.10-beta-23225:dotnet54|System.Threading.Timer:4.0.1-beta-23225:dotnet54|System.Xml.ReaderWriter:4.0.11-beta-23225:dotnet54|System.Xml.XDocument:4.0.11-beta-23225:dotnet54|System.Xml.XmlSerializer:4.0.0-beta-23109:dotnet54|Microsoft.Data.OData:5.6.4:net40-Client|Newtonsoft.Json:6.0.8:net40-Client|Microsoft.Data.Services.Client:5.6.4:net40-Client|Microsoft.Azure.KeyVault.Core:1.0.0:net40-Client|Microsoft.Data.OData:5.6.4:win80|Newtonsoft.Json:6.0.8:win80|Microsoft.Data.OData:5.6.4:wpa|Newtonsoft.Json:6.0.8:wpa|Microsoft.Data.OData:5.6.4:wp80|Newtonsoft.Json:6.0.8:wp80|Microsoft.Azure.KeyVault.Core:1.0.0:wp80|Microsoft.Data.OData:5.6.4:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10|Newtonsoft.Json:6.0.8:portable-net45+win+wpa81+MonoAndroid10+MonoTouch10</d:Dependencies>
+      <d:Description>This client library enables working with the Microsoft Azure storage services which include the blob and file service for storing binary and text data, the table service for storing structured non-relational data, and the queue service for storing messages that may be accessed by a client.
+        For this release see notes - https://github.com/Azure/azure-storage-net/blob/master/README.md and https://github.com/Azure/azure-storage-net/blob/master/changelog.txt
+        Microsoft Azure Storage team's blog - http://blogs.msdn.com/b/windowsazurestorage/
+      </d:Description>
+      <d:DownloadCount m:type="Edm.Int32">3957668</d:DownloadCount>
+      <d:GalleryDetailsUrl>https://www.nuget.org/packages/WindowsAzure.Storage/6.2.2-preview</d:GalleryDetailsUrl>
+      <d:IconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</d:IconUrl>
+      <d:IsLatestVersion m:type="Edm.Boolean">false</d:IsLatestVersion>
+      <d:IsAbsoluteLatestVersion m:type="Edm.Boolean">true</d:IsAbsoluteLatestVersion>
+      <d:IsPrerelease m:type="Edm.Boolean">true</d:IsPrerelease>
+      <d:Language m:null="true" />
+      <d:Published m:type="Edm.DateTime">2015-12-11T01:25:11.37</d:Published>
+      <d:PackageHash>UBhAaxcKpTntWL3n2+cSuOwMngGf9dyxn7q2H8gSC76KZ3SLBF+qKFTgvz41ef/77jffNJDQuElf62zGgyC7kg==</d:PackageHash>
+      <d:PackageHashAlgorithm>SHA512</d:PackageHashAlgorithm>
+      <d:PackageSize m:type="Edm.Int64">4215220</d:PackageSize>
+      <d:ProjectUrl>http://go.microsoft.com/fwlink/?LinkId=235168</d:ProjectUrl>
+      <d:ReportAbuseUrl>https://www.nuget.org/package/ReportAbuse/WindowsAzure.Storage/6.2.2-preview</d:ReportAbuseUrl>
+      <d:ReleaseNotes m:null="true" />
+      <d:RequireLicenseAcceptance m:type="Edm.Boolean">true</d:RequireLicenseAcceptance>
+      <d:Tags>Microsoft Azure Storage Table Blob File Queue Scalable windowsazureofficial</d:Tags>
+      <d:Title>Windows Azure Storage</d:Title>
+      <d:VersionDownloadCount m:type="Edm.Int32">5994</d:VersionDownloadCount>
+      <d:MinClientVersion>2.8.3</d:MinClientVersion>
+      <d:LastEdited m:type="Edm.DateTime" m:null="true" />
+      <d:LicenseUrl>http://go.microsoft.com/fwlink/?LinkId=331471</d:LicenseUrl>
+      <d:LicenseNames m:null="true" />
+      <d:LicenseReportUrl m:null="true" />
+    </m:properties>
+  </entry>
+</feed>

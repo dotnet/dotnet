@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AggregateSourceName" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Argument_Cannot_Be_Null_Or_Empty" xml:space="preserve">
+    <value>Argument cannot be null or empty</value>
+  </data>
+  <data name="Console_DisclaimerText" xml:space="preserve">
+    <value>Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages. Some packages may include dependencies which are governed by additional licenses. Follow the package source (feed) URL to determine any dependencies.</value>
+  </data>
+  <data name="Console_HelpText" xml:space="preserve">
+    <value>Type 'get-help NuGet' to see all available NuGet commands.</value>
+  </data>
+  <data name="ErrorNestedPromptNotSupported" xml:space="preserve">
+    <value>Nested prompt not supported.</value>
+  </data>
+  <data name="Host_PSNotInstalled" xml:space="preserve">
+    <value>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</value>
+  </data>
+  <data name="PowerShellHostTitle" xml:space="preserve">
+    <value>Package Manager Console Host Version {0}</value>
+  </data>
+  <data name="PromptForChoiceSuffix" xml:space="preserve">
+    <value>[?] Help (default is "{0}"):</value>
+    <comment>{0} = defaultChoice</comment>
+  </data>
+  <data name="ZeroLengthCollection" xml:space="preserve">
+    <value>Zero length collection.</value>
+  </data>
+  <data name="Cmdlet_CommandObsolete" xml:space="preserve">
+    <value>This Command/Parameter combination has been deprecated and will be removed in the next release. Please consider using the new command that replaces it: '{0}'.</value>
+  </data>
+  <data name="Cmdlet_DisplayMorePackagesNoHelp" xml:space="preserve">
+    <value>Stop to display more packages</value>
+  </data>
+  <data name="Cmdlet_DisplayMorePackagesYesHelp" xml:space="preserve">
+    <value>Continue to display more packages</value>
+  </data>
+  <data name="Cmdlet_FailToParsePackages" xml:space="preserve">
+    <value>Failed to parse package identities from file {0} with exception: {1}</value>
+  </data>
+  <data name="Cmdlet_FailToParseVersion" xml:space="preserve">
+    <value>Failed to parse the input of Version parameter: {0} to a valid Semantic version. </value>
+  </data>
+  <data name="Cmdlet_FileConflictNoAllHelp" xml:space="preserve">
+    <value>Skip this file and all subsequent files</value>
+  </data>
+  <data name="Cmdlet_FileConflictNoHelp" xml:space="preserve">
+    <value>Skip this file</value>
+  </data>
+  <data name="Cmdlet_FileConflictYesAllHelp" xml:space="preserve">
+    <value>Overwrite this file and all subsequent files</value>
+  </data>
+  <data name="Cmdlet_FileConflictYesHelp" xml:space="preserve">
+    <value>Overwrite this file</value>
+  </data>
+  <data name="Cmdlet_GetPackageNoPackageFound" xml:space="preserve">
+    <value>No packages found in the current package source.</value>
+  </data>
+  <data name="Cmdlet_InvalidPathSyntax" xml:space="preserve">
+    <value>The path '{0}' is invalid.</value>
+  </data>
+  <data name="Cmdlet_InvalidProvider" xml:space="preserve">
+    <value>Only paths residing on a FileSystemProvider are supported.</value>
+  </data>
+  <data name="Cmdlet_InvalidPSDrive" xml:space="preserve">
+    <value>The PSDrive '{0}' was not found.</value>
+  </data>
+  <data name="Cmdlet_No" xml:space="preserve">
+    <value>&amp;No</value>
+  </data>
+  <data name="Cmdlet_NoAll" xml:space="preserve">
+    <value>No to Al&amp;l</value>
+  </data>
+  <data name="Cmdlet_NoCompatibleProjects" xml:space="preserve">
+    <value>No compatible project(s) found in the active solution.</value>
+  </data>
+  <data name="Cmdlet_NoPackagesInstalled" xml:space="preserve">
+    <value>No packages installed.</value>
+  </data>
+  <data name="Cmdlet_NoPackageUpdates" xml:space="preserve">
+    <value>No package updates are available from the current package source for project '{0}'.</value>
+  </data>
+  <data name="Cmdlet_NoSolution" xml:space="preserve">
+    <value>The current environment doesn't have a solution open.</value>
+  </data>
+  <data name="Cmdlet_PackageNotInstalled" xml:space="preserve">
+    <value>Package with the Id '{0}' is not installed to project '{1}'.</value>
+  </data>
+  <data name="Cmdlet_ProjectNotFound" xml:space="preserve">
+    <value>Project '{0}' is not found.</value>
+  </data>
+  <data name="Cmdlet_PrompToDisplayMorePackages" xml:space="preserve">
+    <value>There may be more packages to display. Do you want to continue?</value>
+  </data>
+  <data name="Cmdlet_Yes" xml:space="preserve">
+    <value>&amp;Yes</value>
+  </data>
+  <data name="Cmdlet_YesAll" xml:space="preserve">
+    <value>Yes to &amp;All</value>
+  </data>
+  <data name="Cmdlet_FileConflictTitle" xml:space="preserve">
+    <value>File Conflict</value>
+  </data>
+  <data name="Cmdlet_PackageNotInstalledInAnyProject" xml:space="preserve">
+    <value>'{0}' was not installed in any project. Update failed.</value>
+  </data>
+  <data name="Cmdlet_ExecutingScript" xml:space="preserve">
+    <value>Executing script file '{0}'</value>
+  </data>
+  <data name="Cmdlet_NoPackageActions" xml:space="preserve">
+    <value>No package actions available to be executed.</value>
+  </data>
+  <data name="Cmdlet_NoProjectsToSyncPackage" xml:space="preserve">
+    <value>There are no other projects to sync the package '{0}'.</value>
+  </data>
+  <data name="Cmdlet_MissingPackages" xml:space="preserve">
+    <value>Some NuGet packages are missing from the solution. The packages need to be restored in order to build the dependency graph. Restore the packages before performing any operations.</value>
+  </data>
+  <data name="Cmdlet_RequestRestartToCompleteUninstall" xml:space="preserve">
+    <value>One or more packages could not be completely uninstalled: '{0}'. Restart Visual Studio to finish uninstall.</value>
+  </data>
+  <data name="Cmdlet_TotalTime" xml:space="preserve">
+    <value>Time Elapsed: {0}</value>
+  </data>
+  <data name="Cmdlet_FailedToSearchSource" xml:space="preserve">
+    <value>The following source failed to search for packages: '{0}'{1}{2}</value>
+    <comment>{0} is the source that failed.
+{1} is a line separator.
+{2} is the exception message.</comment>
+  </data>
+  <data name="Cmdlet_DeprecatedFrameworkNoHelp" xml:space="preserve">
+    <value>Do not continue with the project action(s)</value>
+  </data>
+  <data name="Cmdlet_DeprecatedFrameworkYesDoNotPromptAgainHelp" xml:space="preserve">
+    <value>Continue with the project action(s) and do not prompt for confirmation again</value>
+  </data>
+  <data name="Cmdlet_DeprecatedFrameworkYesHelp" xml:space="preserve">
+    <value>Continue with the project action(s)</value>
+  </data>
+  <data name="Cmdlet_YesDoNotPromptAgain" xml:space="preserve">
+    <value>Yes and &amp;Ignore future warnings</value>
+  </data>
+  <data name="Cmdlet_DeprecatedFrameworkContinue" xml:space="preserve">
+    <value>Would you like to continue with the project action(s) anyways?</value>
+  </data>
+  <data name="Exception_PackageNotFound" xml:space="preserve">
+    <value>Unable to find package '{0}' at source '{1}'.</value>
+    <comment>{0} - package id
+{1} - source string specified by the user</comment>
+  </data>
+  <data name="UnknownSource" xml:space="preserve">
+    <value>Source '{0}' not found. Please provide an HTTP or local source.</value>
+    <comment>{0} is the source</comment>
+  </data>
+  <data name="UnknownSourceType" xml:space="preserve">
+    <value>Unsupported type of source '{0}'. Please provide an HTTP or local source.</value>
+    <comment>{0} is the input source.</comment>
+  </data>
+  <data name="UnknownSourceWithId" xml:space="preserve">
+    <value>Unable to find package '{0}' at source '{1}'. Source not found.</value>
+    <comment>Used to fix the accuracy of the error message
+{0} is package id
+{1} is source path</comment>
+  </data>
+  <data name="Warning_SourceNotRespectedForProjectType" xml:space="preserve">
+    <value>The '{0}' parameter is not respected for the transitive package management based project(s) {1}. The enabled sources in your NuGet configuration will be used. </value>
+    <comment>{0} is the parameter, {1} are the project names</comment>
+  </data>
+  <data name="Warning_ReinstallNotRespectedForProjectType" xml:space="preserve">
+    <value>The `-Reinstall` parameter does not apply to PackageReference based projects `{0}'.</value>
+    <comment>0 - semicolon separated project list.</comment>
+  </data>
+</root>

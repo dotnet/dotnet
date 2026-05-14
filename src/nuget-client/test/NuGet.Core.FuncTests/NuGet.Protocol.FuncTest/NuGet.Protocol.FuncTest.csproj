@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
+    <Description>Integration tests for the more involved NuGet.Protocol functionality, such as plugins.</Description>
+    <TestProjectType>Unit</TestProjectType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TestExtensions\TestablePlugin\TestablePlugin.csproj"
+                      OutputItemType="TestablePluginBuildOutput"
+                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <Target Name="GetTestablePluginOutputs"
+          DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <TestablePluginFiles Include="%(TestablePluginBuildOutput.RootDir)%(TestablePluginBuildOutput.Directory)\**" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="CopyTestablePluginBuildOutput"
+          AfterTargets="PrepareForRun"
+          DependsOnTargets="GetTestablePluginOutputs"
+          Inputs="@(TestablePluginFiles)"
+          Outputs="@(TestablePluginFiles->'$(OutputPath)TestablePlugin\%(RecursiveDir)%(Filename)%(Extension)')"
+          Condition="'$(OS)' == 'Windows_NT'">
+
+    <Copy SourceFiles="@(TestablePluginFiles)"
+          DestinationFiles="@(TestablePluginFiles->'$(OutputPath)TestablePlugin\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+          Retries="$(CopyRetryCount)"
+          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+          UseHardlinksIfPossible="$(CreateHardLinksForCopyLocalIfPossible)"
+          UseSymboliclinksIfPossible="$(CreateSymbolicLinksForCopyLocalIfPossible)">
+      <Output TaskParameter="DestinationFiles"
+              ItemName="FileWritesShareable" />
+      <Output TaskParameter="CopiedFiles"
+              ItemName="ReferencesCopiedInThisBuild" />
+    </Copy>
+  </Target>
+</Project>

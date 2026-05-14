@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Microsoft Visual Studio テスト プラットフォーム</DisplayName>
+    <Description>開発者が自動テストの探索、実行、分析を行うために使用できる、拡張可能なテスト プラットフォームです。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

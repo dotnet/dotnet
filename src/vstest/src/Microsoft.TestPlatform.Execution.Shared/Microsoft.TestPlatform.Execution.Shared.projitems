@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>7f26eda3-c8c4-4b7f-a9b6-d278c2f40a13</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace> Microsoft.VisualStudio.TestPlatform.Execution</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DebuggerBreakpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProcDumpExecutableHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UILanguageOverride.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WellKnownDebugEnvironmentVariables.cs" />
+  </ItemGroup>
+</Project>

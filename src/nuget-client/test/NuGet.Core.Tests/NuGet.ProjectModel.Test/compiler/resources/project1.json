@@ -1,0 +1,56 @@
+﻿{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "nuget.versioning": "3.3.0"
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        },
+        "nuget.packaging": "3.3.0"
+      },
+      "imports": "portable-net45+win8"
+    }
+  },
+  "restore": {
+    "projectUniqueName": "A55205E7-4D08-4672-8011-0925467CC45F",
+    "projectName": "x",
+    "projectPath": "c:\\x\\x.csproj",
+    "projectJsonPath": "c:\\x\\project.json",
+    "projectStyle": "PackageReference",
+    "outputPath": "c:\\x\\obj\\bin",
+    "packagesPath": "c:\\packages",
+    "crossTargeting": true,
+    "legacyPackagesDirectory": true,
+    "sources": {
+      "https://api.nuget.org/v3/index.json": {}
+    },
+    "fallbackFolders": [
+      "c:\\fallback1",
+      "c:\\fallback2"
+    ],
+    "configFilePaths": [
+      "c:\\nuget.config",
+      "d:\\nuget.config"
+    ],
+    "frameworks": {
+      "netcoreapp1.0": {
+        "projectReferences": {
+          "44B29B8D-8413-42D2-8DF4-72225659619B": {
+            "projectPath": "c:\\a\\a.csproj",
+            "target": "project",
+            "exclude": "build",
+            "include": "runtime,compile",
+            "suppressParent": "analyzers"
+          },
+          "78A6AD3F-9FA5-47F6-A54E-84B46A48CB2F": {
+            "projectPath": "c:\\b\\b.csproj"
+          }
+        }
+      }
+    }
+  }
+}

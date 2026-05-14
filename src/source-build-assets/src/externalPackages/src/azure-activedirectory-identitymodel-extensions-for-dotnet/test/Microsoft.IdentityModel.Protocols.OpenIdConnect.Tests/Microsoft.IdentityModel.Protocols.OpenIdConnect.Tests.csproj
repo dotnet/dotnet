@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\build\commonTest.props" />
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests</AssemblyName>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\build\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <PackageId>Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests</PackageId>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="JsonWebKeySet.json;JsonWebKeySetBadBase64Data.json;JsonWebKeySetBadX509Data.json;JsonWebKeySetEnd2End.json;JsonWebKeySetSingleX509Data.json;OpenIdConnectMetadata.json;OpenIdConnectMetadata2.json;JsonWebKeySetUnrecognizedKty.json;JsonWebKeySetBadRsaDataMissingComponent.json;OpenIdConnectMetadataBadBase64Data.json;OpenIdConnectMetadataBadX509Data.json;OpenIdConnectMetadataEnd2End.json;OpenIdConnectMetadataJsonWebKeySetBadUri.json;PingLabsJWKS.json;PingLabs-openid-configuration.json;;JsonWebKeySetEnd2EndEC.json;OpenIdConnectMetadataEnd2EndEC.json;OpenIdConnectMetadataUnrecognizedKty.json;OpenIdConnectMetadataBadRsaDataMissingComponent.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Protocols.OpenIdConnect\Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj" />
+    <ProjectReference Include="..\Microsoft.IdentityModel.Protocols.Tests\Microsoft.IdentityModel.Protocols.Tests.csproj" />
+    <ProjectReference Include="..\Microsoft.IdentityModel.TestUtils\Microsoft.IdentityModel.TestUtils.csproj" />
+    <ProjectReference Include="..\Microsoft.IdentityModel.Tokens.Tests\Microsoft.IdentityModel.Tokens.Tests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+</Project>

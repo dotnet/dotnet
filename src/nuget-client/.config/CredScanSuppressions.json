@@ -1,0 +1,13 @@
+{
+    "tool": "Credential Scanner",
+    "suppressions": [
+        {
+            "_justification": "Unit tests use dummy input data.",
+            "file": [
+                "test/NuGet.Core.Tests/NuGet.Protocol.Tests/Plugins/Messages/GetCredentialsResponseTests.cs",
+                "test/NuGet.Core.Tests/NuGet.Protocol.Tests/Plugins/Messages/SetCredentialsRequestTests.cs",
+                "docs/cross-platform-debugging.md"
+            ]
+        }
+    ]
+}

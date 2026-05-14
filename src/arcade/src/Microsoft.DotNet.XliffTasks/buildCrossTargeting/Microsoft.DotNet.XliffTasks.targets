@@ -1,0 +1,59 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
+
+  <Target Name="UpdateXlfOnBuild"
+          DependsOnTargets="UpdateXlf"
+          BeforeTargets="DispatchToInnerBuilds"
+          Condition="'$(EnableXlfLocalization)' == 'true' and '$(UpdateXlfOnBuild)' == 'true'" />
+
+  <Target Name="UpdateXlf">
+    <ItemGroup>
+      <_XlfTargetFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+
+    <!--
+      These inner builds cannot be parallelized as they would race to 
+      update the same inner xlf files.
+    -->
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="UpdateXlf"
+             Properties="TargetFramework=%(_XlfTargetFramework.Identity)" />
+  </Target>
+
+  <!--
+    Sorts the trans-unit elements in the .xlf files by the value of their id attributes.
+    Runs a sort per target framework as resource files may be conditioned on the framework.
+  -->
+  <Target Name="SortXlf">
+    <ItemGroup>
+      <_XlfTargetFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+
+    <!--
+      These inner builds cannot be parallelized as they would race to 
+      update the same inner xlf files.
+    -->
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="SortXlf"
+             Properties="TargetFramework=%(_XlfTargetFramework.Identity)" />
+  </Target>
+
+  <!--
+    Checks that all trans-unit elements in the .xlf files have an up-to-date translation.
+    Runs a sort per target framework as resource files may be conditioned on the framework.
+  -->
+  <Target Name="EnsureAllResourcesTranslated">
+    <ItemGroup>
+      <_XlfTargetFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+    
+    <!--
+      These inner builds can be run in parallel as they don't modify any files.
+    -->
+    <MSBuild Projects="$(MSBuildProjectFile)"
+             Targets="EnsureAllResourcesTranslated"
+             Properties="TargetFramework=%(_XlfTargetFramework.Identity)"
+             BuildInParallel="true" />
+  </Target>
+
+</Project>

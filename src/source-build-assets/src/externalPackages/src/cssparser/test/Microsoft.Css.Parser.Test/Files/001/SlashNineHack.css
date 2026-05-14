@@ -1,0 +1,16 @@
+body > h2:not(:first-of-type):not(:last-of-type) { }
+
+/* \9 hack support */
+body {
+    border-width\9: 10px\9;
+    border-color: red\9;
+    color\9: #f00\9;
+    color: rgb(1,2,3)\9;
+}
+
+body {
+    border-width \9: 10px \9;
+    border-color: red \9;
+    color \9: #f00 \9;
+    color: rgb(1,2,3) \9;
+}

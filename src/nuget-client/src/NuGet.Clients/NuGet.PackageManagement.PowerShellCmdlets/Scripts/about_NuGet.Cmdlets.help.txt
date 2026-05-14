@@ -1,0 +1,53 @@
+﻿TOPIC
+    about_NuGet
+    
+SHORT DESCRIPTION
+    Provides information about NuGet Package Manager commands.
+           
+LONG DESCRIPTION
+    This topic describes the NuGet Package Manager commands. NuGet is an integrated package 
+    management tool for adding libraries and tools to .NET projects.
+
+                 
+    The following NuGet cmdlets are included.
+
+        Cmdlet					Description
+        ------------------		----------------------------------------------
+        Find-Package            Get the set of packages available from the package source, 
+		                        based on the package Id/keyword. This is a new command that
+								will replace Get-Package -ListAvailable.
+
+		Get-Package				Gets the set of installed packages. With -Updates switch, 
+                                gets the set of package updates available from the package source.
+
+        Install-Package			Installs a package and its dependencies into the project.
+
+        Uninstall-Package		Uninstalls a package. If other packages depend on this package, 
+                                the command will fail unless the –Force option is specified.
+
+        Update-Package			Updates a package and its dependencies to a newer version.
+
+		Sync-Package            Get the version of installed package from specified/default project
+		                        and sync the version to the rest of projects in the solution.
+
+        Add-BindingRedirect		Examines all assemblies within the output path for a project
+                                and adds binding redirects to the application (or web) 
+                                configuration file where necessary.
+                            
+        Get-Project				Returns a reference to the DTE (Development Tools Environment) 
+                                for the specified project. If none is specifed, returns the 
+                                default project selected in the Package Manager Console.
+
+        Register-TabExpansion	Registers a tab expansion for the parameters of a command.
+
+SEE ALSO
+    Online documentation: http://go.microsoft.com/fwlink/?LinkID=206619
+	Find-Package
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+	Sync-Package
+    Add-BindingRedirect
+    Get-Project
+    Register-TabExpansion

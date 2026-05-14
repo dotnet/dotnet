@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../Resources.resx">
+    <body>
+      <trans-unit id="PluginException_Abort_Format">
+        <source>Credential plugin {0} handles this request, but is unable to provide credentials. {1}</source>
+        <target state="translated">Kimlik bilgeleri eklentisi {0} bu isteği işler ancak kimlik bilgileri sağlayamaz. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Exception_Format">
+        <source>Credential plugin {0} encountered exception {1}.</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0}, {1} özel durumuyla karşılaştı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_InvalidResponse_Format">
+        <source>Credential plugin {0} returned {1}, but the payload was not valid (username = {2}, password = {3}, authTypes = {4}, message = {5}).</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0}, {1} döndürdü, ancak yük geçerli değil (kullanıcı adı = {2}, parola = {3}, authTypes = {4}, ileti = {5}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_NotStarted_Format">
+        <source>Credential plugin {0} failed to start.</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0} başlatılamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_PathNotFound_Format">
+        <source>Credential plugin {0} not found at any of the following locations {1}.</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0} şu konumlardan birinde bulunamadı: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Timeout_Format">
+        <source>Credential plugin {0} timed out after {1} seconds.</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0}, {1} saniye sonra zaman aşımına uğradı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnexpectedStatus_Format">
+        <source>Credential plugin {0} exited with unexpected error {1}.</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0}, beklenmeyen {1} hatasıyla çıkış yaptı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnreadableResponse_Format">
+        <source>Credential plugin {0} returned {1} with an unreadable payload.</source>
+        <target state="translated">Kimlik bilgileri eklentisi {0}, okunamayan yüke sahip {1} döndürdü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginWarning_PluginIsBeingDeprecated">
+        <source>The credential plugin model used by '{0}' is deprecated. Please contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</source>
+        <target state="translated">'{0}' tarafından kullanılan kimlik bilgisi eklenti modeli kullanım dışı. Lütfen başka bir model için eklentinin sağlayıcısına başvurun. Önerilen eklenti modeli hakkında daha fazla bilgiyi '{1}' bölümünde bulabilirsiniz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_InvalidCredentialResponse">
+        <source>Could not create credential response object because the response was invalid.</source>
+        <target state="translated">Yanıt geçersiz olduğu için kimlik bilgileri yanıt nesnesi oluşturulamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_MalformedResponse">
+        <source>Credential provider gave an invalid response.</source>
+        <target state="translated">Kimlik bilgisi sağlayıcısı, geçersiz bir yanıt verdi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
+        <source>Using {0} as a credential provider plugin.</source>
+        <target state="translated">Kimlik bilgisi sağlayıcı eklentisi olarak {0} kullanılıyor.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
+      <trans-unit id="SecurePluginWarning_UseInteractiveOption">
+        <source>The plugin credential provider could not acquire credentials. Authentication may require manual action. Consider re-running the command with --interactive for `dotnet`, /p:NuGetInteractive="true" for MSBuild or removing the -NonInteractive switch for `NuGet`</source>
+        <target state="translated">Eklenti kimlik bilgisi sağlayıcısı kimlik bilgilerini alamadı. Kimlik doğrulaması el ile gerçekleştirilen eylem gerektirebilir. Komutu `dotnet` için --interactive, MSBuild için /p:NuGetInteractive="true" anahtarıyla ile ya da `NuGet` için -NonInteractive anahtarını kaldırarak yeniden çalıştırın</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

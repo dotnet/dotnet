@@ -1,0 +1,15 @@
+﻿{
+    "codebaseName": "Razor-Tooling-GitHub",
+    "notificationAliases": [
+        "CoreRazorTooling@microsoft.com"
+    ],
+    "codebaseAdmins": [
+        "REDMOND\\jaredpar",
+        "REDMOND\\phillipa"
+    ],
+    "instanceUrl": "https://devdiv.visualstudio.com",
+    "projectName": "DevDiv",
+    "areaPath": "DevDiv\\NET Developer Experience\\Razor Tooling",
+    "iterationPath": "DevDiv",
+    "allTools": true
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Test.fr-FR</id>
+    <version>1.0</version>
+    <authors>NuGet</authors>
+    <description>Lang pack for Test</description>
+    <language>fr-FR</language>
+    <dependencies>
+        <dependency id="Test" version="[1.0]" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="lib\net40\fr-FR\Test.resources.dll" target="lib\net40\fr-FR\Test.resources.dll" />
+  </files>
+</package>

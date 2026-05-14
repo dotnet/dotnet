@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="fr">
+    <body>
+      <trans-unit id="TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">Échec</target>
+        <note>Test result for failed test</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNone">
+        <source>None</source>
+        <target state="translated">Aucun</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">Réussite</target>
+        <note>Test result for passed test</note>
+      </trans-unit>
+      <trans-unit id="BasicTestResultFormat">
+        <source>{0,-10}  {1}</source>
+        <target state="translated">{0,-10}  {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestResultMessageFormat">
+        <source>  {0}:
+{1}</source>
+        <target state="translated">  {0} :
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestResultTextMessagesFormat">
+        <source>  Test Messages:
+{0}</source>
+        <target state="translated">  Messages de test :
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestFailureMessageFormat">
+        <source>  Message: {0}</source>
+        <target state="translated">  Message : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestFailureStackTraceFormat">
+        <source>  StackTrace:
+{0}</source>
+        <target state="translated">  StackTrace :
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NullString">
+        <source>(null)</source>
+        <target state="translated">(null)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_RegisteredTestPropertyHasDifferentValueType">
+        <source>Cannot register property '{0}' as value type '{1}' because it was already registered as '{2}'.</source>
+        <target state="translated">Impossible d'inscrire la propriété '{0}' en tant que type valeur '{1}', car elle est déjà inscrite en tant que '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyColumnNumberLabel">
+        <source>Column Number</source>
+        <target state="translated">Numéro de colonne</target>
+        <note>The label of the test property ColumnNumber for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyExecutorUriLabel">
+        <source>Executor Uri</source>
+        <target state="translated">URI de l'exécuteur</target>
+        <note>The label of the test property ExecutorUri for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertySourceLabel">
+        <source>Source</source>
+        <target state="translated">Source</target>
+        <note>The label of the test property Source for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyLineNumberLabel">
+        <source>Line Number</source>
+        <target state="translated">Numéro de ligne</target>
+        <note>The label of the test property LineNumber for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyNameLabel">
+        <source>Name</source>
+        <target state="translated">Nom</target>
+        <note>The label of the test property Name for test case.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyComputerNameLabel">
+        <source>Computer Name</source>
+        <target state="translated">Nom de l'ordinateur</target>
+        <note>The label of the test property ComputerName for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyDisplayNameLabel">
+        <source>TestResult Display Name</source>
+        <target state="translated">Nom d'affichage de TestResult</target>
+        <note>The label of TestResult.DisplayName, mainly used for parameterized data tests</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyDurationLabel">
+        <source>Duration</source>
+        <target state="translated">Durée</target>
+        <note>The label of the test property Duration for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyEndTimeLabel">
+        <source>End Time</source>
+        <target state="translated">Heure de fin</target>
+        <note>The label of the test property EndTime for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorColumnNumberLabel">
+        <source>Error Column Number</source>
+        <target state="translated">Numéro de colonne d'erreur</target>
+        <note>The label of the test property ErrorColumnNumber for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorMessageLabel">
+        <source>Error Message</source>
+        <target state="translated">Message d'erreur</target>
+        <note>The label of the test property ErrorMessage for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyErrorStackTraceLabel">
+        <source>Error Stack Trace</source>
+        <target state="translated">Arborescence des appels de procédure d'erreur</target>
+        <note>The label of the test property ErrorStackTrace for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyOutcomeLabel">
+        <source>Outcome</source>
+        <target state="translated">Résultat</target>
+        <note>The label of the test property Outcome for test result.</note>
+      </trans-unit>
+      <trans-unit id="TestResultPropertyStartTimeLabel">
+        <source>Start Time</source>
+        <target state="translated">Heure de début</target>
+        <note>The label of the test property StartTime for test result.</note>
+      </trans-unit>
+      <trans-unit id="ConverterNotSupported">
+        <source>Cannot find TypeConverter for type {0}.</source>
+        <target state="translated">TypeConverter introuvable pour le type {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyFilePathLabel">
+        <source>File Path</source>
+        <target state="translated">Chemin du fichier</target>
+        <note>The label of the test property FilePath for test case.</note>
+      </trans-unit>
+      <trans-unit id="NotificationFrequencyIsNotPositive">
+        <source>Notification frequency need to be a positive value.</source>
+        <target state="translated">La fréquence de notification doit être une valeur positive.</target>
+        <note>frequency for DiscoveryCriteria/TestRunCriteria needs to be a positive value</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyIdLabel">
+        <source>Id</source>
+        <target state="translated">ID</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsXmlAttribute">
+        <source>Invalid settings '{0}'. Unexpected XmlAttribute: '{1}'.</source>
+        <target state="translated">Paramètres non valides '{0}'. XmlAttribute inattendu : '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSettingsXmlElement">
+        <source>Invalid settings '{0}'. Unexpected XmlElement: '{1}'.</source>
+        <target state="translated">Paramètres non valides '{0}'. XmlElement inattendu : '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDataCollectorAttributes">
+        <source>Invalid data collector settings. Expected attribute '{0}' is missing.  A typical data collector setting would look like &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;.</source>
+        <target state="translated">Paramètres de collecteur de données non valides. Attribut attendu '{0}' manquant. Un paramétrage de collecteur de données classique se présente comme suit : &lt;DataCollector uri="dataCollector://Samples/SampleCollector/1.0" assemblyQualifiedName="Samples.SampleCollector.SampleDataCollector, SampleCollectors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111" friendlyName="sampleCollector"&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotFound">
+        <source>NotFound</source>
+        <target state="translated">NotFound</target>
+        <note>Test result for not found test</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeSkipped">
+        <source>Skipped</source>
+        <target state="translated">Ignoré</target>
+        <note>Test result for skipped test </note>
+      </trans-unit>
+      <trans-unit id="NotificationTimeoutIsZero">
+        <source>Notification timeout must be greater than zero.</source>
+        <target state="translated">Le délai d'expiration de notification doit être supérieur à zéro.</target>
+        <note>Timeout used during test discovery and execution must be greater than zero.</note>
+      </trans-unit>
+      <trans-unit id="InvalidSettingsIncorrectValue">
+        <source>Invalid settings '{0}'.  Invalid value '{1}' specified for '{2}'.</source>
+        <target state="translated">Paramètres non valides '{0}'. Valeur non valide '{1}' spécifiée pour '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRunSettingsRootNode">
+        <source>The root node of the run settings must be named 'RunSettings'.</source>
+        <target state="translated">Le nœud racine des paramètres d'exécution doit être nommé 'RunSettings'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestCaseFilterForSpecificTests">
+        <source>Cannot specify TestCaseFilter for specific tests run. FilterCriteria is only for run with sources.</source>
+        <target state="translated">Impossible de spécifier TestCaseFilter pour l'exécution de tests spécifiques. FilterCriteria est destiné uniquement à l'exécution avec des sources.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedTypeOfProperty">
+        <source>The test property type '{0}' of property '{1}' is not supported. Use one of the supported property type (primitive types, uri, string, string[]) and try again. </source>
+        <target state="translated">Le type de propriété de test '{0}' de la propriété '{1}' n'est pas pris en charge. Utilisez l'un des types de propriété pris en charge (types primitifs, uri, string, string[]), puis réessayez. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CouldNotFindXmlNode">
+        <source>Could not find '{0}' node</source>
+        <target state="translated">Nœud '{0}' introuvable</target>
+        <note>Error message when the specified {0}  xml node can not be found in the run settings xml document</note>
+      </trans-unit>
+      <trans-unit id="TestCasePropertyFullyQualifiedNameLabel">
+        <source>FullyQualifiedName</source>
+        <target state="translated">FullyQualifiedName</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCasePropertyTraitsLabel">
+        <source>Traits</source>
+        <target state="translated">Caractéristiques</target>
+        <note>The label of the test property Traits for test case.</note>
+      </trans-unit>
+      <trans-unit id="SolutionDirectoryNotExists">
+        <source>Solution directory '{0}' does not exists. Please make sure solution directory specified in runsettings exists and have read permissions for directory.</source>
+        <target state="translated">Le répertoire de solution '{0}' n'existe pas. Vérifiez que le répertoire de solution spécifié dans runsettings existe, et que vous disposez d'autorisations d'accès en lecture pour celui-ci.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Le paramètre ne peut pas avoir une valeur null ou être vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_FileNotExist">
+        <source>File {0} does not exist.</source>
+        <target state="translated">Le fichier {0} n'existe pas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_ObjectMustBeOfType">
+        <source>Object must be of type {0}.</source>
+        <target state="translated">L'objet doit être de type {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeAborted">
+        <source>Aborted</source>
+        <target state="translated">Abandonné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeCompleted">
+        <source>Completed</source>
+        <target state="translated">Effectué</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeDisconnected">
+        <source>Disconnected</source>
+        <target state="translated">Déconnecté</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeError">
+        <source>Error</source>
+        <target state="translated">Erreur</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">Échec</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeInconclusive">
+        <source>Inconclusive</source>
+        <target state="translated">Non concluant</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeInProgress">
+        <source>In Progress</source>
+        <target state="translated">En cours</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeNotExecuted">
+        <source>Not Executed</source>
+        <target state="translated">Non exécuté</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeNotRunnable">
+        <source>Not Runnable</source>
+        <target state="translated">Non exécutable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">Réussite</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePassedButRunAborted">
+        <source>Passed (run aborted)</source>
+        <target state="translated">Réussi (exécution abandonnée)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomePending">
+        <source>Pending</source>
+        <target state="translated">En attente</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeTimeout">
+        <source>Timeout</source>
+        <target state="translated">Délai d'expiration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_TestOutcomeWarning">
+        <source>Warning</source>
+        <target state="translated">Avertissement</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_CanNotReadStream">
+        <source>Unable to read from the provided stream.  Data from a stream cannot be sent unless the stream supports reading.</source>
+        <target state="translated">Impossible de lire le flux fourni. Impossible d'envoyer les données d'un flux s'il ne prend pas en charge la lecture.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_InvalidFileNameCharacters">
+        <source>The provided file name '{0}' contains the following invalid characters: '{1}'.</source>
+        <target state="translated">Le nom de fichier '{0}' fourni contient les caractères non valides suivants : '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionSink_ReservedFilenameUsed">
+        <source>The provided file name '{0}' is reserved.</source>
+        <target state="translated">Le nom de fichier '{0}' fourni est réservé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToCreateDiaSession">
+        <source>Failed to Create msdia Session COM HResult '{0}'.</source>
+        <target state="translated">Échec de la création du HResult COM de la session msdia : '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLoadMsDia">
+        <source>Failed to load msdia</source>
+        <target state="translated">Échec du chargement de msdia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDataCollectorUriInSettings">
+        <source>Invalid URI in data collector settings '{0}'.</source>
+        <target state="translated">URI non valide dans les paramètres de collecteur de données '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUriInSettings">
+        <source>Invalid URI '{0}' in settings '{1}'.</source>
+        <target state="translated">URI '{0}' non valide dans les paramètres '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingLoggerAttributes">
+        <source>Invalid settings '{0}'. Expected atleast one of the XmlAttribute among friendlyName, uri and assemblyQualifiedName.</source>
+        <target state="translated">Paramètres '{0}' non valides. Au moins un des attributs XmlAttribute (friendlyName, uri ou assemblyQualifiedName) était attendu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCaseFilterEscapeException">
+        <source>Filter string '{0}' includes unrecognized escape sequence.</source>
+        <target state="translated">La chaîne de filtre '{0}' inclut une séquence d'échappement non reconnue.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

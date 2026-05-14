@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hant">
+    <body>
+      <trans-unit id="CleanupException">
+        <source>An exception occurred while collecting final entries from the event log '{0}': {1}</source>
+        <target state="translated">從事件記錄檔 '{0}' 收集最終項目時發生例外狀況: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ContextNotFoundException">
+        <source>Event Log DataCollector did not find eventLogContext for DataCollectionContext: {0}</source>
+        <target state="translated">事件記錄檔 DataCollector 找不到 DataCollectionContext 的 eventLogContext: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostWarning">
+        <source>The '{0}' event log may have been cleared during collection; some events may not have been collected</source>
+        <target state="translated">'{0}' 事件記錄檔可能已在收集期間清除; 某些事件可能未收集到</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadError">
+        <source>Unable to read event log '{0}' from computer '{1}'</source>
+        <target state="translated">無法從電腦 '{1}' 讀取事件記錄檔 '{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostError">
+        <source>The '{0}' event log has encountered an exception, some events might get lost. Error : {1}</source>
+        <target state="translated">'{0}' 事件記錄檔發生例外狀況，某些事件可能會遺失。錯誤: {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

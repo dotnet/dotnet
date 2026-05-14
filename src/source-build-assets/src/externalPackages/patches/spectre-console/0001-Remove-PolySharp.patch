@@ -1,0 +1,27 @@
+From 1250cea7252e45de242063668469b75ff7618ee0 Mon Sep 17 00:00:00 2001
+From: Andy Zivkovic <zivkan@users.noreply.github.com>
+Date: Thu, 27 Nov 2025 10:42:15 +1030
+Subject: [PATCH] Remove PolySharp
+
+---
+ src/Spectre.Console/Spectre.Console.csproj | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/Spectre.Console/Spectre.Console.csproj b/src/Spectre.Console/Spectre.Console.csproj
+index 5a9e161..991c064 100644
+--- a/src/Spectre.Console/Spectre.Console.csproj
++++ b/src/Spectre.Console/Spectre.Console.csproj
+@@ -22,10 +22,6 @@
+     <PackageReference Include="Wcwidth.Sources">
+       <PrivateAssets>all</PrivateAssets>
+     </PackageReference>
+-    <PackageReference Include="PolySharp">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+   </ItemGroup>
+ 
+   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+-- 
+2.43.0
+

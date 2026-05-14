@@ -1,0 +1,27 @@
+// Container contains checked-out source code only
+{
+    "name": "Default",
+    "image": "mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64",
+    "hostRequirements": {
+        // A completely source built .NET is >64 GB with all the repos/artifacts
+        "storage": "128gb"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-dotnettools.csharp"
+            ]
+        },
+        "codespaces": {
+            "openFiles": [
+                ".devcontainer/README.md"
+            ]
+        }
+    },
+    "remoteEnv": {
+        "PATH": "${containerWorkspaceFolder}/.dotnet:${containerEnv:PATH}",
+        // Enable SHA1. Required for compilers to strong name assemblies.
+        "OPENSSL_ENABLE_SHA1_SIGNATURES":"1",
+    },
+    "onCreateCommand": ".devcontainer/init.sh"
+}

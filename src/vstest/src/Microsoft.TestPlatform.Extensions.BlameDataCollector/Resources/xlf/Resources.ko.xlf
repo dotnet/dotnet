@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="AbortedTestRun">
+        <source>The active Test Run was aborted because the host process exited unexpectedly. Please inspect the call stack above, if available, to get more information about where the exception originated from.
+The test running when the crash occurred: 
+{0}
+This test may, or may not be the source of the crash.</source>
+        <target state="translated">호스트 프로세스가 예기치 않게 종료되어 활성 테스트 실행이 중단되었습니다. 사용 가능한 경우 예외가 발생한 위치에 대한 자세한 정보를 보려면 위의 호출 스택을 검사하세요.
+크래시가 발생했을 때 실행 중이었던 테스트: 
+{0}
+이 테스트는 크래시의 원인이거나 원인이 아닐 수 있습니다.</target>
+        <note>{0} is a single test (or in rare cases multiple tests) that were running when test host crashed.</note>
+      </trans-unit>
+      <trans-unit id="ProcDumpEnvVarEmpty">
+        <source>Required environment variable PROCDUMP_PATH was null or empty. Set PROCDUMP_PATH to path of folder containing appropriate procdump executable.</source>
+        <target state="translated">필요한 환경 변수 PROCDUMP_PATH가 null이거나 비어 있습니다. 적절한 procdump 실행 파일이 포함된 폴더의 경로에 PROCDUMP_PATH를 설정하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DumpFileNotGeneratedErrorMessage">
+        <source>Collect dump was enabled but no dump file was generated.</source>
+        <target state="translated">덤프 수집이 사용하도록 설정되었지만 덤프 파일이 생성되지 않았습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlameParameterKeyIncorrect">
+        <source>The blame parameter key specified {0} is not valid. Ignoring this key.</source>
+        <target state="translated">지정된 blame 매개 변수 키 {0}이(가) 잘못되었습니다. 이 키를 무시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlameParameterValueIncorrect">
+        <source>The blame parameter key {0}, has incorrect value: {1}. Supported values are: {2}</source>
+        <target state="translated">원인 매개 변수 키 {0}에 잘못된 값 {1}이(가) 있습니다. 지원되는 값은 {2}입니다.</target>
+        <note>{0} and {1} are single values referring to parameters such as BlameHang and Full. {2} is comma separated list of valid values, e.g. Full, Mini, None.</note>
+      </trans-unit>
+      <trans-unit id="ProcDumpCouldNotStart">
+        <source>Could not start process dump: {0}</source>
+        <target state="translated">프로세스 덤프를 시작할 수 없음: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProcDumpNotGenerated">
+        <source>CollectDump was enabled but dump file was not generated.</source>
+        <target state="translated">CollectDump가 사용하도록 설정되었지만 덤프 파일이 생성되지 않았습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InactivityTimeout">
+        <source>The specified inactivity time of {0} {1} has elapsed. Collecting hang dumps from testhost and its child processes</source>
+        <target state="translated">지정한 비활성 시간({0}{1})이 경과되었습니다. Testhost 및 해당 자식 프로세스에서 중단 덤프를 수집하는 중</target>
+        <note>{0} value, {1} one of the unit strings below, Minutes/Seconds</note>
+      </trans-unit>
+      <trans-unit id="UnexpectedValueForInactivityTimespanValue">
+        <source>Unexpected value '{0}' provided as timeout. Please provide a value in this format: 1.5h / 90m / 5400s / 5400000ms / 5400000</source>
+        <target state="translated">예기치 않은 값 '{0}'이(가) 시간 제한으로 제공되었습니다. 1.5h/90m/5400s/5400000ms/5400000 형식으로 값을 제공하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NotGeneratingSequenceFile">
+        <source>All tests finished running, Sequence file will not be generated</source>
+        <target state="translated">모든 테스트 실행이 완료되었지만, 시퀀스 파일이 생성되지 않습니다.</target>
+        <note>"Sequence" is the name of the file. No . at the end, because this is a blame message and the . will be added automatically.</note>
+      </trans-unit>
+      <trans-unit id="Dumping">
+        <source>Dumping {0} - {1}</source>
+        <target state="translated">덤프 {0} - {1}</target>
+        <note>as in creating a process dump, {0} process id, {1} process name</note>
+      </trans-unit>
+      <trans-unit id="DumpingTree">
+        <source>Dumping this process tree (from bottom)</source>
+        <target state="translated">이 프로세스 트리 덤핑(아래쪽에서)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Minutes">
+        <source>minutes</source>
+        <target state="translated">분</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Seconds">
+        <source>seconds</source>
+        <target state="translated">초</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProcDumpNotFound">
+        <source>{0} could not be found, please make sure that the executable is available on PATH. Alternatively set PROCDUMP_PATH environment variable to a directory that contains {0} executable</source>
+        <target state="translated">{0}을(를) 찾을 수 없습니다. 실행 파일을 PATH에서 사용할 수 있는지 확인합니다. 또는 PROCDUMP_PATH 환경 변수를 {0} 실행 파일이 포함된 디렉터리로 설정하세요.</target>
+        <note>0 is procDumpPath, a name of procdump executable such as procdump64.exe, 0 is used twice on purpose. PROCDUMP_PATH and PATH are literal and should not be localized.</note>
+      </trans-unit>
+      <trans-unit id="MonitorPostmortemDebuggerInvalidDumpDirectoryPathParameter">
+        <source>Invalid 'DumpDirectoryPath' for postmortem debugger monitor</source>
+        <target state="translated">사후 디버거 모니터에 대한 잘못된 'DumpDirectoryPath'</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

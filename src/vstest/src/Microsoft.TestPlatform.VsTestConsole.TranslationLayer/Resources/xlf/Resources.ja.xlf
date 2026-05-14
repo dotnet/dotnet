@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ja">
+    <body>
+      <trans-unit id="AbortedTestsRun">
+        <source>The active Tests Run was aborted.</source>
+        <target state="translated">アクティブなテストの実行が中止されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestsDiscovery">
+        <source>The active Tests Discovery was aborted.</source>
+        <target state="translated">アクティブなテスト探索が中止されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToReceiveMessage">
+        <source>Failed to receive message from vstest.console process</source>
+        <target state="translated">vstest.console プロセスからメッセージを受信できませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VsTestProcessExitedAbnormally">
+        <source>vstest.console process exited abnormally</source>
+        <target state="translated">vstest.console プロセスが異常終了しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFilePath">
+        <source>File {0} does not exists</source>
+        <target state="translated">ファイル {0} が存在しません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestRunAttachmentsProcessing">
+        <source>The active Test Run Attachments Processing was aborted.</source>
+        <target state="translated">アクティブなテストの実行の添付ファイルの処理が中止されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStartTestSession">
+        <source>The Start Test Session operation was aborted.</source>
+        <target state="translated">テスト セッションの開始操作が中止されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStopTestSession">
+        <source>The Stop Test Session operation was aborted.</source>
+        <target state="translated">テスト セッションの停止操作が中止されました。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

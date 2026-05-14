@@ -1,0 +1,484 @@
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" Condition="'$(UseWix5)' == ''" />
+  <Import Project="$(MSBuildThisFileDirectory)wix5/wix.targets" Condition="'$(UseWix5)' != ''" />
+
+  <Target Name="GenerateDeb" DependsOnTargets="CreateDeb" />
+  <Target Name="GenerateRpm" DependsOnTargets="CreateRpm" />
+  <Target Name="GenerateMsi" DependsOnTargets="CreateWixInstaller" />
+  <Target Name="GenerateCrossArchMsi" DependsOnTargets="CreateCrossArchWixInstaller" />
+  <Target Name="GeneratePkg" DependsOnTargets="CreatePkg" />
+
+  <PropertyGroup>
+    <LinuxInstallRoot Condition="'$(LinuxInstallRoot)' == ''">/usr/share/dotnet</LinuxInstallRoot>
+  </PropertyGroup>
+
+  <!-- Set up properties for the installer package name and version -->
+  <PropertyGroup>
+    <VersionedInstallerName Condition="'$(VersionInstallerName)' == 'true'">$(InstallerName)-$(MajorVersion).$(MinorVersion)</VersionedInstallerName>
+    <VersionedInstallerName Condition="'$(VersionInstallerName)' != 'true'">$(InstallerName)</VersionedInstallerName>
+    <VersionedInstallerName>$(VersionedInstallerName.ToLowerInvariant())</VersionedInstallerName>
+    <InstallerPackageRelease>1</InstallerPackageRelease>
+    <InstallerPackageVersion>$(VersionPrefix)</InstallerPackageVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludePreReleaseLabelInPackageVersion Condition="'$(DotNetFinalVersionKind)' != 'release'">true</IncludePreReleaseLabelInPackageVersion>
+    <IncludePreReleaseLabelInPackageVersion Condition="'$(SuppressFinalPackageVersion)' == 'true'">true</IncludePreReleaseLabelInPackageVersion>
+    <IncludePreReleaseLabelInPackageVersion Condition="'$(IsShipping)' != 'true'">true</IncludePreReleaseLabelInPackageVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GenerateDeb)' == 'true'">
+    <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)~$(VersionSuffix)</InstallerPackageVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GenerateRpm)' == 'true'">
+    <InstallerPackageRelease Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">0.1.$(VersionSuffix)</InstallerPackageRelease>
+    <InstallerPackageRelease>$([System.String]::Copy('$(InstallerPackageRelease)').Replace('-', '_'))</InstallerPackageRelease>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GeneratePkg)' == 'true'">
+    <InstallerPackageVersion Condition="'$(IncludePreReleaseLabelInPackageVersion)' == 'true'">$(VersionPrefix)-$(VersionSuffix)</InstallerPackageVersion>
+  </PropertyGroup>
+
+  <!--
+    Legacy target. Some consumers depend on this target name, so keep it around.
+    Determine the installer file names from the package name, version, type, and other properties.
+  -->
+  <Target Name="_GetInstallerProperties"
+          DependsOnTargets="_GetTargetOSArchInfo;
+                            _GetProductBrandName">
+    <!-- Distinguish the cross-arch installer filename. -->
+    <PropertyGroup Condition="'$(CrossArchContentsArch)' != ''">
+      <CrossArchContentsBuildPart>_$(CrossArchContentsArch)</CrossArchContentsBuildPart>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+      <InstallerExtension Condition="'$(GenerateMsi)' == 'true' or '$(GenerateCrossArchMsi)' == 'true'">.msi</InstallerExtension>
+      <InstallerExtension Condition="'$(GeneratePkg)' == 'true'">.pkg</InstallerExtension>
+      <InstallerExtension Condition="'$(GenerateDeb)' == 'true'">.deb</InstallerExtension>
+      <InstallerExtension Condition="'$(GenerateRpm)' == 'true'">.rpm</InstallerExtension>
+      <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' == 'win'">.exe</CombinedInstallerExtension>
+      <CombinedInstallerExtension Condition="'$(TargetRuntimeOS)' != 'win'">$(InstallerExtension)</CombinedInstallerExtension>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_InstallerIntermediatesDir>$(IntermediateOutputPath)$(InstallerName)/$(InstallerPackageVersion)/</_InstallerIntermediatesDir>
+      <InstallerBuildPart>$(Version)-$(TargetRuntimeOS)-$(InstallerTargetArchitecture)</InstallerBuildPart>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
+      <_InstallerArchSuffix>$(InstallerTargetArchitecture)</_InstallerArchSuffix>
+      <_InstallerArchSuffix Condition="'$(GenerateRpm)' == 'true' and '$(InstallerTargetArchitecture)' == 'arm64'">aarch64</_InstallerArchSuffix>
+      <InstallerBuildPart>$(Version)-$(_InstallerArchSuffix)</InstallerBuildPart>
+      <InstallerBuildPart Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_InstallerArchSuffix)</InstallerBuildPart>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <!-- Location to place the installer, in artifacts. -->
+      <InstallerFileNameWithoutExtension>$(InstallerName)-$(InstallerBuildPart)$(CrossArchContentsBuildPart)</InstallerFileNameWithoutExtension>
+      <_InstallerFile Condition="'$(_InstallerFile)' == ''">$(PackageOutputPath)$(InstallerFileNameWithoutExtension)$(InstallerExtension)</_InstallerFile>
+      <ExeBundleInstallerFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension).exe</ExeBundleInstallerFile>
+      <ExeBundleInstallerEngineFile>$(PackageOutputPath)$(InstallerFileNameWithoutExtension)-engine.exe</ExeBundleInstallerEngineFile>
+    </PropertyGroup>
+  </Target>
+
+  <!-- This target is a hook for users to add package info in a target. -->
+  <Target Name="GetAdditionalLinuxInstallerProperties">
+    <PropertyGroup>
+      <FullLicenseText>$([System.IO.File]::ReadAllText('$(LicenseFile)').Replace('%0A', '\n').Replace('"', '\"'))</FullLicenseText>
+      <LinuxPackageArchitecture>$(_InstallerArchSuffix)</LinuxPackageArchitecture>
+      <!-- Linux packaging requires 'amd64' for x64 packages -->
+      <LinuxPackageArchitecture Condition="'$(LinuxPackageArchitecture)' == 'x64'">amd64</LinuxPackageArchitecture>
+      <_PackageCopyright>2017 Microsoft</_PackageCopyright>
+      <_PackageLongDescription Condition="'$(InstallerPackageDescription)' != ''">$(InstallerPackageDescription)</_PackageLongDescription>
+      <_PackageLongDescription Condition="'$(_PackageLongDescription)' == ''">.NET is a development platform that you can use to build command-line applications, microservices and modern websites. It is open source, cross-platform and is supported by Microsoft. We hope you enjoy using it! If you do, please consider joining the active community of developers that are contributing to the project on GitHub (https://github.com/dotnet/core). We happily accept issues and PRs.</_PackageLongDescription>
+      <_ShortDescription Condition="'$(PackageSummary)' != ''">$(PackageSummary)</_ShortDescription>
+      <_ShortDescription Condition="'$(PackageSummary)' == ''">$(MSBuildProjectName) $(InstallerPackageVersion)</_ShortDescription>
+      <_ShortDescription Condition="'$(PackageSummary)' == '' and '$(UseBrandingNameInLinuxPackageDescription)' == 'true'">$(ProductBrandName)</_ShortDescription>
+    </PropertyGroup>
+  </Target>
+
+  <PropertyGroup>
+    <_LinuxPackageType Condition="'$(GenerateDeb)' == 'true'">deb</_LinuxPackageType>
+    <_LinuxPackageType Condition="'$(GenerateRpm)' == 'true'">rpm</_LinuxPackageType>
+  </PropertyGroup>
+
+  <Target Name="_CreateLinuxPackagingLayout">
+    <PropertyGroup>
+      <_LayoutDirectory>$(IntermediateOutputPath)installer/$(_LinuxPackageType)Layout/</_LayoutDirectory>
+      <_LayoutDataRoot>$(_LayoutDirectory)root/</_LayoutDataRoot>
+      <_LayoutPackageRoot>$(_LayoutDataRoot)$(LinuxInstallRoot)</_LayoutPackageRoot>
+      <_LayoutControlRoot>$(_LayoutDirectory)control/</_LayoutControlRoot>
+      <_LayoutDocs>$(_LayoutDataRoot)/usr/share/doc</_LayoutDocs>
+    </PropertyGroup>
+
+    <RemoveDir Condition="Exists('$(_InstallerIntermediatesDir)')" Directories="$(_InstallerIntermediatesDir)" />
+    <MakeDir Directories="$(_InstallerIntermediatesDir)" />
+
+    <!-- Create empty layout. -->
+    <RemoveDir Condition="Exists('$(_LayoutDirectory)')" Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutPackageRoot)" />
+    <MakeDir Directories="$(_LayoutControlRoot)" />
+    <MakeDir Directories="$(_LayoutDocs)" />
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+
+    <Copy
+      SourceFiles="@(Manpage)"
+      DestinationFiles="@(Manpage->'$(_LayoutDocs)/%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <!-- Write copyright file in the debian format. -->
+    <ItemGroup>
+      <_CopyrightLine Include="Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/" />
+      <_CopyrightLine Include="%0AFiles: *" />
+      <_CopyrightLine Include="Copyright: $(_PackageCopyright)" />
+      <_CopyrightLine Include="Comment: Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license." />
+      <_CopyrightLine Include="License: MIT and ASL 2.0 and BSD" />
+      <_CopyrightLine Include="%0ALicense: $([System.IO.File]::ReadAllText('$(LicenseFile)'))" />
+    </ItemGroup>
+
+    <WriteLinesToFile File="$(_LayoutDocs)/$(VersionedInstallerName)/copyright" Lines="@(_CopyrightLine)" />
+
+    <ItemGroup>
+      <!-- Allow the old DebSymlink name and the new LinuxPackageSymlink name. -->
+      <_SymlinksToCreate Include="@(DebSymlink);@(LinuxPackageSymlink)" />
+    </ItemGroup>
+
+    <!-- Create any symlinks -->
+    <MakeDir Directories="$(_LayoutDataRoot)%(_SymlinksToCreate.RelativeDir)" Condition="'%(_SymlinksToCreate.Identity)' != ''" />
+    <Exec Command="ln -sf %(_SymlinksToCreate.LinkTarget) %(_SymlinksToCreate.FileName)%(_SymlinksToCreate.Extension)" WorkingDirectory="$(_LayoutDataRoot)%(_SymlinksToCreate.RelativeDir)" Condition="'%(_SymlinksToCreate.Identity)' != ''" />
+
+    <ItemGroup>
+      <_CreatedSymlinks Include="@(_SymlinksToCreate->'$(_LayoutDataRoot)%(Identity)')" />
+    </ItemGroup>
+    
+  </Target>
+
+  <Target Name="CreateDeb"
+          DependsOnTargets="_GetInstallerProperties;GetAdditionalLinuxInstallerProperties;_CreateLinuxPackagingLayout"
+          Returns="$(_InstallerFile)">
+    <ItemGroup>
+      <_ChangelogFile Include="$(_LayoutDocs)/$(VersionedInstallerName)/changelog.Debian.gz" />
+    </ItemGroup>
+    
+    <CreateChangelogFile
+        ChangelogOutputPath="@(_ChangelogFile)"
+        MaintainerEmail="dotnetpackages@dotnetfoundation.org"
+        MaintainerName=".NET Team"
+        PackageName="$(VersionedInstallerName)"
+        PackageVersion="$(InstallerPackageVersion)_$(InstallerPackageRelease)"
+        ReleaseNotes="https://github.com/dotnet/core/tree/master/release-notes" />
+  
+    <ItemGroup>
+      <FileWrites Include="$(_ChangelogFile)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_MD5SumsFile Include="$(_LayoutControlRoot)/md5sums" />
+      <!-- The md5sums file does not include symlinks -->
+      <_MD5SourceFiles Include="$(_LayoutDataRoot)/**/*" Exclude="@(_CreatedSymlinks)" />
+    </ItemGroup>
+
+    <CreateMD5SumsFile
+        OutputFile="@(_MD5SumsFile)"
+        RootDirectory="$(_LayoutDataRoot)"
+        Files="@(_MD5SourceFiles)">
+      <Output TaskParameter="InstalledSize" PropertyName="_InstalledSize" />
+    </CreateMD5SumsFile>
+
+    <ItemGroup>
+      <FileWrites Include="@(_MD5SumsFile)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ControlFile Include="$(_LayoutControlRoot)/control" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_ConflictsProperty Condition="'@(LinuxPackageConflicts)' != ''">@(LinuxPackageConflicts->'%(Identity)',', ')</_ConflictsProperty>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(_ConflictsProperty)' != ''">
+      <_ConflictsControlProperty Include="Conflicts" Value="$(_ConflictsProperty)" />
+    </ItemGroup>
+
+    <CreateControlFile
+        ControlFileOutputPath="@(_ControlFile)"
+        PackageName="$(VersionedInstallerName)"
+        PackageVersion="$(InstallerPackageVersion)"
+        PackageArchitecture="$(LinuxPackageArchitecture)"
+        Maintainer=".NET Team &lt;dotnetpackages@dotnetfoundation.org&gt;"
+        Description="$(_ShortDescription)%0A $(_PackageLongDescription)"
+        InstalledSize="$(_InstalledSize)"
+        Depends="@(LinuxPackageDependency)"
+        Section="libs"
+        AdditionalProperties="@(DebControlProperty);@(_ConflictsControlProperty)" />
+
+    <ItemGroup>
+      <FileWrites Include="@(_ControlFile)" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(DebControlFile)"
+          DestinationFiles="@(DebControlFile->'$(_LayoutControlRoot)%(Filename)%(Extension)')"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="True"
+          UseHardlinksIfPossible="True" />
+
+    <Copy SourceFiles="@(LinuxPostInstallScript)"
+          DestinationFiles="$(_LayoutControlRoot)postinst"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="True"
+          UseHardlinksIfPossible="True"
+          Condition="'@(LinuxPostInstallScript)' != ''" />
+
+    <Exec Command="chmod ugo+x '$(_LayoutControlRoot)postinst'"
+          Condition="'@(LinuxPostInstallScript)' != ''" />
+
+    <Copy SourceFiles="@(LinuxPostRemoveScript)"
+          DestinationFiles="$(_LayoutControlRoot)postrm"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="True"
+          UseHardlinksIfPossible="True"
+          Condition="'@(LinuxPostRemoveScript)' != ''"/>
+
+    <Exec Command="chmod ugo+x '$(_LayoutControlRoot)postrm'"
+          Condition="'@(LinuxPostRemoveScript)' != ''" />
+
+    <Exec Command="tar -C '$(_LayoutControlRoot)' -czf '$(_LayoutDirectory)/control.tar.gz' ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true" />
+    
+    <Exec Command="tar -C '$(_LayoutDataRoot)' -czf '$(_LayoutDirectory)/data.tar.gz' ."
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <CreateDebPackage
+      OutputDebPackagePath="$(_InstallerFile)"
+      ControlFile="$(_LayoutDirectory)/control.tar.gz"
+      DataFile="$(_LayoutDirectory)/data.tar.gz" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+  </Target>
+
+  <!--
+    Create RPM package.
+  -->
+  <Target Name="CreateRpm"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            GetAdditionalLinuxInstallerProperties;
+            _CreateLinuxPackagingLayout"
+          Returns="$(_InstallerFile)">
+    <!--
+      Compress all files and directories that we output.
+      We'll filter out any directories we don't own in CreateRpmPackage.
+    -->
+    <PropertyGroup>
+      <_FindAllPayloadFilesCommand>find . -depth ! -wholename '.'</_FindAllPayloadFilesCommand>
+    </PropertyGroup>
+    <Exec Command="$(_FindAllPayloadFilesCommand) -print  | cpio -H newc -o --quiet > '$(_LayoutDirectory)/payload.cpio'"
+          WorkingDirectory="$(_LayoutDataRoot)"
+          EchoOff="true"
+          StandardOutputImportance="Low" />
+
+    <!-- For each filesystem entry, execute the 'file' command. We need to both shell-escape and MSBuild-escape the semicolon -->
+    <Exec Command="$(_FindAllPayloadFilesCommand) -exec file {} \%3B"
+          ConsoleToMsBuild="true"
+          EchoOff="true"
+          StandardOutputImportance="Low"
+          WorkingDirectory="$(_LayoutDataRoot)">
+      <Output TaskParameter="ConsoleOutput" ItemName="_RawFileKindInfo" />
+    </Exec>
+
+    <ItemGroup>
+      <_RpmScriptlet Include="@(LinuxPostInstallScript)" Kind="Postin" />
+      <_RpmScriptlet Include="@(LinuxPostRmScript)" Kind="Postun" />
+    </ItemGroup>
+
+    <CreateRpmPackage
+      OutputRpmPackagePath="$(_InstallerFile)"
+      Vendor=".NET Foundation"
+      Packager=".NET Team &lt;dotnetpackages@dotnetfoundation.org&gt;"
+      PackageName="$(VersionedInstallerName)"
+      PackageVersion="$(InstallerPackageVersion)"
+      PackageRelease="$(InstallerPackageRelease)"
+      PackageOS="$(TargetRuntimeOS)"
+      PackageArchitecture="$(InstallerTargetArchitecture)"
+      Payload="$(_LayoutDirectory)/payload.cpio"
+      RawPayloadFileKinds="@(_RawFileKindInfo)"
+      Requires="@(LinuxPackageDependency)"
+      Conflicts="@(RpmConflicts);@(LinuxPackageConflicts)"
+      OwnedDirectories="@(RpmOwnedDirectory);@(_GeneratedFileOwnedDirectory)"
+      ChangelogLines="- https://github.com/dotnet/core/tree/master/release-notes"
+      License="MIT and ASL 2.0 and BSD"
+      Summary="$(_ShortDescription)"
+      Description="$(_PackageLongDescription)"
+      PackageUrl="https://github.com/dotnet/core"
+      Scripts="@(_RpmScriptlet)"
+       />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+  </Target>
+
+  <!--
+    Packages produced for Azure Linux must be signed with a special certificate.
+    Additionally, some distros use old keys (SHA-1 based) so there's a different cert for new packages.
+    RPM v4 doesn't support multiple signatures, so we must have two separate copies of the RPM for us to sign.
+    To solve this, we make copies of the packages with special names (which the Arcade SDK will sign with the correct certificate).
+    PackageTargetOS is a distro-specific version suffix, used for deps packages, including the one for Azure Linux.
+    As a result, we don't need to create a separate copy of the package for Azure Linux, but we do need to create a copy with the new key (unless the target is Azure Linux).
+  -->
+  <Target Name="_BuildAzureLinuxRpm"
+          AfterTargets="GenerateRpm"
+          Condition="'$(PackageTargetOS)' == ''">
+    <!-- AzureLinux -->
+    <PropertyGroup>
+      <_AzureLinuxVersionSuffix>azl</_AzureLinuxVersionSuffix>
+      <_InstallerBuildPartAzureLinux>$(Version)-$(_AzureLinuxVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartAzureLinux>
+      <_InstallerFileNameWithoutExtensionAzureLinux>$(InstallerName)-$(_InstallerBuildPartAzureLinux)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionAzureLinux>
+      <_InstallerFileAzureLinux>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionAzureLinux)$(InstallerExtension)</_InstallerFileAzureLinux>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_InstallerFile)"
+          DestinationFiles="$(_InstallerFileAzureLinux)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFileAzureLinux)" Importance="high" />
+  </Target>
+
+  <Target Name="_BuildNewKeyLinuxPackage"
+          AfterTargets="GenerateRpm;GenerateDeb"
+          Condition="!$(PackageTargetOS.Contains('azl'))">
+    <!-- Packages to be signed with the new key -->
+    <PropertyGroup>
+      <_NewKeyVersionSuffix>newkey</_NewKeyVersionSuffix>
+      <_InstallerBuildPartNewKey>$(Version)-$(_NewKeyVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartNewKey>
+      <_InstallerBuildPartNewKey Condition="'$(PackageTargetOS)' != ''">$(Version)-$(PackageTargetOS)-$(_NewKeyVersionSuffix)-$(_InstallerArchSuffix)</_InstallerBuildPartNewKey>
+      <_InstallerFileNameWithoutExtensionNewKey>$(InstallerName)-$(_InstallerBuildPartNewKey)$(CrossArchContentsBuildPart)</_InstallerFileNameWithoutExtensionNewKey>
+      <_InstallerFileNewKey>$(PackageOutputPath)$(_InstallerFileNameWithoutExtensionNewKey)$(InstallerExtension)</_InstallerFileNewKey>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_InstallerFile)"
+          DestinationFiles="$(_InstallerFileNewKey)"
+          OverwriteReadOnlyFiles="True"
+          SkipUnchangedFiles="False"
+          UseHardlinksIfPossible="False" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFileNewKey)" Importance="high" />
+  </Target>
+
+  <!--
+    Create MSI installer, using WiX tools.
+  -->
+  <Target Name="CreateWixInstaller"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            RunLightLinker"
+          Returns="$(_OutInstallerFile)">
+    <Error
+      Condition="'$(GenerateExeBundle)' == 'true' and '$(GenerateMSI)' == 'true'"
+      Text="GenerateExeBundle and GenerateMSI are both set, but only one can be created at a time." />
+
+    <Message Text="$(MSBuildProjectName) -> $(_OutInstallerFile)" Importance="high" />
+  </Target>
+
+  <!--
+    Create MSI installers that install the current architecture's assets into the proper location
+    for a different architecture's SDK to find.
+  -->
+  <Target Name="CreateCrossArchWixInstaller"
+          DependsOnTargets="_GetTargetOSArchInfo"
+          Returns="@(_CrossArchMsi)">
+    <MSBuild
+      Condition="'@(CrossArchMsiToBuild)' != '' and '$(InstallerTargetArchitecture)' != '$(TargetArchitecture)'"
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="CreateWixInstaller"
+      Properties="
+        InstallerTargetArchitecture=$(InstallerTargetArchitecture);
+        CrossArchContentsArch=$(TargetArchitecture);
+        GenerateMSI=true">
+      <Output TaskParameter="TargetOutputs" ItemName="_CrossArchMsi" />
+    </MSBuild>
+  </Target>
+
+  <!--
+    Create macOS pkg installer.
+  -->
+  <Target Name="CreatePkg"
+          DependsOnTargets="_GetInstallerProperties"
+          Returns="@(_CreatedPkg)">
+    
+    <!-- Copy files to layout. -->
+    <PropertyGroup>
+      <_OutputPathRoot>$(IntermediateOutputPath)output/</_OutputPathRoot>
+    </PropertyGroup>
+    
+    <MakeDir Directories="$(_OutputPathRoot)" />
+    <!-- avoid error where the root folder for the _InstallerFile does not exist: https://github.com/dotnet/arcade/issues/8603. -->
+    <MakeDir Directories="$(ArtifactsShippingPackagesDir)" Condition="!Exists($(ArtifactsShippingPackagesDir)) AND '$(IsShipping)' == 'true'" />
+    <MakeDir Directories="$(ArtifactsNonShippingPackagesDir)" Condition="!Exists($(ArtifactsNonShippingPackagesDir)) AND '$(IsShipping)' == 'false'" />
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$(_OutputPathRoot)"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+    <PropertyGroup>
+      <_MacOSVersionComponent Condition="'$(IncludeVersionInMacOSComponentName)' == 'true'">.$(InstallerPackageVersion)</_MacOSVersionComponent>
+      <_MacOSComponentName Condition="'$(_MacOSComponentName)' == ''">com.microsoft.dotnet.$(MacOSComponentNamePackType)$(_MacOSVersionComponent).component.osx.$(InstallerTargetArchitecture)</_MacOSComponentName>
+      <_MacOSSharedInstallDir>/usr/local/share/dotnet</_MacOSSharedInstallDir>
+
+      <_pkgArgs></_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --root $(_OutputPathRoot)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --identifier $(_MacOSComponentName)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --version $(InstallerPackageVersion)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --install-location $(_MacOSSharedInstallDir)</_pkgArgs>
+      <_pkgArgs Condition="'$(MacOSScriptsDirectory)' != ''">$(_pkgArgs) --scripts $(MacOSScriptsDirectory)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) $(_InstallerFile)</_pkgArgs>
+    </PropertyGroup>
+
+    <Exec Command="pkgbuild $(_pkgArgs)" />
+
+    <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />
+    <ItemGroup>
+      <_CreatedPkg Include="$(_InstallerFile)" Description="$(MacOSPackageDescription)" Title="$(ProductBrandName) ($(TargetArchitecture))" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Create installer layout. Used for RPM and Deb package creation.
+  -->
+  <Target Name="_CreateInstallerLayout">
+    <PropertyGroup>
+      <_LayoutDirectory>$(IntermediateOutputPath)installer/layoutDirectory/</_LayoutDirectory>
+      <_LayoutPackageRoot>$(_LayoutDirectory)package_root</_LayoutPackageRoot>
+      <_LayoutAbsolute>$(_LayoutDirectory)$</_LayoutAbsolute>
+      <_LayoutSamples>$(_LayoutDirectory)samples</_LayoutSamples>
+      <_LayoutDocs>$(_LayoutDirectory)docs</_LayoutDocs>
+    </PropertyGroup>
+
+    <RemoveDir Condition="Exists('$(_InstallerIntermediatesDir)')" Directories="$(_InstallerIntermediatesDir)" />
+    <MakeDir Directories="$(_InstallerIntermediatesDir)" />
+
+    <!-- Create empty layout. -->
+    <RemoveDir Condition="Exists('$(_LayoutDirectory)')" Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutDirectory)" />
+    <MakeDir Directories="$(_LayoutAbsolute)" />
+    <MakeDir Directories="$(_LayoutPackageRoot)" />
+    <MakeDir Directories="$(_LayoutSamples)" />
+    <MakeDir Directories="$(_LayoutDocs)" />
+    
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
+    
+    <Copy
+      SourceFiles="@(Manpage)"
+      DestinationFiles="@(Manpage->'$(_LayoutDocs)/%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+</Project>

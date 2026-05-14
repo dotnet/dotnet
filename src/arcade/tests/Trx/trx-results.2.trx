@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2019-07-10T08:38:10.4555443-07:00" queuing="2019-07-10T08:38:10.4555458-07:00" start="2019-07-10T08:38:09.4672547-07:00" finish="2019-07-10T08:38:10.4770430-07:00" />
+  <Results>
+    <UnitTestResult testId="602ff4e7-a4aa-49de-b056-5020176e5301" testName="ExpectedSuccessTheoryTest(i: 14)" duration="00:00:00.0000026" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" />
+    <UnitTestResult testId="8479960f-435f-df74-854a-c8896383c28c" testName="ExpectedFailureTheoryTest(i: 2)" duration="00:00:00.0000031" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" />
+    <UnitTestResult testId="a84ba111-810a-c540-1b74-3c6b8df7065a" testName="ExpectedFailureTheoryTest(i: 1)" duration="00:00:00.0018654" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed">
+      <Output>
+        <StdOut>This is an intentional failure.</StdOut>
+        <ErrorInfo>
+          <Message>
+              This failure is expected and is not the reason why your PR failed. This test is always failing in order to test failure reporting infrastructure. If your PR is blocked there must be another test or build error that is blocking your PR.
+          </Message>
+          <StackTrace>   at tests.UnitTest2.ExpectedFailureTheoryTest(Int32 i) in UnitTest2.cs:line 16</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1f2200db-7e33-4fbb-a2ab-a033fb5962a0" testId="969b5846-702e-9e4a-8477-3ea2da4790f5" testName="ExpectedSuccessTheoryTest(i: 12)" duration="00:00:00.0000157" outcome="Passed" />
+    <UnitTestResult executionId="20147acf-fcdb-4305-8b64-3cc23408b758" testId="d8b3f65a-c217-f23b-e121-ca37be2f7dbc" testName="ExpectedSuccessTheoryTest(i: 16)" duration="00:00:00.0019726" outcome="Passed" />
+    <UnitTestResult executionId="f50b3b1f-a31e-4362-acb6-8919f7f3501c" testId="4bab79b4-f5e5-86b6-02d9-7d89b11e7bbc" testName="ExpectedFailureTheoryTest(i: 3)" duration="00:00:00.0003526" outcome="Failed">
+      <Output>
+        <StdOut>This is an intentional failure.</StdOut>
+        <ErrorInfo>
+          <Message>
+              This failure is expected and is not the reason why your PR failed. This test is always failing in order to test failure reporting infrastructure. If your PR is blocked there must be another test or build error that is blocking your PR.
+          </Message>
+          <StackTrace>   at tests.UnitTest2.ExpectedFailureTheoryTest(Int32 i) in UnitTest2.cs:line 16</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1dd465a4-0d68-4acd-82fb-23e5b1a44795" testId="b4cb7ccb-eeec-d5aa-4d62-538f14f3077f" testName="ExpectedFailureTheoryTest(i: 4)" duration="00:00:00.0000180" outcome="Passed" />
+    <UnitTestResult executionId="da74bea9-a711-4e96-9899-80ac48f9c9df" testId="4b167d40-e69c-a3df-d95b-a62c8ebce3e3" testName="ExpectedSuccessTheoryTest(i: 10)" duration="00:00:00.0000036" outcome="Passed" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ExpectedFailureTheoryTest(i: 4)" id="b4cb7ccb-eeec-d5aa-4d62-538f14f3077f">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedFailureTheoryTest(i: 4)" />
+    </UnitTest>
+    <UnitTest name="ExpectedFailureTheoryTest(i: 2)" id="8479960f-435f-df74-854a-c8896383c28c">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedFailureTheoryTest(i: 2)" />
+    </UnitTest>
+    <UnitTest name="ExpectedSuccessTheoryTest(i: 14)" id="602ff4e7-a4aa-49de-b056-5020176e5301">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedSuccessTheoryTest(i: 14)" />
+    </UnitTest>
+    <UnitTest name="ExpectedSuccessTheoryTest(i: 12)" id="969b5846-702e-9e4a-8477-3ea2da4790f5">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedSuccessTheoryTest(i: 12)" />
+    </UnitTest>
+    <UnitTest name="ExpectedFailureTheoryTest(i: 1)" id="a84ba111-810a-c540-1b74-3c6b8df7065a">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedFailureTheoryTest(i: 1)" />
+    </UnitTest>
+    <UnitTest name="ExpectedFailureTheoryTest(i: 3)" id="4bab79b4-f5e5-86b6-02d9-7d89b11e7bbc">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedFailureTheoryTest(i: 3)" />
+    </UnitTest>
+    <UnitTest name="ExpectedSuccessTheoryTest(i: 10)" id="4b167d40-e69c-a3df-d95b-a62c8ebce3e3">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedSuccessTheoryTest(i: 10)" />
+    </UnitTest>
+    <UnitTest name="ExpectedSuccessTheoryTest(i: 16)" id="d8b3f65a-c217-f23b-e121-ca37be2f7dbc">
+      <TestMethod className="tests.UnitTest2" name="tests.UnitTest2.ExpectedSuccessTheoryTest(i: 16)" />
+    </UnitTest>
+  </TestDefinitions>
+</TestRun>

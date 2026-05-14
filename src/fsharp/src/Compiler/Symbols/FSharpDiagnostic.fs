@@ -1,0 +1,346 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information.
+
+//----------------------------------------------------------------------------
+// Open up the compiler as an incremental service for parsing, 
+// type checking and intellisense-like environment-reporting.
+//--------------------------------------------------------------------------
+
+namespace FSharp.Compiler.Diagnostics
+
+open System
+
+open FSharp.Compiler.CheckExpressions
+open FSharp.Compiler.ConstraintSolver
+open FSharp.Compiler.NameResolution
+open FSharp.Compiler.SignatureConformance
+open FSharp.Compiler.Symbols
+open FSharp.Compiler.Syntax
+open FSharp.Compiler.TypedTree
+open FSharp.Compiler.TypedTreeBasics
+open FSharp.Compiler.TypedTreeOps
+open Internal.Utilities.Library
+
+open FSharp.Core.Printf
+open FSharp.Compiler
+open FSharp.Compiler.CompilerDiagnostics
+open FSharp.Compiler.Diagnostics
+open FSharp.Compiler.DiagnosticsLogger
+open FSharp.Compiler.Text
+open FSharp.Compiler.Text.Range
+
+module ExtendedData =
+    [<RequireQualifiedAccess>]
+    type DiagnosticContextInfo =
+        | NoContext
+        | IfExpression
+        | OmittedElseBranch
+        | ElseBranchResult
+        | RecordFields
+        | TupleInRecordFields
+        | CollectionElement
+        | ReturnInComputationExpression
+        | YieldInComputationExpression
+        | RuntimeTypeTest
+        | DowncastUsedInsteadOfUpcast
+        | FollowingPatternMatchClause
+        | PatternMatchGuard
+        | SequenceExpression
+
+        static member From(contextInfo: ContextInfo) =
+            match contextInfo with
+            | ContextInfo.NoContext -> NoContext
+            | ContextInfo.IfExpression _ -> IfExpression
+            | ContextInfo.OmittedElseBranch _ -> OmittedElseBranch
+            | ContextInfo.ElseBranchResult _ -> ElseBranchResult
+            | ContextInfo.RecordFields -> RecordFields
+            | ContextInfo.TupleInRecordFields -> TupleInRecordFields
+            | ContextInfo.CollectionElement _ -> CollectionElement
+            | ContextInfo.ReturnInComputationExpression -> ReturnInComputationExpression
+            | ContextInfo.YieldInComputationExpression -> YieldInComputationExpression
+            | ContextInfo.RuntimeTypeTest _ -> RuntimeTypeTest
+            | ContextInfo.DowncastUsedInsteadOfUpcast _ -> DowncastUsedInsteadOfUpcast
+            | ContextInfo.FollowingPatternMatchClause _ -> FollowingPatternMatchClause
+            | ContextInfo.PatternMatchGuard _ -> PatternMatchGuard
+            | ContextInfo.SequenceExpression _ -> SequenceExpression
+            | ContextInfo.NullnessCheckOfCapturedArg _ -> NoContext
+
+    type IFSharpDiagnosticExtendedData =
+        interface end
+
+    type ObsoleteDiagnosticExtendedData internal (diagnosticId: string option, urlFormat: string option) =
+        interface IFSharpDiagnosticExtendedData
+
+        member this.DiagnosticId: string option = diagnosticId
+        member this.UrlFormat: string option = urlFormat
+
+    type ExperimentalExtendedData internal (diagnosticId: string option, urlFormat: string option) =
+        interface IFSharpDiagnosticExtendedData
+
+        member this.DiagnosticId: string option = diagnosticId
+        member this.UrlFormat: string option = urlFormat
+    
+    type TypeMismatchDiagnosticExtendedData internal (symbolEnv: SymbolEnv, dispEnv: DisplayEnv, expectedType: TType, actualType: TType,
+            context: DiagnosticContextInfo) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.ExpectedType = FSharpType(symbolEnv, expectedType)
+        member x.ActualType = FSharpType(symbolEnv, actualType)
+        member x.ContextInfo = context
+        member x.DisplayContext = FSharpDisplayContext(fun _ -> dispEnv)
+
+    type TypeExtendedData internal (symbolEnv: SymbolEnv, displayEnv: DisplayEnv, actualType: TType) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.Type = FSharpType(symbolEnv, actualType)
+        member x.DisplayContext = FSharpDisplayContext(fun _ -> displayEnv)
+
+    type ExpressionIsAFunctionExtendedData internal (symbolEnv: SymbolEnv, actualType: TType) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.ActualType = FSharpType(symbolEnv, actualType)
+
+    type FieldNotContainedDiagnosticExtendedData internal (symbolEnv: SymbolEnv, implTycon: Tycon, sigTycon: Tycon,
+            signatureField: RecdField, implementationField: RecdField) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.SignatureField = FSharpField(symbolEnv, RecdFieldRef.RecdFieldRef(mkLocalTyconRef sigTycon, signatureField.Id.idText))
+
+        member x.ImplementationField =
+            FSharpField(symbolEnv, RecdFieldRef.RecdFieldRef(mkLocalTyconRef implTycon, implementationField.Id.idText))
+
+    type ValueNotContainedDiagnosticExtendedData internal (symbolEnv: SymbolEnv, signatureValue: Val, implValue: Val) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.SignatureValue = FSharpMemberOrFunctionOrValue(symbolEnv, mkLocalValRef signatureValue)
+        member x.ImplementationValue = FSharpMemberOrFunctionOrValue(symbolEnv, mkLocalValRef implValue)
+
+    type ArgumentsInSigAndImplMismatchExtendedData internal (sigArg: Ident, implArg: Ident) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.SignatureName = sigArg.idText
+        member x.ImplementationName = implArg.idText
+        member x.SignatureRange = sigArg.idRange
+        member x.ImplementationRange = implArg.idRange
+        
+    type DefinitionsInSigAndImplNotCompatibleAbbreviationsDifferExtendedData internal (signatureType: Tycon, implementationType: Tycon) =
+        interface IFSharpDiagnosticExtendedData
+
+        member x.SignatureRange = signatureType.Range
+        member x.ImplementationRange = implementationType.Range
+
+open ExtendedData
+
+type FSharpDiagnostic(m: range, severity: FSharpDiagnosticSeverity, defaultSeverity: FSharpDiagnosticSeverity, message: string, subcategory: string, errorNum: int, numberPrefix: string, extendedData: IFSharpDiagnosticExtendedData option) =
+    member _.Range = m
+    member _.Severity = severity
+    member _.DefaultSeverity = defaultSeverity
+    member _.Message = message
+    member _.Subcategory = subcategory
+    member _.ErrorNumber = errorNum
+    member _.ErrorNumberPrefix = numberPrefix
+    member _.ErrorNumberText = numberPrefix + errorNum.ToString("0000")
+    member _.Start = m.Start
+    member _.End = m.End
+    member _.StartLine = m.Start.Line
+    member _.EndLine = m.End.Line
+    member _.StartColumn = m.Start.Column
+    member _.EndColumn = m.End.Column
+    member _.FileName = m.FileName
+
+    member _.ExtendedData = extendedData
+
+    member _.WithStart newStart =
+        let m = mkFileIndexRange m.FileIndex newStart m.End
+        FSharpDiagnostic(m, severity, defaultSeverity, message, subcategory, errorNum, numberPrefix, extendedData)
+
+    member _.WithEnd newEnd =
+        let m = mkFileIndexRange m.FileIndex m.Start newEnd
+        FSharpDiagnostic(m, severity, defaultSeverity, message, subcategory, errorNum, numberPrefix, extendedData)
+
+    override _.ToString() =
+        let fileName = m.FileName
+        let s = m.Start
+        let e = m.End
+        let severity = 
+            match severity with
+            | FSharpDiagnosticSeverity.Warning -> "warning"
+            | FSharpDiagnosticSeverity.Error -> "error"
+            | FSharpDiagnosticSeverity.Info -> "info"
+            | FSharpDiagnosticSeverity.Hidden -> "hidden"
+        sprintf "%s (%d,%d)-(%d,%d) %s %s %s" fileName s.Line (s.Column + 1) e.Line (e.Column + 1) subcategory severity message
+
+    /// Decompose a warning or error into parts: position, severity, message, error number
+    static member CreateFromException(diagnostic: PhasedDiagnostic, suggestNames: bool, flatErrors: bool, symbolEnv: SymbolEnv option) =
+        let extendedData: IFSharpDiagnosticExtendedData option =
+            match symbolEnv with
+            | None -> None
+            | Some symbolEnv ->
+
+            match diagnostic.Exception with
+            | ErrorFromAddingConstraint(displayEnv, ConstraintSolverTypesNotInEqualityRelation(_, actualType, expectedType, _, _, contextInfo), _)
+            | ErrorFromAddingTypeEquation(_, displayEnv, expectedType, actualType, ConstraintSolverTupleDiffLengths(contextInfo = contextInfo), _)
+            | ErrorsFromAddingSubsumptionConstraint(_, displayEnv, expectedType, actualType, _, contextInfo, _) ->
+               let context = DiagnosticContextInfo.From(contextInfo)
+               Some(TypeMismatchDiagnosticExtendedData(symbolEnv, displayEnv, expectedType, actualType, context))
+
+            | ErrorFromAddingTypeEquation(g, displayEnv, ty1, ty2, ConstraintSolverTypesNotInEqualityRelation(_, ty1b, ty2b, _, _, contextInfo), _) ->
+               let expectedType, actualType =
+                   if typeEquiv g ty1 ty1b && typeEquiv g ty2 ty2b then
+                       ty1, ty2
+                   elif not (typeEquiv g ty1 ty2) then
+                       ty1, ty2
+                   elif typeEquiv g ty2 ty2b then
+                       ty1b, ty2b
+                   else ty2b, ty1b
+
+               let context = DiagnosticContextInfo.From(contextInfo)
+               Some(TypeMismatchDiagnosticExtendedData(symbolEnv, displayEnv, expectedType, actualType, context))
+
+            | ErrorFromAddingTypeEquation(_, displayEnv, expectedType, actualType, _, _)->
+               Some(TypeMismatchDiagnosticExtendedData(symbolEnv, displayEnv, expectedType, actualType, DiagnosticContextInfo.NoContext))
+
+            | FunctionValueUnexpected(_, actualType, _) ->
+                Some(ExpressionIsAFunctionExtendedData(symbolEnv, actualType))
+
+            | FieldNotContained(_,_, _, implEntity, sigEntity, impl, sign, _) ->
+                Some(FieldNotContainedDiagnosticExtendedData(symbolEnv, implEntity, sigEntity, sign, impl))
+
+            | ValueNotContained(_,_, _, _, implValue, sigValue, _) ->
+                Some(ValueNotContainedDiagnosticExtendedData(symbolEnv, sigValue, implValue))
+
+            | ArgumentsInSigAndImplMismatch(sigArg, implArg) ->
+                Some(ArgumentsInSigAndImplMismatchExtendedData(sigArg, implArg))
+
+            | DefinitionsInSigAndImplNotCompatibleAbbreviationsDiffer(implTycon = implTycon; sigTycon = sigTycon) ->
+                Some(DefinitionsInSigAndImplNotCompatibleAbbreviationsDifferExtendedData(sigTycon, implTycon))
+
+            | ObsoleteDiagnostic(diagnosticId = diagnosticId; urlFormat = urlFormat) ->
+                Some(ObsoleteDiagnosticExtendedData(diagnosticId, urlFormat))
+                
+            | Experimental(diagnosticId = diagnosticId; urlFormat = urlFormat) ->
+                Some(ExperimentalExtendedData(diagnosticId, urlFormat))
+
+            | NoConstructorsAvailableForType(ttype, displayEnv, _) ->
+                Some(TypeExtendedData(symbolEnv, displayEnv, ttype))
+
+            | _ -> None
+
+        let msg =
+             match diagnostic.Exception.Data["CachedFormatCore"] with
+             | :? string as message -> message
+             | _ -> diagnostic.FormatCore(flatErrors, suggestNames)
+
+        let errorNum = diagnostic.Number
+        let m = match diagnostic.Range with Some m -> m.ApplyLineDirectives() | None -> range0
+        FSharpDiagnostic(m, diagnostic.Severity, diagnostic.DefaultSeverity, msg, diagnostic.Subcategory(), errorNum, "FS", extendedData)
+
+    static member NewlineifyErrorString(message) = NewlineifyErrorString(message)
+
+    static member NormalizeErrorString(text) = NormalizeErrorString(text)
+    
+    static member Create(severity, message, number, range, ?numberPrefix, ?subcategory) =
+        let subcategory = defaultArg subcategory BuildPhaseSubcategory.TypeCheck
+        let numberPrefix = defaultArg numberPrefix "FS"
+        FSharpDiagnostic(range, severity, severity, message, subcategory, number, numberPrefix, None)
+
+/// Use to reset error and warning handlers            
+[<Sealed>]
+type DiagnosticsScope(flatErrors: bool)  = 
+    let mutable diags = [] 
+    let unwindBP = UseBuildPhase BuildPhase.TypeCheck
+    let unwindEL =        
+        UseDiagnosticsLogger 
+            { new DiagnosticsLogger("DiagnosticsScope") with 
+
+                member _.DiagnosticSink(diagnostic) = 
+                    let diagnostic = FSharpDiagnostic.CreateFromException(diagnostic, false, flatErrors, None)
+                    diags <- diagnostic :: diags
+
+                member _.ErrorCount = diags.Length }
+        
+    member _.Errors = diags |> List.filter (fun error -> error.Severity = FSharpDiagnosticSeverity.Error)
+
+    member _.Diagnostics = diags
+
+    member x.TryGetFirstErrorText() =
+        match x.Errors with 
+        | error :: _ -> Some error.Message
+        | [] -> None
+    
+    interface IDisposable with
+        member _.Dispose() = 
+            unwindEL.Dispose()
+            unwindBP.Dispose()
+
+    /// Used at entry points to FSharp.Compiler.Service (service.fsi) which manipulate symbols and
+    /// perform other operations which might expose us to either bona-fide F# error messages such 
+    /// "missing assembly" (for incomplete assembly reference sets), or, if there is a compiler bug, 
+    /// may hit internal compiler failures.
+    ///
+    /// In some calling cases, we get a chance to report the error as part of user text. For example
+    /// if there is a "missing assembly" error while formatting the text of the description of an
+    /// autocomplete, then the error message is shown in replacement of the text (rather than crashing Visual
+    /// Studio, or swallowing the exception completely)
+    static member Protect<'a> (m: range) (f: unit->'a) (err: string->'a): 'a = 
+        use diagnosticsScope = new DiagnosticsScope(false)
+        let res = 
+            try 
+                Some (f())
+            with e -> 
+                // Here we only call errorRecovery to save the error message for later use by TryGetFirstErrorText.
+                try 
+                    errorRecovery e m
+                with RecoverableException _ -> 
+                    ()
+                None
+        match res with 
+        | Some res -> res
+        | None -> 
+            match diagnosticsScope.TryGetFirstErrorText() with 
+            | Some text -> err text
+            | None -> err ""
+
+/// A diagnostics logger that capture diagnostics, filtering them according to warning levels etc.
+type internal CompilationDiagnosticLogger(debugName: string, options: FSharpDiagnosticOptions, ?preprocess:
+                                              PhasedDiagnostic -> PhasedDiagnostic) =
+    inherit DiagnosticsLogger("CompilationDiagnosticLogger("+debugName+")")
+            
+    let mutable errorCount = 0
+    let diagnostics = ResizeArray<_>()
+
+    override _.DiagnosticSink(diagnostic) = 
+        let diagnostic =
+            match preprocess with
+            | Some f -> f diagnostic
+            | None -> diagnostic
+
+        match diagnostic.AdjustSeverity(options) with
+        | FSharpDiagnosticSeverity.Error ->
+            diagnostics.Add({ diagnostic with Severity = FSharpDiagnosticSeverity.Error })
+            errorCount <- errorCount + 1
+        | FSharpDiagnosticSeverity.Hidden -> ()
+        | sev -> diagnostics.Add({ diagnostic with Severity = sev })
+
+    override _.ErrorCount = errorCount
+
+    member _.GetDiagnostics() = diagnostics.ToArray()
+
+module DiagnosticHelpers =                            
+
+    let ReportDiagnostic (options: FSharpDiagnosticOptions, allErrors, mainInputFileName, diagnostic: PhasedDiagnostic, suggestNames, flatErrors, symbolEnv) =
+        match diagnostic.AdjustSeverity(options) with
+        | FSharpDiagnosticSeverity.Hidden -> []
+        | adjustedSeverity ->
+            let diagnostic = { diagnostic with Severity = adjustedSeverity }
+            let fileName = 
+                match diagnostic.Range with
+                | Some r -> r.FileName
+                | None -> TcGlobals.DummyFileNameForRangesWithoutASpecificLocation
+            let fDiagnostic = FSharpDiagnostic.CreateFromException (diagnostic, suggestNames, flatErrors, symbolEnv)
+            if allErrors || fileName = mainInputFileName || fileName = TcGlobals.DummyFileNameForRangesWithoutASpecificLocation then
+                [fDiagnostic]
+            else []
+
+    let CreateDiagnostics (options, allErrors, mainInputFileName, diagnostics, suggestNames, flatErrors, symbolEnv) =
+        [| for diagnostic in diagnostics do 
+              yield! ReportDiagnostic (options, allErrors, mainInputFileName, diagnostic, suggestNames, flatErrors, symbolEnv) |]

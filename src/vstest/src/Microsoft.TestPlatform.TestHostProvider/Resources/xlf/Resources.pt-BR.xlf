@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="pt-BR">
+    <body>
+      <trans-unit id="MultipleFileVersions">
+        <source>Multiple versions of same extension found. Selecting the highest version.
+{0}</source>
+        <target state="translated">Várias versões da mesma extensão foram encontradas. Selecionando a versão mais alta.
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindDepsFile">
+        <source>Unable to find {0}. Make sure test project has a nuget reference of package "Microsoft.NET.Test.Sdk".</source>
+        <target state="translated">Não foi possível localizar {0}. Certifique-se de que o projeto de teste tem uma referência nuget do pacote "Microsoft.NET.Test.Sdk".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuggestPublishTestProject">
+        <source>Unable to find {0}. Please publish your test project and retry.</source>
+        <target state="translated">Não foi possível localizar {0}. Publique o projeto de teste e tente novamente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetMuxerFoundForArchitecture">
+        <source>Could not find '{0}' host for the '{1}' architecture.
+
+You can resolve the problem by installing the '{1}' .NET.
+
+The specified framework can be found at:
+  - https://aka.ms/dotnet-download
+</source>
+        <target state="translated">Não foi possível '{0}' o host para a '{1}' configuração.
+
+Você pode resolver o problema instalando o '{1}' .NET.
+
+A estrutura especificada pode ser encontrada em:
+  - https://aka.ms/dotnet-download
+</target>
+        <note>'{0}' is the placeholder for 'dotnet.exe' or 'dotnet' value and depends on platform Windows/Unix, '{1}' is the placeholder for the architeture name like ARM64, X64 etc...</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

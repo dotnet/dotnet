@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="CleanupException">
+        <source>An exception occurred while collecting final entries from the event log '{0}': {1}</source>
+        <target state="translated">이벤트 로그 ‘{0}’에서 최종 항목을 수집하는 동안 예외가 발생했습니다. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ContextNotFoundException">
+        <source>Event Log DataCollector did not find eventLogContext for DataCollectionContext: {0}</source>
+        <target state="translated">이벤트 로그 DataCollector에서 DataCollectionContext에 대한 eventLogContext를 찾지 못했습니다. {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostWarning">
+        <source>The '{0}' event log may have been cleared during collection; some events may not have been collected</source>
+        <target state="translated">수집 중 ‘{0}’ 이벤트 로그가 지워졌을 수 있습니다. 일부 이벤트는 수집되지 않았을 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadError">
+        <source>Unable to read event log '{0}' from computer '{1}'</source>
+        <target state="translated">‘{1}’ 컴퓨터에서 이벤트 로그 ‘{0}’을(를) 읽을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EventsLostError">
+        <source>The '{0}' event log has encountered an exception, some events might get lost. Error : {1}</source>
+        <target state="translated">‘{0}’ 이벤트 로그에서 예외가 발생했습니다. 일부 이벤트가 손실되었을 수 있습니다. 오류: {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

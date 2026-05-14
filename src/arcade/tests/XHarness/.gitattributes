@@ -1,0 +1,2 @@
+# We need to force LF on Windows because the XML contains bash commands which will be executed on a MacOS machine
+XHarness.Apple.*.proj text eol=lf

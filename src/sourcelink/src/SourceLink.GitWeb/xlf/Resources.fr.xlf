@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../Resources.resx">
+    <body>
+      <trans-unit id="RepositoryUrlIsNotSupportedByProvider">
+        <source>The Microsoft.SourceLink.GitWeb provider does not support translating the '{0}' protocol to content URLs.</source>
+        <target state="translated">Le fournisseur Microsoft.SourceLink.GitWeb ne prend pas en charge la traduction du protocole '{0}' en URL de contenu.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

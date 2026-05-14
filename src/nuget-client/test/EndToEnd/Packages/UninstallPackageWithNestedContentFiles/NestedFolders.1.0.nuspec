@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <version>1.0</version>
+    <authors>David Fowler</authors>
+    <owners>David Fowler</owners>
+    <id>NestedFolders</id>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package with nested folders</description>
+  </metadata>
+  <files>
+    <file src="content\a\b\c\test.txt" target="content\a\b\c\test.txt" />
+  </files>
+</package>

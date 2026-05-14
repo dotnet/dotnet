@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Also build for .NET so we can analyze for Native AOT compatibility. -->
+    <TargetFrameworks>$(NetCurrent);netstandard2.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+
+    <MajorVersion>2</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
+    <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
+
+    <!-- Always produce this package in the .NET unified product build so that it may flow to downstream consumers. -->
+    <IsPackable>true</IsPackable>
+    <IsShipping>true</IsShipping>
+    <PackageId>Microsoft.Deployment.DotNet.Releases</PackageId>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EnableXlfLocalization>true</EnableXlfLocalization>
+    <Description>A client library for querying the .NET releases JSON files.</Description>
+
+    <!--
+      Mark as Native AOT compatible. This will enable relevant analyzers.
+      https://learn.microsoft.com/dotnet/core/deploying/native-aot/#aot-compatibility-analyzers
+    -->
+    <IsAotCompatible Condition="'$(TargetFramework)' == '$(NetCurrent)'">true</IsAotCompatible>
+
+    <!-- Only include the netstandard2.0 build in the package; the NetCurrent build is only for AOT analysis. -->
+    <IncludeBuildOutput Condition="'$(TargetFramework)' == '$(NetCurrent)'">false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking Condition="'$(TargetFramework)' == '$(NetCurrent)'">true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.Deployment.DotNet.Releases.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="ReleasesResources.resx"
+                      GenerateSource="true" />
+  </ItemGroup>
+
+</Project>

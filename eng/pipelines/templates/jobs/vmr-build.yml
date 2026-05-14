@@ -1,0 +1,1001 @@
+### This job builds https://github.com/dotnet/dotnet with given parameters
+### If run in an sdk PR, new changes are applied to a local copy of the VMR, then it is built and tested
+
+parameters:
+- name: artifactsRid
+  type: string
+  default: ''
+
+- name: buildName
+  type: string
+
+- name: buildPass
+  type: string
+  default: ''
+
+- name: configuration
+  type: string
+  default: 'Release'
+
+- name: container
+  type: object
+  default:
+    image: ''
+    name: ''
+
+- name: crossRootFs
+  type: string
+  default: ''
+
+- name: pool
+  type: object
+
+- name: targetOS
+  type: string
+  default: ''
+
+- name: targetArchitecture
+  type: string
+  default: ''
+
+- name: useMonoRuntime
+  displayName: True when build output uses the mono runtime
+  type: boolean
+  default: false
+
+- name: sign
+  displayName: True when build output should be signed (includes dry runs)
+  type: boolean
+  default: false
+
+- name: signType
+  displayName: Signing type
+  type: string
+  default: ''
+
+- name: signDac
+  displayName: True when the diagnostic files should be signed
+  type: boolean
+  default: false
+
+# Because branding affects quite a lot of places,
+# this is intentionally left without a default so that 
+# we don't accidentally miss a pass.
+- name: brandingType
+  displayName: Type of branding to use
+  type: string
+  values:
+  - repodefault
+  - preview
+  - unstable
+  - release
+  - empty
+
+# Overrides the rid that is produced by the build.
+- name: targetRid
+  type: string
+  default: ''
+
+# Enables IBC data on when building internally.
+- name: enableIBCOptimization
+  type: boolean
+  default: false
+
+# Name of previous job(s) (from the same template as this) whose output will be used to build this job
+# The SDK from its artifacts is copied to $(sourcesPath)/.dotnet
+- name: reuseBuildArtifactsFrom
+  type: object
+  default: []
+
+# Enables usage of the system libraries when building.
+- name: useSystemLibraries
+  type: boolean
+  default: false
+
+# Indicates whether to runtime dependent jobs are excluded in the build (this occurs for non-1xx branches).
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
+#### SOURCE-ONLY parameters ####
+
+# Instead of building the VMR directly, exports the sources into a tarball and builds from that
+- name: buildFromArchive
+  type: boolean
+  default: false
+
+# Enable for source-building the VMR
+- name: buildSourceOnly
+  type: boolean
+  default: false
+
+- name: enablePoison
+  type: boolean
+  default: false
+
+# Allow downloading artifacts from the internet during the build
+- name: runOnline
+  type: boolean
+  default: true
+
+- name: runTests
+  type: boolean
+  default: true
+
+# Freeform field for extra values to pass to build.sh for special build modes
+- name: extraProperties
+  type: string
+  default: ''
+
+# Use the previous version's SDK to build the current one
+- name: withPreviousSDK
+  type: boolean
+  default: false
+
+# Create and publish the source artifact
+- name: createSourceArtifact
+  type: boolean
+  default: false
+
+# Skip the build step (this would be used when wanting to run tests only)
+- name: skipBuild
+  type: boolean
+  default: false
+
+# Custom steps to run before running tests
+- name: testInitSteps
+  type: stepList
+  default: []
+
+#### repo parameters ####
+
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
+# Disable binary analysis caching by busting the cache key
+- name: disableBinaryAnalysisCaching
+  type: boolean
+  default: false
+
+# Disable Component Governance detection (e.g. on unsupported platforms)
+- name: disableComponentGovernance
+  type: boolean
+  default: false
+
+jobs:
+- job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
+  pool: ${{ parameters.pool }}
+
+  # 1ES pipeline template requires that the container is specified in the job level.
+  # If we are using a container image, we set the container to correct name.
+  # Otherwise, we set the container to host so that the job runs on the host agent.
+  ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    ${{ if ne(parameters.container.name, '') }}:
+      container: ${{ parameters.container.name }}
+    ${{ else }}:
+      container: host
+
+  # For public projects, we always use the container image if it is specified.
+  ${{ else }}:
+    ${{ if ne(parameters.container.image, '') }}:
+      container:
+        image: ${{ parameters.container.image }}
+        options: $(defaultContainerOptions)
+
+  ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
+    dependsOn:
+    - ${{ parameters.reuseBuildArtifactsFrom }}
+  variables:
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - group: AzureDevOps-Artifact-Feeds-Pats
+  - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
+    - group: DotNet-VSTS-Infra-Access
+  - ${{ else }}:
+    - name: BotAccount-dotnet-bot-repo-PAT
+      value: N/A
+  - name: additionalBuildArgs
+    value: ''
+  - name: runTestsTimeout
+    value: 30
+  
+  - ${{ if parameters.buildSourceOnly }}:
+    - name: sharedComponentsDir
+      value: $(Agent.TempDirectory)/shared-components
+
+  - ${{ if parameters.isBuiltFromVmr }}:
+    - name: vmrPath
+      value: $(Build.SourcesDirectory)
+  - ${{ else }}:
+    - name: vmrPath
+      value: $(Agent.BuildDirectory)/vmr
+
+  # Location of the VMR sources
+  # We either build the repo directly, or we extract them outside (which is what partners do)
+  - ${{ if parameters.buildFromArchive }}:
+    - name: sourcesPath
+      value: $(Agent.TempDirectory)/dotnet-sources/
+  - ${{ else }}:
+    - name: sourcesPath
+      value: $(vmrPath)
+
+  - name: artifactsStagingDir
+    value: $(Build.ArtifactStagingDirectory)/artifacts
+
+  - name: artifactsPrepublishDir
+    value: $(Build.ArtifactStagingDirectory)/prepublish
+
+  - name: downloadedArtifactsDir
+    value: $(Agent.TempDirectory)/downloaded-artifacts
+  - name: previouslySourceBuiltSdkDir
+    value: $(Agent.TempDirectory)/previously-source-built-sdk
+  - name: previouslySourceBuiltArtifactsDir
+    value: $(Agent.TempDirectory)/previously-source-built-artifacts
+
+  - name: successfulJobArtifactName
+    value: $(Agent.JobName)_Artifacts
+
+  - name: failedJobArtifactName
+    value: $(successfulJobArtifactName)_Attempt$(System.JobAttempt)
+
+  - ${{ if eq(parameters.disableComponentGovernance, true) }}:
+    - name: ONEES_ENFORCED_COMPONENTGOVERNANCE_ENABLED
+      value: false
+    - name: skipComponentGovernanceDetection
+      value: true
+
+  # Build up the command line variables. We avoid doing this in the script sections below
+  # because AzDO will not echo command lines if they are more than a single line.
+
+  ## Build command line
+
+  ### Command line prefix
+  - name: commandPrefix
+    ${{ if eq(parameters.targetOS, 'windows') }}:
+      value: '-'
+    ${{ else }}:
+      value: '--'
+
+  ### Basic arguments
+  - name: cleanArgument
+    # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      value: ''
+    ${{ else }}:
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)cleanWhileBuilding
+      ${{ else }}:
+        value: $(commandPrefix)clean-while-building
+
+  # If the branding argument is 'empty', then we allow the VMR's versions.props to set the default.
+  - name: brandingArgument
+    ${{ if ne(parameters.brandingType, 'empty') }}:
+      value: $(commandPrefix)branding ${{ parameters.brandingType }}
+    ${{ else }}:
+      value: ''
+
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: officialBuildArgument
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)officialBuildId $(Build.BuildNumber)
+      ${{ else }}:
+        value: $(commandPrefix)official-build-id $(Build.BuildNumber)
+  - ${{ else }}:
+    - name: officialBuildArgument
+      value: ''
+
+  - name: useSystemLibrariesArgument
+    ${{ if eq(parameters.useSystemLibraries, 'true') }}:
+      # Do not use all (or include libunwind) because of the issues described in https://github.com/dotnet/source-build/issues/5288
+      value: $(commandPrefix)with-system-libs brotli+rapidjson+zlib
+    ${{ else }}:
+      value: ''
+
+  - name: baseArguments
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
+
+  - name: baseProperties
+    value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
+
+  - name: targetProperties
+    ${{ if and(ne(parameters.targetOS, ''), ne(parameters.targetArchitecture, '')) }}:
+      value: -os ${{ parameters.targetOS }} -arch ${{ parameters.targetArchitecture }}
+    ${{ elseif ne(parameters.targetOS, '') }}:
+      value: -os ${{ parameters.targetOS }}
+    ${{ else }}:
+      value: -arch ${{ parameters.targetArchitecture }}
+
+  ### Signing
+  - name: _SignDiagnosticFilesArgs
+    value: ''
+  - ${{ if eq(parameters.sign, 'True') }}:
+    - name: signArguments
+      value: $(commandPrefix)sign
+    # MB test signing is not supported on non-Windows platforms for now.
+    # In those cases, force to dryrun.
+    - ${{ if or(eq(parameters.signType, 'DryRun'), and(ne(parameters.targetOS, 'windows'), eq(parameters.signType, 'Test'))) }}:
+      # The _SignType variable is used by microbuild installation
+      - name: _SignType
+        value: ''
+      - name: signProperties
+        value: /p:ForceDryRunSigning=true
+    - ${{ else }}:
+      - name: _SignType
+        value: ${{ parameters.signType }}
+      - name: signProperties
+        value: /p:DotNetSignType=${{ parameters.signType }} /p:TeamName=$(_TeamName)
+  - ${{ else }}:
+    - name: signArguments
+      value: ''
+    - name: signProperties
+      value: ''
+    - name: _SignType
+      value: ''
+
+  ### Build Pass
+  - ${{ if ne(parameters.buildPass, '') }}:
+    - name: buildPassProperties
+      value: /p:DotNetBuildPass=${{ parameters.buildPass }}
+  - ${{ else }}:
+    - name: buildPassProperties
+      value: ''
+
+  ### Additional properties
+  - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
+    - name: ibcProperties
+      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(dn-bot-devdiv-drop-r-code-r)'
+  - ${{ else }}:
+    - name: ibcProperties
+      value: ''
+
+  - name: runtimeSourceFeedKeyProperties
+    value: ''
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - name: runtimeSourceFeedKeyProperties
+      value: '/p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)'
+
+  # Timeout
+  ## Real signing takes a while - increase the timeout to allow for that
+  ${{ if eq(variables['_SignType'], 'real') }}:
+    timeoutInMinutes: 720
+  ## Currently, CodeQL slows the build down too much
+  ## https://github.com/dotnet/source-build/issues/4276
+  ${{ elseif and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    timeoutInMinutes: 720
+  ${{ elseif and(startswith(parameters.buildName, 'OSX'), ne(variables['System.TeamProject'], 'internal')) }}:
+    timeoutInMinutes: 360
+  ${{ else }}:
+    timeoutInMinutes: 240
+
+  templateContext:
+    ${{ if eq(parameters.disableBinaryAnalysisCaching, true) }}:
+      sdl:
+        binaryAnalysisCaching:
+          userState: 'no-cache-$(Build.BuildId)-$(System.JobAttempt)'
+    outputParentDirectory: $(Build.ArtifactStagingDirectory)
+    outputs:
+    - output: pipelineArtifact
+      displayName: Publish BuildLogs
+      condition: succeededOrFailed()
+      targetPath: $(Build.ArtifactStagingDirectory)/BuildLogs
+      artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+      sbomEnabled: false
+
+    # Both publishing steps are necessary to ensure artifacts are published on both success and failure.
+    # This prevents overwrite conflicts in the event of a failed build followed by a rerun.
+    # Additionally, the 'Download Previous Build *' steps depend on a fixed name to acquire specific assets in multi-stage builds.
+    - output: pipelineArtifact
+      path: $(Build.ArtifactStagingDirectory)/artifacts
+      artifact: $(successfulJobArtifactName)
+      displayName: Publish Artifacts (On Success)
+      condition: succeeded()
+      sbomEnabled: true
+
+    - output: pipelineArtifact
+      path: $(artifactsPrepublishDir)
+      artifact: $(failedJobArtifactName)
+      displayName: Publish Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+      sbomEnabled: true
+
+    # Using build artifacts to enable publishing the vertical manifests to a single artifact from different jobs
+    - ${{ if ne(parameters.buildSourceOnly, true) }}:
+      - output: buildArtifacts
+        PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+        ArtifactName: VerticalManifests
+        displayName: Publish Vertical Manifest
+        sbomEnabled: false
+
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    retryCountOnTaskFailure: 5
+
+
+  # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
+  # These directories are referenced in templateContext.outputs which validates paths at job start
+  - ${{ if eq(parameters.targetOS, 'windows') }}:
+    - script: |
+        if not exist "$(Build.ArtifactStagingDirectory)\BuildLogs" mkdir "$(Build.ArtifactStagingDirectory)\BuildLogs"
+        if not exist "$(Build.ArtifactStagingDirectory)\prepublish" mkdir "$(Build.ArtifactStagingDirectory)\prepublish"
+        if not exist "$(Build.ArtifactStagingDirectory)\artifacts" mkdir "$(Build.ArtifactStagingDirectory)\artifacts"
+      displayName: Create artifact staging directories
+      condition: always()
+  
+  - ${{ if ne(parameters.targetOS, 'windows') }}:
+    - script: |
+        mkdir -p "$(Build.ArtifactStagingDirectory)/BuildLogs"
+        mkdir -p "$(Build.ArtifactStagingDirectory)/prepublish"
+        mkdir -p "$(Build.ArtifactStagingDirectory)/artifacts"
+      displayName: Create artifact staging directories
+      condition: always()
+
+
+  - ${{ if not(parameters.isBuiltFromVmr) }}:
+    # Synchronize new content in the VMR during PRs
+    - template: /eng/common/templates/steps/vmr-sync.yml@self
+      parameters:
+        vmrPath: $(vmrPath)
+        targetRef: $(Build.SourceVersion) # Synchronize the current repo commit
+
+  - ${{ if parameters.buildFromArchive }}:
+    - script: |
+        set -ex
+        cp -r "$(vmrPath)" "$(sourcesPath)"
+        rm -rf "$(sourcesPath)/.git"
+      displayName: Export VMR sources
+      workingDirectory: $(Build.ArtifactStagingDirectory)
+
+  - ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
+    - ${{ each reuseBuildArtifacts in parameters.reuseBuildArtifactsFrom }}:
+      - ${{ if eq(parameters.buildSourceOnly, true) }}:
+        - template: ../steps/download-artifacts.yml
+          parameters:
+            artifactDescription: Previous Build (${{ reuseBuildArtifacts }} - Source Build artifacts)
+            artifactName: ${{ reuseBuildArtifacts }}_Artifacts
+            downloadFilePatterns: |
+              assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+              assets/*/dotnet-sdk-*.tar.gz
+            copyDestination: $(downloadedArtifactsDir)
+            flattenDirs: true
+
+      - ${{ else }}:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            artifactName: ${{ reuseBuildArtifacts }}_Artifacts
+            targetPath: $(sourcesPath)/artifacts/
+          displayName: Download Previous Build (${{ reuseBuildArtifacts }})
+
+  - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
+      displayName: Download Previously Source-Built SDK
+
+  # Enable internal runtimes with 3 hour expiry. Late building repos will need to download runtime assets.
+  - template: /eng/common/templates/steps/enable-internal-runtimes.yml
+    parameters:
+      expiryInHours: 3
+
+  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(length(parameters.reuseBuildArtifactsFrom), 0), not(parameters.withPreviousSDK)) }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+        else
+          storageKey=""
+        fi
+        # Download the 1xx source-built SDK
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
+      displayName: Download 1xx SDK
+
+  - ${{ if parameters.excludeRuntimeDependentJobs }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+        else
+          storageKey=""
+        fi
+        mkdir -p "$(sharedComponentsDir)"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
+        tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
+        rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
+      displayName: Download Shared Component Artifacts
+
+  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: PowerShell@2
+      displayName: Setup Internal Feeds
+      inputs:
+        targetType: 'inline'
+        script: |
+          function Setup-NuGetFeeds($repoDir, $description) {
+            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
+            # Search for nuget.config using "Filter" to allow for case-insensitive matching.
+            $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
+            $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
+            
+            Write-Host "Setting up internal NuGet feeds for $description"
+            & $setupScript $nugetConfig $env:Token
+            Write-Host ""
+          }
+          
+          # Setup internal feeds for root NuGet.config
+          Setup-NuGetFeeds "$(sourcesPath)" "root NuGet.config"
+          
+          # Setup internal feeds for each global tool project that has a NuGet.config in the repo.
+          Get-ChildItem -Path "$(sourcesPath)/src" -Directory | ForEach-Object {
+            Setup-NuGetFeeds $_.FullName $_.Name
+          }
+      env:
+        Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+  # When building internal, authenticate to internal feeds that may be in use
+  # We do not need these for source-only builds
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(parameters.buildSourceOnly, 'True')) }}:
+    # Authenticate with service connections to be able to pull packages to external nuget feeds.
+    - task: NuGetAuthenticate@1
+      inputs:
+        nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
+
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
+    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
+      parameters:
+        enableMicrobuild: true
+        enableMicrobuildForMacAndLinux: true
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
+
+  - ${{ if eq(parameters.targetOS, 'windows') }}:
+    # Node is a toolset dependency to build aspnetcore
+    # Keep in sync with aspnetcore: https://github.com/dotnet/aspnetcore/blob/7d5309210d8f7bae8fa074da495e9d009d67f1b4/.azure/pipelines/ci.yml#L719-L722
+    # Pinned to 24.14.1 to work around npm ci exit code 57005 bug in Node 24.15.
+    # Tracking issue to revert: https://github.com/dotnet/aspnetcore/issues/66501
+    - task: UseNode@1
+      displayName: Install Node 24.14.1
+      inputs:
+        version: 24.14.1
+
+    - ${{ if eq(parameters.signDac, 'true') }}:
+      # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
+      - template: ../steps/setup-diagnostics-esrp.yml@self
+        parameters:
+          isOfficialBuild: true
+          serviceConnectionGuid: 0a3b81f8-02bd-434b-960a-1e45cfcca801
+          serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
+          scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
+
+
+    - script: build.cmd
+        $(baseArguments)
+        $(signArguments)
+        $(baseProperties)
+        /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory)
+        $(targetProperties)
+        $(signProperties)
+        $(buildPassProperties)
+        $(ibcProperties)
+        $(runtimeSourceFeedKeyProperties)
+        $(_SignDiagnosticFilesArgs)
+        ${{ parameters.extraProperties }}
+      displayName: Build
+      workingDirectory: ${{ variables.sourcesPath }}
+      ${{ if eq(parameters.sign, 'true') }}:
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ if eq(parameters.signDac, 'true') }}:
+            ESRP_TOKEN: $(System.AccessToken)
+
+    - ${{ if eq(parameters.runTests, 'True') }}:
+      - script: build.cmd
+          $(baseArguments)
+          $(targetProperties)
+          $(buildPassProperties)
+          ${{ parameters.extraProperties }}
+          -test
+          -excludeCIBinarylog
+          /bl:artifacts/log/Release/Test.binlog
+        displayName: Run Tests
+        workingDirectory: ${{ variables.sourcesPath }}
+        timeoutInMinutes: ${{ variables.runTestsTimeout }}
+
+  - ${{ else }}:
+    - ${{ if or(eq(parameters.targetOS, 'osx'), eq(parameters.targetOS, 'ios'), eq(parameters.targetOS, 'iossimulator'), eq(parameters.targetOS, 'tvos'), eq(parameters.targetOS, 'tvossimulator'), eq(parameters.targetOS, 'maccatalyst')) }}:
+      - script: |
+          xcrun simctl runtime delete all
+        displayName: Reclaim disk space from unused simulator runtimes
+      - script: |
+          $(sourcesPath)/eng/common/native/install-dependencies.sh ${{ parameters.targetOS }}
+        displayName: Install dependencies
+    - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
+      - script: |
+          set -ex
+
+          customPrepArgs="-c ${{ parameters.configuration }}"
+          prepSdk=true
+
+          if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+            prepSdk=false
+          fi
+
+          if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
+            # Using source-built SDK implies we do not want to bootstrap.
+            customPrepArgs="${customPrepArgs} --no-bootstrap"
+            prepSdk=false
+          elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+            customPrepArgs="${customPrepArgs} --no-artifacts"
+            prepSdk=false
+          fi
+
+          
+          additionalBuildArgs=""
+          
+
+
+          if [[ "$prepSdk" == "false" ]]; then
+            customPrepArgs="${customPrepArgs} --no-sdk"
+            
+            # Determine where to find the SDK tarball.
+            # Prefer downloadedArtifactsDir (used when reuseBuildArtifactsFrom has items),
+            # but fall back to prereqs/packages/archive when it is not available.
+            sdkSearchDir="$(downloadedArtifactsDir)"
+            fallbackSdkDir="$(Build.SourcesDirectory)/prereqs/packages/archive"
+            
+            # If the primary directory does not exist or does not contain an SDK tarball,
+            # fall back to the prereqs/packages/archive location.
+            if [ ! -d "$sdkSearchDir" ] || ! find "$sdkSearchDir" -name "dotnet-sdk-*.tar.gz" -print -quit >/dev/null 2>&1; then
+              echo "Primary SDK directory '$sdkSearchDir' is not usable. Falling back to '$fallbackSdkDir'."
+              sdkSearchDir="$fallbackSdkDir"
+            fi
+            
+            # After fallback, ensure we have a directory to search.
+            if [ ! -d "$sdkSearchDir" ]; then
+              echo "##vso[task.logissue type=error]SDK extraction required but neither '$(downloadedArtifactsDir)' nor '$fallbackSdkDir' exists."
+              echo "Checking Pipeline Workspace content:"
+              ls -R "$(Pipeline.Workspace)" || true
+              exit 1
+            fi
+            
+            previousSdkPath=$(find "$sdkSearchDir" -name "dotnet-sdk-*.tar.gz" | head -n 1)
+            
+            if [ -z "$previousSdkPath" ]; then
+              echo "##vso[task.logissue type=error]dotnet-sdk-*.tar.gz not found in '$sdkSearchDir'."
+              echo "Contents of '$sdkSearchDir':"
+              ls -R "$sdkSearchDir" || true
+              exit 1
+            fi
+            
+            echo "Found SDK tarball: $previousSdkPath"
+            echo "Extracting SDK..."
+            mkdir -p "$(previouslySourceBuiltSdkDir)"
+            eval tar -xzf "$previousSdkPath" -C "$(previouslySourceBuiltSdkDir)"
+            
+            customPrepArgs="${customPrepArgs} --with-sdk $(previouslySourceBuiltSdkDir)"
+            additionalBuildArgs="--with-sdk $(previouslySourceBuiltSdkDir)"
+          fi
+
+          if [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
+             # Verify download directory exists
+             if [ ! -d "$(downloadedArtifactsDir)" ]; then
+               echo "##vso[task.logissue type=error]Package extraction required but '$(downloadedArtifactsDir)' does not exist."
+               echo "Checking Pipeline Workspace content:"
+               ls -R "$(Pipeline.Workspace)" || true
+               exit 1
+             fi
+
+             artifactsTarball=$(find "$(downloadedArtifactsDir)" -name "Private.SourceBuilt.Artifacts.*.tar.gz" | head -n 1)
+             
+             if [ -z "$artifactsTarball" ]; then
+               echo "##vso[task.logissue type=error]Private.SourceBuilt.Artifacts.*.tar.gz not found in $(downloadedArtifactsDir)"
+               echo "Contents of downloaded artifacts:"
+               ls -R "$(downloadedArtifactsDir)"
+               exit 1
+             fi
+             
+             echo "Found Artifacts tarball: $artifactsTarball"
+             echo "Extracting artifacts..."
+             mkdir -p "$(previouslySourceBuiltArtifactsDir)"
+             tar -xzf "$artifactsTarball" -C "$(previouslySourceBuiltArtifactsDir)"
+             
+             customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
+             additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
+          fi
+          
+          echo "Prep arguments: $customPrepArgs"
+          echo "Additional build arguments: $additionalBuildArgs"
+
+          if [[ -n "$additionalBuildArgs" ]]; then
+            echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
+          fi
+
+          ./prep-source-build.sh $customPrepArgs
+        displayName: Prep the Build
+        workingDirectory: $(sourcesPath)
+    - ${{ if ne(parameters.skipBuild, 'true') }}:
+
+      - script: |
+          set -ex
+          echo "=== System info: disk ==="
+          df -h
+
+          echo ""
+          echo "=== System info: memory ==="
+          if [[ "$(uname)" == "Darwin" ]]; then
+            memory_pressure
+          else
+            cat /proc/meminfo
+          fi
+
+          echo "=== Build ==="
+          customEnvVars=""
+          customPreBuildArgs=""
+          customBuildArgs="$(baseArguments)"
+          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+
+          if [[ '${{ parameters.buildSourceOnly }}' != 'True' ]]; then
+            # We shouldn't pass signing arguments to the build script when building source-only
+            # because signing source-built artifacts happens post-build.
+            customBuildArgs="$customBuildArgs $(signArguments) $(_SignDiagnosticFilesArgs)"
+            extraBuildProperties="$extraBuildProperties $(signProperties)"
+          else
+            customBuildArgs="$customBuildArgs --source-only"
+            extraBuildProperties="$extraBuildProperties /p:ReportSbrpUsage=true"
+            if [[ '${{ parameters.sign }}' == 'True' ]]; then
+              # Set up for signing source-built artifacts post-build.
+              extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
+            fi
+            if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+              customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
+            fi
+          fi
+
+          if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
+            customBuildArgs="$customBuildArgs --online"
+          else
+            customPreBuildArgs="$customPreBuildArgs sudo -E unshare -n"
+          fi
+
+          if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+            customBuildArgs="$customBuildArgs --poison"
+          fi
+
+          if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
+            customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
+            customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
+            if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
+              # Do not enable source artifact creation when not building from a git repo.
+              # We strip the .git/ directory when building from archive,
+              # so it's not possible to create the artifact in that mode.
+              echo "Cannot create source artifact when building from archive."
+              exit 1
+            fi
+          fi
+          
+          if [[ '${{ parameters.createSourceArtifact }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifact=true"
+          fi
+
+          extraBuildProperties="$extraBuildProperties $(runtimeSourceFeedKeyProperties)"
+
+          if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
+            customBuildArgs="$customBuildArgs --use-mono-runtime"
+          fi
+
+          if [[ -n "${{ parameters.targetRid }}" ]]; then
+            customBuildArgs="$customBuildArgs --target-rid ${{ parameters.targetRid }}"
+          fi
+
+          if [[ -n "${{ parameters.crossRootFs }}" ]]; then
+            customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}}"
+            if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
+              extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
+            fi
+          fi
+
+          buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
+
+          if [[ -n "$customEnvVars" ]]; then
+            for envVar in $customEnvVars; do
+              customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
+            done
+          fi
+
+          eval $customEnvVarsWithBashSyntax
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: Failed to raise open file descriptor limit to 65536." >&2
+            echo "Current soft limit (ulimit -Sn): $(ulimit -Sn 2>/dev/null || echo 'unknown')" >&2
+            echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
+          fi
+
+          $customPreBuildArgs ./build.sh $buildArgs
+        displayName: Build
+        workingDirectory: $(sourcesPath)
+        ${{ if eq(parameters.sign, 'true') }}:
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+    - ${{ if ne(parameters.runOnline, 'True' )}}:
+      - script: |
+          set -ex
+          # Update the owner of the staging directory to the current user
+          sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
+        displayName: Update owner of artifacts staging directory
+
+    # Only run tests if enabled
+    - ${{ if eq(parameters.runTests, 'True') }}:
+      - ${{ parameters.testInitSteps }}
+
+      # Setup the NuGet sources used by the tests to use private feeds. This is necessary when testing internal-only product
+      # builds where the packages are only available in the private feeds. This allows the tests to restore from those feeds.
+      # The sdk repo's NuGet.config is configured earilier in the pipeline to use internal feeds.
+      - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        - script: cp "$(sourcesPath)/src/sdk/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.Tests/assets/online.NuGet.Config"
+          displayName: Copy Test NuGet Config for Smoke Tests
+
+      - script: |
+          set -ex
+
+          customPreBuildArgs=''
+          customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
+          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
+
+          if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
+            customPreBuildArgs="$customPreBuildArgs sudo -E"
+          fi
+
+          if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
+            if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+              customBuildArgs="$customBuildArgs --poison"
+            fi
+            customBuildArgs="$customBuildArgs --source-only"
+          fi
+
+          if [[ -n "${{ parameters.targetRid }}" ]]; then
+            customBuildArgs="$customBuildArgs --target-rid ${{ parameters.targetRid }}"
+          fi
+
+          buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
+          buildArgs=$(echo $buildArgs | xargs) # Remove extra spaces
+
+          cd $(sourcesPath)
+
+          # Raise the open file descriptor limit to prevent NuGet restore failures
+          # in cross-build containers with restrictive defaults (see dotnet/dotnet#5381)
+          if ! ulimit -n 65536 2>/dev/null; then
+            echo "Warning: failed to raise open file descriptor limit to 65536. Current limits:"
+            echo "  Soft nofile limit: $(ulimit -Sn 2>/dev/null || echo 'unknown')"
+            echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
+          fi
+
+          $customPreBuildArgs ./build.sh $buildArgs
+
+        displayName: Run Tests
+        timeoutInMinutes: ${{ variables.runTestsTimeout }}
+
+  - ${{ if eq(parameters.sign, 'True') }}:
+    - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
+      - script: |
+          sign_properties="$(signProperties) $(_SignDiagnosticFilesArgs)"
+
+          customPreBuildArgs=""
+          if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
+            customPreBuildArgs="sudo -E"
+            export MICROBUILDOUTPUTFOLDEROVERRIDE
+          fi
+
+          $customPreBuildArgs bash -c '
+            set -euo pipefail
+            . eng/common/tools.sh
+            MSBuild eng/sign-source-built-artifacts.proj -restore \
+              "/p:SignProperties='"$sign_properties"'" \
+              "/p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory)" \
+              "/p:OfficialBuildId=$(Build.BuildNumber)" \
+              "/bl:artifacts/log/outer-sign-source-built-artifacts.binlog"
+          '
+        displayName: Sign Source-Built Artifacts
+        workingDirectory: $(Build.SourcesDirectory)
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
+        parameters:
+          enableMicrobuild: true
+          enableMicrobuildForMacAndLinux: true
+
+  # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
+  - task: CopyFiles@2
+    displayName: Copy logs to BuildLogs staging
+    inputs:
+      SourceFolder: '$(sourcesPath)/artifacts/log'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/log'
+      CleanTargetFolder: true
+    continueOnError: true
+    condition: succeededOrFailed()
+
+  # Only copy test results when tests ran
+  - ${{ if eq(parameters.runTests, 'True') }}:
+    - task: CopyFiles@2
+      displayName: Copy TestResults to BuildLogs staging
+      inputs:
+        SourceFolder: '$(sourcesPath)/artifacts/TestResults'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
+        CleanTargetFolder: true
+      continueOnError: true
+      condition: succeededOrFailed()
+
+  - task: CopyFiles@2
+    displayName: Copy unmerged artifacts to staging directory
+    inputs:
+      SourceFolder: '$(sourcesPath)/artifacts'
+      Contents: |
+        packages/**/*
+        assets/**/*
+        obj/manifests/**/*
+      TargetFolder: '$(artifactsPrepublishDir)'
+      CleanTargetFolder: true
+    condition: failed()
+    continueOnError: true
+
+  - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
+    - publish: $(Build.ArtifactStagingDirectory)/BuildLogs
+      artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+      displayName: Publish BuildLogs
+      continueOnError: true
+      condition: always()
+
+  # Only upload test results when tests ran
+  - ${{ if eq(parameters.runTests, 'True') }}:
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      condition: succeededOrFailed()
+      continueOnError: true
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: 'artifacts/TestResults/Release/*.trx'
+        searchFolder: $(sourcesPath)
+        mergeTestResults: true
+        publishRunAttachments: true
+        testRunTitle: Tests_$(Agent.JobName)
+
+    - task: PublishTestResults@2
+      displayName: Publish Scenario Test Results
+      condition: and(eq(variables['hasScenarioTestResults'], 'true'), succeededOrFailed())
+      continueOnError: true
+      inputs:
+        testRunner: xUnit
+        testResultsFiles: 'artifacts/TestResults/**/scenario-tests/*.xml'
+        searchFolder: $(sourcesPath)
+        mergeTestResults: true
+        publishRunAttachments: true
+        testRunTitle: ScenarioTests_$(Agent.JobName)
+
+  - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
+    # Both publishing steps are necessary to ensure artifacts are published on both success and failure.
+    # This prevents overwrite conflicts in the event of a failed build followed by a rerun.
+    # Additionally, the 'Download Previous Build *' steps depend on a fixed name to acquire specific assets in multi-stage builds.
+    - publish: $(Build.ArtifactStagingDirectory)/artifacts
+      artifact: $(successfulJobArtifactName)
+      displayName: Publish Artifacts (On Success)
+      condition: succeeded()
+      continueOnError: true
+
+    - publish:  $(artifactsPrepublishDir)
+      artifact: $(failedJobArtifactName)
+      displayName: Publish Artifacts (On Failure)
+      condition: failed()
+      continueOnError: true
+
+    # Using build artifacts to enable publishing the vertical manifests to a single artifact from different jobs
+    - ${{ if ne(parameters.buildSourceOnly, true) }}:
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+          ArtifactName: VerticalManifests
+        displayName: Publish Vertical Manifest

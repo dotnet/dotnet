@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="de">
+    <body>
+      <trans-unit id="AbortedTestsRun">
+        <source>The active Tests Run was aborted.</source>
+        <target state="translated">Der aktive Testlauf wurde abgebrochen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestsDiscovery">
+        <source>The active Tests Discovery was aborted.</source>
+        <target state="translated">Die aktive Testermittlung wurde abgebrochen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToReceiveMessage">
+        <source>Failed to receive message from vstest.console process</source>
+        <target state="translated">Fehler beim Empfangen der Nachricht aus dem vstest.console-Prozess.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VsTestProcessExitedAbnormally">
+        <source>vstest.console process exited abnormally</source>
+        <target state="translated">Der vstest.console-Prozess wurde anormal beendet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFilePath">
+        <source>File {0} does not exists</source>
+        <target state="translated">Die Datei "{0}" ist nicht vorhanden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestRunAttachmentsProcessing">
+        <source>The active Test Run Attachments Processing was aborted.</source>
+        <target state="translated">Die Verarbeitung aktiver Testlaufanlagen wurde abgebrochen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStartTestSession">
+        <source>The Start Test Session operation was aborted.</source>
+        <target state="translated">Der Vorgang zum Starten der Testsitzung wurde abgebrochen.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStopTestSession">
+        <source>The Stop Test Session operation was aborted.</source>
+        <target state="translated">Der Vorgang zum Beenden der Testsitzung wurde abgebrochen.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,2 @@
+[NuGet.PackageManagement.VisualStudio.IVsProjectThreadingService]::ThrowIfNotOnUIThread
+[Microsoft.VisualStudio.Shell.ThreadHelper]::ThrowIfNotOnUIThread

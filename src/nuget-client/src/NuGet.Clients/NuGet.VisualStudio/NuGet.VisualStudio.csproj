@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <!-- Preview version of Microsoft.VisualStudio.ComponentModelHost causes a NU5104 warning. When upgrading to a stable version of this package, remove the below NoWarn="NU5104". -->
+    <NoWarn>$(NoWarn);NU5104;RS0041</NoWarn>
+    <Shipping>true</Shipping>
+    <PackProject>true</PackProject>
+    <IncludeInVSIX>true</IncludeInVSIX>
+    <!-- VS Extensibility APIs should use package version corresponding to VS version it targets, to reduce confusion. Also keep assembly version stable to minimize binding redirect issues. -->
+    <PackageVersion>$(NuGetSdkVsSemanticVersion)$(PreReleaseInformationVersion)</PackageVersion>
+    <AssemblyVersion>$(NuGetSdkVsSemanticVersion).0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>NuGet.VisualStudio</PackageId>
+    <AssemblyDescription>APIs for invoking NuGet services in Visual Studio.</AssemblyDescription>
+    <Description>APIs for invoking NuGet services in Visual Studio.</Description>
+    <Guid>228F7591-2777-47D7-B81D-FEADFC71CEB5</Guid>
+    <ComVisible>false</ComVisible>
+    <authors>Microsoft</authors>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.Composition" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" />
+    <PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

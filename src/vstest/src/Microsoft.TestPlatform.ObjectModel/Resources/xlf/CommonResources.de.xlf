@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../CommonResources.resx" target-language="de">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">Der Parameter darf nicht NULL oder leer sein.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisplayChosenSettings">
+        <source>Test run detected DLL(s) which would use different framework and platform versions. Following DLL(s) do not match current settings, which are {0} framework and {1} platform.{2}Go to {3} for more details on managing these settings.</source>
+        <target state="translated">Beim Testlauf wurden DLLs erkannt, die für verschiedene Framework- und Plattformversionen erstellt wurden. Die folgenden DLLs entsprechen nicht den aktuellen Einstellungen: {0} Framework und {1} Plattform.{2}Wechseln Sie zu {3}, um weitere Informationen zum Verwalten dieser Einstellungen zu erhalten.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingSourcesFound">
+        <source>None of the provided test containers match the Platform Architecture and .Net Framework settings for the test run. Platform: {0}  .Net Framework: {1}. Go to http://go.microsoft.com/fwlink/?LinkID=330428 for more details on managing these settings.</source>
+        <target state="translated">Keiner der angegebenen Testcontainer stimmt mit der Plattformarchitektur und den .NET Framework-Einstellungen für den Testlauf überein. Plattform: {0}, .NET Framework: {1}. Navigieren Sie zu http://go.microsoft.com/fwlink/?LinkID=330428, um weitere Informationen zum Verwalten dieser Einstellungen zu erhalten.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MalformedRunSettingsFile">
+        <source>Settings file provided does not conform to required format.</source>
+        <target state="translated">Die angegebene Einstellungsdatei entspricht nicht dem erforderlichen Format.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceIncompatible">
+        <source>{0} would use Framework {1} and Platform {2}.</source>
+        <target state="translated">{0} würde Framework {1} und Platform {2} verwenden.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

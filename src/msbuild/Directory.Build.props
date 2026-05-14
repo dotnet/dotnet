@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup Condition="'$(CopyrightNetFoundation)' != ''">
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>Microsoft® Build Tools®</Product>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TestRunnerName>XUnitV3</TestRunnerName>
+
+    <OutputType Condition="$(MSBuildProjectName.EndsWith('.UnitTests')) or $(MSBuildProjectName.EndsWith('.Tests'))">Exe</OutputType>
+
+    <!-- xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. -->
+    <!-- Consider fixing this later. -->
+    <NoWarn>$(NoWarn);xUnit1051</NoWarn>
+
+    <FullFrameworkTFM>net472</FullFrameworkTFM>
+
+    <!--
+        When updating the version of .NET Core for MSBuild, this property is the 'source of truth'.
+        Other locations to update the version number:
+          global.json
+          scripts/Deploy-MSBuild.ps1
+          src/Framework/README.md
+          src/Utilities/README.md
+     -->
+     <!-- When building in source-only modes, let the TFM float based on what arcade is in use.
+          When building in normal modes (independent build or a dotnet product build), set explicitly. -->
+    <LatestDotNetCoreForMSBuild>net10.0</LatestDotNetCoreForMSBuild>
+    <LatestDotNetCoreForMSBuild Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</LatestDotNetCoreForMSBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DOTNET_INSTALL_DIR Condition="'$(DOTNET_INSTALL_DIR)' == ''">$(RepoRoot).dotnet\</DOTNET_INSTALL_DIR>
+
+    <!-- Repository and project URLs (used in nuget packages) -->
+    <RepositoryUrl>https://github.com/dotnet/msbuild</RepositoryUrl>
+    <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</PackageProjectUrl>
+    <PackageIcon>MSBuild-NuGet-Icon.png</PackageIcon>
+    <PackageTags>MSBuild</PackageTags>
+
+    <TargetMSBuildToolsVersion>Current</TargetMSBuildToolsVersion>
+    <!-- When building the .NET product, there's no need to publish Windows PDBs. Any conversion to Windows PDBs will be done during staging, if necessary. -->
+    <PublishWindowsPdb Condition="'$(DotNetBuild)' == 'true'">false</PublishWindowsPdb>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+
+    <!--
+        NU1507: ManagePackageVersionsCentrally implies source mapping, which we should consider turning on but it's nontrivial
+        NU1603: Microsoft.xunit.netcore.extensions package has dependencies to versions which aren't published, so ignore those warnings
+        NU5105: we're explicitly opting in to semver2, as is most of .NET Core
+        CS1701 and CS1702 are by default ignored by Microsoft.NET.Sdk, but if you define the NoWarn property in Directory.Build.props,
+        you don't get those defaults.
+        SYSLIB0011: Removing binary formatter will happen as part of a larger .NET-wide effort.
+        SYSLIB0037 & SYSLIB0044: The deprecated AssemblyName members could require a bigger refactor for us: https://github.com/dotnet/msbuild/issues/7902
+        RS0016 & RS0017: Roslyn analyzers seem to be bugged, claiming that API's that exist don't and vise-versa: https://github.com/dotnet/msbuild/issues/7903
+    -->
+
+    <NoWarn>$(NoWarn);NU1507;NU1603;NU5105;1701;1702;SYSLIB0011;SYSLIB0037;SYSLIB0044;RS0016;RS0017;</NoWarn>
+    <!-- Loading certificate data through the constructor or Import is obsolete. Use X509CertificateLoader instead to load certific
+ates https://learn.microsoft.com/en-gb/dotnet/fundamentals/syslib-diagnostics/syslib0057 -->
+    <NoWarn>$(NoWarn);SYSLIB0057;</NoWarn>
+
+    <!-- Some VMR builds will occur after MSBuild has gone stable, but other VMR repos haven't.
+         That means the .NET 10 packages referenced by the MSBuild packages will have unstable
+         version numbers. This is ok in that context, since VMR-produced MSBuild packages won't
+         be published. -->
+    <NoWarn Condition="'$(DotNetBuild)' == 'true'">$(NoWarn);NU5104;</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);*.log</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);*.binlog</DefaultItemExcludes>
+
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
+
+  <!-- Enable SDK supplied netanalyzers for all target frameworks -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+  </PropertyGroup>
+
+</Project>

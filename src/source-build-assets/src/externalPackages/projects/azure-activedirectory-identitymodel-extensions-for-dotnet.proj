@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
+    <CustomRepoBuild>true</CustomRepoBuild>
+    <SourceRevisionId>e67b25be77532af9ba405670b34b4d263d505fde</SourceRevisionId>
+    <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
+         when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
+    <FileVersionRevision>50722</FileVersionRevision>
+    <!-- Used by the update-external-metadata script to determine the package to download. -->
+    <FileVersionValidationPackage>Microsoft.IdentityModel.Tokens</FileVersionValidationPackage>
+  </PropertyGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <SystemIdentityModelTokensJwtProject>$(ProjectDirectory)src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj</SystemIdentityModelTokensJwtProject>
+      <MicrosoftIdentityModelsTokenProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj</MicrosoftIdentityModelsTokenProject>
+      <MicrosoftIdentityModelJsonWebTokensProject>$(ProjectDirectory)src/Microsoft.IdentityModel.JsonWebTokens/Microsoft.IdentityModel.JsonWebTokens.csproj</MicrosoftIdentityModelJsonWebTokensProject>
+      <MicrosoftIdentityModelAbstractionsProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj</MicrosoftIdentityModelAbstractionsProject>
+      <MicrosoftIdentityModelLoggingProject>$(ProjectDirectory)src/Microsoft.IdentityModel.Logging/Microsoft.IdentityModel.Logging.csproj</MicrosoftIdentityModelLoggingProject>
+
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
+      <!-- WilsonVersion is used by the repo's build/common.props to compute FileVersion and AssemblyVersion.
+           Without it, the build falls back to the hardcoded WilsonCurrentVersion which may not match the release version. -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:WilsonVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:FileVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion).$(FileVersionRevision)</BuildCommandArgs>
+
+      <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; build /bl:$(ArtifactsLogRepoDir)build.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_TokensJwt.binlog $(SystemIdentityModelTokensJwtProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Tokens.binlog $(MicrosoftIdentityModelsTokenProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_JsonWebTokens.binlog $(MicrosoftIdentityModelJsonWebTokensProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Abstractions.binlog $(MicrosoftIdentityModelAbstractionsProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Logging.binlog $(MicrosoftIdentityModelLoggingProject) $(PackCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

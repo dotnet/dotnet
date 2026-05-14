@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "restore": {
+    "a": {},
+    "b": {},
+    "c": {}
+  },
+  "projects": {
+    "a": {
+      "restore": {
+        "projectUniqueName": "a",
+        "UsingMicrosoftNETSdk": false
+      }
+    },
+    "b": {
+      "restore": {
+        "projectUniqueName": "b",
+        "UsingMicrosoftNETSdk": false
+      }
+    },
+    "c": {
+      "restore": {
+        "projectUniqueName": "c",
+        "UsingMicrosoftNETSdk": false
+      }
+    }
+  }
+}

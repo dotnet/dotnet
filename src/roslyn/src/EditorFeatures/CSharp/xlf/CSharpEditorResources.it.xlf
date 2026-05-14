@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../CSharpEditorResources.resx">
+    <body>
+      <trans-unit id="Add_Missing_Usings_on_Paste">
+        <source>Add Missing Usings on Paste</source>
+        <target state="translated">Aggiungi using mancanti dopo operazione Incolla</target>
+        <note>"usings" is a language specific term and should not be localized</note>
+      </trans-unit>
+      <trans-unit id="Adding_missing_usings">
+        <source>Adding missing usings...</source>
+        <target state="translated">Aggiunta di using mancanti...</target>
+        <note>Shown in a thread await dialog. "usings" is a language specific term and should not be localized</note>
+      </trans-unit>
+      <trans-unit id="Complete_statement_on_semicolon">
+        <source>Complete statement on ;</source>
+        <target state="translated">Completa l'istruzione in corrispondenza di ;</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Fix_interpolated_verbatim_string">
+        <source>Fix interpolated verbatim string</source>
+        <target state="translated">Correggi stringa verbatim interpolata</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Fixing_string_literal_after_paste">
+        <source>Fixing string literal after paste</source>
+        <target state="translated">Correzione del valore letterale stringa dopo l'operazione Incolla</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Event_Subscription">
+        <source>Generate Event Subscription</source>
+        <target state="translated">Genera sottoscrizione di eventi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generating_event">
+        <source>Generating event...</source>
+        <target state="translated">Generazione dell'evento in corso...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Grow_raw_string">
+        <source>Grow raw string</source>
+        <target state="translated">Aumenta stringa non elaborata</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Outside_namespace">
+        <source>Outside namespace</source>
+        <target state="translated">All'esterno di namespace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Press_TAB_to_insert">
+        <source>     (Press TAB to insert)</source>
+        <target state="translated">     (Premere TAB per inserire)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Split_raw_string">
+        <source>Split raw string</source>
+        <target state="translated">Dividi stringa non elaborata</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Split_string">
+        <source>Split string</source>
+        <target state="translated">Dividi stringa</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(TestHostMinimumTargetFrameworks)</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Don't pack on non-Windows as it doesn't build correctly. -->
+    <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
+    <NuspecFile>Microsoft.TestPlatform.TestHost.nuspec</NuspecFile>
+    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <PackageId>Microsoft.TestPlatform.TestHost</PackageId>
+    <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageDescription>
+      Testplatform host executes the test using specified adapter.
+    </PackageDescription>
+    <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet">
+    <NuspecProperty Include="NewtonsoftJsonVersion=$(NewtonsoftJsonVersion)" />
+    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="_._">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)src\testhost\testhost.csproj" />
+    <ProjectReference Include="$(RepoRoot)src\testhost.x86\testhost.x86.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <Target Name="CopyDiaFiles" AfterTargets="Build">
+    <ItemGroup>
+      <DiaFilesX86 Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\x86\*"></DiaFilesX86>
+      <DiaFilesX64 Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\x64\*"></DiaFilesX64>
+      <DiaFilesArm64 Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\arm64\*"></DiaFilesArm64>
+    </ItemGroup>
+    <Copy SourceFiles="@(DiaFilesX86)" DestinationFolder="$(OutDir)\x86" />
+    <Copy SourceFiles="@(DiaFilesX64)" DestinationFolder="$(OutDir)\x64" />
+    <Copy SourceFiles="@(DiaFilesArm64)" DestinationFolder="$(OutDir)\arm64" />
+  </Target>
+
+  <ItemGroup>
+    <None Update="Microsoft.TestPlatform.TestHost.props" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Microsoft.TestPlatform.TestHost.targets" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

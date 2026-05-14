@@ -1,0 +1,113 @@
+parameters:
+- name: displayName
+- name: osName
+- name: agentPool
+  type: string
+  default: Azure Pipelines
+- name: agentDemands
+  type: string
+  default: none
+- name: vmImage
+  type: string
+  default: none
+- name: testType
+- name: testTargetFramework
+- name: timeoutInMinutes
+  type: number
+  default: 15
+- name: testProjectName
+  displayName: Optional name of an individual test project to run tests from.  The default is to run tests from all applicable projects.
+  type: string
+  default: ''
+- name: testVerbosity
+  displayName: Optional verbosity to use when running tests.
+  type: string
+  default: 'minimal'
+
+jobs:
+- job:
+  displayName: ${{ parameters.displayName }}
+  variables:
+    - name: TestType
+      value: ${{ parameters.testType }}
+    - name: TestTargetFramework
+      value: ${{ parameters.testTargetFramework }}
+    - name: TestProjectName
+      value: ${{ parameters.testProjectName }}
+    - name: BinlogDirectory
+      ${{ if eq(parameters.osName, 'Windows') }}:
+        value: $(Agent.TempDirectory)\binlogs\
+      ${{ else }}:
+        value: $(Agent.TempDirectory)/binlogs/
+    - name: VSTestVerbosity
+      value: ${{ parameters.testVerbosity }}
+
+  pool:
+    name: ${{ parameters.agentPool }}
+    ${{ if ne(parameters.vmImage, 'none') }}:
+      vmImage: ${{ parameters.vmImage }}
+    ${{ if ne(parameters.agentDemands, 'none') }}:
+      demands: ${{ parameters.agentDemands }}
+
+  steps:
+  - ${{ if eq(parameters.osName, 'Windows') }}:
+    - task: PowerShell@2
+      displayName: Run configure.ps1
+      inputs:
+        filePath: configure.ps1
+  - ${{ else }}:
+    - task: Bash@3
+      displayName: Run configure.sh
+      env:
+        RESTORE_NUGET_PACKAGES: false
+      inputs:
+        filePath: configure.sh
+
+  - ${{ if eq(parameters.osName, 'Windows') }}:
+    - script: SET | SORT
+      displayName: Log Environment Variables
+  - ${{ else }}:
+    - script: env | sort -f
+      displayName: Log Environment Variables
+
+  - ${{ if eq(parameters.osName, 'Windows') }}:
+    - task: MSBuild@1
+      displayName: Restore and Build $(TestType) Test Projects
+      inputs:
+        solution: NuGet.sln
+        msbuildArchitecture: x64
+        msbuildArguments: --binarylogger:"$(BinlogDirectory)01-RestoreAndBuild.binlog"
+  - ${{ else }}:
+    - task: DotNetCoreCLI@2
+      displayName: Restore and Build $(TestType) Test Projects
+      inputs:
+        command: build
+        arguments: --binarylogger:"$(BinlogDirectory)01-RestoreAndBuild.binlog"
+
+  - task: DotNetCoreCLI@2
+    displayName: Run $(TestType) Tests 
+    condition: succeeded()
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    env:
+      VSTEST_TESTHOST_SHUTDOWN_TIMEOUT: 1000
+    inputs:
+      command: test
+      arguments: --no-restore --restore:false --no-build --framework $(TestTargetFramework) --binarylogger:"$(BinlogDirectory)02-RunTests.binlog"
+      ${{ if ne(parameters.testProjectName, '') }}:
+        testRunTitle: ${{ parameters.osName }} $(TestType) Tests for $(TestProjectName) ($(TestTargetFramework))
+      ${{ else }}:
+        testRunTitle: ${{ parameters.osName }} $(TestType) Tests ($(TestTargetFramework))
+
+  - ${{ if eq(parameters.osName, 'Windows') }}:
+    - script: taskkill /im dotnet.exe /f
+      displayName: Terminate dotnet.exe processes on cancellation or failure
+      continueOnError: true
+      condition: or(failed(), canceled(), eq(variables['System.Debug'], 'true'))
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish MSBuild Binary Logs
+    condition: or(failed(), canceled(), eq(variables['System.Debug'], 'true'))
+    inputs:
+      targetPath: $(BinlogDirectory)
+      artifact: binlog - $(System.JobDisplayName) - Attempt $(System.JobAttempt)
+

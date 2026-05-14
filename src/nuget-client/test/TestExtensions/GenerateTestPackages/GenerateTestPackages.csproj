@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ToolTestKey.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <Description>A utility for generating test packages for end-to-end and Apex tests.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="AssemblySourceFileGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>AssemblySourceFileGenerator.cs</LastGenOutput>
+    </None>
+    <None Include="Test.dgml">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="TestPackageKey.snk" />
+  </ItemGroup>
+
+  <Target Name="DeployToArtifacts" AfterTargets="Build;Rebuild">
+    <!--
+    Publish test extension artifacts to a well-known location so that
+    Import-Module NuGet.Tests.psm1 is able to locate it.
+  -->
+    <PropertyGroup>
+      <PublishDestination>$(ArtifactRoot)\TestExtensions</PublishDestination>
+    </PropertyGroup>
+    <ItemGroup>
+      <FilesToCopy Include="$(OutputPath)\*.*" />
+    </ItemGroup>
+    <Message Text="FilesToCopy:  %(FilesToCopy.Identity)" Importance="high" />
+    <Message Text="Publishing test extension artifacts..." Importance="high" />
+    <Message Text="$(TargetPath) -&gt; $(PublishDestination)" Importance="high" />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(PublishDestination)" OverwriteReadOnlyFiles="true" />
+  </Target>
+</Project>

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- xUnit3 requires test projects to be executable -->
+    <OutputType>Exe</OutputType>
+    <TargetFramework Condition=" '$(TestTargetFramework)' == '' ">$(FSharpNetCoreProductTargetFramework)</TargetFramework>
+    <TargetFramework Condition=" '$(TestTargetFramework)' != '' ">$(TestTargetFramework)</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <DefineConstants>NO_GENERATIVE</DefineConstants>
+    <FSharpCoreImplicitPackageVersion>$(FSharpCoreShippedPackageVersionValue)</FSharpCoreImplicitPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="BasicProvider.Tests.fs" />
+    <Content Include="$(MSBuildProjectDirectory)\**\*.*"
+             Exclude="$(MSBuildProjectDirectory)\bin\**\*.*;$(MSBuildProjectDirectory)\obj\**\*.*;$(MSBuildProjectDirectory)\FSharp.Core\SampleTuples\**\*.*;$(MSBuildProjectDirectory)\Directory.Build.props;$(MSBuildProjectDirectory)\Directory.Build.targets;">
+        <Pack>true</Pack>
+        <PackagePath>content\myfiles\</PackagePath>
+    </Content>
+    <PackageReference Include="BasicProvider" Version="1.0.0" />
+  </ItemGroup>
+
+  <Target Name="RemovePackagesFromCache" BeforeTargets="Restore">
+      <ItemGroup>
+          <FoldersToDelete Include="$(NuGetPackageRoot)basicprovider" />
+      </ItemGroup>
+      <RemoveDir Directories="@(FoldersToDelete)" />
+  </Target>
+
+</Project>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Microsoft.TestPlatform.TranslationLayer.E2ETest": {
+      "commandName": "Project",
+      "commandLineArgs": "--runner:\"bin\\Debug\\net462\\win7-x64\\vstest.console.exe\" --testadapterpath:\"bin\\Debug\\net462\\win7-x64\\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll\" --testassembly:\"bin\\Debug\\net462\\win7-x64\\UnitTestProject.dll\""
+    }
+  }
+}

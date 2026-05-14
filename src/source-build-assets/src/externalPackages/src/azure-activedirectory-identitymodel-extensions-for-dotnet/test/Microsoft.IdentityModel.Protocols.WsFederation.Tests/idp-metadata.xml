@@ -1,0 +1,134 @@
+<EntityDescriptor entityID="https://idp.msidlab13.com/idp/shibboleth"
+                  xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+                  xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                  xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <IDPSSODescriptor protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+
+    <Extensions>
+      <shibmd:Scope regexp="false">msidlab13.com</shibmd:Scope>
+    </Extensions>
+
+    <KeyDescriptor>
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>
+
+            MIIFQTCCBCmgAwIBAgIQDlR6Sam81u0dG2/MMwNVzTANBgkqhkiG9w0BAQsFADBN
+            MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5E
+            aWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTcwMjA2MDAwMDAwWhcN
+            MTgwMjE0MTIwMDAwWjBdMQswCQYDVQQGEwJVUzELMAkGA1UECBMCV0ExEDAOBgNV
+            BAcTB1JlZG1vbmQxFTATBgNVBAoTDFNoYW5lIE9hdG1hbjEYMBYGA1UEAwwPKi5t
+            c2lkbGFiMTMuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuQFN
+            MPR5id74W0XQd4b/KNKGWZOYCyHJ/Y0OfGulID2ikxhgkqz71s/c+iiKfWxwJhRp
+            kmVzjbg1eQVwl0l9JDMQ/o4pLtU9/7y6RWhM7rdKD1xVr1PrCpKbAsUC60V9eAHL
+            VUVVfNtRNRescMo2PodzyiD9m+YQ3/wNsa9fhevl71yIhXjp/o1RSJ20CSMBrEro
+            YJ3qhyFrEq3Ff5vvXQaPaUqD9S6MA6fnGcyMjYm7uiI7mw+VFujr5PcqQXFGdmiM
+            oESXFFsnmdRI2RT4CLeGoREcEr7VwFELlqDqdI+Gf1wdxg889ebCWimcmZiMrv+u
+            6ZLG4T0qgB+zSQIoqwIDAQABo4ICCzCCAgcwHwYDVR0jBBgwFoAUD4BhHIIxYdUv
+            KOeNRji0LOHG2eIwHQYDVR0OBBYEFCFywlBuu9QCbOZ3jnVHgcOMwenHME8GA1Ud
+            EQRIMEaCDyoubXNpZGxhYjEzLmNvbYINbXNpZGxhYjEzLmNvbYIkZW50ZXJwcmlz
+            ZXJlZ2lzdHJhdGlvbi5tc2lkbGFiMTMuY29tMA4GA1UdDwEB/wQEAwIFoDAdBgNV
+            HSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwawYDVR0fBGQwYjAvoC2gK4YpaHR0
+            cDovL2NybDMuZGlnaWNlcnQuY29tL3NzY2Etc2hhMi1nNS5jcmwwL6AtoCuGKWh0
+            dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9zc2NhLXNoYTItZzUuY3JsMEwGA1UdIARF
+            MEMwNwYJYIZIAYb9bAEBMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2lj
+            ZXJ0LmNvbS9DUFMwCAYGZ4EMAQIDMHwGCCsGAQUFBwEBBHAwbjAkBggrBgEFBQcw
+            AYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMEYGCCsGAQUFBzAChjpodHRwOi8v
+            Y2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEyU2VjdXJlU2VydmVyQ0Eu
+            Y3J0MAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQELBQADggEBAHH5AkHEMNoi4DHn
+            Ho6PEihGih0M/bhWbtaC6bNKUgA7qoz7QiOEyp/8+XxB+0U+vf16wHPuUBKhPuab
+            zKlC/EcvBRBTGh3Z+nJw8kSCrs9CG6qGHsdzc2s+pwpX5N511CRdDXf4Ky0i7nqb
+            2bTIPMpgUcff/3EVBQgzFUN7yXdpZO4M+9zSmaJfrjGDkPKImC//QXTxY2weTY8x
+            j7z2LQRvSwNAypeeW6stZEfLOm0JdIzcn1mZVSn/4k3xbLoUNTiWsvnjpVDMU8Sv
+            tstdbvpgA3IfHM7DQmKdmT4+dtLrqUunXBzykMaoTwZKEQKLJjtF+1JtiT15EMzC
+            lNT9CXQ=
+
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </KeyDescriptor>
+
+    <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
+                               Location="https://idp.msidlab13.com:8443/idp/profile/SAML1/SOAP/ArtifactResolution"
+                               index="1"/>
+
+    <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                               Location="https://idp.msidlab13.com:8443/idp/profile/SAML2/SOAP/ArtifactResolution"
+                               index="2"/>
+
+    <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
+    <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+    <SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest"
+                         Location="https://idp.msidlab13.com/idp/profile/Shibboleth/SSO" />
+
+    <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                         Location="https://idp.msidlab13.com/idp/profile/SAML2/POST/SSO" />
+
+    <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                         Location="https://idp.msidlab13.com/idp/profile/SAML2/POST-SimpleSign/SSO" />
+
+    <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+                         Location="https://idp.msidlab13.com/idp/profile/SAML2/Redirect/SSO" />
+  </IDPSSODescriptor>
+
+  <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+
+    <Extensions>
+      <shibmd:Scope regexp="false">msidlab13.com</shibmd:Scope>
+    </Extensions>
+
+    <KeyDescriptor>
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>
+
+            MIIFQTCCBCmgAwIBAgIQDlR6Sam81u0dG2/MMwNVzTANBgkqhkiG9w0BAQsFADBN
+            MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5E
+            aWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTcwMjA2MDAwMDAwWhcN
+            MTgwMjE0MTIwMDAwWjBdMQswCQYDVQQGEwJVUzELMAkGA1UECBMCV0ExEDAOBgNV
+            BAcTB1JlZG1vbmQxFTATBgNVBAoTDFNoYW5lIE9hdG1hbjEYMBYGA1UEAwwPKi5t
+            c2lkbGFiMTMuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuQFN
+            MPR5id74W0XQd4b/KNKGWZOYCyHJ/Y0OfGulID2ikxhgkqz71s/c+iiKfWxwJhRp
+            kmVzjbg1eQVwl0l9JDMQ/o4pLtU9/7y6RWhM7rdKD1xVr1PrCpKbAsUC60V9eAHL
+            VUVVfNtRNRescMo2PodzyiD9m+YQ3/wNsa9fhevl71yIhXjp/o1RSJ20CSMBrEro
+            YJ3qhyFrEq3Ff5vvXQaPaUqD9S6MA6fnGcyMjYm7uiI7mw+VFujr5PcqQXFGdmiM
+            oESXFFsnmdRI2RT4CLeGoREcEr7VwFELlqDqdI+Gf1wdxg889ebCWimcmZiMrv+u
+            6ZLG4T0qgB+zSQIoqwIDAQABo4ICCzCCAgcwHwYDVR0jBBgwFoAUD4BhHIIxYdUv
+            KOeNRji0LOHG2eIwHQYDVR0OBBYEFCFywlBuu9QCbOZ3jnVHgcOMwenHME8GA1Ud
+            EQRIMEaCDyoubXNpZGxhYjEzLmNvbYINbXNpZGxhYjEzLmNvbYIkZW50ZXJwcmlz
+            ZXJlZ2lzdHJhdGlvbi5tc2lkbGFiMTMuY29tMA4GA1UdDwEB/wQEAwIFoDAdBgNV
+            HSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwawYDVR0fBGQwYjAvoC2gK4YpaHR0
+            cDovL2NybDMuZGlnaWNlcnQuY29tL3NzY2Etc2hhMi1nNS5jcmwwL6AtoCuGKWh0
+            dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9zc2NhLXNoYTItZzUuY3JsMEwGA1UdIARF
+            MEMwNwYJYIZIAYb9bAEBMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2lj
+            ZXJ0LmNvbS9DUFMwCAYGZ4EMAQIDMHwGCCsGAQUFBwEBBHAwbjAkBggrBgEFBQcw
+            AYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMEYGCCsGAQUFBzAChjpodHRwOi8v
+            Y2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEyU2VjdXJlU2VydmVyQ0Eu
+            Y3J0MAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQELBQADggEBAHH5AkHEMNoi4DHn
+            Ho6PEihGih0M/bhWbtaC6bNKUgA7qoz7QiOEyp/8+XxB+0U+vf16wHPuUBKhPuab
+            zKlC/EcvBRBTGh3Z+nJw8kSCrs9CG6qGHsdzc2s+pwpX5N511CRdDXf4Ky0i7nqb
+            2bTIPMpgUcff/3EVBQgzFUN7yXdpZO4M+9zSmaJfrjGDkPKImC//QXTxY2weTY8x
+            j7z2LQRvSwNAypeeW6stZEfLOm0JdIzcn1mZVSn/4k3xbLoUNTiWsvnjpVDMU8Sv
+            tstdbvpgA3IfHM7DQmKdmT4+dtLrqUunXBzykMaoTwZKEQKLJjtF+1JtiT15EMzC
+            lNT9CXQ=
+
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </KeyDescriptor>
+
+    <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
+                      Location="https://idp.msidlab13.com:8443/idp/profile/SAML1/SOAP/AttributeQuery" />
+
+    <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+                      Location="https://idp.msidlab13.com:8443/idp/profile/SAML2/SOAP/AttributeQuery" />
+
+    <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
+    <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+  </AttributeAuthorityDescriptor>
+
+</EntityDescriptor>

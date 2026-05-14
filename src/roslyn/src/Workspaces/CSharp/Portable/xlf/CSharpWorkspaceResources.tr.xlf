@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../CSharpWorkspaceResources.resx">
+    <body>
+      <trans-unit id="CSharp_Coding_Conventions">
+        <source>C# Coding Conventions</source>
+        <target state="translated">C# kodlama kuralları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CSharp_Formatting_Rules">
+        <source>C# Formatting Rules</source>
+        <target state="translated">C# biçimlendirme kuralları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Remove_and_Sort_Usings">
+        <source>R&amp;emove and Sort Usings</source>
+        <target state="translated">&amp;Kaldır ve Sıralama Usings</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Only_attributes_constructor_initializers_expressions_or_statements_can_be_made_explicit">
+        <source>Only attributes, constructor initializers, expressions or statements can be made explicit</source>
+        <target state="translated">Yalnızca öznitelikler, oluşturucu başlatıcıları, ifadeler veya deyimler açık hale getirilebilir</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Implement_Interface">
+        <source>Implement Interface</source>
+        <target state="translated">Arabirimi uygula</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_Usings">
+        <source>Sort Usings</source>
+        <target state="translated">Using'leri Sırala</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_Usings_with_accelerator">
+        <source>&amp;Sort Usings</source>
+        <target state="translated">&amp;Using’leri Sırala</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

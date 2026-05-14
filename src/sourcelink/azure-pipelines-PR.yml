@@ -1,0 +1,89 @@
+# Branches that trigger builds on PR
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+trigger:
+  branches:
+    include:
+    - main
+    - release/*
+
+variables:
+  - template: /eng/common/templates/variables/pool-providers.yml
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableTelemetry: true
+      enableSourceBuild: true
+      helixRepo: dotnet/sourcelink
+      jobs:
+      - job: Windows
+        pool:
+          vmImage: 'windows-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: test
+            Release:
+              _BuildConfig: Release
+              _SignType: test
+        steps:
+        - script: eng\CIBuild.cmd -configuration $(_BuildConfig) -prepareMachine
+          displayName: Build and Test
+
+        # Archive NuGet packages to DevOps (workaround for https://github.com/dotnet/arcade/issues/4444)
+        - task: PublishBuildArtifacts@1
+          displayName: Publish Artifact Packages
+          inputs:
+            PathtoPublish: 'artifacts\packages\$(_BuildConfig)'
+            ArtifactName: 'Packages'
+          condition: succeeded()
+
+      - job: MacOS
+        displayName: 'MacOS'
+        pool:
+          vmImage: 'macOS-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: none
+            Release:
+              _BuildConfig: Release
+              _SignType: none
+        steps:
+        - script: eng/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+          displayName: Build and Test
+
+      - job: Linux
+        displayName: 'Linux'
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          matrix:
+            Debug:
+              _BuildConfig: Debug
+              _SignType: none
+            Release:
+              _BuildConfig: Release
+              _SignType: none
+        steps:
+        - script: eng/cibuild.sh --configuration $(_BuildConfig) --prepareMachine
+          displayName: Build and Test

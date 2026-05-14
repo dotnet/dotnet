@@ -1,0 +1,55 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace Windows.Win32.Foundation;
+
+internal static unsafe class IID
+{
+    private static ref readonly Guid IID_NULL
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            ReadOnlySpan<byte> data =
+            [
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+            ];
+
+            return ref Unsafe.As<byte, Guid>(ref MemoryMarshal.GetReference(data));
+        }
+    }
+
+    // We cast away the "readonly" here as there is no way to communicate that through a pointer and
+    // Marshal APIs take the Guid as ref. Even though none of our usages actually change the state.
+
+    /// <summary>
+    ///  Gets a pointer to the IID <see cref="Guid"/> for the given <typeparamref name="T"/>.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Guid* Get<T>() where T : unmanaged, IComIID
+    {
+#if NET
+        return (Guid*)Unsafe.AsPointer(ref Unsafe.AsRef(in T.Guid));
+#else
+        return (Guid*)Unsafe.AsPointer(ref Unsafe.AsRef(in default(T).Guid));
+#endif
+    }
+
+    /// <summary>
+    ///  Gets a reference to the IID <see cref="Guid"/> for the given <typeparamref name="T"/>.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref readonly Guid GetRef<T>() where T : unmanaged, IComIID
+    {
+#if NET
+        return ref Unsafe.AsRef(in T.Guid);
+#else
+        return ref default(T).Guid;
+#endif
+    }
+
+    /// <summary>
+    ///  Empty <see cref="Guid"/> (GUID_NULL in docs).
+    /// </summary>
+    public static Guid* NULL() => (Guid*)Unsafe.AsPointer(ref Unsafe.AsRef(in IID_NULL));
+}

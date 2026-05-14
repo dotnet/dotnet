@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../Resources.resx">
+    <body>
+      <trans-unit id="AssemblyLoaded">
+        <source>Assembly '{0}' loaded.</source>
+        <target state="translated">Ensamblado "{0}" cargado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyReferenceLoaded">
+        <source>Assembly '{0}' referenced by '{1}' loaded.</source>
+        <target state="translated">Ensamblado "{0}" al que hace referencia "{1}" cargado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CouldNotResolveReference">
+        <source>Could not resolve reference '{0}' directly or transitively referenced by {1} in any of the provided search directories.</source>
+        <target state="translated">No se pudo resolver la referencia “{0}”, directamente o transitivamente, a la que hace referencia {1} en ninguno de los directorios de búsqueda proporcionados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadingAssemblies">
+        <source>Loading assemblies '{0}'.</source>
+        <target state="translated">Cargando ensamblados "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadingAssembliesFromArchive">
+        <source>Loading assemblies '{0}' ({1}).</source>
+        <target state="translated">Cargando ensamblados "{0}" ({1}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadingAssembly">
+        <source>Loading assembly '{0}'.</source>
+        <target state="translated">Cargando ensamblado "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadingAssemblyFromStream">
+        <source>Loading assembly '{0}' from stream.</source>
+        <target state="translated">Cargando el ensamblado "{0}" de la secuencia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MatchingAssemblyNotFound">
+        <source>Could not find matching assembly: '{0}' in any of the search directories.</source>
+        <target state="translated">No se han encontrado coincidencias de ensamblado: "{0}" en ninguno de los directorios de búsqueda.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvidedPathToLoadBinariesFromNotFound">
+        <source>Could not find the provided path '{0}' to load binaries from.</source>
+        <target state="translated">No se pudo encontrar la ruta de acceso proporcionada "{0}" desde donde cargar archivos binarios.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProvidedStreamDoesNotHaveMetadata">
+        <source>Provided stream for assembly '{0}' doesn't have any metadata to read. from.</source>
+        <target state="translated">La secuencia proporcionada para el ensamblado "{0}" no tiene metadatos que leer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RootAssemblyDisplayString">
+        <source>'{0}'</source>
+        <target state="translated">"{0}"</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RootAssemblyFromPackageDisplayString">
+        <source>'{0}' ({1})</source>
+        <target state="translated">"{0}" ({1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShouldNotBeNullAndContainAtLeastOneElement">
+        <source>Should not be null and contain at least one element.</source>
+        <target state="translated">No debe ser nulo y debe contener al menos un elemento.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShouldProvideValidAssemblyName">
+        <source>Should provide a valid assembly name.</source>
+        <target state="translated">Debe proporcionar un nombre de ensamblado válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamPositionGreaterThanLength">
+        <source>Stream position is greater than it's length, so there are no contents available to read.</source>
+        <target state="translated">La posición de la secuencia es mayor que su longitud, por lo que no hay contenido disponible para leer.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

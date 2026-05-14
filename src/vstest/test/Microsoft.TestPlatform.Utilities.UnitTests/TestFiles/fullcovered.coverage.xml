@@ -1,0 +1,21 @@
+<results>
+  <modules>
+    <module block_coverage="50.00" line_coverage="50.00" blocks_covered="3" blocks_not_covered="3" lines_covered="3" lines_partially_covered="0" lines_not_covered="3" name="Branches" path="Branches" id="A0010CA3957DA54FB0882F8DB3BB84E701000000">
+      <functions>
+        <function block_coverage="50.00" line_coverage="50.00" blocks_covered="3" blocks_not_covered="3" lines_covered="3" lines_partially_covered="0" lines_not_covered="3" id="0" name="SpecialSwitch(System.DayOfWeek)" namespace="Branches" type_name="SwitchConditions">
+          <ranges>
+            <range source_id="0" covered="yes" start_line="12" start_column="0" end_line="12" end_column="0" />
+            <range source_id="0" covered="yes" start_line="14" start_column="0" end_line="14" end_column="0" />
+            <range source_id="0" covered="yes" start_line="16" start_column="0" end_line="16" end_column="0" />
+            <range source_id="0" covered="no" start_line="18" start_column="0" end_line="18" end_column="0" />
+            <range source_id="0" covered="no" start_line="20" start_column="0" end_line="20" end_column="0" />
+            <range source_id="0" covered="no" start_line="22" start_column="0" end_line="22" end_column="0" />
+          </ranges>
+        </function>
+      </functions>
+      <source_files>
+        <source_file id="0" path="D:\Code\CoverletTester\Branches\SwitchConditions.cs" />
+      </source_files>
+    </module>
+  </modules>
+</results>

@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../Strings.resx">
+    <body>
+      <trans-unit id="CircularDependencyDetected">
+        <source>Circular dependency detected '{0}'.</source>
+        <target state="translated">Döngüsel bağımlılık tarafından '{0}' algılandı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyConstraint">
+        <source>constraint</source>
+        <target state="translated">kısıtlama</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependencyIdsError">
+        <source>The package '{0}' version '{1}' declared a duplicate dependency '{2}'. This might mean the package is corrupt or the server metadata for the package is corrupt.</source>
+        <target state="translated"> '{0}' paketi sürümü '{1}', '{2}' yinelenen bağımlılığını bildirdi. Bu, paketin veya paket sunucu meta verilerinin bozuk olduğu anlamına gelebilir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FatalError">
+        <source>A fatal error occured while resolving dependencies.</source>
+        <target state="translated">Bağımlılıklar çözümlenirken önemli bir hata oluştu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageConfig">
+        <source>One or more unresolved package dependency constraints detected in the existing packages.config file. All dependency constraints must be resolved to add or update packages. If these packages are being updated this message may be ignored, if not the following error(s) may be blocking the current package operation: {0}</source>
+        <target state="translated">Mevcut packages.config dosyasında, bir veya daha fazla çözümlenmemiş paket bağımlılığı kısıtlaması algılandı. Paketlerin eklenebilmesi veya güncelleştirilebilmesi için tüm bağımlılık kısıtlamalarının çözümlenmesi gerekir. Bu paketler güncelleştiriliyorsa bu ileti yoksayılabilir; aksi halde geçerli paket işlemi, aşağıdaki hatalar nedeniyle engelleniyor olabilir: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDependencyInfo">
+        <source>Unable to find package '{0}'. Existing packages must be restored before performing an install or update.</source>
+        <target state="translated">'{0}' paketi bulunamıyor. Yükleme veya güncelleştirme gerçekleştirmeden önce var olan paketler geri yüklenmelidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSolution">
+        <source>Unable to resolve dependencies.</source>
+        <target state="translated">Bağımlılıklar çözümlenemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigConstraint">
+        <source>'{0}' has an additional constraint {1} defined in {2}.</source>
+        <target state="translated">'{0}', {2} öğesinde tanımlaman {1} ek kısıtlamasını içeriyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverTotalTime">
+        <source>Resolving dependency information took {0}</source>
+        <target state="translated">Bağımlılık işlemlerinin çözümlenmesi {0} sürdü</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleVersion">
+        <source>Unable to find a version of '{0}' that is compatible with {1}.</source>
+        <target state="translated">{1} ile uyumlu olan bir '{0}' sürümü bulunamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForEmptySource">
+        <source>Unable to resolve dependency '{0}'.</source>
+        <target state="translated">'{0}' bağımlılığı çözümlenemiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForMultipleSources">
+        <source>Unable to resolve dependency '{0}'. Source(s) used: {1}.</source>
+        <target state="translated">'{0}' bağımlılığı çözümlenemiyor. Kullanılan kaynaklar: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionIsNotCompatible">
+        <source>Unable to resolve dependencies. '{0}' is not compatible with {1}.</source>
+        <target state="translated">Bağımlılıklar çözümlenemiyor. '{0}', {1} ile uyumlu değil.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

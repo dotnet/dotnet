@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../CSharpWorkspaceResources.resx">
+    <body>
+      <trans-unit id="CSharp_Coding_Conventions">
+        <source>C# Coding Conventions</source>
+        <target state="translated">C# 編碼慣例</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CSharp_Formatting_Rules">
+        <source>C# Formatting Rules</source>
+        <target state="translated">C# 格式化規則</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Remove_and_Sort_Usings">
+        <source>R&amp;emove and Sort Usings</source>
+        <target state="translated">移除和排序 Using(&amp;E)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Only_attributes_constructor_initializers_expressions_or_statements_can_be_made_explicit">
+        <source>Only attributes, constructor initializers, expressions or statements can be made explicit</source>
+        <target state="translated">只有屬性、建構函式初始設定式、運算式或陳述式才可明確設定</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Implement_Interface">
+        <source>Implement Interface</source>
+        <target state="translated">實作介面</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_Usings">
+        <source>Sort Usings</source>
+        <target state="translated">排序 Using</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sort_Usings_with_accelerator">
+        <source>&amp;Sort Usings</source>
+        <target state="translated">排序 Using(&amp;S)</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

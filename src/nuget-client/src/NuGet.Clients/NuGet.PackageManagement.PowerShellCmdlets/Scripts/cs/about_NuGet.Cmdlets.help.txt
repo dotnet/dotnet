@@ -1,0 +1,48 @@
+﻿TÉMA
+    about_NuGet
+    
+KRÁTKÝ POPIS
+    Poskytuje informace o příkazech Správce balíčků NuGet.
+           
+DLOUHÝ POPIS
+    Toto téma popisuje příkazy Správce balíčků NuGet. NuGet je integrovaný nástroj 
+    pro správu balíčků umožňující přidávat knihovny a nástroje do projektů .NET.
+
+                 
+    Zahrnuty jsou následující rutiny NuGet.
+
+        Rutina					Popis
+        ------------------		----------------------------------------------
+        Get-Package				Získá sadu nainstalovaných balíčků.  Při použití s parametrem -ListAvailable 
+                                získá sadu dostupných balíčků ze zdroje balíčků.
+
+        Install-Package			Nainstaluje do projektu balíček a s ním také balíčky, které jsou na něm závislé.
+
+        Uninstall-Package		Odinstaluje balíček. Pokud jsou na tomto balíčku závislé další balíčky, 
+                                dojde k chybě tohoto příkazu, pokud není zadán parametr –Force.
+
+        Update-Package			Aktualizuje balíček a také balíčky, které jsou na něm závislé, na novou verzi.
+
+        Add-BindingRedirect		Prozkoumá všechna sestavení ve výstupní cestě pro daný projekt
+                                a podle potřeby přidá do konfiguračního souboru aplikace (nebo webu) 
+                                přesměrování vazeb.
+                            
+        Get-Package				Vrátí odkaz na prostředí DTE (Development Tools Environment) 
+                                pro zadaný projekt. Pokud žádný projekt zadán není, vrátí 
+                                výchozí projekt vybraný v konzole Správce balíčků.
+
+        Open-PackagePage        Otevře prohlížeč odkazující na adresu URL ProjectUrl, LicenseUrl nebo 
+                                ReportAbuseUrl zadaného balíčku.
+
+        Register-TabExpansion	Zaregistruje rozšíření karty pro parametry příkazu.
+
+VIZ TAKÉ
+    Online dokumentace: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Package
+    Open-PackagePage
+    Register-TabExpansion

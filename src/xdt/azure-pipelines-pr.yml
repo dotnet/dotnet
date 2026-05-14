@@ -1,0 +1,87 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enableMicrobuild: true
+      enablePublishBuildArtifacts: true
+      enablePublishTestResults: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      enableSourceBuild: true
+      enableTelemetry: true
+      helixRepo: dotnet/xdt
+      jobs:
+      - job: Windows_NT
+        pool:
+          vmImage: 'windows-latest'
+
+        strategy:
+          matrix:
+            Build_Debug:
+              _BuildConfig: Debug
+              _PublishType: none
+              _SignType: test
+            Build_Release:
+              _BuildConfig: Release
+              _PublishType: none
+              _SignType: test
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng\common\CIBuild.cmd
+            -configuration $(_BuildConfig) 
+            -prepareMachine
+          displayName: Windows Build / Publish
+
+      - job: OSX
+        pool:
+          vmImage: 'macOS-latest'
+        strategy:
+          matrix:
+            debug_configuration:
+              _BuildConfig: Debug
+            release_configuration:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh
+            --configuration $(_BuildConfig)
+            --prepareMachine
+          name: Build
+          displayName: Build
+          condition: succeeded()
+
+      - job: Linux
+        pool:
+          vmImage: 'ubuntu-latest'
+        strategy:
+          matrix:
+            debug_configuration:
+              _BuildConfig: Debug
+            release_configuration:
+              _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+        - script: eng/common/cibuild.sh
+            --configuration $(_BuildConfig)
+            --prepareMachine
+          name: Build
+          displayName: Build
+          condition: succeeded()

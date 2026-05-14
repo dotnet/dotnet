@@ -1,0 +1,289 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    custom
+                ClassSelector
+                    Dot    .
+                    Identifier    dashes
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font
+                Colon    :
+                Identifier    normal
+                Semicolon    ;
+            Declaration
+                Identifier    -font
+                Colon    :
+                Identifier    custom1
+                Semicolon    ;
+            Declaration
+                Identifier    --font
+                Colon    :
+                Identifier    custom2
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Identifier    -font
+                Colon    :
+                Identifier    custom2
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Identifier    --font
+                Colon    :
+                Identifier    custom3
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Minus    -
+                Identifier    -font
+                Colon    :
+                Identifier    custom3
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    custom
+                ClassSelector
+                    Dot    .
+                    Identifier    stars
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    normal
+                Semicolon    ;
+            Declaration
+                StarHackPropertyName
+                    Asterisk    *
+                    Identifier    color
+                Colon    :
+                Identifier    custom1
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Asterisk    *
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom2
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Asterisk    *
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom2
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Asterisk    *
+                Asterisk    *
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom3
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Asterisk    *
+                Asterisk    *
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom3
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    custom
+                ClassSelector
+                    Dot    .
+                    Identifier    mixed
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    normal
+                Semicolon    ;
+            Declaration
+                StarHackPropertyName
+                    Asterisk    *
+                    Identifier    -color
+                Colon    :
+                Identifier    custom1
+                Semicolon    ;
+            Declaration
+                StarHackPropertyName
+                    Asterisk    *
+                    Identifier    -color
+                Colon    :
+                Identifier    custom1
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom2
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom2
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Asterisk    *
+                Identifier    --color
+                Colon    :
+                Identifier    custom3
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Minus    -
+                Asterisk    *
+                Identifier    --color
+                Colon    :
+                Identifier    custom3
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Asterisk    *
+                Minus    -
+                Asterisk    *
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom4
+                Semicolon    ;
+            Declaration (PropertyNameMissing:BeforeItem)
+                Asterisk    *
+                Minus    -
+                Asterisk    *
+                Asterisk    *
+                Identifier    color
+                Colon    :
+                Identifier    custom4
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                ClassSelector
+                    Dot    .
+                    Identifier    progid
+                ClassSelector
+                    Dot    .
+                    Identifier    functions
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    foo
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    foo
+                Dot (PropertyValueExpected:WholeItem)    .
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    foo
+                Dot (PropertyValueExpected:WholeItem)    .
+                Identifier    bar
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Function
+                    Function (CloseFunctionBraceMissing:AfterItem)    progid:foo.bar(
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Function
+                    Function (CloseFunctionBraceMissing:AfterItem)    progid:foo.bar(
+                    FunctionArgument
+                        Identifier    param1
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Function
+                    Function    progid:foo.bar(
+                    FunctionArgument
+                        Identifier    param1
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    2
+                        Comma    ,
+                    FunctionArgument
+                        UnitValue
+                            Number    3
+                            Units    px
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    foo
+                Colon (PropertyValueExpected:WholeItem)    :
+                Function
+                    Function    bar(
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    foo
+                Comma    ,
+                Function
+                    Function    bar(
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            Declaration
+                Identifier    filter
+                Colon    :
+                Identifier    progid
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    foo
+                Function
+                    Function    bar(
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CloseCurlyBrace    }

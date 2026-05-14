@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../BasicVSResources.resx">
+    <body>
+      <trans-unit id="Add_missing_imports_on_paste">
+        <source>Add missing imports on paste</source>
+        <target state="translated">粘贴时添加缺少的 imports</target>
+        <note>'import' is a Visual Basic keyword and should not be localized</note>
+      </trans-unit>
+      <trans-unit id="Collapse_imports_on_file_open">
+        <source>Collapse Imports on file open</source>
+        <target state="translated">打开文件时折叠导入</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="In_relational_binary_operators">
+        <source>In relational operators:  =   &lt;&gt;   &lt;   &gt;   &lt;=   &gt;=   Like   Is</source>
+        <target state="translated">在关系运算符中: =   &lt;&gt;   &lt;   &gt;   &lt;=   &gt;=   Like   Is</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Insert_apostrophe_at_the_start_of_new_lines_when_writing_apostrophe_comments">
+        <source>Insert ' at the start of new lines when writing ' comments</source>
+        <target state="translated">编写 ' 注释时，在新行开头插入 '</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Microsoft_Visual_Basic">
+        <source>Microsoft Visual Basic</source>
+        <target state="translated">Microsoft Visual Basic</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Automatic_insertion_of_Interface_and_MustOverride_members">
+        <source>Automatic _insertion of Interface and MustOverride members</source>
+        <target state="translated">自动插入 Interface 和 MustOverride 成员(_I)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prefer_IsNot_expression">
+        <source>Prefer 'IsNot' expression</source>
+        <target state="translated">首选 "IsNot" 表达式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prefer_Is_Nothing_for_reference_equality_checks">
+        <source>Prefer 'Is Nothing' for reference equality checks</source>
+        <target state="translated">引用相等检查偏好 “Is Nothing”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prefer_simplified_object_creation">
+        <source>Prefer simplified object creation</source>
+        <target state="translated">更偏好简化的对象创建</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_hints_for_New_expressions">
+        <source>Show hints for 'New' expressions</source>
+        <target state="translated">显示 "New" 表达式的提示</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="A_utomatic_insertion_of_end_constructs">
+        <source>A_utomatic insertion of end constructs</source>
+        <target state="translated">自动插入 end 构造(_U)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Pretty_listing_reformatting_of_code">
+        <source>_Pretty listing (reformatting) of code</source>
+        <target state="translated">整齐排列代码(重新格式化)(_P)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enter_outlining_mode_when_files_open">
+        <source>_Enter outlining mode when files open</source>
+        <target state="translated">打开文件时进入大纲模式(_E)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_XML_documentation_comments_for">
+        <source>_Generate XML documentation comments for '''</source>
+        <target state="translated">为 ''' 生成 XML 文档注释(_G)</target>
+        <note>{Locked="'''"} "'''" is a VB keyword and should not be localized.</note>
+      </trans-unit>
+      <trans-unit id="Navigate_to_Object_Browser_for_symbols_defined_in_metadata">
+        <source>_Navigate to Object Browser for symbols defined in metadata</source>
+        <target state="translated">导航到对象浏览器以了解元数据中定义的符号(_N)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Import_Directives">
+        <source>Import Directives</source>
+        <target state="translated">Import 指令</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Suggest_imports_for_types_in_NuGet_packages">
+        <source>Suggest imports for types in _NuGet packages</source>
+        <target state="translated">建议对 NuGet 包中的类型使用 import(_N)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Suggest_imports_for_types_in_reference_assemblies">
+        <source>Suggest imports for types in _reference assemblies</source>
+        <target state="translated">建议对引用程序集中的类型使用 import(_R)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Place_System_directives_first_when_sorting_imports">
+        <source>_Place 'System' directives first when sorting imports</source>
+        <target state="translated">对导入进行排序时将 "System" 指令排在第一位(_P)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Qualify_event_access_with_Me">
+        <source>Qualify event access with 'Me'</source>
+        <target state="translated">使用 "Me" 限定事件访问的资格</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Qualify_field_access_with_Me">
+        <source>Qualify field access with 'Me'</source>
+        <target state="translated">使用 "Me" 限定字段访问的资格</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Qualify_method_access_with_Me">
+        <source>Qualify method access with 'Me'</source>
+        <target state="translated">使用 "Me" 限定方法访问的资格</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Qualify_property_access_with_Me">
+        <source>Qualify property access with 'Me'</source>
+        <target state="translated">使用 "Me" 限定属性访问的资格</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Do_not_prefer_Me">
+        <source>Do not prefer 'Me.'</source>
+        <target state="translated">请勿首选 "Me."</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prefer_Me">
+        <source>Prefer 'Me.'</source>
+        <target state="translated">首选 "Me."</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Me_preferences_colon">
+        <source>'Me.' preferences:</source>
+        <target state="translated">'“Me.”首选项:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Predefined_type_preferences_colon">
+        <source>Predefined type preferences:</source>
+        <target state="translated">预定义类型首选项:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Completion_Lists">
+        <source>Completion Lists</source>
+        <target state="translated">完成列表</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="nothing_checking_colon">
+        <source>'nothing' checking:</source>
+        <target state="translated">'"nothing" 检查:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Fade_out_unused_imports">
+        <source>Fade out unused imports</source>
+        <target state="translated">淡出未使用的导入</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Report_invalid_placeholders_in_string_dot_format_calls">
+        <source>Report invalid placeholders in 'String.Format' calls</source>
+        <target state="translated">报告 "String.Format" 调用中无效的占位符</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Separate_import_directive_groups">
+        <source>Separate import directive groups</source>
+        <target state="translated">单独的导入指令组</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="In_arithmetic_binary_operators">
+        <source>In arithmetic operators:  ^   *   /   \   Mod   +   -   &amp;   &lt;&lt;   &gt;&gt;</source>
+        <target state="translated">在算术运算符中: ^ * / \ Mod + - &amp; &lt;&lt; &gt;&gt;</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="In_other_binary_operators">
+        <source>In other binary operators:  And   AndAlso   Or   OrElse</source>
+        <target state="translated">在其他二进制运算符中: And AndAlso Or OrElse</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

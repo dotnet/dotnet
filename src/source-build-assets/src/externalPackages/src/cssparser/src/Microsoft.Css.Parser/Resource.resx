@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ParseErrorType_AtDirectiveNameMissing" xml:space="preserve">
+    <value>Unrecognized '@' block type.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_AtDirectiveSemicolonMissing" xml:space="preserve">
+    <value>Expected a semicolon (';') to end the current @ block.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_AttributeSelectorCloseBracketMissing" xml:space="preserve">
+    <value>Expected a close bracket (']') in the attribute selector.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_AttributeSelectorElementMissing" xml:space="preserve">
+    <value>Expected an element name in the attribute selector.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_AttributeSelectorOperationMissing" xml:space="preserve">
+    <value>Expected a comparison operator between the name and value in the attribute selector.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_AttributeSelectorValueMissing" xml:space="preserve">
+    <value>Expected a value string after the operator in the attribute selector.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_ClassNameMissing" xml:space="preserve">
+    <value>Missing a class name after the dot ('.').</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_CloseBraceMismatch" xml:space="preserve">
+    <value>The closing brace doesn't match an opening brace.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_CloseCommentMissing" xml:space="preserve">
+    <value>The comment is unclosed, '*/' expected.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_CloseCurlyBraceMissing" xml:space="preserve">
+    <value>The block is unclosed, '}' expected.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_CloseFunctionBraceMissing" xml:space="preserve">
+    <value>The function arguments are unclosed, ')' expected.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_CloseQuoteMissing" xml:space="preserve">
+    <value>Missing a closing quote for the string value.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_ColonMissingInDeclaration" xml:space="preserve">
+    <value>Missing a colon (':') between the property and value in the "(property) : (value)" declaration.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_DeclarationExpected" xml:space="preserve">
+    <value>Expected a "(property) : (value)" declaration.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_EncodingMissing" xml:space="preserve">
+    <value>Missing a character encoding string after the "@charset".</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_FunctionArgumentCommaMissing" xml:space="preserve">
+    <value>Missing a comma between function arguments.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_FunctionArgumentMissing" xml:space="preserve">
+    <value>Missing a function argument.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_IdMissing" xml:space="preserve">
+    <value>Missing an identifier name after the '#'.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_ImportantMissing" xml:space="preserve">
+    <value>Missing "important" after the '!'.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_KeyFrameBlockNameMissing" xml:space="preserve">
+    <value>Missing a name after "@keyframes".</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_KeyFramesSelectorExpected" xml:space="preserve">
+    <value>Expected a keyframes selector.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_MediaTypeMissing" xml:space="preserve">
+    <value>Missing a media type.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_OpenCurlyBraceMissing" xml:space="preserve">
+    <value>Missing an opening brace ('{').</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_OpenCurlyBraceMissingForRule" xml:space="preserve">
+    <value>Missing an opening brace ('{') after the selector in the style rule.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_PropertyNameMissing" xml:space="preserve">
+    <value>Missing a property name before the colon (':') in the "(property) : (value)" declaration.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_PropertyValueExpected" xml:space="preserve">
+    <value>Unexpected character sequence in property value.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_PropertyValueMissing" xml:space="preserve">
+    <value>Missing a property value in the "(property) : (value)" declaration.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_PseudoClassNameMissing" xml:space="preserve">
+    <value>Missing a pseudo-class name after the ':'.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_PseudoElementNameMissing" xml:space="preserve">
+    <value>Missing a pseudo-element name after the '::'.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_SelectorAfterCombineOperatorMissing" xml:space="preserve">
+    <value>Missing a selector after a combinator in the style rule.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_SelectorAfterCommaMissing" xml:space="preserve">
+    <value>Missing a selector after the comma (',') in a selector group.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_SelectorBeforeCombineOperatorMissing" xml:space="preserve">
+    <value>Missing a selector before a combinator in the style rule.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_SelectorBeforeCommaMissing" xml:space="preserve">
+    <value>Missing a selector before the comma (',') in a selector group.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_SelectorBeforeRuleBlockMissing" xml:space="preserve">
+    <value>Missing a selector in the style rule.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UrlImportMissing" xml:space="preserve">
+    <value>Missing a URL after "@import".</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UrlNamespaceMissing" xml:space="preserve">
+    <value>Missing a namespace definition after "@namespace".</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_MediaExpressionExpected" xml:space="preserve">
+    <value>Expected a media expression.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_SimpleSelectorExpected" xml:space="preserve">
+    <value>Expected a selector for the style rule.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UnexpectedAtDirective" xml:space="preserve">
+    <value>Unexpected '@' block in the style rule.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UnexpectedBangInProperty" xml:space="preserve">
+    <value>Unexpected '!' after the property value. Only one '!' is allowed.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UnexpectedMediaQueryToken_Line" xml:space="preserve">
+    <value>Expected a media query or semicolon (';').</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UnexpectedMediaQueryToken_Block" xml:space="preserve">
+    <value>Expected a media query or opening brace ('{').</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UnexpectedToken" xml:space="preserve">
+    <value>Unexpected character sequence.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_UnexpectedBangInSelector" xml:space="preserve">
+    <value>Unexpected '!' in the selector value. Only one '!' is allowed.</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+  <data name="ParseErrorType_CustomPropertyNameExpected" xml:space="preserve">
+    <value>Expected a custom property name (prefixed with '--').</value>
+    <comment>Describes a CSS parsing error in a tooltip or error list.</comment>
+  </data>
+</root>

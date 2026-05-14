@@ -1,0 +1,61 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*.0
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .github/*
+    - Documentation/*
+    - Images/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - PATENTS.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+pr: none
+
+variables:
+- template: /eng/common-variables.yml@self
+  parameters:
+    signType: real
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+
+resources:
+  containers:
+  - container: LinuxContainer
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-fpm-amd64
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean, CFSClean2
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: windows.vs2026.amd64
+      os: windows
+    sdl:
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
+      binskim:
+        scanOutputDirectoryOnly: true
+        analyzeTargetGlob: +:f|**/artifacts/**/*.dll;+:f|**/artifacts/**/*.exe;-:f|**/*.Tests/**/*;-:f|**/wix/**/*;-:f|**/wix3/**/*;-:f|**/winterop.dll;
+
+    stages:
+    - template: /eng/build.yml@self
+      parameters:
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+          oneLocEnabled: true
+        microbuildUseESRP: true

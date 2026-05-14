@@ -1,0 +1,62 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <XHarnessX86TestApkUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/android/test-apk/x86/System.Buffers.Tests-x86.apk</XHarnessX86TestApkUrl>
+    <XHarnessX64TestApkUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/android/test-apk/x86_64/System.Buffers.Tests-x64.apk</XHarnessX64TestApkUrl>
+    <XHarnessARM64V8TestApkUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/android/test-apk/arm64_v8a/System.Buffers.Tests-arm64-v8a.apk</XHarnessARM64V8TestApkUrl>
+  </PropertyGroup>
+
+  <!-- We're not set up currently to build APK files as part of normal builds, so this downloads existing ones for now -->
+  <Target Name="Build" Returns="@(XHarnessApkToTest)" >
+    <Error Condition=" '$(ArtifactsTmpDir)' == ''" Text="Not downloading APK because ArtifactsTmpDir property is unset" />
+
+    <DownloadFile Condition="'$(XHarnessTestX86)' == 'true'" SourceUrl="$(XHarnessX86TestApkUrl)" DestinationFolder="$(ArtifactsTmpDir)XHarness.TestApk\x86" SkipUnchangedFiles="True" Retries="5">
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadedApkFile" />
+    </DownloadFile>
+
+    <DownloadFile Condition="'$(XHarnessTestX86_64)' == 'true'" SourceUrl="$(XHarnessX64TestApkUrl)" DestinationFolder="$(ArtifactsTmpDir)XHarness.TestApk\x86_64" SkipUnchangedFiles="True" Retries="5">
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadedApkFile" />
+    </DownloadFile>
+
+    <DownloadFile Condition="'$(XHarnessTestARM64_V8A)' == 'true'" SourceUrl="$(XHarnessARM64V8TestApkUrl)" DestinationFolder="$(ArtifactsTmpDir)XHarness.TestApk\arm64_v8a" SkipUnchangedFiles="True" Retries="5">
+      <Output TaskParameter="DownloadedFile" ItemName="DownloadedApkFile" />
+    </DownloadFile>
+    
+    <Error Condition=" '@(DownloadedApkFile)' == '' " Text="You have to specify at least one target by setting one of following properties to true - XHarnessX86TestApkUrl / XHarnessX64TestApkUrl / XHarnessARM64V8TestApkUrl" />
+
+    <Message Text="Downloaded @(DownloadedApkFile) for XHarness Test purposes" Importance="High" />
+
+    <!-- We create two work items for each app - one normal and one using the custom commands to test that flow too -->
+    <ItemGroup>
+      <XHarnessApkToTest Include="@(DownloadedApkFile -> '%(Filename)')">
+        <ApkPath>%(FullPath)</ApkPath>
+
+        <!-- Package name: this comes from metadata inside the apk itself -->
+        <AndroidPackageName>net.dot.System.Buffers.Tests</AndroidPackageName>
+
+        <!-- If there are > 1 instrumentation class inside the package, we need to know the name of which to use -->
+        <AndroidInstrumentationName>net.dot.MonoRunner</AndroidInstrumentationName>
+      </XHarnessApkToTest>
+
+      <XHarnessApkToTest Include="@(DownloadedApkFile -> '%(Filename)-custom-command')">
+        <ApkPath>%(FullPath)</ApkPath>
+
+        <!-- Package name: this comes from metadata inside the apk itself -->
+        <AndroidPackageName>net.dot.System.Buffers.Tests</AndroidPackageName>
+
+        <!-- If there are > 1 instrumentation class inside the package, we need to know the name of which to use -->
+        <AndroidInstrumentationName>net.dot.MonoRunner</AndroidInstrumentationName>
+
+        <!-- This command is the same for PowerShell and bash so no need to detect the platform -->
+        <CustomCommands>
+          <![CDATA[
+          xharness android test --app "$app" --package-name "$package_name" --output-directory "$output_directory" --instrumentation "$instrumentation" --timeout "$timeout" -v
+          ]]>
+        </CustomCommands>
+      </XHarnessApkToTest>
+    </ItemGroup>
+  </Target>
+
+</Project>

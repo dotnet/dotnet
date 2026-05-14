@@ -1,0 +1,19 @@
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+#nullable disable
+
+namespace NuGet.Protocol.Plugins
+{
+    /// <summary>
+    /// A unique identifier generator.
+    /// </summary>
+    public interface IIdGenerator
+    {
+        /// <summary>
+        /// Generates a new unique identifier.
+        /// </summary>
+        /// <returns>A unique identifier.</returns>
+        string GenerateUniqueId();
+    }
+}

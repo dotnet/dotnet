@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../ReleasesResources.resx">
+    <body>
+      <trans-unit id="AspNetCoreReleaseName">
+        <source>ASP.NET Core Runtime</source>
+        <target state="new">ASP.NET Core Runtime</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildMetadataCannotBeEmpty">
+        <source>The build metadata cannot be empty if a separator is provided.</source>
+        <target state="new">The build metadata cannot be empty if a separator is provided.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotFound">
+        <source>Could not find the specified file: {0}</source>
+        <target state="new">Could not find the specified file: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HashMismatch">
+        <source>The expected hash ({0}) and actual hash ({1}) for {2} do not match.</source>
+        <target state="new">The expected hash ({0}) and actual hash ({1}) for {2} do not match.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidBuildMetadata">
+        <source>The build metadata value is invalid: {0}</source>
+        <target state="new">The build metadata value is invalid: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMajorVersion">
+        <source>Invalid or missing major version.</source>
+        <target state="new">Invalid or missing major version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidMinorVersion">
+        <source>Invalid or missing minor version.</source>
+        <target state="new">Invalid or missing minor version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNumericIdentifier">
+        <source>Invalid numeric identifier: '{0}'.</source>
+        <target state="new">Invalid numeric identifier: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPatch">
+        <source>Invalid or missing patch version.</source>
+        <target state="new">Invalid or missing patch version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPrerelease">
+        <source>The prerelease value is invalid: {0}</source>
+        <target state="new">The prerelease value is invalid: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidReleaseVersion">
+        <source>The specified version is not a valid semantic version.</source>
+        <target state="new">The specified version is not a valid semantic version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidVersion">
+        <source>The specified version does not contain a valid major, minor, and patch version: '{0}'.</source>
+        <target state="new">The specified version does not contain a valid major, minor, and patch version: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrereleaseCannotBeEmpty">
+        <source>The prerelease value cannot be empty if a separator is provided.</source>
+        <target state="new">The prerelease value cannot be empty if a separator is provided.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RuntimeReleaseName">
+        <source>.NET Core Runtime</source>
+        <target state="new">.NET Core Runtime</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SdkReleaseName">
+        <source>SDK</source>
+        <target state="new">SDK</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ValueCannotBeEmpty">
+        <source>Value cannot be empty.</source>
+        <target state="new">Value cannot be empty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionPartLessThanZero">
+        <source>The value cannot be less than 0.</source>
+        <target state="new">The value cannot be less than 0.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WindowsDesktopReleaseName">
+        <source>Desktop Runtime</source>
+        <target state="new">Desktop Runtime</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

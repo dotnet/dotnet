@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hant">
+    <body>
+      <trans-unit id="AbortedTestRun">
+        <source>The active Test Run was aborted because the host process exited unexpectedly. Please inspect the call stack above, if available, to get more information about where the exception originated from.
+The test running when the crash occurred: 
+{0}
+This test may, or may not be the source of the crash.</source>
+        <target state="translated">因為主機處理序在未預期的狀況下結束，所以已中止使用中的測試回合。請檢查上方的呼叫堆疊 (若有的話)，以取得例外狀況來源的詳細資訊。
+發生損毀時正在執行的測試: 
+{0}
+此測試可能是或不是損毀的來源。</target>
+        <note>{0} is a single test (or in rare cases multiple tests) that were running when test host crashed.</note>
+      </trans-unit>
+      <trans-unit id="ProcDumpEnvVarEmpty">
+        <source>Required environment variable PROCDUMP_PATH was null or empty. Set PROCDUMP_PATH to path of folder containing appropriate procdump executable.</source>
+        <target state="translated">必要的環境變數 PROCDUMP_PATH 為 null 或是空的。請將 PROCDUMP_PATH 設定為包含適當之 procdump 可執行檔之資料夾的路徑。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DumpFileNotGeneratedErrorMessage">
+        <source>Collect dump was enabled but no dump file was generated.</source>
+        <target state="translated">已啟用了收集傾印，但未產生任何傾印檔。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlameParameterKeyIncorrect">
+        <source>The blame parameter key specified {0} is not valid. Ignoring this key.</source>
+        <target state="translated">指定的 blame 參數索引鍵 {0} 無效。即將忽略此索引鍵。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BlameParameterValueIncorrect">
+        <source>The blame parameter key {0}, has incorrect value: {1}. Supported values are: {2}</source>
+        <target state="translated">blame 參數金鑰 {0} 的值不正確: {1}。支援的值為: {2}</target>
+        <note>{0} and {1} are single values referring to parameters such as BlameHang and Full. {2} is comma separated list of valid values, e.g. Full, Mini, None.</note>
+      </trans-unit>
+      <trans-unit id="ProcDumpCouldNotStart">
+        <source>Could not start process dump: {0}</source>
+        <target state="translated">無法啟動處理序傾印: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProcDumpNotGenerated">
+        <source>CollectDump was enabled but dump file was not generated.</source>
+        <target state="translated">CollectDump 已啟用，但未產生傾印檔案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InactivityTimeout">
+        <source>The specified inactivity time of {0} {1} has elapsed. Collecting hang dumps from testhost and its child processes</source>
+        <target state="translated">指定的非使用狀態時間已經過 {0} {1}。正在從 testhost 及其子處理序收集停止回應的傾印</target>
+        <note>{0} value, {1} one of the unit strings below, Minutes/Seconds</note>
+      </trans-unit>
+      <trans-unit id="UnexpectedValueForInactivityTimespanValue">
+        <source>Unexpected value '{0}' provided as timeout. Please provide a value in this format: 1.5h / 90m / 5400s / 5400000ms / 5400000</source>
+        <target state="translated">提供了非預期的值 '{0}' 作為逾時。請提供以下格式的值: 1.5h / 90m / 5400s / 5400000ms / 5400000</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NotGeneratingSequenceFile">
+        <source>All tests finished running, Sequence file will not be generated</source>
+        <target state="translated">所有測試皆已執行完成，將不會產生 Sequence 檔案</target>
+        <note>"Sequence" is the name of the file. No . at the end, because this is a blame message and the . will be added automatically.</note>
+      </trans-unit>
+      <trans-unit id="Dumping">
+        <source>Dumping {0} - {1}</source>
+        <target state="translated">正在傾印 {0} - {1}</target>
+        <note>as in creating a process dump, {0} process id, {1} process name</note>
+      </trans-unit>
+      <trans-unit id="DumpingTree">
+        <source>Dumping this process tree (from bottom)</source>
+        <target state="translated">正在傾印此處理序樹狀結構 (從底部)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Minutes">
+        <source>minutes</source>
+        <target state="translated">分鐘</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Seconds">
+        <source>seconds</source>
+        <target state="translated">秒</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProcDumpNotFound">
+        <source>{0} could not be found, please make sure that the executable is available on PATH. Alternatively set PROCDUMP_PATH environment variable to a directory that contains {0} executable</source>
+        <target state="translated">找不到{0}，請確定可執行檔可在 PATH 上使用。或將 PROCDUMP_PATH 環境變數設定為包含 {0} 可執行檔的目錄。</target>
+        <note>0 is procDumpPath, a name of procdump executable such as procdump64.exe, 0 is used twice on purpose. PROCDUMP_PATH and PATH are literal and should not be localized.</note>
+      </trans-unit>
+      <trans-unit id="MonitorPostmortemDebuggerInvalidDumpDirectoryPathParameter">
+        <source>Invalid 'DumpDirectoryPath' for postmortem debugger monitor</source>
+        <target state="translated">事後剖析偵錯工具監視的 'DumpDirectoryPath' 無效</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

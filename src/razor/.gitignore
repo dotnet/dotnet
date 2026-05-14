@@ -1,0 +1,155 @@
+﻿syntax: glob
+
+### VisualStudio ###
+
+# Tools directory
+/.[Tt]ools/
+.dotnet/
+.packages/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+artifacts/
+[Dd]ebug/
+[Rr]elease/
+x86/ !eng/common/cross/x86/
+[Bb]in/
+[Oo]bj/
+msbuild.log
+msbuild.err
+msbuild.wrn
+msbuild.ProjectImports.zip
+*.binlog
+*.complog
+
+# Visual Studio 2015
+.vs/
+
+# If MSBUILDDEBUGENGINE=1 and no directory is specified then MSBuild_Logs/ will be the default
+MSBuild_Logs/
+
+# Visual Studio 2015 Pre-CTP6
+*.sln.ide
+*.ide/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUNIT
+*.VisualState.xml
+TestResult.xml
+
+# Visual Studio Diagnostic Sessions
+*.diagsession
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# DotCover is a Code Coverage Tool
+*.dotCover
+
+# NuGet Packages
+*.nuget.props
+*.nuget.targets
+*.nupkg
+**/packages/*
+
+### Windows ###
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+### Linux ###
+
+*~
+
+# KDE directory preferences
+.directory
+
+### OSX ###
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# vim temporary files
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# Visual Studio Code
+.vscode/
+.vscode-test/
+
+# Private test configuration and binaries.
+config.ps1
+**/IISApplications
+
+# Python Compile Outputs
+*.pyc
+
+# Rider
+.idea/
+
+# VSCode extension outputs
+dist/
+out/
+
+# Test generated
+src/Razor/test/OutOfWorkspaceFile.razor
+
+# Benchmark generated
+src/Razor/benchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks/BenchmarkDotNet.Artifacts/results/*
+src/Razor/benchmarks/Microsoft.AspNetCore.Razor.Microbenchmarks/BenchmarkDotNet.Artifacts/*Benchmark.log
+
+*.svclog
+
+# Bundled extension assets
+*.vsix
+
+# testapp modifications
+src/Razor/benchmarks/testapps/ComponentApp/Components/Pages/Generated.razor

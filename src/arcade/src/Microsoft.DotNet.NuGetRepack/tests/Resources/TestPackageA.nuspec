@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>A</id>
+    <version>1.0.0-beta-12345-01</version>
+    <authors>Microsoft</authors>
+    <description>A</description>
+    <dependencies>
+      <group targetFramework="portable-net45+win8">
+        <dependency id="B" version="[1.0.0-beta-12345-01,)" />
+        <dependency id="C" version="(,1.0.0-beta-12345-01]" />
+        <dependency id="X" version="4.3.0" />
+      </group>
+      <group targetFramework="netstandard1.1">
+        <dependency id="C" version="1.0.0-beta-12345-01" />
+        <dependency id="Y" version="4.3.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files/>
+</package>

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">参数不能为 NULL 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineError">
+        <source>Error: {0}</source>
+        <target state="translated">错误: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineInformational">
+        <source>Information: {0}</source>
+        <target state="translated">信息: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandLineWarning">
+        <source>Warning: {0}</source>
+        <target state="translated">警告: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsEmpty">
+        <source>The specified argument cannot be empty.</source>
+        <target state="translated">指定的参数不能为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentIsNegative">
+        <source>The specified argument cannot be negative.</source>
+        <target state="translated">指定的参数不能为负。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentNotTypeOf">
+        <source>The specified argument must have the following type: {0}.</source>
+        <target state="translated">指定的参数都必须具有以下类型: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsEmpty">
+        <source>The specified argument has the following property, which cannot be an empty string: {0}.</source>
+        <target state="translated">指定的参数具有以下属性: {0}，且不能为空字符串。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNegative">
+        <source>The specified argument has the following property, which cannot be negative: {0}.</source>
+        <target state="translated">指定的参数具有以下属性: {0}，且不能为负。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyIsNull">
+        <source>The specified argument has the following property, which cannot be null: {0}.</source>
+        <target state="translated">指定的参数具有以下属性: {0}，且不能为 null。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ArgumentPropertyNotTypeOf">
+        <source>The specified argument has the following property: {0}. This property must have the following type: {1}.</source>
+        <target state="translated">指定的参数具有以下属性: {0}。此属性必须具有以下类型: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromJobProcessor">
+        <source>Unhandled exception occurred while processing a job from the '{0}' queue: {1}</source>
+        <target state="translated">处理“{0}”队列中的作业时发生未处理的异常: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueueAlreadyDisposed">
+        <source>The {0} queue has already been disposed.</source>
+        <target state="translated">已处置 {0} 队列。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="QueuePausedDisposeError">
+        <source>The {0} queue cannot be disposed while paused.</source>
+        <target state="translated">暂停时无法处置 {0} 队列。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Utility_ProcessNameWhenCannotGetIt">
+        <source>Error getting process name.</source>
+        <target state="translated">获取进程名称时出错。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find '{0}' host. Make sure that '{0}' is installed on the machine and is available in PATH environment variable.</source>
+        <target state="translated">找不到“{0}”主机。请确保计算机上已安装“{0}”且位于 PATH 环境变量中。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

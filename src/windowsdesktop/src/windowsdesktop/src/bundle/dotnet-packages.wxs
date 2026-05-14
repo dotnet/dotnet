@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Fragment>
+    <!-- Detection for .NET Host - Base component that everything else depends on -->
+    <util:ProductSearch Id="DotNetHostInstalled"
+                       UpgradeCode="{B7446807-9C0A-45C9-A20A-2CE596499A00}"
+                       Result="version"
+                       Variable="DotNetHostInstalledVersion" />
+    
+    <!-- Detection for .NET HostFxr - Framework host resolver -->
+    <util:ProductSearch Id="DotNetHostFxrInstalled"
+                       UpgradeCode="{44A6E04C-6EAC-485E-867B-ED2A6A858810}"
+                       Result="version"
+                       Variable="DotNetHostFxrInstalledVersion" />
+    
+    <!-- Detection for .NET Runtime - Core runtime components -->
+    <util:ProductSearch Id="DotNetRuntimeInstalled"
+                       UpgradeCode="{3FB2EED7-4BDD-4219-8A10-AB0C6C76F330}"
+                       Result="version"
+                       Variable="DotNetRuntimeInstalledVersion" />
+    
+    <!-- Architecture-specific detection for .NET Host -->
+    <?if $(TargetArchitecture) = x64 ?>
+    <util:ProductSearch Id="DotNetHostInstalledx64"
+                       UpgradeCode="{B7446807-9C0A-45C9-A20A-2CE596499A01}"
+                       Result="version"
+                       Variable="DotNetHostInstalledVersionx64" />
+    <?endif?>
+    
+    <?if $(TargetArchitecture) = x86 ?>
+    <util:ProductSearch Id="DotNetHostInstalledx86"
+                       UpgradeCode="{B7446807-9C0A-45C9-A20A-2CE596499A02}"
+                       Result="version"
+                       Variable="DotNetHostInstalledVersionx86" />
+    <?endif?>
+    
+    <?if $(TargetArchitecture) = arm64 ?>
+    <util:ProductSearch Id="DotNetHostInstalledarm64"
+                       UpgradeCode="{B7446807-9C0A-45C9-A20A-2CE596499A03}"
+                       Result="version"
+                       Variable="DotNetHostInstalledVersionarm64" />
+    <?endif?>
+
+    <!-- Architecture-specific detection for .NET HostFxr -->
+    <?if $(TargetArchitecture) = x64 ?>
+    <util:ProductSearch Id="DotNetHostFxrInstalledx64"
+                       UpgradeCode="{44A6E04C-6EAC-485E-867B-ED2A6A858811}"
+                       Result="version"
+                       Variable="DotNetHostFxrInstalledVersionx64" />
+    <?endif?>
+    
+    <?if $(TargetArchitecture) = x86 ?>
+    <util:ProductSearch Id="DotNetHostFxrInstalledx86"
+                       UpgradeCode="{44A6E04C-6EAC-485E-867B-ED2A6A858812}"
+                       Result="version"
+                       Variable="DotNetHostFxrInstalledVersionx86" />
+    <?endif?>
+    
+    <?if $(TargetArchitecture) = arm64 ?>
+    <util:ProductSearch Id="DotNetHostFxrInstalledarm64"
+                       UpgradeCode="{44A6E04C-6EAC-485E-867B-ED2A6A858813}"
+                       Result="version"
+                       Variable="DotNetHostFxrInstalledVersionarm64" />
+    <?endif?>
+
+    <!-- Architecture-specific detection for .NET Runtime -->
+    <?if $(TargetArchitecture) = x64 ?>
+    <util:ProductSearch Id="DotNetRuntimeInstalledx64"
+                       UpgradeCode="{3FB2EED7-4BDD-4219-8A10-AB0C6C76F331}"
+                       Result="version"
+                       Variable="DotNetRuntimeInstalledVersionx64" />
+    <?endif?>
+    
+    <?if $(TargetArchitecture) = x86 ?>
+    <util:ProductSearch Id="DotNetRuntimeInstalledx86"
+                       UpgradeCode="{3FB2EED7-4BDD-4219-8A10-AB0C6C76F332}"
+                       Result="version"
+                       Variable="DotNetRuntimeInstalledVersionx86" />
+    <?endif?>
+    
+    <?if $(TargetArchitecture) = arm64 ?>
+    <util:ProductSearch Id="DotNetRuntimeInstalledarm64"
+                       UpgradeCode="{3FB2EED7-4BDD-4219-8A10-AB0C6C76F333}"
+                       Result="version"
+                       Variable="DotNetRuntimeInstalledVersionarm64" />
+    <?endif?>
+
+    <!-- Detection for existing WindowsDesktop MSI (RC1 compatibility) -->
+    <util:ProductSearch Id="WindowsDesktopRuntimeInstalled"
+                       UpgradeCode="{A81EE51C-5913-400C-93A4-FB6E89F97345}"
+                       Result="version"
+                       Variable="WindowsDesktopRuntimeInstalledVersion" />
+
+    <!-- Condition variables for prerequisite checks -->
+    <Variable Name="DotNetHostMeetsMinimumVersion" Type="formatted" 
+              Value="[DotNetHostInstalledVersion$(PlatformToken)] &gt;= v$(DotNetRuntimeVersion)" />
+    <Variable Name="DotNetHostFxrMeetsMinimumVersion" Type="formatted" 
+              Value="[DotNetHostFxrInstalledVersion$(PlatformToken)] &gt;= v$(DotNetRuntimeVersion)" />
+    <Variable Name="DotNetRuntimeMeetsMinimumVersion" Type="formatted" 
+              Value="[DotNetRuntimeInstalledVersion$(PlatformToken)] &gt;= v$(DotNetRuntimeVersion)" />
+
+    <!-- Combined prerequisite check -->
+    <Variable Name="DotNetPrerequisitesMet" Type="formatted" 
+              Value="DotNetHostMeetsMinimumVersion AND DotNetHostFxrMeetsMinimumVersion AND DotNetRuntimeMeetsMinimumVersion" />
+  </Fragment>
+</Wix>

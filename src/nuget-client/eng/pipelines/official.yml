@@ -1,0 +1,56 @@
+parameters:
+- name: RunBuildForPublishing
+  displayName: Build bits for publishing
+  type: boolean
+  default: true
+- name: SigningType
+  displayName: Type of signing to use
+  type: string
+  default: Real
+  values:
+  - Real
+  - Test
+
+resources:
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
+
+variables:
+  BINLOG_DIRECTORY: $(Build.StagingDirectory)/binlog
+  DOTNET_NOLOGO: 1
+  NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
+  Codeql.Enabled: true
+  Codeql.TSAEnabled: true
+  RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
+  SourceBranch: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      sourceAnalysisPool: VSEng-MicroBuildVSStable
+      binskim:
+        enabled: true
+        scanOutputDirectoryOnly: true
+      sbom:
+        enabled: true
+      credscan:
+        enabled: false
+    pool:
+      name: AzurePipelines-EO
+      image: 1ESPT-Windows2022
+      os: windows
+    featureFlags:
+      enablePrepareFilesForSbom: true
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - template: /eng/pipelines/templates/pipeline.yml@self
+      parameters:
+        isOfficialBuild: true
+        RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
+        SigningType: ${{ parameters.SigningType }}
+        TryRunOneLocBuild: true

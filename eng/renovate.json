@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": false
+  },
+  "customManagers": [
+    {
+      "description": "Updates the OmniSharp version used in source-build tests",
+      "customType": "regex",
+      "managerFilePatterns": ["test/Microsoft.DotNet.SourceBuild.Tests/OmniSharpTests.cs"],
+      "matchStrings": [
+        "OmniSharpReleaseVersion = \"(?<currentValue>[^\"]+)\";"
+      ],
+      "depNameTemplate": "OmniSharp/omnisharp-roslyn",
+      "datasourceTemplate": "github-releases"
+    }
+  ]
+}

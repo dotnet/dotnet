@@ -1,0 +1,16 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project DefaultTargets="Build">
+
+  <PropertyGroup>
+    <!-- Skip importing NuGet Pack targets which are imported from the Microsoft.NET.Sdk targets -->
+    <ImportNuGetBuildTasksPackTargetsFromSdk>false</ImportNuGetBuildTasksPackTargetsFromSdk>
+  </PropertyGroup>
+
+  <!-- We don't want to create this target if the before common targets hook is in use.
+       If we are using the hook, then we avoid creation of the target altogether, which is more
+       compatible with static graph restores -->
+  <Import Project="EmptyIsProjectRestoreSupportedTarget.targets" Condition="!$(_BeforeCommonTargetsHookUsed)"/>
+
+  <Target Name="Restore"/>
+
+</Project>

@@ -1,0 +1,18 @@
+#nullable enable
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.TestCanceledException.TestCanceledException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.TestPlatformFormatException.TestPlatformFormatException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.SettingsException.SettingsException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.SuspendCodeCoverage
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.SuspendCodeCoverage.Dispose() -> void
+virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.SuspendCodeCoverage.Dispose(bool disposing) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.SuspendCodeCoverage.SuspendCodeCoverage() -> void
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter.TestPlatformFormatException.GetObjectData(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.SetupListener(System.Diagnostics.TraceListener? listener) -> void (forwarded, contained in Microsoft.TestPlatform.CoreUtilities)
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.SetupRemoteEqtTraceListeners(System.AppDomain? childDomain) -> void (forwarded, contained in Microsoft.TestPlatform.CoreUtilities)
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.TraceLevel.get -> System.Diagnostics.TraceLevel (forwarded, contained in Microsoft.TestPlatform.CoreUtilities)
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.EqtTrace.TraceLevel.set -> void (forwarded, contained in Microsoft.TestPlatform.CoreUtilities)
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.AssemblyHelper.DoesReferencesAssembly(string! source, System.Reflection.AssemblyName! referenceAssembly) -> bool?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.AssemblyHelper.GetFrameworkVersionAndArchitectureForSource(string! testSource) -> System.Collections.Generic.KeyValuePair<Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture, Microsoft.VisualStudio.TestPlatform.ObjectModel.FrameworkVersion>
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.AssemblyHelper.GetReferencedAssemblies(string! source) -> string![]?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.AssemblyHelper.SetAppDomainFrameworkVersionBasedOnTestSource(System.AppDomainSetup! setup, string! testSource) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.DefaultFramework.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework!

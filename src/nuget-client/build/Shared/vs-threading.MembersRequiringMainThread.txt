@@ -1,0 +1,16 @@
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::EnsureCheckedOutIfExists
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::GetAssemblyReferences
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::GetProjectItem
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::GetProjectItems
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::GetReferencedProjects
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::GetReferences
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::GetWebsiteReferencedProjects
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::IsExplicitlyUnsupported
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::IsParentProjectExplicitlyUnsupported
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::TryGetFile
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::TryGetFolder
+[NuGet.PackageManagement.VisualStudio.EnvDTEProjectUtility]::TryGetNestedFile
+[NuGet.ProjectManagement.IProjectBuildProperties]::GetPropertyValue
+[NuGet.VisualStudio.IVsProjectAdapter]::GetBuildItemInformation
+[NuGet.VisualStudio.IVsProjectAdapter]::IsCapabilityMatch
+[NuGet.VisualStudio.IVsProjectBuildProperties]::GetPropertyValue

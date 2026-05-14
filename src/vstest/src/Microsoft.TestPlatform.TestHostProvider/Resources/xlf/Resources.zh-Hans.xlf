@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hans">
+    <body>
+      <trans-unit id="MultipleFileVersions">
+        <source>Multiple versions of same extension found. Selecting the highest version.
+{0}</source>
+        <target state="translated">找到多个具有相同扩展的版本。请选择最高版本。
+{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindDepsFile">
+        <source>Unable to find {0}. Make sure test project has a nuget reference of package "Microsoft.NET.Test.Sdk".</source>
+        <target state="translated">无法找到 {0}。确保测试项目具有包 "Microsoft.NET.Test.Sdk" 的 nuget 引用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuggestPublishTestProject">
+        <source>Unable to find {0}. Please publish your test project and retry.</source>
+        <target state="translated">无法找到 {0}。请发布测试项目并重试。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetMuxerFoundForArchitecture">
+        <source>Could not find '{0}' host for the '{1}' architecture.
+
+You can resolve the problem by installing the '{1}' .NET.
+
+The specified framework can be found at:
+  - https://aka.ms/dotnet-download
+</source>
+        <target state="translated">找不到“{1}”体系结构的“{0}”主机。
+
+你可以通过安装“{1}”.NET 来解决该问题。
+
+可以在以下位置找到指定的框架:
+  - https://aka.ms/dotnet-download
+</target>
+        <note>'{0}' is the placeholder for 'dotnet.exe' or 'dotnet' value and depends on platform Windows/Unix, '{1}' is the placeholder for the architeture name like ARM64, X64 etc...</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

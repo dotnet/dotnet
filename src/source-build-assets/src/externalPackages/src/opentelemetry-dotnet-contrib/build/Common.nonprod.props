@@ -1,0 +1,58 @@
+<Project>
+  <Import Project=".\Common.props" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)/OpenTelemetryContrib.test.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>$(NoWarn),1574,1591;CA1515</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefaultTargetFrameworkForExampleApps>$(NetMinimumSupportedVersion)</DefaultTargetFrameworkForExampleApps>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests')) OR $(MSBuildProjectName.EndsWith('.FuzzTests'))">
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Target frameworks used in by test projects">
+    <!-- OmniSharp/VS Code requires TargetFrameworks to be in descending order for IntelliSense and analysis. -->
+    <SupportedNetTargets>net10.0;net9.0;net8.0</SupportedNetTargets>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="GitHubActionsTestLogger" />
+    <PackageReference Include="JunitXml.TestLogger" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true' AND $(MSBuildProjectName.EndsWith('.FuzzTests'))">
+    <PackageReference Include="FsCheck.Xunit" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true' AND '$(SkipStrongNameValidation)' != 'true'">
+    <Compile Include="$(RepoRoot)\test\Shared\StrongNameTests.cs" Link="StrongNameTests.cs" />
+  </ItemGroup>
+
+  <Target Name="SkipVSTestForInvalidTargetFramework" BeforeTargets="VSTest" Condition="'$(IsTestProject)' == 'true'">
+    <!-- Note: When running dotnet test from CLI with the framework parameter
+    errors will be generated for projects which do not implement the requested
+    target. In order to enable running tests for a given framework across a
+    solution/project with mixed targets (eg: dotnet test
+    opentelemetry-dotnet-contrib.slnx -f net462) we convert this into a skip
+    message only. -->
+    <PropertyGroup Condition="$(TargetFrameworks.Contains($(TargetFramework))) != 'true'">
+      <_SkipTests>true</_SkipTests>
+      <IsTestProject>false</IsTestProject>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Skipping test execution for '$(TargetPath)' because it does not contain the '$(TargetFramework)' target." Condition="'$(_SkipTests)' == 'true'" />
+  </Target>
+
+</Project>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="cs">
+    <body>
+      <trans-unit id="AbortedTestsRun">
+        <source>The active Tests Run was aborted.</source>
+        <target state="translated">Aktivní testovací běh se přerušil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestsDiscovery">
+        <source>The active Tests Discovery was aborted.</source>
+        <target state="translated">Aktivní zjišťování testů se přerušilo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToReceiveMessage">
+        <source>Failed to receive message from vstest.console process</source>
+        <target state="translated">Nepovedlo se přijmout zprávu z procesu vstest.console.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VsTestProcessExitedAbnormally">
+        <source>vstest.console process exited abnormally</source>
+        <target state="translated">Proces vstest.console se ukončil neobvyklým způsobem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFilePath">
+        <source>File {0} does not exists</source>
+        <target state="translated">Soubor {0} neexistuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestRunAttachmentsProcessing">
+        <source>The active Test Run Attachments Processing was aborted.</source>
+        <target state="translated">Aktivní zpracovávání příloh testovacího běhu se přerušilo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStartTestSession">
+        <source>The Start Test Session operation was aborted.</source>
+        <target state="translated">Operace zahájení testovací relace se přerušila.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStopTestSession">
+        <source>The Stop Test Session operation was aborted.</source>
+        <target state="translated">Operace zastavení testovací relace se přerušila.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

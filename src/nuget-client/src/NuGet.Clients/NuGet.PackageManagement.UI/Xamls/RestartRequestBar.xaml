@@ -1,0 +1,25 @@
+  <UserControl x:Class="NuGet.PackageManagement.UI.RestartRequestBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:resx="clr-namespace:NuGet.PackageManagement.UI"
+             Visibility="Collapsed">
+    <Border x:Name="RestartBar" VerticalAlignment="Center" BorderThickness="0,0,0,1">
+        <Grid Margin="0,4,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="RequestRestartMessage"
+                       VerticalAlignment="Center"
+                       TextWrapping="WrapWithOverflow" />
+            <Button
+                x:Name="RestartButton"
+                VerticalAlignment="Center"
+                Grid.Column="1"
+                Content="{x:Static resx:Resources.RestartButtonLabel}"
+                Click="ExecuteRestart"
+                Margin="5,0,3,0"
+                Padding="8,2,8,2" />
+        </Grid>
+    </Border>
+  </UserControl>

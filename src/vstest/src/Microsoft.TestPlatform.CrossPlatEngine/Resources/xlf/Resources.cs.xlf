@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="cs">
+    <body>
+      <trans-unit id="DiscovererInstantiationException">
+        <source>Exception occurred while instantiating discoverer : {0}</source>
+        <target state="translated">Při vytváření instance nástroje zjišťování došlo k výjimce: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateAdaptersFound">
+        <source>Multiple test adapters with the same uri '{0}' were found. Ignoring adapter '{1}'. Please uninstall the conflicting adapter(s) to avoid this warning.</source>
+        <target state="translated">Našlo se více adaptérů testů se stejným identifikátorem URI {0}. Ignoruje se adaptér {1}. Pokud se chcete tomuto upozornění vyhnout, odinstalujte prosím konfliktní adaptéry.</target>
+        <note>{0} is the unique identifier of test adapter. {1} is the name of the test adapter that shares a unique identifier with a previously loaded adapter.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateSource">
+        <source>Ignoring the specified duplicate source '{0}'.</source>
+        <target state="translated">Ignoruje se zadaný duplicitní zdroj {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromLoadTests">
+        <source>An exception occurred while test discoverer '{0}' was loading tests. Exception: {1}</source>
+        <target state="translated">V době, kdy nástroj zjišťování testů {0} načítal testy, došlo k výjimce. Výjimka: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromRunTests">
+        <source>An exception occurred while invoking executor '{0}': {1}</source>
+        <target state="translated">Při volání prováděcího modulu {0} došlo k výjimce: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotFound">
+        <source>Could not find file {0}.</source>
+        <target state="translated">Nepovedlo se najít soubor {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HostDebuggerWarning">
+        <source>Host debugging is enabled. Please attach debugger to testhost process to continue.</source>
+        <target state="translated">Je povolené ladění hostitele. Pokud chcete pokračovat, připojte prosím ladicí program k procesu testhost.</target>
+        <note>Host, testhost are key words, it should not be localized</note>
+      </trans-unit>
+      <trans-unit id="IgnoringExecutorAsNoDefaultExecutorUriAttribute">
+        <source>Ignoring the test executor corresponding to test discoverer {0} because the discoverer does not have the DefaultExecutorUri attribute . You might need to re-install the test adapter add-in.</source>
+        <target state="translated">Ignoruje se prováděcí modul testování, který odpovídá nástroji zjišťování testů {0}, protože nástroj zjišťování nemá atribut DefaultExecutorUri. Možná bude nutné přeinstalovat doplněk adaptéru testu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitializationFailed">
+        <source>Failed to initialize client proxy: could not connect to test process.</source>
+        <target state="translated">Nepovedlo se inicializovat proxy klienta: nešlo se připojit k procesu testu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LaunchDebugProcessNotAllowedForANonDebugRun">
+        <source>This operation is not allowed in the context of a non-debug run.</source>
+        <target state="translated">Tato operace se v kontextu běhu bez ladění nepovoluje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingExecutor">
+        <source>Could not find test executor with URI '{0}'.  Make sure that the test executor is installed and supports .net runtime version {1}.</source>
+        <target state="translated">Nepovedlo se najít prováděcí modul testování s identifikátorem URI {0}. Ujistěte se, že je prováděcí modul testování nainstalovaný a že podporuje .NET runtime verze {1}.</target>
+        <note>{0} - Executor uri String {1}-  Version - .net Version Eg:-2.0.50727.00</note>
+      </trans-unit>
+      <trans-unit id="NoValidSourceFoundForDiscovery">
+        <source>None of the specified source(s) '{0}' is valid. Fix the above errors/warnings and then try again. </source>
+        <target state="translated">Žádný ze zadaných zdrojů {0} není platný. Opravte chyby/upozornění výše a zkuste to znovu. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringSeperator">
+        <source>, </source>
+        <target state="translated">, </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPropertiesInTestCaseFilter">
+        <source>No tests matched the filter because it contains one or more properties that are not valid ({0}). Specify filter expression containing valid properties ({1}).</source>
+        <target state="translated">Filtru neodpovídá žádný test, protože obsahuje nejméně jednu vlastnost, která není platná ({0}). Zadejte výraz filtru, který obsahuje platné vlastnosti ({1}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find {0}. Make sure that the dotnet is installed on the machine.</source>
+        <target state="translated">Nejde najít {0}. Ujistěte se, že na počítači je nainstalovaný dotnet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestHostExitedWithError">
+        <source>Testhost process for source(s) '{0}' exited with error: {1}. Please check the diagnostic logs for more information.</source>
+        <target state="translated">Proces testhost pro zdroj(e) {0} se ukončil s chybou: {1}. Další informace najdete v diagnostických protokolech.</target>
+        <note>{0} a source, or very rarely list of sources, {1} the output error.</note>
+      </trans-unit>
+      <trans-unit id="DataCollectorDebuggerWarning">
+        <source>DataCollector debugging is enabled. Please attach debugger to datacollector process to continue.</source>
+        <target state="translated">Je povolené ladění kolekce dat. Pokud chcete pokračovat, připojte prosím ladicí program k procesu kolekce dat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestRunFailed_NoDiscovererFound_NoTestsAreAvailableInTheSources">
+        <source>No test is available in {0}. Make sure that test discoverer &amp; executors are registered and platform &amp; framework version settings are appropriate and try again.</source>
+        <target state="translated">V {0} nejsou dostupné žádné testy. Ujistěte se, že nástroje pro zjišťování a provádění testů jsou zaregistrované a že jsou vhodně zvolená nastavení verzí platformy a architektury, a zkuste to znovu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TesthostDiagLogOutputFile">
+        <source>Logging TestHost Diagnostics in file: {0}</source>
+        <target state="translated">Protokolování diagnostiky TestHost v souboru: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLaunchTestHost">
+        <source>Failed to launch testhost with error: {0}</source>
+        <target state="translated">Nepovedlo se spustit hostitele testu kvůli této chybě: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutionThreadApartmentStateNotSupportedForFramework">
+        <source>ExecutionThreadApartmentState option not supported for framework: {0}.</source>
+        <target state="translated">Možnost ExecutionThreadApartmentState se pro rozhraní nepodporuje: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OldTestHostIsGettingUsed">
+        <source>You are using an older version of Microsoft.NET.Test.Sdk. Kindly move to a version equal or greater than 15.3.0.</source>
+        <target state="translated">Používáte starší verzi sady Microsoft.NET.Test.Sdk. Přejděte prosím na verzi 15.3.0 nebo vyšší.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NonExistingExtensions">
+        <source>Could not find extensions: {0}</source>
+        <target state="translated">Nepovedlo se najít rozšíření: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedAdapterPath">
+        <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
+        <target state="translated">Mění se vyhledávání adaptéru. Pro další informace se podívejte sem: https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableForGivenTestCaseFilter">
+        <source>No test matches the given testcase filter `{0}` in {1}</source>
+        <target state="translated">Žádný test neodpovídá danému filtru testovacích případů {0} v: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestDiscoveryCancelled">
+        <source>Discovery of tests cancelled.</source>
+        <target state="translated">Zjišťování testů bylo zrušeno.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
+        <source>Cannot attach the debugger to the default test host with process ID: {0}.</source>
+        <target state="translated">Ladicí program se nedá připojit k výchozímu hostiteli testů s ID procesu {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges.</source>
+        <target state="translated">{0} Při pokusu o vytvoření složky TestResults v uvedeném umístění došlo k odepření přístupu. Tato výjimka se vyvolala, protože spouštíte vstest.console.exe ze složky, která vyžaduje, abyste měli přístup pro zápis. Pokud chcete problém vyřešit, spusťte prosím vstest.console.exe ze složky, ve které máte oprávnění k zápisu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoAvailableProxyForDeque">
+        <source>Could not find an available proxy to deque.</source>
+        <target state="translated">Nepovedlo se najít dostupný proxy server, který se má odebrat z fronty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuchProxyId">
+        <source>Proxy with id {0} is not managed by the current session manager.</source>
+        <target state="translated">Aktuální správce relace nespravuje proxy s ID {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProxyIsAlreadyAvailable">
+        <source>Proxy with id {0} is already available and cannot be re-enqueued.</source>
+        <target state="translated">Proxy s ID {0} je už k dispozici a nedá se znovu zařadit do fronty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider was found for any source in this run.</source>
+        <target state="translated">V tomto běhu se nenašel žádný vhodný zprostředkovatel testovacího modulu runtime pro žádný zdroj.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProxyMatchesDescription">
+        <source>The runsettings changed between the time when the test session was established and the time of the current run/discovery request.</source>
+        <target state="translated">Soubor runsettings se změnil mezi časem, kdy byla relace testu vytvořena, a časem aktuálního požadavku spuštění nebo zjišťování.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentOutputFormat">
+        <source>  {0}</source>
+        <target state="translated">  {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentsBanner">
+        <source>Attachments:</source>
+        <target state="translated">Přílohy:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuitableRuntimeProviderFound">
+        <source>No suitable test runtime provider was found:</source>
+        <target state="translated">Nenašel se žádný vhodný zprostředkovatel testovacího modulu runtime:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SkippingSource">
+        <source>Skipping source:</source>
+        <target state="translated">Přeskočení zdroje:</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

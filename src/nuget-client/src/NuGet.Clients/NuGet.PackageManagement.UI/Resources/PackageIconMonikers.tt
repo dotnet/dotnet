@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<#@ template hostspecific="true" #>
+<#@ parameter type="System.String" name="PMUIAssemblyVersion" #>
+<ImageManifest
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.microsoft.com/VisualStudio/ImageManifestSchema/2014">
+  <Symbols>
+    <String Name="Resources" Value="/NuGet.PackageManagement.UI;v<#= PMUIAssemblyVersion #>;31bf3856ad364e35;Component/" />
+    <Guid Name="PackageIconMonikers" Value="{8F5EAE8F-9892-4CE2-826C-764BEDE6D2EC}" />
+    <ID Name="PrefixReservedIndicator" Value="1" />
+    <ID Name="UpdateAvailableIndicator" Value="2" />
+    <ID Name="UninstallIndicator" Value="3" />
+    <ID Name="DownloadIndicator" Value="4" />
+  </Symbols>
+  <Images>
+    <Image Guid="$(PackageIconMonikers)" ID="$(PrefixReservedIndicator)" AllowColorInversion="false">
+      <Source Uri="$(Resources)/Xamls/PrefixReservedIndicator.xaml" />
+    </Image>
+    <Image Guid="$(PackageIconMonikers)" ID="$(UpdateAvailableIndicator)" AllowColorInversion="false">
+      <Source Uri="$(Resources)/Xamls/UpdateAvailableIndicator.xaml" />
+    </Image>
+    <Image Guid="$(PackageIconMonikers)" ID="$(UninstallIndicator)" AllowColorInversion="false">
+      <Source Uri="$(Resources)/Xamls/UninstallIndicator.xaml" />
+    </Image>
+    <Image Guid="$(PackageIconMonikers)" ID="$(DownloadIndicator)" AllowColorInversion="false">
+      <Source Uri="$(Resources)/Xamls/DownloadIndicator.xaml" />
+    </Image>
+  </Images>
+  <ImageLists />
+</ImageManifest>
+<#@ output extension=".imagemanifest" #>

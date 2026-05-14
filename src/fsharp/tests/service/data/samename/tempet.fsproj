@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="folder1/a.fs" />
+    <Compile Include="folder2/a.fs" />
+  </ItemGroup>
+</Project>

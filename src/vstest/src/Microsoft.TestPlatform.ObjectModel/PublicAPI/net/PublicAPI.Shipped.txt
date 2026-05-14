@@ -1,0 +1,248 @@
+﻿#nullable enable
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.FileName.get -> string!
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.PerformCleanup.get -> bool
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents.SessionEnd -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionEndEventArgs!>?
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents.SessionStart -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs!>?
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents.TestCaseEnd -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs!>?
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents.TestCaseStart -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs!>?
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents.TestHostLaunched -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestHostLaunchedEventArgs!>?
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger.LogError(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! text) -> void
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger.LogError(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! text, System.Exception! exception) -> void
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger.LogWarning(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! text) -> void
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink.SendFileAsync(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation! fileTransferInformation) -> void
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink.SendFileCompleted -> System.ComponentModel.AsyncCompletedEventHandler?
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollector.Initialize(System.Xml.XmlElement? configurationElement, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents! events, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink! dataSink, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger! logger, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext? environmentContext) -> void
+abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.TestRunSettings.ToXml() -> System.Xml.XmlElement!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.BasicTransferInformation(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.Context.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.Description.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.Description.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.RequestId.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.RequestId.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.UserToken.get -> object?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.BasicTransferInformation.UserToken.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.DataCollectionContext(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId! sessionId) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.DataCollectionContext(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId! sessionId, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId? testExecId) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.DataCollectionContext(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId! sessionId, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase! testCase) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.DataCollectionContext(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase? testCase) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.HasTestCase.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.SessionId.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.TestCase.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.TestExecId.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext.DataCollectionEnvironmentContext(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! sessionDataCollectionContext) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext.SessionDataCollectionContext.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEventArgs.Context.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEventArgs.DataCollectionEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEventArgs.DataCollectionEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEvents.DataCollectionEvents() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger.DataCollectionLogger() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger.LogError(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, System.Exception! exception) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink.DataCollectionSink() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink.SendFileAsync(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! path, bool deleteFile) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionSink.SendFileAsync(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! path, string! description, bool deleteFile) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollector
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollector.DataCollector() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollector.Dispose() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorFriendlyNameAttribute
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorFriendlyNameAttribute.DataCollectorFriendlyNameAttribute(string! friendlyName) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorFriendlyNameAttribute.FriendlyName.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel.Data = 3 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel.Error = 0 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel.Info = 2 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel.Warning = 1 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorTypeUriAttribute
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorTypeUriAttribute.DataCollectorTypeUriAttribute(string! typeUri) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorTypeUriAttribute.TypeUri.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation.FileTransferInformation(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! path, bool deleteFile) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation.FileTransferInformation(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, string! path, bool deleteFile, Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces.IFileHelper! fileHelper) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation.Path.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectionSink
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectionSink.SendData(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! dataCollectionContext, string! key, string! value) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachmentProcessor
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachmentProcessor.GetExtensionUris() -> System.Collections.Generic.IEnumerable<System.Uri!>?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachmentProcessor.ProcessAttachmentSetsAsync(System.Xml.XmlElement! configurationElement, System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>! attachments, System.IProgress<int>! progressReporter, Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.IMessageLogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>!>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachmentProcessor.SupportsIncrementalProcessing.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachments
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachments.GetExtensionUri() -> System.Uri!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectorAttachments.HandleDataCollectionAttachmentSets(System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>! dataCollectionAttachments) -> System.Collections.Generic.ICollection<Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet!>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.ITestExecutionEnvironmentSpecifier
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.ITestExecutionEnvironmentSpecifier.GetTestExecutionEnvironmentVariables() -> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string!>>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.CompareTo(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId? other) -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.CompareTo(object? obj) -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.Equals(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId? other) -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.Id.get -> System.Guid
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionEndEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionEndEventArgs.SessionEndEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionEndEventArgs.SessionEndEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.Id.get -> System.Guid
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.SessionId() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.SessionId(System.Guid id) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs.GetProperties() -> System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string!, object?>>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs.GetPropertyValue(string! property) -> object?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs.GetPropertyValue<T>(string! property) -> T?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs.SessionStartEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs.SessionStartEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, System.Collections.Generic.IDictionary<string!, object?>! properties) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionStartEventArgs.SessionStartEventArgs(System.Collections.Generic.IDictionary<string!, object?>! properties) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestCaseEndEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestCaseEndEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase! testElement, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome testOutcome) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestCaseEndEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase! testElement, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome testOutcome) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEndEventArgs.TestOutcome.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.IsChildTestCase.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase! testElement) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, System.Guid testCaseId, string? testCaseName, bool isChildTestCase) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseId.get -> System.Guid
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestCaseName.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseEventArgs.TestElement.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType.Assertion = 1 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType.MissingException = 4 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType.None = 0 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType.Other = 5 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType.UnexpectedException = 3 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType.UnhandledException = 2 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseFailureType
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs.TestCaseStartEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs.TestCaseStartEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase! testElement) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestCaseStartEventArgs.TestCaseStartEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase! testElement) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.Id.get -> System.Guid
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.TestExecId() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.TestExecId(System.Guid id) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestHostLaunchedEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestHostLaunchedEventArgs.TestHostLaunchedEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, int processId) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestHostLaunchedEventArgs.TestHostProcessId.get -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestResultEventArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestResultEventArgs.TestResult.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestResultEventArgs.TestResultEventArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestResultEventArgs.TestResultEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult! testResult) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestResultEventArgs.TestResultEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult! testResult) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.DataCollectionRunSettings() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.DataCollectionRunSettings(string! dataCollectionRootName, string! dataCollectionsName, string! dataCollectorName) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.DataCollectorSettingsList.get -> System.Collections.ObjectModel.Collection<Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings!>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.IsCollectionEnabled.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.InProcDataCollectionArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseEndArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseEndArgs.DataCollectionContext.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseEndArgs.TestCaseEndArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! dataCollectionContext, Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome outcome) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseEndArgs.TestOutcome.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestOutcome
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseStartArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseStartArgs.TestCase.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseStartArgs.TestCaseStartArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase? testCase) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionEndArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionEndArgs.TestSessionEndArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.Configuration.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.Configuration.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.GetProperties() -> System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<string!, object?>>!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.GetPropertyValue(string! property) -> object?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.GetPropertyValue<T>(string! property) -> T?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.TestSessionStartArgs() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.TestSessionStartArgs(string! configuration) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs.TestSessionStartArgs(System.Collections.Generic.IDictionary<string!, object?>! properties) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.AssemblyQualifiedName.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.AssemblyQualifiedName.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.CodeBase.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.CodeBase.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.Configuration.get -> System.Xml.XmlElement?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.Configuration.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.DataCollectorSettings() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.FriendlyName.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.FriendlyName.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.IsEnabled.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.IsEnabled.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.ToXml() -> System.Xml.XmlElement!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.ToXml(string! dataCollectorName) -> System.Xml.XmlElement!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.Uri.get -> System.Uri?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings.Uri.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.DiaNavigationData(string? fileName, int minLineNumber, int maxLineNumber) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.FileName.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.FileName.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.MaxLineNumber.get -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.MaxLineNumber.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.MinLineNumber.get -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData.MinLineNumber.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession.DiaSession(string! binaryPath) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession.DiaSession(string! binaryPath, string? searchPath) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession.Dispose() -> void
+virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession.Dispose(bool disposing) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession.GetNavigationData(string! declaringTypeName, string! methodName) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaNavigationData?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DiaSession.GetNavigationDataForMethod(string! declaringTypeName, string! methodName) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector.InProcDataCollection
+Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector.InProcDataCollection.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.IDataCollectionSink! dataCollectionSink) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector.InProcDataCollection.TestCaseEnd(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseEndArgs! testCaseEndArgs) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector.InProcDataCollection.TestCaseStart(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestCaseStartArgs! testCaseStartArgs) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector.InProcDataCollection.TestSessionEnd(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionEndArgs! testSessionEndArgs) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.InProcDataCollector.InProcDataCollection.TestSessionStart(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollector.InProcDataCollector.TestSessionStartArgs! testSessionStartArgs) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.LoggerSettings.Configuration.get -> System.Xml.XmlElement?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.LoggerSettings.Configuration.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.LoggerSettings.ToXml() -> System.Xml.XmlElement!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.LoggerSettings.ToXml(string! loggerName) -> System.Xml.XmlElement!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData.FileName.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData.FileName.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData.MaxLineNumber.get -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData.MaxLineNumber.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData.MinLineNumber.get -> int
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData.MinLineNumber.set -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationSession
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationSession.GetNavigationDataForMethod(string! declaringTypeName, string! methodName) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation.INavigationData?
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.Equals(object? obj) -> bool
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.GetHashCode() -> int
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation.FileName.get -> string!
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.FileTransferInformation.PerformCleanup.get -> bool
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.Equals(object? obj) -> bool
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.GetHashCode() -> int
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.ToString() -> string!
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.Equals(object? obj) -> bool
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.GetHashCode() -> int
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.ToString() -> string!
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.Equals(object? obj) -> bool
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.GetHashCode() -> int
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.ToString() -> string!
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.ToXml() -> System.Xml.XmlElement!
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.LoggerRunSettings.ToXml() -> System.Xml.XmlElement!
+override Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.ToXml() -> System.Xml.XmlElement!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.operator !=(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext? context1, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext? context2) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext.operator ==(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext? context1, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext? context2) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext.CreateForLocalEnvironment() -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext.CreateForLocalEnvironment(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! sessionDataCollectionContext) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionEnvironmentContext!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.operator !=(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId? left, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId? right) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.operator ==(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId? left, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId? right) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId.Empty.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.SessionId!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId.Empty.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.TestExecId!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.CreateDataCollectionRunSettings(System.Xml.XmlReader! reader, string! dataCollectionName, string! dataCollectorsName, string! dataCollectorName) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.FromXml(System.Xml.XmlReader! reader) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings.FromXml(System.Xml.XmlReader! reader, string! dataCollectionName, string! dataCollectorsName, string! dataCollectorName) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.ContainsDataCollector(System.Xml.XPath.IXPathNavigable! runSettingDocument, string! dataCollectorUri) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.CreateDefaultRunSettings() -> System.Xml.XmlDocument!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.GetDataCollectionRunSettings(string? runSettingsXml) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.GetDataCollectorsFriendlyName(string? runsettingsXml) -> System.Collections.Generic.IList<string!>!
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.GetInProcDataCollectionRunSettings(string? runSettingsXml) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectionRunSettings?
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.InsertDataCollectorsNode(System.Xml.XPath.IXPathNavigable! runSettingDocument, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollectorSettings! settings) -> void
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.IsDataCollectionEnabled(string? runSettingsXml) -> bool
+static Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities.XmlRunSettingsUtilities.IsInProcDataCollectionEnabled(string? runSettingsXml) -> bool
+static readonly Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId.Empty -> Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.RequestId!
+virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionLogger.LogException(Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectionContext! context, System.Exception! ex, Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorMessageLevel level) -> void
+virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollector.Dispose(bool disposing) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorAttachmentProcessorAttribute
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorAttachmentProcessorAttribute.DataCollectorAttachmentProcessorAttribute(System.Type! type) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection.DataCollectorAttachmentProcessorAttribute.Type.get -> System.Type!

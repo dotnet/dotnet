@@ -1,0 +1,45 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+
+  <PropertyGroup>
+    <XHarnessAppBundleName>System.Numerics.Vectors.Tests</XHarnessAppBundleName>
+    <XHarnessAppBundleUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/ios/test-app/ios-simulator-64/$(XHarnessAppBundleName).app.zip</XHarnessAppBundleUrl>
+  </PropertyGroup>
+
+  <!-- We're not set up currently to build app bundles as part of normal builds, so this downloads existing ones for now -->
+  <Target Name="Build" Returns="@(XHarnessAppBundleToTest)">
+    <Error Condition=" '$(ArtifactsTmpDir)' == ''" Text="Not downloading AppBundle because ArtifactsTmpDir property is unset" />
+    <DownloadFile SourceUrl="$(XHarnessAppBundleUrl)" DestinationFolder="$(ArtifactsTmpDir)XHarness.CustomCommandsAppBundle" SkipUnchangedFiles="True" Retries="5">
+      <Output TaskParameter="DownloadedFile" ItemName="ZippedAppBundle" />
+    </DownloadFile>
+
+    <Message Text="Downloaded @(ZippedAppBundle) for XHarness Test purposes" Importance="High" />
+
+    <Exec Command="tar -xzf @(ZippedAppBundle) -C $(ArtifactsTmpDir)XHarness.CustomCommandsAppBundle" />
+
+    <ItemGroup>
+      <XHarnessAppBundleToTest Include="$(ArtifactsTmpDir)XHarness.CustomCommandsAppBundle/$(XHarnessAppBundleName).app">
+        <TestTarget>ios-simulator-64</TestTarget>
+        <WorkItemTimeout>00:20:00</WorkItemTimeout>
+        <TestTimeout>00:05:00</TestTimeout>
+        <LaunchTimeout>00:03:30</LaunchTimeout>
+        <CustomCommands>
+          <![CDATA[
+          set -ex
+          deviceId=`xharness apple device $target`
+          xharness apple install -t=$target --device="$deviceId" -o="$output_directory" --app="$app" --timeout=$launch_timeout -v
+          set +e
+          result=0
+          xharness apple just-test -t=$target --device="$deviceId" -o="$output_directory" --app="net.dot.$(XHarnessAppBundleName)" --launch-timeout=$launch_timeout --timeout=$timeout -v
+          ((result|=$?))
+          xharness apple uninstall -t=$target --device="$deviceId" -o="$output_directory" --app="net.dot.$(XHarnessAppBundleName)" -v
+          ((result|=$?))
+          exit $result
+          ]]>
+        </CustomCommands>
+      </XHarnessAppBundleToTest>
+    </ItemGroup>
+  </Target>
+
+</Project>

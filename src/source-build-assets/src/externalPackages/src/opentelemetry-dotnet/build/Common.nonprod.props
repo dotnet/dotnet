@@ -1,0 +1,79 @@
+<Project>
+  <Import Project=".\Common.props" />
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn),CS1574,CS1591</NoWarn>
+    <IsPackable>false</IsPackable>
+    <CodeAnalysisRuleSet>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'OpenTelemetry.slnx'))\build\OpenTelemetry.test.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefaultTargetFrameworkForExampleApps>net10.0</DefaultTargetFrameworkForExampleApps>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests')) OR $(MSBuildProjectName.EndsWith('.FuzzTests'))">
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <Content Include="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'OpenTelemetry.slnx'))\build\xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="GitHubActionsTestLogger" />
+    <PackageReference Include="JunitXml.TestLogger" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <Compile Include="$(RepoRoot)\test\Shared\StrongNameTests.cs" Link="StrongNameTests.cs" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Running unit tests from VSCode does not work with .NET SDK 6.0.200 without ProduceReferenceAssemblyInOutDir -->
+    <!-- Related breaking change: https://docs.microsoft.com/en-us/dotnet/core/compatibility/sdk/6.0/write-reference-assemblies-to-obj -->
+    <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+
+  <Target Name="SkipVSTestForInvalidTargetFramework" BeforeTargets="VSTest" Condition="'$(IsTestProject)' == 'true'">
+    <!-- Note: When running dotnet test from CLI with the framework parameter
+    errors will be generated for projects which do not implement the requested
+    target. In order to enable running tests for a given framework across a
+    solution/project with mixed targets (eg: dotnet test OpenTelemetry.slnx -f
+    net462) we convert this into a skip message only. -->
+    <PropertyGroup Condition="$(TargetFrameworks.Contains($(TargetFramework))) != 'true'">
+      <_SkipTests>true</_SkipTests>
+      <IsTestProject>false</IsTestProject>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Skipping test execution for '$(TargetPath)' because it does not contain the '$(TargetFramework)' target." Condition="'$(_SkipTests)' == 'true'" />
+  </Target>
+
+  <Target Name="ResolveExposedExperimentalFeatures" BeforeTargets="CoreCompile">
+    <!-- Note: What this does is look for $(ProjectReferenceName).BuildFlags.txt
+        files for all the dependencies of the project being compiled. If
+        ExposeExperimentalFeatures=true is found in those files we set compiler
+        constants for each project where experimental features were exposed.
+        Example:
+        OPENTELEMETRY_EXPORTER_INMEMORY_EXPERIMENTAL_FEATURES_EXPOSED;OPENTELEMETRY_EXPERIMENTAL_FEATURES_EXPOSED;OPENTELEMETRY_API_EXPERIMENTAL_FEATURES_EXPOSED;OPENTELEMETRY_API_PROVIDERBUILDEREXTENSIONS_EXPERIMENTAL_FEATURES_EXPOSED
+        -->
+    <ItemGroup>
+      <DependenciesWithExposedExperimentalFeatures
+        Include="@(_ResolvedProjectReferencePaths->'%(Filename)')"
+        Condition="$([System.IO.File]::Exists('%(RootDir)%(Directory)%(Filename).BuildFlags.txt')) AND $([System.IO.File]::ReadAllText('%(RootDir)%(Directory)%(Filename).BuildFlags.txt').Contains('ExposeExperimentalFeatures=true'))" />
+      <CompilerConstantsForDependenciesWithExposedExperimentalFeatures Include="@(DependenciesWithExposedExperimentalFeatures->'$([System.String]::Copy('%(DependenciesWithExposedExperimentalFeatures.Identity)').ToUpper().Replace('.', '_'))_EXPERIMENTAL_FEATURES_EXPOSED')" />
+    </ItemGroup>
+
+    <PropertyGroup Condition="'@(CompilerConstantsForDependenciesWithExposedExperimentalFeatures)' != ''">
+      <DefineConstants>$(DefineConstants);@(CompilerConstantsForDependenciesWithExposedExperimentalFeatures)</DefineConstants>
+    </PropertyGroup>
+  </Target>
+</Project>

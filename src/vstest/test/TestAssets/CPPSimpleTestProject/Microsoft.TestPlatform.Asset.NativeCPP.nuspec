@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.TestPlatform.TestAsset.NativeCPP</id>
+    <version>2.0.0</version>
+    <title>Microsoft.TestPlatform.TestAsset.NativeCPP</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE_MIT.txt</license>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>MSDia typelib for reading debug symbols from managed code.</description>
+    <copyright>Copyright © Microsoft Corporation</copyright>
+    <contentFiles>
+      <!-- Include Assets as Content -->
+      <files include="**/*.*" buildAction="None" copyToOutput="true" flatten="false" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="package\licenses\LICENSE_MIT.txt" target="" />
+    <file src="CPPSimpleProj\Release\Microsoft.TestPlatform.TestAsset.NativeCPP.dll" target="contentFiles\any\any\" />
+    <file src="CPPSimpleProj\x64\Release\Microsoft.TestPlatform.TestAsset.NativeCPP.dll" target="contentFiles\any\any\x64" />
+    <file src="ConsoleNativeApp\Release\Microsoft.TestPlatform.TestAsset.ConsoleNativeApp.exe" target="contentFiles\any\any\" />
+    <file src="ConsoleNativeApp\x64\Release\Microsoft.TestPlatform.TestAsset.ConsoleNativeApp.exe" target="contentFiles\any\any\x64" />
+  </files>
+</package>

@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../TrxResource.resx" build-num="247625400">
+    <header>
+      <count-group name="BlackBox wordcount">
+        <count count-type="x-wordCount">134</count>
+        <count count-type="x-adjWordCount">113.9</count>
+        <count count-type="x-curAdjWordCount">113.9</count>
+        <count count-type="x-repeatAdjWordCount">0</count>
+        <count count-type="x-termWordCount">0</count>
+      </count-group>
+      <count-group name="BlackBox wordcount analysis">
+        <count count-type="x-match102%">0</count>
+        <count count-type="x-match101%">0</count>
+        <count count-type="x-match100%">0</count>
+        <count count-type="x-match99-90%">0</count>
+        <count count-type="x-match89-75%">0</count>
+        <count count-type="x-mt">134</count>
+        <count count-type="repetition">0</count>
+      </count-group>
+    </header>
+    <body>
+      <trans-unit id="TestOutcomeAborted">
+        <source>Aborted</source>
+        <target state="translated">Anulado</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Abgebrochen</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeCompleted">
+        <source>Completed</source>
+        <target state="translated">Concluído</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Abgeschlossen</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeDisconnected">
+        <source>Disconnected</source>
+        <target state="translated">Desconectado</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Verbindung getrennt</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeError">
+        <source>Error</source>
+        <target state="translated">Erro</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Fehler</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeFailed">
+        <source>Failed</source>
+        <target state="translated">Com falha</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Fehler</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeInconclusive">
+        <source>Inconclusive</source>
+        <target state="translated">Inconclusivo</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Nicht eindeutig</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeInProgress">
+        <source>In Progress</source>
+        <target state="translated">Em andamento</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">In Bearbeitung</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotExecuted">
+        <source>Not Executed</source>
+        <target state="translated">Não executado</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Nicht ausgeführt</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeNotRunnable">
+        <source>Not Runnable</source>
+        <target state="translated">Não executável</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Nicht ausführbar</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePassed">
+        <source>Passed</source>
+        <target state="translated">Aprovado</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Übergeben</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePassedButRunAborted">
+        <source>Passed (run aborted)</source>
+        <target state="translated">Aprovado (execução anulada)</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Erfolgreich (Testlauf abgebrochen)</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomePending">
+        <source>Pending</source>
+        <target state="translated">Pendente</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Ausstehend</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeTimeout">
+        <source>Timeout</source>
+        <target state="translated">Tempo limite</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Zeitlimit</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TestOutcomeWarning">
+        <source>Warning</source>
+        <target state="translated">Aviso</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Warnung</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="Common_CannotBeLessThanZero">
+        <source>The parameter cannot be less than 0.</source>
+        <target state="translated">O parâmetro não pode ser menor que 0.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Der Parameter darf nicht kleiner als 0 sein.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="7" adjWordcount="5.95" curWordcount="5.95"</note>
+      </trans-unit>
+      <trans-unit id="Common_CannotBeNullOrEmpty">
+        <source>The parameter cannot be null or empty.</source>
+        <target state="translated">O parâmetro não pode ser nulo ou estar vazio.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Der Parameter darf nicht null oder leer sein.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="7" adjWordcount="5.95" curWordcount="5.95"</note>
+      </trans-unit>
+      <trans-unit id="Common_CannotGetNextIterationName">
+        <source>Cannot get free name for {0}(1),(2),... in directory {1}. Please clean up this directory.</source>
+        <target state="translated">Não é possível obter o nome livre para {0}(1),(2),... no diretório {1}. Limpe esse diretório.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Freien Name für {0}(1),(2),... in Verzeichnis ' {1} ' kann nicht abgerufen werden. Bereinigen Sie dieses Verzeichnis.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="15" adjWordcount="12.75" curWordcount="12.75"</note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunConfigInRun">
+        <source>Test Settings are not specified.</source>
+        <target state="translated">As Configurações de Teste não estão especificadas.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Einstellungen sind nicht angegeben.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="5" adjWordcount="4.25" curWordcount="4.25"</note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunDeploymentRootInRunConfig">
+        <source>The active Test Settings do not define the Run Deployment Directory.</source>
+        <target state="translated">As Configurações de Teste ativas não definem o Diretório de Implantação de Execução.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Aktive Testkonfigurationen definieren Bereitstellungsverzeichnis auszuführen.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="11" adjWordcount="9.35" curWordcount="9.35"</note>
+      </trans-unit>
+      <trans-unit id="Common_MissingRunInResult">
+        <source>The result is not associated with a test run. Use a result that was obtained from an in-progress or completed test run.</source>
+        <target state="translated">O resultado não está associado a uma execução de teste. Use um resultado obtido de uma execução de teste em andamento ou concluída.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Das Ergebnis ist ein Testlauf nicht zugeordnet. Verwenden Sie ein Ergebnis aus einem laufenden oder abgeschlossenen Testlaufs.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="22" adjWordcount="18.7" curWordcount="18.7"</note>
+      </trans-unit>
+      <trans-unit id="Common_NothingLeftAfterReplaciingBadCharsInName">
+        <source>The specified file/directory name '{0}' is not valid.</source>
+        <target state="translated">O nome do arquivo/diretório '{0}' especificado não é válido.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Der angegebene Datei-/Verzeichnisname '{0}' ist ungültig.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="8" adjWordcount="6.8" curWordcount="6.8"</note>
+      </trans-unit>
+      <trans-unit id="Common_TestRunName">
+        <source>{0}@{1} {2}</source>
+        <target state="translated">{0}@{1} {2}</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">{0}@{1} {2}</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="2" adjWordcount="1.7" curWordcount="1.7"</note>
+      </trans-unit>
+      <trans-unit id="FailureToAttach">
+        <source>Failed to attach files from: {0}
+Error Details: {1}:{2}</source>
+        <target state="translated">Falha ao anexar arquivos de: {0}
+Detalhes do erro: {1}:{2}</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Fehler beim Anfügen von Dateien: {0}
+Fehlerdetails: {1}: {2}</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="9" adjWordcount="7.65" curWordcount="7.65"</note>
+      </trans-unit>
+      <trans-unit id="MessageForSkippedTests">
+        <source>Test '{0}' was skipped in the test run.</source>
+        <target state="translated">O teste '{0}' foi ignorado na execução de teste.</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Test "{0}" wurde im Testlauf übersprungen.</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="8" adjWordcount="6.8" curWordcount="6.8"</note>
+      </trans-unit>
+      <trans-unit id="TrxLoggerResultsFile">
+        <source>Results File: {0}</source>
+        <target state="translated">Arquivo de resultados: {0}</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Datei: {0}</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="TS_AllResults">
+        <source>All Loaded Results</source>
+        <target state="translated">Todos os resultados carregados</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Alle geladenen Ergebnisse</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="TS_UncategorizedResults">
+        <source>Results Not in a List</source>
+        <target state="translated">Resultados que não estão em uma lista</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Ergebnisse nicht in einer Liste</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="5" adjWordcount="4.25" curWordcount="4.25"</note>
+      </trans-unit>
+      <trans-unit id="Common_DeploymentItem">
+        <source>deployment item '{0}'</source>
+        <target state="translated">item de implantação '{0}'</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Bereitstellungselement "{0}"</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="3" adjWordcount="2.55" curWordcount="2.55"</note>
+      </trans-unit>
+      <trans-unit id="Common_DeploymentItemWithOutputDirectory">
+        <source>deployment item '{0}' (output directory '{1}')</source>
+        <target state="translated">item de implantação '{0}' (diretório de saída '{1}')</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">Bereitstellungselement "{0}' (Ausgabeverzeichnis '{1}')</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="6" adjWordcount="5.1" curWordcount="5.1"</note>
+      </trans-unit>
+      <trans-unit id="Common_NullInMessages">
+        <source>(null)</source>
+        <target state="translated">(nulo)</target>
+        <note />
+        <alt-trans match-quality="100%" tool="BlackBox/MSR MT">
+          <target state-qualifier="mt-suggestion">(null)</target>
+        </alt-trans>
+        <note from="bb-metadata">fuzzyMatch="15" wordcount="1" adjWordcount="0.85" curWordcount="0.85"</note>
+      </trans-unit>
+      <trans-unit id="TrxLoggerResultsFileOverwriteWarning">
+        <source>WARNING: Overwriting results file: {0}</source>
+        <target state="translated">AVISO: sobrescrevendo o arquivo de resultados: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrefixAndNameProvidedError">
+        <source>The parameters LogFileName and LogFilePrefix cannot be used together. </source>
+        <target state="translated">Os parâmetros LogFileName e LogFilePrefix não podem ser usados juntos. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Common_CannotGetNextTimestampFileName">
+        <source>Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</source>
+        <target state="translated">Não é possível localizar um nome de arquivo disponível para {0} usando o formato de carimbo de data/hora '{2}' em {1}.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

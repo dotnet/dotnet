@@ -1,0 +1,47 @@
+/* BEGIN EXTERNAL SOURCE */
+.foo { color: red;
+/* END EXTERNAL SOURCE */
+/* BEGIN EXTERNAL SOURCE */
+  background-color: blue; }
+/* END EXTERNAL SOURCE */
+
+/* Unclosed comment */
+/* Comment1 */ /* Comment2
+/* END EXTERNAL SOURCE */
+
+/* Unclosed string */
+.foo { color: "red\
+/* END EXTERNAL SOURCE */
+.foo { color: "red /* END EXTERNAL SOURCE */
+
+/* Nested blocks */
+@media screen {
+  @media print {
+    .foo { color: red;
+/* END EXTERNAL SOURCE */
+    .bar { color: blue; }
+
+@ /* END EXTERNAL SOURCE */
+@charset /* END EXTERNAL SOURCE */
+@charset " /* END EXTERNAL SOURCE */
+@charset "foo /* END EXTERNAL SOURCE */
+@charset "foo" /* END EXTERNAL SOURCE */
+@charset "foo"; /* END EXTERNAL SOURCE */
+@keyframes foo {/* END EXTERNAL SOURCE */
+@font-face { /* END EXTERNAL SOURCE */
+@import /* END EXTERNAL SOURCE */
+@import url( /* END EXTERNAL SOURCE */
+@import url('foo.jpg /* END EXTERNAL SOURCE */
+@import url('foo.jpg' /* END EXTERNAL SOURCE */
+@import url('foo.jpg') /* END EXTERNAL SOURCE */
+@import url('foo.jpg'); /* END EXTERNAL SOURCE */
+
+.foo /* END EXTERNAL SOURCE */
+.foo { /* END EXTERNAL SOURCE */
+.foo { color /* END EXTERNAL SOURCE */
+.foo { color: /* END EXTERNAL SOURCE */
+.foo { color: red /* END EXTERNAL SOURCE */
+.foo { color: red; /* END EXTERNAL SOURCE */
+.foo { color: red; } /* END EXTERNAL SOURCE */
+
+/* END EXTERNAL SOURCE */

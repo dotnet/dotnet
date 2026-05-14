@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- xUnit3 requires test projects to be executable -->
+    <OutputType>Exe</OutputType>
+    <TargetFramework Condition=" '$(TestTargetFramework)' == '' ">$(FSharpNetCoreProductTargetFramework)</TargetFramework>
+    <TargetFramework Condition=" '$(TestTargetFramework)' != '' ">$(TestTargetFramework)</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <FSharpCoreImplicitPackageVersion>$(FSharpCoreShippedPackageVersionValue)</FSharpCoreImplicitPackageVersion>
+    <DefineConstants>NO_GENERATIVE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ComboProvider.Tests.fs" />
+
+    <PackageReference Include="ComboProvider" Version="1.0.0" />
+  </ItemGroup>
+
+  <Target Name="RemovePackagesFromCache" BeforeTargets="Restore">
+      <ItemGroup>
+          <FoldersToDelete Include="$(NuGetPackageRoot)comboprovider" />
+      </ItemGroup>
+      <RemoveDir Directories="@(FoldersToDelete)" />
+  </Target>
+
+</Project>

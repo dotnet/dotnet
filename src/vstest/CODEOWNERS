@@ -1,0 +1,14 @@
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners
+
+PublicAPI.Shipped.txt @nohwnd @MarcoRossignoli
+PublicAPI.Unshipped.txt @nohwnd @MarcoRossignoli
+
+# Adding/removing telemetry or doing any kind of changes to the telemetry data constants is
+# something that should be treated with care and we should be transparent about it. It also
+# requires making sure all telemetry collection systems in place will continue to function well.
+TelemetryDataConstants.cs @cvpoienaru @nohwnd
+
+# Changes here might break our contracts with other adapters, and possibly
+# Visual Studio.
+/src/Microsoft.TestPlatform.AdapterUtilities/ @nohwnd @Evangelink
+/test/Microsoft.TestPlatform.AdapterUtilities.UnitTests/ @nohwnd @Evangelink

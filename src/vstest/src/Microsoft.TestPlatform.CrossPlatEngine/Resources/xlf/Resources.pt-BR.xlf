@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="pt-BR">
+    <body>
+      <trans-unit id="DiscovererInstantiationException">
+        <source>Exception occurred while instantiating discoverer : {0}</source>
+        <target state="translated">Ocorreu uma exceção ao criar uma instância do discoverer: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateAdaptersFound">
+        <source>Multiple test adapters with the same uri '{0}' were found. Ignoring adapter '{1}'. Please uninstall the conflicting adapter(s) to avoid this warning.</source>
+        <target state="translated">Foram encontrados vários adaptadores de teste com o mesmo URI '{0}'. Ignorando o adaptador '{1}'. Desinstale os adaptadores conflitantes para evitar este aviso.</target>
+        <note>{0} is the unique identifier of test adapter. {1} is the name of the test adapter that shares a unique identifier with a previously loaded adapter.</note>
+      </trans-unit>
+      <trans-unit id="DuplicateSource">
+        <source>Ignoring the specified duplicate source '{0}'.</source>
+        <target state="translated">Ignorando a fonte duplicada especificada '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromLoadTests">
+        <source>An exception occurred while test discoverer '{0}' was loading tests. Exception: {1}</source>
+        <target state="translated">Ocorreu uma exceção enquanto o discoverer de testes '{0}' estava carregando testes. Exceção: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionFromRunTests">
+        <source>An exception occurred while invoking executor '{0}': {1}</source>
+        <target state="translated">Ocorreu uma exceção ao chamar o executor '{0}': {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotFound">
+        <source>Could not find file {0}.</source>
+        <target state="translated">Não foi possível localizar o arquivo {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HostDebuggerWarning">
+        <source>Host debugging is enabled. Please attach debugger to testhost process to continue.</source>
+        <target state="translated">O host de depuração está habilitado. Anexe o depurador ao processo de testhost para continuar.</target>
+        <note>Host, testhost are key words, it should not be localized</note>
+      </trans-unit>
+      <trans-unit id="IgnoringExecutorAsNoDefaultExecutorUriAttribute">
+        <source>Ignoring the test executor corresponding to test discoverer {0} because the discoverer does not have the DefaultExecutorUri attribute . You might need to re-install the test adapter add-in.</source>
+        <target state="translated">Ignorando o executor de teste correspondente ao discoverer de teste {0} porque o discoverer não tem o atributo DefaultExecutorUri. Talvez seja necessário instalar novamente o suplemento do adaptador de teste.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitializationFailed">
+        <source>Failed to initialize client proxy: could not connect to test process.</source>
+        <target state="translated">Falha ao inicializar o proxy do cliente: não foi possível se conectar ao processo de teste.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LaunchDebugProcessNotAllowedForANonDebugRun">
+        <source>This operation is not allowed in the context of a non-debug run.</source>
+        <target state="translated">Esta operação não é permitida no contexto de uma execução sem depuração.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoMatchingExecutor">
+        <source>Could not find test executor with URI '{0}'.  Make sure that the test executor is installed and supports .net runtime version {1}.</source>
+        <target state="translated">Não foi possível localizar o executor de teste com o URI '{0}'. Verifique se o executor de teste está instalado e oferece suporte à versão de runtime do .net {1}.</target>
+        <note>{0} - Executor uri String {1}-  Version - .net Version Eg:-2.0.50727.00</note>
+      </trans-unit>
+      <trans-unit id="NoValidSourceFoundForDiscovery">
+        <source>None of the specified source(s) '{0}' is valid. Fix the above errors/warnings and then try again. </source>
+        <target state="translated">Nenhuma das fontes especificadas '{0}' é válida. Corrija os erros/avisos acima e tente novamente. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringSeperator">
+        <source>, </source>
+        <target state="translated">, </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPropertiesInTestCaseFilter">
+        <source>No tests matched the filter because it contains one or more properties that are not valid ({0}). Specify filter expression containing valid properties ({1}).</source>
+        <target state="translated">Nenhum teste correspondeu ao filtro porque ele contém uma ou mais propriedades que não são válidas ({0}). Especifique a expressão de filtro contendo as propriedades válidas ({1}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoDotnetExeFound">
+        <source>Could not find {0}. Make sure that the dotnet is installed on the machine.</source>
+        <target state="translated">Não foi possível localizar {0}. Certifique-se de que o dotnet esteja instalado no computador.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestHostExitedWithError">
+        <source>Testhost process for source(s) '{0}' exited with error: {1}. Please check the diagnostic logs for more information.</source>
+        <target state="translated">Processo testhost para fonte(s) '{0}' encerrado com erro: {1}. Verifique os logs de diagnóstico para mais informações.</target>
+        <note>{0} a source, or very rarely list of sources, {1} the output error.</note>
+      </trans-unit>
+      <trans-unit id="DataCollectorDebuggerWarning">
+        <source>DataCollector debugging is enabled. Please attach debugger to datacollector process to continue.</source>
+        <target state="translated">A depuração do DataCollector está habilitada. Anexe o depurador ao processo datacollector para continuar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestRunFailed_NoDiscovererFound_NoTestsAreAvailableInTheSources">
+        <source>No test is available in {0}. Make sure that test discoverer &amp; executors are registered and platform &amp; framework version settings are appropriate and try again.</source>
+        <target state="translated">Não há nenhum teste disponível em {0}. Verifique se o detector e os executores de teste estão registrados e se as configurações de versão da estrutura da plataforma &amp; são apropriadas e tente novamente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TesthostDiagLogOutputFile">
+        <source>Logging TestHost Diagnostics in file: {0}</source>
+        <target state="translated">Registro em log do diagnóstico TestHost no arquivo: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToLaunchTestHost">
+        <source>Failed to launch testhost with error: {0}</source>
+        <target state="translated">Falha ao iniciar o host de teste com o erro: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutionThreadApartmentStateNotSupportedForFramework">
+        <source>ExecutionThreadApartmentState option not supported for framework: {0}.</source>
+        <target state="translated">A opção ExecutionThreadApartmentState não tem suporte para a estrutura: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OldTestHostIsGettingUsed">
+        <source>You are using an older version of Microsoft.NET.Test.Sdk. Kindly move to a version equal or greater than 15.3.0.</source>
+        <target state="translated">Você está usando uma versão mais antiga do Microsoft.NET.Test.Sdk. Mude para uma versão igual ou maior que 15.3.0.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NonExistingExtensions">
+        <source>Could not find extensions: {0}</source>
+        <target state="translated">Não foi possível encontrar as extensões: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedAdapterPath">
+        <source>Adapter lookup is being changed, please follow https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap for more details.</source>
+        <target state="translated">A pesquisa do adaptador está sendo alterada, acesse https://github.com/Microsoft/vstest/blob/main/RFCs/0022-User-Specified-TestAdapter-Lookup.md#roadmap para obter mais detalhes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestsAvailableForGivenTestCaseFilter">
+        <source>No test matches the given testcase filter `{0}` in {1}</source>
+        <target state="translated">Nenhum teste corresponde ao filtro de testcase `{0}` determinado no {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestDiscoveryCancelled">
+        <source>Discovery of tests cancelled.</source>
+        <target state="translated">Descoberta de testes cancelada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachDebuggerToDefaultTestHostFailure">
+        <source>Cannot attach the debugger to the default test host with process ID: {0}.</source>
+        <target state="translated">Não é possível anexar o depurador ao host de teste padrão com a ID de processo: {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AccessDenied">
+        <source>{0} Access denied while trying to create "TestResults" folder in mentioned location. You are getting this exception because you are running vstest.console.exe from a folder which requires having write access. To solve the issue: please  run vstest.console.exe from a folder where you have write privileges.</source>
+        <target state="translated">{0} Acesso negado ao tentar criar a pasta "TestResults" no local mencionado. Você está recebendo esta exceção porque está executando o vstest.console.exe em uma pasta que requer acesso para gravação. Para resolver o problema: execute vstest.console.exe em uma pasta na qual você tenha privilégios de gravação.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoAvailableProxyForDeque">
+        <source>Could not find an available proxy to deque.</source>
+        <target state="translated">Não foi possível encontrar um proxy disponível para deque.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuchProxyId">
+        <source>Proxy with id {0} is not managed by the current session manager.</source>
+        <target state="translated">O proxy com a ID {0} não é gerenciado pelo gerenciador de sessão atual.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProxyIsAlreadyAvailable">
+        <source>Proxy with id {0} is already available and cannot be re-enqueued.</source>
+        <target state="translated">O proxy com a ID {0} já está disponível e não pode ser enfileirado novamente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider was found for any source in this run.</source>
+        <target state="translated">Nenhum provedor de runtime de teste encontrado para esta execução.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProxyMatchesDescription">
+        <source>The runsettings changed between the time when the test session was established and the time of the current run/discovery request.</source>
+        <target state="translated">As runsettings foram alteradas entre a hora em que a sessão de teste foi estabelecida e a hora da solicitação de execução/descoberta atual.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentOutputFormat">
+        <source>  {0}</source>
+        <target state="translated">  {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttachmentsBanner">
+        <source>Attachments:</source>
+        <target state="translated">Anexos:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSuitableRuntimeProviderFound">
+        <source>No suitable test runtime provider was found:</source>
+        <target state="translated">Nenhum provedor de runtime de teste encontrado:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SkippingSource">
+        <source>Skipping source:</source>
+        <target state="translated">Ignorando origem:</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

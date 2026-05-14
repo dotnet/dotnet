@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}</source>
+        <target state="translated">값은 {0}보다 크거나 같아야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredEnvVar">
+        <source>Required environment variable '{0}' is not set. Try setting '{0}' and running the operation again.</source>
+        <target state="translated">필수 환경 변수 '{0}'이(가) 설정되지 않았습니다. '{0}'을(를) 설정하고 작업을 다시 실행해 보세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredEnvVarsDotnet">
+        <source>Required environment variable '{0}' is not set. Try setting '{1}' or '{0}' and running the operation</source>
+        <target state="translated">필요한 환경 변수 '{0}'가 설정되지 않았습니다. '{1}' 또는 '{0}'을(를) 설정하고 작업을 실행해 보세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimeUnits_Hour">
+        <source>{0:0.##} hr</source>
+        <target state="translated">{0:0.##}시간</target>
+        <note>{0:0.##} is number of hours, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Millisecond">
+        <source>{0:0.##} ms</source>
+        <target state="translated">{0:0.##}밀리초</target>
+        <note>{0:0.##} is number of milliseconds, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Minute">
+        <source>{0:0.##} min</source>
+        <target state="translated">{0:0.##}분</target>
+        <note>{0:0.##} is number of minutes, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="TimeUnits_Second">
+        <source>{0:0.##} sec</source>
+        <target state="translated">{0:0.##}초</target>
+        <note>{0:0.##} is number of seconds, abbreviated, with two decimal digits</note>
+      </trans-unit>
+      <trans-unit id="UnableToDetemineClientVersion">
+        <source>Unable to determine the current NuGet client version.</source>
+        <target state="translated">현재 NuGet 클라이언트 버전을 확인할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToSetNuGetTempFolderPermission">
+        <source>User is unable to set permission to 700 while creating {0}, errno={1}.</source>
+        <target state="translated">{0}, errno={1}을(를) 만드는 동안 사용자가 권한을 700으로 설정할 수 없습니다.</target>
+        <note>{0} is a file path; {1} is an error code.</note>
+      </trans-unit>
+      <trans-unit id="UnauthorizedLockFail">
+        <source>Unable to obtain lock file access on '{0}' for operations on '{1}'. This may mean that a different user or administrator is holding this lock and that this process does not have permission to access it. If no other process is currently performing an operation on this file it may mean that an earlier NuGet process crashed and left an inaccessible lock file, in this case removing the file '{0}' will allow NuGet to continue.</source>
+        <target state="translated">'{1}'의 작업에 있어서는 '{0}'에 대한 잠금 파일 액세스 권한을 가져올 수 없습니다. 즉, 다른 사용자 또는 관리자가 이 잠금 파일을 가지고 있을 수 있으며 이 프로세스에는 잠금 파일에 대한 액세스 권한이 없습니다. 현재 다른 프로세스에서 이 파일에 대한 작업을 수행하고 있지 않은 경우 이전 NuGet 프로세스가 크래시되어 잠금 파일이 액세스할 수 없게 되었을 수 있습니다. 이 경우 '{0}' 파일을 제거하면 NuGet에서 계속할 수 있습니다.</target>
+        <note>{0} and {1} are both file paths.</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.</source>
+        <target state="translated">'{0}' 해시 알고리즘은 지원되지 않습니다. 지원되는 알고리즘에는 SHA512 및 SHA256이 포함됩니다.</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithmName">
+        <source>Hash algorithm '{0}' is unsupported.</source>
+        <target state="translated">해시 알고리즘 '{0}'이(가) 지원되지 않습니다.</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedSignatureAlgorithmName">
+        <source>Signature algorithm '{0}' is unsupported.</source>
+        <target state="translated">시그니처 알고리즘 '{0}'이(가) 지원되지 않습니다.</target>
+        <note>{0} is an algorithm identifier</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

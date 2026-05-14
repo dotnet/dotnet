@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(CurrentTargetFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <!-- properties placeholder -->
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- items placeholder -->
+  </ItemGroup>
+</Project>

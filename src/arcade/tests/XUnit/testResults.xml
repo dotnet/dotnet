@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assemblies timestamp="05/24/2021 16:33:36">
+  <assembly name="SomeXUnitTests.DLL" total="1" passed="0" failed="1" skipped="0" time="0.435" errors="0">
+    <errors />
+    <collection total="1" passed="0" failed="1" skipped="0" name="Test collection for XunitReportingTests" time="0.056">
+      <test name="XunitReportingTests.ExerciseXunitCharacterFilteringFailurePath" type="XunitReportingTests" method="ExerciseXunitCharacterFilteringFailurePath" time="0.0564499" result="Fail">
+        <failure exception-type="Xunit.Sdk.TrueException">
+          <message><![CDATA[Intentional Failure 🍕 \r \n \t \a \b \v \f \0\r\nExpected: True\r\nActual:   False]]></message>
+          <stack-trace><![CDATA[   at XunitReportingTests.ExerciseXunitCharacterFilteringFailurePath() in Class1.cs:line 1]]></stack-trace>
+        </failure>
+      </test>
+    </collection>
+  </assembly>
+</assemblies>

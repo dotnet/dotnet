@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">Argument nemůže být null ani prázdný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkDoesNotSupportProfiles">
+        <source>.NET 5.0 and above does not support profiles.</source>
+        <target state="translated">Architektury .NET 5.0 a novější nepodporují profily.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkMismatch">
+        <source>Frameworks must have the same identifier, profile, and platform.</source>
+        <target state="translated">Rozhraní musí mít stejný identifikátor, profil a platformu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkIdentifier">
+        <source>Invalid framework identifier '{0}'.</source>
+        <target state="translated">Neplatný identifikátor rozhraní {0}</target>
+        <note>{0} is the invalid framework identifier.</note>
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkVersion">
+        <source>Invalid framework version '{0}'.</source>
+        <target state="translated">Neplatná verze rozhraní {0}.</target>
+        <note>{0} is the invalid framework version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPlatformVersion">
+        <source>Invalid platform version '{0}'.</source>
+        <target state="translated">Neplatná verze platformy {0}</target>
+        <note>{0} is the invalid platform version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPortableFrameworksDueToHyphen">
+        <source>Invalid portable frameworks '{0}'. A hyphen may not be in any of the portable framework names.</source>
+        <target state="translated">Neplatná přenosná rozhraní {0}. V žádném z názvů přenosného rozhraní nemůže být spojovník.</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+      <trans-unit id="MissingPortableFrameworks">
+        <source>Invalid portable frameworks for '{0}'. A portable framework must have at least one framework in the profile.</source>
+        <target state="translated">Neplatná přenosná rozhraní pro {0}. Přenosné rozhraní musí mít v profilu aspoň jedno rozhraní.</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,12 @@
+html/*1234*/:/*1234*/lang(/*1234*/fr-ca/*1234*/)/*1234*/ { /*1234*/quotes/*1234*/:/*1234*/ /*1234*/'� '/*1234*/ ' �'/*1234*/ }
+html:/*1234*/lang(/*1234*/de/*1234*/) { quotes: /*1234*/'\2039'/*1234*/'\203A' }
+:/*1234*/lang(fr/*1234*/) /*1234*//*1234*/> Q/*1234*/ /*1234*/{ quotes:/*1234*/ '� ' ' �' }
+:lang(/*1234*/de/*1234*//*1234*/) >/*1234*/ Q { quotes:/*1234*//*1234*//*1234*/ '�' '�' '\2039' /*1234*//*1234*/ }
+
+li { list-style: url(http://www.example.com/redball.png) disc }
+li { list-style: url(http://www.example.com/redball.png/*123*/) disc }
+li { list-style: url(http://www.example.com/redball.png /*123*/) disc }
+
+li { list-style: url("http://www.example.com/redball.png") /* "string in comments" */ }
+li { list-style: "/* comments in a string */" }
+li { list-style: /* /* nested comment */ */ }

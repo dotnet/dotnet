@@ -1,0 +1,14 @@
+a#b
+{
+    a: "this is a 'string'";
+    b: "this is a \"string\"";
+    c: 'this is a "string"';
+    d: 'this is a \'string\'';
+}
+
+li { list-style: url("http://www.example.com/redball.png) disc }
+li { list-style: url('http://www.example.com/redball.png) disc }
+li { list-style: url("http://www.example.com/redball.png') disc }
+li { list-style: url('http://www.example.com/redball.png") disc }
+li { }
+

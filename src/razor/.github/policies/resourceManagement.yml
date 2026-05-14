@@ -1,0 +1,295 @@
+id: 
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+    - description: '[Idle Issue Management] Add no recent activity label to issues'
+      frequencies:
+      - weekday:
+          day: Monday
+          time: 0:0
+      - weekday:
+          day: Tuesday
+          time: 0:0
+      - weekday:
+          day: Wednesday
+          time: 0:0
+      - weekday:
+          day: Thursday
+          time: 0:0
+      - weekday:
+          day: Friday
+          time: 0:0
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: needs more info
+      - noActivitySince:
+          days: 7
+      - isNotLabeledWith:
+          label: no recent activity
+      actions:
+      - addLabel:
+          label: no recent activity
+      - addReply:
+          reply: >-
+            This issue has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **7 days**. It will be closed if no further activity occurs **within 7 days of this comment**. If it *is* closed, feel free to comment when you are able to provide the additional information and we will re-investigate.
+
+
+            Please see our [Issue Management Policies](https://github.com/dotnet/razor-tooling/blob/main/docs/IssueManagementPolicies.md) for more information.
+    - description: '[Idle Issue Management] Close stale issues'
+      frequencies:
+      - weekday:
+          day: Monday
+          time: 0:0
+      - weekday:
+          day: Tuesday
+          time: 0:0
+      - weekday:
+          day: Wednesday
+          time: 0:0
+      - weekday:
+          day: Thursday
+          time: 0:0
+      - weekday:
+          day: Friday
+          time: 0:0
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: needs more info
+      - hasLabel:
+          label: no recent activity
+      - noActivitySince:
+          days: 7
+      actions:
+      - closeIssue
+    - description: '[Resolved Issue Management] Close answered issues after 1 day of inactivity'
+      frequencies:
+      - hourly:
+          hour: 1
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: ':heavy_check_mark: resolution: answered'
+      - noActivitySince:
+          days: 1
+      actions:
+      - closeIssue
+      - addReply:
+          reply: >-
+            This issue has been resolved and has not had any activity for **1 day**. It will be closed for housekeeping purposes.
+
+
+            Please see our [Issue Management Policies](https://github.com/dotnet/razor-tooling/blob/main/docs/IssueManagementPolicies.md) for more information.
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - hasLabel:
+          label: auto-merge
+      then:
+      - enableAutoMerge:
+          mergeMethod: Squash
+      description: "[PR Automerge] Automatically merge Pull Requests with the 'auto-merge' label"
+    - if:
+      - payloadType: Pull_Request
+      - labelRemoved:
+          label: auto-merge
+      then:
+      - disableAutoMerge
+      description: "[PR Automerge] Automatically merge Pull Requests with the 'auto-merge' label"
+    - if:
+      - payloadType: Pull_Request
+      - isAction:
+          action: Opened
+      - isActivitySender:
+          user: dotnet-maestro[bot]
+          issueAuthor: False
+      - titleContains:
+          pattern: Update dependencies
+          isRegex: False
+      then:
+      - addLabel:
+          label: area-infrastructure
+      - addLabel:
+          label: 'type-dependency update :arrow_up_small:'
+      - approvePullRequest:
+          comment: Auto-approving dependency update.
+      description: '[Infrastructure PRs] Add area-infrastructure label to dependency update Pull Requests'
+    - if:
+      - payloadType: Pull_Request
+      - isAction:
+          action: Opened
+      - isActivitySender:
+          user: dotnet-maestro-bot
+          issueAuthor: False
+      - titleContains:
+          pattern: Merge branch
+          isRegex: False
+      then:
+      - addLabel:
+          label: area-infrastructure
+      - addLabel:
+          label: 'type-merge forward :fast_forward:'
+      - addLabel:
+          label: auto-merge
+      - approvePullRequest:
+          comment: Auto-approving branch merge.
+      description: '[Infrastructure PRs] Add area-infrastructure label to auto-merge Pull Requests'
+    - if:
+      - payloadType: Issues
+      - or:
+        - and:
+          - isOpen
+          - not: isPartOfAnyMilestone
+          - not:
+              hasLabel:
+                label: needs more info
+        - and:
+          - isAction:
+              action: Opened
+          - not: isPartOfAnyMilestone
+          - not:
+              hasLabel:
+                label: needs more info
+      then:
+      - addLabel:
+          label: untriaged
+      description: '[Issues] Tag all non-milestone issues as "untriaged"'
+    - if:
+      - payloadType: Issues
+      - or:
+        - isAction:
+            action: Closed
+        - isPartOfAnyMilestone
+      - hasLabel:
+          label: untriaged
+      then:
+      - removeLabel:
+          label: untriaged
+      description: '[Issues] Issues with milestone should be removed from "untriaged" tag'
+    - if:
+      - payloadType: Issues
+      - isAction:
+          action: Opened
+      - or:
+        - isActivitySender:
+            user: vsfeedback
+            issueAuthor: False
+        - bodyContains:
+            pattern: Copied from original issue
+            isRegex: False
+      then:
+      - addLabel:
+          label: 'author: migration bot :robot:'
+      description: '[Issues] Tag vsfeedback issues with bot label'
+    - if:
+      - payloadType: Issue_Comment
+      - isAction:
+          action: Created
+      - hasLabel:
+          label: needs more info
+      - isOpen
+      - or:
+        - isActivitySender:
+            issueAuthor: True
+        - and:
+          - hasLabel:
+              label: 'author: migration bot :robot:'
+          - not:
+              activitySenderHasPermission:
+                permission: Write
+      then:
+      - removeLabel:
+          label: no recent activity
+      - removeLabel:
+          label: needs more info
+      - addLabel:
+          label: untriaged
+      description: "[Idle Issue Management] Remove 'needs more info' and 'no recent activity' label when the author comments on an issue"
+    - if:
+      - payloadType: Pull_Request
+      - isAction:
+          action: Opened
+      - isActivitySender:
+          user: dotnet-maestro-bot
+          issueAuthor: False
+      - titleContains:
+          pattern: Merge branch
+          isRegex: False
+      - targetsBranch:
+          branch: main
+      then:
+      - addLabel:
+          label: auto-merge
+      description: '[Infrastructure PRs] Add auto-merge label to branch merge Pull Requests in main'
+    - if:
+      - payloadType: Issues
+      - hasLabel:
+          label: needs more info
+      then:
+      - removeLabel:
+          label: untriaged
+      description: "[Issues] 'needs more info' tag removes 'untriaged' tag"
+    - if:
+      - payloadType: Issues
+      - hasLabel:
+          label: vs-insertion
+      - titleContains:
+          pattern: '[Automated] PRs inserted in VS build'
+          isRegex: False
+      then:
+      - closeIssue
+      description: Close automatically generated PR tagger issues
+    - if:
+      - payloadType: Pull_Request
+      - isAction:
+          action: Closed
+      - isMerged
+      - targetsBranch:
+          branch: main
+      then:
+      - addMilestone:
+          milestone: Next
+      description: '[PRs] Milestone tracking'
+    - if:
+      - payloadType: Issues
+      - labelAdded:
+          label: breaking-change
+      then:
+      - addReply:
+          reply: >-
+            Refer to the [.NET SDK breaking change guidelines](https://github.com/dotnet/sdk/blob/main/documentation/project-docs/breaking-change-guidelines.md#required-process-for-all-net-sdk-breaking-changes)
+      description: Add breaking change doc instructions to issue
+    - if:
+      - payloadType: Pull_Request
+      - labelAdded:
+          label: breaking-change
+      then:
+      - addLabel:
+          label: needs-breaking-change-doc-created
+      - addReply:
+          reply: >-
+            Added `needs-breaking-change-doc-created` label because this PR has the `breaking-change` label. 
+
+
+            When you commit this breaking change:
+
+
+            1. [ ] Create and link to this PR and the issue a matching issue in the dotnet/docs repo using the [breaking change documentation template](https://aka.ms/dotnet/docs/new-breaking-change-issue), then remove this `needs-breaking-change-doc-created` label.
+
+            2. [ ] Ask a committer to mail the `.NET SDK Breaking Change Notification` email list.
+
+
+            You can refer to the [.NET SDK breaking change guidelines](https://github.com/dotnet/sdk/blob/main/documentation/project-docs/breaking-change-guidelines.md)
+      description: Add breaking change instructions to PR.
+onFailure: 
+onSuccess:

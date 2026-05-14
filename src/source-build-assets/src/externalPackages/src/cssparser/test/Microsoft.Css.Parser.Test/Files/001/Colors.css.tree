@@ -1,0 +1,96 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    em
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #f00
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    #rgb
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    em
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                HexColorValue
+                    HashName    #ff0000
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    #rrggbb
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    em
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                FunctionColor
+                    Function    rgb(
+                    FunctionArgument
+                        NumericalValue
+                            Number    255
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    0
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    0
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    em
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                FunctionColor
+                    Function    rgb(
+                    FunctionArgument
+                        UnitValue
+                            Number    100
+                            Units    %
+                        Comma    ,
+                    FunctionArgument
+                        UnitValue
+                            Number    0
+                            Units    %
+                        Comma    ,
+                    FunctionArgument
+                        UnitValue
+                            Number    0
+                            Units    %
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CloseCurlyBrace    }

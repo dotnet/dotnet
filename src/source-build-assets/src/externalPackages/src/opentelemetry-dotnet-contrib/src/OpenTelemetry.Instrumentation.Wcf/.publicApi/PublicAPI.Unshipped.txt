@@ -1,0 +1,32 @@
+const OpenTelemetry.Instrumentation.Wcf.WcfEnrichEventNames.AfterReceiveReply = "AfterReceiveReply" -> string!
+const OpenTelemetry.Instrumentation.Wcf.WcfEnrichEventNames.BeforeSendRequest = "BeforeSendRequest" -> string!
+OpenTelemetry.Instrumentation.Wcf.TelemetryContractBehaviorAttribute
+OpenTelemetry.Instrumentation.Wcf.TelemetryContractBehaviorAttribute.AddBindingParameters(System.ServiceModel.Description.ContractDescription! contractDescription, System.ServiceModel.Description.ServiceEndpoint! endpoint, System.ServiceModel.Channels.BindingParameterCollection! bindingParameters) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryContractBehaviorAttribute.ApplyClientBehavior(System.ServiceModel.Description.ContractDescription! contractDescription, System.ServiceModel.Description.ServiceEndpoint! endpoint, System.ServiceModel.Dispatcher.ClientRuntime! clientRuntime) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryContractBehaviorAttribute.ApplyDispatchBehavior(System.ServiceModel.Description.ContractDescription! contractDescription, System.ServiceModel.Description.ServiceEndpoint! endpoint, System.ServiceModel.Dispatcher.DispatchRuntime! dispatchRuntime) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryContractBehaviorAttribute.TelemetryContractBehaviorAttribute() -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryContractBehaviorAttribute.Validate(System.ServiceModel.Description.ContractDescription! contractDescription, System.ServiceModel.Description.ServiceEndpoint! endpoint) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehavior
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceEndpoint! endpoint, System.ServiceModel.Channels.BindingParameterCollection! bindingParameters) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehavior.ApplyClientBehavior(System.ServiceModel.Description.ServiceEndpoint! endpoint, System.ServiceModel.Dispatcher.ClientRuntime! clientRuntime) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceEndpoint! endpoint, System.ServiceModel.Dispatcher.EndpointDispatcher! endpointDispatcher) -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehavior.TelemetryEndpointBehavior() -> void
+OpenTelemetry.Instrumentation.Wcf.TelemetryEndpointBehavior.Validate(System.ServiceModel.Description.ServiceEndpoint! endpoint) -> void
+OpenTelemetry.Instrumentation.Wcf.WcfEnrichEventNames
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.Enrich.get -> System.Action<System.Diagnostics.Activity!, string!, object!>?
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.Enrich.set -> void
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.IncomingRequestFilter.get -> System.Func<System.ServiceModel.Channels.Message!, bool>?
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.IncomingRequestFilter.set -> void
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.OutgoingRequestFilter.get -> System.Func<System.ServiceModel.Channels.Message!, bool>?
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.OutgoingRequestFilter.set -> void
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.RecordException.get -> bool
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.RecordException.set -> void
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.SetSoapMessageVersion.get -> bool
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.SetSoapMessageVersion.set -> void
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.SuppressDownstreamInstrumentation.get -> bool
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.SuppressDownstreamInstrumentation.set -> void
+OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions.WcfInstrumentationOptions() -> void
+OpenTelemetry.Trace.TracerProviderBuilderExtensions
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddWcfInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddWcfInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.Wcf.WcfInstrumentationOptions!>? configure) -> OpenTelemetry.Trace.TracerProviderBuilder!

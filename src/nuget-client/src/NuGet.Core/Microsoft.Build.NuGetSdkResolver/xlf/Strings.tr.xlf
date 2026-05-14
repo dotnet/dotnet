@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../Strings.resx">
+    <body>
+      <trans-unit id="CouldNotFindInstalledPackage">
+        <source>Failed to resolve SDK '{0}'. A package was successfully restored but the package could not be located.</source>
+        <target state="translated">'{0}' SDK'sı çözümlenemedi. Bir paket başarıyla geri yüklendi ancak paket bulunamadı.</target>
+        <note>{0} is the name of an MSBuild project SDK.</note>
+      </trans-unit>
+      <trans-unit id="Error_DisabledSdkResolver">
+        <source>The NuGetSdkResolver did not resolve this SDK because it was disabled by the MSBUILDDISABLENUGETSDKRESOLVER environment variable.</source>
+        <target state="translated">NuGetSdkResolver, MSBUILDDISABLENUGETSDKRESOLVER ortam değişkeni tarafından devre dışı bırakıldığından bu SDK'yı çözümlemedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToReadSettings">
+        <source>Failed to load NuGet settings. {0}</source>
+        <target state="translated">NuGet ayarları yüklenemedi. {0}</target>
+        <note>{0} is exception message.</note>
+      </trans-unit>
+      <trans-unit id="Error_NoSdkVersion">
+        <source>The NuGetSdkResolver did not resolve this SDK because there was no version specified in the project or global.json.</source>
+        <target state="translated">Projede veya global.json'da belirtilen sürüm olmadığından NuGetSdkResolver bu SDK'yı çözümlemedi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToFindPathToGlobalJson">
+        <source>Failed to determine path to global.json from path "{0}". {1}</source>
+        <target state="translated">"{0}" yolundan global.json yolu belirlenemedi. {1}</target>
+        <note>{0} is the path to the file used to start looking for global.json and {1} is the exception message that occurred.</note>
+      </trans-unit>
+      <trans-unit id="FailedToParseGlobalJson">
+        <source>Failed to parse "{0}". {1}</source>
+        <target state="translated">"{0}" ayrıştırılamadı. {1}.</target>
+        <note>{0} is the path to the global.json file that was attempted to be parsed and {1} is the exception message that occurred.</note>
+      </trans-unit>
+      <trans-unit id="FailedToReadGlobalJson">
+        <source>Failed to read file "{0}". {1}</source>
+        <target state="translated">"{0}" dosyası okunamadı. {1}</target>
+        <note>{0} is the path to the global.json file that was attempted to be read and {1} is the exception message that occurred.</note>
+      </trans-unit>
+      <trans-unit id="PackageWasNotInstalled">
+        <source>Failed to resolve SDK '{0}'. Package restore was successful but a package with the ID of "{1}" was not installed.</source>
+        <target state="translated">'{0}' SDK'sı çözümlenemedi. Paket geri yükleme başarılı ancak "{1}" kimlikli bir paket yüklü değil.</target>
+        <note>{0} is name of an MSBuild project SDK and {1} is package ID that was installed.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

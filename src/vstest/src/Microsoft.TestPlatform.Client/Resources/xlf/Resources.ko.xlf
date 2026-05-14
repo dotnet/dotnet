@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="ko">
+    <body>
+      <trans-unit id="InvalidStateForExecution">
+        <source>The test run could not be executed because the initial state was invalid.</source>
+        <target state="translated">초기 상태가 잘못되어 테스트 실행을 실행할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
+        <source>Wait for completion operation is not allowed when there is no active test run. </source>
+        <target state="translated">활성 테스트 실행이 없으면 완료 작업을 대기할 수 없습니다. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestSessionTimeoutMessage">
+        <source>Aborting test run: test run timeout of {0} milliseconds exceeded.</source>
+        <target state="translated">테스트 실행 중단 중: 테스트 실행 시간 제한 {0}밀리초가 초과되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTestHostProviderFound">
+        <source>No suitable test runtime provider found for this run.</source>
+        <target state="translated">이 실행에 적합한 테스트 런타임 공급자를 찾지 못했습니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

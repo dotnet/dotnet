@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="AdditionalTelemetry">
+        <source>Additional performance telemetry (experimental)</source>
+        <target state="translated">추가 성능 원격 분석(실험적)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Always_place_opens_at_top_level">
+        <source>Always place open statements at the top level</source>
+        <target state="translated">항상 최상위에 open 문 배치</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Analyze_full_solution_on_background">
+        <source>Keep analyzing the entire solution for diagnostics as a low priority background task (requires restart)</source>
+        <target state="translated">진단에 대한 전체 솔루션을 낮은 우선 순위 백그라운드 작업으로 계속 분석(다시 시작해야 함)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Background_analysis">
+        <source>Background analysis</source>
+        <target state="translated">백그라운드 분석</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_Background_ItemKeyStore_And_Semantic_Classification">
+        <source>Keep background symbol keys</source>
+        <target state="translated">배경 기호 키 유지</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_Fast_Find_References">
+        <source>Enable fast find references &amp; rename (experimental)</source>
+        <target state="translated">빠른 찾기 참조 및 이름 바꾸기 사용(실험적)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_Live_Buffers">
+        <source>Use live (unsaved) buffers for analysis (restart required)</source>
+        <target state="translated">분석에 라이브(저장되지 않은) 버퍼 사용(다시 시작 필요)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_partial_type_checking">
+        <source>Enable partial type checking</source>
+        <target state="translated">부분 형식 검사 사용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Find_References_Performance">
+        <source>Find References Performance Options</source>
+        <target state="translated">참조 성능 옵션 찾기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Formatting">
+        <source>Formatting</source>
+        <target state="translated">서식</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Generate_Body_For_Overridden_Method">
+        <source>Generate default implementation body for overridden method</source>
+        <target state="new">Generate default implementation body for overridden method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Inlay_Hints">
+        <source>Inlay Hints</source>
+        <target state="new">Inlay Hints</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Code_Fixes">
+        <source>Code Fixes</source>
+        <target state="translated">코드 수정 사항</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Completion_Lists">
+        <source>Completion Lists</source>
+        <target state="translated">완성 목록</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Diagnostics">
+        <source>Diagnostics</source>
+        <target state="translated">진단</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_Parallel_Reference_Resolution">
+        <source>Enable parallel reference resolution</source>
+        <target state="translated">병렬 참조 해상도 사용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Keep_All_Background_Resolutions">
+        <source>Keep all background intermediate resolutions (increases memory usage)</source>
+        <target state="translated">모든 백그라운드 중간 해상도 유지(메모리 사용량 증가)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Keep_All_Background_Symbol_Uses">
+        <source>Keep all background symbol uses (increases memory usage)</source>
+        <target state="translated">모든 배경 기호 사용 유지(메모리 사용량 증가)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Language_Service_Performance">
+        <source>Performance</source>
+        <target state="translated">성능</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Dash_underline">
+        <source>D_ash underline</source>
+        <target state="translated">대시 밑줄(_A)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Dot_underline">
+        <source>D_ot underline</source>
+        <target state="translated">점 밑줄(_O)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Language_Service_Settings">
+        <source>Language service settings (advanced)</source>
+        <target state="translated">언어 서비스 설정(고급)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveBuffers">
+        <source>Live Buffers</source>
+        <target state="translated">라이브 버퍼</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Navigation_links">
+        <source>Navigation links</source>
+        <target state="translated">탐색 링크</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Parallelization">
+        <source>Parallelization (requires restart)</source>
+        <target state="translated">병렬화(다시 시작 필요)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Preferred_description_width_in_characters">
+        <source>Preferred description width in characters</source>
+        <target state="translated">기본 설정 설명 너비(문자)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Remove_parens_code_fix">
+        <source>Remove unnecessary parentheses (experimental, might affect typing performance)</source>
+        <target state="translated">불필요한 괄호 제거(실험적, 입력 성능에 영향을 줄 수 있음)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Send_Additional_Telemetry">
+        <source>Send additional performance telemetry</source>
+        <target state="translated">추가 성능 원격 분석 보내기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_Inlay_Parameter_Name_Hints">
+        <source>Display inlay parameter name hints (preview)</source>
+        <target state="new">Display inlay parameter name hints (preview)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_Inlay_Type_Hints">
+        <source>Display inlay type hints (preview)</source>
+        <target state="new">Display inlay type hints (preview)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_Return_Type_Hints">
+        <source>Display return type hints (preview)</source>
+        <target state="translated">반환 형식 힌트 표시(미리 보기)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_all_symbols">
+        <source>Show s_ymbols in unopened namespaces</source>
+        <target state="translated">열려 있지 않은 네임스페이스에 기호 표시(_Y)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_completion_list_after_a_character_is_deleted">
+        <source>Show completion list after a character is _deleted</source>
+        <target state="translated">문자를 삭제하면 완성 목록 표시(_D)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_completion_list_after_a_character_is_typed">
+        <source>_Show completion list after a character is typed</source>
+        <target state="translated">문자를 입력하면 완성 목록 표시(_S)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_in_memory_cross_project_references">
+        <source>_Enable in-memory cross project references</source>
+        <target state="translated">메모리 내 크로스 프로젝트 참조 사용(_E)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_navigation_links_as">
+        <source>S_how navigation links as</source>
+        <target state="translated">탐색 링크를 다음으로 표시(_H)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_remarks_in_Quick_Info">
+        <source>Show remarks in Quick Info</source>
+        <target state="translated">요약 정보에 설명 표시</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_name_code_fix">
+        <source>Simplify names (remove unnecessary qualifiers)</source>
+        <target state="translated">이름 단순화(불필요한 한정자 제거)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Solid_underline">
+        <source>_Solid underline</source>
+        <target state="translated">실선 밑줄(_S)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_hover">
+        <source>Text hover</source>
+        <target state="translated">텍스트 호버</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Tooltip_preferred_description_width_in_characters">
+        <source>Format signature to the given width by adding line breaks conforming with F# syntax rules. </source>
+        <target state="translated">F# 구문 규칙에 맞는 줄 바꿈을 추가하여 지정된 너비에 시그니처의 서식을 지정합니다. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TransparentCompiler">
+        <source>Transparent Compiler (experimental)</source>
+        <target state="translated">투명한 컴파일러(실험적)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TransparentCompiler_Disclaimer1">
+        <source>WARNING! Transparent Compiler does not yet support all features and can cause crashes or give incorrect results.</source>
+        <target state="new">WARNING! Transparent Compiler does not yet support all features and can cause crashes or give incorrect results.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TransparentCompiler_Disclaimer2">
+        <source>Use at your own risk!</source>
+        <target state="new">Use at your own risk!</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TransparentCompiler_Disclaimer3">
+        <source>By checking this you also opt-in for additional performance telemetry</source>
+        <target state="new">By checking this you also opt-in for additional performance telemetry</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Transparent_Compiler_Cache_Factor">
+        <source>Transparent Compiler Cache Factor</source>
+        <target state="translated">투명한 컴파일러 캐시 팩터</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Transparent_Compiler_Cache_Factor_Tooltip">
+        <source>Higher number means more memory will be used for caching. Changing the value wipes cache.</source>
+        <target state="translated">숫자가 높을수록 캐싱에 더 많은 메모리가 사용됩니다. 값을 변경하면 캐시가 초기화됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Transparent_Compiler_Snapshot_Reuse">
+        <source>Create new project snapshots from existing ones</source>
+        <target state="translated">기존 스냅샷에서 새 프로젝트 스냅샷 만들기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unused_opens_code_fix">
+        <source>Remove unused open statements</source>
+        <target state="translated">사용되지 않는 open 문 제거</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unused_declaration_code_fix">
+        <source>Analyze and suggest fixes for unused values</source>
+        <target state="translated">사용되지 않는 값에 대해 수정 사항 분석 및 제안</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Block_Structure">
+        <source>Block Structure Guides</source>
+        <target state="translated">블록 구조 가이드</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_guides">
+        <source>Show structure guidelines for F# code</source>
+        <target state="translated">F# 코드에 대한 구조체 지침 표시</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Outlining">
+        <source>Outlining</source>
+        <target state="translated">개요</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Show_Outlining">
+        <source>Show outlining and collapsible nodes for F# code</source>
+        <target state="translated">F# 코드에 대한 개요 및 축소 가능한 노드 표시</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Time_until_stale_completion">
+        <source>Time until stale results are used (in milliseconds)</source>
+        <target state="translated">부실 결과가 사용될 때까지 시간(밀리초)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IntelliSense_Performance">
+        <source>IntelliSense Performance Options</source>
+        <target state="translated">IntelliSense 성능 옵션</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Project_Performance">
+        <source>F# Project and Caching Performance Options</source>
+        <target state="translated">F# 프로젝트 및 캐싱 성능 옵션</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_Stale_IntelliSense_Results">
+        <source>Enable stale data for IntelliSense features</source>
+        <target state="translated">IntelliSense 기능에 대해 부실 데이터 사용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Tooltip_in_memory_cross_project_references">
+        <source>In-memory cross-project references store project-level data in memory to allow IDE features to work across projects.</source>
+        <target state="translated">메모리 내 크로스 프로젝트 참조가 메모리에 프로젝트 수준 데이터를 저장하여 IDE 기능이 프로젝트에서 작동하도록 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enter_key_always">
+        <source>Always add new line on enter</source>
+        <target state="translated">입력 시 새 줄 항상 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enter_key_never">
+        <source>Never add new line on enter</source>
+        <target state="translated">입력 시 새 줄 추가 안 함</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enter_key_only">
+        <source>Only add new line on enter after end of fully typed word</source>
+        <target state="translated">단어를 모두 입력하고 &lt;Enter&gt; 키를 누르면 새 줄 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enter_Key_Rule">
+        <source>Enter key behavior</source>
+        <target state="translated">키 동작 입력</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Format_on_paste">
+        <source>Re-format indentation on paste (Experimental)</source>
+        <target state="translated">붙여넣을 때 들여쓰기 서식 다시 지정(실험적)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Suggest_names_for_errors_code_fix">
+        <source>Suggest names for unresolved identifiers</source>
+        <target state="translated">확인되지 않은 식별자의 이름 제안</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Use_Transparent_Compiler">
+        <source>Use Transparent Compiler (restart required)</source>
+        <target state="translated">투명한 컴파일러 사용(다시 시작해야 함)</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

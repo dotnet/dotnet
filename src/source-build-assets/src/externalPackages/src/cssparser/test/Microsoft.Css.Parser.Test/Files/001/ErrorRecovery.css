@@ -1,0 +1,4 @@
+p  color:green; color{;color:maroon} } /* unexpected tokens { } */
+p { color:red;   color{;color:maroon}; color:green } /* same with recovery */
+p:before {content: counter(par-num, upper-roman) "". ""}
+

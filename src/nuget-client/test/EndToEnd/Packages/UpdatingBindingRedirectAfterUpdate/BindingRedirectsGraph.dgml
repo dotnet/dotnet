@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="A:1.0" Label="A:1.0" />
+    <Node Id="B:1.0" Label="B:1.0" />
+    <Node Id="B:2.0" Label="B:2.0" />
+	<Node Id="B:3.0" Label="B:3.0" />
+  </Nodes>
+  <Links>
+    <Link Source="A:1.0" Target="B:1.0" />
+  </Links>
+  <Properties>
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

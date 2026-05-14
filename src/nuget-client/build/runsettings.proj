@@ -1,0 +1,36 @@
+<Project>
+    <Target Name="Build">
+
+        <Error Condition=" '$(IsOfficialBuild)' == 'true' AND '$(VsTargetMajorVersion)' == '' "
+            Text="VsTargetMajorVersion must be specified" />
+
+        <!-- NuGet.OptProfV2.runsettings -->
+        <MSBuild Condition=" '$(IsOfficialBuild)' == 'true' "
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.OptProfV2;
+            FileName=NuGet.OptProf.dll;
+            TestCaseFilter=TestCategory=OptProf;
+            OptProfCollector=enabled;
+            IncludeProfilingInputs=true;
+            VsConfigPath=tests.optprof.vsconfig;" />
+
+        <!-- NuGet.Tests.Apex.runsettings -->
+        <MSBuild
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.Tests.Apex;
+            FileName=NuGet.Tests.Apex.dll;" />
+
+        <!-- NuGet.Tests.Apex.Gate.runsettings (VS test gate - runs only [TestCategory("Gate")] tests) -->
+        <MSBuild
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.Tests.Apex.Gate;
+            FileName=NuGet.Tests.Apex.dll;
+            TestCaseFilter=TestCategory=Gate;" />
+
+        <!-- NuGet.Tests.Apex.Daily.runsettings -->
+        <MSBuild
+            Projects="template.runsettingsproj"
+            Properties="RunName=NuGet.Tests.Apex.Daily;
+            FileName=NuGet.Tests.Apex.Daily.dll;NuGet.Tests.Apex.dll;" />
+    </Target>
+</Project>

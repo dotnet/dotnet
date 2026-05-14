@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <EmscriptenNodeToolsPath>$(MSBuildThisFileDirectory)..\tools\</EmscriptenNodeToolsPath>
+    <EmscriptenNodeBinPath>$(EmscriptenNodeToolsPath)bin\</EmscriptenNodeBinPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmscriptenPrependPATH Include="$(EmscriptenNodeBinPath)" />
+  </ItemGroup>
+</Project>

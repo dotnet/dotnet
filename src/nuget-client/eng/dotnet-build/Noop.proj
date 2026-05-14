@@ -1,0 +1,6 @@
+<Project>
+  <Target Name="Restore" />
+  <Target Name="Build" />
+  <Target Name="Pack" />
+  <Target Name="Test" />
+</Project>

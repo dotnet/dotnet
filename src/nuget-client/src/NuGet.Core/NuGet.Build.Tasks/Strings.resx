@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ImportsFallbackWarning" xml:space="preserve">
+    <value>ProjectReference '{0}' was resolved using '{1}' instead of the project target framework '{2}'. This project may not be fully compatible with your project.</value>
+    <comment>0 - referenced project path
+1 - resolved tfm
+2 - project tfm</comment>
+  </data>
+  <data name="NoCompatibleTargetFramework" xml:space="preserve">
+    <value>Project '{0}' targets '{2}'. It cannot be referenced by a project that targets '{1}'.</value>
+  </data>
+  <data name="NoProjectsProvidedToTask" xml:space="preserve">
+    <value>Unable to find a project to restore!</value>
+  </data>
+  <data name="NoProjectsToRestore" xml:space="preserve">
+    <value>Nothing to do. None of the projects specified contain packages to restore.</value>
+  </data>
+  <data name="RestoreCanceled" xml:space="preserve">
+    <value>Restore canceled!</value>
+  </data>
+  <data name="UnsupportedFallbackFramework" xml:space="preserve">
+    <value>The project fallback framework '{0}' is not a supported target framework.</value>
+  </data>
+  <data name="UnsupportedTargetFramework" xml:space="preserve">
+    <value>The project target framework '{0}' is not a supported target framework.</value>
+  </data>
+  <data name="Argument_Cannot_Be_Null_Or_Empty" xml:space="preserve">
+    <value>Argument cannot be null or empty</value>
+  </data>
+  <data name="RestoreNoSolutionFound" xml:space="preserve">
+    <value>No solution found. Restore against a solution or pass in /p:SolutionDir</value>
+  </data>
+  <data name="InstallCommandNothingToInstall" xml:space="preserve">
+    <value>All packages listed in {0} are already installed.</value>
+  </data>
+  <data name="Warning_InvalidPackageSaveMode" xml:space="preserve">
+    <value>Invalid PackageSaveMode value '{0}'.</value>
+  </data>
+  <data name="Error_PackagesConfigParseError" xml:space="preserve">
+    <value>Error parsing packages.config file at {0}: {1}</value>
+  </data>
+  <data name="Error_PackageDownload_OnlyExactVersionsAreAllowed" xml:space="preserve">
+    <value>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
+    <comment>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</comment>
+  </data>
+  <data name="Error_PackageDownload_NoVersion" xml:space="preserve">
+    <value>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
+    <comment>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</comment>
+  </data>
+  <data name="CreatedDependencyGraphSpec" xml:space="preserve">
+    <value>Created DependencyGraphSpec in {0:D2}ms.</value>
+  </data>
+  <data name="ProjectEvaluationSummary" xml:space="preserve">
+    <value>Evaluated {0} project(s) in {1:D2}ms ({2} builds, {3} failures).</value>
+  </data>
+  <data name="DeterminingProjectsToRestore" xml:space="preserve">
+    <value>Determining projects to restore...</value>
+  </data>
+  <data name="Error_DgSpecGenerationFailed" xml:space="preserve">
+    <value>Cannot write the dependency graph spec because the generation failed.</value>
+  </data>
+  <data name="Error_MissingRestoreGraphOutputPath" xml:space="preserve">
+    <value>Cannot write the dependency graph spec because the `RestoreGraphOutputPath` is missing.</value>
+  </data>
+  <data name="Log_ProjectsInSolutionNotKnowntoMSBuild" xml:space="preserve">
+    <value>The solution contains '{0}' project(s) '{1}' that are not known to MSBuild. Ensure that all projects are known to be MSBuild before running restore on the solution.</value>
+    <comment>0 - number of projects not known to msbuild
+1 - list of projects</comment>
+  </data>
+  <data name="Log_NoProjectsForRestore" xml:space="preserve">
+    <value>The solution did not have any projects to restore, ensure that all projects are known to be MSBuild and that the projects exist.</value>
+  </data>
+  <data name="Error_DuplicateItems" xml:space="preserve">
+    <value>Duplicate '{0}' items found. Remove the duplicate items or use the Update functionality to ensure a consistent restore behavior. The duplicate '{0}' items are: {1}.</value>
+  </data>
+  <data name="Error_StaticGraphNonZeroExitCode" xml:space="preserve">
+    <value>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</value>
+    <comment>0 - the exit code of the process</comment>
+  </data>
+  <data name="Error_StaticGraphUnhandledException" xml:space="preserve">
+    <value>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
+{0}</value>
+    <comment>0 - The exception as a string.</comment>
+  </data>
+  <data name="Log_RunningStaticGraphRestoreCommand" xml:space="preserve">
+    <value>Running command: '{0}' {1}</value>
+    <comment>0 - the path to the EXE being launched
+1 - The command-line arguments</comment>
+  </data>
+  <data name="Log_RestoreNoCacheInformation" xml:space="preserve">
+    <value>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</value>
+    <comment>Do not translate RestoreNoCache and RestoreNoHttpCache</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as there was an unexpected number of arguments, {0}. Please file an issue at https://github.com/NuGet/Home</value>
+    <comment>0 - The number of arguments</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentsParsingFailedEndOfStream" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as end of the standard input stream was unexpectedly encountered. Please file an issue at https://github.com/NuGet/Home</value>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
+{1}</value>
+    <comment>0 - The exception message
+1 - The string representation of the exception</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as the first integer read, {0}, is not an allowable value. Please file an issue at https://github.com/NuGet/Home</value>
+    <comment>0 - The value of the first integer read from the stream</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreFailedToStart" xml:space="preserve">
+    <value>An error occurred starting static graph-based restore. {0}. Please file an issue at https://github.com/NuGet/Home</value>
+    <comment>0 - The exception message</comment>
+  </data>
+</root>

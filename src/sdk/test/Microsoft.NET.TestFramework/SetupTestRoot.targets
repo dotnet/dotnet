@@ -1,0 +1,30 @@
+<Project>
+
+  <ItemGroup>
+    <_CopyDirectoryBuildTestDependenciesInput Include="$(MSBuildThisFileDirectory)..\Common\Empty.props" />
+    <_CopyDirectoryBuildTestDependenciesInput Include="$(MSBuildThisFileDirectory)..\Common\Empty.targets" />
+    <_CopyDirectoryBuildTestDependenciesInput Include="$(MSBuildThisFileDirectory)..\Common\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_CopyDirectoryBuildTestDependenciesOutput Include="$(TestLayoutDir)Directory.Build.props" />
+    <_CopyDirectoryBuildTestDependenciesOutput Include="$(TestLayoutDir)Directory.Build.targets" />
+    <_CopyDirectoryBuildTestDependenciesOutput Include="$(TestLayoutDir).editorconfig" />
+  </ItemGroup>
+
+  <!-- Since TestFramework is multi-targeted, only copy these files for one of the inner builds -->
+  <Target Name="_CopyDirectoryBuildTestDependencies" AfterTargets="Build" Inputs="@(_CopyDirectoryBuildTestDependenciesInput)" Outputs="@(_CopyDirectoryBuildTestDependenciesOutput)"
+          Condition="'$(TargetFramework)' == '$(SdkTargetFramework)'">
+    <Copy SourceFiles="@(_CopyDirectoryBuildTestDependenciesInput)" DestinationFiles="@(_CopyDirectoryBuildTestDependenciesOutput)" />
+  </Target>
+
+  <Target Name="WriteNugetConfigFile"
+          AfterTargets="Build"
+          Inputs="$(RepoRoot)NuGet.config"
+          Outputs="$(TestLayoutDir)NuGet.config"
+          Condition="'$(TargetFramework)' == '$(SdkTargetFramework)'"
+          >
+    <Copy SourceFiles="$(RepoRoot)NuGet.config" DestinationFiles="$(TestLayoutDir)NuGet.config" />
+  </Target>
+
+</Project>

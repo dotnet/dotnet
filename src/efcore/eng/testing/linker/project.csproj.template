@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>{TargetFramework}</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RuntimeIdentifier>{RuntimeIdentifier}</RuntimeIdentifier>
+    <PublishAot>{PublishAot}</PublishAot>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <NoWarn>$(NoWarn);NU1903;NU1904</NoWarn>
+    <_ExtraTrimmerArgs>{ExtraTrimmerArgs} $(_ExtraTrimmerArgs)</_ExtraTrimmerArgs>
+    {AdditionalProperties}
+  </PropertyGroup>
+
+  <ItemGroup>
+    {RuntimeHostConfigurationOptions}
+  </ItemGroup>
+
+  <ItemGroup>
+    {AdditionalProjectReferences}
+  </ItemGroup>
+
+  <ItemGroup>
+    {AdditionalPackageReferences}
+  </ItemGroup>
+
+</Project>

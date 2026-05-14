@@ -1,0 +1,366 @@
+﻿module Conformance.Expressions.ComputationExpressions
+
+open Xunit
+open FSharp.Test.Compiler
+
+[<Fact>]
+let ``[<CustomOperation>] without explicit name is allowed, uses method name as operation name`` () =
+    FSharp """
+        module CustomOperationTest
+        type CBuilder() =
+            [<CustomOperation>]
+            member this.Foo _ = "Foo"
+            [<CustomOperation>]
+            member this.foo _ = "foo"
+            [<CustomOperation("")>]
+            member this.bar _ = "bar"
+            member this.Yield _ = ()
+            member this.Zero _ = ()
+
+
+        [<EntryPoint>]
+        let main _ =
+            let cb = CBuilder()
+
+            let x = cb { Foo }
+            let y = cb { foo }
+            let z = cb { bar }
+            printfn $"{x}"
+            printfn $"{y}"
+
+            if x <> "Foo" then
+                failwith "not Foo"
+            if y <> "foo" then
+                failwith "not foo"
+            if z <> "bar" then
+                failwith "not bar"
+            0
+    """
+    |> asExe
+    |> compileAndRun
+    |> shouldSucceed
+
+/// Tests for empty-bodied computation expressions: builder { }
+module EmptyBodied =
+    /// F# 8.0 and below do not support empty-bodied computation expressions.
+    module Unsupported =
+        [<Fact>]
+        let ``seq { } does not compile`` () =
+            Fsx """
+            let xs : int seq = seq { }
+            """
+            |> withLangVersion80
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 789
+            |> withErrorMessage "'{ }' is not a valid expression. Records must include at least one field. Empty sequences are specified by using Seq.empty or an empty list '[]'."
+
+        [<Fact>]
+        let ``async { } does not compile`` () =
+            Fsx """
+            let a : Async<unit> = async { }
+            """
+            |> withLangVersion80
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 3
+            |> withErrorMessage "This value is not a function and cannot be applied. It has type 'AsyncBuilder', which does not accept arguments."
+
+        [<Fact>]
+        let ``task { } does not compile`` () =
+            Fsx """
+            open System.Threading.Tasks
+
+            let t : Task<unit> = task { }
+            """
+            |> withLangVersion80
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 3
+            |> withErrorMessage "This value is not a function and cannot be applied. It has type 'TaskBuilder', which does not accept arguments."
+
+        [<Fact>]
+        let ``builder { } does not compile`` () =
+            FSharp """
+            type Builder () =
+                member _.Zero () = Seq.empty
+                member _.Delay f = f
+                member _.Run f = f ()
+
+            let builder = Builder ()
+
+            let xs : int seq = builder { }
+            """
+            |> withLangVersion80
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 3
+            |> withErrorMessage "This value is not a function and cannot be applied. It has type 'Builder', which does not accept arguments."
+
+        [<Fact>]
+        let ``builder { () } and no Zero: FS0708`` () =
+            FSharp """
+            type Builder () =
+                member _.Delay f = f
+                member _.Run f = f ()
+
+            let builder = Builder ()
+
+            let xs : int seq = builder { () }
+            """
+            |> withLangVersion80
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 708
+            |> withErrorMessage "This control construct may only be used if the computation expression builder defines a 'Zero' method"
+
+        [<Fact>]
+        let ``builder { () } ≡ seq { () } when Zero () = Seq.empty`` () =
+            Fsx """
+            type Builder () =
+                member _.Zero () = Seq.empty
+                member _.Delay f = f
+                member _.Run f = f ()
+
+            let builder = Builder ()
+
+            if List.ofSeq (builder { () }) <> List.ofSeq (seq { () }) then
+                failwith "builder { () } ≢ seq { () }"
+            """
+            |> withLangVersion80
+            |> runFsi
+            |> shouldSucceed
+
+        [<Fact>]
+        let ``Unchecked﹒defaultof<'a> { }`` () =
+            FSharp """
+            Unchecked.defaultof<'a> { }
+            """
+            |> withLangVersion80
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 789
+            |> withErrorMessage "'{ }' is not a valid expression. Records must include at least one field. Empty sequences are specified by using Seq.empty or an empty list '[]'."
+
+    /// F# 9.0 and above support empty-bodied computation expressions.
+    module Supported =
+        /// The language version that supports empty-bodied computation expressions.
+        let [<Literal>] SupportedLanguageVersion = "latest"
+
+        [<Fact>]
+        let ``seq { } ≡ seq { () }`` () =
+            Fsx """
+            if List.ofSeq (seq { }) <> List.ofSeq (seq { () }) then
+                failwith "seq { } ≢ seq { () }"
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> runFsi
+            |> shouldSucceed
+
+        [<Fact>]
+        let ``async { } ≡ async { () }`` () =
+            Fsx """
+            if
+                [|(); ()|] <> (
+                                  [|async { }; async { () }|]
+                                  |> Async.Parallel
+                                  |> Async.RunSynchronously
+                              )
+            then
+                failwith "async { } ≢ async { () }"
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> runFsi
+            |> shouldSucceed
+
+        [<Fact>]
+        let ``task { } ≡ task { () }`` () =
+            Fsx """
+            open System.Threading.Tasks
+
+            // We wrap this in a function to avoid https://github.com/dotnet/fsharp/issues/12038
+            let f () =
+                if
+                    [|(); ()|] <> Task.WhenAll(task { }, task { () }).GetAwaiter().GetResult()
+                then
+                    failwith "task { } ≢ task { () }"
+
+            f ()
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> runFsi
+            |> shouldSucceed
+
+        [<Fact>]
+        let ``builder { () } and no Zero: FS0708`` () =
+            FSharp """
+            type Builder () =
+                member _.Delay f = f
+                member _.Run f = f ()
+
+            let builder = Builder ()
+
+            let xs : int seq = builder { () }
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 708
+            |> withErrorMessage "This control construct may only be used if the computation expression builder defines a 'Zero' method"
+
+        [<Fact>]
+        let ``builder { } and no Zero: FS0708 and new message`` () =
+            FSharp """
+            type Builder () =
+                member _.Delay f = f
+                member _.Run f = f ()
+
+            let builder = Builder ()
+
+            let xs : int seq = builder { }
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 708
+            |> withErrorMessage "An empty body may only be used if the computation expression builder defines a 'Zero' method."
+
+        [<Fact>]
+        let ``builder { } ≡ seq { } when Zero () = Seq.empty`` () =
+            Fsx """
+            type Builder () =
+                member _.Zero () = Seq.empty
+                member _.Delay f = f
+                member _.Run f = f ()
+
+            let builder = Builder ()
+
+            if List.ofSeq (builder { }) <> List.ofSeq (seq { }) then
+                failwith "builder { } ≢ seq { }"
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> runFsi
+            |> shouldSucceed
+
+        [<Fact>]
+        let ``Unchecked﹒defaultof<'a> { }`` () =
+            FSharp """
+            Unchecked.defaultof<'a> { }
+            """
+            |> withLangVersion SupportedLanguageVersion
+            |> asExe
+            |> compile
+            |> shouldFail
+            |> withErrorCode 789
+            |> withErrorMessage "'{ }' is not a valid expression. Records must include at least one field. Empty sequences are specified by using Seq.empty or an empty list '[]'."
+
+module LetUseBangTests =
+
+    [<Fact>]
+    let ``let! isn't allowed outside of Computation Expression`` () =
+        FSharp """
+        let test =
+            let! a = 1 + 1
+            ()
+        """
+        |> asExe
+        |> compile
+        |> withErrorCode 750
+        |> withErrorMessage "This construct may only be used within computation expressions"
+
+    [<Fact>]
+    let ``use! isn't allowed outside of Computation Expression`` () =
+        FSharp """
+        open System
+
+        let test =
+            use! a = 
+                { new IDisposable with 
+                    member this.Dispose() = () 
+                }
+            ()
+        """
+        |> asExe
+        |> compile
+        |> withErrorCode 750
+        |> withErrorMessage "This construct may only be used within computation expressions"
+
+    [<Fact>]
+    let ``let! with and! aren't allowed outside of Computation Expression`` () =
+        FSharp """
+        let test =
+            let! a = 1 + 1
+            and! b = 1 + 1
+            ()
+        """
+        |> asExe
+        |> compile
+        |> withErrorCode 750
+        |> withErrorMessage "This construct may only be used within computation expressions"
+
+    [<Fact>]
+    let ``When let! is outside of Computation Expression, the analysis lasts`` () =
+        FSharp """
+        let test =
+            let! a = 1 + 1
+            return! 0
+        """
+        |> asExe
+        |> compile
+        |> withDiagnostics [
+            (Error 750, Line 3, Col 13, Line 3, Col 17, 
+                "This construct may only be used within computation expressions");
+            (Error 748, Line 4, Col 13, Line 4, Col 20, 
+                "This construct may only be used within computation expressions. To return a value from an ordinary function simply write the expression without 'return'.")
+        ]
+
+// https://github.com/dotnet/fsharp/issues/3783
+[<Fact>]
+let ``Issue 3783 - Mutually recursive computation expression should not raise NullReferenceException`` () =
+    FSharp """
+#nowarn "40"
+#nowarn "21"
+
+let x () =
+    let rec a = seq {
+        yield 0
+        yield! b () }
+    and b () = seq {
+        yield 1
+        yield! a }
+    Seq.take 10 a |> Seq.toList
+
+type A () =
+    let test =
+        let rec a = seq {
+            yield 0
+            yield! b () }
+        and b () = seq {
+            yield 1
+            yield! a }
+        Seq.take 10 a |> Seq.toList
+    member _.Test = test
+
+[<EntryPoint>]
+let main _ =
+    let result1 = x ()
+    if result1 <> [0; 1; 0; 1; 0; 1; 0; 1; 0; 1] then
+        failwithf "Function variant failed: %A" result1
+
+    let a = A()
+    if a.Test <> [0; 1; 0; 1; 0; 1; 0; 1; 0; 1] then
+        failwithf "Type constructor variant failed: %A" a.Test
+
+    0
+    """
+    |> asExe
+    |> compileExeAndRun
+    |> shouldSucceed

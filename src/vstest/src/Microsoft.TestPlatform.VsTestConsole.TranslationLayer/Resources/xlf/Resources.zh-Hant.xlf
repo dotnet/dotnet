@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hant">
+    <body>
+      <trans-unit id="AbortedTestsRun">
+        <source>The active Tests Run was aborted.</source>
+        <target state="translated">已中止使用中的測試回合。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestsDiscovery">
+        <source>The active Tests Discovery was aborted.</source>
+        <target state="translated">已中止使用中的測試探索。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToReceiveMessage">
+        <source>Failed to receive message from vstest.console process</source>
+        <target state="translated">無法接收來自 vstest.console 處理序的訊息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VsTestProcessExitedAbnormally">
+        <source>vstest.console process exited abnormally</source>
+        <target state="translated">vstest.console 處理序異常結束</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFilePath">
+        <source>File {0} does not exists</source>
+        <target state="translated">檔案 {0} 不存在</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedTestRunAttachmentsProcessing">
+        <source>The active Test Run Attachments Processing was aborted.</source>
+        <target state="translated">執行中的測試回合附件處理已中止。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStartTestSession">
+        <source>The Start Test Session operation was aborted.</source>
+        <target state="translated">開始測試工作階段作業已中止。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AbortedStopTestSession">
+        <source>The Stop Test Session operation was aborted.</source>
+        <target state="translated">停止測試工作階段作業已中止。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

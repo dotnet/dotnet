@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
+    <Description>Installer task package</Description>
+    <PackageTags>Arcade Build Tool Installer</PackageTags>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoWarn>$(NoWarn);NU5127</NoWarn>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DotNet.SignCheckLibrary" />
+    <InternalsVisibleTo Include="Microsoft.DotNet.SignTool" />
+    <InternalsVisibleTo Include="Microsoft.DotNet.SignTool.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build/**/*.*"
+          Pack="true"
+          PackagePath="build" />
+    <None Include="..\Common\wix\dotnethome_x64.wxs"
+          Link="build\wix\product\dotnethome_x64.wxs"
+          PackagePath="%(Link)"
+          Pack="true" />
+    <None Include="..\Common\wix5\dotnethome_x64.wxs"
+          Link="build\wix5\product\dotnethome_x64.wxs"
+          PackagePath="%(Link)"
+          Pack="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\Internal\BuildTask.cs" />
+  </ItemGroup>
+
+</Project>

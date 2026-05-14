@@ -1,0 +1,153 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                Greater    >
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h2
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    first-of-type
+                        CloseFunctionBrace    )
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    last-of-type
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    \9 hack support
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    border-width
+                CommentTokenItem
+                    CommentText    \9
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            Declaration
+                Identifier    border-color
+                Colon    :
+                Identifier    red
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                CommentTokenItem
+                    CommentText    \9
+                Colon    :
+                HexColorValue
+                    HashName    #f00
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                FunctionColor
+                    Function    rgb(
+                    FunctionArgument
+                        NumericalValue
+                            Number    1
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    2
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    3
+                    CloseFunctionBrace    )
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    border-width
+                CommentTokenItem
+                    CommentText    \9
+                Colon    :
+                UnitValue
+                    Number    10
+                    Units    px
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            Declaration
+                Identifier    border-color
+                Colon    :
+                Identifier    red
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                CommentTokenItem
+                    CommentText    \9
+                Colon    :
+                HexColorValue
+                    HashName    #f00
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            Declaration
+                Identifier    color
+                Colon    :
+                FunctionColor
+                    Function    rgb(
+                    FunctionArgument
+                        NumericalValue
+                            Number    1
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    2
+                        Comma    ,
+                    FunctionArgument
+                        NumericalValue
+                            Number    3
+                    CloseFunctionBrace    )
+                CommentTokenItem
+                    CommentText    \9
+                Semicolon    ;
+            CloseCurlyBrace    }

@@ -1,0 +1,12 @@
+{
+  "version": "6.0.100-preview.6.891",
+  "workloads": {
+    "maui": {
+      "description": ".NET MAUI SDK for all platforms",
+      "extends": [
+        "maui-mobile",
+        "maui-desktop"
+      ]
+    }
+  }
+}
