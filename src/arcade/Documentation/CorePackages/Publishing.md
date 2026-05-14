@@ -113,7 +113,7 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
     | publishingInfraVersion                  | int      | Publishing infrastructure version - Use 3 for latest publishing infra. Accepted values are 3 (.NET 5.0+) and 2 (.NET 3.1).                               | 3    |
     | enableSigningValidation                 | bool     | Run signing validation during the post-build stage.                                                  | true |
     | enableNugetValidation                   | bool     | Run NuGet package validation tool during the post build stage.                                       | true |
-    | symbolPublishingAdditionalParameters    | string   | Additional arguments for the PublishToSymbolServers sdk task.                                        | '' |
+    | symbolPublishingAdditionalParameters    | string   | Additional arguments for symbol publishing in the PublishArtifactsInManifest sdk task.               | '' |
     | artifactsPublishingAdditionalParameters | string   | Additional arguments for the PublishArtifactsInManifest sdk task.                                    | '' |
     | signingValidationAdditionalParameters   | string  | Additional arguments for the SigningValidation sdk task.     | '' |
     | publishInstallersAndChecksums           | bool     | Publish installers packages and checksums from the build artifacts to the dotnetcli storage account. Documentation for opting in to automatic checksum generation can be found in the [Checksum section](https://github.com/dotnet/arcade/blob/main/Documentation/CorePackages/Publishing.md#checksum-generation) of this document. | true |
@@ -245,8 +245,6 @@ Starting with Arcade SDK version **5.0.0-beta.20120.2** there is not support any
   | DotNetPublishBlobFeedKey      |
   | DotNetPublishBlobFeedUrl      |
   | DotNetPublishToBlobFeed       |
-  | DotNetSymbolServerTokenMsdl   |
-  | DotNetSymbolServerTokenSymWeb |
   | DotNetPublishusingPipelines   |
 
 ## Frequently Asked Questions

@@ -9,7 +9,6 @@ parameters:
     default: 'main'
 
 variables:
-- group: DotNet-Roslyn-Insertion-Variables
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - name: BuildQueueName
   value: 'microsoft-vstest'
@@ -134,7 +133,7 @@ extends:
                       "--title-prefix", "$(OptionalTitlePrefix)"
                       "--reviewer-guid", $team
                       "--dnceng-azdo-token", $dncengToken
-                      "--devdiv-azdo-token", "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
+                      "--devdiv-azdo-token", $dncengToken
                       "--ci"
                     )
 
@@ -156,7 +155,7 @@ extends:
                       $insertArgs += "$(CherryPick)"
                     }
 
-                    "Running: ./roslyn-tools.exe $($insertArgs -join ' ')"
+                    "Running: ./roslyn-tools.exe $(($insertArgs -join ' ') -replace [regex]::Escape($dncengToken), '***')"
                     $roslynOutput = ./roslyn-tools.exe @insertArgs 2>&1 | ForEach-Object { Write-Host $_; $_ }
                     if ($LASTEXITCODE -ne 0) {
                       exit $LASTEXITCODE
@@ -164,10 +163,9 @@ extends:
 
                     # Push vstest.console app.config to the insertion PR branch in the VS repo.
                     # The file maps to src/vset/Agile/TestPlatform/RocksteadyCLI/App.config in VS.
-                    $devdivToken = "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
-                    $base64Token = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$devdivToken"))
+                    # Use the WIF token (SP is enrolled in both dnceng and devdiv)
                     $headers = @{
-                      Authorization = "Basic $base64Token"
+                      Authorization = "Bearer $dncengToken"
                       'Content-Type' = 'application/json'
                     }
 
