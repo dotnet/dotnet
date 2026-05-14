@@ -549,10 +549,12 @@
       <Output TaskParameter="TargetOutputs" ItemName="_DotnetAotPublishedItems" />
     </MSBuild>
 
-    <!-- Find the NativeAOT shared library among the published items. -->
+    <!-- Match on %(TargetPath) so the macOS dSYM bundle's inner Mach-O
+         (libdotnet-aot.dylib.dSYM/Contents/Resources/DWARF/libdotnet-aot.dylib)
+         is not picked alongside the real dylib. See dotnet/sdk#54296. -->
     <ItemGroup>
       <_DotnetAotNativeLib Include="@(_DotnetAotPublishedItems)"
-                           Condition="'%(Filename)%(Extension)' == '$(_DotnetAotNativeLibName)'" />
+                           Condition="'%(TargetPath)' == '$(_DotnetAotNativeLibName)'" />
     </ItemGroup>
 
     <Error Condition="'@(_DotnetAotNativeLib)' == ''"
