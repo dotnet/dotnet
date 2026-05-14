@@ -14,6 +14,9 @@ Param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+# Import binding redirect verification.
+. "$PSScriptRoot/verify-binding-redirects.ps1"
+
 function Verify-Nuget-Packages {
     Write-Host "Starting Verify-Nuget-Packages."
     $expectedNumOfFiles = @{
@@ -316,3 +319,6 @@ Start-sleep -Seconds 10
 # skipped, it is hard to find the right dumpbin.exe and corflags tools on server
 # Verify-NugetPackageExe -configuration $configuration -UnzipNugetPackages $unzipNugetPackages
 Verify-NugetPackageVersion -configuration $configuration -UnzipNugetPackages $unzipNugetPackages
+
+Write-Host "`nVerifying binding redirects..."
+Verify-BindingRedirects -PackageDirs $unzipNugetPackages -Configuration $configuration
