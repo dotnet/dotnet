@@ -551,7 +551,7 @@
 
     <!-- Match on %(TargetPath) so the macOS dSYM bundle's inner Mach-O
          (libdotnet-aot.dylib.dSYM/Contents/Resources/DWARF/libdotnet-aot.dylib)
-         is not picked alongside the real dylib. See dotnet/sdk#54296. -->
+         is not picked alongside the real dylib. -->
     <ItemGroup>
       <_DotnetAotNativeLib Include="@(_DotnetAotPublishedItems)"
                            Condition="'%(TargetPath)' == '$(_DotnetAotNativeLibName)'" />
