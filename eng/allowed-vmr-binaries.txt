@@ -65,9 +65,6 @@ src/nuget-client/test/TestUtilities/**/compiler/resources/.signature.p7s
 src/nuget-client/test/TestUtilities/**/compiler/resources/*.nupkg
 src/nuget-client/test/TestUtilities/**/compiler/resources/*.zip
 
-# razor
-src/razor/src/Razor/test/Microsoft.VisualStudio.Razor.IntegrationTests/TestFiles/*.zip
-
 # roslyn
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.metadata
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.winmd
@@ -78,6 +75,7 @@ src/roslyn/src/Compilers/Test/Resources/Core/**/*.dll
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.exe
 src/roslyn/src/Compilers/Test/Resources/Core/**/*.Dll
 src/roslyn/src/ExpressionEvaluator/Core/Source/ExpressionCompiler/Resources/WindowsProxy.winmd
+src/roslyn/src/Razor/src/Razor/test/Microsoft.VisualStudio.Razor.IntegrationTests/TestFiles/*.zip
 src/roslyn/src/Workspaces/CoreTest/Resources/*
 src/roslyn/src/Workspaces/MSBuild/Test/Resources/Dlls/*.dll
 src/roslyn/**/CodeAnalysisTest/**/*.res

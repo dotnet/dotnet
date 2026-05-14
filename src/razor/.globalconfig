@@ -1,4 +1,0 @@
-﻿is_global = true
-
-# IDE0059: Remove unnecessary value assignment
-dotnet_diagnostic.IDE0059.severity = warning
