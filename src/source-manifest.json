@@ -109,10 +109,10 @@
       "commitSha": "5f6075016c80a0954f98c6c3814607277737b09d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.26208.3",
+      "packageVersion": "8.0.0-alpha.1.26262.3",
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "e911a8db53ca72e45e66bb84376e68fe5c5999b9"
+      "commitSha": "43fa27099796cf60357226180f279946dbb6495e"
     },
     {
       "packageVersion": "8.0.0-alpha.1.26216.1",
