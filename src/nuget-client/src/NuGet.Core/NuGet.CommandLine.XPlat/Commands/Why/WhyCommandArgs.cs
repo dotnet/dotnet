@@ -3,7 +3,6 @@
 
 #nullable enable
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using Spectre.Console;
@@ -12,32 +11,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     internal class WhyCommandArgs
     {
-        public string Path { get; }
-        public string Package { get; }
-        public List<string> Frameworks { get; }
-        public IAnsiConsole Logger { get; }
-        public CancellationToken CancellationToken { get; }
-
-        /// <summary>
-        /// A constructor for the arguments of the 'why' command.
-        /// </summary>
-        /// <param name="path">The path to the solution or project file.</param>
-        /// <param name="package">The package for which we show the dependency graphs.</param>
-        /// <param name="frameworks">The target framework(s) for which we show the dependency graphs.</param>
-        /// <param name="logger"></param>
-        /// <param name="cancellationToken"></param>
-        public WhyCommandArgs(
-            string path,
-            string package,
-            List<string> frameworks,
-            IAnsiConsole logger,
-            CancellationToken cancellationToken)
-        {
-            Path = path ?? throw new ArgumentNullException(nameof(path));
-            Package = package ?? throw new ArgumentNullException(nameof(package));
-            Frameworks = frameworks ?? throw new ArgumentNullException(nameof(frameworks));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            CancellationToken = cancellationToken;
-        }
+        public required string Path { get; init; }
+        public required string Package { get; init; }
+        public required List<string> Frameworks { get; init; }
+        public required IAnsiConsole Logger { get; init; }
+        public required CancellationToken CancellationToken { get; init; }
+        public required IDotnetVersionChecker DotnetVersionChecker { get; init; }
     }
 }

@@ -791,7 +791,7 @@ namespace NuGet.Build.Tasks.Console
         /// <returns>A <see cref="DependencyGraphSpec" /> for the specified project if they could be loaded, otherwise <code>null</code>.</returns>
         private DependencyGraphSpec GetDependencyGraphSpec(string entryProjectPath, IDictionary<string, string> globalProperties, bool interactive, string binaryLoggerParameters, IEnvironmentVariableReader environmentVariableReader)
         {
-            string envVar = environmentVariableReader.GetEnvironmentVariable("NUGET_USE_NEW_PACKAGESPEC_FACTORY");
+            string envVar = environmentVariableReader.GetEnvironmentVariable(PackageSpecFactory.EnvironmentVariableName);
             if (!string.Equals(envVar, bool.FalseString, StringComparison.OrdinalIgnoreCase))
             {
                 return GetDependencyGraphSpec(
@@ -801,7 +801,7 @@ namespace NuGet.Build.Tasks.Console
                     binaryLoggerParameters,
                     createProjectFactory: static (string projectPath, (ProjectInstance projectInstance, string targetFramework) args) =>
                     {
-                        var adapter = new RestoreProjectAdapter(args.projectInstance.FullPath);
+                        var adapter = new RestoreProjectAdapter(args.projectInstance.FullPath, args.projectInstance.GlobalProperties);
                         adapter.AddTargetFramework(args.targetFramework, new TargetFrameworkAdapter(args.projectInstance));
                         return adapter;
                     },

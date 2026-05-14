@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Globalization;
@@ -32,7 +31,7 @@ namespace NuGet.Protocol
         {
             // Observe the NoCache argument.
             var directDownload = downloadContext.DirectDownload;
-            DownloadResourceResult packageFromGlobalPackages = null;
+            DownloadResourceResult? packageFromGlobalPackages = null;
             try
             {
                 packageFromGlobalPackages = GlobalPackagesFolderUtility.GetPackage(
@@ -140,7 +139,7 @@ namespace NuGet.Protocol
         public static void CleanUpDirectDownloads(PackageDownloadContext downloadContext)
         {
             foreach (var file in Directory.EnumerateFiles(
-                downloadContext.DirectDownloadDirectory,
+                downloadContext.DirectDownloadDirectory!,
                 DirectDownloadPattern,
                 SearchOption.TopDirectoryOnly))
             {
@@ -186,13 +185,13 @@ namespace NuGet.Protocol
             // extraction code since the random component is specifically designed to avoid collisions.
             var randomComponent = Path.GetRandomFileName();
             var fileName = $"{randomComponent}{DirectDownloadExtension}";
-            var directDownloadPath = Path.Combine(downloadContext.DirectDownloadDirectory, fileName);
+            var directDownloadPath = Path.Combine(downloadContext.DirectDownloadDirectory!, fileName);
 
-            FileStream fileStream = null;
+            FileStream? fileStream = null;
 
             try
             {
-                Directory.CreateDirectory(downloadContext.DirectDownloadDirectory);
+                Directory.CreateDirectory(downloadContext.DirectDownloadDirectory!);
 
                 // Use DeleteOnClose when opening this stream since this file is just used for for the package
                 // extraction. This file is meant to be ephemeral because package extraction does not always result

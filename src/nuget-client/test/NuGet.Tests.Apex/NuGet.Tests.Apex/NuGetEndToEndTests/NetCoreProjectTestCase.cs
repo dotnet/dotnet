@@ -233,6 +233,40 @@ namespace NuGet.Tests.Apex
             }
         }
 
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        [TestCategory("StagingGate")]
+        public async Task InstallAndUpdatePackageFromUI_NetCoreProject_Succeeds()
+        {
+            // Arrange
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger);
+            var packageName = "NetCoreUpdateTestPackage";
+            var packageVersion1 = "1.0.0";
+            var packageVersion2 = "2.0.0";
+
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion1);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion2);
+
+            VisualStudio.AssertNoErrors();
+
+            // Act
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
+            var nugetTestService = GetNuGetTestService();
+            var uiwindow = nugetTestService.GetUIWindowfromProject(testContext.Project);
+            uiwindow.InstallPackageFromUI(packageName, packageVersion1);
+            testContext.SolutionService.Build();
+            testContext.NuGetApexTestService.WaitForAutoRestore();
+            CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName, packageVersion1, Logger);
+
+            uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
+            testContext.SolutionService.Build();
+            testContext.NuGetApexTestService.WaitForAutoRestore();
+
+            // Assert
+            VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+            CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName, packageVersion2, Logger);
+        }
+
         // There  is a bug with VS or Apex where NetCoreConsoleApp and NetCoreClassLib create netcore 2.1 projects that are not supported by the sdk
         // Commenting out any NetCoreConsoleApp or NetCoreClassLib template and swapping it for NetStandardClassLib as both are package ref.
 
