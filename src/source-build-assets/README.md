@@ -34,6 +34,10 @@ New packages are needed from time to time as
 and [new dependencies are added](https://github.com/dotnet/source-build/blob/main/Documentation/sourcebuild-in-repos/new-dependencies.md)
 to .NET. The following sections describe how to add/upgrade the various types of packages.
 
+> **Note:** The instructions below apply to the `main` branch. Servicing branches (e.g. `release/9.0`)
+> may have different processes for generating and adding packages. When working on a servicing branch,
+> always refer to the README on that branch for the correct instructions.
+
 * [External](#external)
 
 * [Reference](#reference)

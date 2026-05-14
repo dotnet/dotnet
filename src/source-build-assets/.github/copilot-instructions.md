@@ -25,14 +25,24 @@ All general documentation is maintained in the [README.md](../README.md) to avoi
 - **ALWAYS** validate commands work on Linux (primary platform for source-build)
 - **ALWAYS** preserve intentional code comments explaining manual fixes
 
+## Branch Awareness
+
+The instructions in this file and the README apply to the `main` branch.
+**Servicing branches (e.g. `release/9.0`) may have different tools, scripts, and
+workflows for generating and adding packages.** When working on a servicing branch,
+always read the README and copilot instructions from that branch — do not assume
+the `main` branch instructions are correct.
+
 ## Workflow Patterns
 
 ### When User Asks to "Add a Package"
 
-1. Determine package type first: External, Reference, Targeting, or Text-only
-2. For Reference packages: Use `./generate.sh --package name,version`
-3. For External packages: Requires submodule + project creation + patches1
-4. Check README for detailed workflows
+1. Confirm which branch the work targets — if it is a servicing branch, read that
+   branch's README for the correct process before proceeding
+2. Determine package type first: External, Reference, Targeting, or Text-only
+3. For Reference packages: Use `./generate.sh --package name,version`
+4. For External packages: Requires submodule + project creation + patches
+5. Check README for detailed workflows
 
 ### When Regenerating Packages
 
