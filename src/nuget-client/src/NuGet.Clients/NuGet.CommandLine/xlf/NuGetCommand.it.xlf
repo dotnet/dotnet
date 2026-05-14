@@ -597,8 +597,13 @@ nuget pack foo.nuspec -Version 2.1.0</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandDeterministic">
-        <source>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package.</source>
-        <target state="translated">Specificare se il comando deve creare un pacchetto deterministico. Le chiamate multiple del comando pack creeranno lo stesso pacchetto.</target>
+        <source>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package when used with -DeterministicTimestamp.</source>
+        <target state="new">Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package when used with -DeterministicTimestamp.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandDeterministicTimestamp">
+        <source>Specify the timestamp this command should use when creating a deterministic package. Multiple invocations of the pack command will create the exact same package.</source>
+        <target state="new">Specify the timestamp this command should use when creating a deterministic package. Multiple invocations of the pack command will create the exact same package.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandExcludeDescription">

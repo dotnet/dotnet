@@ -465,8 +465,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} no se eliminará. Considere la posibilidad de quitar este paquete de las dependencias, ya que es probable que no sea necesario.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="needs-review-translation">PackageReference {0} no se eliminará. Considere la posibilidad de quitar este paquete de las dependencias, ya que es probable que no sea necesario.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1495,6 +1495,12 @@ NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere p
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
         <target state="translated">{0} no proporciona un límite inferior inclusivo para la dependencia {1}. {2} se resolvió en su lugar.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">El paquete "{0}" {1} usa el marco MonoAndroid en desuso en lugar de "net6.0-android" o posterior. Considere la posibilidad de actualizar a una versión más reciente de este paquete o póngase en contacto con el autor del paquete.</target>
+        <note>{0} - package id
+{1} - package version</note>
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>

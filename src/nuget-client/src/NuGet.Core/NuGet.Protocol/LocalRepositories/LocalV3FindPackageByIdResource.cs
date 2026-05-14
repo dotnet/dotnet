@@ -222,7 +222,7 @@ namespace NuGet.Protocol
                         fileStream.Position = 0;
 
                         await fileStream.CopyToAsync(destination, cancellationToken);
-                        ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length));
+                        ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length, id));
                         return true;
                     }
                 }

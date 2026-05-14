@@ -151,6 +151,24 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CRL URL: {0}.
+        /// </summary>
+        internal static string CertUtilityCertificateCrlUrl {
+            get {
+                return ResourceManager.GetString("CertUtilityCertificateCrlUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OCSP URL: {0}.
+        /// </summary>
+        internal static string CertUtilityCertificateOcspUrl {
+            get {
+                return ResourceManager.GetString("CertUtilityCertificateOcspUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ... {0} more..
         /// </summary>
         internal static string CertUtilityMultipleCertificatesFooter {
@@ -444,6 +462,15 @@ namespace NuGet.Packaging {
         internal static string ErrorInvalidPackageVersionForDependency {
             get {
                 return ResourceManager.GetString("ErrorInvalidPackageVersionForDependency", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid timestamp: &apos;{0}&apos;.
+        /// </summary>
+        internal static string ErrorInvalidTimestamp {
+            get {
+                return ResourceManager.GetString("ErrorInvalidTimestamp", resourceCulture);
             }
         }
         

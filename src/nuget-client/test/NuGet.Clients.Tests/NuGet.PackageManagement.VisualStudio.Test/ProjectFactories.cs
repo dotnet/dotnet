@@ -20,6 +20,7 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using Test.Utility;
+using VSLangProj150;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -44,7 +45,12 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     projectId: projectName);
         }
 
-        internal static LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string projectId, IVsProjectThreadingService threadingService, LibraryDependency[] pkgDependencies)
+        internal static LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(
+            TestDirectory testDirectory,
+            string projectId,
+            IVsProjectThreadingService threadingService,
+            LibraryDependency[] pkgDependencies,
+            bool usePackageSpecFactory)
         {
             var framework = NuGetFramework.Parse("netstandard13");
             IVsProjectAdapter projectAdapter = CreateProjectAdapter(testDirectory);
@@ -58,12 +64,18 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectAdapter,
                 projectId,
                 projectServices,
-                threadingService);
+                threadingService,
+                usePackageSpecFactory);
 
             return testProject;
         }
 
-        internal static LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(TestDirectory testDirectory, string projectId, string range, IVsProjectThreadingService threadingService)
+        internal static LegacyPackageReferenceProject CreateLegacyPackageReferenceProject(
+            TestDirectory testDirectory,
+            string projectId,
+            string range,
+            IVsProjectThreadingService threadingService,
+            bool usePackageSpecFactory)
         {
             var onedep = new[]
             {
@@ -76,7 +88,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 }
             };
 
-            return CreateLegacyPackageReferenceProject(testDirectory: testDirectory, projectId: projectId, threadingService: threadingService, pkgDependencies: onedep);
+            return CreateLegacyPackageReferenceProject(testDirectory, projectId, threadingService, onedep, usePackageSpecFactory);
         }
 
         internal static IVsProjectAdapter CreateProjectAdapter(string fullPath)
@@ -89,9 +101,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             var projectAdapter = CreateProjectAdapter(projectBuildProperties);
 
+            var projectFilePath = Path.Combine(fullPath, "foo.csproj");
             projectAdapter
                 .Setup(x => x.FullProjectPath)
-                .Returns(Path.Combine(fullPath, "foo.csproj"));
+                .Returns(projectFilePath);
+            projectAdapter
+                .Setup(x => x.ProjectDirectory)
+                .Returns(fullPath);
             projectAdapter
                 .Setup(x => x.GetTargetFramework())
                 .Returns(NuGetFramework.Parse("netstandard13"));
@@ -101,6 +117,19 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             projectAdapter
                 .Setup(x => x.GetMSBuildProjectExtensionsPath())
                 .Returns(testMSBuildProjectExtensionsPath);
+
+            // MSBuild always defines these properties. Set them up so the PackageSpecFactory code path works.
+            projectBuildProperties
+                .Setup(x => x.GetPropertyValue("MSBuildProjectName"))
+                .Returns(Path.GetFileNameWithoutExtension(projectFilePath));
+#pragma warning disable CS0618 // GetPropertyValueWithDteFallback is obsolete
+            projectBuildProperties
+                .Setup(x => x.GetPropertyValueWithDteFallback(ProjectBuildProperties.MSBuildProjectExtensionsPath))
+                .Returns(testMSBuildProjectExtensionsPath);
+            projectBuildProperties
+                .Setup(x => x.GetPropertyValueWithDteFallback(ProjectBuildProperties.TargetFrameworkMoniker))
+                .Returns(NuGetFramework.Parse("netstandard13").DotNetFrameworkName);
+#pragma warning restore CS0618
 
             return projectAdapter.Object;
         }
@@ -120,6 +149,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             projectAdapter
                 .Setup(x => x.BuildProperties)
                 .Returns(projectBuildProperties.Object);
+
+            projectAdapter
+                .Setup(x => x.IsSupported(It.IsAny<Reference6>()))
+                .Returns(true);
 
             return projectAdapter;
         }

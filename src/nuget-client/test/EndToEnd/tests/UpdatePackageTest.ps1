@@ -123,28 +123,6 @@ function Test-UpdatingPackageDependentPackageVersion {
 }
 
 
-function Test-UpdatingPackageWhatIf {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-    Install-Package D -Version 1.0 -Source $context.RepositoryPath
-    Assert-Package $p D 1.0
-    Assert-Package $p B 1.0
-    Assert-Package $p C 1.0
-    Assert-Package $p A 2.0
-
-    # Act
-    Update-Package D -Source $context.RepositoryPath -WhatIf
-
-    # Assert: no packages are touched
-    Assert-Package $p D 1.0
-    Assert-Package $p B 1.0
-    Assert-Package $p C 1.0
-    Assert-Package $p A 2.0
-}
 
 function Test-UpdatingPackageWithSharedDependencySimple {
     param(
@@ -175,14 +153,6 @@ function Test-UpdatingPackageWithSharedDependencySimple {
     Assert-Null (Get-ProjectPackage $p B 1.0)
     Assert-Null (Get-SolutionPackage D 1.0)
     Assert-Null (Get-SolutionPackage B 1.0)
-}
-
-function Test-UpdateWithoutPackageInstalledThrows {
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act & Assert
-    Assert-Throws { $p | Update-Package elmah } ("'elmah' was not installed in any project. Update failed.")
 }
 
 #function Test-UpdateSolutionOnlyPackage {
@@ -418,19 +388,6 @@ function Test-UpdatePackageWithOlderVersionOfSharedDependencyInUse {
     Assert-Null (Get-SolutionPackage A 1.0)
 }
 
-function Test-UpdatePackageAcceptsSourceName {
-    # Arrange
-    $p = New-ConsoleApplication
-    Install-Package Antlr -Version 3.1.1 -Project $p.Name -Source $SourceNuGet
-
-    Assert-Package $p Antlr 3.1.1
-
-    # Act
-    Update-Package Antlr -Version 3.1.3.42154 -Project $p.Name -Source $SourceNuGet
-
-    # Assert
-    Assert-Package $p Antlr 3.1.3.42154
-}
 
 function UpdatePackageAcceptsAllAsSourceName {
     # Arrange
@@ -496,17 +453,6 @@ function Test-UpdatePackageAcceptsRelativePathSource2 {
     popd
 }
 
-function Test-UpdateProjectLevelPackageNotInstalledInAnyProject {
-    # Arrange
-    $p1 = New-ConsoleApplication
-
-    # Act
-    $p1 | Install-Package Ninject -Version 2.0.1.0
-    Remove-ProjectItem $p1 packages.config
-
-    # Assert
-    Assert-Throws { Update-Package Ninject } "'Ninject' was not installed in any project. Update failed."
-}
 
 # https://github.com/NuGet/Home/issues/9283
 #function Test-UpdatePackageMissingPackage {
@@ -844,15 +790,6 @@ function Test-UpdatePackageWithDependentsThatHaveNoAvailableUpdatesThrows {
 
     # Act
     Assert-Throws { Update-Package B -Source $context.RepositoryPath } "Unable to resolve dependencies. 'B 2.0.0' is not compatible with 'A 1.0.0 constraint: B (= 1.0.0)'."
-}
-
-function Test-UpdatePackageThrowsWhenSourceIsInvalid {
-    # Arrange
-    $p = New-ConsoleApplication
-    $p | Install-Package jQuery -Version 1.5.1 -Source $context.RepositoryPath
-
-    # Act & Assert
-    Assert-Throws { Update-Package jQuery -source "d:package" } "Unsupported type of source 'd:package'. Please provide an HTTP or local source."
 }
 
 function Test-UpdatePackageInOneProjectDoesNotCheckAllPackagesInSolution {

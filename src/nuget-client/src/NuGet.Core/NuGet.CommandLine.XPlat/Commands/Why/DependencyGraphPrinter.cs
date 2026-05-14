@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NuGet.Shared;
+using NuGet.Versioning;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -22,7 +23,8 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="dependencyGraphPerFramework">A dictionary mapping target frameworks to their dependency graphs.</param>
         /// <param name="targetPackage">The package we want the dependency paths for.</param>
         /// <param name="logger"></param>
-        public static void PrintAllDependencyGraphs(Dictionary<string, List<DependencyNode>?> dependencyGraphPerFramework, string targetPackage, IAnsiConsole logger)
+        /// <param name="dotnetVersionChecker"></param>
+        public static void PrintAllDependencyGraphs(Dictionary<string, List<DependencyNode>?> dependencyGraphPerFramework, string targetPackage, IAnsiConsole logger, IDotnetVersionChecker dotnetVersionChecker)
         {
             // print empty line
             logger.WriteLine();
@@ -34,7 +36,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             {
                 if (frameworks.Count > 0)
                 {
-                    PrintDependencyGraphPerFramework(frameworks, dependencyGraphPerFramework[frameworks.First()], targetPackage, logger);
+                    PrintDependencyGraphPerFramework(frameworks, dependencyGraphPerFramework[frameworks.First()], targetPackage, logger, dotnetVersionChecker);
                 }
             }
         }
@@ -46,7 +48,8 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// <param name="topLevelNodes">The top-level package nodes of the dependency graph.</param>
         /// <param name="targetPackage">The package we want the dependency paths for.</param>
         /// <param name="logger"></param>
-        private static void PrintDependencyGraphPerFramework(List<string> frameworks, List<DependencyNode>? topLevelNodes, string targetPackage, IAnsiConsole logger)
+        /// <param name="dotnetVersionChecker"></param>
+        private static void PrintDependencyGraphPerFramework(List<string> frameworks, List<DependencyNode>? topLevelNodes, string targetPackage, IAnsiConsole logger, IDotnetVersionChecker dotnetVersionChecker)
         {
             var tree = new Tree(string.Join("\n", frameworks.Select(f => $"[[{f}]]")));
 
@@ -74,7 +77,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             {
                 var current = stack.Pop();
 
-                var treeNodeText = GetNodeText(current.Node, targetPackage);
+                var treeNodeText = GetNodeText(current.Node, targetPackage, dotnetVersionChecker);
                 var treeNode = current.ParentNode.AddNode(treeNodeText);
 
                 if (current.Node.Children?.Count > 0)
@@ -94,9 +97,29 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             logger.WriteLine();
         }
 
-        private static IRenderable GetNodeText(DependencyNode node, string targetPackage)
+        private static IRenderable GetNodeText(DependencyNode node, string targetPackage, IDotnetVersionChecker dotnetVersionChecker)
         {
-            string text = $"{node.Id} (v{node.Version})";
+            string text;
+
+            if (node is PackageNode pkgNode)
+            {
+                string resolved = pkgNode.ResolvedVersion.OriginalVersion ?? pkgNode.ResolvedVersion.ToString();
+
+                if (dotnetVersionChecker.DotnetVersion >= 11)
+                {
+                    string requested = pkgNode.RequestedVersion.ToString("f", VersionRangeFormatter.Instance);
+                    text = $"{node.Id}@{resolved} ({requested})";
+                }
+                else
+                {
+                    text = $"{node.Id} (v{resolved})";
+                }
+            }
+            else
+            {
+                text = node.Id;
+            }
+
             Style? style = node.Id.Equals(targetPackage, StringComparison.OrdinalIgnoreCase)
                 ? new Style(foreground: TargetPackageColor)
                 : null;

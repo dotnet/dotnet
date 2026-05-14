@@ -18,6 +18,7 @@ using NuGet.ProjectModel;
 using NuGet.Repositories;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.Test
@@ -177,7 +178,7 @@ namespace NuGet.Commands.Test
             // Arrange
             using (var randomProjectDirectory = TestDirectory.Create())
             {
-                var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(NullSettings.Instance);
+                var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(NullSettings.Instance, TestEnvironmentVariableReader.EmptyInstance);
 
                 if (!string.IsNullOrEmpty(globalPackagesFolder))
                 {
