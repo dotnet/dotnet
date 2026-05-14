@@ -445,6 +445,12 @@ jobs:
           Write-Host "Successfully acquired DevDiv access token via WIF for IBC optimization"
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - template: /eng/common/templates-official/steps/get-federated-access-token.yml
+        parameters:
+          federatedServiceConnection: VmrSyncPipeline
+          outputVariableName: AzdoToken
+
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self
       parameters:

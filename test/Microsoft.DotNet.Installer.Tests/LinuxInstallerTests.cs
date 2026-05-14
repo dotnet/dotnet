@@ -545,9 +545,22 @@ public partial class LinuxInstallerTests : IDisposable
 
     private string GetMatchingDepsPackage(string baseImage, PackageType packageType)
     {
-        string matchPattern = packageType == PackageType.Deb
-            ? $"{DotnetRuntimeDepsPrefix}*.deb"
-            : $"{DotnetRuntimeDepsPrefix}*azl*.rpm"; // We currently only support Azure Linux deps image
+        string matchPattern;
+        if (packageType == PackageType.Deb)
+        {
+            matchPattern = $"{DotnetRuntimeDepsPrefix}*.deb";
+        }
+        else
+        {
+            // Select the deps RPM that matches the base image's Azure Linux version
+            string azlVersion = baseImage switch
+            {
+                _ when baseImage.Contains("azurelinux3") => "azl.3",
+                _ when baseImage.Contains("azurelinux4") => "azl.4",
+                _ => "azl"
+            };
+            matchPattern = $"{DotnetRuntimeDepsPrefix}*{azlVersion}*.rpm";
+        }
 
         string[] files = Directory.GetFiles(_contextDir, matchPattern, SearchOption.AllDirectories);
         if (files.Length == 0)
@@ -861,13 +874,13 @@ public partial class LinuxInstallerTests : IDisposable
             if (packageType == PackageType.Rpm)
             {
                 // Runtime deps distro variants (RPM only)
-                string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
+                string[] distros = new[] { "azl.3", "azl.4", "opensuse.15", "sles.15" };
                 foreach (string distro in distros)
                 {
                     patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
 
                     // `azl` deps packages do not have a -newkey- variant
-                    if (distro != "azl.3")
+                    if (!distro.StartsWith("azl", StringComparison.Ordinal))
                     {
                         patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
                     }
