@@ -523,7 +523,7 @@ namespace NuGet.SolutionRestoreManager
 
         // Trying to fetch a property value from tfm property bags.
         // If defined the property should have identical values in all of the occurrences.
-        private static TValue? GetSingleNonEvaluatedPropertyOrNull<TValue>(
+        internal static TValue? GetSingleNonEvaluatedPropertyOrNull<TValue>(
             IReadOnlyList<IVsTargetFrameworkInfo4> values,
             string propertyName,
             Func<string, TValue> valueFactory)
