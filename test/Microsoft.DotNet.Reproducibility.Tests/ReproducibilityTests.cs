@@ -82,6 +82,11 @@ public class ReproducibilityTests
         OutputHelper.WriteLine($"  Tarball 1 files: {hashes1.Count}");
         OutputHelper.WriteLine($"  Tarball 2 files: {hashes2.Count}");
 
+        // ExclusionsHelper.GenerateNewBaselineFile and the updated baseline write below
+        // both target Config.LogsDirectory; ensure it exists for environments (e.g. local
+        // runs) where the harness hasn't already created it.
+        Directory.CreateDirectory(Config.LogsDirectory);
+
         ExclusionsHelper exclusionsHelper = new(exclusionsFileName, Config.LogsDirectory);
 
         // First, compute the raw diff lists. Do not consult exclusions yet — IsFileExcluded
