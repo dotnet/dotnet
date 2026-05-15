@@ -1,8 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.IO;
 using FluentAssertions;
+using NuGet.Configuration;
 using NuGet.ProjectManagement;
+using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
 
@@ -57,5 +60,52 @@ public class PackageSpecFactoryTests
 
         // Assert
         packageSpec.RestoreMetadata.CentralPackageVersionsEnabled.Should().Be(expectedCpmEnabled);
+    }
+
+    [Theory]
+    // No RestorePackagesPath set → falls back to globalPackagesFolder from settings
+    [InlineData(null, null, "custom-gpf")]
+    // RestorePackagesPath set as project property → uses project value
+    [InlineData(null, "my-packages", "my-packages")]
+    // RestorePackagesPath set as global property → global override wins
+    [InlineData("override-packages", "my-packages", "override-packages")]
+    public void ApplySettings_PackagesPath_ResolvedFromCorrectSource(
+        string? globalOverride,
+        string? projectPackagesPath,
+        string expected)
+    {
+        // Arrange
+        using var testDirectory = TestDirectory.Create();
+        string projectPath = Path.Combine(testDirectory, "my.csproj");
+        string globalPackagesFolder = Path.Combine(testDirectory, "custom-gpf");
+
+        var settings = new MockSettings
+        {
+            Sections = new[]
+            {
+                new MockSettingSection(
+                    ConfigurationConstants.Config,
+                    new AddItem(ConfigurationConstants.GlobalPackagesFolder, globalPackagesFolder))
+            }
+        };
+
+        var factory = new TestPackageSpecFactory(projectPath, outerBuild =>
+        {
+            outerBuild.WithProperty("TargetFramework", "net8.0");
+            if (projectPackagesPath is not null)
+            {
+                outerBuild.WithProperty("RestorePackagesPath", projectPackagesPath);
+            }
+        });
+        if (globalOverride is not null)
+        {
+            factory.WithGlobalProperty("RestorePackagesPath", globalOverride);
+        }
+
+        // Act
+        var packageSpec = factory.Build(settings);
+
+        // Assert
+        packageSpec.RestoreMetadata.PackagesPath.Should().Be(Path.Combine(testDirectory, expected));
     }
 }
