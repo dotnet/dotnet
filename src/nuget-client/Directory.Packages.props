@@ -29,6 +29,7 @@
     <SystemMemoryPackageVersion Condition="'$(SystemMemoryPackageVersion)' == ''">4.6.3</SystemMemoryPackageVersion>
     <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">8.0.1</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">8.0.0</SystemSecurityCryptographyProtectedDataVersion>
+    <SystemSecurityCryptographyXmlPackageVersion Condition="'$(SystemSecurityCryptographyXmlPackageVersion)' == ''">8.0.3</SystemSecurityCryptographyXmlPackageVersion>
     <MicrosoftDotNetXliffTasksVersion Condition="'$(MicrosoftDotNetXliffTasksVersion)' == ''">10.0.0-beta.25260.104</MicrosoftDotNetXliffTasksVersion>
   </PropertyGroup>
 
@@ -97,7 +98,7 @@
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(SystemSecurityCryptographyPkcsVersion)" />
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="$(SystemSecurityCryptographyProtectedDataVersion)" />
     <!-- S.S.C.Xml is a dependency of MSBuild. Once MSBuild no longer has a transitive dependency on a vulnerable version, this can be removed -->
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.3" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlPackageVersion)" />
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <!--
       The Microsoft.VisualStudio.SDK metapackage brings in System.Threading.Tasks.Dataflow 4.11.1 (assembly version 4.9.5.0).
