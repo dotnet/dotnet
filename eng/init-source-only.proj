@@ -30,13 +30,6 @@
           WorkingDirectory="$(PreviouslySourceBuiltPackagesPath)" />
   </Target>
 
-  <ItemGroup>
-    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
-  </ItemGroup>
-  <PropertyGroup>
-    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
-  </PropertyGroup>
-
   <Target Name="ValidateSourceOnlySigning">
     <Error Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true' and '$(DotNetSourceOnlyPublishArtifacts)' != 'true'" 
            Text="Source-only signing requires publishing artifacts through Arcade. Please set 'DotNetSourceOnlyPublishArtifacts' to 'true', or disable signing by setting 'DotNetSourceOnlyPostBuildSign' to 'false'." />
@@ -72,6 +65,7 @@
           Outputs="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete">
 
     <MakeDir Directories="$(SharedComponentsArtifactsPath)" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
 
     <!-- Extract everything except the assets directory to the shared components packages path -->
     <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --exclude='assets'"
