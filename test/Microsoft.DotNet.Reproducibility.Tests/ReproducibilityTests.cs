@@ -13,7 +13,7 @@ using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.DotNet.Tests;
+namespace Microsoft.DotNet.Reproducibility.Tests;
 
 [Trait("Category", "Reproducibility")]
 public class ReproducibilityTests
@@ -79,7 +79,7 @@ public class ReproducibilityTests
         OutputHelper.WriteLine($"  Tarball 1 files: {hashes1.Count}");
         OutputHelper.WriteLine($"  Tarball 2 files: {hashes2.Count}");
 
-        ExclusionsHelper exclusionsHelper = new(exclusionsFileName, Config.LogsDirectory, baselineSubDir: nameof(ReproducibilityTests));
+        ExclusionsHelper exclusionsHelper = new(exclusionsFileName, Config.LogsDirectory);
 
         // First, compute the raw diff lists. Do not consult exclusions yet — IsFileExcluded
         // has the side effect of marking matched exclusions as "used", and we only want an
@@ -241,6 +241,6 @@ public class ReproducibilityTests
 
     private static string GetAssetsPath(string fileName)
     {
-        return Path.Combine(Directory.GetCurrentDirectory(), "assets", nameof(ReproducibilityTests), fileName);
+        return Path.Combine(Directory.GetCurrentDirectory(), "assets", fileName);
     }
 }
