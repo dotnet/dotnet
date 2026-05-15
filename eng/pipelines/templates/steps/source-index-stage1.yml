@@ -21,8 +21,8 @@ parameters:
   # Repos to include (if set, ONLY these repos will be indexed; space-separated)
   includeRepos: ''
 
-  sourceIndexUploadPackageVersion: 2.0.0-20260515.1
-  sourceIndexProcessBinlogPackageVersion: 1.0.1-20260515.1
+  sourceIndexUploadPackageVersion: 2.0.0-20260515.3
+  sourceIndexProcessBinlogPackageVersion: 1.0.1-20260515.3
   sourceIndexPackageSource: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
   sourceIndexBaseDir: $(Agent.TempDirectory)/.source-index
 
