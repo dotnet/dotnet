@@ -69,7 +69,8 @@
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuildId)' == ''">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
-    <NuGetAudit>false</NuGetAudit>
+    <!-- Use nuget.org as the audit source for vulnerability data. -->
+    <NuGetAuditSources>https://data.nuget.org/v3/index.json</NuGetAuditSources>
     
     <!--
       Until 2xx and later branches start consuming a newer 1xx build with SBRP repo renamed to source-build-assets,
