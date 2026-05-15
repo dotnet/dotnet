@@ -107,7 +107,7 @@ jobs:
       --logger:'console;verbosity=detailed'
       -c Release
       -bl:$(Build.SourcesDirectory)/artifacts/log/Debug/ReproTests_$(date +"%m%d%H%M%S").binlog
-      -flp:LogFile=$(Build.SourcesDirectory)/artifacts/logs/ReproTests_$(date +"%m%d%H%M%S").log
+      -flp:LogFile=$(Build.SourcesDirectory)/artifacts/log/ReproTests_$(date +"%m%d%H%M%S").log
       -clp:v=m
       /p:${{ parameters.buildType }}SdkTarballPath1=$(FirstSdkTarballPath)
       /p:${{ parameters.buildType }}SdkTarballPath2=$(SecondSdkTarballPath)
