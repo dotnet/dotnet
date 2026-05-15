@@ -77,6 +77,9 @@ stages:
           $token = az account get-access-token --resource "499b84ac-1321-427f-aa17-267ca6975798" --query accessToken -o tsv
           Write-Host "##vso[task.setvariable variable=InsertAccessToken;issecret=true]$token"
       condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], '${{ parameters.componentBranchName }}'), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.componentBranchName }}')))
+    - script: git config --global credential.helper ""
+      displayName: 'Disable GCM (Entra token too large for credential store)'
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], '${{ parameters.componentBranchName }}'), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.componentBranchName }}')))
     - task: ms-vseng.MicroBuildShipTasks.55100717-a81d-45ea-a363-b8fe3ec375ad.MicroBuildInsertVsPayload@5
       displayName: 'Insert VS Payload'
       inputs:
