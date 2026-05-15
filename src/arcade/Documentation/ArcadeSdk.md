@@ -687,16 +687,8 @@ The following task restores tools that are only available from internal feeds.
           /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
           /p:VisualStudioDropName=$(VisualStudioDropName) # required if repository builds VS insertion components
           /p:DotNetSignType=$(SignType)
-          /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-          /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
   displayName: Build
 ```
-
-The Build Pipeline needs to link the following variable group:
-
-- DotNet-Symbol-Server-Pats
-  - `microsoft-symbol-server-pat`
-  - `symweb-symbol-server-pat`
 
 ### Publishing test results
 
