@@ -39,6 +39,7 @@ pr: none
 trigger: none
 
 variables:
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
 - template: /eng/pipelines/templates/variables/vmr-build.yml@self
   parameters:
     buildSourceOnly: true
@@ -49,12 +50,12 @@ extends:
     settings:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     pool:
-      name: NetCore1ESPool-Svc-Internal
-      image: 1es-ubuntu-2204
+      name: $(DncEngInternalBuildPool)
+      image: build.azurelinux.3.amd64
       os: linux
     sdl:
       sourceAnalysisPool:
-          name: NetCore1ESPool-Svc-Internal
+          name: $(DncEngInternalBuildPool)
           image: 1es-windows-2022
           os: windows
 
