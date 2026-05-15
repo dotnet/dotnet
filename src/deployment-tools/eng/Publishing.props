@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!-- This avoids creating VS.*.symbols.nupkg packages that are identical to the original package. -->
     <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
-    <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
+    <ProducesDotNetReleaseShippingAssets Condition="'$(DotNetBuildFromVMR)' == 'true'">true</ProducesDotNetReleaseShippingAssets>
   </PropertyGroup>
   
   <!-- Update all Artifacts with Kind=Package to have additional metadata item Category="ToolingPackage".
