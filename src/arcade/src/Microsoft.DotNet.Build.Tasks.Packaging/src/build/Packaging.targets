@@ -1275,6 +1275,10 @@
 
     <Message Condition="'$(_SkipCreatePackage)' == 'true'" Text="Skipping package creation for $(NuSpecPath) because the following files do not exist: @(_missingFiles)" />
 
+    <PropertyGroup>
+      <DeterministicTimestamp Condition="'$(DeterministicTimestamp)' == '' AND '$(SOURCE_DATE_EPOCH)' != ''">$(SOURCE_DATE_EPOCH)</DeterministicTimestamp>
+    </PropertyGroup>
+
     <NuGetPack Nuspecs="$(NuSpecPath)"
                OutputDirectory="$(PackageOutputPath)"
                ExcludeEmptyDirectories="true"
@@ -1287,6 +1291,7 @@
                AdditionalSymbolPackageExcludes="@(AdditionalSymbolPackageExcludes)"
                PackedPackageNamePrefix="$(PackedPackageNamePrefix)"
                Deterministic="$(Deterministic)"
+               DeterministicTimestamp="$(DeterministicTimestamp)"
                Condition="'$(_SkipCreatePackage)' != 'true'"/>
 
     <!-- Create a marker that records the path to the generated package -->
