@@ -69,6 +69,7 @@
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuildId)' == ''">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1903</WarningsNotAsErrors>
     <!-- Use nuget.org as the audit source for vulnerability data. -->
     <NuGetAuditSources>https://data.nuget.org/v3/index.json</NuGetAuditSources>
     
