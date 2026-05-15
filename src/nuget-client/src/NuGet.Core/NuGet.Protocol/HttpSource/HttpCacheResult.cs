@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 
@@ -12,6 +10,16 @@ namespace NuGet.Protocol
     {
         public HttpCacheResult(TimeSpan maxAge, string newFile, string cacheFule)
         {
+            if (newFile == null)
+            {
+                throw new ArgumentNullException(nameof(newFile));
+            }
+
+            if (cacheFule == null)
+            {
+                throw new ArgumentNullException(nameof(cacheFule));
+            }
+
             MaxAge = maxAge;
             NewFile = newFile;
             CacheFile = cacheFule;
@@ -20,6 +28,6 @@ namespace NuGet.Protocol
         public TimeSpan MaxAge { get; }
         public string NewFile { get; }
         public string CacheFile { get; }
-        public Stream Stream { get; set; }
+        public Stream? Stream { get; set; }
     }
 }

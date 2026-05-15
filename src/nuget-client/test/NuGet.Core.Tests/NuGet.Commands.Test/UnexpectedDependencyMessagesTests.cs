@@ -249,6 +249,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("1.0.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, VersionRange.Parse("[1.0.0, 3.0.0)"), child);
@@ -280,6 +281,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("1.0.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, VersionRange.Parse("[1.0.0, 3.0.0)"), child);
@@ -314,6 +316,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("2.5.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, VersionRange.Parse("(, 3.0.0)"), child);
@@ -348,6 +351,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("2.5.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, range, child);
@@ -381,6 +385,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var targetGraphs = new[] { targetGraph.Object };
             var ignore = new HashSet<string>();
             var indexedGraphs = targetGraphs.Select(IndexedRestoreTargetGraph.Create).ToList();
@@ -405,6 +410,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var targetGraphs = new[] { targetGraph.Object };
             var ignore = new HashSet<string>();
             var indexedGraphs = targetGraphs.Select(IndexedRestoreTargetGraph.Create).ToList();
@@ -429,6 +435,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var targetGraphs = new[] { targetGraph.Object };
             var ignore = new HashSet<string>() { "X" };
             var indexedGraphs = targetGraphs.Select(IndexedRestoreTargetGraph.Create).ToList();
@@ -453,6 +460,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var targetGraphs = new[] { targetGraph.Object };
             var ignore = new HashSet<string>();
             var indexedGraphs = targetGraphs.Select(IndexedRestoreTargetGraph.Create).ToList();
@@ -575,7 +583,7 @@ namespace NuGet.Commands.Test
 
             log.Code.Should().Be(NuGetLogCode.NU1604);
             log.TargetGraphs.Should().BeEquivalentTo(
-                new[] { NuGetFramework.Parse("netstandard2.0").DotNetFrameworkName },
+                new[] { "netstandard2.0" },
                 "net46 contains a valid range that should be filtered out");
         }
 
@@ -773,6 +781,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("2.0.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, VersionRange.Parse("1.0.0"), child);
@@ -813,6 +822,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("2.0.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, VersionRange.Parse("1.0.0"), child);
@@ -872,6 +882,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46/win10");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             var parent = new LibraryIdentity("z", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
             var child = new LibraryIdentity("x", NuGetVersion.Parse("2.5.0"), LibraryType.Package);
             var dependency = new ResolvedDependencyKey(parent, null, child);
@@ -890,6 +901,248 @@ namespace NuGet.Commands.Test
             testLogger.LogMessages.Select(e => e.Code).Should().NotContain(NuGetLogCode.NU1603);
         }
 
+        [Fact]
+        public void GetBumpedUpDependencies_TwoAliasesSameTFM_OnlyAffectedAliasWarns()
+        {
+            // apple requires x >= 1.0.0, banana requires x >= 2.0.0, both resolve x 2.0.0
+            // Only apple should get NU1601
+            var net46 = NuGetFramework.Parse("net46");
+            var tfi = new List<TargetFrameworkInformation>
+            {
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "apple",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package) })
+                },
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "banana",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("2.0.0"), LibraryDependencyTarget.Package) })
+                }
+            };
+            var project = new PackageSpec(tfi) { Name = "proj" };
+
+            var flattened = new HashSet<GraphItem<RemoteResolveResult>>
+            {
+                new GraphItem<RemoteResolveResult>(new LibraryIdentity("x", NuGetVersion.Parse("2.0.0"), LibraryType.Package))
+            };
+
+            var appleGraph = new Mock<IRestoreTargetGraph>();
+            appleGraph.SetupGet(e => e.Flattened).Returns(flattened);
+            appleGraph.SetupGet(e => e.TargetGraphName).Returns("apple");
+            appleGraph.SetupGet(e => e.Framework).Returns(net46);
+            appleGraph.SetupGet(e => e.TargetAlias).Returns("apple");
+
+            var bananaGraph = new Mock<IRestoreTargetGraph>();
+            bananaGraph.SetupGet(e => e.Flattened).Returns(flattened);
+            bananaGraph.SetupGet(e => e.TargetGraphName).Returns("banana");
+            bananaGraph.SetupGet(e => e.Framework).Returns(net46);
+            bananaGraph.SetupGet(e => e.TargetAlias).Returns("banana");
+
+            var indexedGraphs = new[] { appleGraph.Object, bananaGraph.Object }.Select(IndexedRestoreTargetGraph.Create).ToList();
+            var ignore = new HashSet<string>();
+
+            var messages = UnexpectedDependencyMessages.GetBumpedUpDependencies(indexedGraphs, project, ignore).ToList();
+
+            messages.Should().HaveCount(1);
+            messages[0].Code.Should().Be(NuGetLogCode.NU1601);
+            messages[0].TargetGraphs.Should().BeEquivalentTo(new[] { "apple" });
+        }
+
+        [Fact]
+        public void GetBumpedUpDependencies_TwoAliasesSameTFM_NeitherBumped_NoWarning()
+        {
+            // Both apple and banana require x >= 2.0.0, resolve to 2.0.0 — no warning
+            var net46 = NuGetFramework.Parse("net46");
+            var tfi = new List<TargetFrameworkInformation>
+            {
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "apple",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("2.0.0"), LibraryDependencyTarget.Package) })
+                },
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "banana",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("2.0.0"), LibraryDependencyTarget.Package) })
+                }
+            };
+            var project = new PackageSpec(tfi) { Name = "proj" };
+
+            var flattened = new HashSet<GraphItem<RemoteResolveResult>>
+            {
+                new GraphItem<RemoteResolveResult>(new LibraryIdentity("x", NuGetVersion.Parse("2.0.0"), LibraryType.Package))
+            };
+
+            var appleGraph = new Mock<IRestoreTargetGraph>();
+            appleGraph.SetupGet(e => e.Flattened).Returns(flattened);
+            appleGraph.SetupGet(e => e.TargetGraphName).Returns("apple");
+            appleGraph.SetupGet(e => e.Framework).Returns(net46);
+            appleGraph.SetupGet(e => e.TargetAlias).Returns("apple");
+
+            var bananaGraph = new Mock<IRestoreTargetGraph>();
+            bananaGraph.SetupGet(e => e.Flattened).Returns(flattened);
+            bananaGraph.SetupGet(e => e.TargetGraphName).Returns("banana");
+            bananaGraph.SetupGet(e => e.Framework).Returns(net46);
+            bananaGraph.SetupGet(e => e.TargetAlias).Returns("banana");
+
+            var indexedGraphs = new[] { appleGraph.Object, bananaGraph.Object }.Select(IndexedRestoreTargetGraph.Create).ToList();
+            var ignore = new HashSet<string>();
+
+            UnexpectedDependencyMessages.GetBumpedUpDependencies(indexedGraphs, project, ignore).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetProjectDependenciesMissingLowerBounds_TwoAliasesSameTFM_OnlyAffectedAliasInTargetGraphs()
+        {
+            // apple has bad range (,2.0.0), banana has good range [1.0.0, 2.0.0)
+            // NU1604 TargetGraphs should only contain "apple"
+            var net46 = NuGetFramework.Parse("net46");
+            var tfi = new List<TargetFrameworkInformation>
+            {
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "apple",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("(, 2.0.0)"), LibraryDependencyTarget.Package) })
+                },
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "banana",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("[1.0.0, 2.0.0)"), LibraryDependencyTarget.Package) })
+                }
+            };
+            var project = new PackageSpec(tfi) { Name = "proj" };
+
+            var log = UnexpectedDependencyMessages.GetProjectDependenciesMissingLowerBounds(project).Single();
+
+            log.Code.Should().Be(NuGetLogCode.NU1604);
+            log.TargetGraphs.Should().BeEquivalentTo(new[] { "apple" });
+        }
+
+        [Fact]
+        public void GetBumpedUpDependencies_RIDGraphWithAlias_UsesAliasForDepLookup()
+        {
+            // Graph has TargetAlias="apple", TargetGraphName="apple/win-x64" (RID graph)
+            // Should find deps via alias and report graph name with RID
+            var net46 = NuGetFramework.Parse("net46");
+            var tfi = new List<TargetFrameworkInformation>
+            {
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "apple",
+                    Dependencies = ImmutableArray.Create(new LibraryDependency() { LibraryRange = new LibraryRange("x", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package) })
+                }
+            };
+            var project = new PackageSpec(tfi) { Name = "proj" };
+
+            var flattened = new HashSet<GraphItem<RemoteResolveResult>>
+            {
+                new GraphItem<RemoteResolveResult>(new LibraryIdentity("x", NuGetVersion.Parse("2.0.0"), LibraryType.Package))
+            };
+
+            var ridGraph = new Mock<IRestoreTargetGraph>();
+            ridGraph.SetupGet(e => e.Flattened).Returns(flattened);
+            ridGraph.SetupGet(e => e.TargetGraphName).Returns("apple/win-x64");
+            ridGraph.SetupGet(e => e.Framework).Returns(net46);
+            ridGraph.SetupGet(e => e.TargetAlias).Returns("apple");
+
+            var indexedGraphs = new[] { ridGraph.Object }.Select(IndexedRestoreTargetGraph.Create).ToList();
+            var ignore = new HashSet<string>();
+
+            var log = UnexpectedDependencyMessages.GetBumpedUpDependencies(indexedGraphs, project, ignore).Single();
+
+            log.Code.Should().Be(NuGetLogCode.NU1601);
+            log.TargetGraphs.Should().BeEquivalentTo(new[] { "apple/win-x64" });
+        }
+
+        [Fact]
+        public void GetProjectDependenciesMissingLowerBounds_BothAliasesHaveBadRange_BothInTargetGraphs()
+        {
+            // Both apple and banana have bad range — both should appear in TargetGraphs
+            var net46 = NuGetFramework.Parse("net46");
+            var badRange = VersionRange.Parse("(, 2.0.0)");
+            var dep = new LibraryDependency() { LibraryRange = new LibraryRange("x", badRange, LibraryDependencyTarget.Package) };
+            var tfi = new List<TargetFrameworkInformation>
+            {
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "apple",
+                    Dependencies = ImmutableArray.Create(dep)
+                },
+                new TargetFrameworkInformation()
+                {
+                    FrameworkName = net46,
+                    TargetAlias = "banana",
+                    Dependencies = ImmutableArray.Create(dep)
+                }
+            };
+            var project = new PackageSpec(tfi) { Name = "proj" };
+
+            var log = UnexpectedDependencyMessages.GetProjectDependenciesMissingLowerBounds(project).Single();
+
+            log.Code.Should().Be(NuGetLogCode.NU1604);
+            log.TargetGraphs.Should().BeEquivalentTo(new[] { "apple", "banana" });
+        }
+
+        [Fact]
+        public void GetMissingLowerBounds_WithAlias_TargetGraphNameIncludesAlias()
+        {
+            // Graph with TargetGraphName = "apple", has resolved dep with missing lower bound
+            var range = VersionRange.Parse("(, 5.0.0]");
+            var parent = new LibraryIdentity("a", NuGetVersion.Parse("9.0.0"), LibraryType.Package);
+            var child = new LibraryIdentity("b", NuGetVersion.Parse("2.0.0"), LibraryType.Package);
+            var dependency = new ResolvedDependencyKey(parent, range, child);
+            var dependencySet = new HashSet<ResolvedDependencyKey>() { dependency };
+
+            var targetGraph = new Mock<IRestoreTargetGraph>();
+            targetGraph.SetupGet(e => e.ResolvedDependencies).Returns(dependencySet);
+            targetGraph.SetupGet(e => e.TargetGraphName).Returns("apple");
+            var targetGraphs = new[] { targetGraph.Object };
+            var ignore = new HashSet<string>();
+
+            var log = UnexpectedDependencyMessages.GetMissingLowerBounds(targetGraphs, ignore).Single();
+
+            log.Code.Should().Be(NuGetLogCode.NU1602);
+            log.TargetGraphs.Should().BeEquivalentTo(new[] { "apple" });
+        }
+
+        [Fact]
+        public void GetDependenciesAboveUpperBounds_WithAlias_TargetGraphNameIncludesAlias()
+        {
+            // Graph with TargetGraphName = "apple", has dep above upper bound
+            var testLogger = new TestLogger();
+            var depY = new LibraryDependency()
+            {
+                LibraryRange = new LibraryRange("y", VersionRange.Parse("[1.0.0]"), LibraryDependencyTarget.Package)
+            };
+            var itemX = GetItem("x", "1.0.0", LibraryType.Package, depY);
+            var itemY = GetItem("y", "2.0.0", LibraryType.Package);
+
+            var flattened = new HashSet<GraphItem<RemoteResolveResult>>() { itemX, itemY };
+
+            var targetGraph = new Mock<IRestoreTargetGraph>();
+            targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
+            targetGraph.SetupGet(e => e.TargetGraphName).Returns("apple");
+            targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("apple");
+            targetGraph.SetupGet(e => e.ResolvedDependencies).Returns(new HashSet<ResolvedDependencyKey>());
+            var indexedGraphs = new[] { targetGraph.Object }.Select(IndexedRestoreTargetGraph.Create).ToList();
+
+            var messages = UnexpectedDependencyMessages.GetDependenciesAboveUpperBounds(indexedGraphs, testLogger).ToList();
+
+            messages.Should().HaveCount(1);
+            messages[0].Code.Should().Be(NuGetLogCode.NU1608);
+            messages[0].TargetGraphs.Should().BeEquivalentTo(new[] { "apple" });
+        }
+
         private static List<TargetFrameworkInformation> GetTFI(NuGetFramework framework, params LibraryRange[] dependencies)
         {
             return new List<TargetFrameworkInformation>()
@@ -897,6 +1150,7 @@ namespace NuGet.Commands.Test
                 new TargetFrameworkInformation()
                 {
                     FrameworkName = framework,
+                    TargetAlias = framework.GetShortFolderName(),
                     Dependencies = dependencies.Select(e => new LibraryDependency(){ LibraryRange = e }).ToImmutableArray()
                 }
             };
@@ -908,6 +1162,7 @@ namespace NuGet.Commands.Test
             targetGraph.SetupGet(e => e.Flattened).Returns(flattened);
             targetGraph.SetupGet(e => e.TargetGraphName).Returns("net46");
             targetGraph.SetupGet(e => e.Framework).Returns(NuGetFramework.Parse("net46"));
+            targetGraph.SetupGet(e => e.TargetAlias).Returns("net46");
             targetGraph.SetupGet(e => e.ResolvedDependencies).Returns(new HashSet<ResolvedDependencyKey>());
             var targetGraphs = new[] { targetGraph.Object };
             var indexedGraphs = targetGraphs.Select(IndexedRestoreTargetGraph.Create).ToList();

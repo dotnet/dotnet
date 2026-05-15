@@ -465,8 +465,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">Le PackageReference {0} ne sera pas supprimé. Envisagez de retirer ce package de vos dépendances, car il est probablement inutile.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="needs-review-translation">Le PackageReference {0} ne sera pas supprimé. Envisagez de retirer ce package de vos dépendances, car il est probablement inutile.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1495,6 +1495,12 @@ NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
         <target state="translated">{0} ne fournit pas de limite inférieure inclusive pour la dépendance {1}. {2} a été résolu à la place.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">Le package « {0} » {1} utilise le framework MonoAndroid obsolète au lieu de « net6.0-android » ou d’une version ultérieure. Envisagez de mettre à niveau ce package vers une version plus récente ou de contacter son auteur.</target>
+        <note>{0} - package id
+{1} - package version</note>
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>

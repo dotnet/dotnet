@@ -137,6 +137,78 @@ namespace NuGet.VisualStudio.Common.Test.Telemetry
             Assert.Equal(sizes.Sum(), result.NupkgSize);
         }
 
+        [Theory]
+        [InlineData("Newtonsoft.Json")]
+        [InlineData("NuGet.Protocol")]
+        [InlineData("My-Package.1")]
+        [InlineData("ALLCAPS")]
+        [InlineData("alllower")]
+        [InlineData("123Numeric")]
+        [InlineData("a")]
+        public void AddNupkgCopiedData_StandardPackageId_IdContainsNonAlphanumericDotDashOrUnderscoreCharacterIsFalse(string packageId)
+        {
+            // Arrange
+            var data = CreateDataDictionary(SampleSource);
+            var nce = new ProtocolDiagnosticNupkgCopiedEvent(SampleSource, fileSize: 1000, packageId);
+
+            // Act
+            PackageSourceTelemetry.AddNupkgCopiedData(nce, data);
+
+            // Assert
+            var result = Assert.Single(data).Value;
+            Assert.False(result.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter);
+        }
+
+        [Theory]
+        [InlineData("Package@1.0")]
+        [InlineData("Ünïcödé")]
+        [InlineData("Package Name")]
+        [InlineData("package+extra")]
+        public void AddNupkgCopiedData_NonstandardPackageId_IdContainsNonAlphanumericDotDashOrUnderscoreCharacterIsTrue(string packageId)
+        {
+            // Arrange
+            var data = CreateDataDictionary(SampleSource);
+            var nce = new ProtocolDiagnosticNupkgCopiedEvent(SampleSource, fileSize: 1000, packageId);
+
+            // Act
+            PackageSourceTelemetry.AddNupkgCopiedData(nce, data);
+
+            // Assert
+            var result = Assert.Single(data).Value;
+            Assert.True(result.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter);
+        }
+
+        [Fact]
+        public void AddNupkgCopiedData_MultiplePackagesOneNonstandard_IdContainsNonAlphanumericDotDashOrUnderscoreCharacterIsTrue()
+        {
+            // Arrange
+            var data = CreateDataDictionary(SampleSource);
+
+            // Act
+            PackageSourceTelemetry.AddNupkgCopiedData(new ProtocolDiagnosticNupkgCopiedEvent(SampleSource, fileSize: 1000, "Standard.Package"), data);
+            PackageSourceTelemetry.AddNupkgCopiedData(new ProtocolDiagnosticNupkgCopiedEvent(SampleSource, fileSize: 1000, "Nonstandard@Package"), data);
+            PackageSourceTelemetry.AddNupkgCopiedData(new ProtocolDiagnosticNupkgCopiedEvent(SampleSource, fileSize: 1000, "Another.Standard"), data);
+
+            // Assert
+            var result = Assert.Single(data).Value;
+            Assert.True(result.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter);
+        }
+
+        [Fact]
+        public void AddNupkgCopiedData_EmptyPackageId_IdContainsNonAlphanumericDotDashOrUnderscoreCharacterIsFalse()
+        {
+            // Arrange
+            var data = CreateDataDictionary(SampleSource);
+            var nce = new ProtocolDiagnosticNupkgCopiedEvent(SampleSource, fileSize: 1000);
+
+            // Act
+            PackageSourceTelemetry.AddNupkgCopiedData(nce, data);
+
+            // Assert
+            var result = Assert.Single(data).Value;
+            Assert.False(result.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter);
+        }
+
         [Fact]
         public async Task AddData_IsThreadSafe()
         {
@@ -308,6 +380,7 @@ namespace NuGet.VisualStudio.Common.Test.Telemetry
 
             Assert.Equal(data.NupkgCount, result[PackageSourceTelemetry.PropertyNames.Nupkgs.Copied]);
             Assert.Equal(data.NupkgSize, result[PackageSourceTelemetry.PropertyNames.Nupkgs.Bytes]);
+            Assert.Equal(data.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter, result[PackageSourceTelemetry.PropertyNames.Nupkgs.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter]);
 
             Assert.Equal(data.Resources.Sum(r => r.Value.count), result[PackageSourceTelemetry.PropertyNames.Resources.Calls]);
             foreach (var resource in data.Resources)

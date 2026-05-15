@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Globalization;
@@ -68,7 +67,7 @@ namespace NuGet.Protocol.Core.Types
             return false;
         }
 
-        public static string GetPackageDirectory(PackageIdentity packageIdentity, string offlineFeed)
+        public static string? GetPackageDirectory(PackageIdentity packageIdentity, string offlineFeed)
         {
             var versionFolderPathResolver = new VersionFolderPathResolver(offlineFeed);
             return Path.GetDirectoryName(
@@ -227,7 +226,7 @@ namespace NuGet.Protocol.Core.Types
             // Reading Nuspec in invalid package on Mono will get PackagingException 
             catch (Exception ex) when (ex is InvalidDataException
                                     || (RuntimeEnvironmentHelper.IsMono
-                                    && (ex.GetType().FullName.Equals("SharpCompress.Common.ArchiveException", StringComparison.Ordinal)
+                                    && (ex.GetType().FullName?.Equals("SharpCompress.Common.ArchiveException", StringComparison.Ordinal) == true
                                     || ex is PackagingException)))
             {
                 var message = string.Format(

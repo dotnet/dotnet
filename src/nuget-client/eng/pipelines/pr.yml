@@ -272,7 +272,7 @@ stages:
     - ${{ if eq(parameters.RunStaticAnalysis, true) }}:
       - job:
         displayName: Run Static Analysis
-        timeoutInMinutes: 15
+        timeoutInMinutes: 30
         pool:
           vmImage: windows-latest
         steps:
@@ -284,3 +284,62 @@ stages:
           displayName: Log Environment Variables
         - script: dotnet format whitespace --verify-no-changes NuGet.sln
           displayName: Run dotnet format whitespace
+          condition: succeededOrFailed()
+        - task: PowerShell@2
+          displayName: Ensure all projects are in NuGet.sln
+          condition: succeededOrFailed()
+          inputs:
+            targetType: inline
+            script: |
+              try {
+                $slnProjects = & dotnet sln NuGet.sln list | Select-Object -Skip 2 | ForEach-Object { "$PWD\$_" } | sort
+                "Solution contains $($slnProjects.Length) projects"
+                $fsProjects = gci -Recurse -Filter *.csproj | ForEach-Object { $_.FullName } | Where-Object { $_ -notlike "*\EndToEnd\*" -and $_ -notlike "*\bin\*" -and $_ -notlike "*\compiler\resources\*" -and $_ -notlike "*\Assets\*" -and $_ -notlike "*\eng\*" } | sort
+                "Repo contains $($fsProjects.Length) projects"
+                $diff = @(Compare-Object -ReferenceObject $fsProjects -DifferenceObject $slnProjects)
+                $diff
+                if ($diff.length -gt 0)
+                {
+                  throw "Repo has project file(s) not in NuGet.sln"
+                }
+              }
+              catch
+              {
+                Write-Host "##vso[task.LogIssue type=error;]$Error[0]"
+                exit 1
+              }
+
+        - task: MSBuild@1
+          displayName: Restore and Build
+          condition: "and(succeededOrFailed(), ne(variables['SkipNupkgDependenciesCheck'], 'true'))"
+          inputs:
+            solution: NuGet.sln
+            msbuildArchitecture: x64
+            msbuildArguments: "/property:BuildRTM=true /property:MicroBuild_SigningEnabled=false"
+
+        - task: MSBuild@1
+          displayName: Pack Nupkgs
+          condition: "and(succeeded(), ne(variables['SkipNupkgDependenciesCheck'], 'true'))"
+          inputs:
+            solution: build\build.proj
+            msbuildArchitecture: x64
+            msbuildArguments: "/restore:false /target:Pack /property:BuildRTM=true /property:ExcludeTestProjects=true /property:MicroBuild_SigningEnabled=false"
+
+        - task: PowerShell@2
+          displayName: Check package dependencies
+          condition: "and(succeeded(), ne(variables['SkipNupkgDependenciesCheck'], 'true'))"
+          inputs:
+            targetType: inline
+            script: |
+              $nupkgs = Get-ChildItem artifacts/nupkgs/*.nupkg -Exclude *.symbols.nupkg,NuGet.CommandLine.XPlat.*
+              if ($nupkgs.Count -eq 0) { throw "Could not find nupkgs" }
+              "nupkgs:"
+              $nupkgs.FullName
+              ""
+              "Building validation tool"
+              dotnet build tools-local/ensure-nupkg-dependencies-on-source/
+              if ($LASTEXITCODE -ne 0) { throw "Build was not successful" }
+              ""
+              "Running validation tool"
+              dotnet run --project tools-local/ensure-nupkg-dependencies-on-source/ --no-build -- $nupkgs -s https://api.nuget.org/v3/index.json
+              if ($LASTEXITCODE -ne 0) { throw "Validation tool failed" }

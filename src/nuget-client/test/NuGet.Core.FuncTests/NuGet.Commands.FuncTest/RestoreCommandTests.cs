@@ -3446,6 +3446,228 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.LogMessages.Should().HaveCount(0);
         }
 
+        // CppCli (net10.0-windows7.0 + secondaryFramework=native) -> CppNative (native)
+        [Fact]
+        public async Task RestoreCommand_WithCPPCliProject_WithNativeProjectReference_Succeeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // C++/CLI project: dual-compatible (net10.0-windows7.0 + native) with a package dependency
+            var cppCliProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""net10.0-windows7.0"": {
+                            ""targetAlias"" : ""net10.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net462"",
+                                ""net47"",
+                                ""net471"",
+                                ""net472"",
+                                ""net48"",
+                                ""net481""
+                            ],
+                            ""secondaryFramework"" : ""native"",
+                            ""dependencies"": {
+                                ""A"": {
+                                    ""version"" : ""1.0.0""
+                                }
+                            }
+                        }
+                    }
+                }";
+
+            // Native C++ project: targets only native framework
+            var nativeProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""native"": {
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            // Arrange
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("A", "1.0.0"));
+
+            var logger = new TestLogger();
+
+            var cppCliProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppCli", pathContext.SolutionRoot, cppCliProjectJson);
+            var nativeProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppNative", pathContext.SolutionRoot, nativeProjectJson);
+
+            cppCliProject = cppCliProject.WithTestProjectReference(nativeProject);
+            CreateFakeProjectFile(nativeProject);
+
+            // Act
+            var result = await new RestoreCommand(
+                ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, cppCliProject, nativeProject))
+                .ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert: After fix, restore should succeed — C++/CLI project with
+            // secondaryFramework=native should be compatible with native project references.
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.Libraries.Should().HaveCount(2);
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("CppNative"));
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("A"));
+            result.LockFile.LogMessages.Where(m => m.Code == NuGetLogCode.NU1201).Should().HaveCount(0,
+                "C++/CLI project with secondaryFramework=native should be compatible with native project references");
+        }
+
+        // CppCli (net10.0-windows7.0 + secondaryFramework=native) -> CppNative (native) with native package dependency
+        // Ensures the native project's package dependencies flow through correctly as transitive dependencies.
+        // https://github.com/NuGet/Home/issues/14876
+        [Fact]
+        public async Task RestoreCommand_WithCPPCliProject_WithNativeProjectReferenceWithPackageDependency_Succeeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // C++/CLI project: dual-compatible (net10.0-windows7.0 + native)
+            var cppCliProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""net10.0-windows7.0"": {
+                            ""targetAlias"" : ""net10.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net462"",
+                                ""net47"",
+                                ""net471"",
+                                ""net472"",
+                                ""net48"",
+                                ""net481""
+                            ],
+                            ""secondaryFramework"" : ""native""
+                        }
+                    }
+                }";
+
+            // Native C++ project: targets native framework with a native package dependency
+            var nativeProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""native"": {
+                            ""dependencies"": {
+                                ""NativeLib"": {
+                                    ""version"" : ""1.0.0""
+                                }
+                            }
+                        }
+                    }
+                }";
+
+            // Arrange
+            var nativePackage = new SimpleTestPackageContext("NativeLib", "1.0.0");
+            nativePackage.AddFile("lib/native/NativeLib.dll");
+
+            var nativeTransitive = new SimpleTestPackageContext("NativeLib.Transitive", "1.0.0");
+            nativeTransitive.AddFile("lib/native/NativeLib.Transitive.dll");
+
+            nativePackage.PerFrameworkDependencies.Add(CommonFrameworks.Native,
+                new List<SimpleTestPackageContext> { nativeTransitive });
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                nativePackage,
+                nativeTransitive);
+
+            var logger = new TestLogger();
+
+            var cppCliProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppCli", pathContext.SolutionRoot, cppCliProjectJson);
+            var nativeProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppNative", pathContext.SolutionRoot, nativeProjectJson);
+
+            cppCliProject = cppCliProject.WithTestProjectReference(nativeProject);
+            CreateFakeProjectFile(nativeProject);
+
+            // Act
+            var result = await new RestoreCommand(
+                ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, cppCliProject, nativeProject))
+                .ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.Libraries.Should().HaveCount(3);
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("CppNative"));
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("NativeLib"));
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("NativeLib.Transitive"));
+            result.LockFile.LogMessages.Where(m => m.Code == NuGetLogCode.NU1201).Should().HaveCount(0);
+        }
+
+        // CppNative (native) -> CppCli (net10.0-windows7.0 + secondaryFramework=native)
+        // A native project referencing a C++/CLI project is not expected to be compatible.
+        [Fact]
+        public async Task RestoreCommand_WithNativeProject_WithCPPCliProjectReference_RaisesNU1201()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Native C++ project: targets only native framework, references the C++/CLI project
+            var nativeProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""native"": {
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            // C++/CLI project: dual-compatible (net10.0-windows7.0 + native)
+            var cppCliProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""net10.0-windows7.0"": {
+                            ""targetAlias"" : ""net10.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net462"",
+                                ""net47"",
+                                ""net471"",
+                                ""net472"",
+                                ""net48"",
+                                ""net481""
+                            ],
+                            ""secondaryFramework"" : ""native"",
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            // Arrange
+            var logger = new TestLogger();
+
+            var nativeProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppNative", pathContext.SolutionRoot, nativeProjectJson);
+            var cppCliProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppCli", pathContext.SolutionRoot, cppCliProjectJson);
+
+            nativeProject = nativeProject.WithTestProjectReference(cppCliProject);
+            CreateFakeProjectFile(cppCliProject);
+
+            // Act
+            var result = await new RestoreCommand(
+                ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, nativeProject, cppCliProject))
+                .ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert: NU1201 is expected — a native project cannot consume a C++/CLI project.
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().Contain(m => m.Code == NuGetLogCode.NU1201);
+        }
+
         // Project1(net5.0) -> A(net472) -> B(net472)
         [Fact]
         public async Task Restore_WhenPackageSelectedWithATF_ItsDependenciesAreIncluded_AndATFWarningsAreRaised()

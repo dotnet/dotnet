@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Collections.Concurrent;
@@ -58,7 +57,7 @@ namespace NuGet.Protocol
             ILogger logger,
             CancellationToken token)
         {
-            NuspecReader reader = null;
+            NuspecReader? reader = null;
 
             lock (_nuspecReadersLock)
             {
@@ -137,7 +136,7 @@ namespace NuGet.Protocol
                         try
                         {
                             await stream.CopyToAsync(destination, token);
-                            ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_httpSource.PackageSource, destination.Length));
+                            ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_httpSource.PackageSource, destination.Length, identity.Id));
                         }
                         catch when (!token.IsCancellationRequested)
                         {
@@ -252,7 +251,7 @@ namespace NuGet.Protocol
         private async Task<T> ProcessHttpSourceResultAsync<T>(
             PackageIdentity identity,
             string url,
-            Func<HttpSourceResult, Task<T>> processAsync,
+            Func<HttpSourceResult?, Task<T>> processAsync,
             SourceCacheContext cacheContext,
             ILogger logger,
             CancellationToken token)
@@ -369,13 +368,13 @@ namespace NuGet.Protocol
 
         private class CacheEntry
         {
-            public CacheEntry(string cacheFile, bool alreadyProcessed)
+            public CacheEntry(string? cacheFile, bool alreadyProcessed)
             {
                 CacheFile = cacheFile;
                 AlreadyProcessed = alreadyProcessed;
             }
 
-            public string CacheFile { get; }
+            public string? CacheFile { get; }
             public bool AlreadyProcessed { get; }
         }
     }

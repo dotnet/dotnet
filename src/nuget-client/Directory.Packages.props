@@ -96,6 +96,8 @@
     <PackageVersion Include="System.Memory" Version="$(SystemMemoryPackageVersion)" />
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="$(SystemSecurityCryptographyPkcsVersion)" />
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="$(SystemSecurityCryptographyProtectedDataVersion)" />
+    <!-- S.S.C.Xml is a dependency of MSBuild. Once MSBuild no longer has a transitive dependency on a vulnerable version, this can be removed -->
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.3" />
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <!--
       The Microsoft.VisualStudio.SDK metapackage brings in System.Threading.Tasks.Dataflow 4.11.1 (assembly version 4.9.5.0).

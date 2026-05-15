@@ -1,10 +1,8 @@
-#nullable disable
-
 namespace NuGet.Protocol.Core.Types
 {
     public class NullSourceCacheContext : SourceCacheContext
     {
-        private static SourceCacheContext _instance;
+        private static SourceCacheContext? _instance;
 
         public static SourceCacheContext Instance
         {
@@ -28,8 +26,8 @@ namespace NuGet.Protocol.Core.Types
             }
         }
 
-        public override SourceCacheContext WithRefreshCacheTrue() { return _instance; }
+        public override SourceCacheContext WithRefreshCacheTrue() { return Instance; }
 
-        public override SourceCacheContext Clone() { return _instance; }
+        public override SourceCacheContext Clone() { return Instance; }
     }
 }
