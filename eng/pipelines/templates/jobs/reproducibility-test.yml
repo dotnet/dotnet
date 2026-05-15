@@ -44,11 +44,7 @@ jobs:
   # Download the first SDK tarball from this pipeline's Build1 stage.
   - task: DownloadPipelineArtifact@2
     inputs:
-      buildType: specific
-      project: internal
-      pipeline: 1620
-      buildVersionToDownload: specific
-      buildId: 2975877
+      buildType: current
       artifact: ${{ parameters.build1JobName }}_Artifacts
       ${{ if eq(parameters.buildType, 'Msft') }}:
         patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
@@ -78,11 +74,7 @@ jobs:
   # Download the second SDK tarball from this pipeline's Build2 stage
   - task: DownloadPipelineArtifact@2
     inputs:
-      buildType: specific
-      project: internal
-      pipeline: 1620
-      buildVersionToDownload: specific
-      buildId: 2975877
+      buildType: current
       artifact: ${{ parameters.build2JobName }}_Artifacts
       ${{ if eq(parameters.buildType, 'Msft') }}:
         patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'

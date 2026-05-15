@@ -17,7 +17,6 @@ stages:
 # non-determinism, not toolchain drift.
 
 - stage: Build1
-  condition: false
   variables:
   - template: /eng/pipelines/templates/variables/vmr-build.yml@self
     parameters:
@@ -62,7 +61,6 @@ stages:
 
 - stage: Build2
   dependsOn: []
-  condition: false
   variables:
   - template: /eng/pipelines/templates/variables/vmr-build.yml@self
     parameters:
@@ -103,7 +101,9 @@ stages:
 
 # Compare stage: download both stages' SDK tarballs and run the reproducibility tests.
 - stage: Compare
-  dependsOn: []
+  dependsOn:
+  - Build1
+  - Build2
   variables:
   - template: /eng/pipelines/templates/variables/vmr-build.yml@self
     parameters:
