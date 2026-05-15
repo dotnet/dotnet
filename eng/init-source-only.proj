@@ -89,7 +89,7 @@
     <!-- Extract the assets directory directly to the artifacts directory.
          Exclude the symbols tarball: it is staged into BaseIntermediateOutputPath by ExtractSharedComponentsSymbols
          so it doesn't collide with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
-    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets --exclude='$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)'"
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --wildcards --exclude='assets/*/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)' assets"
           WorkingDirectory="$(ArtifactsDir)" />
 
     <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
