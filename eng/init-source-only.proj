@@ -56,12 +56,9 @@
           Inputs="$(SharedComponentAssetManifests)"
           Outputs="$(BaseIntermediateOutputPath)CopyCustomSharedComponentAssets.complete">
 
-    <!-- Copy assets from custom shared components artifacts path to artifacts directory.
-         Exclude the symbols tarball: it is staged into BaseIntermediateOutputPath by ExtractSharedComponentsSymbols
-         so it doesn't collide with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
+    <!-- Copy assets from custom shared components artifacts path to artifacts directory. -->
     <ItemGroup>
-      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*"
-                              Exclude="$(CustomSharedComponentsArtifactsPath)/assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
+      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(SharedComponentsAssets)"
@@ -86,10 +83,8 @@
     <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --exclude='assets'"
           WorkingDirectory="$(SharedComponentsArtifactsPath)" />
 
-    <!-- Extract the assets directory directly to the artifacts directory.
-         Exclude the symbols tarball: it is staged into BaseIntermediateOutputPath by ExtractSharedComponentsSymbols
-         so it doesn't collide with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
-    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --wildcards --exclude='assets/*/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)' assets"
+    <!-- Extract only the assets directory directly to the artifacts directory -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets"
           WorkingDirectory="$(ArtifactsDir)" />
 
     <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
@@ -103,22 +98,17 @@
           Outputs="$(BaseIntermediateOutputPath)ExtractSharedComponentsSymbols.complete">
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
 
-    <!-- Stage the shared components symbols tarball into BaseIntermediateOutputPath. We do not place
-         it in ArtifactsAssetsDir because that location also receives the current repo's symbols tarball
-         (created later by RepackageSymbols), and a wildcard match in either location can pick up both. -->
+    <!-- Identify the shared components symbols tarball by its exact filename derived from the source.
+         A wildcard match in ArtifactsAssetsDir is unsafe because that location may also contain the
+         current repo's symbols tarball (produced later by RepackageSymbols and possibly still present
+         from a previous build invocation). -->
 
-    <!-- Custom path case: locate the source tarball and stage it via symlink. -->
+    <!-- Custom path case: locate the source tarball directly. -->
     <ItemGroup Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
       <_SharedComponentsSymbolsSourceTarball Include="$(CustomSharedComponentsArtifactsPath)/assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(_SharedComponentsSymbolsSourceTarball)"
-          DestinationFolder="$(BaseIntermediateOutputPath)"
-          UseSymbolicLinksIfPossible="true"
-          Condition="'@(_SharedComponentsSymbolsSourceTarball)' != ''" />
-
-    <!-- Prereqs archive case: list the matching member(s) inside the archive so we can resolve
-         the exact filename for the subsequent extract command (avoiding wildcards there). -->
+    <!-- Prereqs archive case: list the matching member(s) inside the archive to resolve the filename. -->
     <Exec Command="tar -tzf $(SharedComponentsPrereqsArchiveFile) --wildcards 'assets/*/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)'"
           ConsoleToMSBuild="true"
           EchoOff="true"
@@ -126,29 +116,25 @@
       <Output TaskParameter="ConsoleOutput" ItemName="_ArchiveSymbolsTarballPaths" />
     </Exec>
 
-    <!-- Extract just the symbols tarball directly into BaseIntermediateOutputPath.
-         The strip-components option removes the leading 'assets/<config>/' so the tarball lands flat. -->
-    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --wildcards --strip-components=2 'assets/*/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)'"
-          WorkingDirectory="$(BaseIntermediateOutputPath)"
-          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''" />
-
-    <!-- Resolve the exact path of the staged tarball from whichever code path produced it. This lets
-         the subsequent tar invocation use a fully-qualified path instead of a wildcard, so it remains
-         unambiguous even if BaseIntermediateOutputPath happens to contain other matching files (e.g.,
-         leftovers from a previous run with a different shared components version). -->
+    <!-- Resolve the exact path of the symbols tarball in ArtifactsAssetsDir from the resolved filename. -->
     <ItemGroup>
-      <_StagedSymbolsAllTarball Include="@(_SharedComponentsSymbolsSourceTarball->'$(BaseIntermediateOutputPath)%(Filename)%(Extension)')" />
-      <_StagedSymbolsAllTarball Include="@(_ArchiveSymbolsTarballPaths->'$(BaseIntermediateOutputPath)%(Filename)%(Extension)')" />
+      <_SourceBuiltSymbolsAllTarball Include="@(_SharedComponentsSymbolsSourceTarball->'$(ArtifactsAssetsDir)%(Filename)%(Extension)')" />
+      <_SourceBuiltSymbolsAllTarball Include="@(_ArchiveSymbolsTarballPaths->'$(ArtifactsAssetsDir)%(Filename)%(Extension)')" />
     </ItemGroup>
 
     <PropertyGroup>
-      <_StagedSymbolsAllTarballPath>@(_StagedSymbolsAllTarball)</_StagedSymbolsAllTarballPath>
+      <_SourceBuiltSymbolsAllTarballPath>@(_SourceBuiltSymbolsAllTarball)</_SourceBuiltSymbolsAllTarballPath>
     </PropertyGroup>
 
-    <Error Condition="'$(_StagedSymbolsAllTarballPath)' == ''"
+    <Error Condition="'$(_SourceBuiltSymbolsAllTarballPath)' == ''"
            Text="Could not locate the shared components symbols tarball." />
-    <Error Condition="$(_StagedSymbolsAllTarballPath.Contains(';'))"
-           Text="Found multiple shared components symbols tarballs: $(_StagedSymbolsAllTarballPath). Expected exactly one." />
+    <Error Condition="$(_SourceBuiltSymbolsAllTarballPath.Contains(';'))"
+           Text="Found multiple shared components symbols tarballs: $(_SourceBuiltSymbolsAllTarballPath). Expected exactly one." />
+
+    <!-- Move the symbols tarball out of ArtifactsAssetsDir to the obj directory so it doesn't get
+         confused with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
+    <Move SourceFiles="@(_SourceBuiltSymbolsAllTarball)"
+          DestinationFolder="$(BaseIntermediateOutputPath)" />
 
     <PropertyGroup>
       <_SharedComponentsSymbolsDir>$(IntermediateSymbolsRootDir)shared-components</_SharedComponentsSymbolsDir>
@@ -156,8 +142,8 @@
 
     <MakeDir Directories="$(_SharedComponentsSymbolsDir)" />
 
-    <!-- Extract all symbols from the staged symbols tarball using its exact path (no wildcard). -->
-    <Exec Command="tar -xzf $(_StagedSymbolsAllTarballPath)"
+    <!-- Extract all symbols from the moved symbols tarball using its exact path (no wildcard). -->
+    <Exec Command="tar -xzf @(_SourceBuiltSymbolsAllTarball->'$(BaseIntermediateOutputPath)%(Filename)%(Extension)')"
           WorkingDirectory="$(_SharedComponentsSymbolsDir)" />
     <!-- Remove all directories except those from shared components. We also want to keep those from the Arcade bootstrap
          repos, specifically SBRP, because SBRP is built in each feature band branch and so there may be differences between 
