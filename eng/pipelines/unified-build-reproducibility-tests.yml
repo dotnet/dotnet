@@ -1,5 +1,6 @@
 # This pipeline builds the VMR twice within a single run and compares the two SDK
-# tarballs to validate byte-level reproducibility.
+# tarballs to validate that the regular-file contents inside the tarballs are
+# reproducible.
 
 schedules:
 - cron: "0 12 * * 1-5"

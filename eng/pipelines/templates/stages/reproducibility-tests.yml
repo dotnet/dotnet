@@ -13,8 +13,8 @@ stages:
 # Two parallel build stages, each producing a full set of SDK tarballs from the same
 # pipeline-resolved commit and the same pipeline-resolved container image digest.
 # Same-pipeline-run guarantees the same toolchain (clang/LLD, etc.) for both stages,
-# so any byte-level difference between their outputs is real non-determinism, not
-# toolchain drift.
+# so any difference in the regular-file contents between their outputs is real
+# non-determinism, not toolchain drift.
 
 - stage: Build1
   variables:

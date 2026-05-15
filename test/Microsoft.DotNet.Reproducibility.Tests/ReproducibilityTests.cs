@@ -51,9 +51,12 @@ public class ReproducibilityTests
     }
 
     /// <summary>
-    /// Compares two SDK tarballs and asserts they are identical, modulo files listed in
-    /// the exclusions file. Any new non-reproducible file causes the test to fail; any file
-    /// that becomes reproducible causes the baseline to be stale.
+    /// Compares the regular-file contents of two SDK tarballs and asserts that they
+    /// match, modulo files listed in the exclusions file. Non-regular entries
+    /// (symlinks, hardlinks, directories) and tar metadata (file modes, uid/gid,
+    /// mtime, entry order, gzip header) are not compared. Any new non-reproducible
+    /// file causes the test to fail; any file that becomes reproducible causes the
+    /// baseline to be stale.
     /// </summary>
     private void CompareTarballs(
         string tarballPath1,
