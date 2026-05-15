@@ -25,6 +25,7 @@ namespace NuGet.Protocol.Tests
     {
         private const string ApiKeyHeader = "X-NuGet-ApiKey";
         private const string NuGetClientVersionHeader = "X-NuGet-Client-Version";
+        private const int TempApiKeyRequestTimeoutInSeconds = 10;
 
         [Fact]
         public async Task PackageUpdateResource_IncludesApiKeyWhenDeletingAsync()
@@ -276,10 +277,14 @@ namespace NuGet.Protocol.Tests
                         "https://www.nuget.org/api/v2/package/create-verification-key/test/1.0.0",
                         request =>
                         {
-                            var content = new StringContent(string.Format(JsonData.TempApiKeyJsonData,"tempkey"), Encoding.UTF8, "application/json");
-                            var response = new HttpResponseMessage(HttpStatusCode.OK){
-                            Content = content
-};
+                            var content = new StringContent(
+                                string.Format(JsonData.TempApiKeyJsonData, "tempkey"),
+                                Encoding.UTF8,
+                                "application/json");
+                            var response = new HttpResponseMessage(HttpStatusCode.OK)
+                            {
+                                Content = content
+                            };
                             return Task.FromResult(response);
                         }
                     }
@@ -435,7 +440,7 @@ namespace NuGet.Protocol.Tests
                 await resource.Push(
                     packagePaths: new[] { packageInfo.FullName },
                     symbolSource: symbolSource,
-                    timeoutInSecond: 5,
+                    timeoutInSecond: TempApiKeyRequestTimeoutInSeconds,
                     disableBuffering: false,
                     getApiKey: _ => apiKey,
                     getSymbolApiKey: _ => apiKey,
@@ -493,10 +498,14 @@ namespace NuGet.Protocol.Tests
                         "https://www.nuget.org/api/v2/package/create-verification-key/test/1.0.0",
                         request =>
                         {
-                            var content = new StringContent(string.Format(JsonData.TempApiKeyJsonData,"tempkey"), Encoding.UTF8, "application/json");
-                            var response = new HttpResponseMessage(HttpStatusCode.OK){
-                            Content = content
-};
+                            var content = new StringContent(
+                                string.Format(JsonData.TempApiKeyJsonData, "tempkey"),
+                                Encoding.UTF8,
+                                "application/json");
+                            var response = new HttpResponseMessage(HttpStatusCode.OK)
+                            {
+                                Content = content
+                            };
                             return Task.FromResult(response);
                         }
                     }
@@ -511,7 +520,7 @@ namespace NuGet.Protocol.Tests
                 await resource.Push(
                     packagePaths: new[] { packageInfo.FullName },
                     symbolSource: null,
-                    timeoutInSecond: 5,
+                    timeoutInSecond: TempApiKeyRequestTimeoutInSeconds,
                     disableBuffering: false,
                     getApiKey: _ => apiKey,
                     getSymbolApiKey: _ => null,
@@ -660,10 +669,14 @@ namespace NuGet.Protocol.Tests
                         "https://www.nuget.org/api/v2/package/create-verification-key/test/1.0.0",
                         request =>
                         {
-                            var content = new StringContent(string.Format(JsonData.TempApiKeyJsonData, "tempkey"), Encoding.UTF8, "application/json");
-                            var response = new HttpResponseMessage(HttpStatusCode.OK){
-                            Content = content
-};
+                            var content = new StringContent(
+                                string.Format(JsonData.TempApiKeyJsonData, "tempkey"),
+                                Encoding.UTF8,
+                                "application/json");
+                            var response = new HttpResponseMessage(HttpStatusCode.OK)
+                            {
+                                Content = content
+                            };
                             return Task.FromResult(response);
                         }
                     }
@@ -678,7 +691,7 @@ namespace NuGet.Protocol.Tests
                 await resource.Push(
                     packagePaths: new[] { packageInfo.FullName },
                     symbolSource: null,
-                    timeoutInSecond: 5,
+                    timeoutInSecond: TempApiKeyRequestTimeoutInSeconds,
                     disableBuffering: false,
                     getApiKey: _ => apiKey,
                     getSymbolApiKey: _ => null,
@@ -748,7 +761,7 @@ namespace NuGet.Protocol.Tests
                     async () => await resource.Push(
                         packagePaths: new[] { packageInfo.FullName },
                         symbolSource: symbolSource,
-                        timeoutInSecond: 5,
+                        timeoutInSecond: TempApiKeyRequestTimeoutInSeconds,
                         disableBuffering: false,
                         getApiKey: _ => apiKey,
                         getSymbolApiKey: _ => apiKey,
@@ -793,15 +806,19 @@ namespace NuGet.Protocol.Tests
                     },
                     {
                         "https://www.nuget.org/api/v2/package/create-verification-key/test/1.0.0",
-                         request =>
-                         {
+                        request =>
+                        {
                             createKeyRequestCount++;
-                            var content = new StringContent(string.Format(JsonData.TempApiKeyJsonData, $"tempkey{createKeyRequestCount}"), Encoding.UTF8, "application/json");
-                            var response = new HttpResponseMessage(HttpStatusCode.OK){
-                            Content = content
-};
+                            var content = new StringContent(
+                                string.Format(JsonData.TempApiKeyJsonData, $"tempkey{createKeyRequestCount}"),
+                                Encoding.UTF8,
+                                "application/json");
+                            var response = new HttpResponseMessage(HttpStatusCode.OK)
+                            {
+                                Content = content
+                            };
                             return Task.FromResult(response);
-                         }
+                        }
                     }
 
                 };
@@ -814,7 +831,7 @@ namespace NuGet.Protocol.Tests
                 await resource.Push(
                     packagePaths: new[] { symbolPackageInfo.FullName },
                     symbolSource: null,
-                    timeoutInSecond: 5,
+                    timeoutInSecond: TempApiKeyRequestTimeoutInSeconds,
                     disableBuffering: false,
                     getApiKey: _ => apiKey,
                     getSymbolApiKey: _ => null,
