@@ -190,7 +190,8 @@ jobs:
 
   ${{ if or(gt(length(parameters.reuseBuildArtifactsFrom), 0), gt(length(parameters.dependsOn), 0)) }}:
     dependsOn:
-    - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ each dep in parameters.reuseBuildArtifactsFrom }}:
+      - ${{ dep }}
     - ${{ each dep in parameters.dependsOn }}:
       - ${{ dep }}
   variables:
