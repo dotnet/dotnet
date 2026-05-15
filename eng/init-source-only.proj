@@ -52,19 +52,28 @@
   </Target>
 
   <Target Name="CopyCustomSharedComponentAssets"
-          Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
-    
-    <!-- Copy assets from custom shared components artifacts path to artifacts directory -->
+          Condition="'$(CustomSharedComponentsArtifactsPath)' != ''"
+          Inputs="$(SharedComponentAssetManifests)"
+          Outputs="$(BaseIntermediateOutputPath)CopyCustomSharedComponentAssets.complete">
+
+    <!-- Copy assets from custom shared components artifacts path to artifacts directory.
+         Exclude the symbols tarball: it is staged into BaseIntermediateOutputPath by ExtractSharedComponentsSymbols
+         so it doesn't collide with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
     <ItemGroup>
-      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
+      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*"
+                              Exclude="$(CustomSharedComponentsArtifactsPath)/assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
     </ItemGroup>
-    
+
     <Copy SourceFiles="@(SharedComponentsAssets)"
           DestinationFolder="$(ArtifactsDir)/assets/%(RecursiveDir)"
           UseSymbolicLinksIfPossible="true"
           Condition="'@(SharedComponentsAssets)' != ''" />
-  
-  </Target>  
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)CopyCustomSharedComponentAssets.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
 
   <Target Name="UnpackSharedComponentsPrereqsArchive"
           Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(DotNetSourceOnlyTestOnly)' != 'true'"
@@ -77,8 +86,10 @@
     <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --exclude='assets'"
           WorkingDirectory="$(SharedComponentsArtifactsPath)" />
 
-    <!-- Extract only the assets directory directly to the artifacts directory -->
-    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets"
+    <!-- Extract the assets directory directly to the artifacts directory.
+         Exclude the symbols tarball: it is staged into BaseIntermediateOutputPath by ExtractSharedComponentsSymbols
+         so it doesn't collide with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets --exclude='$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)'"
           WorkingDirectory="$(ArtifactsDir)" />
 
     <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
@@ -87,17 +98,30 @@
   </Target>
 
   <Target Name="ExtractSharedComponentsSymbols"
-          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''">
+          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''"
+          Inputs="$(SharedComponentAssetManifests)"
+          Outputs="$(BaseIntermediateOutputPath)ExtractSharedComponentsSymbols.complete">
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
 
-    <ItemGroup>
-      <_SourceBuiltSymbolsAllTarball Include="$(ArtifactsAssetsDir)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
+    <!-- Stage the shared components symbols tarball into BaseIntermediateOutputPath. We do not place
+         it in ArtifactsAssetsDir because that location also receives the current repo's symbols tarball
+         (created later by RepackageSymbols), and a wildcard match in either location can pick up both. -->
+
+    <!-- Custom path case: locate the source tarball and stage it via symlink. -->
+    <ItemGroup Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
+      <_SharedComponentsSymbolsSourceTarball Include="$(CustomSharedComponentsArtifactsPath)/assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
     </ItemGroup>
 
-    <!-- The extraction of the assets directory from the artifacts tarball included the symbols tarball.
-         Move that to the obj directory so it doesn't get confused as the symbols output of the current repo.-->
-    <Move SourceFiles="@(_SourceBuiltSymbolsAllTarball)"
-          DestinationFolder="$(BaseIntermediateOutputPath)" />
+    <Copy SourceFiles="@(_SharedComponentsSymbolsSourceTarball)"
+          DestinationFolder="$(BaseIntermediateOutputPath)"
+          UseSymbolicLinksIfPossible="true"
+          Condition="'@(_SharedComponentsSymbolsSourceTarball)' != ''" />
+
+    <!-- Prereqs archive case: extract just the symbols tarball directly into BaseIntermediateOutputPath.
+         The strip-components option removes the leading 'assets/<config>/' so the tarball lands flat. -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --wildcards --strip-components=2 'assets/*/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)'"
+          WorkingDirectory="$(BaseIntermediateOutputPath)"
+          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''" />
 
     <PropertyGroup>
       <_SharedComponentsSymbolsDir>$(IntermediateSymbolsRootDir)shared-components</_SharedComponentsSymbolsDir>
@@ -105,7 +129,8 @@
 
     <MakeDir Directories="$(_SharedComponentsSymbolsDir)" />
 
-    <!-- Extract all symbols from the symbols tarball to the intermediate symbols root directory -->
+    <!-- Extract all symbols from the staged symbols tarball. The wildcard is safe because BaseIntermediateOutputPath
+         only contains the staged shared components symbols tarball. -->
     <Exec Command="tar -xzf $(BaseIntermediateOutputPath)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)"
           WorkingDirectory="$(_SharedComponentsSymbolsDir)" />
     <!-- Remove all directories except those from shared components. We also want to keep those from the Arcade bootstrap
@@ -118,6 +143,10 @@
     </ItemGroup>
 
     <RemoveDir Directories="@(_SymbolDirsToDelete)" Condition="'@(_SymbolDirsToDelete)' != ''" />
+
+    <Touch Files="$(BaseIntermediateOutputPath)ExtractSharedComponentsSymbols.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <!--
