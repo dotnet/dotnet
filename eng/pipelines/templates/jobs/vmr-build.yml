@@ -189,9 +189,7 @@ jobs:
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
-  - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
-    - group: DotNet-VSTS-Infra-Access
-  - ${{ else }}:
+  - ${{ if ne(parameters.enableIBCOptimization, 'true') }}:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
   - name: additionalBuildArgs
@@ -343,7 +341,7 @@ jobs:
   ### Additional properties
   - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
     - name: ibcProperties
-      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(dn-bot-devdiv-drop-r-code-r)'
+      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(IBCDropAccessToken)'
   - ${{ else }}:
     - name: ibcProperties
       value: ''
@@ -431,6 +429,20 @@ jobs:
       displayName: Create artifact staging directories
       condition: always()
 
+  # Acquire a WIF-based access token for DevDiv AzDO when IBC optimization is enabled
+  # This replaces the dn-bot-devdiv-drop-r-code-r PAT with a federated identity credential
+  - ${{ if and(eq(parameters.enableIBCOptimization, 'true'), eq(variables['System.TeamProject'], 'internal')) }}:
+    - task: AzureCLI@2
+      displayName: Acquire DevDiv access token (WIF)
+      inputs:
+        azureSubscription: dnceng-devdiv-drop-r-code-r-wif-arm
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: |
+          $token = az account get-access-token --resource "499b84ac-1321-427f-aa17-267ca6975798" --query accessToken -o tsv
+          if (-not $token) { Write-Error "Failed to acquire DevDiv access token via WIF"; exit 1 }
+          Write-Host "##vso[task.setvariable variable=IBCDropAccessToken;issecret=true]$token"
+          Write-Host "Successfully acquired DevDiv access token via WIF for IBC optimization"
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
