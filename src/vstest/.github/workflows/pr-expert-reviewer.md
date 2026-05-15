@@ -117,7 +117,7 @@ The VSTest test platform has unique architectural concerns:
 
 ## Your Mission
 
-Perform a deep analysis of the code changes in this pull request, focusing exclusively on the categories above.
+Perform a deep analysis of the code changes in this pull request. You operate in two layers: the **baseline correctness dimensions** defined in this workflow, plus the **vstest-specific expert dimensions** defined in `@expert-reviewer`.
 
 ### Step 1: Load Context
 
@@ -140,18 +140,17 @@ Before proceeding, guard against duplicate runs:
 3. **Get files changed** to understand the scope
 4. **Read key files fully** — For complex changes, fetch the full file (not just the diff) to understand the surrounding context, class hierarchy, and call sites
 
-### Step 4: Deep Analysis
+### Step 4: Delegate to @expert-reviewer
 
-For each changed file, analyze systematically through the lenses defined in "Scope Boundaries" above, with particular attention to the vstest-specific concerns.
+Invoke `@expert-reviewer` for the full vstest-specific analysis. Pass it the PR context from Step 3 and these **supplemental dimensions** to evaluate in addition to its own 16 dimensions:
 
-Key areas in the vstest architecture:
+1. **Algorithmic correctness** — Off-by-one errors, wrong boundary conditions, logic inversions, missing cases in switches/pattern matches
+2. **Performance & allocations** — Unnecessary allocations in hot paths, O(n²) where O(n) is possible, repeated enumeration, string concatenation in loops
+3. **Resource & IDisposable management** — Missing `using`/`await using`, leaked handles, missing cleanup in error paths
+4. **Security** — Injection, path traversal, unsafe deserialization (beyond IPC-specific concerns)
+5. **Defensive coding at boundaries** — Missing `try/catch` around user-provided callbacks, reflection without exception handling, unbounded growth from user input
 
-- **`src/Microsoft.TestPlatform.CrossPlatEngine/`** — Test execution engine, parallel execution, data collection. Thread safety critical.
-- **`src/Microsoft.TestPlatform.CommunicationUtilities/`** — IPC protocol, JSON-RPC. Wire compatibility critical.
-- **`src/Microsoft.TestPlatform.ObjectModel/`** — Public API surface. Binary compatibility critical.
-- **`src/vstest.console/`** — Entry point, argument parsing, app.config binding redirects.
-- **`src/Microsoft.TestPlatform.CoreUtilities/`** — Shared utilities, frequently used in hot paths.
-- **`src/testhost*/`** — Test host processes, assembly loading, isolation boundaries.
+The expert-reviewer agent handles its own 5-wave workflow: briefing, dimension analysis, validation, inline posting, and summary. It will deduplicate against existing PR comments and post findings at exact file:line with dimension tags.
 
 ### Step 5: PR Description Alignment Check
 
@@ -168,26 +167,7 @@ If the description is inaccurate or incomplete, include a top-level review comme
 
 Skip this check for dependency update PRs (maestro) — their descriptions are auto-generated.
 
-### Step 6: Submit Review
-
-For each finding, post an inline review comment using `create-pull-request-review-comment`:
-
-**Comment format:**
-
-- Start with a **category tag**: `[Correctness]`, `[Threading]`, `[Performance]`, `[API Compat]`, `[Cross-TFM]`, `[Resources]`, `[Security]`, `[IPC Protocol]`, or `[Packaging]`
-- Explain the **mechanism** — what exactly goes wrong and under what conditions
-- State the **impact** — crash, data corruption, performance degradation, security risk, binary break
-- Provide a **concrete suggestion** when possible
-- Maximum **5 review comments** — pick the most impactful issues only
-
-Then submit an overall review using `submit-pull-request-review` with:
-
-- **Event**: Choose based on findings:
-  - `REQUEST_CHANGES` — if there are correctness bugs, thread safety issues, security vulnerabilities, or public API breaking changes
-  - `COMMENT` — if findings are performance suggestions, defensive coding improvements, or minor concerns
-  - `APPROVE` — if no issues found and the code is solid
-
-### Step 7: Update Memory Cache
+### Step 6: Update Memory Cache
 
 After the review, update:
 
@@ -197,27 +177,10 @@ After the review, update:
 
 ## Decision Framework
 
-### When to REQUEST_CHANGES
+The `@expert-reviewer` agent determines the review verdict (APPROVE / COMMENT / REQUEST_CHANGES) based on its dimension analysis. This workflow defers to the agent's decision framework for all code findings.
 
-- Bug that will cause runtime failure or incorrect behavior
-- Thread safety issue that could cause data corruption under parallel test execution
-- Security vulnerability (injection, deserialization, path traversal)
-- Breaking change to public API without corresponding version bump or `[Obsolete]`
-- IPC protocol change that breaks wire compatibility
-- Missing binding redirect that will cause `FileLoadException` in net462 hosts
-
-### When to COMMENT
-
-- Performance improvement opportunity (not a regression)
-- Missing cancellation token propagation
-- Defensive coding suggestion
-- Missing update to `expected-nupkg-file-counts.json` or `expected-dll-frameworks.json`
-- Resource management improvement
-
-### When to APPROVE
-
-- No issues found in any review category
-- All changes are well-structured and correct
+This workflow adds one workflow-level override:
+- If the PR description is materially misleading about the change's scope or intent, escalate from APPROVE to COMMENT regardless of code findings.
 
 ## Edge Cases
 
