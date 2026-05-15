@@ -100,18 +100,8 @@ jobs:
       echo "##vso[task.setvariable variable=SecondSdkTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_sdk_tarball"
     displayName: Locate second SDK tarball
 
-  - script: |
-      eng/common/build.sh -bl --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Tests/Microsoft.DotNet.Tests.csproj --restore
-
-      source ./eng/common/tools.sh
-      InitializeDotNetCli true
-
-      echo "##vso[task.setvariable variable=DotNetPath]$_InitializeDotNetCli"
-    displayName: Restore tests
-    workingDirectory: $(Build.SourcesDirectory)
-
   - script: >
-      $(DotNetPath)/dotnet test
+      eng/common/dotnet.sh test
       $(Build.SourcesDirectory)/test/Microsoft.DotNet.Tests/Microsoft.DotNet.Tests.csproj
       --filter "Category=Reproducibility"
       --logger:'trx;LogFileName=$(Agent.JobName)_ReproducibilityTests.trx'
@@ -158,7 +148,6 @@ jobs:
       # tool filters to files prefixed with "Updated", so other build logs in BuildLogs are ignored.
       - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
         parameters:
-          dotnetPath: $(DotNetPath)
           pipeline: reproducibility
           repo: dotnet/dotnet
           originalFilesDirectory: test/Microsoft.DotNet.Tests/assets/ReproducibilityTests
