@@ -7,7 +7,9 @@ description: >
 on:
   issues:
     types: [opened]
-  schedule: daily
+  issue_comment:
+    types: [created]
+  schedule: every 12h
   workflow_dispatch:
 
 permissions:
@@ -31,17 +33,18 @@ tools:
 
 safe-outputs:
   add-comment:
-    max: 3
+    max: 10
     target: "*"
     hide-older-comments: true
   add-labels:
-    max: 5
+    max: 15
   remove-labels:
-    max: 5
+    max: 15
   create-pull-request:
     draft: true
     title-prefix: "[fix] "
-    max: 2
+    max: 3
+    allowed-base-branches: ["main", "rel/*"]
     protected-files: fallback-to-issue
     github-token: ${{ secrets.GH_AW_GITHUB_TOKEN }}
   noop:
@@ -49,7 +52,7 @@ safe-outputs:
   messages:
     footer: "> 🔍 *Triaged by [{workflow_name}]({run_url})*"
 
-timeout-minutes: 30
+timeout-minutes: 45
 
 imports:
   - shared/repo-build-setup.md
@@ -70,7 +73,7 @@ You are the Issue Triage agent for `${{ github.repository }}`. Your job is to dr
 
 - **Never post more than one comment per issue per run.**
 - **Prefer editing your previous comment** over adding a new one.
-- **Never comment if a human maintainer commented in the last 48 hours** — they're handling it.
+- **Never comment if a human maintainer commented in the last 48 hours** — unless this run was triggered BY that maintainer's comment (`issue_comment` event). In that case, the maintainer wants you to act.
 - **Never override human-applied labels** like `State: Blocked`, `State: Approved`, or `Needs: Design`.
 
 ## Existing Labels to Use
@@ -88,19 +91,28 @@ Use ONLY these existing repository labels — do not create new labels:
 
 Evaluate the new issue immediately.
 
-### On `schedule` (daily)
+### On `issue_comment` (maintainer comments on an issue)
 
-Your daily goal: **drive open issues to zero.** Process the backlog systematically:
+A maintainer commented on an issue — they likely added context, repro steps, or clarification. Treat this as a signal to act on the issue:
 
-1. **Follow-ups first**: Check issues labeled `Needs: Additional Info` that have been updated since labeling — the reporter may have added repro steps. Re-evaluate them.
-2. **Backlog nibble**: Pick **one** open bug issue to work on. Selection priority:
+1. Read the full issue and all comments.
+2. If the maintainer's comment explicitly says to hold off (e.g., "don't triage this yet", "leave this alone", "not now", "skip this") → `noop`.
+3. Otherwise, treat the issue as if it was just opened — evaluate completeness, attempt repro if possible, attempt fix if reproducible. The maintainer's comment likely provides additional context that makes the issue more actionable.
+
+### On `schedule` (every 12 hours)
+
+Your goal: **drive open issues to zero.** Process the backlog systematically:
+
+1. **Follow-ups first**: Check ALL issues labeled `Needs: Additional Info` or `Needs: Author Feedback` that have been updated since labeling — the reporter may have added repro steps. Re-evaluate every one of them.
+2. **New issues from external contributors**: Check issues opened in the last 24 hours that have NOT been triaged yet (no agent comment, no triage labels). These were skipped on creation because the author lacked write permission. Triage them now — they deserve the same treatment as maintainer-filed issues.
+3. **Backlog**: Work through open bug issues. Process **up to 3 issues** per run. Selection priority:
    a. Issues with `Needs: Triage :mag:` label (untriaged, newest first)
    b. Oldest open bug issues that have repro steps but no linked PR
    c. Issues without repro steps that you can investigate from the description alone
-3. **Skip**: issues labeled `State: Blocked`, `Needs: Design`, `State: Approved`, or `State: In-PR`
-4. **Skip**: issues you already commented on in the last 7 days (don't re-triage the same issue)
+4. **Skip**: issues labeled `State: Blocked`, `Needs: Design`, `State: Approved`, or `State: In-PR`
+5. **Skip**: issues you already commented on in the last 7 days (don't re-triage the same issue)
 
-The goal is steady progress: one issue per day = the backlog shrinks consistently. The maintainer wakes up to either a draft fix PR or a root cause analysis comment — actionable work ready to go.
+The goal is steady progress: the maintainer wakes up to draft fix PRs or root cause analysis comments — actionable work ready to go.
 
 ## Process
 
