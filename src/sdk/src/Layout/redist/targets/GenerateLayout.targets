@@ -536,16 +536,19 @@
 
     <!--
       Publish the dotnet-aot project.  The project is configured with a RuntimeIdentifier
-      and with PublishAot=true, so this creates the NativeAOT library.  We avoid passing
-      any global properties to avoid issues with a different builds overwriting existing
-      outputs.
+      and with PublishAot=true, so this creates the NativeAOT library.  We pass
+      _IsPublishing=true as a global property because that's the property the SDK uses
+      to gate Publish-time behaviors (for example, suppressing apphost generation when
+      PublishAot is true); without it, running the Publish target directly is known to
+      produce subtly wrong behaviors.
 
       Also call PublishItemsOutputGroup to retrieve the published file list, so we
       don't have to hard-code or predict the publish output directory.
     -->
     <MSBuild
       Targets="Publish;PublishItemsOutputGroup"
-      Projects="$(RepoRoot)src/Cli/dotnet-aot/dotnet-aot.csproj">
+      Projects="$(RepoRoot)src/Cli/dotnet-aot/dotnet-aot.csproj"
+      Properties="_IsPublishing=true">
       <Output TaskParameter="TargetOutputs" ItemName="_DotnetAotPublishedItems" />
     </MSBuild>
 
