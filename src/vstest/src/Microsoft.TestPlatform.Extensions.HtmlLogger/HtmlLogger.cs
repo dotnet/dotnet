@@ -310,7 +310,7 @@ public class HtmlLogger : ITestLoggerWithParameters
     {
         try
         {
-            var fileName = string.Format(CultureInfo.CurrentCulture, "{0}_{1}_{2}",
+            var fileName = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}",
                 Environment.GetEnvironmentVariable("UserName"), Environment.MachineName,
                 FormatDateTimeForRunName(DateTime.Now));
 
@@ -350,17 +350,19 @@ public class HtmlLogger : ITestLoggerWithParameters
 
     private string GenerateUniqueFilePath(string fileName, string fileExtension)
     {
-        string fullFilePath;
         for (short i = 0; i < short.MaxValue; i++)
         {
             var fileNameWithIter = i == 0 ? fileName : Path.GetFileNameWithoutExtension(fileName) + $"[{i}]";
-            fullFilePath = Path.Combine(TestResultsDirPath!, $"TestResult_{fileNameWithIter}.{fileExtension}");
+            var fullFilePath = Path.Combine(TestResultsDirPath!, $"TestResult_{fileNameWithIter}.{fileExtension}");
+
             try
             {
-                using var _ = new FileStream(fullFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                // Use FileMode.CreateNew for atomic "create if not exists" to avoid
+                // cross-process race conditions when multiple vstest processes run in parallel.
+                using var _ = _fileHelper.GetStream(fullFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                 return fullFilePath;
             }
-            catch (IOException) when (File.Exists(fullFilePath))
+            catch (IOException) when (_fileHelper.Exists(fullFilePath))
             {
                 // File already exists (another process created it), try next iteration.
             }
