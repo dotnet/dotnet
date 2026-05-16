@@ -5,49 +5,76 @@
 
 using System;
 using System.Collections.Generic;
-using NuGet.Shared;
+using System.Linq;
+using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.Commands.Why
 {
     /// <summary>
     /// Represents a node in the package dependency graph.
     /// </summary>
-    internal class DependencyNode
+    internal abstract record DependencyNode(string Id, HashSet<DependencyNode> Children)
     {
-        public string Id { get; set; }
-        public string Version { get; set; }
-        public HashSet<DependencyNode> Children { get; set; }
+        public abstract bool Equals(DependencyNode? other);
 
-        public DependencyNode(string id, string version)
+        public abstract override int GetHashCode();
+    }
+
+    /// <summary>
+    /// Represents a project node in the dependency graph.
+    /// </summary>
+    internal record ProjectNode(string Id, HashSet<DependencyNode> Children)
+        : DependencyNode(Id, Children)
+    {
+        public virtual bool Equals(ProjectNode? other)
         {
-            Id = id ?? throw new ArgumentNullException(nameof(id));
-            Version = version ?? throw new ArgumentNullException(nameof(version));
-            Children = new HashSet<DependencyNode>(new DependencyNodeComparer());
+            if (other == null)
+                return false;
+
+            return string.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase)
+                && Children.SetEquals(other.Children);
         }
 
         public override int GetHashCode()
         {
-            var hashCodeCombiner = new HashCodeCombiner();
-            hashCodeCombiner.AddObject(Id);
-            hashCodeCombiner.AddObject(Version);
-            hashCodeCombiner.AddUnorderedSequence(Children);
-            return hashCodeCombiner.CombinedHash;
+            var hash = new HashCode();
+            hash.Add(Id, StringComparer.OrdinalIgnoreCase);
+            foreach (var child in Children.OrderBy(c => c.Id, StringComparer.OrdinalIgnoreCase))
+            {
+                hash.Add(child);
+            }
+            return hash.ToHashCode();
         }
     }
 
-    internal class DependencyNodeComparer : IEqualityComparer<DependencyNode>
+    /// <summary>
+    /// Represents a package node in the dependency graph.
+    /// </summary>
+    internal record PackageNode(string Id, NuGetVersion ResolvedVersion, VersionRange RequestedVersion, HashSet<DependencyNode> Children)
+        : DependencyNode(Id, Children)
     {
-        public bool Equals(DependencyNode? x, DependencyNode? y)
+        public virtual bool Equals(PackageNode? other)
         {
-            if (x == null || y == null)
+            if (other == null)
                 return false;
 
-            return string.Equals(x.Id, y.Id, StringComparison.CurrentCultureIgnoreCase);
+            return string.Equals(Id, other.Id, StringComparison.OrdinalIgnoreCase)
+                && ResolvedVersion.Equals(other.ResolvedVersion)
+                && RequestedVersion.Equals(other.RequestedVersion)
+                && Children.SetEquals(other.Children);
         }
 
-        public int GetHashCode(DependencyNode obj)
+        public override int GetHashCode()
         {
-            return obj.Id.GetHashCode();
+            var hash = new HashCode();
+            hash.Add(Id, StringComparer.OrdinalIgnoreCase);
+            hash.Add(ResolvedVersion);
+            hash.Add(RequestedVersion);
+            foreach (var child in Children.OrderBy(c => c.Id, StringComparer.OrdinalIgnoreCase))
+            {
+                hash.Add(child);
+            }
+            return hash.ToHashCode();
         }
     }
 }

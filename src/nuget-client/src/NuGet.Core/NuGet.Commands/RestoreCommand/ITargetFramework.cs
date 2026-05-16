@@ -15,7 +15,7 @@ namespace NuGet.Commands.Restore
         /// <summary>Get the value for a property in the project.</summary>
         /// <param name="propertyName">The name of the property</param>
         /// <returns>The value of the requested property, or <see langword="null"/> if the property was not defined.</returns>
-        string GetProperty(string propertyName);
+        string? GetProperty(string propertyName);
 
         /// <summary>Get all items of a given type.</summary>
         /// <param name="itemType">The item type. For example, PackageReference, PackageVersion, etc.</param>

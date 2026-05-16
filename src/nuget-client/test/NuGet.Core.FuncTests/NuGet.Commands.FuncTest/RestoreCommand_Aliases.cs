@@ -977,6 +977,321 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.LogMessages.Should().Contain(m => m.Message.Contains(invalidAlias));
         }
 
+        // Two aliases of the same framework (net472) with different versions of the same package.
+        // Each alias resolves exactly its requested version. NU1601 should not fire on any graph.
+        [Theory]
+        [InlineData("1.0.0", "2.0.0-preview.1")]          // stable + preview
+        [InlineData("1.0.0", "2.0.0")]                     // both stable
+        [InlineData("1.0.0-preview.1", "2.0.0-preview.1")] // both preview
+        public async Task RestoreCommand_WithAliasesOfSameFramework_DifferentVersionsPerAlias_Succeeds(string appleVersion, string bananaVersion)
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var rootProject = $@"
+            {{
+              ""frameworks"": {{
+                ""apple"": {{
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {{
+                            ""PackageA"": {{
+                                ""version"": ""[{appleVersion},)"",
+                                ""target"": ""Package""
+                            }}
+                    }}
+                }},
+                ""banana"": {{
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {{
+                            ""PackageA"": {{
+                                ""version"": ""[{bananaVersion},)"",
+                                ""target"": ""Package""
+                            }}
+                    }}
+                }}
+              }}
+            }}";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("PackageA", appleVersion),
+                new SimpleTestPackageContext("PackageA", bananaVersion));
+
+            var logger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, forceEvaluate: false, logger, projectSpec);
+
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            // Both aliases should resolve their correct package version
+            var alias1Target = result.LockFile.GetTarget("apple", null);
+            alias1Target.Libraries.Should().ContainSingle(e => e.Name!.Equals("PackageA"));
+            alias1Target.Libraries[0].Version.Should().Be(new NuGetVersion(appleVersion));
+
+            var alias2Target = result.LockFile.GetTarget("banana", null);
+            alias2Target.Libraries.Should().ContainSingle(e => e.Name!.Equals("PackageA"));
+            alias2Target.Libraries[0].Version.Should().Be(new NuGetVersion(bananaVersion));
+
+            result.LockFile.LogMessages.Should().BeEmpty(
+                because: "each alias resolves its own requested version — no bump occurred");
+        }
+
+        // NU1604: Project dependency has a non-inclusive lower bound (e.g., (1.0.0, )).
+        // apple has PackageA (1.0.0, ) → NU1604 (missing lower bound)
+        // banana has PackageA [2.0.0, ) → no NU1604 (inclusive lower bound, version exists)
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_DifferentRangesPerAliasAndMissingLowerBound_NU1604OnlyOnAffectedAlias()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""(1.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[2.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                }
+              }
+            }";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("PackageA", "1.0.1"),
+                new SimpleTestPackageContext("PackageA", "2.0.0"));
+
+            var logger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, forceEvaluate: false, logger, projectSpec);
+
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1604);
+            result.LockFile.LogMessages[0].LibraryId.Should().Be("PackageA");
+
+            result.LockFile.LogMessages[0].TargetGraphs.Should().ContainSingle()
+                .Which.Should().Be("apple");
+        }
+
+        // NU1603: Requested min version does not exist on the feed.
+        // apple has PackageA [1.0.0, ) but only 1.0.1 exists → NU1603
+        // banana has PackageA [2.0.0, ) and 2.0.0 exists → no NU1603
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_MissingMinVersionOnOneAlias_NU1603OnlyOnAffectedAlias()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[2.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                }
+              }
+            }";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            // 1.0.0 does NOT exist — only 1.0.1. 2.0.0 exists.
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("PackageA", "1.0.1"),
+                new SimpleTestPackageContext("PackageA", "2.0.0"));
+
+            var logger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, forceEvaluate: false, logger, projectSpec);
+
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1603);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().ContainSingle()
+                .Which.Should().Be("apple");
+        }
+
+        // NU1602: Transitive dependency has a non-inclusive lower bound.
+        // apple: PackageA 1.0.0 → PackageB (> 1.0.0) → resolves to 1.0.1 → NU1602
+        // banana: PackageC 1.0.0 → PackageB [1.0.0, ) → resolves to 1.0.0 → no NU1602
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_TransitiveNonInclusiveLowerBound_NU1602OnlyOnAffectedAlias()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // PackageA 1.0.0 depends on PackageB (> 1.0.0) — non-inclusive lower bound
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("PackageB", "(1.0.0, )")]
+            };
+
+            // PackageC 1.0.0 depends on PackageB [1.0.0, ) — inclusive lower bound
+            var pkgB_1_0_0 = new SimpleTestPackageContext("PackageB", "1.0.0");
+            var pkgB_1_0_1 = new SimpleTestPackageContext("PackageB", "1.0.1");
+            var pkgC = new SimpleTestPackageContext("PackageC", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("PackageB", "1.0.0")]
+            };
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource, pkgA, pkgB_1_0_0, pkgB_1_0_1, pkgC);
+
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""PackageC"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                }
+              }
+            }";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            var logger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, forceEvaluate: false, logger, projectSpec);
+
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1602);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().ContainSingle()
+                .Which.Should().Be("apple");
+        }
+
+        // NU1608: Transitive dependency resolved above its upper bound.
+        // apple: PackageA 1.0.0 → PackageB [1.0.0, 2.0.0), plus direct dep PackageB [2.0.0, )
+        //         PackageB resolves to 2.0.0, exceeding PackageA's upper bound → NU1608
+        // banana: PackageC 1.0.0 → PackageB [1.0.0, ) (no upper bound)
+        //         PackageB resolves fine → no NU1608
+        [Fact]
+        public async Task RestoreCommand_WithAliasesOfSameFramework_TransitiveAboveUpperBound_NU1608OnlyOnAffectedAlias()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // PackageA 1.0.0 depends on PackageB [1.0.0, 2.0.0) — has upper bound
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.0");
+            pkgA.Nuspec = XDocument.Parse(
+                @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <package>
+                    <metadata>
+                        <id>PackageA</id>
+                        <version>1.0.0</version>
+                        <dependencies>
+                            <group>
+                                <dependency id=""PackageB"" version=""[1.0.0, 2.0.0)"" />
+                            </group>
+                        </dependencies>
+                    </metadata>
+                </package>");
+
+            // PackageC 1.0.0 depends on PackageB [1.0.0, ) — no upper bound
+            var pkgC = new SimpleTestPackageContext("PackageC", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("PackageB", "1.0.0")]
+            };
+
+            var pkgB = new SimpleTestPackageContext("PackageB", "2.0.0");
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource, pkgA, pkgB, pkgC);
+
+            // apple pulls in PackageA (which wants B < 2.0.0) AND directly requires PackageB >= 2.0.0.
+            // banana only has PackageC (which wants B >= 1.0.0) and directly requires PackageB >= 2.0.0 — no upper bound conflict.
+            var rootProject = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package""
+                            },
+                            ""PackageB"": {
+                                ""version"": ""[2.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""PackageC"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package""
+                            },
+                            ""PackageB"": {
+                                ""version"": ""[2.0.0,)"",
+                                ""target"": ""Package""
+                            }
+                    }
+                }
+              }
+            }";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+
+            var logger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, forceEvaluate: false, logger, projectSpec);
+
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1608);
+            result.LockFile.LogMessages[0].TargetGraphs.Should().ContainSingle()
+                .Which.Should().Be("apple");
+        }
+
         internal static Task<RestoreResult> RunRestoreAsync(SimpleTestPathContext pathContext, params PackageSpec[] projects)
         {
             return RunRestoreAsync(pathContext, forceEvaluate: false, new TestLogger(), projects);

@@ -6,6 +6,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell.Interop;
 using NuGet.Frameworks;
+using VSLangProj150;
 
 namespace NuGet.VisualStudio
 {
@@ -77,5 +78,12 @@ namespace NuGet.VisualStudio
         /// See <see cref="Microsoft.VisualStudio.Shell.PackageUtilities.IsCapabilityMatch(IVsHierarchy, string)"/>
         /// </summary>
         bool IsCapabilityMatch(string capabilityExpression);
+
+        /// <summary>
+        /// Checks whether a project reference supports NuGet.
+        /// </summary>
+        /// <param name="projectReference"></param>
+        /// <returns></returns>
+        bool IsSupported(Reference6 projectReference);
     }
 }

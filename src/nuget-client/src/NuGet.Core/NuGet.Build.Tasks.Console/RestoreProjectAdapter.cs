@@ -13,11 +13,12 @@ namespace NuGet.Build.Tasks.Console
 {
     internal class RestoreProjectAdapter : IProject
     {
-        public RestoreProjectAdapter(string fullPath)
+        public RestoreProjectAdapter(string fullPath, IDictionary<string, string> globalProperties)
         {
             FullPath = fullPath ?? throw new ArgumentNullException(nameof(fullPath));
             Directory = Path.GetDirectoryName(fullPath) ?? throw new ArgumentNullException(nameof(fullPath));
 
+            _globalProperties = globalProperties;
             _targetFrameworks = new(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -28,6 +29,8 @@ namespace NuGet.Build.Tasks.Console
         public ITargetFramework OuterBuild { get; private set; }
 
         public IReadOnlyDictionary<string, ITargetFramework> TargetFrameworks => _targetFrameworks;
+
+        private readonly IDictionary<string, string> _globalProperties;
 
         private ConcurrentDictionary<string, ITargetFramework> _targetFrameworks;
 
@@ -50,6 +53,20 @@ namespace NuGet.Build.Tasks.Console
                 var targetFramework = OuterBuild.GetProperty("TargetFramework") ?? string.Empty;
                 _targetFrameworks.TryAdd(targetFramework, OuterBuild);
             }
+        }
+
+        public string GetGlobalProperty(string propertyName)
+        {
+            if (_globalProperties.TryGetValue(propertyName, out string value))
+            {
+                string trimmed = value?.Trim();
+                if (!string.IsNullOrWhiteSpace(trimmed))
+                {
+                    return trimmed;
+                }
+            }
+
+            return null;
         }
     }
 }

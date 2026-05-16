@@ -11,7 +11,7 @@ namespace NuGet.Protocol.Plugins.Tests
 {
     public class SenderTests
     {
-        private readonly Message _message = new Message(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
+        private readonly Message _message = MessageUtilities.Create(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
 
         [Fact]
         public void Constructor_ThrowsForNull()

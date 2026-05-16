@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using Newtonsoft.Json;
 using NuGet.Versioning;
@@ -29,9 +27,9 @@ namespace NuGet.Protocol
         /// <param name="existingValue">The existing value of the object.</param>
         /// <param name="serializer">A serializer.</param>
         /// <returns>A <see cref="SemanticVersion" /> object.</returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            return reader.TokenType != JsonToken.Null ? SemanticVersion.Parse(serializer.Deserialize<string>(reader)) : null;
+            return reader.TokenType != JsonToken.Null ? SemanticVersion.Parse(serializer.Deserialize<string>(reader)!) : null;
         }
 
         /// <summary>
@@ -40,9 +38,9 @@ namespace NuGet.Protocol
         /// <param name="writer">A JSON writer.</param>
         /// <param name="value">A value to serialize.</param>
         /// <param name="serializer">A serializer.</param>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var semanticVersion = (SemanticVersion)value;
+            var semanticVersion = (SemanticVersion)value!;
 
             serializer.Serialize(writer, semanticVersion.ToString());
         }

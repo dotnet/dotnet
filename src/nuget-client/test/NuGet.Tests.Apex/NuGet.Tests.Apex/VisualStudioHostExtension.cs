@@ -139,6 +139,12 @@ namespace NuGet.Tests.Apex
             {
                 // ignore errors
             }
+            catch (OperationCanceledException)
+            {
+                // The UI thread may be temporarily busy, causing the JoinableTaskFactory
+                // main-thread switch inside the Apex ErrorListService to time out.
+                // Since clearing the error window is best-effort cleanup, swallow the exception.
+            }
         }
 
         /// <summary>

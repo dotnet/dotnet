@@ -842,7 +842,10 @@ nuget trusted-signers Remove -Name TrustedRepo</value>
     <value>Enables project lock file to be generated and used with restore.</value>
   </data>
   <data name="PackageCommandDeterministic" xml:space="preserve">
-    <value>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package.</value>
+    <value>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package when used with -DeterministicTimestamp.</value>
+  </data>
+  <data name="PackageCommandDeterministicTimestamp" xml:space="preserve">
+    <value>Specify the timestamp this command should use when creating a deterministic package. Multiple invocations of the pack command will create the exact same package.</value>
   </data>
   <data name="ClientCertificatesCommandFilePathDescription" xml:space="preserve">
     <value>Path to certificate file.</value>

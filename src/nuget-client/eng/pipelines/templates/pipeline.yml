@@ -83,9 +83,8 @@ stages:
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
       BuildRTM: "false"
       SemanticVersion: $[stageDependencies.Initialize.GetSemanticVersion.outputs['setsemanticversion.SemanticVersion']]
-      RunSettingsDropName: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
+      RunSettingsDropName: 'RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildNumber)'
       ProfilingInputsDropName: 'ProfilingInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildId)'
-      NuGetTestGateDropName: 'TestGate/$(System.TeamProject)/$(Build.Repository.Name)/$(SourceBranch)/$(Build.BuildNumber)'
     pool:
       name: VSEng-MicroBuildVSStable
     templateContext:
@@ -130,17 +129,6 @@ stages:
         usePat: true
         dropMetadataContainerName: 'DropMetadata-RunSettings'
         # need to make daily Apex test pipeline build its own tests, and remove this from official pipeline
-        codeSignValidationEnabled: false
-
-      - output: artifactsDrop
-        displayName: 'Publish test gate drop'
-        condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
-        dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: '$(NuGetTestGateDropName)'
-        sourcePath: '$(Build.StagingDirectory)\RunSettings'
-        toLowerCase: false
-        usePat: true
-        dropMetadataContainerName: 'DropMetadata-TestGate'
         codeSignValidationEnabled: false
 
       - output: artifactsDrop
@@ -262,17 +250,3 @@ stages:
       parameters:
         BuildRTM: true
         SigningType: ${{ parameters.SigningType }}
-
-  - job: Validate_Publishing_Artifacts
-    condition: "and(succeeded(), ne(variables['RunBuildForPublishing'], 'false'))"
-    displayName: 'Validate Publishing build artifacts'
-    dependsOn: Build_RTM
-    timeoutInMinutes: 15
-    pool:
-      name: AzurePipelines-EO
-      image: 1ESPT-Windows2022
-      os: windows
-    steps:
-    - template: /eng/pipelines/templates/Validate_Build_Output.yml@self
-      parameters:
-        isOfficialBuild: ${{ parameters.isOfficialBuild }}
