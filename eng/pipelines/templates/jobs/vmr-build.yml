@@ -163,6 +163,20 @@ parameters:
   type: boolean
   default: false
 
+# Source Index: name for the uploaded source index bundle (e.g., 'dotnet-dotnet').
+# When set, processes per-repo Build.binlog files and uploads SLN data.
+- name: sourceIndexName
+  type: string
+  default: ''
+
+- name: sourceIndexExcludeRepos
+  type: string
+  default: ''
+
+- name: sourceIndexIncludeRepos
+  type: string
+  default: ''
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -924,6 +938,15 @@ jobs:
         parameters:
           enableMicrobuild: true
           enableMicrobuildForMacAndLinux: true
+
+  - ${{ if and(ne(parameters.sourceIndexName, ''), eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - template: ../steps/source-index-stage1.yml
+      parameters:
+        sourceIndexName: ${{ parameters.sourceIndexName }}
+        sourcesPath: $(sourcesPath)
+        logsPath: $(sourcesPath)/artifacts/log/Release
+        excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
+        includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
 
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
