@@ -37,6 +37,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Minimum SDK Analysis Level required for:
         /// <list type="bullet">
+        /// <item>warning when packages use the deprecated MonoAndroid framework</item>
         /// <item>error when TargetFramework alias contains non-ASCII characters</item>
         /// </list>
         /// </summary>

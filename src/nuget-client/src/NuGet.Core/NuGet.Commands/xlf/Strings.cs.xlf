@@ -465,8 +465,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} se nevyřadí. Zvažte odebrání tohoto balíčku ze závislostí, protože je pravděpodobně nepotřebný.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="new">PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1495,6 +1495,12 @@ NuGet vyžaduje zdroje HTTPS. Další informace najdete na https://aka.ms/nuget-
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
         <target state="translated">{0} neposkytuje inkluzivní dolní mez pro závislost {1}. Místo toho bylo přeloženo: {2}.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">Balíček {0} {1} používá zastaralou architekturu MonoAndroid místo net6.0-android nebo novější. Zvažte možnost upgradovat na novější verzi tohoto balíčku nebo kontaktovat autora balíčku.</target>
+        <note>{0} - package id
+{1} - package version</note>
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>

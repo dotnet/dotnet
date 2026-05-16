@@ -135,6 +135,9 @@
 {1} is the package's identity.
 {2} is the dependency's version range.</comment>
   </data>
+  <data name="ErrorInvalidTimestamp" xml:space="preserve">
+    <value>Invalid timestamp: '{0}'</value>
+  </data>
   <data name="ErrorNullOrEmptyPackageId" xml:space="preserve">
     <value>Null or empty package id</value>
   </data>
@@ -270,6 +273,14 @@
     <value>Valid from: {0} to {1}</value>
     <comment>0 -  start date
 1 - end date</comment>
+  </data>
+  <data name="CertUtilityCertificateCrlUrl" xml:space="preserve">
+    <value>CRL URL: {0}</value>
+    <comment>0 - CRL distribution point URL</comment>
+  </data>
+  <data name="CertUtilityCertificateOcspUrl" xml:space="preserve">
+    <value>OCSP URL: {0}</value>
+    <comment>0 - OCSP responder URL</comment>
   </data>
   <data name="CertUtilityMultipleCertificatesFooter" xml:space="preserve">
     <value>... {0} more.</value>

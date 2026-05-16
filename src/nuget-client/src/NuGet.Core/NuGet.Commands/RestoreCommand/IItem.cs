@@ -16,6 +16,6 @@ namespace NuGet.Commands.Restore
         /// <summary>Get the evaluated value of a metadata on this item.</summary>
         /// <param name="name">The name of the metadata whose value is retrieved.</param>
         /// <returns>The evaluated value of the given metadata for this item, or <see langword="null"/> if no metadata exists with the given name.</returns>
-        string GetMetadata(string name);
+        string? GetMetadata(string name);
     }
 }

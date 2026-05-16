@@ -42,6 +42,8 @@ namespace NuGet.Build.Tasks.Pack
                 BasePath = request.NuspecBasePath,
                 NoPackageAnalysis = request.NoPackageAnalysis,
                 NoDefaultExcludes = request.NoDefaultExcludes,
+                Deterministic = request.Deterministic,
+                DeterministicTimestamp = request.DeterministicTimestamp,
                 WarningProperties = WarningProperties.GetWarningProperties(request.TreatWarningsAsErrors, request.WarningsAsErrors, request.NoWarn, request.WarningsNotAsErrors),
                 PackTargetArgs = new MSBuildPackTargetArgs()
             };
@@ -126,7 +128,8 @@ namespace NuGet.Build.Tasks.Pack
                 ReleaseNotes = request.ReleaseNotes,
                 RequireLicenseAcceptance = request.RequireLicenseAcceptance,
                 EmitRequireLicenseAcceptance = request.RequireLicenseAcceptance,
-                PackageTypes = ParsePackageTypes(request)
+                PackageTypes = ParsePackageTypes(request),
+                DeterministicTimestamp = request.DeterministicTimestamp,
             };
 
             if (request.DevelopmentDependency)

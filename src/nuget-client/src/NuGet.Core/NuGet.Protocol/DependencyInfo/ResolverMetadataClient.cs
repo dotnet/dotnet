@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,10 +42,10 @@ namespace NuGet.Protocol
                     throw new InvalidDataException(registrationUri.AbsoluteUri);
                 }
 
-                foreach (JObject packageObj in rangeObj["items"])
+                foreach (JObject packageObj in rangeObj["items"]!)
                 {
-                    var catalogEntry = (JObject)packageObj["catalogEntry"];
-                    var version = NuGetVersion.Parse(catalogEntry["version"].ToString());
+                    var catalogEntry = (JObject)packageObj["catalogEntry"]!;
+                    var version = NuGetVersion.Parse(catalogEntry["version"]!.ToString());
 
                     if (range.Satisfies(version))
                     {
@@ -67,16 +65,16 @@ namespace NuGet.Protocol
         /// <returns>Returns the RemoteSourceDependencyInfo object corresponding to this package version</returns>
         private static RemoteSourceDependencyInfo ProcessPackageVersion(JObject packageObj, NuGetVersion version)
         {
-            var catalogEntry = (JObject)packageObj["catalogEntry"];
+            var catalogEntry = (JObject)packageObj["catalogEntry"]!;
 
             var listed = catalogEntry.GetBoolean("listed") ?? true;
 
-            var id = catalogEntry.Value<string>("id");
+            var id = catalogEntry.Value<string>("id")!;
 
             var identity = new PackageIdentity(id, version);
             var dependencyGroups = new List<PackageDependencyGroup>();
 
-            var dependencyGroupsArray = (JArray)catalogEntry["dependencyGroups"];
+            var dependencyGroupsArray = (JArray?)catalogEntry["dependencyGroups"];
 
             if (dependencyGroupsArray != null)
             {
@@ -87,7 +85,7 @@ namespace NuGet.Protocol
 
                     var groupDependencies = new List<PackageDependency>();
 
-                    JToken dependenciesObj;
+                    JToken? dependenciesObj;
 
                     // Packages with no dependencies have 'dependencyGroups' but no 'dependencies'
                     if (dependencyGroupObj.TryGetValue("dependencies", out dependenciesObj))
@@ -96,8 +94,8 @@ namespace NuGet.Protocol
                         for (int j = 0; j < dependencies.Count; j++)
                         {
                             var dependencyObj = (JObject)dependencies[j];
-                            var dependencyId = dependencyObj.Value<string>("id");
-                            var dependencyRange = RegistrationUtility.CreateVersionRange(dependencyObj.Value<string>("range"));
+                            var dependencyId = dependencyObj.Value<string>("id")!;
+                            var dependencyRange = RegistrationUtility.CreateVersionRange(dependencyObj.Value<string>("range")!);
 
                             groupDependencies.Add(new PackageDependency(dependencyId, dependencyRange));
                         }
@@ -107,7 +105,7 @@ namespace NuGet.Protocol
                 }
             }
 
-            var contentUri = packageObj.Value<string>("packageContent");
+            var contentUri = packageObj.Value<string>("packageContent")!;
 
             return new RemoteSourceDependencyInfo(identity, listed, dependencyGroups, contentUri);
         }
@@ -115,8 +113,8 @@ namespace NuGet.Protocol
         /// <summary>
         /// Retrieve a registration blob
         /// </summary>
-        /// <returns>Returns Null if the package does not exist</returns>
-        public static async Task<RegistrationInfo> GetRegistrationInfo(
+        /// <returns>Returns null if the package does not exist.</returns>
+        public static async Task<RegistrationInfo?> GetRegistrationInfo(
             HttpSource httpClient,
             Uri registrationUri,
             string packageId,
@@ -130,9 +128,17 @@ namespace NuGet.Protocol
             var frameworkReducer = new FrameworkReducer();
             var dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token);
 
-            var registrationInfo = new RegistrationInfo();
+            if (!dependencies.Any())
+            {
+                return null;
+            }
 
-            registrationInfo.IncludePrerelease = true;
+            var registrationInfo = new RegistrationInfo
+            {
+                Id = packageId,
+                IncludePrerelease = true
+            };
+
             foreach (var item in dependencies)
             {
                 var packageInfo = new PackageInfo
@@ -167,7 +173,6 @@ namespace NuGet.Protocol
                 }
 
                 registrationInfo.Add(packageInfo);
-                registrationInfo.Id = item.Identity.Id;
             }
 
             return registrationInfo;
@@ -182,7 +187,7 @@ namespace NuGet.Protocol
 
             if (dependencyGroupObj["targetFramework"] != null)
             {
-                framework = NuGetFramework.Parse(dependencyGroupObj["targetFramework"].ToString());
+                framework = NuGetFramework.Parse(dependencyGroupObj["targetFramework"]!.ToString());
             }
 
             return framework;

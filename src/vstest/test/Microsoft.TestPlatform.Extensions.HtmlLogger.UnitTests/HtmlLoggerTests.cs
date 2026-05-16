@@ -604,6 +604,35 @@ public class HtmlLoggerTests
             $"Filename should end with yyyyMMdd_HHmmss.fffffff pattern: {fileName}");
     }
 
+    [TestMethod]
+    public void TestCompleteHandlerShouldRetryUniqueFileNameWhenCreateNewCollides()
+    {
+        var collisionInjected = false;
+
+        _mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
+
+        _mockFileHelper.Setup(x => x.GetStream(It.IsAny<string>(), FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            .Returns<string, FileMode, FileAccess, FileShare>((path, _, _, _) =>
+            {
+                if (!collisionInjected)
+                {
+                    collisionInjected = true;
+                    throw new IOException("collision");
+                }
+
+                return new Mock<Stream>().Object;
+            });
+
+        _mockFileHelper.Setup(x => x.GetStream(It.IsAny<string>(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            .Returns(new Mock<Stream>().Object);
+
+        _htmlLogger.TestRunCompleteHandler(new object(), new TestRunCompleteEventArgs(null, false, true, null, null, null, TimeSpan.Zero));
+
+        Assert.IsNotNull(_htmlLogger.XmlFilePath);
+        Assert.Contains("[1].xml", _htmlLogger.XmlFilePath);
+        _mockFileHelper.Verify(x => x.GetStream(It.IsAny<string>(), FileMode.CreateNew, FileAccess.Write, FileShare.None), Times.AtLeast(2));
+    }
+
     private static TestCase CreateTestCase(string testCaseName)
     {
         return new TestCase(testCaseName, new Uri("some://uri"), "DummySourceFileName");

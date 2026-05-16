@@ -164,7 +164,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => handshake.HandleResponseAsync(
                         connection: null,
-                        request: new Message(
+                        request: MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
                             method: MessageMethod.Handshake),
@@ -199,7 +199,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => handshake.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        new Message(requestId: "a", type: MessageType.Request, method: MessageMethod.Handshake),
+                        MessageUtilities.Create(requestId: "a", type: MessageType.Request, method: MessageMethod.Handshake),
                         responseHandler: null,
                         cancellationToken: CancellationToken.None));
 
@@ -215,7 +215,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 await Assert.ThrowsAsync<OperationCanceledException>(
                     () => handshake.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        new Message(requestId: "a", type: MessageType.Request, method: MessageMethod.Initialize),
+                        MessageUtilities.Create(requestId: "a", type: MessageType.Request, method: MessageMethod.Initialize),
                         Mock.Of<IResponseHandler>(),
                         new CancellationToken(canceled: true)));
             }
@@ -255,11 +255,11 @@ namespace NuGet.Protocol.Plugins.Tests
                     .Returns(Task.FromResult(0));
 
                 var request = new HandshakeRequest(requestedProtocolVersion, requestedMinimumProtocolVersion);
-                var inboundMessage = new Message(
+                var inboundMessage = MessageUtilities.Create(
                     requestId: "a",
                     type: MessageType.Request,
                     method: MessageMethod.Handshake,
-                    payload: JsonSerializationUtilities.FromObject(request));
+                    payload: request);
 
                 await handshake.HandleResponseAsync(
                     Mock.Of<IConnection>(),

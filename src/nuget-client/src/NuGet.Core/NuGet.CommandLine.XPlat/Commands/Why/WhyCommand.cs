@@ -123,12 +123,15 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
             {
                 try
                 {
-                    var whyCommandArgs = new WhyCommandArgs(
-                        parseResult.GetValue(path)!,
-                        parseResult.GetValue(package)!,
-                        parseResult.GetValue(frameworks)!,
-                        console.Value,
-                        cancellationToken);
+                    var whyCommandArgs = new WhyCommandArgs
+                    {
+                        Path = parseResult.GetValue(path)!,
+                        Package = parseResult.GetValue(package)!,
+                        Frameworks = parseResult.GetValue(frameworks)!,
+                        Logger = console.Value,
+                        CancellationToken = cancellationToken,
+                        DotnetVersionChecker = DotnetVersionChecker.Instance,
+                    };
 
                     int exitCode = await action(whyCommandArgs);
                     return exitCode;
