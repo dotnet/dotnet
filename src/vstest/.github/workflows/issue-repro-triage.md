@@ -107,7 +107,7 @@ Your goal: **drive open issues to zero.** Process the backlog systematically:
 2. **New issues from external contributors**: Check issues opened in the last 24 hours that have NOT been triaged yet (no agent comment, no triage labels). These were skipped on creation because the author lacked write permission. Triage them now — they deserve the same treatment as maintainer-filed issues.
 3. **Backlog**: Work through open bug issues. Process **up to 3 issues** per run. Selection priority:
    a. Issues with `Needs: Triage :mag:` label (untriaged, newest first)
-   b. Oldest open bug issues that have repro steps but no linked PR
+   b. Oldest open bug issues that have repro steps but no linked PR and no `State: In-PR` label
    c. Issues without repro steps that you can investigate from the description alone
 4. **Skip**: issues labeled `State: Blocked`, `Needs: Design`, `State: Approved`, or `State: In-PR`
 5. **Skip**: issues you already commented on in the last 7 days (don't re-triage the same issue)
@@ -160,6 +160,24 @@ Check whether the issue contains actionable information:
 
 If the bug is reproducible and the fix appears scoped (not requiring architectural decisions):
 
+#### Step 4a: Check for existing PRs (MANDATORY)
+
+Before writing any code, search for existing open PRs that already address this issue:
+
+1. Search for open PRs with branch names matching `fix/issue-<number>` (e.g. `fix/issue-15643`)
+2. Search for open PRs whose title or body references this issue number
+3. Check the `auto-fix-prs` cache-memory key for previously created PRs for this issue
+
+**If an existing open PR is found:**
+- Do NOT create a new PR. Instead, add a comment on the issue noting the existing PR (if not already noted).
+- Add label `State: In-PR` to the issue if not already present.
+- If the existing PR has review feedback that hasn't been addressed, consider iterating on it instead of creating a new one — but only if you can push to the branch.
+- `noop` with message: "Existing PR #NNN already addresses this issue."
+
+**If all existing PRs for this issue are closed** (not merged), evaluate whether the previous approach was wrong or just abandoned. If wrong, try a different approach. If abandoned, consider reopening rather than creating yet another PR.
+
+#### Step 4b: Implement the fix
+
 1. **Read AGENTS.md** for repo conventions
 2. **Understand the root cause** by reading the relevant source code
 3. **Implement a fix** on a new branch `fix/issue-<number>`
@@ -174,7 +192,10 @@ The PR description should include:
 - What the fix does
 - Test that verifies the fix
 
-After creating the PR, **register it in cache-memory** so the PR Iteration workflow knows to follow up:
+After creating the PR:
+
+1. **Add label `State: In-PR`** to the issue so future triage runs skip it.
+2. **Register it in cache-memory** so the PR Iteration workflow knows to follow up:
 
 ```json
 // Read existing cache first, then update
