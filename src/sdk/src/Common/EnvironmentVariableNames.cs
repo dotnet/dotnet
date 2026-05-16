@@ -33,6 +33,7 @@ internal static class EnvironmentVariableNames
     public static readonly string DOTNET_CLI_TELEMETRY_STORAGE_PATH = nameof(DOTNET_CLI_TELEMETRY_STORAGE_PATH);
     public static readonly string DOTNET_CLI_TELEMETRY_LOG_PATH = nameof(DOTNET_CLI_TELEMETRY_LOG_PATH);
     public static readonly string DOTNET_CLI_TELEMETRY_DISABLE_TRACE_EXPORT = nameof(DOTNET_CLI_TELEMETRY_DISABLE_TRACE_EXPORT);
+    public static readonly string DOTNET_CLI_TELEMETRY_ENABLE_EXPORTER = nameof(DOTNET_CLI_TELEMETRY_ENABLE_EXPORTER);
 
 #if NET7_0_OR_GREATER
     private static readonly Version s_version6_0 = new(6, 0);
