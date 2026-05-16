@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +16,7 @@ namespace NuGet.Protocol
         public static async Task<T> StartWithTimeout<T>(
             Func<CancellationToken, Task<T>> getTask,
             TimeSpan timeout,
-            string timeoutMessage,
+            string? timeoutMessage,
             CancellationToken token)
         {
             /*
@@ -60,7 +58,7 @@ namespace NuGet.Protocol
         public static async Task StartWithTimeout(
             Func<CancellationToken, Task> getTask,
             TimeSpan timeout,
-            string timeoutMessage,
+            string? timeoutMessage,
             CancellationToken token)
         {
             await StartWithTimeout(

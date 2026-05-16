@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
+using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -115,22 +116,7 @@ EndGlobal";
 
                 _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.0", testOutputHelper: _testOutputHelper);
 
-                using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
-                {
-                    var xml = XDocument.Load(stream);
-
-                    var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
-
-                    ProjectFileUtils.AddItem(
-                        xml,
-                        "PackageReference",
-                        "TestPackage.AuthorSigned",
-                        string.Empty,
-                        new Dictionary<string, string>(),
-                        attributes);
-
-                    ProjectFileUtils.WriteXmlToFile(xml, stream);
-                }
+                ProjectFileUtils.AddItem(projectFile, "PackageReference", "TestPackage.AuthorSigned", string.Empty, new Dictionary<string, string>() { { "Version", "1.0.0" } });
 
                 _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
             }
@@ -804,7 +790,7 @@ EndGlobal";
 
                 Dictionary<string, string> environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 // Act
@@ -1412,7 +1398,7 @@ EndGlobal";
 
                 var environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 // Preconditions
@@ -1447,7 +1433,7 @@ EndGlobal";
 
                 var environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName1, " classlib", testOutputHelper: _testOutputHelper);
@@ -1485,7 +1471,7 @@ EndGlobal";
 
                 var environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 string directoryBuildPropsPath = Path.Combine(testDirectory, "Directory.Build.props");
@@ -3046,7 +3032,7 @@ EndGlobal";
 
             var environmentVariables = new Dictionary<string, string>()
             {
-                { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
             };
 
             var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile}" + (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty), environmentVariables, testOutputHelper: _testOutputHelper);
@@ -4231,6 +4217,75 @@ EndGlobal";
             {
                 Assert.Equal(related, item.Properties["related"]);
             }
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(true, true, false)]
+        [InlineData(true, true, true)]
+        public async Task DotnetRestore_RestoreSourcesWithRelativePaths_ResolvedCorrectPath(bool useGlobalProperty, bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            const string packageId = "TestPackage";
+            var package100 = new SimpleTestPackageContext(packageId, "1.0.0");
+            var package200 = new SimpleTestPackageContext(packageId, "2.0.0");
+
+            // Create two source directories with different versions
+            var source1 = Path.Combine(pathContext.WorkingDirectory, "source1");
+            var source2 = Path.Combine(pathContext.WorkingDirectory, "source2");
+            Directory.CreateDirectory(source1);
+            Directory.CreateDirectory(source2);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(source1, PackageSaveMode.Defaultv3, package100);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(source2, PackageSaveMode.Defaultv3, package200);
+
+            // Create project with a floating version PackageReference, and RestoreSources pointing to source1 (which has v1.0.0)
+            var projectA = SimpleTestProjectContext.CreateNETCore(
+                "projectA",
+                pathContext.SolutionRoot,
+                NuGetFramework.Parse("net8.0"));
+
+            var packageRef = new SimpleTestPackageContext(packageId, "1.0.0");
+            packageRef.Version = "*";
+            projectA.AddPackageToAllFrameworks(packageRef);
+            projectA.Properties.Add("RestoreSources", "../../source1");
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            solution.Projects.Add(projectA);
+            solution.Create();
+
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+
+            // Build restore arguments
+            string arguments = $"restore projectA{Path.DirectorySeparatorChar}projectA.csproj";
+            if (useStaticGraphRestore)
+            {
+                arguments += " /p:RestoreUseStaticGraphEvaluation=true";
+            }
+            if (useGlobalProperty)
+            {
+                arguments += " /p:RestoreSources=../source2";
+            }
+
+            // Act
+            _dotnetFixture.RunDotnetExpectSuccess(
+                pathContext.SolutionRoot,
+                arguments,
+                environmentVariables,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert - check which version was extracted into the global packages folder
+            string expectedVersion = useGlobalProperty ? "2.0.0" : "1.0.0";
+            var packageDirectory = Path.Combine(pathContext.UserPackagesFolder, packageId.ToLowerInvariant(), expectedVersion);
+            Directory.Exists(packageDirectory).Should().BeTrue($"expected {packageId} {expectedVersion} to be in the global packages folder");
         }
     }
 }

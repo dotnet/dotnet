@@ -133,38 +133,41 @@ namespace NuGet.Commands
         {
             var messages = new List<RestoreLogMessage>();
 
-            // Group by framework to get project dependencies, then check each graph.
-            foreach (var frameworkGroup in graphs.GroupBy(e => e.Graph.Framework))
+            // Check each graph individually using its target alias to get the correct dependencies.
+            foreach (var indexedGraph in graphs)
             {
-                // Get dependencies from the project
-                var dependencies = project.GetPackageDependenciesForFramework(frameworkGroup.Key)
-                                              .Where(e => !ignoreIds.Contains(e.Name, StringComparer.OrdinalIgnoreCase))
-                                              .Where(IsNonFloatingPackageDependency);
+                // Use the alias to look up the correct per-alias dependencies.
+                // For alias projects, TargetAlias is non-empty and uniquely identifies the target framework.
+                // For non-alias projects, fall back to framework-based lookup.
+                string targetAlias = indexedGraph.Graph.TargetAlias;
+                IEnumerable<LibraryDependency> dependencies = !string.IsNullOrEmpty(targetAlias)
+                    ? project.GetTargetFramework(targetAlias)!.Dependencies
+                    : project.GetPackageDependenciesForFramework(indexedGraph.Graph.Framework);
 
                 foreach (var dependency in dependencies)
                 {
-                    // Graphs may have different versions of the resolved package
-                    foreach (var indexedGraph in frameworkGroup)
+                    if (ignoreIds.Contains(dependency.Name, StringComparer.OrdinalIgnoreCase)
+                        || !IsNonFloatingPackageDependency(dependency))
                     {
-                        var minVersion = dependency.LibraryRange.VersionRange?.MinVersion;
-                        if (minVersion != null && dependency.LibraryRange.VersionRange.IsMinInclusive)
+                        continue;
+                    }
+
+                    var minVersion = dependency.LibraryRange.VersionRange?.MinVersion;
+                    if (minVersion != null && dependency.LibraryRange.VersionRange.IsMinInclusive)
+                    {
+                        var match = indexedGraph.GetItemById(dependency.Name, LibraryType.Package);
+
+                        if (match != null && match.Key.Version > minVersion)
                         {
-                            // Ignore floating or version-less (project) dependencies
-                            // Avoid warnings for non-packages
-                            var match = indexedGraph.GetItemById(dependency.Name, LibraryType.Package);
+                            var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_DependencyBumpedUp,
+                                dependency.LibraryRange.Name,
+                                dependency.LibraryRange.VersionRange.PrettyPrint(),
+                                match.Key.Name,
+                                match.Key.Version);
 
-                            if (match != null && match.Key.Version > minVersion)
-                            {
-                                var message = string.Format(CultureInfo.CurrentCulture, Strings.Log_DependencyBumpedUp,
-                                    dependency.LibraryRange.Name,
-                                    dependency.LibraryRange.VersionRange.PrettyPrint(),
-                                    match.Key.Name,
-                                    match.Key.Version);
+                            var graphName = indexedGraph.Graph.TargetGraphName;
 
-                                var graphName = indexedGraph.Graph.TargetGraphName;
-
-                                messages.Add(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, message, match.Key.Name, graphName));
-                            }
+                            messages.Add(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1601, message, match.Key.Name, graphName));
                         }
                     }
                 }
@@ -316,11 +319,11 @@ namespace NuGet.Commands
         /// </summary>
         private static string[] GetDependencyTargetGraphs(PackageSpec spec, LibraryDependency dependency)
         {
-            var infos = new List<TargetFrameworkInformation>();
-            // Add all tfms where the dependency is found
-            infos.AddRange(spec.TargetFrameworks.Where(e => e.Dependencies.Contains(dependency)));
-            // Convert framework to target graph name.
-            return infos.Select(e => e.FrameworkName.ToString()).ToArray();
+            // Add all tfms where the dependency is found and use the alias name if available.
+            return spec.TargetFrameworks
+                .Where(e => e.Dependencies.Contains(dependency))
+                .Select(e => string.IsNullOrEmpty(e.TargetAlias) ? e.FrameworkName.ToString() : e.TargetAlias)
+                .ToArray();
         }
 
     }

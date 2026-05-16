@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 using NuGet.Commands;
+using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -23,6 +24,7 @@ using NuGet.ProjectModel;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
+using Test.Utility;
 using Test.Utility.ProjectManagement;
 using Xunit;
 using static NuGet.Frameworks.FrameworkConstants;
@@ -41,8 +43,10 @@ namespace NuGet.SolutionRestoreManager.Test
             NuGetUIThreadHelper.SetCustomJoinableTaskFactory(joinableTaskContext.Factory);
         }
 
-        [Fact]
-        public void NominateProjectAsync_Always_SchedulesAutoRestore()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void NominateProjectAsync_Always_SchedulesAutoRestore(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0")
@@ -51,7 +55,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var restoreWorker = CreateDefaultISolutionRestoreWorkerMock();
 
             // Act
-            var actualRestoreTask = NominateProjectAsync(projectRestoreInfo, CancellationToken.None, restoreWorker: restoreWorker);
+            var actualRestoreTask = NominateProjectAsync(usePackageSpecFactory, projectRestoreInfo, CancellationToken.None, restoreWorker: restoreWorker);
 
             restoreWorker
                 .Verify(
@@ -60,8 +64,10 @@ namespace NuGet.SolutionRestoreManager.Test
                     "Service should schedule auto-restore operation.");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_ConsoleAppTemplate()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_ConsoleAppTemplate(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -75,7 +81,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var expectedBaseIntermediate = projectRestoreInfo.MSBuildProjectExtensionsPath;
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -99,8 +105,10 @@ namespace NuGet.SolutionRestoreManager.Test
                 "Microsoft.NETCore.App:1.0.1");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_ConsoleAppTemplateWithPlatform()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_ConsoleAppTemplateWithPlatform(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("net5.0-windows10.0", builder: builder =>
@@ -115,7 +123,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var expectedBaseIntermediate = projectRestoreInfo.MSBuildProjectExtensionsPath;
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -140,8 +148,10 @@ namespace NuGet.SolutionRestoreManager.Test
                 "Microsoft.NETCore.App:1.0.1");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_WithCliTool()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_WithCliTool(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0")
@@ -149,7 +159,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -181,12 +191,16 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData("netcoreapp2.0", @"..\packages", @"..\source1;..\source2", @"..\fallback1;..\fallback2")]
-        [InlineData("netcoreapp2.0", @"C:\packagesPath", @"..\source1;..\source2", @"C:\fallback1;C:\fallback2")]
-        [InlineData("netcoreapp2.0", null, null, null)]
-        [InlineData("netcoreapp1.0", null, null, null)]
+        [InlineData("netcoreapp2.0", @"..\packages", @"..\source1;..\source2", @"..\fallback1;..\fallback2", true)]
+        [InlineData("netcoreapp2.0", @"..\packages", @"..\source1;..\source2", @"..\fallback1;..\fallback2", false)]
+        [InlineData("netcoreapp2.0", @"C:\packagesPath", @"..\source1;..\source2", @"C:\fallback1;C:\fallback2", true)]
+        [InlineData("netcoreapp2.0", @"C:\packagesPath", @"..\source1;..\source2", @"C:\fallback1;C:\fallback2", false)]
+        [InlineData("netcoreapp2.0", null, null, null, true)]
+        [InlineData("netcoreapp2.0", null, null, null, false)]
+        [InlineData("netcoreapp1.0", null, null, null, true)]
+        [InlineData("netcoreapp1.0", null, null, null, false)]
         public async Task NominateProjectAsync_WithCliTool_RestoreSettings(
-            string toolFramework, string restorePackagesPath, string restoreSources, string fallbackFolders)
+            string toolFramework, string restorePackagesPath, string restoreSources, string fallbackFolders, bool usePackageSpecFactory)
         {
             var expectedToolFramework = NuGetFramework.Parse(toolFramework);
 
@@ -203,7 +217,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -245,9 +259,11 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData("netstandard1.4")]
-        [InlineData("netstandard1.4;net46")]
-        public async Task NominateProjectAsync_CrossTargeting(string targetFrameworks)
+        [InlineData("netstandard1.4", true)]
+        [InlineData("netstandard1.4", false)]
+        [InlineData("netstandard1.4;net46", true)]
+        [InlineData("netstandard1.4;net46", false)]
+        public async Task NominateProjectAsync_CrossTargeting(string targetFrameworks, bool usePackageSpecFactory)
         {
             var builder = new TestProjectRestoreInfoBuilder();
             var splitTargetFrameworks = targetFrameworks.Split([';'], StringSplitOptions.RemoveEmptyEntries);
@@ -260,7 +276,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var projectRestoreInfo = builder.Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -275,9 +291,11 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(ProjectBuildProperties.PackageTargetFallback)]
-        [InlineData(ProjectBuildProperties.AssetTargetFallback)]
-        public async Task NominateProjectAsync_Imports(string propertyName)
+        [InlineData(ProjectBuildProperties.PackageTargetFallback, true)]
+        [InlineData(ProjectBuildProperties.PackageTargetFallback, false)]
+        [InlineData(ProjectBuildProperties.AssetTargetFallback, true)]
+        [InlineData(ProjectBuildProperties.AssetTargetFallback, false)]
+        public async Task NominateProjectAsync_Imports(string propertyName, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netstandard1.4", builder =>
@@ -287,7 +305,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -299,8 +317,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal("dotnet53;portable-net452+win81", actualImports);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_WithValidPackageVersion()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_WithValidPackageVersion(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -310,7 +330,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -319,40 +339,15 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal("1.2.0-beta1", actualProjectSpec.Version.ToString());
         }
 
-        [Theory]
-        [InlineData("1.2.3", "1.2.3")]
-        [InlineData("1.2.0-beta1", "1.2.0-beta1")]
-        [InlineData("1.0.0", "1.0.0.0")]
-        public async Task NominateProjectAsync_WithIdenticalPackageVersions(string version1, string version2)
-        {
-            var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
-                .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
-                {
-                    builder.WithProperty(ProjectBuildProperties.PackageVersion, version1);
-                })
-                .WithTargetFrameworkInfo("net46", builder =>
-                {
-                    builder.WithProperty(ProjectBuildProperties.PackageVersion, version2);
-                })
-                .Build();
-
-            // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
-
-            // Assert
-            SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
-
-            var actualProjectSpec = actualRestoreSpec.Projects.Single();
-            Assert.Equal(version1, actualProjectSpec.Version.ToString());
-        }
-
         // The data in the restore settings should be unprocessed meaning the paths should stay relative.
-        // The processing of the paths will be done later in the netcorepackagereferenceproject
         [Theory]
-        [InlineData(@"..\packages", @"..\source1;..\source2", @"..\fallback1;..\fallback2")]
-        [InlineData(@"C:\packagesPath", @"..\source1;..\source2", @"C:\fallback1;C:\fallback2")]
-        [InlineData(null, null, null)]
-        public async Task NominateProjectAsync_RestoreSettings(string restorePackagesPath, string restoreSources, string fallbackFolders)
+        [InlineData(@"..\packages", @"..\source1;..\source2", @"..\fallback1;..\fallback2", true)]
+        [InlineData(@"..\packages", @"..\source1;..\source2", @"..\fallback1;..\fallback2", false)]
+        [InlineData(@"C:\packagesPath", @"..\source1;..\source2", @"C:\fallback1;C:\fallback2", true)]
+        [InlineData(@"C:\packagesPath", @"..\source1;..\source2", @"C:\fallback1;C:\fallback2", false)]
+        [InlineData(null, null, null, true)]
+        [InlineData(null, null, null, false)]
+        public async Task NominateProjectAsync_RestoreSettings(string restorePackagesPath, string restoreSources, string fallbackFolders, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -365,7 +360,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -383,9 +378,11 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(@"..\packages", @"..\source1;..\source2", @"..\fallback1;Clear;..\fallback2")]
-        [InlineData(@"C:\packagesPath", @"Clear;..\source1;..\source2", @"C:\fallback1;C:\fallback2")]
-        public async Task NominateProjectAsync_RestoreSettingsClear(string restorePackagesPath, string restoreSources, string fallbackFolders)
+        [InlineData(@"..\packages", @"..\source1;..\source2", @"..\fallback1;Clear;..\fallback2", true)]
+        [InlineData(@"..\packages", @"..\source1;..\source2", @"..\fallback1;Clear;..\fallback2", false)]
+        [InlineData(@"C:\packagesPath", @"Clear;..\source1;..\source2", @"C:\fallback1;C:\fallback2", true)]
+        [InlineData(@"C:\packagesPath", @"Clear;..\source1;..\source2", @"C:\fallback1;C:\fallback2", false)]
+        public async Task NominateProjectAsync_RestoreSettingsClear(string restorePackagesPath, string restoreSources, string fallbackFolders, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -398,7 +395,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
 
@@ -414,15 +411,17 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.True(Enumerable.SequenceEqual(expectedFallback.OrderBy(t => t), specFallback.OrderBy(t => t)));
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_CacheFilePathInPackageSpec_Succeeds()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_CacheFilePathInPackageSpec_Succeeds(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0")
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -432,11 +431,15 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData("1.0.0", "1.2.3")]
-        [InlineData("1.0.0", "")]
-        [InlineData("1.0.0", "   ")]
-        [InlineData("1.0.0", null)]
-        public async Task NominateProjectAsync_WithDifferentPackageVersions_Fails(string version1, string version2)
+        [InlineData("1.0.0", "1.2.3", true)]
+        [InlineData("1.0.0", "1.2.3", false)]
+        [InlineData("1.0.0", "", true)]
+        [InlineData("1.0.0", "", false)]
+        [InlineData("1.0.0", "   ", true)]
+        [InlineData("1.0.0", "   ", false)]
+        [InlineData("1.0.0", null, true)]
+        [InlineData("1.0.0", null, false)]
+        public async Task NominateProjectAsync_WithDifferentPackageVersions_Fails(string version1, string version2, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -458,7 +461,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var telemetryProvider = Mock.Of<INuGetTelemetryProvider>();
 
             var service = new VsSolutionRestoreService(
-                cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider);
+                cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider, CreateEnvironmentVariableReader(usePackageSpecFactory));
 
             // Act
             var result = await ((IVsSolutionRestoreService5)service).NominateProjectAsync(projectFullPath, projectRestoreInfo, CancellationToken.None);
@@ -466,8 +469,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.False(result, "Project restore nomination must fail.");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_PackageId()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_PackageId(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -477,7 +482,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -486,8 +491,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal("TestPackage", actualProjectSpec.Name);
         }
 
-        [Fact]
-        public async Task DifferingPackageIdsFailsWithUsableErrorMessage()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task DifferingPackageIdsFailsWithUsableErrorMessage(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -507,10 +514,10 @@ namespace NuGet.SolutionRestoreManager.Test
             var telemetryProvider = Mock.Of<INuGetTelemetryProvider>();
 
             var service = new VsSolutionRestoreService(
-                cache, restoreWorker, NuGet.Common.NullLogger.Instance, asyncLazySolution2, telemetryProvider);
+                cache, restoreWorker, NuGet.Common.NullLogger.Instance, asyncLazySolution2, telemetryProvider, CreateEnvironmentVariableReader(usePackageSpecFactory));
 
             // Act
-            var additionalMessages = await CaptureAdditionalMessagesAsync(projectRestoreInfo);
+            var additionalMessages = await CaptureAdditionalMessagesAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             var additionalMessage = Assert.Single(additionalMessages);
@@ -518,8 +525,10 @@ namespace NuGet.SolutionRestoreManager.Test
             additionalMessage.Message.Should().Contain(string.Format(CultureInfo.CurrentCulture, Resources.PropertyDoesNotHaveSingleValue, "PackageId", "PackageId.net46, PackageId.netcoreapp1.0"));
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_VerifySourcesAreCombinedAcrossFrameworks()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_VerifySourcesAreCombinedAcrossFrameworks(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -549,7 +558,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
             var metadata = actualRestoreSpec.Projects.Single().RestoreMetadata;
 
             // Assert
@@ -557,8 +566,10 @@ namespace NuGet.SolutionRestoreManager.Test
             metadata.FallbackFolders.Should().BeEquivalentTo(new[] { "base", VSRestoreSettingsUtilities.AdditionalValue, "x", "y", "z" });
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_VerifyExcludedFallbackFoldersAreRemoved()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_VerifyExcludedFallbackFoldersAreRemoved(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -579,7 +590,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
             var metadata = actualRestoreSpec.Projects.Single().RestoreMetadata;
 
             // Assert
@@ -587,8 +598,10 @@ namespace NuGet.SolutionRestoreManager.Test
             metadata.FallbackFolders.Should().BeEquivalentTo(new[] { "base" });
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_VerifyToolRestoresUseAdditionalSourcesAndFallbackFolders()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_VerifyToolRestoresUseAdditionalSourcesAndFallbackFolders(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTool("ToolTest", "2.0.0")
@@ -610,7 +623,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Find the tool spec
             var metadata = actualRestoreSpec.Projects.Single(e => e.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool).RestoreMetadata;
@@ -621,12 +634,17 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(@"..\source1", @"..\additionalsource", @"..\fallback1", @"..\additionalFallback1")]
-        [InlineData(@"..\source1", null, @"..\fallback1", null)]
-        [InlineData(null, @"..\additionalsource", null, @"..\additionalFallback1")]
-        [InlineData(@"Clear;C:\source1", @"C:\additionalsource", @"C:\fallback1;Clear", @"C:\additionalFallback1")]
-        [InlineData(@"C:\source1;Clear", @"C:\additionalsource", @"Clear;C:\fallback1", @"C:\additionalFallback1")]
-        public async Task NominateProjectAsync_WithRestoreAdditionalSourcesAndFallbackFolders(string restoreSources, string restoreAdditionalProjectSources, string restoreFallbackFolders, string restoreAdditionalFallbackFolders)
+        [InlineData(@"..\source1", @"..\additionalsource", @"..\fallback1", @"..\additionalFallback1", true)]
+        [InlineData(@"..\source1", @"..\additionalsource", @"..\fallback1", @"..\additionalFallback1", false)]
+        [InlineData(@"..\source1", null, @"..\fallback1", null, true)]
+        [InlineData(@"..\source1", null, @"..\fallback1", null, false)]
+        [InlineData(null, @"..\additionalsource", null, @"..\additionalFallback1", true)]
+        [InlineData(null, @"..\additionalsource", null, @"..\additionalFallback1", false)]
+        [InlineData(@"Clear;C:\source1", @"C:\additionalsource", @"C:\fallback1;Clear", @"C:\additionalFallback1", true)]
+        [InlineData(@"Clear;C:\source1", @"C:\additionalsource", @"C:\fallback1;Clear", @"C:\additionalFallback1", false)]
+        [InlineData(@"C:\source1;Clear", @"C:\additionalsource", @"Clear;C:\fallback1", @"C:\additionalFallback1", true)]
+        [InlineData(@"C:\source1;Clear", @"C:\additionalsource", @"Clear;C:\fallback1", @"C:\additionalFallback1", false)]
+        public async Task NominateProjectAsync_WithRestoreAdditionalSourcesAndFallbackFolders(string restoreSources, string restoreAdditionalProjectSources, string restoreFallbackFolders, string restoreAdditionalFallbackFolders, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp2.0", builder =>
@@ -640,7 +658,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -680,12 +698,17 @@ namespace NuGet.SolutionRestoreManager.Test
 
 
         [Theory]
-        [InlineData(@"C:\source1", @"C:\additionalsource", @"C:\source1;C:\additionalsource", @"C:\fallback1", @"C:\additionalFallback1", @"C:\fallback1;C:\additionalFallback1")]
-        [InlineData(@"C:\source1", null, @"C:\source1", @"C:\fallback1", null, @"C:\fallback1")]
-        [InlineData(null, @"C:\additionalsource", @"C:\additionalsource", null, @"C:\additionalFallback1", @"C:\additionalFallback1")]
-        [InlineData(@"Clear;C:\source1", @"C:\additionalsource", @"C:\additionalsource", @"C:\fallback1;Clear", @"C:\additionalFallback1", @"C:\additionalFallback1")]
-        [InlineData(@"C:\source1;Clear", @"C:\additionalsource", @"C:\additionalsource", @"Clear;C:\fallback1", @"C:\additionalFallback1", @"C:\additionalFallback1")]
-        public async Task VSSolutionRestoreService_VSRestoreSettingsUtilities_Integration(string restoreSources, string restoreAdditionalProjectSources, string expectedRestoreSources, string restoreFallbackFolders, string restoreAdditionalFallbackFolders, string expectedFallbackFolders)
+        [InlineData(@"C:\source1", @"C:\additionalsource", @"C:\source1;C:\additionalsource", @"C:\fallback1", @"C:\additionalFallback1", @"C:\fallback1;C:\additionalFallback1", true)]
+        [InlineData(@"C:\source1", @"C:\additionalsource", @"C:\source1;C:\additionalsource", @"C:\fallback1", @"C:\additionalFallback1", @"C:\fallback1;C:\additionalFallback1", false)]
+        [InlineData(@"C:\source1", null, @"C:\source1", @"C:\fallback1", null, @"C:\fallback1", true)]
+        [InlineData(@"C:\source1", null, @"C:\source1", @"C:\fallback1", null, @"C:\fallback1", false)]
+        [InlineData(null, @"C:\additionalsource", @"C:\additionalsource", null, @"C:\additionalFallback1", @"C:\additionalFallback1", true)]
+        [InlineData(null, @"C:\additionalsource", @"C:\additionalsource", null, @"C:\additionalFallback1", @"C:\additionalFallback1", false)]
+        [InlineData(@"Clear;C:\source1", @"C:\additionalsource", @"C:\additionalsource", @"C:\fallback1;Clear", @"C:\additionalFallback1", @"C:\additionalFallback1", true)]
+        [InlineData(@"Clear;C:\source1", @"C:\additionalsource", @"C:\additionalsource", @"C:\fallback1;Clear", @"C:\additionalFallback1", @"C:\additionalFallback1", false)]
+        [InlineData(@"C:\source1;Clear", @"C:\additionalsource", @"C:\additionalsource", @"Clear;C:\fallback1", @"C:\additionalFallback1", @"C:\additionalFallback1", true)]
+        [InlineData(@"C:\source1;Clear", @"C:\additionalsource", @"C:\additionalsource", @"Clear;C:\fallback1", @"C:\additionalFallback1", @"C:\additionalFallback1", false)]
+        public async Task VSSolutionRestoreService_VSRestoreSettingsUtilities_Integration(string restoreSources, string restoreAdditionalProjectSources, string expectedRestoreSources, string restoreFallbackFolders, string restoreAdditionalFallbackFolders, string expectedFallbackFolders, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp2.0", builder =>
@@ -699,7 +722,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -722,14 +745,18 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData("true", null, "false")]
-        [InlineData(null, "packages.A.lock.json", null)]
-        [InlineData("true", null, "true")]
-        [InlineData("false", null, "false")]
+        [InlineData("true", null, "false", true)]
+        [InlineData("true", null, "false", false)]
+        [InlineData(null, "packages.A.lock.json", null, true)]
+        [InlineData(null, "packages.A.lock.json", null, false)]
+        [InlineData("true", null, "true", true)]
+        [InlineData("true", null, "true", false)]
+        [InlineData("false", null, "false", true)]
+        [InlineData("false", null, "false", false)]
         public async Task NominateProjectAsync_LockFileSettings(
             string restorePackagesWithLockFile,
             string lockFilePath,
-            string restoreLockedMode)
+            string restoreLockedMode, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -742,7 +769,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -753,8 +780,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal(MSBuildStringUtility.IsTrue(restoreLockedMode), actualProjectSpec.RestoreMetadata.RestoreLockProperties.RestoreLockedMode);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_RuntimeGraph()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_RuntimeGraph(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -764,7 +793,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -773,8 +802,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal("win10-x64", actualProjectSpec.RuntimeGraph.Runtimes.Single().Key);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_BasicPackageDownload()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_BasicPackageDownload(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp3.0", builder =>
@@ -788,7 +819,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -816,9 +847,11 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData("[1.0.0];[2.0.0]")]
-        [InlineData(";[1.0.0];;[2.0.0];")]
-        public async Task NominateProjectAsync_PackageDownload_AllowsVersionList(string versionString)
+        [InlineData("[1.0.0];[2.0.0]", true)]
+        [InlineData("[1.0.0];[2.0.0]", false)]
+        [InlineData(";[1.0.0];;[2.0.0];", true)]
+        [InlineData(";[1.0.0];;[2.0.0];", false)]
+        public async Task NominateProjectAsync_PackageDownload_AllowsVersionList(string versionString, bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp3.0", builder =>
@@ -830,7 +863,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -855,8 +888,10 @@ namespace NuGet.SolutionRestoreManager.Test
                 "NetCoreTargetingPack:[2.0.0]");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_PackageDownload_InexactVersionsNotAllowed()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_PackageDownload_InexactVersionsNotAllowed(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp3.0", builder =>
@@ -874,15 +909,17 @@ namespace NuGet.SolutionRestoreManager.Test
             var telemetryProvider = Mock.Of<INuGetTelemetryProvider>();
 
             var service = new VsSolutionRestoreService(
-                cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider);
+                cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider, CreateEnvironmentVariableReader(usePackageSpecFactory));
 
             var result = await ((IVsSolutionRestoreService5)service).NominateProjectAsync(projectFullPath, projectRestoreInfo, CancellationToken.None);
 
             Assert.False(result, "Project restore nomination must fail.");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_BasicFrameworkReferences()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_BasicFrameworkReferences(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp3.0", builder =>
@@ -895,7 +932,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -918,8 +955,10 @@ namespace NuGet.SolutionRestoreManager.Test
                 "Microsoft.WindowsDesktop.App|WPF:none");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_FrameworkReferencesAreCaseInsensitive()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_FrameworkReferencesAreCaseInsensitive(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp3.0", builder =>
@@ -932,7 +971,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -954,8 +993,10 @@ namespace NuGet.SolutionRestoreManager.Test
                 "Microsoft.WindowsDesktop.App|WinForms:none");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_FrameworkReferencesMultiTargeting()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_FrameworkReferencesMultiTargeting(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp3.0", builder =>
@@ -972,7 +1013,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1003,8 +1044,10 @@ namespace NuGet.SolutionRestoreManager.Test
                 "Microsoft.ASPNetCore.App:none");
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_WarningProperties()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_WarningProperties(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -1018,7 +1061,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1035,8 +1078,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.True(actualProjectSpec.RestoreMetadata.ProjectWideWarningProperties.WarningsNotAsErrors.Contains(NuGetLogCode.NU1802));
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_RuntimeIdentifierGraphPath()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_RuntimeIdentifierGraphPath(bool usePackageSpecFactory)
         {
             var runtimeGraphPath = @"C:\Program Files\dotnet\sdk\3.0.100\runtime.json";
 
@@ -1048,7 +1093,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1057,8 +1102,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal(runtimeGraphPath, actualProjectSpec.TargetFrameworks.First().RuntimeIdentifierGraphPath);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_ThrowsNullReferenceException()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_ThrowsNullReferenceException(bool usePackageSpecFactory)
         {
             var cache = Mock.Of<IProjectSystemCache>();
 
@@ -1077,14 +1124,16 @@ namespace NuGet.SolutionRestoreManager.Test
             var telemetryProvider = Mock.Of<INuGetTelemetryProvider>();
 
             var service = new VsSolutionRestoreService(
-                cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider);
+                cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider, CreateEnvironmentVariableReader(usePackageSpecFactory));
 
             // Act
             _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await ((IVsSolutionRestoreService5)service).NominateProjectAsync(@"F:\project\project.csproj", null!, CancellationToken.None));
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_InvalidTargetFrameworkMoniker_Succeeds()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_InvalidTargetFrameworkMoniker_Succeeds(bool usePackageSpecFactory)
         {
             // Arrange
             var restoreWorker = CreateDefaultISolutionRestoreWorkerMock();
@@ -1098,7 +1147,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var additionalMessages = await CaptureAdditionalMessagesAsync(projectRestoreInfo, restoreWorker: restoreWorker);
+            var additionalMessages = await CaptureAdditionalMessagesAsync(usePackageSpecFactory, projectRestoreInfo, restoreWorker: restoreWorker);
 
             // Assert
             var additionalMessage = Assert.Single(additionalMessages);
@@ -1106,8 +1155,10 @@ namespace NuGet.SolutionRestoreManager.Test
             restoreWorker.Verify(rw => rw.ScheduleRestoreAsync(It.IsAny<SolutionRestoreRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_InvalidDependencyVersion_Succeeds()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_InvalidDependencyVersion_Succeeds(bool usePackageSpecFactory)
         {
             // Arrange
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
@@ -1121,7 +1172,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var restoreWorker = CreateDefaultISolutionRestoreWorkerMock();
 
             // Act
-            var additionalMessages = await CaptureAdditionalMessagesAsync(projectRestoreInfo, restoreWorker);
+            var additionalMessages = await CaptureAdditionalMessagesAsync(usePackageSpecFactory, projectRestoreInfo, restoreWorker);
 
             // Assert
             var additionalMessage = Assert.Single(additionalMessages);
@@ -1129,8 +1180,10 @@ namespace NuGet.SolutionRestoreManager.Test
             restoreWorker.Verify(rw => rw.ScheduleRestoreAsync(It.IsAny<SolutionRestoreRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_CancelledToken_ThrowsOperationCanceledException()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_CancelledToken_ThrowsOperationCanceledException(bool usePackageSpecFactory)
         {
             // Arrange
             var restoreWorker = new Mock<ISolutionRestoreWorker>();
@@ -1144,11 +1197,13 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act & Assert
-            await Assert.ThrowsAsync<OperationCanceledException>(async () => await NominateProjectAsync(projectRestoreInfo, CancellationToken.None, restoreWorker: restoreWorker));
+            await Assert.ThrowsAsync<OperationCanceledException>(async () => await NominateProjectAsync(usePackageSpecFactory, projectRestoreInfo, CancellationToken.None, restoreWorker: restoreWorker));
         }
 
-        [Fact]
-        public void ToPackageSpec_CentralVersions_AreAddedToThePackageSpecIfCPVMIsEnabled()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_CentralVersions_AreAddedToThePackageSpecIfCPVMIsEnabled(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1166,7 +1221,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             var tfm = result.TargetFrameworks.First();
@@ -1179,8 +1235,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.True(result.RestoreMetadata.CentralPackageVersionsEnabled);
         }
 
-        [Fact]
-        public void ToPackageSpec_CentralVersions_CPVMIsEnabled_NoPackageVersions()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_CentralVersions_CPVMIsEnabled_NoPackageVersions(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1195,7 +1253,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             var tfm = result.TargetFrameworks.First();
@@ -1208,10 +1267,13 @@ namespace NuGet.SolutionRestoreManager.Test
         /// The default for DisableCentralPackageVersions should be disabled.
         /// </summary>
         [Theory]
-        [InlineData("1.0.0", "false")]
-        [InlineData(null, null)]
-        [InlineData("1.0.0", "")]
-        public void ToPackageSpec_CentralVersions_AreNotAddedToThePackageSpecIfCPVMIsNotEnabled(string packRefVersion, string managePackageVersionsCentrally)
+        [InlineData("1.0.0", "false", true)]
+        [InlineData("1.0.0", "false", false)]
+        [InlineData(null, null, true)]
+        [InlineData(null, null, false)]
+        [InlineData("1.0.0", "", true)]
+        [InlineData("1.0.0", "", false)]
+        public void ToDependencyGraphSpec_CentralVersions_AreNotAddedToThePackageSpecIfCPVMIsNotEnabled(string packRefVersion, string managePackageVersionsCentrally, bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1234,7 +1296,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             var tfm = result.TargetFrameworks.First();
@@ -1246,14 +1309,21 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(null, true)]
-        [InlineData("", true)]
-        [InlineData("                     ", true)]
-        [InlineData("true", true)]
-        [InlineData("invalid", true)]
-        [InlineData("false", false)]
-        [InlineData("           false    ", false)]
-        public void ToPackageSpec_CentralVersionOverride_CanBeDisabled(string isCentralPackageVersionOverrideEnabled, bool expected)
+        [InlineData(null, true, true)]
+        [InlineData(null, true, false)]
+        [InlineData("", true, true)]
+        [InlineData("", true, false)]
+        [InlineData("                     ", true, true)]
+        [InlineData("                     ", true, false)]
+        [InlineData("true", true, true)]
+        [InlineData("true", true, false)]
+        [InlineData("invalid", true, true)]
+        [InlineData("invalid", true, false)]
+        [InlineData("false", false, true)]
+        [InlineData("false", false, false)]
+        [InlineData("           false    ", false, true)]
+        [InlineData("           false    ", false, false)]
+        public void ToDependencyGraphSpec_CentralVersionOverride_CanBeDisabled(string isCentralPackageVersionOverrideEnabled, bool expected, bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1272,7 +1342,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            PackageSpec result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            PackageSpec result = dgSpec.Projects.Single();
 
             // Assert
             TargetFrameworkInformation tfm = result.TargetFrameworks.First();
@@ -1294,14 +1365,21 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(null, false)]
-        [InlineData("", false)]
-        [InlineData(" ", false)]
-        [InlineData("invalid", false)]
-        [InlineData("false", false)]
-        [InlineData("true", true)]
-        [InlineData("           true    ", true)]
-        public void ToPackageSpec_TransitiveDependencyPinning_CanBeEnabled(string CentralPackageTransitivePinningEnabled, bool expected)
+        [InlineData(null, false, true)]
+        [InlineData(null, false, false)]
+        [InlineData("", false, true)]
+        [InlineData("", false, false)]
+        [InlineData(" ", false, true)]
+        [InlineData(" ", false, false)]
+        [InlineData("invalid", false, true)]
+        [InlineData("invalid", false, false)]
+        [InlineData("false", false, true)]
+        [InlineData("false", false, false)]
+        [InlineData("true", true, true)]
+        [InlineData("true", true, false)]
+        [InlineData("           true    ", true, true)]
+        [InlineData("           true    ", true, false)]
+        public void ToDependencyGraphSpec_TransitiveDependencyPinning_CanBeEnabled(string CentralPackageTransitivePinningEnabled, bool expected, bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1317,7 +1395,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            PackageSpec result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            PackageSpec result = dgSpec.Projects.Single();
 
             // Assert
 
@@ -1332,14 +1411,21 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(null, false)]
-        [InlineData("", false)]
-        [InlineData(" ", false)]
-        [InlineData("invalid", false)]
-        [InlineData("false", false)]
-        [InlineData("true", true)]
-        [InlineData("           true    ", true)]
-        public void ToPackageSpec_CentralPackageFloatingVersions_CanBeEnabled(string centralPackageFloatingVersionsEnabled, bool expected)
+        [InlineData(null, false, true)]
+        [InlineData(null, false, false)]
+        [InlineData("", false, true)]
+        [InlineData("", false, false)]
+        [InlineData(" ", false, true)]
+        [InlineData(" ", false, false)]
+        [InlineData("invalid", false, true)]
+        [InlineData("invalid", false, false)]
+        [InlineData("false", false, true)]
+        [InlineData("false", false, false)]
+        [InlineData("true", true, true)]
+        [InlineData("true", true, false)]
+        [InlineData("           true    ", true, true)]
+        [InlineData("           true    ", true, false)]
+        public void ToDependencyGraphSpec_CentralPackageFloatingVersions_CanBeEnabled(string centralPackageFloatingVersionsEnabled, bool expected, bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1355,7 +1441,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            PackageSpec result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            PackageSpec result = dgSpec.Projects.Single();
 
             // Assert
 
@@ -1369,8 +1456,10 @@ namespace NuGet.SolutionRestoreManager.Test
             }
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_PackageReferenceWithAliases()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_PackageReferenceWithAliases(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netcoreapp1.0", builder =>
@@ -1382,7 +1471,7 @@ namespace NuGet.SolutionRestoreManager.Test
 
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1394,8 +1483,10 @@ namespace NuGet.SolutionRestoreManager.Test
         /// <summary>
         /// The default for DisableCentralPackageVersions should be disabled.
         /// </summary>
-        [Fact]
-        public void ToPackageSpec_TargetFrameworkWithAlias_DefinesAliasCorrectly()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_TargetFrameworkWithAlias_DefinesAliasCorrectly(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1414,7 +1505,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             Assert.Equal(2, result.TargetFrameworks.Count);
@@ -1458,10 +1550,13 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData("NetCore", true)]
-        [InlineData("NetFx", false)]
-        [InlineData("false", false)]
-        public void ToPackageSpec_TargetFrameworkWithCLRSupport_InterpretsFrameworkCorrect(string clrSupport, bool isDualCompatibilityFramework)
+        [InlineData("NetCore", true, true)]
+        [InlineData("NetCore", true, false)]
+        [InlineData("NetFx", false, true)]
+        [InlineData("NetFx", false, false)]
+        [InlineData("false", false, true)]
+        [InlineData("false", false, false)]
+        public void ToDependencyGraphSpec_TargetFrameworkWithCLRSupport_InterpretsFrameworkCorrect(string clrSupport, bool isDualCompatibilityFramework, bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.vcxproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
@@ -1477,7 +1572,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             Assert.Equal(1, result.TargetFrameworks.Count);
@@ -1500,8 +1596,10 @@ namespace NuGet.SolutionRestoreManager.Test
             }
         }
 
-        [Fact]
-        public void ToPackageSpec_TwoProjectReferencesToSameProject_DeduplicatesProjectReference()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_TwoProjectReferencesToSameProject_DeduplicatesProjectReference(bool usePackageSpecFactory)
         {
             // Arrange
             string currentProjectPath = @"n:\path\to\current\project.csproj";
@@ -1513,12 +1611,15 @@ namespace NuGet.SolutionRestoreManager.Test
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netstandard2.0", builder =>
                 {
-                    builder.WithItem(ProjectItems.ProjectReference, relativePath, []);
+                    builder
+                    .WithProperty("MSBuildProjectFullPath", currentProjectPath)
+                    .WithItem(ProjectItems.ProjectReference, relativePath, []);
                 })
                 .Build();
 
             // Act
-            var actual = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var actual = dgSpec.Projects.Single();
 
             // Assert
             ProjectRestoreMetadataFrameworkInfo targetFramework = Assert.Single(actual.RestoreMetadata.TargetFrameworks);
@@ -1528,8 +1629,10 @@ namespace NuGet.SolutionRestoreManager.Test
 
         private delegate bool TryGetProjectNamesReturns(string projectPath, out ProjectNames projectNames);
 
-        [Fact]
-        public void ToPackageSpec_PackageDownloadWithNoVersion_ThrowsException()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_PackageDownloadWithNoVersion_ThrowsException(bool usePackageSpecFactory)
         {
             // Arrange
             string packageName = "package";
@@ -1545,12 +1648,14 @@ namespace NuGet.SolutionRestoreManager.Test
             string expected = string.Format(CultureInfo.CurrentCulture, Resources.Error_PackageDownload_NoVersion, packageName);
 
             // Assert
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo));
             Assert.Equal(expected, exception.Message);
         }
 
-        [Fact]
-        public void ToPackageSpec_WithNuGetAuditSupressItem_PackageSpecHasSupressUrl()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_WithNuGetAuditSupressItem_PackageSpecHasSupressUrl(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
@@ -1564,7 +1669,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actual = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var actual = dgSpec.Projects.Single();
 
             // Assert
             RestoreAuditProperties auditProperties = actual.RestoreMetadata.RestoreAuditProperties;
@@ -1572,8 +1678,10 @@ namespace NuGet.SolutionRestoreManager.Test
             actualUrl.Should().Be(cveUrl);
         }
 
-        [Fact]
-        public void ToPackageSpec_TwoTFMsWithDifferentNuGetAuditSupressItems_Throws()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_TwoTFMsWithDifferentNuGetAuditSupressItems_Throws(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
@@ -1592,12 +1700,14 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo));
+            var exception = Assert.Throws<InvalidOperationException>(() => VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo));
             exception.Message.Should().Contain(ProjectItems.NuGetAuditSuppress);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_CanSetUseLegacyDependencyResolver()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_CanSetUseLegacyDependencyResolver(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo("netstandard2.0", builder =>
@@ -1608,7 +1718,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1617,8 +1727,10 @@ namespace NuGet.SolutionRestoreManager.Test
             actualProjectSpec.RestoreMetadata.UseLegacyDependencyResolver.Should().BeTrue();
         }
 
-        [Fact]
-        public void ToPackageSpec_WithCPMAndAutoReferencedPackages_SkipsAddingVersion()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_WithCPMAndAutoReferencedPackages_SkipsAddingVersion(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1635,7 +1747,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             var tfm = result.TargetFrameworks.First();
@@ -1655,8 +1768,10 @@ namespace NuGet.SolutionRestoreManager.Test
             tfm.Dependencies[1].AutoReferenced.Should().BeTrue();
         }
 
-        [Fact]
-        public void ToPackageSpec_WithCPMAndVersionOverride_SetsVersionToVersionOverride()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_WithCPMAndVersionOverride_SetsVersionToVersionOverride(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1675,7 +1790,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             var tfm = result.TargetFrameworks.First();
@@ -1695,8 +1811,10 @@ namespace NuGet.SolutionRestoreManager.Test
             tfm.Dependencies[1].AutoReferenced.Should().BeFalse();
         }
 
-        [Fact]
-        public void ToPackageSpec_WithCPMAndPackageReferenceWithDifferentCasing_CombinesCorrectly()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_WithCPMAndPackageReferenceWithDifferentCasing_CombinesCorrectly(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
@@ -1714,7 +1832,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var result = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var result = dgSpec.Projects.Single();
 
             // Assert
             var tfm = result.TargetFrameworks.First();
@@ -1729,9 +1848,11 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void ToPackageSpec_WithPrunePackageReference_CapturesAsMaxVersions(bool restoreEnablePackagePruning)
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(false, false)]
+        public void ToDependencyGraphSpec_WithPrunePackageReference_CapturesAsMaxVersions(bool restoreEnablePackagePruning, bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
@@ -1746,7 +1867,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var actualRestoreSpec = dgSpec.Projects.Single();
 
             // Assert
             if (restoreEnablePackagePruning)
@@ -1764,8 +1886,10 @@ namespace NuGet.SolutionRestoreManager.Test
             }
         }
 
-        [Fact]
-        public void ToPackageSpec_WithPrunePackageReference_WithMissingVersion_Throws()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_WithPrunePackageReference_WithMissingVersion_Throws(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
@@ -1780,12 +1904,14 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act & Assert
-            var result = Assert.Throws<ArgumentException>(() => VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo));
+            var result = Assert.Throws<ArgumentException>(() => VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo));
             result.Message.Should().Contain("PrunePackageReference");
         }
 
-        [Fact]
-        public void ToPackageSpec_WithPrunePackageReference_AccountsForDefaults()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ToDependencyGraphSpec_WithPrunePackageReference_AccountsForDefaults(bool usePackageSpecFactory)
         {
             // Arrange
             ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
@@ -1806,7 +1932,8 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Build();
 
             // Act
-            var actualRestoreSpec = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+            var dgSpec = VsSolutionRestoreService.ToDependencyGraphSpec(usePackageSpecFactory, projectName, projectRestoreInfo);
+            var actualRestoreSpec = dgSpec.Projects.Single();
 
             // Assert
             actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Should().HaveCount(1);
@@ -1822,8 +1949,10 @@ namespace NuGet.SolutionRestoreManager.Test
             resultB.Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_SimulatedCPPProject_WithMissingTargetFramework_AliasRemainsEmpty()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_SimulatedCPPProject_WithMissingTargetFramework_AliasRemainsEmpty(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo(CommonFrameworks.Native.GetShortFolderName(), builder =>
@@ -1838,7 +1967,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 })
                 .Build();
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1863,8 +1992,10 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.Equal(string.Empty, actualPRMFI.TargetAlias);
         }
 
-        [Fact]
-        public async Task NominateProjectAsync_SimulatedCPPProject_WithMissingTargetFrameworkAndAssetTargetFallback_AliasRemainsEmpty()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task NominateProjectAsync_SimulatedCPPProject_WithMissingTargetFrameworkAndAssetTargetFallback_AliasRemainsEmpty(bool usePackageSpecFactory)
         {
             var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
                 .WithTargetFrameworkInfo(CommonFrameworks.Native.GetShortFolderName(), builder =>
@@ -1880,7 +2011,7 @@ namespace NuGet.SolutionRestoreManager.Test
                 })
                 .Build();
             // Act
-            var actualRestoreSpec = await CaptureNominateResultAsync(projectRestoreInfo);
+            var actualRestoreSpec = await CaptureNominateResultAsync(usePackageSpecFactory, projectRestoreInfo);
 
             // Assert
             SpecValidationUtility.ValidateDependencySpec(actualRestoreSpec);
@@ -1910,10 +2041,12 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         private async Task<DependencyGraphSpec> CaptureNominateResultAsync(
+            bool usePackageSpecFactory,
             IVsProjectRestoreInfo3 pri,
             Mock<IProjectSystemCache>? cache = null)
         {
             DependencyGraphSpec? capturedRestoreSpec = null;
+            IReadOnlyList<IAssetsLogMessage>? capturedMessages = null;
 
             if (cache == null)
             {
@@ -1930,11 +2063,21 @@ namespace NuGet.SolutionRestoreManager.Test
                     It.IsAny<DependencyGraphSpec>(),
                     It.IsAny<IReadOnlyList<IAssetsLogMessage>>()))
                 .Callback<ProjectNames, DependencyGraphSpec, IReadOnlyList<IAssetsLogMessage>>(
-                    (_, dg, __) => { capturedRestoreSpec = dg; })
+                    (_, dg, messages) =>
+                    {
+                        capturedRestoreSpec = dg;
+                        capturedMessages = messages;
+                    })
                 .Returns(true);
 
             // Act
-            var result = await NominateProjectAsync(pri, CancellationToken.None, cache: cache);
+            var result = await NominateProjectAsync(usePackageSpecFactory, pri, CancellationToken.None, cache: cache);
+
+            if (capturedMessages is not null && capturedMessages.Count > 0)
+            {
+                var allMessages = string.Join(Environment.NewLine, capturedMessages.Select(m => m.Message));
+                Assert.Fail($"Nomination produced {capturedMessages.Count} error(s):{Environment.NewLine}{allMessages}");
+            }
 
             Assert.True(result, "Project restore nomination should succeed.");
             capturedRestoreSpec.Should().NotBeNull("Project restore nomination should produce a DependencyGraphSpec.");
@@ -1943,6 +2086,7 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         private async Task<IReadOnlyList<IAssetsLogMessage>> CaptureAdditionalMessagesAsync(
+            bool usePackageSpecFactory,
             IVsProjectRestoreInfo3 pri,
             Mock<ISolutionRestoreWorker>? restoreWorker = null)
         {
@@ -1965,7 +2109,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var logger = new Mock<ILogger>();
 
             // Act
-            var result = await NominateProjectAsync(pri, CancellationToken.None, cache: cache, restoreWorker, logger);
+            var result = await NominateProjectAsync(usePackageSpecFactory, pri, CancellationToken.None, cache: cache, restoreWorker, logger);
 
             Assert.True(result, "Project restore nomination should succeed.");
             logger.Verify(l => l.LogError(It.IsAny<string>()), Times.Never);
@@ -1974,6 +2118,7 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         private Task<bool> NominateProjectAsync(
+            bool usePackageSpecFactory,
             IVsProjectRestoreInfo3 pri,
             CancellationToken cancellationToken,
             Mock<IProjectSystemCache>? cache = null,
@@ -2002,7 +2147,7 @@ namespace NuGet.SolutionRestoreManager.Test
             var asyncLazySolution2 = new Microsoft.VisualStudio.Threading.AsyncLazy<IVsSolution2>(() => Task.FromResult(vsSolution2));
             var telemetryProvider = Mock.Of<INuGetTelemetryProvider>();
 
-            var service = new VsSolutionRestoreService(cache.Object, restoreWorker.Object, logger.Object, asyncLazySolution2, telemetryProvider);
+            var service = new VsSolutionRestoreService(cache.Object, restoreWorker.Object, logger.Object, asyncLazySolution2, telemetryProvider, CreateEnvironmentVariableReader(usePackageSpecFactory));
 
             return ((IVsSolutionRestoreService5)service).NominateProjectAsync(projectFullPath, pri, cancellationToken);
         }
@@ -2046,6 +2191,14 @@ namespace NuGet.SolutionRestoreManager.Test
             return restoreWorker;
         }
 
+        private static IEnvironmentVariableReader CreateEnvironmentVariableReader(bool usePackageSpecFactory)
+        {
+            return new TestEnvironmentVariableReader(new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory ? bool.TrueString : bool.FalseString }
+            });
+        }
+
         private static void AssertPackages(TargetFrameworkInformation actualTfi, params string[] expectedPackages)
         {
             var actualPackages = actualTfi
@@ -2073,5 +2226,6 @@ namespace NuGet.SolutionRestoreManager.Test
                 .Select(e => e.Name + ":" + FrameworkDependencyFlagsUtils.GetFlagString(e.PrivateAssets))
                 .ToArray());
         }
+
     }
 }

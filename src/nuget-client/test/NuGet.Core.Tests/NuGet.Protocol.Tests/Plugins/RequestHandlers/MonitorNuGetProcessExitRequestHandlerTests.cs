@@ -152,11 +152,10 @@ namespace NuGet.Protocol.Plugins.Tests
                     payload: payload);
             }
 
-            return new Message(
+            return MessageUtilities.Create(
                 requestId: "a",
                 type: type,
-                method: MessageMethod.MonitorNuGetProcessExit,
-                payload: null);
+                method: MessageMethod.MonitorNuGetProcessExit);
         }
 
         private static int GetCurrentProcessId()

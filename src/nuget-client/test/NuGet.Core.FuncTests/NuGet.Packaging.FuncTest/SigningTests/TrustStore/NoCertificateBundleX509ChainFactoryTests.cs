@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using Xunit;
+using NuGet.Test.Utility;
 
 namespace NuGet.Packaging.FuncTest.SigningTests
 {
@@ -19,7 +20,7 @@ namespace NuGet.Packaging.FuncTest.SigningTests
         {
         }
 
-        [Fact]
+        [NetFxCIOnlyFact]
         public void AdditionalContext_WhenRootCertificateIsUntrusted_ReturnsLogMessage()
         {
             NoCertificateBundleX509ChainFactory factory = new();
