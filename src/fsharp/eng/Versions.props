@@ -19,6 +19,7 @@
     <FSBuildVersion>301</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>    
 
+
     <!-- F# Language version -->
     <FSLanguageVersion>$(FSMajorVersion).$(FSMinorVersion)</FSLanguageVersion>
     <!-- -->
