@@ -56,7 +56,6 @@ stages:
           logs: true
           manifests: true
       enableMicrobuild: true
-      enableSourceIndex: true
       enableSourceBuild: true
       workspace:
         clean: all
