@@ -68,17 +68,6 @@ secrets:
       organizations: dnceng
       scopes: packaging_write
 
-  dn-bot-dnceng-universal-packages-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dnceng-universal-packages
-      organizations: dnceng
-      scopes: packaging_write
-
   dn-bot-all-orgs-artifact-feeds-rw:
     type: azure-devops-access-token
     parameters:
