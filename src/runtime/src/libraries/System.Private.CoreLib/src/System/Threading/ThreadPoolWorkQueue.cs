@@ -656,11 +656,14 @@ namespace System.Threading
         internal static void TransferAllLocalWorkItemsToHighPriorityGlobalQueue()
         {
             // If there's no local queue, there's nothing to transfer.
-            if (ThreadPoolWorkQueueThreadLocals.threadLocals is not ThreadPoolWorkQueueThreadLocals tl)
+            if (ThreadPoolWorkQueueThreadLocals.threadLocals is ThreadPoolWorkQueueThreadLocals tl)
             {
-                return;
+                TransferAllLocalWorkItemsToHighPriorityGlobalQueue(tl);
             }
+        }
 
+        internal static void TransferAllLocalWorkItemsToHighPriorityGlobalQueue(ThreadPoolWorkQueueThreadLocals tl)
+        {
             // Pop each work item off the local queue and push it onto the global. This is a
             // bounded loop as no other thread is allowed to push into this thread's queue.
             ThreadPoolWorkQueue queue = ThreadPool.s_workQueue;
@@ -978,7 +981,7 @@ namespace System.Threading
                     // This thread is being parked and may remain inactive for a while. Transfer any thread-local work items
                     // to ensure that they would not be heavily delayed. Tell the caller that this thread was requested to stop
                     // processing work items.
-                    ThreadPoolWorkQueue.TransferAllLocalWorkItemsToHighPriorityGlobalQueue();
+                    ThreadPoolWorkQueue.TransferAllLocalWorkItemsToHighPriorityGlobalQueue(tl);
                     tl.isProcessingHighPriorityWorkItems = false;
                     if (s_assignableWorkItemQueueCount > 0)
                     {
@@ -1104,7 +1107,7 @@ namespace System.Threading
             // Transfer any pending workitems into the global queue so that they will be executed by another thread
             if (null != workStealingQueue)
             {
-                ThreadPoolWorkQueue.TransferAllLocalWorkItemsToHighPriorityGlobalQueue();
+                ThreadPoolWorkQueue.TransferAllLocalWorkItemsToHighPriorityGlobalQueue(this);
                 ThreadPoolWorkQueue.WorkStealingQueueList.Remove(workStealingQueue);
             }
         }
@@ -1148,7 +1151,7 @@ namespace System.Threading
                 // Currently where this type is used, queued work is expected to be processed
                 // at high priority. The implementation could be modified to support different
                 // priorities if necessary.
-                ThreadPool.UnsafeQueueUserWorkItemInternal(this, preferLocal: false);
+                ThreadPool.UnsafeQueueHighPriorityWorkItemInternal(this);
             }
         }
 
