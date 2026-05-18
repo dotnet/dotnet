@@ -334,3 +334,33 @@ steps:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       DOTNET_MULTILEVEL_LOOKUP: true
     condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
+
+  - task: PowerShell@1
+    displayName: "Create ReleaseConfigs artifact"
+    inputs:
+      scriptType: "inlineScript"
+      inlineScript: |
+        try {
+          if ([string]::IsNullOrWhiteSpace("$(BARBuildId)"))
+          {
+            throw "BARBuildId was not set by PublishToBuildAssetRegistry."
+          }
+
+          New-Item -ItemType Directory -Force -Path "$(Build.StagingDirectory)\ReleaseConfigs" | Out-Null
+          @(
+            "$(BARBuildId)"
+            "$(DefaultChannels)"
+            "$(IsStableBuild)"
+          ) | Set-Content -Path "$(Build.StagingDirectory)\ReleaseConfigs\ReleaseConfigs.txt"
+        } catch {
+          Write-Host "##vso[task.LogIssue type=error;]$_"
+          exit 1
+        }
+    condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
+
+  - template: /eng/common/templates-official/steps/publish-build-artifacts.yml
+    parameters:
+      displayName: "Publish ReleaseConfigs artifact"
+      pathToPublish: '$(Build.StagingDirectory)\ReleaseConfigs'
+      artifactName: 'ReleaseConfigs'
+      condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"

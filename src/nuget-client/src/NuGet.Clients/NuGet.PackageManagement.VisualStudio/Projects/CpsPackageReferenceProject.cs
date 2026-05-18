@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
 using Microsoft.VisualStudio.ProjectSystem.References;
 using NuGet.Commands;
-using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -153,7 +152,12 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 var project = originalProject.Clone();
 
-                PackageSpecFactory.ApplySettings(project, settings);
+                // Read restore settings from ISettings if it doesn't exist in the project
+                // NOTE: Very important that the original project is used in the arguments, because cloning sorts the sources and compromises how the sources will be evaluated
+                project.RestoreMetadata.PackagesPath = VSRestoreSettingsUtilities.GetPackagesPath(settings, originalProject);
+                project.RestoreMetadata.Sources = VSRestoreSettingsUtilities.GetSources(settings, originalProject);
+                project.RestoreMetadata.FallbackFolders = VSRestoreSettingsUtilities.GetFallbackFolders(settings, originalProject);
+                project.RestoreMetadata.ConfigFilePaths = GetConfigFilePaths(settings);
                 IgnoreUnsupportProjectReference(project);
                 projects.Add(project);
             }
@@ -172,6 +176,11 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             return Task.FromResult<(IReadOnlyList<PackageSpec>, IReadOnlyList<IAssetsLogMessage>)>((projects, additionalMessages));
+        }
+
+        private IList<string> GetConfigFilePaths(ISettings settings)
+        {
+            return settings.GetConfigFilePaths();
         }
 
         private void IgnoreUnsupportProjectReference(PackageSpec project)

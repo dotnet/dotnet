@@ -16,13 +16,11 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Commands;
-using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.ProjectModel;
 using NuGet.Shared;
-using NuGet.SolutionRestoreManager.PackageSpecAdapter;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Etw;
 using NuGet.VisualStudio.Telemetry;
@@ -50,7 +48,6 @@ namespace NuGet.SolutionRestoreManager
         private readonly Microsoft.VisualStudio.Threading.AsyncLazy<IVsSolution2> _vsSolution2;
         private readonly ConcurrentQueue<(IVsProjectRestoreInfoSource, CancellationToken, TaskCompletionSource<bool>)> _projectRestoreInfoSources = new();
         private readonly INuGetTelemetryProvider _telemetryProvider;
-        private readonly bool _usePackageSpecFactory;
 
         [ImportingConstructor]
         public VsSolutionRestoreService(
@@ -68,8 +65,8 @@ namespace NuGet.SolutionRestoreManager
                   logger,
                   new Microsoft.VisualStudio.Threading.AsyncLazy<IVsSolution2>(() =>
                   serviceProvider.GetServiceAsync<SVsSolution, IVsSolution2>(), NuGetUIThreadHelper.JoinableTaskFactory),
-                  telemetryProvider,
-                  EnvironmentVariableWrapper.Instance)
+                  telemetryProvider
+                  )
         {
         }
 
@@ -78,21 +75,13 @@ namespace NuGet.SolutionRestoreManager
             ISolutionRestoreWorker restoreWorker,
             ILogger logger,
             Microsoft.VisualStudio.Threading.AsyncLazy<IVsSolution2> vsSolution2,
-            INuGetTelemetryProvider telemetryProvider,
-            IEnvironmentVariableReader environmentVariableReader)
+            INuGetTelemetryProvider telemetryProvider)
         {
             _projectSystemCache = projectSystemCache ?? throw new ArgumentNullException(nameof(projectSystemCache));
             _restoreWorker = restoreWorker ?? throw new ArgumentNullException(nameof(restoreWorker));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _vsSolution2 = vsSolution2 ?? throw new ArgumentNullException(nameof(vsSolution2));
             _telemetryProvider = telemetryProvider ?? throw new ArgumentNullException(nameof(telemetryProvider));
-
-            if (environmentVariableReader is null)
-            {
-                throw new ArgumentNullException(nameof(environmentVariableReader));
-            }
-            string? envValue = environmentVariableReader.GetEnvironmentVariable(PackageSpecFactory.EnvironmentVariableName);
-            _usePackageSpecFactory = !string.Equals(envValue, bool.FalseString, StringComparison.OrdinalIgnoreCase);
         }
 
         Task<bool> IVsSolutionRestoreService.CurrentRestoreOperation
@@ -264,7 +253,7 @@ namespace NuGet.SolutionRestoreManager
                 IReadOnlyList<IAssetsLogMessage>? nominationErrors = null;
                 try
                 {
-                    dgSpec = ToDependencyGraphSpec(_usePackageSpecFactory, projectNames, projectRestoreInfo);
+                    dgSpec = ToDependencyGraphSpec(projectNames, projectRestoreInfo);
                 }
                 catch (Exception e)
                 {
@@ -306,19 +295,11 @@ namespace NuGet.SolutionRestoreManager
             }
         }
 
-        internal static DependencyGraphSpec ToDependencyGraphSpec(bool usePackageSpecFactory, ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
+        private static DependencyGraphSpec ToDependencyGraphSpec(ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
         {
             var dgSpec = new DependencyGraphSpec();
-            PackageSpec packageSpec;
 
-            if (usePackageSpecFactory)
-            {
-                packageSpec = ToPackageSpec(projectNames, projectRestoreInfo);
-            }
-            else
-            {
-                packageSpec = LegacyToPackageSpec(projectNames, projectRestoreInfo);
-            }
+            var packageSpec = ToPackageSpec(projectNames, projectRestoreInfo);
 
             dgSpec.AddRestore(packageSpec.RestoreMetadata.ProjectUniqueName);
             dgSpec.AddProject(packageSpec);
@@ -331,23 +312,7 @@ namespace NuGet.SolutionRestoreManager
             return dgSpec;
         }
 
-        private static PackageSpec ToPackageSpec(ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
-        {
-            var adapter = new NominationProjectAdapter(projectNames, projectRestoreInfo);
-
-            // Project systems give us nominations when the project changes, but it doesn't know when settings change.
-            // So, we create an intermediate PackageSpec without settings. In CpsPackageReferenceProject.GetPackageSpecsAndAdditionalMessagesAsync
-            // it adjusts the package spec with the current settings.
-            PackageSpec? packageSpec = PackageSpecFactory.GetIntermediatePackageSpec(adapter);
-
-            if (packageSpec == null)
-            {
-                throw new InvalidOperationException("Failed to create PackageSpec from the project restore info.");
-            }
-            return packageSpec;
-        }
-
-        private static PackageSpec LegacyToPackageSpec(ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
+        internal static PackageSpec ToPackageSpec(ProjectNames projectNames, IVsProjectRestoreInfo3 projectRestoreInfo)
         {
             var targetFrameworks = projectRestoreInfo.TargetFrameworks;
 
