@@ -30,6 +30,8 @@
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
 
+    <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
+
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
