@@ -21,7 +21,6 @@ public class TestPackageSpecFactory
     private string _directory;
     private TestTargetFramework _outerBuild;
     private Dictionary<string, ITargetFramework>? _targetFrameworks;
-    private Dictionary<string, string>? _globalProperties;
 
     public static string SampleFullPath { get; } = RuntimeEnvironmentHelper.IsWindows ? "c:\\src\\my.csproj" : "/home/me/src/my.csproj";
 
@@ -69,13 +68,6 @@ public class TestPackageSpecFactory
         }
 
         _outerBuild = outerBuild;
-    }
-
-    public TestPackageSpecFactory WithGlobalProperty(string name, string value)
-    {
-        _globalProperties ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        _globalProperties[name] = value;
-        return this;
     }
 
     public TestPackageSpecFactory WithInnerBuild(Action<TargetFrameworkBuilder> builder)
@@ -172,8 +164,7 @@ public class TestPackageSpecFactory
             FullPath = _fullPath,
             Directory = _directory,
             OuterBuild = _outerBuild,
-            TargetFrameworks = targetFrameworks,
-            GlobalProperties = _globalProperties
+            TargetFrameworks = targetFrameworks
         };
 
         var packageSpec = PackageSpecFactory.GetPackageSpec(project, settings ?? NullSettings.Instance);

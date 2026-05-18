@@ -44,28 +44,7 @@ namespace NuGet.Commands.Restore.Utility
         /// </summary>
         public static PackageSpec? GetPackageSpec(IProject project, ISettings settings)
         {
-            PackageSpec? packageSpec = GetIntermediatePackageSpec(project);
-
-            if (packageSpec == null)
-            {
-                return null;
-            }
-
-            ApplySettings(packageSpec, settings);
-
-            return packageSpec;
-        }
-
-        /// <summary>
-        /// Convert an MSBuild project to a PackageSpec without applying <see cref="ISettings"/>.
-        /// The result contains project-level restore properties only. Settings-dependent values
-        /// like <see cref="ProjectRestoreMetadata.PackagesPath"/>, <see cref="ProjectRestoreMetadata.Sources"/>,
-        /// <see cref="ProjectRestoreMetadata.FallbackFolders"/>, and <see cref="ProjectRestoreMetadata.ConfigFilePaths"/>
-        /// may be incomplete. Call <see cref="ApplySettings"/> to fill them in.
-        /// </summary>
-        public static PackageSpec? GetIntermediatePackageSpec(IProject project)
-        {
-            (ProjectRestoreMetadata? restoreMetadata, List<TargetFrameworkInformation>? targetFrameworkInfos) = GetProjectRestoreMetadataAndTargetFrameworkInformation(project);
+            (ProjectRestoreMetadata? restoreMetadata, List<TargetFrameworkInformation>? targetFrameworkInfos) = GetProjectRestoreMetadataAndTargetFrameworkInformation(project, settings);
 
             if (restoreMetadata == null || targetFrameworkInfos == null)
             {
@@ -96,143 +75,6 @@ namespace NuGet.Commands.Restore.Utility
             };
 
             return packageSpec;
-        }
-
-        /// <summary>
-        /// Apply <see cref="ISettings"/> to a <see cref="PackageSpec"/> created by <see cref="GetIntermediatePackageSpec"/>.
-        /// Fills in settings-dependent defaults for <see cref="ProjectRestoreMetadata.PackagesPath"/>,
-        /// <see cref="ProjectRestoreMetadata.Sources"/>, <see cref="ProjectRestoreMetadata.FallbackFolders"/>,
-        /// and <see cref="ProjectRestoreMetadata.ConfigFilePaths"/>.
-        /// </summary>
-        public static void ApplySettings(PackageSpec packageSpec, ISettings settings)
-        {
-            ProjectRestoreMetadata metadata = packageSpec.RestoreMetadata;
-
-            // PackagesPath: fill from settings if not set by the project
-            if (string.IsNullOrEmpty(metadata.PackagesPath))
-            {
-                metadata.PackagesPath = SettingsUtility.GetGlobalPackagesFolder(settings);
-            }
-            else
-            {
-                // Resolve relative path from the project file
-                string projectDirectory = Path.GetDirectoryName(metadata.ProjectPath) ?? throw new ArgumentException("Path.GetDirectoryName(metadata.ProjectPath) returned null");
-                metadata.PackagesPath = UriUtility.GetAbsolutePath(projectDirectory, metadata.PackagesPath);
-            }
-
-            // RepositoryPath (packages.config only): fill from settings if not set
-            if (metadata is PackagesConfigProjectRestoreMetadata pcMetadata && string.IsNullOrEmpty(pcMetadata.RepositoryPath))
-            {
-                pcMetadata.RepositoryPath = SettingsUtility.GetRepositoryPath(settings);
-
-                // Final fallback: solution-relative "packages" folder
-                if (string.IsNullOrEmpty(pcMetadata.RepositoryPath))
-                {
-                    string projectDirectory = Path.GetDirectoryName(metadata.ProjectPath) ?? throw new ArgumentException("Path.GetDirectoryName.metadata.ProjectPath returned null");
-                    pcMetadata.RepositoryPath = UriUtility.GetAbsolutePath(projectDirectory, PackagesConfig.PackagesNodeName);
-                }
-            }
-
-            // Sources: fill from settings if not set by the project.
-            // If the project used "Clear", the sources list contains the Clear marker — don't fill from settings.
-            ApplySettingsSources(metadata, settings);
-
-            // FallbackFolders: fill from settings if not set by the project.
-            // If the project used "Clear", the fallback folders list contains the Clear marker — don't fill from settings.
-            ApplySettingsFallbackFolders(metadata, settings);
-
-            // ConfigFilePaths: always set from settings
-            metadata.ConfigFilePaths = settings.GetConfigFilePaths();
-        }
-
-        private static void ApplySettingsSources(ProjectRestoreMetadata metadata, ISettings settings)
-        {
-            (List<string> sources, List<string> additionalSources) = SplitOnAdditionalMarker(
-                metadata.Sources?.Select(s => s.Source));
-
-            IEnumerable<string> processedSources;
-            if (sources.Count == 0)
-            {
-                processedSources = PackageSourceProvider.LoadPackageSources(settings)
-                    .Where(e => e.IsEnabled)
-                    .Select(e => e.Source);
-            }
-            else if (MSBuildRestoreUtility.ContainsClearKeyword(sources))
-            {
-                processedSources = Enumerable.Empty<string>();
-            }
-            else
-            {
-                processedSources = sources;
-            }
-
-            // Resolve relative source paths to absolute using the project directory.
-            // The intermediate PackageSpec stores raw relative paths; we resolve them here.
-            string projectDirectory = Path.GetDirectoryName(metadata.ProjectPath)!;
-            metadata.Sources = processedSources
-                .Concat(additionalSources)
-                .Select(s => new PackageSource(UriUtility.GetAbsolutePath(projectDirectory, s)!))
-                .ToList();
-        }
-
-        private static void ApplySettingsFallbackFolders(ProjectRestoreMetadata metadata, ISettings settings)
-        {
-            (List<string> fallbackFolders, List<string> additionalFallbackFolders) = SplitOnAdditionalMarker(
-                metadata.FallbackFolders);
-
-            IEnumerable<string> processedFallbackFolders;
-            if (fallbackFolders.Count == 0)
-            {
-                processedFallbackFolders = SettingsUtility.GetFallbackPackageFolders(settings);
-            }
-            else if (MSBuildRestoreUtility.ContainsClearKeyword(fallbackFolders))
-            {
-                processedFallbackFolders = Enumerable.Empty<string>();
-            }
-            else
-            {
-                processedFallbackFolders = fallbackFolders;
-            }
-
-            // Resolve relative fallback folder paths to absolute using the project directory.
-            string projectDirectory = Path.GetDirectoryName(metadata.ProjectPath)!;
-            metadata.FallbackFolders = processedFallbackFolders
-                .Concat(additionalFallbackFolders)
-                .Select(f => UriUtility.GetAbsolutePath(projectDirectory, f)!)
-                .ToList();
-        }
-
-        /// <summary>
-        /// Splits a list of entries on the <see cref="AdditionalValue"/> marker.
-        /// Entries before the marker are "main" entries; entries after are "additional" entries
-        /// that should always be appended regardless of whether main entries come from settings.
-        /// </summary>
-        private static (List<string> main, List<string> additional) SplitOnAdditionalMarker(IEnumerable<string>? entries)
-        {
-            var main = new List<string>();
-            var additional = new List<string>();
-
-            if (entries is not null)
-            {
-                bool readingAdditional = false;
-                foreach (string entry in entries)
-                {
-                    if (StringComparer.Ordinal.Equals(AdditionalValue, entry))
-                    {
-                        readingAdditional = true;
-                    }
-                    else if (readingAdditional)
-                    {
-                        additional.Add(entry);
-                    }
-                    else
-                    {
-                        main.Add(entry);
-                    }
-                }
-            }
-
-            return (main, additional);
         }
 
         /// <summary>
@@ -273,8 +115,9 @@ namespace NuGet.Commands.Restore.Utility
         /// Gets the restore metadata and target framework information for the specified project.
         /// </summary>
         /// <param name="project">An <see cref="IProject" /> representing the project.</param>
+        /// <param name="settings">The <see cref="ISettings" /> of the specified project.</param>
         /// <returns>A <see cref="Tuple" /> containing the <see cref="ProjectRestoreMetadata" /> and <see cref="List{TargetFrameworkInformation}" /> for the specified project.</returns>
-        private static (ProjectRestoreMetadata? RestoreMetadata, List<TargetFrameworkInformation>? TargetFrameworkInfos) GetProjectRestoreMetadataAndTargetFrameworkInformation(IProject project)
+        private static (ProjectRestoreMetadata? RestoreMetadata, List<TargetFrameworkInformation>? TargetFrameworkInfos) GetProjectRestoreMetadataAndTargetFrameworkInformation(IProject project, ISettings settings)
         {
             ITargetFramework outerBuild = project.OuterBuild;
             string projectName = GetProjectName(outerBuild);
@@ -297,7 +140,7 @@ namespace NuGet.Commands.Restore.Utility
                 restoreMetadata = new PackagesConfigProjectRestoreMetadata
                 {
                     PackagesConfigPath = packagesConfigFilePath,
-                    RepositoryPath = GetRepositoryPath(project),
+                    RepositoryPath = GetRepositoryPath(project, settings),
                     RestoreAuditProperties = auditProperties,
                 };
             }
@@ -309,10 +152,13 @@ namespace NuGet.Commands.Restore.Utility
                     CrossTargeting = (projectStyle == ProjectStyle.PackageReference) && (
                         project.TargetFrameworks.Count > 1 || !string.IsNullOrWhiteSpace(project.OuterBuild.GetProperty("TargetFrameworks"))),
                     FallbackFolders = GetFallbackFolders(
+                        outerBuild.GetProperty("MSBuildStartupDirectory"),
+                        project.Directory,
                         SplitPropertyValueOrNull(outerBuild, "RestoreFallbackFolders"),
                         project.SplitGlobalPropertyValueOrNull("RestoreFallbackFolders"),
                         project.TargetFrameworks.Values.SelectMany(i => MSBuildStringUtility.Split(i.GetProperty("RestoreAdditionalProjectFallbackFolders"))),
-                        project.TargetFrameworks.Values.SelectMany(i => MSBuildStringUtility.Split(i.GetProperty("RestoreAdditionalProjectFallbackFoldersExcludes")))),
+                        project.TargetFrameworks.Values.SelectMany(i => MSBuildStringUtility.Split(i.GetProperty("RestoreAdditionalProjectFallbackFoldersExcludes"))),
+                        settings),
                     SkipContentFileWrite = IsLegacyProject(outerBuild),
                     ValidateRuntimeAssets = outerBuild.IsPropertyTrue("ValidateRuntimeIdentifierCompatibility"),
                     CentralPackageVersionsEnabled = isCentralPackageManagementEnabled && projectStyle == ProjectStyle.PackageReference,
@@ -324,26 +170,21 @@ namespace NuGet.Commands.Restore.Utility
             }
 
             restoreMetadata.CacheFilePath = NoOpRestoreUtilities.GetProjectCacheFilePath(outputPath, project.FullPath);
-            restoreMetadata.ConfigFilePaths = [];
+            restoreMetadata.ConfigFilePaths = settings.GetConfigFilePaths();
             restoreMetadata.OutputPath = outputPath;
             targetFrameworkInfos.ForEach(tfi =>
-                {
-                    // Validate the framework by always computing the short folder name.
-                    // This will throw for invalid frameworks (e.g. "_,Version=2.0").
-                    string shortFolderName = tfi.FrameworkName.GetShortFolderName();
-                    restoreMetadata.OriginalTargetFrameworks.Add(
+                restoreMetadata.OriginalTargetFrameworks.Add(
                         !string.IsNullOrEmpty(tfi.TargetAlias) ?
                             tfi.TargetAlias :
-                            shortFolderName);
-                });
-            restoreMetadata.PackagesPath = GetPackagesPath(project);
+                            tfi.FrameworkName.GetShortFolderName()));
+            restoreMetadata.PackagesPath = GetPackagesPath(project, settings);
             restoreMetadata.ProjectName = projectName;
             restoreMetadata.ProjectPath = project.FullPath;
             restoreMetadata.ProjectStyle = projectStyle;
             restoreMetadata.ProjectUniqueName = project.FullPath;
             restoreMetadata.ProjectWideWarningProperties = WarningProperties.GetWarningProperties(outerBuild.GetProperty("TreatWarningsAsErrors"), outerBuild.GetProperty("WarningsAsErrors"), outerBuild.GetProperty("NoWarn"), outerBuild.GetProperty("WarningsNotAsErrors"));
             restoreMetadata.RestoreLockProperties = new RestoreLockProperties(outerBuild.GetProperty("RestorePackagesWithLockFile"), outerBuild.GetProperty("NuGetLockFilePath"), outerBuild.IsPropertyTrue("RestoreLockedMode"));
-            restoreMetadata.Sources = GetSources(project);
+            restoreMetadata.Sources = GetSources(project, settings);
             restoreMetadata.TargetFrameworks = GetProjectRestoreMetadataFrameworkInfos(targetFrameworkInfos, project.TargetFrameworks);
             restoreMetadata.UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(outerBuild.GetProperty("UsingMicrosoftNETSdk"));
             restoreMetadata.SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(outerBuild.GetProperty("SdkAnalysisLevel"));
@@ -496,7 +337,7 @@ namespace NuGet.Commands.Restore.Utility
         internal static bool IsLegacyProject(ITargetFramework project)
         {
             // We consider the project to be legacy if it does not specify TargetFramework or TargetFrameworks
-            return project.GetProperty("TargetFrameworks") == null && project.GetProperty("TargetFramework") == null;
+            return project.GetProperty("TargetFramework") == null && project.GetProperty("TargetFrameworks") == null;
         }
 
         /// <summary>
@@ -599,45 +440,49 @@ namespace NuGet.Commands.Restore.Utility
         }
 
         /// <summary>
+        /// Gets the packages path for the specified project.
+        /// </summary>
+        /// <param name="project">The <see cref="IMSBuildItem" /> representing the project.</param>
+        /// <param name="settings">The <see cref="ISettings" /> of the project.</param>
+        /// <returns>The full path to the packages directory for the specified project.</returns>
+        internal static string GetPackagesPath(IProject project, ISettings settings)
+        {
+            var packagesPath = GetValue(
+                () => UriUtility.GetAbsolutePath(project.Directory, project.GetGlobalProperty("RestorePackagesPath")),
+                () => UriUtility.GetAbsolutePath(project.Directory, project.OuterBuild.GetProperty("RestorePackagesPath")),
+                () => SettingsUtility.GetGlobalPackagesFolder(settings));
+
+            // GetValue doesn't understand that the last func will always provide a non-null value.
+            return packagesPath!;
+        }
+
+        /// <summary>
         /// Gets the package fallback folders for a project.
         /// </summary>
+        /// <param name="startupDirectory">The start-up directory of the tool.</param>
+        /// <param name="projectDirectory">The full path to the directory of the project.</param>
         /// <param name="fallbackFolders">A <see cref="T:string[]" /> containing the fallback folders for the project.</param>
         /// <param name="fallbackFoldersOverride">A <see cref="T:string[]" /> containing overrides for the fallback folders for the project.</param>
         /// <param name="additionalProjectFallbackFolders">An <see cref="IEnumerable{String}" /> containing additional fallback folders for the project.</param>
         /// <param name="additionalProjectFallbackFoldersExcludes">An <see cref="IEnumerable{String}" /> containing fallback folders to exclude.</param>
+        /// <param name="settings">An <see cref="ISettings" /> object containing settings for the project.</param>
         /// <returns>A <see cref="T:string[]" /> containing the package fallback folders for the project.</returns>
-        private static string[] GetFallbackFolders(string[]? fallbackFolders, string[]? fallbackFoldersOverride, IEnumerable<string> additionalProjectFallbackFolders, IEnumerable<string> additionalProjectFallbackFoldersExcludes)
+        private static string[] GetFallbackFolders(string? startupDirectory, string projectDirectory, string[]? fallbackFolders, string[]? fallbackFoldersOverride, IEnumerable<string> additionalProjectFallbackFolders, IEnumerable<string> additionalProjectFallbackFoldersExcludes, ISettings settings)
         {
-            // Fallback folders — keep as relative paths; ApplySettings will resolve to absolute.
+            // Fallback folders
             var currentFallbackFolders = GetValue(
-                () => fallbackFoldersOverride,
-                () => MSBuildRestoreUtility.ContainsClearKeyword(fallbackFolders) ? new[] { MSBuildRestoreUtility.Clear } : null,
-                () => fallbackFolders);
-
-            // If the result contains Clear (e.g., override had Clear mixed in), collapse to just the marker.
-            if (currentFallbackFolders != null && MSBuildRestoreUtility.ContainsClearKeyword(currentFallbackFolders))
-            {
-                currentFallbackFolders = new[] { MSBuildRestoreUtility.Clear };
-            }
+                () => string.IsNullOrEmpty(startupDirectory) ? null : fallbackFoldersOverride?.Select(e => UriUtility.GetAbsolutePath(startupDirectory, e)).ToArray(),
+                () => MSBuildRestoreUtility.ContainsClearKeyword(fallbackFolders) ? Array.Empty<string>() : null,
+                () => fallbackFolders?.Select(e => UriUtility.GetAbsolutePath(projectDirectory, e)).ToArray(),
+                () => SettingsUtility.GetFallbackPackageFolders(settings).ToArray());
 
             // Append additional fallback folders after removing excluded folders
             var filteredAdditionalProjectFallbackFolders = MSBuildRestoreUtility.AggregateSources(
                     values: additionalProjectFallbackFolders,
                     excludeValues: additionalProjectFallbackFoldersExcludes);
 
-            // When no fallback folders are defined by MSBuild properties, return empty. ApplySettings will fill from ISettings later.
-            return AppendItems(currentFallbackFolders ?? Array.Empty<string>(), filteredAdditionalProjectFallbackFolders);
-        }
-
-        /// <summary>
-        /// Gets the packages path from project properties only, without falling back to <see cref="ISettings"/>.
-        /// Returns <see langword="null"/> if the project does not specify <c>RestorePackagesPath</c>.
-        /// </summary>
-        private static string? GetPackagesPath(IProject project)
-        {
-            return GetValue(
-                () => project.GetGlobalProperty("RestorePackagesPath"),
-                () => project.OuterBuild.GetProperty("RestorePackagesPath"));
+            // GetValue doesn't understand that the last func will always provide a non-null value.
+            return AppendItems(projectDirectory, currentFallbackFolders!, filteredAdditionalProjectFallbackFolders);
         }
 
         /// <summary>
@@ -932,12 +777,14 @@ namespace NuGet.Commands.Restore.Utility
         /// Gets the repository path for the specified project.
         /// </summary>
         /// <param name="project">The <see cref="IMSBuildItem" /> representing the project.</param>
+        /// <param name="settings">The <see cref="ISettings" /> of the specified project.</param>
         /// <returns>The repository path of the specified project.</returns>
-        private static string GetRepositoryPath(IProject project)
+        private static string GetRepositoryPath(IProject project, ISettings settings)
         {
             var path = GetValue(
                 () => UriUtility.GetAbsolutePath(project.Directory, project.GetGlobalProperty("RestoreRepositoryPath")),
                 () => UriUtility.GetAbsolutePath(project.Directory, project.OuterBuild.GetProperty("RestoreRepositoryPath")),
+                () => SettingsUtility.GetRepositoryPath(settings),
                 () =>
                 {
                     string? solutionDir = project.OuterBuild.GetProperty("SolutionPath");
@@ -979,34 +826,29 @@ namespace NuGet.Commands.Restore.Utility
         /// Gets the package sources of the specified project.
         /// </summary>
         /// <param name="project">An <see cref="IProject" /> representing the project..</param>
+        /// <param name="settings">The <see cref="ISettings" /> of the specified project.</param>
         /// <returns>A <see cref="List{PackageSource}" /> object containing the packages sources for the specified project.</returns>
-        internal static List<PackageSource> GetSources(IProject project)
+        internal static List<PackageSource> GetSources(IProject project, ISettings settings)
         {
             return GetSources(
                 project.GetGlobalProperty("OriginalMSBuildStartupDirectory"),
                 project.Directory,
                 project.OuterBuild.SplitPropertyValueOrNull("RestoreSources"),
                 project.SplitGlobalPropertyValueOrNull("RestoreSources"),
-                project.TargetFrameworks.Values.SelectMany(i => MSBuildStringUtility.Split(i.GetProperty("RestoreAdditionalProjectSources"))))
+                project.TargetFrameworks.Values.SelectMany(i => MSBuildStringUtility.Split(i.GetProperty("RestoreAdditionalProjectSources"))),
+                settings)
                 .Select(i => new PackageSource(i))
                 .ToList();
         }
 
-        private static string[] GetSources(string? startupDirectory, string projectDirectory, string[]? sources, string[]? sourcesOverride, IEnumerable<string> additionalProjectSources)
+        private static string[] GetSources(string? startupDirectory, string projectDirectory, string[]? sources, string[]? sourcesOverride, IEnumerable<string> additionalProjectSources, ISettings settings)
         {
-            // Sources — keep as relative paths; ApplySettings will resolve to absolute.
-            // Exception: override sources must be resolved against startupDirectory here,
-            // because ApplySettings only knows projectDirectory.
+            // Sources
             var currentSources = GetValue(
-                () => sourcesOverride?.Select(MSBuildRestoreUtility.FixSourcePath).Select(e => UriUtility.GetAbsolutePath(startupDirectory, e)!).ToArray(),
-                () => MSBuildRestoreUtility.ContainsClearKeyword(sources) ? new[] { MSBuildRestoreUtility.Clear } : null,
-                () => sources?.Select(MSBuildRestoreUtility.FixSourcePath).ToArray());
-
-            // If the result contains Clear (e.g., override had Clear mixed in), collapse to just the marker.
-            if (currentSources != null && MSBuildRestoreUtility.ContainsClearKeyword(currentSources))
-            {
-                currentSources = new[] { MSBuildRestoreUtility.Clear };
-            }
+                () => string.IsNullOrEmpty(startupDirectory) ? null : sourcesOverride?.Select(MSBuildRestoreUtility.FixSourcePath).Select(e => UriUtility.GetAbsolutePath(startupDirectory, e)).ToArray(),
+                () => MSBuildRestoreUtility.ContainsClearKeyword(sources) ? Array.Empty<string>() : null,
+                () => sources?.Select(MSBuildRestoreUtility.FixSourcePath).Select(e => UriUtility.GetAbsolutePath(projectDirectory, e)).ToArray(),
+                () => (PackageSourceProvider.LoadPackageSources(settings)).Where(e => e.IsEnabled).Select(e => e.Source).ToArray());
 
             // Append additional sources
             // Escape strings to avoid xplat path issues with msbuild.
@@ -1015,17 +857,11 @@ namespace NuGet.Commands.Restore.Utility
                     excludeValues: Enumerable.Empty<string>())
                 .Select(MSBuildRestoreUtility.FixSourcePath);
 
-            // When no sources are defined by MSBuild properties, return empty. ApplySettings will fill from ISettings later.
-            return AppendItems(currentSources ?? Array.Empty<string>(), filteredAdditionalProjectSources);
+            // GetValue doesn't understand that the last func will always provide a non-null value.
+            return AppendItems(projectDirectory, currentSources!, filteredAdditionalProjectSources);
         }
 
-        /// <summary>
-        /// Marker value that separates main entries from additional entries in the combined sources/fallback folders list.
-        /// Must match <c>VSRestoreSettingsUtilities.AdditionalValue</c>.
-        /// </summary>
-        internal const string AdditionalValue = "$Additional$";
-
-        private static string[] AppendItems(string[] current, IEnumerable<string>? additional)
+        private static string[] AppendItems(string projectDirectory, string[] current, IEnumerable<string>? additional)
         {
             if (additional == null || !additional.Any())
             {
@@ -1033,7 +869,9 @@ namespace NuGet.Commands.Restore.Utility
                 return current;
             }
 
-            return current.Concat(new[] { AdditionalValue }).Concat(additional).ToArray();
+            IEnumerable<string> additionalAbsolute = additional.Select(e => UriUtility.GetAbsolutePath(projectDirectory, e)!);
+
+            return current.Concat(additionalAbsolute).ToArray();
         }
 
         /// <summary>
