@@ -772,7 +772,7 @@ jobs:
             extraBuildProperties="$extraBuildProperties $(signProperties)"
           else
             customBuildArgs="$customBuildArgs --source-only"
-            extraBuildProperties="$extraBuildProperties /p:ReportSbrpUsage=true"
+            extraBuildProperties="$extraBuildProperties /p:ReportSbaUsage=true"
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
