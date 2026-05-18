@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 
 #if NET9_0_OR_GREATER
@@ -53,7 +54,7 @@ internal partial class UnsafeComStreamWrapper : IUnsafeComStream, IStream
 
     public void UnlockRegion(long libOffset, long cb, int dwLockType) => _stream.UnlockRegion(libOffset, cb, dwLockType);
 
-    public void Stat(out STATSTG pstatstg, int grfStatFlag) => _stream.Stat(out pstatstg, grfStatFlag);
+    public unsafe void Stat(ref NativeSTATSTG pstatstg, int grfStatFlag) => _stream.Stat(ref pstatstg, grfStatFlag);
 
     public void Clone(out IntPtr ppstm) => _stream.Clone(out ppstm);
 
@@ -85,11 +86,12 @@ internal partial class UnsafeComStreamWrapper : IUnsafeComStream, IStream
 
     void System.Runtime.InteropServices.ComTypes.IStream.Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, int grfStatFlag)
     {
-        _stream.Stat(out var unsafeSTASTG, grfStatFlag);
+        NativeSTATSTG nativeStat = default;
+        _stream.Stat(ref nativeStat, grfStatFlag | 1 /* STATFLAG_NONAME */);
 
         pstatstg = new System.Runtime.InteropServices.ComTypes.STATSTG()
         {
-            cbSize = unsafeSTASTG.cbSize,
+            cbSize = nativeStat.cbSize,
         };
     }
 
