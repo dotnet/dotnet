@@ -300,15 +300,15 @@ Other source build related issues should be opened in [dotnet/source-build](http
 Periodically, packages that are unreferenced by the product source build should be deleted. The number of
 unreferenced packages build up over time as the product repositories upgrade their dependencies to newer
 versions. Ideally this cleanup would be performed around RC1 timeframe as the product locks down in preparation
-for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbrpUsage`
-option to generate an SBRP package usage report. The resulting report will be written to
-`artifacts/log/<configuration>/sbrpPackageUsage.json`.
+for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbaUsage`
+option to generate a package usage report. The resulting report will be written to
+`artifacts/log/<configuration>/sbaPackageUsage.json`.
 
 ``` bash
-./build.sh -sb /p:ReportSbrpUsage=true
+./build.sh -sb /p:ReportSbaUsage=true
 ```
 
-The VMR CI runs with the `ReportSbrpUsage` option set therefore you can grab the usage report from any build's
+The VMR CI runs with the `ReportSbaUsage` option set therefore you can grab the usage report from any build's
 artifacts.
 
 > **Note:** [The package usage report does not currently support external packages](https://github.com/dotnet/source-build/issues/3405).

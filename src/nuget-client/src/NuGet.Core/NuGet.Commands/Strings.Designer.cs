@@ -826,7 +826,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary..
+        ///   Looks up a localized string similar to PackageReference {0} will not be pruned. This package is unused and should be removed from your dependencies..
         /// </summary>
         internal static string Error_RestorePruningDirectPackageReference {
             get {
@@ -2626,6 +2626,15 @@ namespace NuGet.Commands {
         internal static string Warning_MinVersionNonInclusive {
             get {
                 return ResourceManager.GetString("Warning_MinVersionNonInclusive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; {1} uses the deprecated MonoAndroid framework instead of &apos;net6.0-android&apos; or later. Consider upgrading to a newer version of this package or contacting the package author..
+        /// </summary>
+        internal static string Warning_MonoAndroidFrameworkDeprecated {
+            get {
+                return ResourceManager.GetString("Warning_MonoAndroidFrameworkDeprecated", resourceCulture);
             }
         }
         

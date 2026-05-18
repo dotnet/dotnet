@@ -18,7 +18,6 @@ using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
-using Test.Utility.Signing;
 using Xunit;
 
 namespace NuGet.Packaging.Test
@@ -1863,48 +1862,6 @@ namespace NuGet.Packaging.Test
                 var expectedResult = Convert.ToBase64String(new CryptoHashProvider("SHA512").CalculateHash(test.Stream));
 
                 Assert.Equal(expectedResult, result);
-            }
-        }
-
-        [Fact]
-        public async Task GetContentHash_IsSameForUnsignedAndSignedPackageAsync()
-        {
-            // this test will create an unsigned package, copy it, then sign it. then compare the contentHash
-            var nupkg = new SimpleTestPackageContext("Package.Content.Hash.Test", "1.0.0");
-
-            using (var unsignedDir = TestDirectory.Create())
-            {
-                var nupkgFileName = $"{nupkg.Identity.Id}.{nupkg.Identity.Version}.nupkg";
-                var nupkgFileInfo = await nupkg.CreateAsFileAsync(unsignedDir, nupkgFileName);
-
-                using (var signedDir = TestDirectory.Create())
-                {
-                    Uri timestampService = null;
-                    var signatureHashAlgorithm = HashAlgorithmName.SHA256;
-                    var timestampHashAlgorithm = HashAlgorithmName.SHA256;
-
-                    var signedPackagePath = Path.Combine(signedDir.Path, nupkgFileName);
-
-                    using (var trustedCert = SigningTestUtility.GenerateTrustedTestCertificate())
-                    using (var originalPackage = File.OpenRead(nupkgFileInfo.FullName))
-                    using (var signedPackage = File.Open(signedPackagePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                    using (var request = new AuthorSignPackageRequest(
-                        trustedCert.Source.Cert,
-                        signatureHashAlgorithm,
-                        timestampHashAlgorithm))
-                    {
-                        await SignedArchiveTestUtility.CreateSignedPackageAsync(request, originalPackage, signedPackage, timestampService);
-                    }
-
-                    using (var unsignedReader = new PackageArchiveReader(nupkgFileInfo.FullName))
-                    using (var signedReader = new PackageArchiveReader(signedPackagePath))
-                    {
-                        var contentHashUnsigned = unsignedReader.GetContentHash(CancellationToken.None);
-                        var contentHashSigned = signedReader.GetContentHash(CancellationToken.None);
-
-                        Assert.Equal(contentHashUnsigned, contentHashSigned);
-                    }
-                }
             }
         }
 

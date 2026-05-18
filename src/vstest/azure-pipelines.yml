@@ -1,23 +1,8 @@
-# Branches that trigger a build on commit
-trigger:
-  branches:
-    include:
-    - main
-    - rel/*
-    exclude:
-    - rel/15.*
-    - rel/16.*
-    - rel/17.0
-    - rel/17.1
-    - rel/17.2
-    - rel/17.3
-    - rel/17.4
-    - rel/17.5
-    - rel/17.6
-  paths:
-    exclude:
-      - .gitignore
-      - .vscode/*
+# The public pipeline is intended to run only on PRs, not on branch pushes.
+# An explicit `trigger: none` is required to satisfy the dnceng requirement
+# (dotnet/dnceng#6014) of having an explicit trigger section, while avoiding
+# duplicate builds for non-fork PRs (one for the push, one for the PR).
+trigger: none
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
@@ -34,6 +19,7 @@ pr:
       - .markdownlint.json
       - .markdownlintignore
       - .gitignore
+      - AGENTS.md
       - CODE_OF_CONDUCT.md
       - CONTRIBUTING.md
       - README.md

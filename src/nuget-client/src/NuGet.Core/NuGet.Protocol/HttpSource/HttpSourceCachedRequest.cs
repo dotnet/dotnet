@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,7 +73,7 @@ namespace NuGet.Protocol
         /// A method used to validate the response stream. This method should not
         /// dispose the stream and should throw an exception when the content is invalid.
         /// </summary>
-        public Action<Stream> EnsureValidContents { get; set; }
+        public Action<Stream>? EnsureValidContents { get; set; }
 
         /// <summary>
         /// The timeout to use when fetching the <see cref="HttpResponseMessage"/>. Since

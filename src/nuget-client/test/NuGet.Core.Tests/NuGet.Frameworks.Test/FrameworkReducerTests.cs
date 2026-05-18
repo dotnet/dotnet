@@ -140,6 +140,17 @@ namespace NuGet.Frameworks.Test
         [InlineData("net7.0-android", "xamarin.mac,net6.0,net6.0-tizen,monoandroid,net5.0,netcoreapp3.1", "net6.0")]
         [InlineData("net7.0-android", "xamarin.mac,net7.0,net6.0-android,monoandroid,net5.0,netcoreapp3.1", "net7.0")]
         [InlineData("net7.0-android", "xamarin.mac,net7.0-tizen,net6.0-macos,", null)]
+        // Compatibility based on Windows platform revision (CsWinRT 2.x vs 3.0 TFM)
+        // .0 project skips .1 candidate, falls back to net6.0
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0-windows10.0.17763.1,net6.0-windows10.0.17763.0", "net6.0-windows10.0.17763.0")]
+        // .1 project skips .0 candidate, falls back to net6.0 (no .1 available in net6.0 era)
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows10.0.17763.0,net6.0-windows10.0.17763.0", null)]
+        // .1 project picks .1 candidate
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows10.0.17763.1,net6.0-windows10.0.17763.0", "net10.0-windows10.0.17763.1")]
+        // Same revision, picks higher .NET version
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0-windows10.0.17763.0,net6.0-windows10.0.17763.0", "net10.0-windows10.0.17763.0")]
+        // .1 project picks version with no platform version
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows", "net10.0-windows")]
         // Additional tests
         [InlineData("dotnet5.5", "dotnet6.0,dotnet5.4,portable-net45+win8", "dotnet5.4")]
         [InlineData("dotnet7", "dotnet6.0,dotnet5.4,portable-net45+win8", "dotnet6.0")]

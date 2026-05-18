@@ -380,6 +380,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             new Regex(@"(^|[\\/])get-aspire-cli\.(ps1|sh)(\.sha512)?$", RegexOptions.IgnoreCase)
         ];
 
+        // dotnetup standalone executables for Linux/macOS have no file extension, so
+        // they don't match DefaultAkaMSCreateLinkPatterns (which is extension-based).
+        // This pattern matches dotnetup-{linux,osx}* binaries and their .sha512 checksums.
+        // Windows .exe binaries already match DefaultAkaMSCreateLinkPatterns.
+        public static readonly ImmutableList<Regex> DotnetupAkaMSCreateLinkPatterns =
+        [
+            ..DefaultAkaMSCreateLinkPatterns,
+            new Regex(@"(^|[\\/])dotnetup-(linux|osx)[a-z0-9-]*(\.sha512)?$", RegexOptions.IgnoreCase)
+        ];
+
         public static readonly ImmutableList<Regex> DefaultAkaMSDoNotCreateLinkPatterns =
         [
             new Regex(@"wixpack", RegexOptions.IgnoreCase),
@@ -1674,6 +1684,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: GeneralTestingInternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal,
                 isProduction: false),
+
+            // dotnetup Daily — every CI build of the dotnetup installer tool from dotnet/sdk.
+            // Binaries are published to ci.dot.net/public/dotnetup/<SemVer>/ via DotNetToolsFeeds.
+            // Stable aka.ms links at aka.ms/dotnet/dotnetup/daily/<filename> always point at the latest build.
+            new TargetChannelConfig(
+                id: 10506,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["dotnetup/daily"],
+                akaMSCreateLinkPatterns: DotnetupAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
 
             #endregion
 

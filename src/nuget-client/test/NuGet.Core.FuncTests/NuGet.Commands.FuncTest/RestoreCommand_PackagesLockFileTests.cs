@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1677,6 +1678,194 @@ namespace NuGet.Commands.FuncTest
             logger.ErrorMessages.Should().ContainSingle();
             logger.ErrorMessages.Single().Should().Contain("NU1004");
             logger.ErrorMessages.Single().Should().Contain("The project reference project2 has changed");
+        }
+
+        // Verifies project reference through ATF, lock file creation, and locked mode
+        [Fact]
+        public async Task RestoreCommand_PackagesLockFile_ProjectReferenceWithATF_LockedModeSucceeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var logger = new TestLogger();
+
+            // Create packages
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgA);
+
+            var project2Spec = @"
+            {
+              ""frameworks"": {
+                ""net472"": {
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+            var project2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2Spec);
+
+            var project1Spec = @"
+            {
+              ""frameworks"": {
+                ""net10.0"": {
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                    }
+                }
+              }
+            }";
+
+            var project1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1Spec);
+            project1 = project1.WithTestProjectReference(project2);
+
+            var lockFilePath = Path.Combine(Path.GetDirectoryName(project1.RestoreMetadata.ProjectPath)!, PackagesLockFileFormat.LockFileName);
+            project1.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                restorePackagesWithLockFile: "true",
+                lockFilePath,
+                restoreLockedMode: false);
+
+            var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1, project2)).ExecuteAsync();
+            result.Success.Should().BeTrue(because: string.Join(Environment.NewLine, result.LockFile.LogMessages.Select(e => e.Message)));
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Verify lock file was created and has correct alias-aware structure
+            File.Exists(lockFilePath).Should().BeTrue();
+            var packagesLockFile = PackagesLockFileFormat.Read(lockFilePath);
+            packagesLockFile.Targets.Should().HaveCount(1);
+            packagesLockFile.Targets[0].Dependencies.Should().HaveCount(2);
+
+            // Enable locked mode
+            project1.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                restorePackagesWithLockFile: "true",
+                lockFilePath,
+                restoreLockedMode: true);
+            logger.Clear();
+
+            // Second restore in locked mode
+            result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1, project2)).ExecuteAsync();
+            result.Success.Should().BeTrue(logger.ShowErrors());
+        }
+
+        // P1 (apple;banana net10.0 with ATF net472) -> Project2 (apple;banana net472) -> PackageA
+        // Verifies project reference through alias disambiguation with ATF, lock file creation, and locked mode
+        [Fact]
+        public async Task RestoreCommand_PackagesLockFile_WithAliasesOfSameFramework_ProjectReferenceWithATF_LockedModeSucceeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var logger = new TestLogger();
+
+            // Create packages
+            var pkgA = new SimpleTestPackageContext("PackageA", "1.0.0");
+            var pkgB = new SimpleTestPackageContext("PackageB", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, pkgA, pkgB);
+
+            string apple = nameof(apple);
+            string banana = nameof(banana);
+
+            // Create Project2 spec with apple;banana aliases both targeting net472
+            var project2Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""apple"",
+                    ""dependencies"": {
+                            ""PackageA"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net472"",
+                    ""targetAlias"": ""banana"",
+                    ""dependencies"": {
+                            ""PackageB"": {
+                                ""version"": ""[1.0.0,)"",
+                                ""target"": ""Package"",
+                            }
+                    }
+                }
+              }
+            }";
+
+            var project2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, project2Spec);
+
+            // Create Project1 spec with apple;banana aliases, both net10.0 with ATF for net472
+            var project1Spec = @"
+            {
+              ""frameworks"": {
+                ""apple"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""apple"",
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                    }
+                },
+                ""banana"": {
+                    ""framework"": ""net10.0"",
+                    ""targetAlias"": ""banana"",
+                    ""assetTargetFallback"": true,
+                    ""imports"": [ ""net472"" ],
+                    ""warn"": true,
+                    ""dependencies"": {
+                    }
+                }
+              }
+            }";
+
+            var project1 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, project1Spec);
+            project1 = project1.WithTestProjectReference(project2);
+
+            // Enable lock file on Project1
+            var lockFilePath = Path.Combine(Path.GetDirectoryName(project1.RestoreMetadata.ProjectPath)!, PackagesLockFileFormat.LockFileName);
+            project1.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                restorePackagesWithLockFile: "true",
+                lockFilePath,
+                restoreLockedMode: false);
+
+            // First restore - generates lock file
+            var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1, project2)).ExecuteAsync();
+            result.Success.Should().BeTrue(because: string.Join(Environment.NewLine, result.LockFile.LogMessages.Select(e => e.Message)));
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Verify lock file was created and has correct alias-aware structure
+            File.Exists(lockFilePath).Should().BeTrue();
+            var packagesLockFile = PackagesLockFileFormat.Read(lockFilePath);
+            packagesLockFile.Targets.Should().HaveCount(2);
+            packagesLockFile.Targets.Should().Contain(t => t.TargetAlias == apple);
+            packagesLockFile.Targets.Should().Contain(t => t.TargetAlias == banana);
+            packagesLockFile.Targets[0].Dependencies.Should().HaveCount(2);
+            packagesLockFile.Targets[1].Dependencies.Should().HaveCount(2);
+
+            // Both aliases should resolve Project2 through alias disambiguation with ATF
+            var appleTarget = result.LockFile.GetTarget(apple, null);
+            appleTarget.Should().NotBeNull();
+            appleTarget.Libraries.Should().Contain(e => e.Name!.Equals("Project2"));
+
+            var bananaTarget = result.LockFile.GetTarget(banana, null);
+            bananaTarget.Should().NotBeNull();
+            bananaTarget.Libraries.Should().Contain(e => e.Name!.Equals("Project2"));
+
+            // Enable locked mode
+            project1.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                restorePackagesWithLockFile: "true",
+                lockFilePath,
+                restoreLockedMode: true);
+            logger.Clear();
+
+            // Second restore in locked mode
+            // Lock file validation does not consider ATF for project references (PackagesLockFileUtilities.cs),
+            // so locked mode fails with NU1004 when the project reference requires ATF.
+            result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1, project2)).ExecuteAsync();
+            result.Success.Should().BeTrue(logger.ShowErrors());
         }
     }
 }

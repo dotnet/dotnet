@@ -633,7 +633,7 @@ namespace NuGet.Test.Utility
                             xml,
                             "PackageReference",
                             package.Id,
-                            referenceFramework,
+                            referenceFramework?.IsSpecificFramework == true ? referenceFramework.GetShortFolderName() : string.Empty,
                             props,
                             attributes);
                     }
@@ -663,7 +663,7 @@ namespace NuGet.Test.Utility
                             xml,
                             "PackageDownload",
                             package.Id,
-                            referenceFramework,
+                            referenceFramework?.IsSpecificFramework == true ? referenceFramework.GetShortFolderName() : string.Empty,
                             props,
                             attributes);
                     }
@@ -710,7 +710,7 @@ namespace NuGet.Test.Utility
                             xml,
                             "ProjectReference",
                             $"{project.ProjectPath}",
-                            referenceFramework,
+                            referenceFramework?.IsSpecificFramework == true ? referenceFramework.GetShortFolderName() : string.Empty,
                             props,
                             new Dictionary<string, string>());
                     }
@@ -735,7 +735,7 @@ namespace NuGet.Test.Utility
                         xml,
                         "DotNetCliToolReference",
                         $"{tool.Id}",
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         props,
                         attributes);
                 }
@@ -770,7 +770,7 @@ namespace NuGet.Test.Utility
                         xml,
                         "ProjectReference",
                         $"{project.ProjectPath}",
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         props,
                         new Dictionary<string, string>());
                 }

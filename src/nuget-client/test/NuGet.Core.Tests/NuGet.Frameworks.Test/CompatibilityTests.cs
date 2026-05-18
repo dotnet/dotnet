@@ -106,6 +106,33 @@ namespace NuGet.Frameworks.Test
         [InlineData("net5.0-madeupname1.1.3.4.5.6", "net5.0", false)]
         [InlineData("net5.0", "net5.0-madeupname", false)]
 
+        // Compatibility based on Windows platform revision (CsWinRT 2.x vs 3.0 TFM)
+        // .0 project (CsWinRT 2.x) is incompatible with .1 candidate (CsWinRT 3.0)
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0-windows10.0.17763.1", false)]
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0-windows10.0.26100.1", false)]
+        [InlineData("net10.0-windows10.0.17763.0", "net10.0-windows10.0.17763.1", false)]
+        // .1 project (CsWinRT 3.0) is incompatible with .0 candidate (CsWinRT 2.x)
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows10.0.17763.0", false)]
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows10.0.26100.0", false)]
+        [InlineData("net10.0-windows10.0.17763.1", "net10.0-windows10.0.17763.0", false)]
+        // Same revision: compatible (standard version rules apply)
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0-windows10.0.17763.0", true)]
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows10.0.17763.1", true)]
+        [InlineData("net10.0-windows10.0.17763.1", "net10.0-windows10.0.17763.1", true)]
+        [InlineData("net10.0-windows10.0.17763.0", "net10.0-windows10.0.17763.0", true)]
+        // Higher platform build still incompatible when candidate version > target
+        [InlineData("net10.0-windows10.0.17763.0", "net10.0-windows10.0.26100.0", false)]
+        [InlineData("net10.0-windows10.0.17763.1", "net10.0-windows10.0.26100.1", false)]
+        // Cross .NET version with matching revision is compatible
+        [InlineData("net10.0-windows10.0.26100.0", "net6.0-windows10.0.17763.0", true)]
+        // Rule does NOT apply to non-Windows platforms
+        [InlineData("net10.0-android10.0.26100.0", "net10.0-android10.0.17763.1", true)]
+        // Candidate without platform OS version is handled normally
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0", true)]
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0", true)]
+        [InlineData("net10.0-windows10.0.26100.0", "net10.0-windows", true)]
+        [InlineData("net10.0-windows10.0.26100.1", "net10.0-windows", true)]
+
         // dotnet
         [InlineData("dotnet", "dotnet", true)]
         [InlineData("dotnet5.1", "dotnet", true)]

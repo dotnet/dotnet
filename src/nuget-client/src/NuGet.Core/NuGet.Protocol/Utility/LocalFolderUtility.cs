@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +27,7 @@ namespace NuGet.Protocol
         /// Retrieve a nupkg using the path.
         /// </summary>
         /// <param name="path">Nupkg path in uri form.</param>
-        public static LocalPackageInfo GetPackage(Uri path, ILogger log)
+        public static LocalPackageInfo? GetPackage(Uri path, ILogger log)
         {
             if (path == null)
             {
@@ -127,7 +126,7 @@ namespace NuGet.Protocol
         /// <param name="root">Nupkg folder directory path.</param>
         /// <param name="id">Package id.</param>
         /// <param name="version">Package version.</param>
-        public static LocalPackageInfo GetPackageV2(string root, string id, NuGetVersion version, ILogger log)
+        public static LocalPackageInfo? GetPackageV2(string root, string id, NuGetVersion version, ILogger log)
         {
             return GetPackageV2(root, id, version, log, CancellationToken.None);
         }
@@ -139,7 +138,7 @@ namespace NuGet.Protocol
         /// <param name="id">Package id.</param>
         /// <param name="version">Package version.</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        public static LocalPackageInfo GetPackageV2(string root, string id, NuGetVersion version, ILogger log, CancellationToken cancellationToken)
+        public static LocalPackageInfo? GetPackageV2(string root, string id, NuGetVersion version, ILogger log, CancellationToken cancellationToken)
         {
             if (root == null)
             {
@@ -169,7 +168,7 @@ namespace NuGet.Protocol
         /// </summary>
         /// <param name="root">Nupkg folder directory path.</param>
         /// <param name="identity">Package id and version.</param>
-        public static LocalPackageInfo GetPackageV2(string root, PackageIdentity identity, ILogger log)
+        public static LocalPackageInfo? GetPackageV2(string root, PackageIdentity identity, ILogger log)
         {
             return GetPackageV2(root, identity, log, CancellationToken.None);
         }
@@ -180,7 +179,7 @@ namespace NuGet.Protocol
         /// <param name="root">Nupkg folder directory path.</param>
         /// <param name="identity">Package id and version.</param>
         /// /// <param name="cancellationToken">Cancellation token</param>
-        public static LocalPackageInfo GetPackageV2(string root, PackageIdentity identity, ILogger log, CancellationToken cancellationToken)
+        public static LocalPackageInfo? GetPackageV2(string root, PackageIdentity identity, ILogger log, CancellationToken cancellationToken)
         {
             if (root == null)
             {
@@ -206,7 +205,7 @@ namespace NuGet.Protocol
             // using the file system sort order. This is to match the legacy nuget 2.8.x behavior.
             foreach (var directoryList in GetNupkgsFromFlatFolderChunked(rootDirInfo, log, cancellationToken))
             {
-                LocalPackageInfo fallbackMatch = null;
+                LocalPackageInfo? fallbackMatch = null;
 
                 // Check for any files that are in the form packageId.version.nupkg
                 foreach (var file in directoryList.Where(file => IsPossiblePackageMatch(file, identity)))
@@ -348,7 +347,7 @@ namespace NuGet.Protocol
         /// </summary>
         /// <param name="root">Nupkg folder directory path.</param>
         /// <param name="identity">Package id and version.</param>
-        public static LocalPackageInfo GetPackagesConfigFolderPackage(string root, PackageIdentity identity, ILogger log)
+        public static LocalPackageInfo? GetPackagesConfigFolderPackage(string root, PackageIdentity identity, ILogger log)
         {
             if (root == null)
             {
@@ -433,7 +432,7 @@ namespace NuGet.Protocol
         /// Retrieve a package with an id and version from a packages.config packages folder.
         /// </summary>
         /// <param name="root">Nupkg folder directory path.</param>
-        public static LocalPackageInfo GetPackagesConfigFolderPackage(
+        public static LocalPackageInfo? GetPackagesConfigFolderPackage(
             string root,
             string id,
             NuGetVersion version,
@@ -467,9 +466,9 @@ namespace NuGet.Protocol
         /// Return the package nupkg from a packages.config folder sub directory.
         /// </summary>
         /// <param name="dir">Package directory in the format id.version</param>
-        private static LocalPackageInfo GetPackagesConfigFolderPackage(DirectoryInfo dir, ILogger log)
+        private static LocalPackageInfo? GetPackagesConfigFolderPackage(DirectoryInfo dir, ILogger log)
         {
-            LocalPackageInfo result = null;
+            LocalPackageInfo? result = null;
 
             var nupkgPath = Path.Combine(
                 dir.FullName,
@@ -527,7 +526,7 @@ namespace NuGet.Protocol
         /// An imperfect attempt at finding the identity of a package from the file name.
         /// This can fail if the package name ends with something such as .1
         /// </summary>
-        public static PackageIdentity GetIdentityFromNupkgPath(FileInfo file, string id)
+        public static PackageIdentity? GetIdentityFromNupkgPath(FileInfo file, string id)
         {
             if (id == null)
             {
@@ -553,7 +552,7 @@ namespace NuGet.Protocol
         /// An imperfect attempt at finding the version of a package from the file name.
         /// This can fail if the package name ends with something such as .1
         /// </summary>
-        public static NuGetVersion GetVersionFromFileName(string fileName, string id, string extension)
+        public static NuGetVersion? GetVersionFromFileName(string fileName, string id, string extension)
         {
             if (id == null)
             {
@@ -570,7 +569,7 @@ namespace NuGet.Protocol
                 throw new ArgumentNullException(nameof(extension));
             }
 
-            NuGetVersion result = null;
+            NuGetVersion? result = null;
 
             if (fileName.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
             {
@@ -592,7 +591,7 @@ namespace NuGet.Protocol
         /// </summary>
         /// <param name="idVersionString">Id.Version</param>
         /// <param name="id">Expected id</param>
-        private static NuGetVersion GetVersionFromIdVersionString(string idVersionString, string id)
+        private static NuGetVersion? GetVersionFromIdVersionString(string idVersionString, string id)
         {
             var prefix = $"{id}.";
 
@@ -600,7 +599,7 @@ namespace NuGet.Protocol
             {
                 var versionString = idVersionString.Substring(prefix.Length);
 
-                NuGetVersion version;
+                NuGetVersion? version;
                 if (NuGetVersion.TryParse(versionString, out version))
                 {
                     return version;
@@ -613,7 +612,7 @@ namespace NuGet.Protocol
         /// <summary>
         /// Retrieve a single package from a v3 version folder.
         /// </summary>
-        public static LocalPackageInfo GetPackageV3(string root, string id, NuGetVersion version, ILogger log)
+        public static LocalPackageInfo? GetPackageV3(string root, string id, NuGetVersion version, ILogger log)
         {
             if (root == null)
             {
@@ -641,7 +640,7 @@ namespace NuGet.Protocol
         /// <summary>
         /// Retrieve a package from a v3 feed.
         /// </summary>
-        public static LocalPackageInfo GetPackageV3(string root, PackageIdentity identity, ILogger log)
+        public static LocalPackageInfo? GetPackageV3(string root, PackageIdentity identity, ILogger log)
         {
             if (root == null)
             {
@@ -799,16 +798,13 @@ namespace NuGet.Protocol
         /// </summary>
         public static DirectoryInfo GetAndVerifyRootDirectory(string root)
         {
-            // Check for package files one level deep.
-            DirectoryInfo rootDirectoryInfo = null;
-
             try
             {
                 // Convert file:// to a local path if needed
                 var localPath = UriUtility.GetLocalPath(root);
 
                 // Verify that the directory is a valid path.
-                rootDirectoryInfo = new DirectoryInfo(localPath);
+                var rootDirectoryInfo = new DirectoryInfo(localPath);
 
                 // The root must also be parsable as a URI (relative or absolute). This rejects
                 // sources that have the weird "C:Source" format. For more information about this 
@@ -821,6 +817,8 @@ namespace NuGet.Protocol
                 {
                     throw new NotSupportedException(uriResult.AbsoluteUri);
                 }
+
+                return rootDirectoryInfo;
             }
             catch (Exception ex) when (ex is ArgumentException ||
                                        ex is IOException ||
@@ -832,8 +830,6 @@ namespace NuGet.Protocol
 
                 throw new FatalProtocolException(message, ex);
             }
-
-            return rootDirectoryInfo;
         }
 
         /// <summary>
@@ -841,12 +837,10 @@ namespace NuGet.Protocol
         /// </summary>
         private static FileInfo GetAndVerifyFileInfo(Uri fileUri)
         {
-            FileInfo fileInfo = null;
-
             try
             {
                 // Verify that the file is a valid path
-                fileInfo = new FileInfo(fileUri.LocalPath);
+                return new FileInfo(fileUri.LocalPath);
             }
             catch (Exception ex) when (ex is ArgumentException || ex is IOException || ex is SecurityException)
             {
@@ -854,8 +848,6 @@ namespace NuGet.Protocol
 
                 throw new FatalProtocolException(message, ex);
             }
-
-            return fileInfo;
         }
 
         /// <summary>
@@ -1256,9 +1248,9 @@ namespace NuGet.Protocol
             return GetFilesSafe(root, NupkgFilter, log, cancellationToken);
         }
 
-        private static LocalPackageInfo GetPackageV3(string root, string id, string version, ILogger log)
+        private static LocalPackageInfo? GetPackageV3(string root, string id, string version, ILogger log)
         {
-            NuGetVersion nugetVersion;
+            NuGetVersion? nugetVersion;
             if (NuGetVersion.TryParse(version, out nugetVersion))
             {
                 var identity = new PackageIdentity(id, nugetVersion);
@@ -1274,9 +1266,9 @@ namespace NuGet.Protocol
             return null;
         }
 
-        private static FileInfo CreateFileInfoIfValidOrNull(string localPath, ILogger log)
+        private static FileInfo? CreateFileInfoIfValidOrNull(string localPath, ILogger log)
         {
-            FileInfo fileInfo = null;
+            FileInfo? fileInfo = null;
             try
             {
                 fileInfo = new FileInfo(localPath);
@@ -1311,7 +1303,9 @@ namespace NuGet.Protocol
                                         return File.ReadAllText(hashPath);
                                     }
 
-                                    return null;
+                                    // Callers guarantee hashPath exists, so this branch is unreachable.
+                                    // null! is required because GetContentHash's delegate is typed as Func<string> (not Func<string?>).
+                                    return null!;
                                 });
 
                             // write the new hash file

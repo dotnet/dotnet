@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- Logger assembly needs to keep supporting .NET Framework for framework msbuild. -->
-    <TargetFrameworks>$(BundledNETCoreAppTargetFramework);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetMinimum);$(NetFrameworkToolCurrent)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

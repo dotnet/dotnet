@@ -3,7 +3,7 @@
   <Import Project="ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <RootNamespace>Microsoft.SignCheck</RootNamespace>
     <!-- This assembly is bundled in the Microsoft.DotNet.SignCheck package and is not mean to be used as a class library package. -->
     <IsPackable>false</IsPackable>

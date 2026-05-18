@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
@@ -11,6 +11,7 @@
     <UseAppHost>false</UseAppHost>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-macos-pkg</ToolCommandName>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>

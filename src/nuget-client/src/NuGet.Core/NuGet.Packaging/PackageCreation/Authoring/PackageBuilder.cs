@@ -32,6 +32,7 @@ namespace NuGet.Packaging
         internal const string ManifestRelationType = "manifest";
         private readonly bool _includeEmptyDirectories;
         private readonly bool _deterministic;
+        private readonly DateTimeOffset _deterministicTimestamp = DateTimeOffset.UtcNow;
         private readonly ILogger _logger;
         private readonly string? _versionOverride;
 
@@ -69,6 +70,7 @@ namespace NuGet.Packaging
             : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic, logger, versionOverride: "")
         {
         }
+
         public PackageBuilder(string path, string? basePath, Func<string, string>? propertyProvider, bool includeEmptyDirectories, bool deterministic, ILogger logger, string versionOverride)
             : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic, versionOverride)
         {
@@ -78,8 +80,8 @@ namespace NuGet.Packaging
         public PackageBuilder(string path, string? basePath, Func<string, string>? propertyProvider, bool includeEmptyDirectories, bool deterministic)
             : this(path, basePath, propertyProvider, includeEmptyDirectories, deterministic, versionOverride: "")
         {
-
         }
+
         public PackageBuilder(string path, string? basePath, Func<string, string>? propertyProvider, bool includeEmptyDirectories, bool deterministic, string versionOverride)
             : this(includeEmptyDirectories, deterministic)
         {
@@ -118,7 +120,6 @@ namespace NuGet.Packaging
         public PackageBuilder(bool deterministic) :
             this(includeEmptyDirectories: false, deterministic: deterministic)
         {
-
         }
 
         public PackageBuilder()
@@ -127,19 +128,19 @@ namespace NuGet.Packaging
         }
 
         public PackageBuilder(bool deterministic, ILogger logger)
-            : this(includeEmptyDirectories: false, deterministic: deterministic, logger)
+            : this(includeEmptyDirectories: false, deterministic: deterministic, logger: logger)
         {
         }
 
         private PackageBuilder(bool includeEmptyDirectories, bool deterministic)
-            : this(includeEmptyDirectories: false, deterministic: deterministic, logger: NullLogger.Instance)
+            : this(includeEmptyDirectories: includeEmptyDirectories, deterministic: deterministic, logger: NullLogger.Instance)
         {
         }
 
         private PackageBuilder(bool includeEmptyDirectories, bool deterministic, ILogger logger)
         {
             _includeEmptyDirectories = includeEmptyDirectories;
-            _deterministic = false; // fix in https://github.com/NuGet/Home/issues/8601
+            _deterministic = deterministic;
             _logger = logger;
             Files = new Collection<IPackageFile>();
             DependencyGroups = new Collection<PackageDependencyGroup>();
@@ -155,6 +156,75 @@ namespace NuGet.Packaging
             // Just like parameter replacements, these are also case insensitive, for consistency.
             Properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
+
+        public string DeterministicTimestamp
+        {
+            init
+            {
+                if (string.IsNullOrEmpty(value) || string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase))
+                {
+                    _deterministicTimestamp = DateTimeOffset.UtcNow;
+                }
+                else if (string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase))
+                {
+                    _deterministic = false;
+                    _deterministicTimestamp = DateTimeOffset.UtcNow;
+                }
+                else if (TryParseTimestamp(value, out DateTimeOffset parsedDateTimestamp))
+                {
+                    _deterministicTimestamp = parsedDateTimestamp;
+                }
+                else
+                {
+                    throw new PackagingException(
+                        NuGetLogCode.NU5502,
+                        string.Format(CultureInfo.CurrentCulture, Strings.ErrorInvalidTimestamp, value));
+                }
+            }
+        }
+
+        internal static bool TryParseTimestamp(string timestamp, out DateTimeOffset result)
+        {
+            if (long.TryParse(timestamp, NumberStyles.None, CultureInfo.InvariantCulture, out long unixTimeSeconds))
+            {
+                result = DateTimeOffset.FromUnixTimeSeconds(unixTimeSeconds);
+                return true;
+            }
+
+            var parsedDate = ParseRfc3339(timestamp);
+            if (parsedDate is DateTimeOffset nonNullParsedTimestamp)
+            {
+                result = nonNullParsedTimestamp;
+                return true;
+            }
+
+            result = default;
+            return false;
+        }
+
+        private static DateTimeOffset? ParseRfc3339(string input)
+        {
+            // RFC3339 patterns:
+            // 1. Full date-time with 'Z' (UTC)
+            // 2. Full date-time with offset (+HH:mm or -HH:mm)
+            // 3. Full date-time with fractional seconds and 'Z'
+            // 4. Full date-time with fractional seconds and offset
+            string[] formats = {
+                "yyyy-MM-dd'T'HH:mm:ss'Z'",
+                "yyyy-MM-dd'T'HH:mm:sszzz",
+                "yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK", // K handles Z or offset
+            };
+            if (DateTimeOffset.TryParseExact(input, formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out DateTimeOffset result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
 
         // Set to empty to enforce a stricter nullability contract.
         // This will be validated in the Save() method before writing the manifest
@@ -853,7 +923,7 @@ namespace NuGet.Packaging
             var entry = package.CreateEntry(entryName, compressionLevel);
             if (_deterministic)
             {
-                entry.LastWriteTime = ZipFormatMinDate;
+                entry.LastWriteTime = _deterministicTimestamp;
             }
             return entry;
         }
@@ -909,7 +979,7 @@ namespace NuGet.Packaging
                         package,
                         file.Path,
                         stream,
-                        lastWriteTime: _deterministic ? ZipFormatMinDate : file.LastWriteTime,
+                        lastWriteTime: _deterministic ? _deterministicTimestamp : file.LastWriteTime,
                         warningMessage);
                     var fileExtension = Path.GetExtension(file.Path);
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <IsPackable>true</IsPackable>
@@ -84,7 +84,7 @@
   </Target>
 
   <ItemGroup>
-    <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(BundledNETCoreAppTargetFramework)\Microsoft.DotNet.ArcadeLogging.dll"
+    <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(NetMinimum)\Microsoft.DotNet.ArcadeLogging.dll"
           Pack="true"
           PackagePath="toolset\net\Microsoft.DotNet.ArcadeLogging.dll" />
     <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(NetFrameworkToolCurrent)\Microsoft.DotNet.ArcadeLogging.dll"

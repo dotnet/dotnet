@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -19,6 +17,16 @@ namespace NuGet.Protocol
     {
         public static void ValidateJObject(string uri, Stream stream)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             try
             {
                 using (var reader = new StreamReader(
@@ -58,6 +66,16 @@ namespace NuGet.Protocol
 
         public static void ValidateNupkg(string uri, Stream stream)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             try
             {
                 using (var reader = new PackageArchiveReader(
@@ -81,6 +99,21 @@ namespace NuGet.Protocol
 
         internal static void ValidatePackageIdentity(string uri, Stream stream, PackageIdentity expectedIdentity)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            if (expectedIdentity == null)
+            {
+                throw new ArgumentNullException(nameof(expectedIdentity));
+            }
+
             try
             {
                 using (var reader = new PackageArchiveReader(
@@ -118,6 +151,16 @@ namespace NuGet.Protocol
 
         public static void ValidateXml(string uri, Stream stream)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             try
             {
                 using (var xmlReader = XmlReader.Create(

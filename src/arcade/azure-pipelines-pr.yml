@@ -56,7 +56,6 @@ stages:
           logs: true
           manifests: true
       enableMicrobuild: true
-      enableSourceIndex: true
       enableSourceBuild: true
       workspace:
         clean: all
@@ -159,19 +158,6 @@ stages:
             $(_InternalBuildArgs)
             /p:Test=false
           displayName: Windows Build / Publish
-
-        - task: PowerShell@2
-          displayName: sdk-task verification
-          inputs:
-            filePath: eng\common\sdk-task.ps1
-            arguments: -task PublishToSymbolServers /p:DryRun="true" -restore -msbuildEngine dotnet
-              /p:DotNetSymbolServerTokenMsdl=DryRunPTA
-              /p:DotNetSymbolServerTokenSymWeb=DryRunPTA
-              /p:PDBArtifactsDirectory='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
-              /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
-              /p:SymbolPublishingExclusionsFile='$(System.DefaultWorkingDirectory)/eng/SymbolPublishingExclusionsFile.txt'
-              /p:Configuration=Release
-              /p:PublishToMSDL=false
 
         - powershell: eng\common\build.ps1
             -configuration $(_BuildConfig)
