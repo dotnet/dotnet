@@ -7,7 +7,9 @@ description: >
 on:
   issues:
     types: [opened]
-  schedule: daily
+  issue_comment:
+    types: [created]
+  schedule: every 12h
   workflow_dispatch:
 
 permissions:
@@ -31,17 +33,18 @@ tools:
 
 safe-outputs:
   add-comment:
-    max: 3
+    max: 10
     target: "*"
     hide-older-comments: true
   add-labels:
-    max: 5
+    max: 15
   remove-labels:
-    max: 5
+    max: 15
   create-pull-request:
     draft: true
     title-prefix: "[fix] "
-    max: 2
+    max: 3
+    allowed-base-branches: ["main", "rel/*"]
     protected-files: fallback-to-issue
     github-token: ${{ secrets.GH_AW_GITHUB_TOKEN }}
   noop:
@@ -49,7 +52,7 @@ safe-outputs:
   messages:
     footer: "> 🔍 *Triaged by [{workflow_name}]({run_url})*"
 
-timeout-minutes: 30
+timeout-minutes: 45
 
 imports:
   - shared/repo-build-setup.md
@@ -70,7 +73,7 @@ You are the Issue Triage agent for `${{ github.repository }}`. Your job is to dr
 
 - **Never post more than one comment per issue per run.**
 - **Prefer editing your previous comment** over adding a new one.
-- **Never comment if a human maintainer commented in the last 48 hours** — they're handling it.
+- **Never comment if a human maintainer commented in the last 48 hours** — unless this run was triggered BY that maintainer's comment (`issue_comment` event). In that case, the maintainer wants you to act.
 - **Never override human-applied labels** like `State: Blocked`, `State: Approved`, or `Needs: Design`.
 
 ## Existing Labels to Use
@@ -88,19 +91,28 @@ Use ONLY these existing repository labels — do not create new labels:
 
 Evaluate the new issue immediately.
 
-### On `schedule` (daily)
+### On `issue_comment` (maintainer comments on an issue)
 
-Your daily goal: **drive open issues to zero.** Process the backlog systematically:
+A maintainer commented on an issue — they likely added context, repro steps, or clarification. Treat this as a signal to act on the issue:
 
-1. **Follow-ups first**: Check issues labeled `Needs: Additional Info` that have been updated since labeling — the reporter may have added repro steps. Re-evaluate them.
-2. **Backlog nibble**: Pick **one** open bug issue to work on. Selection priority:
+1. Read the full issue and all comments.
+2. If the maintainer's comment explicitly says to hold off (e.g., "don't triage this yet", "leave this alone", "not now", "skip this") → `noop`.
+3. Otherwise, treat the issue as if it was just opened — evaluate completeness, attempt repro if possible, attempt fix if reproducible. The maintainer's comment likely provides additional context that makes the issue more actionable.
+
+### On `schedule` (every 12 hours)
+
+Your goal: **drive open issues to zero.** Process the backlog systematically:
+
+1. **Follow-ups first**: Check ALL issues labeled `Needs: Additional Info` or `Needs: Author Feedback` that have been updated since labeling — the reporter may have added repro steps. Re-evaluate every one of them.
+2. **New issues from external contributors**: Check issues opened in the last 24 hours that have NOT been triaged yet (no agent comment, no triage labels). These were skipped on creation because the author lacked write permission. Triage them now — they deserve the same treatment as maintainer-filed issues.
+3. **Backlog**: Work through open bug issues. Process **up to 3 issues** per run. Selection priority:
    a. Issues with `Needs: Triage :mag:` label (untriaged, newest first)
-   b. Oldest open bug issues that have repro steps but no linked PR
+   b. Oldest open bug issues that have repro steps but no linked PR and no `State: In-PR` label
    c. Issues without repro steps that you can investigate from the description alone
-3. **Skip**: issues labeled `State: Blocked`, `Needs: Design`, `State: Approved`, or `State: In-PR`
-4. **Skip**: issues you already commented on in the last 7 days (don't re-triage the same issue)
+4. **Skip**: issues labeled `State: Blocked`, `Needs: Design`, `State: Approved`, or `State: In-PR`
+5. **Skip**: issues you already commented on in the last 7 days (don't re-triage the same issue)
 
-The goal is steady progress: one issue per day = the backlog shrinks consistently. The maintainer wakes up to either a draft fix PR or a root cause analysis comment — actionable work ready to go.
+The goal is steady progress: the maintainer wakes up to draft fix PRs or root cause analysis comments — actionable work ready to go.
 
 ## Process
 
@@ -148,6 +160,24 @@ Check whether the issue contains actionable information:
 
 If the bug is reproducible and the fix appears scoped (not requiring architectural decisions):
 
+#### Step 4a: Check for existing PRs (MANDATORY)
+
+Before writing any code, search for existing open PRs that already address this issue:
+
+1. Search for open PRs with branch names matching `fix/issue-<number>` (e.g. `fix/issue-15643`)
+2. Search for open PRs whose title or body references this issue number
+3. Check the `auto-fix-prs` cache-memory key for previously created PRs for this issue
+
+**If an existing open PR is found:**
+- Do NOT create a new PR. Instead, add a comment on the issue noting the existing PR (if not already noted).
+- Add label `State: In-PR` to the issue if not already present.
+- If the existing PR has review feedback that hasn't been addressed, consider iterating on it instead of creating a new one — but only if you can push to the branch.
+- `noop` with message: "Existing PR #NNN already addresses this issue."
+
+**If all existing PRs for this issue are closed** (not merged), evaluate whether the previous approach was wrong or just abandoned. If wrong, try a different approach. If abandoned, consider reopening rather than creating yet another PR.
+
+#### Step 4b: Implement the fix
+
 1. **Read AGENTS.md** for repo conventions
 2. **Understand the root cause** by reading the relevant source code
 3. **Implement a fix** on a new branch `fix/issue-<number>`
@@ -162,7 +192,10 @@ The PR description should include:
 - What the fix does
 - Test that verifies the fix
 
-After creating the PR, **register it in cache-memory** so the PR Iteration workflow knows to follow up:
+After creating the PR:
+
+1. **Add label `State: In-PR`** to the issue so future triage runs skip it.
+2. **Register it in cache-memory** so the PR Iteration workflow knows to follow up:
 
 ```json
 // Read existing cache first, then update

@@ -189,7 +189,7 @@ namespace NuGet.Protocol
 
                     await source.CopyToAsync(destination, bufferSize, cancellationToken);
 
-                    ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(Source, destination.Length));
+                    ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(Source, destination.Length, _packageIdentity.Id));
 
                     return true;
                 }

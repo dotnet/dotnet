@@ -98,7 +98,7 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(1, resultsA.Count);
                 Assert.Equal(packageA.Identity, resultsA[0], PackageIdentity.Comparer);
                 Assert.True(resultsA[0].Listed);
-                Assert.Contains("a.1.0.0.nupkg", resultsA[0].DownloadUri.LocalPath);
+                Assert.Contains("a.1.0.0.nupkg", resultsA[0].DownloadUri!.LocalPath);
                 Assert.Equal(2, resultsA[0].Dependencies.Count());
                 Assert.Equal("c", resultsA[0].Dependencies.First().Id);
                 Assert.Equal("[1.0.0, )", resultsA[0].Dependencies.First().VersionRange.ToNormalizedString());
@@ -109,7 +109,7 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(1, resultsX.Count);
                 Assert.Equal(packageX.Identity, resultsX[0], PackageIdentity.Comparer);
                 Assert.True(resultsX[0].Listed);
-                Assert.Contains("x.1.0.0.nupkg", resultsX[0].DownloadUri.LocalPath);
+                Assert.Contains("x.1.0.0.nupkg", resultsX[0].DownloadUri!.LocalPath);
                 Assert.Equal(0, resultsX[0].Dependencies.Count());
 
                 // not found
@@ -158,7 +158,7 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(1, results.Count);
                 Assert.Equal(packageX.Identity, results[0], PackageIdentity.Comparer);
                 Assert.True(results[0].Listed);
-                Assert.Contains("x.1.0.0.nupkg", results[0].DownloadUri.LocalPath);
+                Assert.Contains("x.1.0.0.nupkg", results[0].DownloadUri!.LocalPath);
                 Assert.Equal(0, results[0].Dependencies.Count());
             }
         }
@@ -287,7 +287,7 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(1, results.Count);
                 Assert.Equal(packageA.Identity, results[0], PackageIdentity.Comparer);
                 Assert.True(results[0].Listed);
-                Assert.Contains("a.1.0.0.nupkg", results[0].DownloadUri.LocalPath);
+                Assert.Contains("a.1.0.0.nupkg", results[0].DownloadUri!.LocalPath);
                 Assert.Equal(1, results[0].Dependencies.Count());
 
                 Assert.Equal(0, resultsX.Count);
@@ -338,7 +338,7 @@ namespace NuGet.Protocol.Tests
                 // Assert
                 Assert.Equal(packageA.Identity, result, PackageIdentity.Comparer);
                 Assert.True(result.Listed);
-                Assert.Contains("a.1.0.0.nupkg", result.DownloadUri.LocalPath);
+                Assert.Contains("a.1.0.0.nupkg", result.DownloadUri!.LocalPath);
                 Assert.Equal(1, result.Dependencies.Count());
                 Assert.Equal("x", result.Dependencies.Single().Id);
             }

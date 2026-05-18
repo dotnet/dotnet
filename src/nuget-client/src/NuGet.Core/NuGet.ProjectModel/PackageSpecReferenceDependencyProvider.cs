@@ -215,18 +215,7 @@ namespace NuGet.ProjectModel
                 // Record all frameworks in the project
                 library[KnownLibraryProperties.ProjectFrameworks] = frameworks;
 
-                var targetFrameworkInfo = packageSpec.GetNearestTargetFramework(targetFramework, alias);
-
-                // FrameworkReducer.GetNearest does not consider ATF since it is used for more than just compat
-                if (targetFrameworkInfo.FrameworkName == null && targetFramework is AssetTargetFallbackFramework atfFramework)
-                {
-                    targetFrameworkInfo = packageSpec.GetNearestTargetFramework(atfFramework.AsFallbackFramework(), alias);
-                }
-
-                if (targetFrameworkInfo.FrameworkName == null && targetFramework is DualCompatibilityFramework mcfFramework)
-                {
-                    targetFrameworkInfo = packageSpec.GetNearestTargetFramework(mcfFramework.AsFallbackFramework(), alias);
-                }
+                var targetFrameworkInfo = GetNearestTargetFrameworkWithFallbacks(packageSpec, targetFramework, alias);
 
                 library[KnownLibraryProperties.TargetFrameworkInformation] = targetFrameworkInfo;
 
@@ -250,10 +239,7 @@ namespace NuGet.ProjectModel
 
             if (!_useLegacyAssetTargetFallbackBehavior)
             {
-                if (targetFrameworkInfo.FrameworkName == null && targetFramework is AssetTargetFallbackFramework atfFramework)
-                {
-                    targetFrameworkInfo = packageSpec.GetNearestTargetFramework(atfFramework.AsFallbackFramework(), targetAlias: targetAlias);
-                }
+                targetFrameworkInfo = GetNearestTargetFrameworkWithFallbacks(packageSpec, targetFramework, targetAlias, targetFrameworkInfo);
             }
 
             if (targetFrameworkInfo.FrameworkName == null)
@@ -305,6 +291,49 @@ namespace NuGet.ProjectModel
             }
 
             return dependencies;
+        }
+
+        /// <summary>
+        /// Resolves the nearest target framework with fallback precedence matching the package path:
+        /// 1. Root framework (exact or nearest)
+        /// 2. DualCompatibilityFramework secondary (e.g., native for C++/CLI)
+        /// 3. AssetTargetFallback imports (e.g., net472)
+        /// </summary>
+        private static TargetFrameworkInformation GetNearestTargetFrameworkWithFallbacks(
+            PackageSpec packageSpec,
+            NuGetFramework targetFramework,
+            string targetAlias,
+            TargetFrameworkInformation initialResult = null)
+        {
+            var targetFrameworkInfo = initialResult ?? packageSpec.GetNearestTargetFramework(targetFramework, targetAlias);
+
+            if (targetFrameworkInfo.FrameworkName != null)
+            {
+                return targetFrameworkInfo;
+            }
+
+            // Unwrap the root framework from ATF if present
+            NuGetFramework rootFramework = targetFramework is AssetTargetFallbackFramework atf
+                ? atf.RootFramework
+                : targetFramework;
+
+            // Try DualCompatibilityFramework secondary before ATF imports
+            if (rootFramework is DualCompatibilityFramework dcf)
+            {
+                targetFrameworkInfo = packageSpec.GetNearestTargetFramework(dcf.AsFallbackFramework(), targetAlias);
+                if (targetFrameworkInfo.FrameworkName != null)
+                {
+                    return targetFrameworkInfo;
+                }
+            }
+
+            // Try ATF imports last
+            if (targetFramework is AssetTargetFallbackFramework atfFramework)
+            {
+                targetFrameworkInfo = packageSpec.GetNearestTargetFramework(atfFramework.AsFallbackFramework(), targetAlias);
+            }
+
+            return targetFrameworkInfo;
         }
 
         private List<LibraryDependency> GetDependenciesFromExternalReference(ExternalProjectReference externalReference)

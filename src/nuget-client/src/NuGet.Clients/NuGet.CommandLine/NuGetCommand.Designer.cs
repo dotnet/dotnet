@@ -992,6 +992,15 @@ namespace NuGet.CommandLine {
                 return ResourceManager.GetString("PackageCommandDeterministic", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Specify the timestamps this command should use when creating a deterministic package. Multiple invocations of the pack command will create the exact same package..
+        /// </summary>
+        internal static string PackageCommandDeterministicTimestamp {
+            get {
+                return ResourceManager.GetString("PackageCommandDeterministicTimestamp", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Specifies one or more wildcard patterns to exclude when creating a package..

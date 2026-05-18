@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Net;
 using System.Net.Http;
@@ -39,12 +37,12 @@ namespace NuGet.Protocol
 
         public override HttpMessageHandler MessageHandler => _messageHandler;
 
-        public static Lazy<ICredentialService> CredentialService { get; set; }
+        public static Lazy<ICredentialService>? CredentialService { get; set; }
 
         /// <summary>
         /// Gets or sets a delegate that is to be invoked when authenticated feed credentials are successfully
         /// used.
         /// </summary>
-        public static Action<Uri, ICredentials> CredentialsSuccessfullyUsed { get; set; }
+        public static Action<Uri, ICredentials>? CredentialsSuccessfullyUsed { get; set; }
     }
 }

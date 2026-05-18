@@ -406,7 +406,7 @@ namespace NuGet.Protocol.Plugins
             Message request,
             CancellationToken cancellationToken)
         {
-            var message = new Message(request.RequestId, MessageType.Cancel, request.Method);
+            var message = MessageUtilities.Create(request.RequestId, MessageType.Cancel, request.Method);
 
             await DispatchWithExistingContextAsync(connection, message, cancellationToken);
         }
@@ -419,19 +419,17 @@ namespace NuGet.Protocol.Plugins
         {
             Message message;
 
-            var jsonPayload = JsonSerializationUtilities.FromObject(fault);
-
             if (request == null)
             {
                 var requestId = _idGenerator.GenerateUniqueId();
 
-                message = new Message(requestId, MessageType.Fault, MessageMethod.None, jsonPayload);
+                message = new Message(requestId, MessageType.Fault, MessageMethod.None, fault);
 
                 await connection.SendAsync(message, cancellationToken);
             }
             else
             {
-                message = new Message(request.RequestId, MessageType.Fault, request.Method, jsonPayload);
+                message = new Message(request.RequestId, MessageType.Fault, request.Method, fault);
 
                 await DispatchWithExistingContextAsync(connection, message, cancellationToken);
             }

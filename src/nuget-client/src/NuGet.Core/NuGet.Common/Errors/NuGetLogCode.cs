@@ -381,7 +381,8 @@ namespace NuGet.Common
         NU1702 = 1702,
 
         /// <summary>
-        /// MacCatalyst platform fell back to xamarin.ios - Added in 6.0, removed in 6.1.
+        /// Package uses a deprecated legacy Xamarin framework (e.g. MonoAndroid) instead of a modern .NET TFM.
+        /// Originally added in 6.0 for MacCatalyst/Xamarin.iOS (removed in 6.1), reused for MonoAndroid in 11.0.
         /// </summary>
         NU1703 = 1703,
 
@@ -1076,5 +1077,10 @@ namespace NuGet.Common
         /// InvalidUndottedFrameworkWarning
         /// </summary>
         NU5501 = 5501,
+
+        /// <summary>
+        /// Invalid deterministic timestamp
+        /// </summary>
+        NU5502 = 5502,
     }
 }

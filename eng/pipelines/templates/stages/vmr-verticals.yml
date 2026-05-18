@@ -158,6 +158,8 @@ stages:
           targetArchitecture: x64
           enableIBCOptimization: ${{ variables.ibcEnabled }}
           brandingType: ${{ variables.brandingType }}
+          sourceIndexName: dotnet-dotnet-windows
+          sourceIndexIncludeRepos: 'winforms wpf windowsdesktop'
 
     - ${{ if containsValue(parameters.verifications, 'unified-build-windows-x86') }}:
       - template: ../jobs/vmr-build.yml

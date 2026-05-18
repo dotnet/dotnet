@@ -34,7 +34,7 @@ namespace NuGet.Commands
             RestoreTargetGraph targetGraph,
             LibraryIncludeFlags dependencyType)
         {
-            var (lockFileTargetLibrary, _) = CreateLockFileTargetLibrary(
+            var (lockFileTargetLibrary, _, _, _) = CreateLockFileTargetLibrary(
                 aliases: null,
                 library,
                 package,
@@ -57,8 +57,8 @@ namespace NuGet.Commands
         /// <param name="targetFrameworkOverride">The original framework if the asset selection is happening for a fallback framework.</param>
         /// <param name="dependencies">The dependencies of this package.</param>
         /// <param name="cache">The lock file build cache.</param>
-        /// <returns>The LockFileTargetLibrary, and whether a fallback framework criteria was used to select it.</returns>
-        internal static (LockFileTargetLibrary, bool) CreateLockFileTargetLibrary(
+        /// <returns>The LockFileTargetLibrary, whether a fallback framework criteria was used to select it, the framework selected for compile assets, and the framework selected for runtime assets.</returns>
+        internal static (LockFileTargetLibrary, bool, NuGetFramework, NuGetFramework) CreateLockFileTargetLibrary(
                 string aliases,
                 LockFileLibrary library,
                 LocalPackageInfo package,
@@ -75,6 +75,8 @@ namespace NuGet.Commands
                 () =>
                 {
                     LockFileTargetLibrary lockFileLib = null;
+                    NuGetFramework compileAssetFramework = null;
+                    NuGetFramework runtimeAssetFramework = null;
                     // This will throw an appropriate error if the nuspec is missing
                     var nuspec = package.Nuspec;
 
@@ -86,7 +88,7 @@ namespace NuGet.Commands
 
                     for (var i = 0; i < orderedCriteriaSets.Count; i++)
                     {
-                        lockFileLib = CreateLockFileTargetLibrary(aliases, library, package, targetGraph.Conventions, dependencyType,
+                        (lockFileLib, compileAssetFramework, runtimeAssetFramework) = CreateLockFileTargetLibrary(aliases, library, package, targetGraph.Conventions, dependencyType,
                              framework, runtimeIdentifier, contentItems, nuspec, packageTypes, orderedCriteriaSets[i].orderedCriteria);
                         // Check if compatible assets were found.
                         // If no compatible assets were found and this is the last check
@@ -108,7 +110,7 @@ namespace NuGet.Commands
 
                     lockFileLib.Freeze();
 
-                    return (lockFileLib, fallbackUsed);
+                    return (lockFileLib, fallbackUsed, compileAssetFramework, runtimeAssetFramework);
                 });
         }
 
@@ -165,7 +167,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Populate assets for a <see cref="LockFileLibrary"/>.
         /// </summary>
-        internal static LockFileTargetLibrary CreateLockFileTargetLibrary(
+        internal static (LockFileTargetLibrary lockFileLib, NuGetFramework compileAssetFramework, NuGetFramework runtimeAssetFramework) CreateLockFileTargetLibrary(
             string aliases,
             LockFileLibrary library,
             LocalPackageInfo package,
@@ -198,6 +200,7 @@ namespace NuGet.Commands
                 orderedCriteria,
                 contentItems,
                 applyAliases,
+                out NuGetFramework compileFramework,
                 managedCodeConventions.Patterns.CompileRefAssemblies,
                 managedCodeConventions.Patterns.CompileLibAssemblies);
 
@@ -205,6 +208,8 @@ namespace NuGet.Commands
             lockFileLib.RuntimeAssemblies = GetLockFileItems(
                 orderedCriteria,
                 contentItems,
+                additionalAction: null,
+                out NuGetFramework runtimeFramework,
                 managedCodeConventions.Patterns.RuntimeAssemblies);
 
             // Embed
@@ -242,7 +247,7 @@ namespace NuGet.Commands
             // Apply filters from the <references> node in the nuspec
             ApplyReferenceFilter(lockFileLib, framework, nuspec);
 
-            return lockFileLib;
+            return (lockFileLib, compileFramework, runtimeFramework);
         }
 
         private static void AddMSBuildAssets(
@@ -659,15 +664,17 @@ namespace NuGet.Commands
         }
 
         /// <summary>
-        /// Create lock file items for the best matching group.
+        /// Create lock file items for the best matching group, and optionally output the selected framework.
         /// </summary>
         /// <remarks>Enumerate this once after calling.</remarks>
         private static IList<LockFileItem> GetLockFileItems(
             List<SelectionCriteria> criteria,
             ContentItemCollection items,
             Action<LockFileItem> additionalAction,
+            out NuGetFramework selectedFramework,
             params PatternSet[] patterns)
         {
+            selectedFramework = null;
             List<LockFileItem> result = null;
             // Loop through each criteria taking the first one that matches one or more items.
             foreach (var managedCriteria in criteria)
@@ -678,6 +685,12 @@ namespace NuGet.Commands
 
                 if (group != null)
                 {
+                    if (group.Properties.TryGetValue(
+                        ManagedCodeConventions.PropertyNames.TargetFrameworkMoniker, out object tfmObj))
+                    {
+                        selectedFramework = tfmObj as NuGetFramework;
+                    }
+
                     result = new(group.Items.Count);
                     foreach (var item in group.Items.NoAllocEnumerate())
                     {
@@ -711,7 +724,7 @@ namespace NuGet.Commands
             ContentItemCollection items,
             params PatternSet[] patterns)
         {
-            return GetLockFileItems(criteria, items, additionalAction: null, patterns);
+            return GetLockFileItems(criteria, items, additionalAction: null, out _, patterns);
         }
 
         /// <summary>
