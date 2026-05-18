@@ -24,7 +24,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 public partial class WriteSbaUsageReport : Task
 {
     private const string SbaRepoName = "source-build-assets";
-    private const string ErrorCode = "SBRP001";
+    private const string ErrorCode = "SBA001";
 
     private readonly Dictionary<string, PackageInfo> _sbaPackages = [];
 

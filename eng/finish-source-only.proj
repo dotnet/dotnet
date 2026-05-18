@@ -13,7 +13,7 @@
     <ResultingPrebuiltPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsLogDir)', 'prebuilt-packages'))</ResultingPrebuiltPackagesDir>
 
     <!-- SBRP usage report is diagnostic-only and should not fail the build -->
-    <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBRP001</MSBuildWarningsNotAsErrors>
+    <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBA001</MSBuildWarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
