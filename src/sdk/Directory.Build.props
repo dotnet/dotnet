@@ -78,6 +78,12 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
 
+  <!-- Disable NuGet audit in official builds. NuGet Restore does not respect
+       WarningsNotAsErrors, so audit findings become errors via TreatWarningsAsErrors. -->
+  <PropertyGroup Condition="'$(OfficialBuild)' == 'true'">
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
