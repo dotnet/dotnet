@@ -22,7 +22,6 @@
     <!-- For each property in this group, there is an appropriate package dependency in eng/Version.Details.xml -->
     <!-- All .NET package dependencies have to use proper version property names -->
   <PropertyGroup>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion Condition="'$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion Condition="'$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)' == ''">6.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftWebXdtPackageVersion Condition="'$(MicrosoftWebXdtPackageVersion)' == ''">3.2.0</MicrosoftWebXdtPackageVersion>
     <SystemComponentModelCompositionPackageVersion Condition="'$(SystemComponentModelCompositionPackageVersion)' == ''">4.5.0</SystemComponentModelCompositionPackageVersion>
@@ -55,7 +54,6 @@
     <PackageVersion Include="Microsoft.DotNet.XliffTasks" Version="$(MicrosoftDotNetXliffTasksVersion)" />
     <PackageVersion Include="Microsoft.DotNet.SignTool" Version="10.0.0-beta.25367.5" />
     <PackageVersion Include="Microsoft.Extensions.CommandLineUtils.Sources" Version="3.0.0-preview6.19253.5" />
-    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="17.10.40173" />
     <PackageVersion Include="Microsoft.NET.StringTools" Version="$(MicrosoftBuildVersion)" />
@@ -183,7 +181,6 @@
       <_allowBuildFromSourcePackage Include="Microsoft.DotNet.Build.Tasks.Feed" />
       <_allowBuildFromSourcePackage Include="Microsoft.DotNet.XliffTasks" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.CommandLineUtils.Sources" />
-      <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileProviders.Abstractions" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileSystemGlobbing" />
       <_allowBuildFromSourcePackage Include="Microsoft.Web.Xdt" />
       <_allowBuildFromSourcePackage Include="Newtonsoft.Json" />
