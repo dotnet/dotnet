@@ -146,21 +146,21 @@
     </Touch>
   </Target>
 
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WriteSBRPUsageReport" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="ReportSbrpUsage"
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WriteSbaUsageReport" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="ReportSbaUsage"
           AfterTargets="Build"
           DependsOnTargets="ResolveProjectReferences"
-          Condition="'$(ReportSbrpUsage)' == 'true'">
+          Condition="'$(ReportSbaUsage)' == 'true'">
     <ItemGroup>
       <ProjectAssetsJsonFile Include="$(ArtifactsDir)**/project.assets.json" />
       <ProjectAssetsJsonFile Include="$(SrcDir)**/artifacts/**/project.assets.json" />
     </ItemGroup>
 
-    <WriteSbrpUsageReport ContinueOnError="WarnAndContinue"
-                          SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
-                          SbaPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-assets"
-                          ProjectAssetsJsons="@(ProjectAssetsJsonFile)"
-                          OutputPath="$(ArtifactsLogDir)" />
+    <WriteSbaUsageReport ContinueOnError="WarnAndContinue"
+                         SbaRepoSrcPath="$(SourceBuildAssetsRepoSrcDir)"
+                         SbaPackagesPath="$(ArtifactsShippingPackagesDir)/source-build-assets"
+                         ProjectAssetsJsons="@(ProjectAssetsJsonFile)"
+                         OutputPath="$(ArtifactsLogDir)" />
   </Target>
 
   <Target Name="DetermineSourceBuiltSdkNonStableVersion"

@@ -17,11 +17,11 @@ using NuGet.ProjectModel;
 namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
 /// <summary>
-/// Reports the usage of the source-build-reference-packages:
+/// Reports the usage of the source-build-assets packages:
 /// 1. SBA references
 /// 2. Unreferenced packages
 /// </summary>
-public partial class WriteSbrpUsageReport : Task
+public partial class WriteSbaUsageReport : Task
 {
     private const string SbaRepoName = "source-build-assets";
     private const string ErrorCode = "SBRP001";
