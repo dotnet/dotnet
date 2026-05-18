@@ -301,7 +301,7 @@ Periodically, packages that are unreferenced by the product source build should 
 unreferenced packages build up over time as the product repositories upgrade their dependencies to newer
 versions. Ideally this cleanup would be performed around RC1 timeframe as the product locks down in preparation
 for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbaUsage`
-option to generate an SBA package usage report. The resulting report will be written to
+option to generate a package usage report. The resulting report will be written to
 `artifacts/log/<configuration>/sbaPackageUsage.json`.
 
 ``` bash
