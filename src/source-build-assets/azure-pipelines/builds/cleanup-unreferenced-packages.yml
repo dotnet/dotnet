@@ -4,7 +4,7 @@ parameters:
 - name: artifactName
   type: string
   default: SB_CentOSStream10_Online_MsftSdk_x64_BuildLogs_Attempt1
-  displayName: (Optional) Source Build Artrifact Name to retrieve sbaPackageUsage.json from
+  displayName: (Optional) Source Build Artifact Name to retrieve sbaPackageUsage.json from
 
 - name: skipPackages
   type: string
