@@ -119,13 +119,11 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <_SourceBuiltSymbolsAllTarballPath>@(_SourceBuiltSymbolsAllTarball)</_SourceBuiltSymbolsAllTarballPath>
+      <_SourceBuiltSymbolsAllTarballCount>@(_SourceBuiltSymbolsAllTarball->Count())</_SourceBuiltSymbolsAllTarballCount>
     </PropertyGroup>
 
-    <Error Condition="'$(_SourceBuiltSymbolsAllTarballPath)' == ''"
-           Text="Could not locate the shared components symbols tarball." />
-    <Error Condition="$(_SourceBuiltSymbolsAllTarballPath.Contains(';'))"
-           Text="Found multiple shared components symbols tarballs: $(_SourceBuiltSymbolsAllTarballPath). Expected exactly one." />
+    <Error Condition="'$(_SourceBuiltSymbolsAllTarballCount)' != '1'"
+           Text="Expected exactly one shared components symbols tarball; found $(_SourceBuiltSymbolsAllTarballCount): @(_SourceBuiltSymbolsAllTarball, ';')" />
 
     <!-- Move the symbols tarball out of ArtifactsAssetsDir to the obj directory so it doesn't get
          confused with the current repo's symbols tarball that is later produced into ArtifactsAssetsDir. -->
