@@ -41,6 +41,7 @@ stages:
       withPreviousSDK: false
       createSourceArtifact: false
       brandingType: ${{ variables.brandingType }}
+      setDeterministicTimestamp: true
 
   # Microsoft build (Linux x64, cross-build, unsigned). Both Build1 and Build2 stages
   # produce delay-signed (zero-filled signature) outputs; they should be byte-identical
@@ -58,6 +59,7 @@ stages:
       targetArchitecture: x64
       runTests: false
       brandingType: ${{ variables.brandingType }}
+      setDeterministicTimestamp: true
 
 - stage: Build2
   dependsOn: []
@@ -84,6 +86,7 @@ stages:
       withPreviousSDK: false
       createSourceArtifact: false
       brandingType: ${{ variables.brandingType }}
+      setDeterministicTimestamp: true
 
   - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
     parameters:
@@ -98,6 +101,7 @@ stages:
       targetArchitecture: x64
       runTests: false
       brandingType: ${{ variables.brandingType }}
+      setDeterministicTimestamp: true
 
 # Compare stage: download both stages' SDK tarballs and run the reproducibility tests.
 - stage: Compare

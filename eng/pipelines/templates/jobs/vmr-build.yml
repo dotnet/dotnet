@@ -163,6 +163,15 @@ parameters:
   type: boolean
   default: false
 
+# When true, export SOURCE_DATE_EPOCH (Unix seconds derived from
+# System.PipelineStartTime) on every build script invocation in this job so that
+# NuGet pack stamps the same wall-clock time into every .nupkg ZIP envelope.
+# Enabled by pipelines that need byte-stable package envelopes across builds
+# (e.g. reproducibility validation).
+- name: setDeterministicTimestamp
+  type: boolean
+  default: false
+
 # Additional job dependencies beyond reuseBuildArtifactsFrom
 - name: dependsOn
   type: object
@@ -416,6 +425,20 @@ jobs:
         sbomEnabled: false
 
   steps:
+  - ${{ if eq(parameters.setDeterministicTimestamp, 'true') }}:
+    # Compute SourceDateEpoch (Unix seconds since epoch) from System.PipelineStartTime
+    # and export it via SOURCE_DATE_EPOCH on every build script invocation in this job
+    # so that every NuGet pack invocation stamps the same wall-clock time into its
+    # .nupkg ZIP envelope. System.PipelineStartTime is set once per pipeline run and
+    # is identical across all stages/jobs in the run, so two independent builds in
+    # the same run get matching package envelopes.
+    # AzDO YAML expressions cannot compute Unix-epoch seconds, so the conversion is
+    # done in this pwsh step (cross-platform: Windows, Linux, macOS).
+    - pwsh: |
+        $epoch = [DateTimeOffset]::Parse('$(System.PipelineStartTime)').ToUnixTimeSeconds()
+        Write-Host "##vso[task.setvariable variable=SourceDateEpoch]$epoch"
+      displayName: Compute SourceDateEpoch
+
   - checkout: self
     fetchDepth: 1
     retryCountOnTaskFailure: 5
@@ -594,8 +617,10 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      ${{ if eq(parameters.sign, 'true') }}:
-        env:
+      env:
+        ${{ if eq(parameters.setDeterministicTimestamp, 'true') }}:
+          SOURCE_DATE_EPOCH: $(SourceDateEpoch)
+        ${{ if eq(parameters.sign, 'true') }}:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           ${{ if eq(parameters.signDac, 'true') }}:
             ESRP_TOKEN: $(System.AccessToken)
@@ -827,8 +852,10 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if eq(parameters.sign, 'true') }}:
-          env:
+        env:
+          ${{ if eq(parameters.setDeterministicTimestamp, 'true') }}:
+            SOURCE_DATE_EPOCH: $(SourceDateEpoch)
+          ${{ if eq(parameters.sign, 'true') }}:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
