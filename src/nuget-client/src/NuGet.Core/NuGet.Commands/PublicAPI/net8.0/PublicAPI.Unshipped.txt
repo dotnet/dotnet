@@ -3,5 +3,3 @@
 ~NuGet.Commands.PackArgs.DeterministicTimestamp.set -> void
 const NuGet.Commands.Restore.Utility.PackageSpecFactory.EnvironmentVariableName = "NUGET_USE_NEW_PACKAGESPEC_FACTORY" -> string!
 NuGet.Commands.Restore.IProject.GetGlobalProperty(string! propertyName) -> string?
-static NuGet.Commands.Restore.Utility.PackageSpecFactory.ApplySettings(NuGet.ProjectModel.PackageSpec! packageSpec, NuGet.Configuration.ISettings! settings) -> void
-static NuGet.Commands.Restore.Utility.PackageSpecFactory.GetIntermediatePackageSpec(NuGet.Commands.Restore.IProject! project) -> NuGet.ProjectModel.PackageSpec?

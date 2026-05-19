@@ -88,6 +88,10 @@ If triggered by `schedule` or `workflow_dispatch`, check ALL your PRs and iterat
 - **Never comment if a human commented in the last 48 hours** — they're handling it.
 - **Prefer a small number of clear follow-up commits** over rewriting PR history; do not amend/rebase or force-push PR branches.
 
+## Security Concerns Are Out of Scope
+
+This workflow does not assess, discuss, or make recommendations about potential security implications of PRs or review feedback. If review feedback or a PR description raises a security concern, do not evaluate whether the concern is valid, do not discuss the potential impact, and do not include any security analysis in your reply or commits. Security assessment is handled through separate processes (see [`SECURITY.md`](../../SECURITY.md)).
+
 ## Process
 
 ### On `pull_request_review` or `issue_comment`
