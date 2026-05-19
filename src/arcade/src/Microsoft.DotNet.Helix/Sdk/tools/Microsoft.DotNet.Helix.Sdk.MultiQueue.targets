@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <Target Name="ValidateTargetQueues">
-    <Telemetry EventName="NETCORE_ENGINEERING_TELEMETRY" EventData="Category=Build" />
     <Error Condition="'@(HelixTargetQueue)' == ''" Text="You must specify at least one target queue to send a job to helix. Use the HelixTargetQueues property or HelixTargetQueue items." />
   </Target>
 

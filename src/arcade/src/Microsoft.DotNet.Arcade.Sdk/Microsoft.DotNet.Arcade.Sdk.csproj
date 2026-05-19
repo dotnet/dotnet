@@ -47,13 +47,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
-    <ProjectReference Include="..\Microsoft.DotNet.ArcadeLogging\Microsoft.DotNet.ArcadeLogging.csproj"
-      ReferenceOutputAssembly="false"
-      SkipGetTargetFrameworkProperties="true"
-      Publish="false"
-      Private="false"
-      PrivateAssets="all"
-      ExcludeAssets="runtime" />
   </ItemGroup>
 
   <Target Name="_GenerateSdkVersionFile" Inputs="$(MSBuildAllProjects)" Outputs="$(_GeneratedVersionFilePath)" BeforeTargets="GenerateNuSpec">
@@ -82,15 +75,5 @@
       <FileWrites Include="$(_GeneratedVersionFilePath)" />
     </ItemGroup>
   </Target>
-
-  <ItemGroup>
-    <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(NetMinimum)\Microsoft.DotNet.ArcadeLogging.dll"
-          Pack="true"
-          PackagePath="toolset\net\Microsoft.DotNet.ArcadeLogging.dll" />
-    <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\$(NetFrameworkToolCurrent)\Microsoft.DotNet.ArcadeLogging.dll"
-          Pack="true"
-          PackagePath="toolset\netframework\Microsoft.DotNet.ArcadeLogging.dll"
-          Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-  </ItemGroup>
 
 </Project>

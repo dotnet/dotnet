@@ -169,16 +169,16 @@ The `ErrorMessage` value needs to be updated with an error message that meets th
     For example, for the following error:
 
     ```log
-    ##[error].dotnet/sdk/6.0.100-rc.1.21411.28/NuGet.RestoreEx.targets(19,5): error : (NETCORE_ENGINEERING_TELEMETRY=Restore) Failed to retrieve information about 'Microsoft.Extensions.Hosting.WindowsServices' from remote source 'https://pkgs.dev.azure.com/dnceng/9ee6d478-d288-47f7-aacc-f6e6d082ae6d/_packaging/c9f8ac11-6bd8-4926-8306-f075241547f7/nuget/v3/flat2/microsoft.extensions.hosting.windowsservices/index.json'.
+    ##[error].dotnet/sdk/6.0.100-rc.1.21411.28/NuGet.RestoreEx.targets(19,5): error : Failed to retrieve information about 'Microsoft.Extensions.Hosting.WindowsServices' from remote source 'https://pkgs.dev.azure.com/dnceng/9ee6d478-d288-47f7-aacc-f6e6d082ae6d/_packaging/c9f8ac11-6bd8-4926-8306-f075241547f7/nuget/v3/flat2/microsoft.extensions.hosting.windowsservices/index.json'.
     ```
 
-    We could choose this part of the message: `(NETCORE_ENGINEERING_TELEMETRY=Restore) Failed to retrieve information`. This is a good option because it targets a particular problem but excludes details of the build, thus making it possible for this same error to match with other builds.
+    We could choose this part of the message: `Failed to retrieve information`. This is a good option because it targets a particular problem but excludes details of the build, thus making it possible for this same error to match with other builds.
 
 After selecting the message, fill `ErrorMessage` value:
 
 ```json
 { 
-    "ErrorMessage":"(NETCORE_ENGINEERING_TELEMETRY=Restore) Failed to retrieve information" 
+    "ErrorMessage":"Failed to retrieve information" 
 }
 ```
 

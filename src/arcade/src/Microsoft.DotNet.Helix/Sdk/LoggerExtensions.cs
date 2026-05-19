@@ -11,9 +11,6 @@ namespace Microsoft.DotNet.Helix.Sdk
 {
     public static class LoggerExtensions
     {
-        private const string EventName = "NETCORE_ENGINEERING_TELEMETRY";
-        private const string CategoryKey = "Category";
-
         private static readonly AsyncLocal<ImmutableStack<string>> s_localCategoryStack = new AsyncLocal<ImmutableStack<string>>();
 
         private static ImmutableStack<string> CategoryStack
@@ -28,15 +25,9 @@ namespace Microsoft.DotNet.Helix.Sdk
             {
                 throw new ArgumentNullException(nameof(log));
             }
-            CategoryStack = CategoryStack.Push(category.Value);
-            UpdateCategory(log);
-            return new FailureCategoryScope(log);
-        }
 
-        private static void UpdateCategory(TaskLoggingHelper log)
-        {
-            string currentCategory = CategoryStack.IsEmpty ? "" : CategoryStack.Peek();
-            log.LogTelemetry(EventName, new Dictionary<string, string> {{CategoryKey, currentCategory}});
+            CategoryStack = CategoryStack.Push(category.Value);
+            return new FailureCategoryScope(log);
         }
 
         public static void LogError(this TaskLoggingHelper log, FailureCategory category, string message, params object[] messageArgs)
@@ -75,7 +66,6 @@ namespace Microsoft.DotNet.Helix.Sdk
                 if (_log == null)
                     return;
                 CategoryStack = CategoryStack.Pop();
-                UpdateCategory(_log);
                 _log = null;
             }
         }
