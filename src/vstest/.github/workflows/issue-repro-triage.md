@@ -2,13 +2,9 @@
 description: >
   Triages new issues for completeness and reproducibility.
   Validates structured repro steps when present.
-  Attempts to fix reproducible bugs by creating draft PRs.
+  Attempts to fix reproducible bugs by creating PRs.
 
 on:
-  issues:
-    types: [opened]
-  issue_comment:
-    types: [created]
   schedule: every 12h
   workflow_dispatch:
 
@@ -41,7 +37,7 @@ safe-outputs:
   remove-labels:
     max: 15
   create-pull-request:
-    draft: true
+    draft: false
     title-prefix: "[fix] "
     max: 3
     allowed-base-branches: ["main", "rel/*"]
@@ -73,8 +69,12 @@ You are the Issue Triage agent for `${{ github.repository }}`. Your job is to dr
 
 - **Never post more than one comment per issue per run.**
 - **Prefer editing your previous comment** over adding a new one.
-- **Never comment if a human maintainer commented in the last 48 hours** — unless this run was triggered BY that maintainer's comment (`issue_comment` event). In that case, the maintainer wants you to act.
+- **Never comment if a human maintainer commented in the last 48 hours.**
 - **Never override human-applied labels** like `State: Blocked`, `State: Approved`, or `Needs: Design`.
+
+## Security Concerns Are Out of Scope
+
+This workflow does not assess, discuss, or make recommendations about potential security implications of issues. If an issue claims to describe a security vulnerability, do not evaluate whether the claim is valid, do not discuss the potential impact, and do not include any security analysis in the triage report or fix attempt. Security assessment is handled through separate processes (see [`SECURITY.md`](../../SECURITY.md)).
 
 ## Existing Labels to Use
 
@@ -86,18 +86,6 @@ Use ONLY these existing repository labels — do not create new labels:
 - `Needs: Triage :mag:` — default label from issue template, remove once triaged
 
 ## Triggers
-
-### On `issues.opened`
-
-Evaluate the new issue immediately.
-
-### On `issue_comment` (maintainer comments on an issue)
-
-A maintainer commented on an issue — they likely added context, repro steps, or clarification. Treat this as a signal to act on the issue:
-
-1. Read the full issue and all comments.
-2. If the maintainer's comment explicitly says to hold off (e.g., "don't triage this yet", "leave this alone", "not now", "skip this") → `noop`.
-3. Otherwise, treat the issue as if it was just opened — evaluate completeness, attempt repro if possible, attempt fix if reproducible. The maintainer's comment likely provides additional context that makes the issue more actionable.
 
 ### On `schedule` (every 12 hours)
 
@@ -181,9 +169,30 @@ Before writing any code, search for existing open PRs that already address this 
 1. **Read AGENTS.md** for repo conventions
 2. **Understand the root cause** by reading the relevant source code
 3. **Implement a fix** on a new branch `fix/issue-<number>`
-4. **Write a test** that fails without the fix and passes with it
+4. **Write tests** — see testing requirements below
 5. **Build and run tests** to verify nothing is broken
 6. **Create a draft PR** referencing the issue
+
+##### Testing Requirements
+
+Every fix **must** include an acceptance test (end-to-end) unless the exact scenario is already covered by an existing acceptance test. Unit tests alone are not sufficient.
+
+**Acceptance tests** live in `test/Microsoft.TestPlatform.Acceptance.IntegrationTests/`. They exercise the real test platform pipeline — building and running actual test projects through `dotnet test` or the translation layer — and verify externally observable behavior (console output, TRX content, exit codes, data collector artifacts, etc.).
+
+**Why this matters:** Unit tests with mocks verify internal wiring but miss integration failures — wrong event ordering, serialization issues, host process boundaries, adapter interactions. The bug being fixed was already "tested" by internal logic; what was missing is proof that the scenario works end-to-end.
+
+**How to decide:**
+1. Search `test/Microsoft.TestPlatform.Acceptance.IntegrationTests/` for existing tests covering the same scenario (same framework, same feature, same failure mode).
+2. If an existing test already exercises the exact code path that was broken → add a comment in the PR noting which test covers it. No new acceptance test needed.
+3. If no existing test covers it → write one. Follow the patterns in the acceptance test project (test assets under `test/TestAssets/`, `AcceptanceTestBase` helpers, `InvokeVsTestConsole`/`InvokeDotnetTest` for execution).
+
+**Acceptance test checklist:**
+- [ ] Uses a real test project (existing test asset or new minimal one under `test/TestAssets/`)
+- [ ] Runs through the actual test host (not mocked)
+- [ ] Asserts on externally visible output (TRX results, stdout, exit code, artifacts)
+- [ ] Fails without the fix applied (verify by temporarily reverting the source change)
+
+Unit tests are still welcome as supplementary coverage for edge cases and internal invariants, but they don't replace the acceptance test requirement.
 
 The PR description should include:
 - 🤖 disclosure that this is an automated fix
