@@ -53,6 +53,7 @@
 
   <ItemGroup Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
     <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
+    <_SharedComponentsSymbolsSourceTarball Include="$(CustomSharedComponentsArtifactsPath)/assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
   </ItemGroup>
 
   <Target Name="CopyCustomSharedComponentAssets"
@@ -94,7 +95,7 @@
 
   <Target Name="ExtractSharedComponentsSymbols"
           Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''"
-          Inputs="$(SharedComponentAssetManifests)"
+          Inputs="$(SharedComponentsPrereqsArchiveFile);@(_SharedComponentsSymbolsSourceTarball)"
           Outputs="$(BaseIntermediateOutputPath)ExtractSharedComponentsSymbols.complete">
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
 
@@ -102,11 +103,6 @@
          A wildcard match in ArtifactsAssetsDir is unsafe because that location may also contain the
          current repo's symbols tarball (produced later by RepackageSymbols and possibly still present
          from a previous build invocation). -->
-
-    <!-- Custom path case: locate the source tarball directly. -->
-    <ItemGroup Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
-      <_SharedComponentsSymbolsSourceTarball Include="$(CustomSharedComponentsArtifactsPath)/assets/**/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
-    </ItemGroup>
 
     <!-- Prereqs archive case: list the matching member(s) inside the archive to resolve the filename. -->
     <Exec Command="tar -tzf $(SharedComponentsPrereqsArchiveFile) --wildcards 'assets/*/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)'"
