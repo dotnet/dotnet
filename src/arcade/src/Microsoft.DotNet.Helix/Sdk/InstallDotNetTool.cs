@@ -145,7 +145,7 @@ namespace Microsoft.DotNet.Helix.Sdk
 
             if (!string.IsNullOrEmpty(Source))
             {
-                args.Add("--add-source");
+                args.Add("--source");
                 args.Add(Source);
             }
 
