@@ -175,7 +175,7 @@
       </trans-unit>
       <trans-unit id="ErrorInvalidTimestamp">
         <source>Invalid timestamp: '{0}'</source>
-        <target state="new">Invalid timestamp: '{0}'</target>
+        <target state="translated">잘못된 타임스탬프: '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorManifestFileNotFound">
