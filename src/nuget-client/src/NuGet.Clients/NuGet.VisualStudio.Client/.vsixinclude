@@ -58,9 +58,7 @@ NuGet.Versioning.dll
 NuGet.Versioning.resources.dll
 
 # 3rd party dlls to keep
-Microsoft.Extensions.FileProviders.Abstractions.dll
 Microsoft.Extensions.FileSystemGlobbing.dll
-Microsoft.Extensions.Primitives.dll
 Microsoft.Web.XmlTransform.dll
 Microsoft.Web.XmlTransform.resources.dll
 
