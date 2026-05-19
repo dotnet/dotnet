@@ -31,10 +31,10 @@
       "commitSha": "87b9cb458b22091afbb55e246d7851eb623e516a"
     },
     {
-      "barId": 313855,
+      "barId": 314894,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "db04688c99efadc619ef6765025b9b26d69ac580"
+      "commitSha": "8e5b9c338fe218d8f5638becb2a3887eae372639"
     },
     {
       "barId": 314657,
