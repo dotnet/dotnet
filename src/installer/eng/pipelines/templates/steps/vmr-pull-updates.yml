@@ -44,7 +44,7 @@ steps:
     ./eng/vmr-sync.sh
     --vmr ${{ parameters.vmrPath }}
     --tmp $(Agent.TempDirectory)
-    --azdev-pat '$(dn-bot-all-orgs-code-r)'
+    --azdev-pat '$(AzdoToken)'
     --branch ${{ parameters.vmrBranch }}
     --repository "installer:${{ parameters.targetRef }}"
     --recursive
