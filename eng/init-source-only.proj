@@ -51,16 +51,16 @@
            Text="Shared components must be provided as input to a build which does not produce shared components." />
   </Target>
 
+  <ItemGroup Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
+    <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
+  </ItemGroup>
+
   <Target Name="CopyCustomSharedComponentAssets"
           Condition="'$(CustomSharedComponentsArtifactsPath)' != ''"
-          Inputs="$(SharedComponentAssetManifests)"
+          Inputs="@(SharedComponentsAssets)"
           Outputs="$(BaseIntermediateOutputPath)CopyCustomSharedComponentAssets.complete">
 
     <!-- Copy assets from custom shared components artifacts path to artifacts directory. -->
-    <ItemGroup>
-      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
-    </ItemGroup>
-
     <Copy SourceFiles="@(SharedComponentsAssets)"
           DestinationFolder="$(ArtifactsDir)/assets/%(RecursiveDir)"
           UseSymbolicLinksIfPossible="true"
