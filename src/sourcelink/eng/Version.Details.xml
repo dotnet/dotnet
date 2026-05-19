@@ -2,13 +2,13 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="sourcelink" Sha="913bfeebf747b38cf6ea89a64787ce7245969915" BarId="307550" />
   <ProductDependencies>
-    <Dependency Name="System.CommandLine" Version="2.0.8">
+    <Dependency Name="System.CommandLine" Version="2.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>94ea82652cdd4e0f8046b5bd5becbd11461482ca</Sha>
+      <Sha>ce4003e1780ffc11da98499334112b75a598837a</Sha>
     </Dependency>
-    <Dependency Name="System.IO.Hashing" Version="10.0.8">
+    <Dependency Name="System.IO.Hashing" Version="10.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>94ea82652cdd4e0f8046b5bd5becbd11461482ca</Sha>
+      <Sha>ce4003e1780ffc11da98499334112b75a598837a</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
