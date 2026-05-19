@@ -537,8 +537,12 @@
 
   <Target Name="_AddFilesToNuGetPackage" BeforeTargets="_GetPackageFiles">
 
+    <!-- Set _GettingFilesForPackage=true to differentiate global properties for this nested MSBuild call
+         and avoid an intermittent circular dependency (MSB4006) when the scheduler builds the same project
+         concurrently with identical global properties. See https://github.com/dotnet/msbuild/issues/13599 -->
     <MSBuild Projects="$(MSBuildProjectFullPath)"
           Targets="_GetAllSharedFrameworkFiles"
+          Properties="_GettingFilesForPackage=true"
           RemoveProperties="NoBuild">
       <Output TaskParameter="TargetOutputs" ItemName="_FilesToPackage" />
     </MSBuild>
@@ -570,8 +574,11 @@
 
   <Target Name="GetFilesToPublish">
 
+    <!-- Set _GettingFilesForPublish=true to differentiate global properties for this nested MSBuild call
+         and avoid an intermittent circular dependency (MSB4006). -->
     <MSBuild Projects="$(MSBuildProjectFullPath)"
           Targets="_GetAllSharedFrameworkFiles"
+          Properties="_GettingFilesForPublish=true"
           RemoveProperties="OutputPath;SymbolsOutputPath">
       <Output TaskParameter="TargetOutputs" ItemName="_FilesToPackage" />
     </MSBuild>
