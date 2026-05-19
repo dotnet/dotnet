@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.26216.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.26265.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>7abd7043b258fe69233070da30f6a88438f4b293</Sha>
+      <Sha>068e37394c61ba439d2898151c6c078dad3ef66b</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.26203.3">
-      <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>9d83c59ff890ff2020aa38ebcf3bb514e38e9ffe</Sha>
-      <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-assets" Version="8.0.0-alpha.1.26262.3">
+      <Uri>https://github.com/dotnet/source-build-assets</Uri>
+      <Sha>43fa27099796cf60357226180f279946dbb6495e</Sha>
+      <SourceBuild RepoName="source-build-assets" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24517.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -17,9 +17,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.26168.3">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.26224.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>8dabb7110e0c0e8ca9866f389493bfb5047b8c24</Sha>
+      <Sha>d9af20b993c474033098fe0851c2d71b4ecf434b</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23475.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
