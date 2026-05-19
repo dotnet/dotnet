@@ -2,9 +2,7 @@
 <Project ToolsVersion="15.0">
   <ItemGroup>
     <MergeInclude Include="$(OutputPath)Microsoft.Bcl.AsyncInterfaces.dll"/>
-    <MergeInclude Include="$(OutputPath)Microsoft.Extensions.FileProviders.Abstractions.dll"/>
     <MergeInclude Include="$(OutputPath)Microsoft.Extensions.FileSystemGlobbing.dll"/>
-    <MergeInclude Include="$(OutputPath)Microsoft.Extensions.Primitives.dll"/>
     <MergeInclude Include="$(OutputPath)Microsoft.Web.XmlTransform.dll"/>
     <MergeInclude Include="$(OutputPath)Newtonsoft.Json.dll"/>
     <MergeInclude Include="$(OutputPath)NuGet.Build.Tasks.dll"/>
