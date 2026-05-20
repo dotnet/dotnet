@@ -105,7 +105,7 @@
     }
     else if (string.Equals(UseAuthorizedNotFoundPage, "true", StringComparison.OrdinalIgnoreCase))
     {
-        <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(TestContentPackage.NotFound.NotFoundPage).Assembly }" NotFoundPage="NotFoundPageType" OnNavigateAsync="HandleOnNavigateAsync">
+        <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(TestContentPackage.NotFound.NotFoundPage).Assembly }" NotFoundPage="NotFoundPageType">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData">
                     <NotAuthorized>
