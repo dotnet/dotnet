@@ -22,6 +22,7 @@ internal static class Validation
         var pm = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
 
         var repoRoot = pm.FindGitRoot(AppContext.BaseDirectory);
+        LogInfo($"Repository root: {repoRoot}");
 
         var serviceProvider = RegisterServices(repoRoot);
 
@@ -48,9 +49,10 @@ internal static class Validation
             {
                 validationSuccess = await validationStep.Validate(prInfo);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 LogError($"{validationStep.DisplayName} was interrupted with an unexpected error.");
+                LogError($"Exception: {ex}");
             }
             if (validationSuccess)
             {
@@ -78,17 +80,29 @@ internal static class Validation
 
     private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
-        string? targetBranch = $"origin/{Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH")}";
+        string? rawTargetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
+        string? rawSourceBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
         string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER");
 
-        if (string.IsNullOrEmpty(targetBranch))
+        LogInfo($"Raw environment variables:");
+        LogInfo($"  SYSTEM_PULLREQUEST_TARGETBRANCH: {rawTargetBranch}");
+        LogInfo($"  SYSTEM_PULLREQUEST_SOURCEBRANCH: {rawSourceBranch}");
+        LogInfo($"  SYSTEM_PULLREQUEST_PULLREQUESTNUMBER: {prNumber}");
+
+        string? targetBranch = $"origin/{rawTargetBranch}";
+
+        if (string.IsNullOrEmpty(rawTargetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
         }
 
+        LogInfo($"Resolved target branch ref: {targetBranch}");
+
         // Create a git reference to the original branching-off point of the PR branch from the target branch
+        LogInfo($"Fetching PR merge ref: refs/pull/{prNumber}/merge");
         await pm.ExecuteGit(repoPath, "fetch", "origin", $"refs/pull/{prNumber}/merge:pr-merge");
 
+        LogInfo($"Computing diff between {targetBranch} and pr-merge...");
         var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", targetBranch, "pr-merge"])).StandardOutput.Trim();
 
         var changedFiles = diffOutput
@@ -96,7 +110,7 @@ internal static class Validation
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
-        Console.WriteLine($"Found modifications to {changedFiles.Count} file(s) in PR head branch");
+        LogInfo($"Found modifications to {changedFiles.Count} file(s) in PR head branch");
 
         return new PrInfo(targetBranch, changedFiles);
     }
