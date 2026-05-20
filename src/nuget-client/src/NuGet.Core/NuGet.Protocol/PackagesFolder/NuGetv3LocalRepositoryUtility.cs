@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System;
 using System.Collections.Generic;
 using NuGet.Versioning;
 
@@ -13,12 +12,16 @@ namespace NuGet.Repositories
         /// <summary>
         /// Take the first match on id and version.
         /// </summary>
-        public static LocalPackageSourceInfo GetPackage(
+        public static LocalPackageSourceInfo? GetPackage(
             IReadOnlyList<NuGetv3LocalRepository> repositories,
             string id,
             NuGetVersion version)
         {
-            LocalPackageInfo package = null;
+            _ = repositories ?? throw new ArgumentNullException(nameof(repositories));
+            _ = id ?? throw new ArgumentNullException(nameof(id));
+            _ = version ?? throw new ArgumentNullException(nameof(version));
+
+            LocalPackageInfo? package = null;
 
             for (var i = 0; i < repositories.Count; i++)
             {

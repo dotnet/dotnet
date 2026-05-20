@@ -173,7 +173,7 @@ namespace NuGet.Build.Tasks
             // Convert to the internal wrapper
             var wrappedItems = RestoreGraphItems.Select(MSBuildUtility.WrapMSBuildItem);
 
-            var dgFile = MSBuildRestoreUtility.GetDependencySpec(wrappedItems, readOnly: true);
+            (var dgFile, var additionalMessages) = MSBuildRestoreUtility.GetDependencySpec(wrappedItems, readOnly: true, collectAdditionalMessages: true);
 
             EmbedInBinlog = GetFilesToEmbedInBinlog(dgFile);
 
@@ -195,6 +195,8 @@ namespace NuGet.Build.Tasks
                 forceEvaluate: RestoreForceEvaluate,
                 hideWarningsAndErrors: HideWarningsAndErrors,
                 restorePC: RestorePackagesConfig,
+                cleanupAssetsForUnsupportedProjects: false,
+                additionalMessages: additionalMessages,
                 log: log,
                 cancellationToken: _cts.Token);
 

@@ -3,3 +3,4 @@
 ~NuGet.Commands.PackArgs.DeterministicTimestamp.set -> void
 const NuGet.Commands.Restore.Utility.PackageSpecFactory.EnvironmentVariableName = "NUGET_USE_NEW_PACKAGESPEC_FACTORY" -> string!
 NuGet.Commands.Restore.IProject.GetGlobalProperty(string! propertyName) -> string?
+~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, bool readOnly, bool collectAdditionalMessages) -> (NuGet.ProjectModel.DependencyGraphSpec, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage>)
