@@ -89,12 +89,15 @@ internal static class Validation
         LogInfo($"  SYSTEM_PULLREQUEST_SOURCEBRANCH: {rawSourceBranch}");
         LogInfo($"  SYSTEM_PULLREQUEST_PULLREQUESTNUMBER: {prNumber}");
 
-        string? targetBranch = $"origin/{rawTargetBranch}";
-
         if (string.IsNullOrEmpty(rawTargetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
         }
+
+        // AzDO may provide the branch as "refs/heads/..." or just the branch name — normalize to "origin/<branch>"
+        string? targetBranch = rawTargetBranch?.StartsWith("refs/heads/") == true
+            ? $"origin/{rawTargetBranch["refs/heads/".Length..]}"
+            : $"origin/{rawTargetBranch}";
 
         LogInfo($"Resolved target branch ref: {targetBranch}");
 
