@@ -59,5 +59,36 @@ namespace Microsoft.DotNet.Tests
             var commandPath = result.Args.Trim('"');
             commandPath.Should().Contain("dotnet-watch.dll");
         }
+
+        [Fact]
+        public void ItReturnsAnExecutableCommandSpecFromToolSettings()
+        {
+            var dotnetToolPath = TestAssetsManager.CreateTestDirectory().Path;
+            var commandName = "dotnet-user-secrets";
+            var toolDirectory = Path.Combine(dotnetToolPath, commandName, "1.0.0", "tools", "any", "win-x64");
+            Directory.CreateDirectory(toolDirectory);
+            var executablePath = Path.Combine(toolDirectory, commandName);
+
+            File.WriteAllText(executablePath, "test command that does nothing.");
+            File.WriteAllText(
+                Path.Combine(toolDirectory, "DotnetToolSettings.xml"),
+                string.Join(Environment.NewLine,
+                    "<DotNetCliTool Version=\"2\">",
+                    "  <Commands>",
+                    $"    <Command Name=\"{commandName}\" EntryPoint=\"{commandName}\" Runner=\"executable\" />",
+                    "  </Commands>",
+                    "</DotNetCliTool>"));
+
+            var resolver = new DotnetToolsCommandResolver(dotnetToolPath);
+            var result = resolver.Resolve(new CommandResolverArguments()
+            {
+                CommandName = commandName,
+                CommandArguments = ["--help"],
+            });
+
+            result.Should().NotBeNull();
+            result.Path.Should().Be(executablePath);
+            result.Args.Should().Be("--help");
+        }
     }
 }
