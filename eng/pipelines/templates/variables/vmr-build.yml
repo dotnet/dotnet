@@ -44,7 +44,8 @@ variables:
   # Enable IBC on the internal project if this is an official build of a release branch and is not a source-only build.
   - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: ibcEnabled
-      value: true
+      # value: true # disabled by default since we're missing optprof data for release/10.0.1xx
+      value: false
   # No IBC otherwise.
   - ${{ else }}:
     - name: ibcEnabled
