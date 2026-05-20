@@ -10,7 +10,9 @@
     <BundledDotnetTool Include="dotnet-dev-certs"
                        Version="$(DotnetDevCertsPackageVersion)"
                        RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)" />
-    <BundledDotnetTool Include="dotnet-user-jwts" Version="$(DotnetUserJwtsPackageVersion)" />
+    <BundledDotnetTool Include="dotnet-user-jwts"
+                       Version="$(DotnetUserJwtsPackageVersion)"
+                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)" />
     <BundledDotnetTool Include="dotnet-user-secrets"
                        Version="$(DotnetUserSecretsPackageVersion)"
                        ObsoletesCliTool="Microsoft.Extensions.SecretManager.Tools"

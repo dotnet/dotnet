@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
     <OutputType>exe</OutputType>
@@ -7,6 +8,7 @@
     <PackageTags>configuration;authentication;authorization;jwt</PackageTags>
     <RootNamespace>Microsoft.AspNetCore.Authentication.JwtBearer.Tools</RootNamespace>
     <PackAsTool>true</PackAsTool>
+    <PublishAot>true</PublishAot>
     <!-- This package is for internal use only. It contains a CLI which is bundled in the .NET Core SDK. -->
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
@@ -36,4 +38,5 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.Authentication.JwtBearer.Tools.Tests" />
   </ItemGroup>
+
 </Project>

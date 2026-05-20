@@ -11,6 +11,9 @@
     <TargetLatestDotNetRuntime Condition=" '$(IsServicingBuild)' == 'true' ">false</TargetLatestDotNetRuntime>
     <!-- Tool projects publish before packing. Packages should contain the latest bits. -->
     <UseLatestPackageReferences>true</UseLatestPackageReferences>
+
+    <!-- AOT publish is not supported in source-only builds, so disable it to avoid build errors. -->
+    <PublishAot Condition=" '$(PublishAot)' == 'true' AND '$(DotNetBuildSourceOnly)' == 'true'">false</PublishAot>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(PublishAot)' == 'true' ">
