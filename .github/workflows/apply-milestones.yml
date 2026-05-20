@@ -46,19 +46,21 @@ jobs:
           private-key: ${{ secrets.MILESTONE_APP_PRIVATE_KEY }}
           owner: dotnet
 
-      - name: Generate microsoft org token
-        uses: actions/create-github-app-token@v1
-        id: microsoft-token
-        with:
-          app-id: ${{ secrets.MILESTONE_APP_ID }}
-          private-key: ${{ secrets.MILESTONE_APP_PRIVATE_KEY }}
-          owner: microsoft
+      # Uncomment the step below to enable milestoning for microsoft org repos.
+      # Requires the GitHub App to be installed on the microsoft org.
+      # - name: Generate microsoft org token
+      #   uses: actions/create-github-app-token@v1
+      #   id: microsoft-token
+      #   with:
+      #     app-id: ${{ secrets.MILESTONE_APP_ID }}
+      #     private-key: ${{ secrets.MILESTONE_APP_PRIVATE_KEY }}
+      #     owner: microsoft
 
       - name: Apply milestones
         uses: actions/github-script@v7
         env:
           DOTNET_TOKEN: ${{ steps.dotnet-token.outputs.token }}
-          MICROSOFT_TOKEN: ${{ steps.microsoft-token.outputs.token }}
+          # MICROSOFT_TOKEN: ${{ steps.microsoft-token.outputs.token }}  # Uncomment when microsoft org app is installed
           DRY_RUN: ${{ github.event.inputs.dry-run || 'false' }}
         with:
           github-token: ${{ steps.dotnet-token.outputs.token }}
@@ -69,9 +71,11 @@ jobs:
             if (DRY_RUN) core.info('DRY RUN -- no milestones will be created or applied');
 
             // Map of org -> authenticated Octokit client
+            // To enable microsoft org, uncomment the microsoft-token step above,
+            // the MICROSOFT_TOKEN env var, and the microsoft entry below.
             const orgClients = {
               dotnet: github,
-              microsoft: new Octokit({ auth: process.env.MICROSOFT_TOKEN }),
+              // microsoft: new Octokit({ auth: process.env.MICROSOFT_TOKEN }),
             };
 
             function getOctokit(owner) {
