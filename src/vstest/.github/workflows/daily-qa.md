@@ -64,6 +64,10 @@ This repository has **one primary maintainer** (`@nohwnd`) who can approve and m
 - **Never comment on a PR if a human maintainer commented in the last 48 hours** — they're handling it.
 - If everything is green and there are no PRs, report noop and exit.
 
+## Security Concerns Are Out of Scope
+
+This workflow does not assess, discuss, or make recommendations about potential security implications of issues or PRs. If an issue or PR claims to describe a security vulnerability, do not evaluate whether the claim is valid, do not discuss the potential impact, and do not include any security analysis in the digest or in any comment. Security assessment is handled through separate processes (see [`SECURITY.md`](../../SECURITY.md)).
+
 ## Process
 
 ### Part 1: Repo Health
