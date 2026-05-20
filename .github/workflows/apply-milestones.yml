@@ -101,7 +101,7 @@ jobs:
 
             // --- Step 1: Resolve milestone name ---
 
-            async function resolveMilestone(branch) {
+            async function resolveMilestone(branch, mergeCommitSha) {
 
               // --- Preview/RC release branches ---
               // release/11.0.1xx-preview4 → 11.0-preview4
@@ -210,7 +210,28 @@ jobs:
                 return `${ver}-${fullLabel}`;
               }
 
-              // Branch exists → branding is stale. Deterministically increment.
+              // Branch exists → branding may be stale, OR the PR was merged just before the snap.
+              // Check if this PR's merge commit is in the release branch.
+              // If it is, the PR shipped in this preview — use current branding.
+              if (mergeCommitSha) {
+                try {
+                  const { data: comparison } = await github.rest.repos.compareCommits({
+                    owner: 'dotnet', repo: 'dotnet',
+                    base: mergeCommitSha,
+                    head: candidateBranch,
+                  });
+                  // If merge commit is behind or equal to the branch, it's included
+                  if (comparison.status === 'ahead' || comparison.status === 'identical') {
+                    core.info(`Merge commit ${mergeCommitSha.substring(0, 8)} is in ${candidateBranch} — using current branding`);
+                    return `${ver}-${fullLabel}`;
+                  }
+                } catch (e) {
+                  core.warning(`Could not check branch reachability: ${e.message}`);
+                }
+              }
+
+              // Merge commit is NOT in the release branch — branding is stale.
+              // Deterministically increment.
               // RC snap means main is now vNext
               if (label === 'rc') {
                 return `${major + 1}.0-preview1`;
@@ -462,13 +483,16 @@ jobs:
 
             // For workflow_dispatch, fetch the PR to get its base branch and checkout its merge commit
             let baseBranch;
+            let mergeCommitSha;
             if (context.payload.pull_request) {
               baseBranch = context.payload.pull_request.base.ref;
+              mergeCommitSha = context.payload.pull_request.merge_commit_sha;
             } else {
               const { data: pr } = await github.rest.pulls.get({
                 owner: 'dotnet', repo: 'dotnet', pull_number: prNumber,
               });
               baseBranch = pr.base.ref;
+              mergeCommitSha = pr.merge_commit_sha;
               if (!pr.merged) {
                 core.setFailed(`PR #${prNumber} has not been merged`);
                 return;
@@ -480,7 +504,7 @@ jobs:
 
             core.info(`Processing PR #${prNumber} against ${baseBranch}`);
 
-            const milestoneName = await resolveMilestone(baseBranch);
+            const milestoneName = await resolveMilestone(baseBranch, mergeCommitSha);
 
             if (!milestoneName) {
               core.info('Could not resolve milestone, skipping');
