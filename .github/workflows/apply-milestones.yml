@@ -65,7 +65,7 @@ jobs:
         with:
           github-token: ${{ steps.dotnet-token.outputs.token }}
           script: |
-            const { Octokit } = require("@octokit/rest");
+            // const { Octokit } = require("@octokit/rest");  // Uncomment when microsoft org app is installed
             const DRY_RUN = process.env.DRY_RUN === 'true';
 
             if (DRY_RUN) core.info('DRY RUN -- no milestones will be created or applied');
