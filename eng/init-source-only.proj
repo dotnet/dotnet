@@ -47,7 +47,7 @@
          If more than one archive is present, @(SharedComponentsPrereqsArchivePathItem) stringifies
          to a semicolon-separated list, which would be split into multiple shell commands by the
          unquoted tar invocations in UnpackSharedComponentsPrereqsArchive. Only validate when the
-         archive path would actually be consumed (not when --with-shared-components is used). -->
+         archive path would actually be consumed (not when CustomSharedComponentsArtifactsPath is set). -->
     <Error Condition="'$(CustomSharedComponentsArtifactsPath)' == '' and '@(SharedComponentsPrereqsArchivePathItem->Count())' != '0' and '@(SharedComponentsPrereqsArchivePathItem->Count())' != '1'"
            Text="Multiple $(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension) tarballs exist at $(ExternalTarballsDir). Expecting only one." />
   </Target>
