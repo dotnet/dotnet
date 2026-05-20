@@ -1,1 +1,3 @@
 #nullable enable
+static NuGet.Configuration.SettingsUtility.GetFallbackPackageFolders(NuGet.Configuration.ISettings! settings, NuGet.Common.IEnvironmentVariableReader! environmentVariableReader) -> System.Collections.Generic.IReadOnlyList<string!>!
+static NuGet.Configuration.SettingsUtility.GetGlobalPackagesFolder(NuGet.Configuration.ISettings! settings, NuGet.Common.IEnvironmentVariableReader! environmentVariableReader) -> string!
