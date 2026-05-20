@@ -42,6 +42,14 @@
 
     <Error Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(SharedComponentsPrereqsArchiveFile)' == ''"
            Text="Shared components must be provided as input to a build which does not produce shared components." />
+
+    <!-- Guard against multiple matches from the SharedComponentsPrereqsArchivePathItem glob.
+         If more than one archive is present, @(SharedComponentsPrereqsArchivePathItem) stringifies
+         to a semicolon-separated list, which would be split into multiple shell commands by the
+         unquoted tar invocations in UnpackSharedComponentsPrereqsArchive. Only validate when the
+         archive path would actually be consumed (not when --with-shared-components is used). -->
+    <Error Condition="'$(CustomSharedComponentsArtifactsPath)' == '' and '@(SharedComponentsPrereqsArchivePathItem->Count())' != '0' and '@(SharedComponentsPrereqsArchivePathItem->Count())' != '1'"
+           Text="Multiple $(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension) tarballs exist at $(ExternalTarballsDir). Expecting only one." />
   </Target>
 
   <Target Name="CopyCustomSharedComponentAssets"
