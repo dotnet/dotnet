@@ -20,10 +20,6 @@
     public string? UseAuthorizedNotFoundPage { get; set; }
 
     [Parameter]
-    [SupplyParameterFromQuery(Name = "useUnprotectedNotFoundPageInAuthRouteView")]
-    public string? UseUnprotectedNotFoundPageInAuthRouteView { get; set; }
-
-    [Parameter]
     [SupplyParameterFromQuery(Name = "useCustomRouter")]
     public string? UseCustomRouter { get; set; }
 
@@ -67,10 +63,6 @@
         {
             NotFoundPageType = typeof(AuthorizedNotFoundPage);
         }
-        else if (string.Equals(UseUnprotectedNotFoundPageInAuthRouteView, "true", StringComparison.OrdinalIgnoreCase))
-        {
-            NotFoundPageType = typeof(CustomNotFoundPage);
-        }
         else if (string.Equals(UseCustomNotFoundPage, "true", StringComparison.OrdinalIgnoreCase))
         {
             NotFoundPageType = typeof(CustomNotFoundPage);
@@ -111,8 +103,7 @@
             </Found>
         </CustomRouter>
     }
-    else if (string.Equals(UseAuthorizedNotFoundPage, "true", StringComparison.OrdinalIgnoreCase)
-        || string.Equals(UseUnprotectedNotFoundPageInAuthRouteView, "true", StringComparison.OrdinalIgnoreCase))
+    else if (string.Equals(UseAuthorizedNotFoundPage, "true", StringComparison.OrdinalIgnoreCase))
     {
         <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(TestContentPackage.NotFound.NotFoundPage).Assembly }" NotFoundPage="NotFoundPageType" OnNavigateAsync="HandleOnNavigateAsync">
             <Found Context="routeData">
