@@ -52,7 +52,7 @@ internal static class Validation
             catch (Exception ex)
             {
                 LogError($"{validationStep.DisplayName} was interrupted with an unexpected error.");
-                LogError($"Exception: {ex}");
+                Console.WriteLine(ex);
             }
             if (validationSuccess)
             {
@@ -93,13 +93,13 @@ internal static class Validation
         }
 
         // AzDO may provide the branch as "refs/heads/..." or just the branch name — normalize to "origin/<branch>"
-        string? targetBranch = rawTargetBranch?.StartsWith("refs/heads/") == true
+        string targetBranch = rawTargetBranch.StartsWith("refs/heads/")
             ? $"origin/{rawTargetBranch["refs/heads/".Length..]}"
             : $"origin/{rawTargetBranch}";
 
         LogInfo($"Resolved target branch ref: {targetBranch}");
 
-        // HEAD is already the PR source branch (checked out by the pipeline).
+        // HEAD is the PR ref checked out by the pipeline (source or merge commit).
         // Compute the merge-base between HEAD and the target branch to get only PR changes.
         string mergeBaseCommit = (await pm.ExecuteGit(repoPath, ["merge-base", "HEAD", targetBranch])).StandardOutput.Trim();
         LogInfo($"Merge base commit: {mergeBaseCommit}");
