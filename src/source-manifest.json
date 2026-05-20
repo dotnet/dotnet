@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 313474,
+      "barId": 314946,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "3454b2fe822e52373f2604856417b0e6bce71d70"
+      "commitSha": "96a58d029003171c2302b951688fc87464b197f5"
     },
     {
       "barId": 313833,
@@ -85,16 +85,16 @@
       "commitSha": "78f97fa34e33b6b1140d9aa1c3179037a3578354"
     },
     {
-      "barId": 313280,
+      "barId": 314360,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "1fe5fb281a13fd04732e311acac360744c0f5464"
+      "commitSha": "f9bea3774f4a87c9795a68f129bc042d8fc1abbd"
     },
     {
-      "barId": 314374,
+      "barId": 314952,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "eb1835d8078a593d440181ea250246ed9fb8cd6a"
+      "commitSha": "888f2b8c65a13498d4de94aa42f7febb05f34229"
     },
     {
       "barId": 313975,
@@ -109,10 +109,10 @@
       "commitSha": "8e386fb47a384407aa0bac54e49f006b6c5e6714"
     },
     {
-      "barId": 291125,
+      "barId": 314880,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "1536a1ca256a4e9f804b2073464ca8e4f4794702"
+      "commitSha": "8655fee9aae40ba74257255cbcd1f05edc2f48fa"
     },
     {
       "barId": 313554,
