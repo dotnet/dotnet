@@ -137,8 +137,11 @@ function DownloadArchive {
   local downloadDir="$outputDir"
   if [[ -n "$destinationFileNamePrefix" ]]; then
     downloadDir=$(mktemp -d)
-    trap "rm -rf '$downloadDir'" RETURN
   fi
+
+  # Track the overall result via a local variable so the function has a single
+  # exit point.
+  local result=0
 
   # Try each base URL in order
   for entry in "${baseUrls[@]}"; do
@@ -169,19 +172,20 @@ function DownloadArchive {
       # Only continue to next URL if it was a 404
       if [[ $downloadResult -ne 22 ]]; then
         echo "  ERROR: Failed to download $displayUrl"
-        return 1
+        result=1
+        break
       fi
       echo "  Not found, trying next location..."
     fi
   done
 
-  if [[ "$downloadSucceeded" == false ]]; then
+  if [[ $result -eq 0 && "$downloadSucceeded" == false ]]; then
     echo "  ERROR: Failed to download from all available locations"
-    return 1
+    result=1
   fi
 
   # Move the file to outputDir, renaming it if a destination filename prefix is provided.
-  if [[ -n "$destinationFileNamePrefix" ]]; then
+  if [[ $result -eq 0 && -n "$destinationFileNamePrefix" ]]; then
     # Extract the suffix from the downloaded filename
     local baseFilenameForSuffix="$artifactsBaseFileName"
     if [[ "$propertyName" == *Prebuilts* ]]; then
@@ -195,5 +199,10 @@ function DownloadArchive {
     echo "  Renamed $downloadedFilename to $newFilename"
   fi
 
-  return 0
+  # Clean up the temp directory, if we created one. Runs on both success and failure paths.
+  if [[ -n "$destinationFileNamePrefix" ]]; then
+    rm -rf "$downloadDir"
+  fi
+
+  return $result
 }
