@@ -44,7 +44,7 @@ During build analysis, we will query GitHub to get open issues with the labels a
 
 From each issue we will get a string that shows up every time the known issue manifests. Once we have all error lines we will look for them in the AzDo logs of failed builds.
 
-We will have a list of all failed builds where we were able to match a error message to a line in the log ([Mockup](GitHub-Check-Mockup\Build-Failure-Infra-Issue.md))
+We will have a list of all failed builds where we were able to match a error message to a line in the log
 
 ![List Known Issues](./assets/List-Known-Issues.png)
 
@@ -65,8 +65,3 @@ In other to later build reporting for known issues, we will save the following i
 
 - Once a new known issue is submitted, regenerate build analysis check for affected builds
 - Regenerate build analyses check once a potential new known issue is submitted
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Infra-Known-Issues.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Infra-Known-Issues.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Infra-Known-Issues.md)</sub>
-<!-- End Generated Content-->

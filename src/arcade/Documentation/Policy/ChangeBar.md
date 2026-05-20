@@ -41,10 +41,3 @@ The criteria for *when* changes can be taken into Arcade are as follows.  See fa
 | Disruptive      | Not necessarily breaking, but there's a high likelihood there will be some unintended fallout **OR** is a change which adds debt|
 | Minimal Risk    | Probably won't break anyone or cause disruption |
 | Minor, low risk | Very unlikely to have any negative impact |
-
-
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CChangeBar.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CChangeBar.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CChangeBar.md)</sub>
-<!-- End Generated Content-->

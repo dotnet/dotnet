@@ -56,8 +56,3 @@ TBD (https://github.com/dotnet/arcade/issues/6663)
 ## How to reintroduce : Run without failure for 30 days
 Once a fix has been introduced, and that component has passed passed for a month, it can be reintroduced into the mainline build by reverting the change
 made to quarantine it.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CTemporary-Quarantine.md)](https://helix.dot.net/f/p/5?p=Documentation%5CTemporary-Quarantine.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CTemporary-Quarantine.md)</sub>
-<!-- End Generated Content-->

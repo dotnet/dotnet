@@ -58,7 +58,7 @@ See the [dotnet-bot-github-service-endpoint documentation](https://github.com/do
 
 ## Agent queues
 
-We now use Azure Pool Providers supplied by 1ES ('One' Engineering System) to deploy VMs as build agents. Workflows defined in yaml that still use the "phases" syntax will not able to take advantage of this feature.  See [this document](https://github.com/dotnet/arcade/blob/master/Documentation/AzureDevOps/PhaseToJobSchemaChange.md) for details how to migrate if you are in this scenario.
+We now use Azure Pool Providers supplied by 1ES ('One' Engineering System) to deploy VMs as build agents. Workflows defined in yaml that still use the "phases" syntax will not able to take advantage of this feature.  See [this document](PhaseToJobSchemaChange.md) for details how to migrate if you are in this scenario.
 
 To use an Azure Pool provider, you need to specify both the name of the pool provider and the Helix Queue it uses.  This looks something like:
 
@@ -114,13 +114,11 @@ It is recommended that you do **NOT** enable the checkbox labeled "Make secrets 
 
 - Code reuse
 
-  For *most* teams, it is recommended that you author your yaml to use the [same yaml files for internal, CI, and Pull Request builds](./WritingBuildDefinitions.md).  See https://github.com/dotnet/arcade/blob/master/azure-pipelines.yml, for how this is being done in Arcade with build steps conditioned on "build reason".
+  For *most* teams, it is recommended that you author your yaml to use the [same yaml files for internal, CI, and Pull Request builds](./WritingBuildDefinitions.md).  See ../../azure-pipelines.yml, for how this is being done in Arcade with build steps conditioned on "build reason".
 
 - Shared templates
 
-  Arcade currently provides a handful for [shared templates](https://github.com/dotnet/arcade/tree/master/eng/common/templates).
-
-  - [base.yml](https://github.com/dotnet/arcade/blob/master/eng/common/templates/phases/base.yml) defines docker variables, and enables telemetry to be sent for non-CI builds.
+  Arcade currently provides a handful for [shared templates](../../eng/common/templates).
 
 - Variable groups
 
@@ -198,8 +196,3 @@ For a list of known Azure DevOps issues we are tracking, please go [here](https:
   `An error occurred while loading the YAML Pipeline. Repository self references endpoint 6510879c-eddc-458b-b083-f8150e06ada5 which does not exist or is not authorized for use`
 
   The problem is the yaml file had a parse error when the definition was originally created. When the definition is created, parse errors are saved with the definition and are supposed to be shown in the definition editor. That regressed in the UI. Azure DevOps is also making a change so that even if there are errors parsing the file, they go ahead and save the repository endpoint as authorized.  In the mean time, you have to track down your YAML parse error.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CAzureDevOps%5CAzureDevOpsOnboarding.md)](https://helix.dot.net/f/p/5?p=Documentation%5CAzureDevOps%5CAzureDevOpsOnboarding.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CAzureDevOps%5CAzureDevOpsOnboarding.md)</sub>
-<!-- End Generated Content-->

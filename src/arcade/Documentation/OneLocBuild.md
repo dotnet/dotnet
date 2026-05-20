@@ -199,8 +199,3 @@ The parameters that can be passed to the template are as follows:
 | `JobNameSuffix` | `''` | Allows for custom job name suffix. This is helpful for disambiguation in case of need for more then one OneLocBuild job run - e.g. as a way to set multiple package IDs. |
 
 It is recommended that you set `LclSource` and `LclPackageId` as shown in the example above.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5COneLocBuild.md)](https://helix.dot.net/f/p/5?p=Documentation%5COneLocBuild.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5COneLocBuild.md)</sub>
-<!-- End Generated Content-->

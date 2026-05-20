@@ -122,8 +122,3 @@ Errors we commonly see in validation jobs include:
   * Localization is done closer to release time. Localization failures suggest that either the localization team hasn't finished translations, or the translation PR hasn't been checked into your repository and should be. The closer to release we get, the more important fixing these failures becomes.
 * Nuget Metadata Validation
   * Metadata is missing. These need to be fixed in the repository, and are shipping blockers.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CValidation.md)](https://helix.dot.net/f/p/5?p=Documentation%5CValidation.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CValidation.md)</sub>
-<!-- End Generated Content-->

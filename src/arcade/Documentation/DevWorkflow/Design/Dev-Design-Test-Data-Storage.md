@@ -69,8 +69,3 @@ BuildId | I32 | X | X
 DefinitionId | I32 | X | X
 DefinitionName | StringBuffer | X | X
 AggregationDate | DateTimeOffset | | X
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Test-Data-Storage.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Test-Data-Storage.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Test-Data-Storage.md)</sub>
-<!-- End Generated Content-->

@@ -45,9 +45,3 @@ The intent is to provide access to a change log which contains all PR’s and th
 - Log is auto generated and posted (not emailed)
 - Is not always categorized by type of change because of automation, e.g. breaking etc  (add ML in the future?)
 - Resource updates and 2nd party services are out of scope for this automation piece
-
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CArcadeCommunications.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CArcadeCommunications.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CArcadeCommunications.md)</sub>
-<!-- End Generated Content-->
