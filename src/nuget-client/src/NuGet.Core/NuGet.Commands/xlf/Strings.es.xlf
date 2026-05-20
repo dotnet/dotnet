@@ -454,6 +454,11 @@
         <target state="translated">La propiedad "{0}" no debe ser NULL ni estar vacía.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">No se puede agregar un repositorio de confianza. El paquete no tiene ninguna contrafirma ni firma de repositorio.</target>

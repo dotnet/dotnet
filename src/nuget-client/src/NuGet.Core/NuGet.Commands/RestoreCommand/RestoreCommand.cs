@@ -179,7 +179,7 @@ namespace NuGet.Commands
 
             _isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
             _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && ShouldUseNewResolverWithLockFile(_isLockFileEnabled, _request.Project) && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
-            EnvironmentVariableReader = EnvironmentVariableWrapper.Instance;
+            EnvironmentVariableReader = _request.EnvironmentVariableReader;
         }
 
         // Use the new resolver if lock files are not enabled, or if lock files are enabled and legacy projects or .NET 10 SDK is used.
