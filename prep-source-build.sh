@@ -84,10 +84,8 @@ prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
 prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
 
 sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
-sharedComponentsTarballPattern="$sharedComponentsBaseFileName.*.tar.gz"
 
 sourceBuiltSdkBaseFileName="dotnet-sdk"
-sourceBuiltSdkTarballPattern="$sourceBuiltSdkBaseFileName-*.tar.gz"
 
 # Detect whether the current branch is a non-1xx (feature band) branch.
 # On feature band branches, the runtime/aspnetcore/etc. shared components are not built
@@ -259,6 +257,30 @@ fi
 # Check if Private.SourceBuilt artifacts archive exists
 downloadPsbArtifacts=$downloadArtifacts
 packagesArchiveDir="$packagesDir/archive/"
+
+# Determine the exact expected filenames for the shared components and source-built
+# SDK cache checks. Using exact filenames (rather than glob-matching) ensures that
+# leftover tarballs from a different version or RID don't trigger false cache hits.
+# These properties may not be defined on every branch:
+#  - PrivateSourceBuiltSdkVersion is read from eng/Versions.props.
+#  - MicrosoftNETSdkPackageVersion is populated by Maestro dependency flow into
+#    eng/Version.Details.props on non-1xx (feature band) branches; on 1xx it is
+#    absent, but the shared components download is never invoked there either.
+expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
+expectedSharedComponentsVersion=$(GetXmlPropertyValue "MicrosoftNETSdkPackageVersion" "$REPO_ROOT/eng/Version.Details.props")
+
+# Note: the source-built SDK filename uses dash separators around the version, while
+# Private.SourceBuilt.* archives use dot separators. This matches DownloadArchive's
+# filename construction.
+expectedSourceBuiltSdkFile=""
+if [[ -n "$expectedSdkVersion" ]]; then
+  expectedSourceBuiltSdkFile="${packagesArchiveDir}${sourceBuiltSdkBaseFileName}-${expectedSdkVersion}-${artifactsRid}.tar.gz"
+fi
+expectedSharedComponentsFile=""
+if [[ -n "$expectedSharedComponentsVersion" ]]; then
+  expectedSharedComponentsFile="${packagesArchiveDir}${sharedComponentsBaseFileName}.${expectedSharedComponentsVersion}.${artifactsRid}.tar.gz"
+fi
+
 if [ "$downloadArtifacts" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPsbArtifacts=false
@@ -270,25 +292,24 @@ if [ "$downloadPrebuilts" == true ] && [ -n "$(find "$packagesArchiveDir" -maxde
   downloadPrebuilts=false
 fi
 
-# Check if Private.SourceBuilt.SharedComponents archive exists
-if [ "$downloadSharedComponents" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$sharedComponentsTarballPattern" 2>/dev/null | head -n 1)" ]; then
-  echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+# Check if Private.SourceBuilt.SharedComponents archive exists for the expected version + RID
+if [ "$downloadSharedComponents" == true ] && [[ -n "$expectedSharedComponentsFile" ]] && [ -f "$expectedSharedComponentsFile" ]; then
+  echo "  $(basename "$expectedSharedComponentsFile") exists in $packagesArchiveDir...it will not be downloaded"
   downloadSharedComponents=false
 fi
 
-# Check if source-built SDK tarball exists in the archive directory. The tarball
-# (rather than the extracted .dotnet/sdk/<version> directory) is used as the cache
-# marker because a same-versioned SDK could otherwise be present in .dotnet from a
-# prior Microsoft SDK install on a 1xx branch, which would not be a source-built SDK
+# Check if the source-built SDK tarball exists for the expected version + RID. The
+# tarball (rather than the extracted .dotnet/sdk/<version> directory) is used as the
+# cache marker because a same-versioned SDK could otherwise be present in .dotnet from
+# a prior Microsoft SDK install on a 1xx branch, which would not be a source-built SDK
 # even though the version matches.
 downloadSourceBuiltSdkArchive=$downloadSourceBuiltSdk
-if [ "$downloadSourceBuiltSdk" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$sourceBuiltSdkTarballPattern" 2>/dev/null | head -n 1)" ]; then
-  echo "  $sourceBuiltSdkTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+if [ "$downloadSourceBuiltSdk" == true ] && [[ -n "$expectedSourceBuiltSdkFile" ]] && [ -f "$expectedSourceBuiltSdkFile" ]; then
+  echo "  $(basename "$expectedSourceBuiltSdkFile") exists in $packagesArchiveDir...it will not be downloaded"
   downloadSourceBuiltSdkArchive=false
 fi
 
 # Check if dotnet is installed
-expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
 if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
   installedVersions=$("$REPO_ROOT/.dotnet/dotnet" --list-sdks | awk '{print $1}')
   if grep -qx "$expectedSdkVersion" <<< "${installedVersions[*]}"; then
@@ -312,9 +333,8 @@ if [ "$downloadSourceBuiltSdk" == true ]; then
     DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" true "$artifactsRid" "$packagesArchiveDir"
   fi
 
-  sdkTarball=$(find "$packagesArchiveDir" -maxdepth 1 -name "$sourceBuiltSdkTarballPattern" | head -n 1)
-  if [ -z "$sdkTarball" ]; then
-    echo "  ERROR: $sourceBuiltSdkTarballPattern not found in $packagesArchiveDir after download"
+  if [ ! -f "$expectedSourceBuiltSdkFile" ]; then
+    echo "  ERROR: $(basename "$expectedSourceBuiltSdkFile") not found in $packagesArchiveDir after download"
     exit 1
   fi
 
@@ -322,8 +342,8 @@ if [ "$downloadSourceBuiltSdk" == true ]; then
   # than any prior Microsoft SDK install that may have left same-named files behind.
   # Tar overwrites existing files, so this is idempotent.
   mkdir -p "$REPO_ROOT/.dotnet"
-  echo "  Extracting $(basename "$sdkTarball") to $REPO_ROOT/.dotnet"
-  tar -xzf "$sdkTarball" -C "$REPO_ROOT/.dotnet"
+  echo "  Extracting $(basename "$expectedSourceBuiltSdkFile") to $REPO_ROOT/.dotnet"
+  tar -xzf "$expectedSourceBuiltSdkFile" -C "$REPO_ROOT/.dotnet"
 fi
 
 # Read the eng/Versions.props to get the archives to download and download them
