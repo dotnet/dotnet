@@ -55,14 +55,10 @@
       <_DotnetUserSecretsPackageId>@(_SelectedDotnetUserSecretsPackage->'%(PackageId)')</_DotnetUserSecretsPackageId>
     </PropertyGroup>
 
-    <ItemGroup>
-      <BundledDotnetTool Update="dotnet-user-secrets" Condition="'$(_DotnetUserSecretsPackageId)' != 'dotnet-user-secrets'">
-        <PackagePathRelativeToPackageRoot>$(_DotnetUserSecretsPackageId)/%(Version)/</PackagePathRelativeToPackageRoot>
-        <NupkgPathRelativeToPackageRoot>$(_DotnetUserSecretsPackageId)/%(Version)/$(_DotnetUserSecretsPackageId).%(Version).nupkg</NupkgPathRelativeToPackageRoot>
-        <RestoredPackagePath>$(NuGetPackageRoot)$(_DotnetUserSecretsPackageId.ToLowerInvariant())/%(Version)/</RestoredPackagePath>
-        <RestoredNupkgPath>$(NuGetPackageRoot)$(_DotnetUserSecretsPackageId.ToLowerInvariant())/%(Version)/$(_DotnetUserSecretsPackageId.ToLowerInvariant()).%(Version).nupkg</RestoredNupkgPath>
-      </BundledDotnetTool>
-    </ItemGroup>
+    <PropertyGroup>
+      <_DotnetUserSecretsPackageVersion>@(_SelectedDotnetUserSecretsPackage->'%(PackageVersion)')</_DotnetUserSecretsPackageVersion>
+      <_DotnetUserSecretsRestoredPackagePath>$(NuGetPackageRoot)$(_DotnetUserSecretsPackageId.ToLowerInvariant())/$(_DotnetUserSecretsPackageVersion)/</_DotnetUserSecretsRestoredPackagePath>
+    </PropertyGroup>
   </Target>
 
   <Target Name="AddBundledDotnetToolsAsPackageDownloads"
@@ -80,8 +76,11 @@
           DependsOnTargets="SelectBundledDotnetToolPackages"
           Condition="'@(BundledDotnetTool)' != ''">
     <ItemGroup>
-      <BundledToolFiles Include="%(BundledDotnetTool.RestoredPackagePath)\**\*.*" PackageToRestore="%(BundledDotnetTool.Identity)" PackageVersionToRestore="%(BundledDotnetTool.Version)" />
-      <BundledToolFiles Remove="%(BundledDotnetTool.RestoredPackagePath)\*.*" />
+      <_BundledDotnetToolToLayout Include="@(BundledDotnetTool)" Condition="'%(BundledDotnetTool.Identity)' != 'dotnet-user-secrets'" />
+      <BundledToolFiles Include="%(_BundledDotnetToolToLayout.RestoredPackagePath)\**\*.*" PackageToRestore="%(_BundledDotnetToolToLayout.Identity)" PackageVersionToRestore="%(_BundledDotnetToolToLayout.Version)" />
+      <BundledToolFiles Include="$(_DotnetUserSecretsRestoredPackagePath)\**\*.*" PackageToRestore="dotnet-user-secrets" PackageVersionToRestore="$(_DotnetUserSecretsPackageVersion)" />
+      <BundledToolFiles Remove="%(_BundledDotnetToolToLayout.RestoredPackagePath)\*.*" />
+      <BundledToolFiles Remove="$(_DotnetUserSecretsRestoredPackagePath)\*.*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(BundledToolFiles)"
