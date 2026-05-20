@@ -33,13 +33,13 @@ jobs:
       github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 2  # Need parent commit for diff
 
       - name: Generate dotnet org token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         id: dotnet-token
         with:
           app-id: ${{ secrets.MILESTONE_APP_ID }}
@@ -49,7 +49,7 @@ jobs:
       # Uncomment the step below to enable milestoning for microsoft org repos.
       # Requires the GitHub App to be installed on the microsoft org.
       # - name: Generate microsoft org token
-      #   uses: actions/create-github-app-token@v1
+      #   uses: actions/create-github-app-token@v3
       #   id: microsoft-token
       #   with:
       #     app-id: ${{ secrets.MILESTONE_APP_ID }}
@@ -57,7 +57,7 @@ jobs:
       #     owner: microsoft
 
       - name: Apply milestones
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           DOTNET_TOKEN: ${{ steps.dotnet-token.outputs.token }}
           # MICROSOFT_TOKEN: ${{ steps.microsoft-token.outputs.token }}  # Uncomment when microsoft org app is installed
