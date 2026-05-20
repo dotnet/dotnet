@@ -82,12 +82,10 @@ internal static class Validation
     {
         string? rawTargetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
         string? rawSourceBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
-        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER");
 
         LogInfo($"Raw environment variables:");
         LogInfo($"  SYSTEM_PULLREQUEST_TARGETBRANCH: {rawTargetBranch}");
         LogInfo($"  SYSTEM_PULLREQUEST_SOURCEBRANCH: {rawSourceBranch}");
-        LogInfo($"  SYSTEM_PULLREQUEST_PULLREQUESTNUMBER: {prNumber}");
 
         if (string.IsNullOrEmpty(rawTargetBranch))
         {
@@ -101,12 +99,13 @@ internal static class Validation
 
         LogInfo($"Resolved target branch ref: {targetBranch}");
 
-        // Create a git reference to the original branching-off point of the PR branch from the target branch
-        LogInfo($"Fetching PR merge ref: refs/pull/{prNumber}/merge");
-        await pm.ExecuteGit(repoPath, "fetch", "origin", $"refs/pull/{prNumber}/merge:pr-merge");
+        // HEAD is already the PR source branch (checked out by the pipeline).
+        // Compute the merge-base between HEAD and the target branch to get only PR changes.
+        string mergeBaseCommit = (await pm.ExecuteGit(repoPath, ["merge-base", "HEAD", targetBranch])).StandardOutput.Trim();
+        LogInfo($"Merge base commit: {mergeBaseCommit}");
 
-        LogInfo($"Computing diff between {targetBranch} and pr-merge...");
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", targetBranch, "pr-merge"])).StandardOutput.Trim();
+        LogInfo($"Computing diff between {mergeBaseCommit} and HEAD...");
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBaseCommit, "HEAD"])).StandardOutput.Trim();
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
