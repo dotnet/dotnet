@@ -242,9 +242,9 @@ namespace NuGet.Configuration
         public static string GetGlobalPackagesFolder(ISettings settings)
         {
             return GetGlobalPackagesFolder(settings, EnvironmentVariableWrapper.Instance);
-
         }
-        internal static string GetGlobalPackagesFolder(ISettings settings, IEnvironmentVariableReader environmentVariableReader)
+
+        public static string GetGlobalPackagesFolder(ISettings settings, IEnvironmentVariableReader environmentVariableReader)
         {
             if (settings == null)
             {
@@ -283,7 +283,7 @@ namespace NuGet.Configuration
             return GetFallbackPackageFolders(settings, EnvironmentVariableWrapper.Instance);
         }
 
-        internal static IReadOnlyList<string> GetFallbackPackageFolders(ISettings settings, IEnvironmentVariableReader environmentVariableReader)
+        public static IReadOnlyList<string> GetFallbackPackageFolders(ISettings settings, IEnvironmentVariableReader environmentVariableReader)
         {
             if (settings == null)
             {

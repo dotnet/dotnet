@@ -47,6 +47,12 @@
         <target state="translated">剖析位於 {0} 的 packages.config 檔案時發生錯誤: {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>0 - The project name
+1 - The error message</note>
+      </trans-unit>
       <trans-unit id="Error_StaticGraphNonZeroExitCode">
         <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
         <target state="translated">靜態圖形式還原失敗，結束代碼為 '{0}' 但未記錄錯誤。請在 https://github.com/NuGet/Home. 提出問題。</target>

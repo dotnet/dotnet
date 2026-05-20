@@ -202,5 +202,11 @@ namespace NuGet.Commands
         /// It can be set to true through the updatePackageLastAccessTime configuration flag
         /// </summary>
         public bool UpdatePackageLastAccessTime { get; set; }
+
+        /// <summary>
+        /// The environment variable reader to use for environment variable lookups during restore.
+        /// Defaults to <see cref="EnvironmentVariableWrapper.Instance"/>.
+        /// </summary>
+        public IEnvironmentVariableReader EnvironmentVariableReader { get; init; } = EnvironmentVariableWrapper.Instance;
     }
 }
