@@ -428,6 +428,28 @@ public class NoInteractivityTest : ServerTestBase<BasicTestAppServerSiteFixture<
     }
 
     [Fact]
+    public void NotFoundSetOnInitialization_AuthorizedNotFoundPage_AnonymousUser_RendersNotAuthorizedContent()
+    {
+        string testUrl = $"{ServerPathBase}/set-not-found-ssr?useAuthorizedNotFoundPage=true";
+        Navigate(testUrl);
+
+        Browser.Equal("Not authorized to view this page.", () => Browser.Exists(By.Id("not-authorized-content")).Text);
+        Browser.DoesNotExist(By.Id("protected-not-found-content"));
+        AssertUrlNotChanged(testUrl);
+    }
+
+    [Fact]
+    public void NotFoundSetOnInitialization_UnprotectedNotFoundPageInAuthorizeRouteView_AnonymousUser_RendersNotFoundPage()
+    {
+        string testUrl = $"{ServerPathBase}/set-not-found-ssr?useUnprotectedNotFoundPageInAuthRouteView=true";
+        Navigate(testUrl);
+
+        Browser.Equal("Welcome On Custom Not Found Page", () => Browser.Exists(By.Id("test-info")).Text);
+        Browser.DoesNotExist(By.Id("not-authorized-content"));
+        AssertUrlNotChanged(testUrl);
+    }
+
+    [Fact]
     public void StatusCodePagesWithReExecution()
     {
         Navigate($"{ServerPathBase}/reexecution/trigger-404");
