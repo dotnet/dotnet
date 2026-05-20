@@ -12,7 +12,10 @@
 ###   --no-artifacts              Exclude the download of the previously source-built artifacts archive
 ###   --no-bootstrap              Don't replace portable packages in the download source-built artifacts
 ###   --no-prebuilts              Exclude the download of the prebuilts archive
-###   --no-sdk                    Exclude the download of the .NET SDK
+###   --no-sdk                    Skip installing the Microsoft .NET SDK. On non-1xx (feature
+###                               band) branches, this is already the default because the 1xx
+###                               source-built SDK is used instead; use --no-source-built-sdk
+###                               to skip that download.
 ###   --no-shared-components      Exclude the download of the 1xx shared components archive.
 ###                               Only applies on non-1xx (feature band) branches, where the shared
 ###                               components archive is downloaded by default. On 1xx branches this
