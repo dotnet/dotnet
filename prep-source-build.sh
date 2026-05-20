@@ -259,19 +259,19 @@ fi
 # Check if Private.SourceBuilt artifacts archive exists
 downloadPsbArtifacts=$downloadArtifacts
 packagesArchiveDir="$packagesDir/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
+if [ "$downloadArtifacts" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPsbArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+if [ "$downloadPrebuilts" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$prebuiltsTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPrebuilts=false
 fi
 
 # Check if Private.SourceBuilt.SharedComponents archive exists
-if [ "$downloadSharedComponents" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
+if [ "$downloadSharedComponents" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$sharedComponentsTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadSharedComponents=false
 fi
@@ -282,7 +282,7 @@ fi
 # prior Microsoft SDK install on a 1xx branch, which would not be a source-built SDK
 # even though the version matches.
 downloadSourceBuiltSdkArchive=$downloadSourceBuiltSdk
-if [ "$downloadSourceBuiltSdk" == true ] && [ -f ${packagesArchiveDir}${sourceBuiltSdkTarballPattern} ]; then
+if [ "$downloadSourceBuiltSdk" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$sourceBuiltSdkTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $sourceBuiltSdkTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadSourceBuiltSdkArchive=false
 fi
