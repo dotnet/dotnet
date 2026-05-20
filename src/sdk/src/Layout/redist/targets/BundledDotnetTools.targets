@@ -1,38 +1,21 @@
 <Project>
 
-  <UsingTask TaskName="Microsoft.NET.Build.Tasks.PickBestRid" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
+  <UsingTask TaskName="Microsoft.NET.Build.Tasks.SelectRuntimeIdentifierSpecificItems" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
 
   <PropertyGroup>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('linux')) and '$(TargetArchitecture)' == 'x64'">linux-x64</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('linux')) and '$(TargetArchitecture)' == 'arm'">linux-arm</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('linux')) and '$(TargetArchitecture)' == 'arm64'">linux-arm64</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('win')) and '$(TargetArchitecture)' == 'x64'">win-x64</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('win')) and '$(TargetArchitecture)' == 'x86'">win-x86</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('win')) and '$(TargetArchitecture)' == 'arm64'">win-arm64</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('osx')) and '$(TargetArchitecture)' == 'x64'">osx-x64</DotnetUserSecretsPackageRid>
-    <DotnetUserSecretsPackageRid Condition="'$(DotnetUserSecretsPackageRid)' == '' and '$(DotNetBuildSourceOnly)' != 'true' and $(ProductMonikerRid.StartsWith('osx')) and '$(TargetArchitecture)' == 'arm64'">osx-arm64</DotnetUserSecretsPackageRid>
+    <DotnetUserSecretsPackageRids>linux-x64;linux-arm;linux-arm64;win-x64;win-x86;win-arm64;osx-x64;osx-arm64</DotnetUserSecretsPackageRids>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IncludeAspNetCoreRuntime)' != 'false'">
     <BundledDotnetTool Include="dotnet-dev-certs" Version="$(DotnetDevCertsPackageVersion)" />
     <BundledDotnetTool Include="dotnet-user-jwts" Version="$(DotnetUserJwtsPackageVersion)" />
-    <BundledDotnetTool Include="dotnet-user-secrets" Version="$(DotnetUserSecretsPackageVersion)" ObsoletesCliTool="Microsoft.Extensions.SecretManager.Tools">
-      <RidSpecificPackageRuntimeIdentifiers>linux-x64;linux-arm;linux-arm64;win-x64;win-x86;win-arm64;osx-x64;osx-arm64</RidSpecificPackageRuntimeIdentifiers>
-      <RidSpecificPackageId Condition="'$(DotnetUserSecretsPackageRid)' != ''">dotnet-user-secrets.$(DotnetUserSecretsPackageRid)</RidSpecificPackageId>
-    </BundledDotnetTool>
+    <BundledDotnetTool Include="dotnet-user-secrets" Version="$(DotnetUserSecretsPackageVersion)" ObsoletesCliTool="Microsoft.Extensions.SecretManager.Tools" />
   </ItemGroup>
 
   <ItemGroup>
     <BundledDotnetTool Update="@(BundledDotnetTool)">
-      <PackageIdToRestore>%(Identity)</PackageIdToRestore>
-      <PackageIdToRestore Condition="'%(RidSpecificPackageId)' != ''">%(RidSpecificPackageId)</PackageIdToRestore>
-    </BundledDotnetTool>
-  </ItemGroup>
-
-  <ItemGroup>
-    <BundledDotnetTool Update="@(BundledDotnetTool)">
-      <PackagePathRelativeToPackageRoot>%(PackageIdToRestore)/%(Version)/</PackagePathRelativeToPackageRoot>
-      <NupkgPathRelativeToPackageRoot>%(PackageIdToRestore)/%(Version)/%(PackageIdToRestore).%(Version).nupkg</NupkgPathRelativeToPackageRoot>
+      <PackagePathRelativeToPackageRoot>%(Identity)/%(Version)/</PackagePathRelativeToPackageRoot>
+      <NupkgPathRelativeToPackageRoot>%(Identity)/%(Version)/%(Identity).%(Version).nupkg</NupkgPathRelativeToPackageRoot>
     </BundledDotnetTool>
   </ItemGroup>
 
@@ -43,26 +26,58 @@
     </BundledDotnetTool>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageDownload Include="%(BundledDotnetTool.PackageIdToRestore)" Version="[%(BundledDotnetTool.Version)]" />
-  </ItemGroup>
+  <Target Name="SelectBundledDotnetToolPackages"
+          Condition="'@(BundledDotnetTool)' != ''">
+    <ItemGroup>
+      <_DotnetUserSecretsPackageRid Include="$(DotnetUserSecretsPackageRids)" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+      <_DotnetUserSecretsRidSpecificPackage Include="@(_DotnetUserSecretsPackageRid)">
+        <PackageId>dotnet-user-secrets.%(_DotnetUserSecretsPackageRid.Identity)</PackageId>
+        <PackageVersion>$(DotnetUserSecretsPackageVersion)</PackageVersion>
+        <RuntimeIdentifier>%(_DotnetUserSecretsPackageRid.Identity)</RuntimeIdentifier>
+      </_DotnetUserSecretsRidSpecificPackage>
+    </ItemGroup>
 
-  <Target Name="ValidateBundledDotnetToolRuntimeIdentifiers"
-          DependsOnTargets="PublishRuntimeIdentifierGraphFiles"
-          Condition="'@(BundledDotnetTool)' != '' and '$(DotnetUserSecretsPackageRid)' != ''">
-    <PickBestRid Condition="'%(BundledDotnetTool.RidSpecificPackageId)' != ''"
-                 RuntimeGraphPath="$(OutputPath)RuntimeIdentifierGraph.json"
-                 TargetRid="$(ProductMonikerRid)"
-                 SupportedRids="%(BundledDotnetTool.RidSpecificPackageRuntimeIdentifiers)">
-      <Output TaskParameter="MatchingRid" PropertyName="_MatchingBundledDotnetToolRid" />
-    </PickBestRid>
+    <SelectRuntimeIdentifierSpecificItems Condition="'@(_DotnetUserSecretsRidSpecificPackage)' != ''"
+                                          TargetRuntimeIdentifier="$(ProductMonikerRid)"
+                                          Items="@(_DotnetUserSecretsRidSpecificPackage)"
+                                          RuntimeIdentifierGraphPath="$(RuntimeIdentifierGraphPath)">
+      <Output TaskParameter="SelectedItems" ItemName="_SelectedDotnetUserSecretsPackage" />
+    </SelectRuntimeIdentifierSpecificItems>
 
-    <Error Condition="'%(BundledDotnetTool.RidSpecificPackageId)' != '' and '$(_MatchingBundledDotnetToolRid)' != '$(DotnetUserSecretsPackageRid)'"
-           Text="Package '%(BundledDotnetTool.Identity)' resolved RID-specific package '%(BundledDotnetTool.RidSpecificPackageId)', but the runtime graph selected '$(_MatchingBundledDotnetToolRid)' for target RID '$(ProductMonikerRid)'." />
+    <ItemGroup Condition="'@(_SelectedDotnetUserSecretsPackage)' == ''">
+      <_SelectedDotnetUserSecretsPackage Include="dotnet-user-secrets">
+        <PackageId>dotnet-user-secrets</PackageId>
+        <PackageVersion>$(DotnetUserSecretsPackageVersion)</PackageVersion>
+      </_SelectedDotnetUserSecretsPackage>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_DotnetUserSecretsPackageId>@(_SelectedDotnetUserSecretsPackage->'%(PackageId)')</_DotnetUserSecretsPackageId>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <BundledDotnetTool Update="dotnet-user-secrets" Condition="'$(_DotnetUserSecretsPackageId)' != 'dotnet-user-secrets'">
+        <PackagePathRelativeToPackageRoot>$(_DotnetUserSecretsPackageId)/%(Version)/</PackagePathRelativeToPackageRoot>
+        <NupkgPathRelativeToPackageRoot>$(_DotnetUserSecretsPackageId)/%(Version)/$(_DotnetUserSecretsPackageId).%(Version).nupkg</NupkgPathRelativeToPackageRoot>
+        <RestoredPackagePath>$(NuGetPackageRoot)$(_DotnetUserSecretsPackageId.ToLowerInvariant())/%(Version)/</RestoredPackagePath>
+        <RestoredNupkgPath>$(NuGetPackageRoot)$(_DotnetUserSecretsPackageId.ToLowerInvariant())/%(Version)/$(_DotnetUserSecretsPackageId.ToLowerInvariant()).%(Version).nupkg</RestoredNupkgPath>
+      </BundledDotnetTool>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AddBundledDotnetToolsAsPackageDownloads"
+          BeforeTargets="CollectPackageDownloads"
+          DependsOnTargets="SelectBundledDotnetToolPackages"
+          Condition="'$(IncludeAspNetCoreRuntime)' != 'false'">
+    <ItemGroup>
+      <PackageDownload Include="dotnet-dev-certs" Version="[$(DotnetDevCertsPackageVersion)]" />
+      <PackageDownload Include="dotnet-user-jwts" Version="[$(DotnetUserJwtsPackageVersion)]" />
+      <PackageDownload Include="%(_SelectedDotnetUserSecretsPackage.PackageId)" Version="[%(_SelectedDotnetUserSecretsPackage.PackageVersion)]" />
+    </ItemGroup>
   </Target>
 
   <Target Name="LayoutBundledTools"
-          DependsOnTargets="ValidateBundledDotnetToolRuntimeIdentifiers"
+          DependsOnTargets="SelectBundledDotnetToolPackages"
           Condition="'@(BundledDotnetTool)' != ''">
     <ItemGroup>
       <BundledToolFiles Include="%(BundledDotnetTool.RestoredPackagePath)\**\*.*" PackageToRestore="%(BundledDotnetTool.Identity)" PackageVersionToRestore="%(BundledDotnetTool.Version)" />
