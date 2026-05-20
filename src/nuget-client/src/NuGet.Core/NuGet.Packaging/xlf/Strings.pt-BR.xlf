@@ -44,6 +44,16 @@
         <note>0 -  start date
 1 - end date</note>
       </trans-unit>
+      <trans-unit id="CertUtilityCertificateCrlUrl">
+        <source>CRL URL: {0}</source>
+        <target state="translated">URL da CRL: {0}</target>
+        <note>0 - CRL distribution point URL</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateOcspUrl">
+        <source>OCSP URL: {0}</source>
+        <target state="translated">URL do OCSP: {0}</target>
+        <note>0 - OCSP responder URL</note>
+      </trans-unit>
       <trans-unit id="CertUtilityMultipleCertificatesFooter">
         <source>... {0} more.</source>
         <target state="translated">... {0} mais.</target>
@@ -163,6 +173,11 @@
 {1} is the package's identity.
 {2} is the dependency's version range.</note>
       </trans-unit>
+      <trans-unit id="ErrorInvalidTimestamp">
+        <source>Invalid timestamp: '{0}'</source>
+        <target state="translated">Carimbo de data/hora inválido: “{0}”</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ErrorManifestFileNotFound">
         <source>Manifest file not found at '{0}'</source>
         <target state="translated">Arquivo de manifesto não encontrado em '{0}'</target>
@@ -185,7 +200,7 @@
       </trans-unit>
       <trans-unit id="ErrorPackageIdentityDoesNotMatch">
         <source>Expected package {0} {1}, but got package {2} {3}</source>
-        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <target state="translated">Pacote esperado {0} {1}, mas o pacote recebido foi {2} {3}</target>
         <note>0 and 2 are package names, and 1 and 3 are versions numbers.</note>
       </trans-unit>
       <trans-unit id="ErrorPackageNotSigned">

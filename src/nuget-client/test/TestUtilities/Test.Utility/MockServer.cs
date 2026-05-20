@@ -29,6 +29,7 @@ namespace Test.Utility
     public class MockServer : IDisposable
     {
         private Task _listenerTask;
+        private CancellationTokenSource _cts;
         private bool _disposed = false;
         private AuthenticationSchemes _authenticationSchemes;
         private HttpListener _listener;
@@ -97,7 +98,8 @@ namespace Test.Utility
             }
             while (_listener == null);
 
-            _listenerTask = Task.Factory.StartNew(() => HandleRequest());
+            _cts = new CancellationTokenSource();
+            _listenerTask = Task.Run(() => HandleRequestAsync(_cts.Token));
         }
 
         /// <summary>
@@ -107,6 +109,7 @@ namespace Test.Utility
         {
             try
             {
+                _cts?.Cancel();
                 _listener?.Abort();
 
                 Task task = _listenerTask;
@@ -118,6 +121,11 @@ namespace Test.Utility
             catch (Exception ex)
             {
                 Debug.Fail(ex.ToString());
+            }
+            finally
+            {
+                _cts?.Dispose();
+                _cts = null;
             }
         }
 
@@ -355,22 +363,26 @@ namespace Test.Utility
             }
         }
 
-        private void HandleRequest()
+        private async Task HandleRequestAsync(CancellationToken cancellationToken)
         {
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    if (_listener == null)
+                    if (_listener == null || !_listener.IsListening)
                     {
                         return;
                     }
 
-                    var context = _listener.GetContext();
+                    var contextTask = _listener.GetContextAsync();
 
-                    GenerateResponse(context);
-
-                    RequestObserver(context);
+                    // Wait for either a request or cancellation.
+                    using (cancellationToken.Register(() => _listener?.Abort()))
+                    {
+                        var context = await contextTask;
+                        GenerateResponse(context);
+                        RequestObserver(context);
+                    }
                 }
                 catch (ObjectDisposedException)
                 {
@@ -392,6 +404,10 @@ namespace Test.Utility
                         System.Console.WriteLine("Unexpected error code: {0}. Ex: {1}", ex.ErrorCode, ex);
                         throw;
                     }
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
                 }
             }
         }

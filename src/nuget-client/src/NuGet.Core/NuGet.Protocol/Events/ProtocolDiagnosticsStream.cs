@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -14,7 +12,7 @@ namespace NuGet.Protocol.Events
     internal sealed class ProtocolDiagnosticsStream : Stream
     {
         private readonly Stream _baseStream;
-        private ProtocolDiagnosticInProgressHttpEvent _inProgressEvent;
+        private ProtocolDiagnosticInProgressHttpEvent? _inProgressEvent;
         private readonly Stopwatch _stopwatch;
         private long _bytes;
         private readonly Action<ProtocolDiagnosticHttpEvent> _diagnosticEvent;

@@ -31,7 +31,7 @@ namespace NuGet.Commands
         private readonly ConcurrentDictionary<CriteriaKey, List<(List<SelectionCriteria>, bool)>> _criteriaSets =
             new();
 
-        private readonly ConcurrentDictionary<(CriteriaKey, string path, string aliases, LibraryIncludeFlags, int dependencyCount), Lazy<(LockFileTargetLibrary, bool)>> _lockFileTargetLibraryCache =
+        private readonly ConcurrentDictionary<(CriteriaKey, string path, string aliases, LibraryIncludeFlags, int dependencyCount), Lazy<(LockFileTargetLibrary, bool, NuGetFramework, NuGetFramework)>> _lockFileTargetLibraryCache =
             new();
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Try to get a LockFileTargetLibrary from the cache.
         /// </summary>
-        internal (LockFileTargetLibrary, bool) GetLockFileTargetLibrary(RestoreTargetGraph graph, NuGetFramework framework, LocalPackageInfo localPackageInfo, string aliases, LibraryIncludeFlags libraryIncludeFlags, List<LibraryDependency> dependencies, Func<(LockFileTargetLibrary, bool)> valueFactory)
+        internal (LockFileTargetLibrary, bool, NuGetFramework, NuGetFramework) GetLockFileTargetLibrary(RestoreTargetGraph graph, NuGetFramework framework, LocalPackageInfo localPackageInfo, string aliases, LibraryIncludeFlags libraryIncludeFlags, List<LibraryDependency> dependencies, Func<(LockFileTargetLibrary, bool, NuGetFramework, NuGetFramework)> valueFactory)
         {
             // Comparing RuntimeGraph for equality is very expensive,
             // so in case of a request where the RuntimeGraph is not empty we avoid using the cache.
@@ -117,7 +117,7 @@ namespace NuGet.Commands
             var criteriaKey = new CriteriaKey(graph.TargetGraphName, framework);
             var packagePath = localPackageInfo.ExpandedPath;
             return _lockFileTargetLibraryCache.GetOrAdd((criteriaKey, packagePath, aliases, libraryIncludeFlags, dependencies.Count),
-                key => new Lazy<(LockFileTargetLibrary, bool)>(valueFactory)).Value;
+                key => new Lazy<(LockFileTargetLibrary, bool, NuGetFramework, NuGetFramework)>(valueFactory)).Value;
         }
 
         private class CriteriaKey : IEquatable<CriteriaKey>

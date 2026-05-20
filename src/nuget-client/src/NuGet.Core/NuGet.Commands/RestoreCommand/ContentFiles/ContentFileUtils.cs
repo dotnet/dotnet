@@ -22,6 +22,7 @@ namespace NuGet.Commands
     internal static class ContentFileUtils
     {
         private const string ContentFilesFolderName = "contentFiles/";
+        private const string MatcherRoot = "ROOT/";
 
         /// <summary>
         /// Get all content groups that have the nearest TxM
@@ -99,9 +100,6 @@ namespace NuGet.Commands
                 }
             }
 
-            // Virtual root for file globbing
-            var rootDirectory = new VirtualFileInfo(SingleFileProvider.RootDir, isDirectory: true);
-
             // Apply all nuspec property mappings to the files returned by content model
             foreach (var filesEntry in nuspecContentFiles)
             {
@@ -110,11 +108,11 @@ namespace NuGet.Commands
 
                 // Create a filesystem matcher for globbing patterns
                 var matcher = new Matcher(StringComparison.OrdinalIgnoreCase);
-                matcher.AddInclude(filesEntry.Include);
+                matcher.AddInclude(GetMatcherPattern(filesEntry.Include));
 
                 if (filesEntry.Exclude != null)
                 {
-                    matcher.AddExclude(filesEntry.Exclude);
+                    matcher.AddExclude(GetMatcherPattern(filesEntry.Exclude));
                 }
 
                 // Check each file against the patterns
@@ -130,16 +128,7 @@ namespace NuGet.Commands
                         var relativePath = file.Substring(rootFolderPathLength, file.Length - rootFolderPathLength);
 
                         // Check if the nuspec group include/exclude patterns apply to the file
-                        var globbingDirectory = new FileProviderGlobbingDirectory(
-                            fileProvider: new SingleFileProvider(relativePath),
-                            fileInfo: rootDirectory,
-                            parent: null);
-
-                        // Currently Matcher only returns the file name not the full path, each file must be
-                        // check individually.
-                        var matchResults = matcher.Execute(globbingDirectory);
-
-                        if (matchResults.HasMatches)
+                        if (matcher.Match(MatcherRoot + relativePath).HasMatches)
                         {
                             entries.Add(filesEntry);
                         }
@@ -244,6 +233,25 @@ namespace NuGet.Commands
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Prefix matcher patterns with a fixed root segment so matching doesn't rely on current directory.
+        /// Preserve empty patterns and leading ".." patterns as-is to keep existing globbing behavior.
+        /// </summary>
+        private static string GetMatcherPattern(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                return string.Empty;
+            }
+
+            if (pattern.StartsWith("..", StringComparison.Ordinal))
+            {
+                return pattern;
+            }
+
+            return MatcherRoot + pattern;
         }
 
         /// <summary>

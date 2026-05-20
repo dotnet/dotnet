@@ -22,6 +22,7 @@ internal static class Validation
         var pm = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
 
         var repoRoot = pm.FindGitRoot(AppContext.BaseDirectory);
+        LogInfo($"Repository root: {repoRoot}");
 
         var serviceProvider = RegisterServices(repoRoot);
 
@@ -48,9 +49,10 @@ internal static class Validation
             {
                 validationSuccess = await validationStep.Validate(prInfo);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 LogError($"{validationStep.DisplayName} was interrupted with an unexpected error.");
+                Console.WriteLine(ex);
             }
             if (validationSuccess)
             {
@@ -78,25 +80,39 @@ internal static class Validation
 
     private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
-        string? targetBranch = $"origin/{Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH")}";
-        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER");
+        string? rawTargetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
+        string? rawSourceBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
 
-        if (string.IsNullOrEmpty(targetBranch))
+        LogInfo($"Raw environment variables:");
+        LogInfo($"  SYSTEM_PULLREQUEST_TARGETBRANCH: {rawTargetBranch}");
+        LogInfo($"  SYSTEM_PULLREQUEST_SOURCEBRANCH: {rawSourceBranch}");
+
+        if (string.IsNullOrEmpty(rawTargetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
         }
 
-        // Create a git reference to the original branching-off point of the PR branch from the target branch
-        await pm.ExecuteGit(repoPath, "fetch", "origin", $"refs/pull/{prNumber}/merge:pr-merge");
+        // AzDO may provide the branch as "refs/heads/..." or just the branch name — normalize to "origin/<branch>"
+        string targetBranch = rawTargetBranch.StartsWith("refs/heads/")
+            ? $"origin/{rawTargetBranch["refs/heads/".Length..]}"
+            : $"origin/{rawTargetBranch}";
 
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", targetBranch, "pr-merge"])).StandardOutput.Trim();
+        LogInfo($"Resolved target branch ref: {targetBranch}");
+
+        // HEAD is the PR ref checked out by the pipeline (source or merge commit).
+        // Compute the merge-base between HEAD and the target branch to get only PR changes.
+        string mergeBaseCommit = (await pm.ExecuteGit(repoPath, ["merge-base", "HEAD", targetBranch])).StandardOutput.Trim();
+        LogInfo($"Merge base commit: {mergeBaseCommit}");
+
+        LogInfo($"Computing diff between {mergeBaseCommit} and HEAD...");
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBaseCommit, "HEAD"])).StandardOutput.Trim();
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
-        Console.WriteLine($"Found modifications to {changedFiles.Count} file(s) in PR head branch");
+        LogInfo($"Found modifications to {changedFiles.Count} file(s) in PR head branch");
 
         return new PrInfo(targetBranch, changedFiles);
     }

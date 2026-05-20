@@ -3034,6 +3034,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["NoOpDuration"] = value => value.Should().NotBeNull(),
                 ["TotalUniquePackagesCount"] = value => value.Should().Be(1),
                 ["NewPackagesInstalledCount"] = value => value.Should().Be(1),
+                ["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"] = value => value.Should().Be(false),
                 ["EvaluateLockFileDuration"] = value => value.Should().NotBeNull(),
                 ["CreateRestoreTargetGraphDuration"] = value => value.Should().NotBeNull(),
                 ["GenerateRestoreGraphDuration"] = value => value.Should().NotBeNull(),
@@ -3082,6 +3083,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["Audit.Duration.Total"] = value => value.Should().BeOfType<double>(),
                 ["UseLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
                 ["UsedLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
+                ["TargetFrameworks"] = value => value.Should().Be("net472"),
                 ["TargetFrameworksCount"] = value => value.Should().Be(1),
                 ["RuntimeIdentifiersCount"] = value => value.Should().Be(0),
                 ["TreatWarningsAsErrors"] = value => value.Should().Be(false),
@@ -3156,6 +3158,50 @@ namespace NuGet.Commands.Test.RestoreCommandTests
         }
 
         [Fact]
+        public async Task ExecuteAsync_WithMultiTargetedProject_PopulatesShortTargetFrameworkNamesTelemetry()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", "a");
+            NuGetFramework secondFramework = NuGetFramework.Parse(".NETCoreApp,Version=v8.0");
+            packageSpec.TargetFrameworks.Add(new TargetFrameworkInformation() { FrameworkName = secondFramework });
+            packageSpec.RestoreMetadata.TargetFrameworks.Add(new ProjectRestoreMetadataFrameworkInfo(secondFramework) { TargetAlias = secondFramework.GetShortFolderName() });
+            packageSpec.RestoreMetadata.OriginalTargetFrameworks.Add(secondFramework.GetShortFolderName());
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("a", "1.0.0"));
+
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(packageSpec, new PackageSource[] { new PackageSource(pathContext.PackageSource) }, pathContext.UserPackagesFolder, logger)
+            {
+                LockFilePath = Path.Combine(projectPath, "project.assets.json"),
+                ProjectStyle = ProjectStyle.PackageReference,
+            };
+
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+            projectInformationEvent["TargetFrameworks"].Should().Be("net472;net8.0");
+            projectInformationEvent["TargetFrameworksCount"].Should().Be(2);
+        }
+
+        [Fact]
         public async Task ExecuteAsync_WithSinglePackage_WhenNoOping_PopulatesCorrectTelemetry()
         {
             // Arrange
@@ -3212,49 +3258,66 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(41);
+            var expectedProperties = new Dictionary<string, Action<object>>()
+            {
+                ["RestoreSuccess"] = value => value.Should().Be(true),
+                ["NoOpResult"] = value => value.Should().Be(true),
+                ["IsCentralVersionManagementEnabled"] = value => value.Should().Be(false),
+                ["NoOpCacheFileEvaluationResult"] = value => value.Should().Be(true),
+                ["NoOpRestoreOutputEvaluationResult"] = value => value.Should().Be(true),
+                ["NoOpDuration"] = value => value.Should().NotBeNull(),
+                ["TotalUniquePackagesCount"] = value => value.Should().Be(1),
+                ["NewPackagesInstalledCount"] = value => value.Should().Be(0),
+                ["NoOpCacheFileEvaluateDuration"] = value => value.Should().NotBeNull(),
+                ["StartTime"] = value => value.Should().NotBeNull(),
+                ["EndTime"] = value => value.Should().NotBeNull(),
+                ["OperationId"] = value => value.Should().NotBeNull(),
+                ["Duration"] = value => value.Should().NotBeNull(),
+                ["NoOpRestoreOutputEvaluationDuration"] = value => value.Should().NotBeNull(),
+                ["NoOpReplayLogsDuration"] = value => value.Should().NotBeNull(),
+                ["PackageSourceMapping.IsMappingEnabled"] = value => value.Should().Be(false),
+                ["SourcesCount"] = value => value.Should().Be(1),
+                ["HttpSourcesCount"] = value => value.Should().Be(0),
+                ["LocalSourcesCount"] = value => value.Should().Be(1),
+                ["FallbackFoldersCount"] = value => value.Should().Be(0),
+                ["IsLockFileEnabled"] = value => value.Should().Be(false),
+                ["NoOpCacheFileAgeDays"] = value => value.Should().NotBeNull(),
+                ["UseLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
+                ["UsedLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
+                ["Audit.Enabled"] = value => value.Should().BeOfType<string>(),
+                ["TargetFrameworks"] = value => value.Should().Be("net472"),
+                ["TargetFrameworksCount"] = value => value.Should().Be(1),
+                ["RuntimeIdentifiersCount"] = value => value.Should().Be(0),
+                ["TreatWarningsAsErrors"] = value => value.Should().Be(true),
+                ["SDKAnalysisLevel"] = value => value.Should().Be(NuGetVersion.Parse("9.0.100")),
+                ["UsingMicrosoftNETSdk"] = value => value.Should().Be(true),
+                ["IsPackageInstallationTrigger"] = value => value.Should().Be(false),
+                ["ForceRestore"] = value => value.Should().Be(false),
+                ["UpdatedAssetsFile"] = value => value.Should().Be(false),
+                ["UpdatedMSBuildFiles"] = value => value.Should().Be(false),
+                ["NETSdkVersion"] = value => value.Should().Be(NuGetVersion.Parse("10.0.100")),
+                ["Pruning.FrameworksEnabled.Count"] = value => value.Should().Be(0),
+                ["Pruning.FrameworksDisabled.Count"] = value => value.Should().Be(0),
+                ["Pruning.FrameworksUnsupported.Count"] = value => value.Should().Be(1),
+                ["Pruning.DefaultEnabled"] = value => value.Should().Be(false),
+                ["UsesLegacyPackagesDirectory"] = value => value.Should().Be(false),
+                ["UsesLegacyAssetTargetFallback"] = value => value.Should().Be(false),
+            };
 
-            projectInformationEvent["RestoreSuccess"].Should().Be(true);
-            projectInformationEvent["NoOpResult"].Should().Be(true);
-            projectInformationEvent["IsCentralVersionManagementEnabled"].Should().Be(false);
-            projectInformationEvent["NoOpCacheFileEvaluationResult"].Should().Be(true);
-            projectInformationEvent["NoOpRestoreOutputEvaluationResult"].Should().Be(true);
-            projectInformationEvent["NoOpDuration"].Should().NotBeNull();
-            projectInformationEvent["TotalUniquePackagesCount"].Should().Be(1);
-            projectInformationEvent["NewPackagesInstalledCount"].Should().Be(0);
-            projectInformationEvent["NoOpCacheFileEvaluateDuration"].Should().NotBeNull();
-            projectInformationEvent["StartTime"].Should().NotBeNull();
-            projectInformationEvent["EndTime"].Should().NotBeNull();
-            projectInformationEvent["OperationId"].Should().NotBeNull();
-            projectInformationEvent["Duration"].Should().NotBeNull();
-            projectInformationEvent["NoOpRestoreOutputEvaluationDuration"].Should().NotBeNull();
-            projectInformationEvent["NoOpReplayLogsDuration"].Should().NotBeNull();
-            projectInformationEvent["PackageSourceMapping.IsMappingEnabled"].Should().Be(false);
-            projectInformationEvent["SourcesCount"].Should().Be(1);
-            projectInformationEvent["HttpSourcesCount"].Should().Be(0);
-            projectInformationEvent["LocalSourcesCount"].Should().Be(1);
-            projectInformationEvent["FallbackFoldersCount"].Should().Be(0);
-            projectInformationEvent["IsLockFileEnabled"].Should().Be(false);
-            projectInformationEvent["NoOpCacheFileAgeDays"].Should().NotBeNull();
-            projectInformationEvent["UseLegacyDependencyResolver"].Should().BeOfType<bool>();
-            projectInformationEvent["UsedLegacyDependencyResolver"].Should().BeOfType<bool>();
-            projectInformationEvent["Audit.Enabled"].Should().BeOfType<string>();
-            projectInformationEvent["TargetFrameworksCount"].Should().Be(1);
-            projectInformationEvent["RuntimeIdentifiersCount"].Should().Be(0);
-            projectInformationEvent["TreatWarningsAsErrors"].Should().Be(true);
-            projectInformationEvent["SDKAnalysisLevel"].Should().Be(NuGetVersion.Parse("9.0.100"));
-            projectInformationEvent["UsingMicrosoftNETSdk"].Should().Be(true);
-            projectInformationEvent["IsPackageInstallationTrigger"].Should().Be(false);
-            projectInformationEvent["ForceRestore"].Should().Be(false);
-            projectInformationEvent["UpdatedAssetsFile"].Should().Be(false);
-            projectInformationEvent["UpdatedMSBuildFiles"].Should().Be(false);
-            projectInformationEvent["NETSdkVersion"].Should().Be(NuGetVersion.Parse("10.0.100"));
-            projectInformationEvent["Pruning.FrameworksEnabled.Count"].Should().Be(0);
-            projectInformationEvent["Pruning.FrameworksDisabled.Count"].Should().Be(0);
-            projectInformationEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(1);
-            projectInformationEvent["Pruning.DefaultEnabled"].Should().Be(false);
-            projectInformationEvent["UsesLegacyPackagesDirectory"].Should().Be(false);
-            projectInformationEvent["UsesLegacyAssetTargetFallback"].Should().Be(false);
+            HashSet<string> actualProperties = new();
+            foreach (var eventProperty in projectInformationEvent)
+            {
+                actualProperties.Add(eventProperty.Key);
+            }
+
+            expectedProperties.Keys.Except(actualProperties).Should().BeEmpty();
+            actualProperties.Except(expectedProperties.Keys).Should().BeEmpty();
+
+            foreach (var kvp in expectedProperties)
+            {
+                object value = projectInformationEvent[kvp.Key];
+                kvp.Value(value);
+            }
         }
 
         [Fact]
@@ -3312,16 +3375,75 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
 
-            projectInformationEvent.Count.Should().Be(49);
-            projectInformationEvent["RestoreSuccess"].Should().Be(true);
-            projectInformationEvent["NoOpResult"].Should().Be(false);
-            projectInformationEvent["TotalUniquePackagesCount"].Should().Be(2);
-            projectInformationEvent["NewPackagesInstalledCount"].Should().Be(1);
-            projectInformationEvent["PackageSourceMapping.IsMappingEnabled"].Should().Be(false);
-            projectInformationEvent["UpdatedAssetsFile"].Should().Be(true);
-            projectInformationEvent["UpdatedMSBuildFiles"].Should().Be(true);
-            projectInformationEvent["IsPackageInstallationTrigger"].Should().Be(false);
-            projectInformationEvent["ForceRestore"].Should().Be(false);
+            var expectedProperties = new Dictionary<string, Action<object>>()
+            {
+                ["RestoreSuccess"] = value => value.Should().Be(true),
+                ["NoOpResult"] = value => value.Should().Be(false),
+                ["IsCentralVersionManagementEnabled"] = value => value.Should().Be(false),
+                ["NoOpCacheFileEvaluationResult"] = value => value.Should().Be(false),
+                ["IsLockFileEnabled"] = value => value.Should().Be(false),
+                ["IsLockFileValidForRestore"] = value => value.Should().Be(false),
+                ["LockFileEvaluationResult"] = value => value.Should().Be(true),
+                ["NoOpDuration"] = value => value.Should().NotBeNull(),
+                ["TotalUniquePackagesCount"] = value => value.Should().Be(2),
+                ["NewPackagesInstalledCount"] = value => value.Should().Be(1),
+                ["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"] = value => value.Should().Be(false),
+                ["EvaluateLockFileDuration"] = value => value.Should().NotBeNull(),
+                ["CreateRestoreTargetGraphDuration"] = value => value.Should().NotBeNull(),
+                ["GenerateRestoreGraphDuration"] = value => value.Should().NotBeNull(),
+                ["CreateRestoreResultDuration"] = value => value.Should().NotBeNull(),
+                ["WalkFrameworkDependencyDuration"] = value => value.Should().NotBeNull(),
+                ["GenerateAssetsFileDuration"] = value => value.Should().NotBeNull(),
+                ["ValidateRestoreGraphsDuration"] = value => value.Should().NotBeNull(),
+                ["EvaluateDownloadDependenciesDuration"] = value => value.Should().NotBeNull(),
+                ["NoOpCacheFileEvaluateDuration"] = value => value.Should().NotBeNull(),
+                ["StartTime"] = value => value.Should().NotBeNull(),
+                ["EndTime"] = value => value.Should().NotBeNull(),
+                ["OperationId"] = value => value.Should().NotBeNull(),
+                ["Duration"] = value => value.Should().NotBeNull(),
+                ["PackageSourceMapping.IsMappingEnabled"] = value => value.Should().Be(false),
+                ["SourcesCount"] = value => value.Should().Be(1),
+                ["HttpSourcesCount"] = value => value.Should().Be(0),
+                ["LocalSourcesCount"] = value => value.Should().Be(1),
+                ["FallbackFoldersCount"] = value => value.Should().Be(0),
+                ["Audit.Enabled"] = value => value.Should().BeOfType<string>(),
+                ["UseLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
+                ["UsedLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
+                ["TargetFrameworks"] = value => value.Should().Be("net472"),
+                ["TargetFrameworksCount"] = value => value.Should().Be(1),
+                ["RuntimeIdentifiersCount"] = value => value.Should().Be(0),
+                ["TreatWarningsAsErrors"] = value => value.Should().Be(false),
+                ["SDKAnalysisLevel"] = value => value.Should().Be(null),
+                ["UsingMicrosoftNETSdk"] = value => value.Should().Be(false),
+                ["IsPackageInstallationTrigger"] = value => value.Should().Be(false),
+                ["ForceRestore"] = value => value.Should().Be(false),
+                ["UpdatedAssetsFile"] = value => value.Should().Be(true),
+                ["UpdatedMSBuildFiles"] = value => value.Should().Be(true),
+                ["NETSdkVersion"] = value => value.Should().Be(null),
+                ["Pruning.FrameworksEnabled.Count"] = value => value.Should().BeOfType<int>(),
+                ["Pruning.FrameworksDisabled.Count"] = value => value.Should().BeOfType<int>(),
+                ["Pruning.FrameworksUnsupported.Count"] = value => value.Should().BeOfType<int>(),
+                ["Pruning.DefaultEnabled"] = value => value.Should().BeOfType<bool>(),
+                ["Pruning.RemovablePackages.Count"] = value => value.Should().BeOfType<int>(),
+                ["Pruning.Pruned.Direct.Count"] = value => value.Should().BeOfType<int>(),
+                ["UsesLegacyPackagesDirectory"] = value => value.Should().Be(false),
+                ["UsesLegacyAssetTargetFallback"] = value => value.Should().Be(false),
+            };
+
+            HashSet<string> actualProperties = new();
+            foreach (var eventProperty in projectInformationEvent)
+            {
+                actualProperties.Add(eventProperty.Key);
+            }
+
+            expectedProperties.Keys.Except(actualProperties).Should().BeEmpty();
+            actualProperties.Except(expectedProperties.Keys).Should().BeEmpty();
+
+            foreach (var kvp in expectedProperties)
+            {
+                object value = projectInformationEvent[kvp.Key];
+                kvp.Value(value);
+            }
         }
 
         /// A 1.0.0 -> C 1.0.0 -> D 1.1.0
@@ -3719,6 +3841,137 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             packageSpec.FilePath = projectPath;
 
             return packageSpec;
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_WithASCIIPackageId_AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharactersIsFalse()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", "My.Package1");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("My.Package1", "1.0.0"));
+            var logger = new TestLogger();
+
+            var request = new TestRestoreRequest(packageSpec, new PackageSource[] { new PackageSource(pathContext.PackageSource) }, pathContext.UserPackagesFolder, logger)
+            {
+                LockFilePath = Path.Combine(projectPath, "project.assets.json"),
+                ProjectStyle = ProjectStyle.PackageReference,
+            };
+
+            // Set-up telemetry service - Important to set-up the service *after* the package source creation call as that emits telemetry!
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var _telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            _telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = _telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+            projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(false);
+        }
+
+        [Theory]
+        [InlineData("Pac\u212Bage")]         // Kelvin sign K (U+212A)
+        [InlineData("Package\u03B1")]        // Greek lowercase alpha (U+03B1)
+        [InlineData("Package\u00E9")]        // Latin small letter e with acute (U+00E9)
+        [InlineData("\u0410.Package")]        // Cyrillic capital A (U+0410)
+        public async Task ExecuteAsync_WithNonAlphanumericDotDashOrUnderscorePackageId_AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharactersIsTrue(string packageId)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", packageId);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext(packageId, "1.0.0"));
+            var logger = new TestLogger();
+
+            var request = new TestRestoreRequest(packageSpec, new PackageSource[] { new PackageSource(pathContext.PackageSource) }, pathContext.UserPackagesFolder, logger)
+            {
+                LockFilePath = Path.Combine(projectPath, "project.assets.json"),
+                ProjectStyle = ProjectStyle.PackageReference,
+            };
+
+            // Set-up telemetry service - Important to set-up the service *after* the package source creation call as that emits telemetry!
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var _telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            _telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = _telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+            projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(true);
+        }
+
+        [Theory]
+        [InlineData("Pac\u212Bage")]         // Kelvin sign K (U+212A)
+        [InlineData("Package\u03B1")]        // Greek lowercase alpha (U+03B1)
+        public async Task ExecuteAsync_WithMixedPackageIds_AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharactersIsTrue(string packageId)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
+            var asciiOnlyPkg = new SimpleTestPackageContext("Some.Package", "1.0.0");
+            var NonAlphanumericDotDashOrUnderscorePkg = new SimpleTestPackageContext(packageId, "1.0.0");
+            asciiOnlyPkg.Dependencies.Add(NonAlphanumericDotDashOrUnderscorePkg);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                asciiOnlyPkg,
+                NonAlphanumericDotDashOrUnderscorePkg);
+
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", "Some.Package");
+            var logger = new TestLogger();
+
+            var request = new TestRestoreRequest(packageSpec, new PackageSource[] { new PackageSource(pathContext.PackageSource) }, pathContext.UserPackagesFolder, logger)
+            {
+                LockFilePath = Path.Combine(projectPath, "project.assets.json"),
+                ProjectStyle = ProjectStyle.PackageReference,
+            };
+
+            // Set-up telemetry service - Important to set-up the service *after* the package source creation call as that emits telemetry!
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var _telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            _telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = _telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+            projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(true);
         }
 
         private Task<GraphNode<RemoteResolveResult>> DoWalkAsync(RemoteDependencyWalker walker, string name, NuGetFramework framework)

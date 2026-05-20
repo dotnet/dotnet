@@ -167,6 +167,11 @@
   <data name="Log_ImportsFallbackWarning" xml:space="preserve">
     <value>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</value>
   </data>
+  <data name="Warning_MonoAndroidFrameworkDeprecated" xml:space="preserve">
+    <value>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</value>
+    <comment>{0} - package id
+{1} - package version</comment>
+  </data>
   <data name="Log_CycleDetected" xml:space="preserve">
     <value>Cycle detected.</value>
   </data>
@@ -1150,7 +1155,7 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
     <comment>0 - package id and version, 1 - version</comment>
   </data>
   <data name="Error_RestorePruningDirectPackageReference" xml:space="preserve">
-    <value>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</value>
+    <value>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</value>
     <comment>0 - package id and version</comment>
   </data>
   <data name="Error_RestorePruningProjectReference" xml:space="preserve">

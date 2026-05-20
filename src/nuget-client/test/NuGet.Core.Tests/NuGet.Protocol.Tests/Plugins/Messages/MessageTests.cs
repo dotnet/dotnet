@@ -3,7 +3,6 @@
 
 using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
@@ -12,45 +11,16 @@ namespace NuGet.Protocol.Plugins.Tests
 
     public class MessageTests
     {
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void Constructor_ThrowsForNullOrEmptyRequestId(string requestId)
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new Message(requestId, MessageType.Cancel, MessageMethod.None));
-
-            Assert.Equal("requestId", exception.ParamName);
-        }
-
-        [Fact]
-        public void Constructor_ThrowsForUndefinedType()
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new Message("requestId", (MessageType)int.MinValue, MessageMethod.None));
-
-            Assert.Equal("type", exception.ParamName);
-        }
-
-        [Fact]
-        public void Constructor_ThrowsForUndefinedMethod()
-        {
-            var exception = Assert.Throws<ArgumentException>(
-                () => new Message("requestId", MessageType.Fault, (MessageMethod)int.MinValue));
-
-            Assert.Equal("method", exception.ParamName);
-        }
-
         [Fact]
         public void Constructor_InitializesProperties()
         {
             var payload = new { E = 7 };
-            var message = new Message("a", MessageType.Request, MessageMethod.None, JObject.FromObject(payload));
+            var message = MessageUtilities.Create("a", MessageType.Request, MessageMethod.None, payload);
 
             Assert.Equal("a", message.RequestId);
             Assert.Equal(MessageType.Request, message.Type);
             Assert.Equal(MessageMethod.None, message.Method);
-            Assert.Equal("{\"E\":7}", message.Payload.ToString(Formatting.None));
+            Assert.Equal("{\"E\":7}", MessageUtilities.SerializePayload(message));
         }
 
         [Fact]
@@ -58,12 +28,11 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var version = new SemanticVersion(major: 1, minor: 2, patch: 3);
             var request = new HandshakeRequest(protocolVersion: version, minimumProtocolVersion: version);
-            var payload = JsonSerializationUtilities.FromObject(request);
-            var message = new Message(
+            var message = MessageUtilities.Create(
                 requestId: "a",
                 type: MessageType.Request,
                 method: MessageMethod.None,
-                payload: payload);
+                payload: request);
 
             var actualJson = TestUtilities.Serialize(message);
             var expectedJson = "{\"RequestId\":\"a\",\"Type\":\"Request\",\"Method\":\"None\",\"Payload\":{\"ProtocolVersion\":\"1.2.3\",\"MinimumProtocolVersion\":\"1.2.3\"}}";
@@ -82,7 +51,7 @@ namespace NuGet.Protocol.Plugins.Tests
             Assert.Equal("a", message.RequestId);
             Assert.Equal(MessageType.Request, message.Type);
             Assert.Equal(MessageMethod.None, message.Method);
-            Assert.Equal("{\"ProtocolVersion\":\"c\",\"MinimumProtocolVersion\":\"d\"}", message.Payload.ToString(Formatting.None));
+            Assert.Equal("{\"ProtocolVersion\":\"c\",\"MinimumProtocolVersion\":\"d\"}", MessageUtilities.SerializePayload(message));
         }
 
         [Theory]

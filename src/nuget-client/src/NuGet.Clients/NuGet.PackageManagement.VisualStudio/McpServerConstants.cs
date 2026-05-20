@@ -9,7 +9,7 @@ namespace NuGet.PackageManagement.VisualStudio
         public const string NuGetMcpServerName = "nuget";
 
         // Tool names below must match their respective tool names defined in the NuGet MCP Server.
-        public const string NuGetSolverToolName = "get-nuget-solver";
+        public const string NuGetSolverToolName = "fix_vulnerable_packages";
 
         // Fully qualified tool names are in the format of "{serverName}_{toolName}".
         public const string NuGetSolverFullyQualifiedToolName = $"{NuGetMcpServerName}_{NuGetSolverToolName}";

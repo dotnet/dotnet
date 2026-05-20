@@ -4,7 +4,7 @@ parameters:
 - name: artifactName
   type: string
   default: SB_CentOSStream10_Online_MsftSdk_x64_BuildLogs_Attempt1
-  displayName: (Optional) Source Build Artrifact Name to retrieve sbrpPackageUsage.json from
+  displayName: (Optional) Source Build Artifact Name to retrieve sbaPackageUsage.json from
 
 - name: skipPackages
   type: string
@@ -14,7 +14,7 @@ parameters:
 - name: knownFalsePositives
   type: string
   default: 'microsoft.build.notargets/3.7.0 microsoft.build.traversal/3.4.0'
-  displayName: List of known false positives (<name>[/<version>]) in the sbrpPackageUsage.json to skip from deletion (space separated)
+  displayName: List of known false positives (<name>[/<version>]) in the sbaPackageUsage.json to skip from deletion (space separated)
 
 pool:
   name: NetCore1ESPool-Svc-Internal
@@ -63,19 +63,19 @@ stages:
         definition: $(resources.pipeline.dotnet-unified-build.pipelineName)
         pipelineId: $(resources.pipeline.dotnet-unified-build.runID)
         artifactName: ${{ parameters.artifactName }}
-        itemPattern: '**/sbrpPackageUsage.json'
+        itemPattern: '**/sbaPackageUsage.json'
         targetPath: $(Pipeline.Workspace)
         allowPartiallySucceededBuilds: true
         allowFailedBuilds: true
 
     - script: |
-        if [ -f "$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json" ]; then
-          echo "sbrpPackageUsage.json file found."
-          cat "$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json"
+        if [ -f "$(Pipeline.Workspace)/artifacts/log/Release/sbaPackageUsage.json" ]; then
+          echo "sbaPackageUsage.json file found."
+          cat "$(Pipeline.Workspace)/artifacts/log/Release/sbaPackageUsage.json"
         else
-          echo "sbrpPackageUsage.json file not found."
+          echo "sbaPackageUsage.json file not found."
         fi
-      displayName: Check and display sbrpPackageUsage.json
+      displayName: Check and display sbaPackageUsage.json
 
     - script: |
         time="$(date +%s)"
@@ -100,8 +100,8 @@ stages:
         GH_TOKEN: $(BotAccount-dotnet-sb-bot-pat)
 
     - script: |
-        json_file="$(Pipeline.Workspace)/artifacts/log/Release/sbrpPackageUsage.json"
-        unreferenced_paths=$(jq -r '.UnreferencedSbrps[]' "$json_file")
+        json_file="$(Pipeline.Workspace)/artifacts/log/Release/sbaPackageUsage.json"
+        unreferenced_paths=$(jq -r '.UnreferencedSbaPackages[]' "$json_file")
         skip_packages_array=(${{ lower(parameters.skipPackages) }} ${{ lower(parameters.knownFalsePositives) }})
 
         for path in $unreferenced_paths; do

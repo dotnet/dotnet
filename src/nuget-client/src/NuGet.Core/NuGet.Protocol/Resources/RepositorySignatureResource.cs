@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
 
 namespace NuGet.Protocol
 {
@@ -41,6 +42,27 @@ namespace NuGet.Protocol
                 }
             }
 
+            Source = source.PackageSource.Source;
+        }
+
+        internal RepositorySignatureResource(RepositorySignatureModel model, SourceRepository source)
+        {
+            AllRepositorySigned = model.AllRepositorySigned ??
+                throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToParseRepoSignInfor, JsonProperties.AllRepositorySigned, source.PackageSource.Source));
+
+            RepositoryCertificateInfo[] certs = model.SigningCertificates ??
+                throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToParseRepoSignInfor, JsonProperties.SigningCertificates, source.PackageSource.Source));
+
+            foreach (RepositoryCertificateInfo cert in certs)
+            {
+                if (!Uri.TryCreate(cert.ContentUrl, UriKind.Absolute, out Uri contentUrl)
+                    || !string.Equals(contentUrl.Scheme, "https", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new FatalProtocolException(Strings.RepositoryContentUrlMustBeHttps);
+                }
+            }
+
+            RepositoryCertificateInfos = certs;
             Source = source.PackageSource.Source;
         }
 

@@ -11,6 +11,8 @@ Microsoft.Bcl.HashCode.dll
 Microsoft.DataAI.NuGetRecommender.Contracts.dll
 Microsoft.Extensions.DependencyInjection.dll
 Microsoft.Extensions.DependencyInjection.Abstractions.dll
+Microsoft.Extensions.FileProviders.Abstractions.dll
+Microsoft.Extensions.Primitives.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll
 Microsoft.IdentityModel.JsonWebTokens.dll

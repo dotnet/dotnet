@@ -1,1 +1,5 @@
 #nullable enable
+~NuGet.Commands.PackArgs.DeterministicTimestamp.get -> string
+~NuGet.Commands.PackArgs.DeterministicTimestamp.set -> void
+const NuGet.Commands.Restore.Utility.PackageSpecFactory.EnvironmentVariableName = "NUGET_USE_NEW_PACKAGESPEC_FACTORY" -> string!
+NuGet.Commands.Restore.IProject.GetGlobalProperty(string! propertyName) -> string?
