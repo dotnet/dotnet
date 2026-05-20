@@ -1,0 +1,517 @@
+name: Apply milestones to codeflow PRs
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'main'
+      - 'release/**'
+    paths: ['src/source-manifest.json']
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Log actions without making changes'
+        type: boolean
+        default: true
+      pr-number:
+        description: 'PR number to process (required for manual runs)'
+        type: number
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: milestone-${{ github.event.pull_request.base.ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  apply-milestones:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 2  # Need parent commit for diff
+
+      - name: Generate dotnet org token
+        uses: actions/create-github-app-token@v3
+        id: dotnet-token
+        with:
+          app-id: ${{ secrets.MILESTONE_APP_ID }}
+          private-key: ${{ secrets.MILESTONE_APP_PRIVATE_KEY }}
+          owner: dotnet
+
+      # Uncomment the step below to enable milestoning for microsoft org repos.
+      # Requires the GitHub App to be installed on the microsoft org.
+      # - name: Generate microsoft org token
+      #   uses: actions/create-github-app-token@v3
+      #   id: microsoft-token
+      #   with:
+      #     app-id: ${{ secrets.MILESTONE_APP_ID }}
+      #     private-key: ${{ secrets.MILESTONE_APP_PRIVATE_KEY }}
+      #     owner: microsoft
+
+      - name: Apply milestones
+        uses: actions/github-script@v9
+        env:
+          DOTNET_TOKEN: ${{ steps.dotnet-token.outputs.token }}
+          # MICROSOFT_TOKEN: ${{ steps.microsoft-token.outputs.token }}  # Uncomment when microsoft org app is installed
+          DRY_RUN: ${{ github.event.inputs.dry-run || 'false' }}
+        with:
+          github-token: ${{ steps.dotnet-token.outputs.token }}
+          script: |
+            // const { Octokit } = require("@octokit/rest");  // Uncomment when microsoft org app is installed
+            const DRY_RUN = process.env.DRY_RUN === 'true';
+
+            if (DRY_RUN) core.info('DRY RUN -- no milestones will be created or applied');
+
+            // Map of org -> authenticated Octokit client
+            // To enable microsoft org, uncomment the microsoft-token step above,
+            // the MICROSOFT_TOKEN env var, and the microsoft entry below.
+            const orgClients = {
+              dotnet: github,
+              // microsoft: new Octokit({ auth: process.env.MICROSOFT_TOKEN }),
+            };
+
+            function getOctokit(owner) {
+              return orgClients[owner.toLowerCase()] || null;
+            }
+
+            // Repos that have opted out of auto-milestoning
+            const fs = require('fs');
+            const config = JSON.parse(fs.readFileSync('.github/milestone-config.json', 'utf8'));
+            const OPTED_OUT_REPOS = new Set(config.optedOutRepos.map(r => r.toLowerCase()));
+
+            // --- Constants: 7 previews, 2 RCs per release ---
+            const MAX_PREVIEWS = 7;
+
+            // Compute the next milestone when a preview branch snap is detected.
+            // preview1→preview2, ..., preview7→rc1
+            function nextPreviewMilestone(ver, iteration) {
+              if (iteration < MAX_PREVIEWS) {
+                return `${ver}-preview${iteration + 1}`;
+              }
+              return `${ver}-rc1`;
+            }
+
+            // --- Step 1: Resolve milestone name ---
+
+            async function resolveMilestone(branch, mergeCommitSha) {
+
+              // --- Preview/RC release branches ---
+              // release/11.0.1xx-preview4 → 11.0-preview4
+              const releaseMatch = branch.match(/^release\/(\d+\.\d+)\.1xx-((?:preview|rc)\d+)$/);
+              if (releaseMatch) {
+                return `${releaseMatch[1]}-${releaseMatch[2]}`;
+              }
+
+              // --- Bare release branches (e.g. release/11.0.1xx) ---
+              // Only active during the narrow window where this branch is staging rc2:
+              // branding is "rc2", release/X.Y.1xx-rc1 exists, but release/X.Y.1xx-rc2 does not.
+              const bareMatch = branch.match(/^release\/(\d+\.\d+)\.(\d+)xx$/);
+              if (bareMatch) {
+                const ver = bareMatch[1];
+                const featureBand = bareMatch[2];
+
+                const fs = require('fs');
+                const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
+
+                // Skip if servicing (patch > 0)
+                const patchMatch = versionsProps.match(/<VersionSDKMinorPatch>(\d+)<\/VersionSDKMinorPatch>/);
+                const patch = patchMatch ? parseInt(patchMatch[1]) : -1;
+                if (patch !== 0) {
+                  core.info(`Bare release branch ${branch} has patch version ${patch} (servicing), skipping`);
+                  return null;
+                }
+
+                // Only proceed if branding is rc2
+                const labelMatch = versionsProps.match(/<PreReleaseVersionLabel>([^<]+)<\/PreReleaseVersionLabel>/);
+                const iterationMatch = versionsProps.match(/<PreReleaseVersionIteration>(\d*)<\/PreReleaseVersionIteration>/);
+                const label = labelMatch ? labelMatch[1] : '';
+                const iteration = parseInt(iterationMatch?.[1] || '0');
+
+                if (label !== 'rc' || iteration !== 2) {
+                  core.info(`Bare release branch ${branch} branded as "${label}${iteration}", not rc2 — skipping`);
+                  return null;
+                }
+
+                // Only active if rc2 branch hasn't been snapped yet
+                try {
+                  await github.rest.repos.getBranch({
+                    owner: 'dotnet', repo: 'dotnet',
+                    branch: `release/${ver}.${featureBand}xx-rc2`,
+                  });
+                  core.info(`Bare release branch ${branch}: rc2 branch already snapped, skipping`);
+                  return null;
+                } catch (e) {
+                  if (e.status !== 404) throw e;
+                }
+
+                return `${ver}-rc2`;
+              }
+
+              // --- Any other release branch format: skip ---
+              if (branch.startsWith('release/')) {
+                core.info(`Release branch ${branch} does not match expected patterns, skipping`);
+                return null;
+              }
+
+              // --- Main branch ---
+              const fs = require('fs');
+              const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
+
+              const majorMatch = versionsProps.match(/<VersionMajor>(\d+)<\/VersionMajor>/);
+              const minorMatch = versionsProps.match(/<VersionMinor>(\d+)<\/VersionMinor>/);
+              const labelMatch = versionsProps.match(/<PreReleaseVersionLabel>([^<]+)<\/PreReleaseVersionLabel>/);
+              const iterationMatch = versionsProps.match(/<PreReleaseVersionIteration>(\d*)<\/PreReleaseVersionIteration>/);
+
+              if (!majorMatch || !labelMatch) {
+                core.warning('Could not parse version from eng/Versions.props');
+                return null;
+              }
+
+              const major = parseInt(majorMatch[1]);
+              const minor = minorMatch ? minorMatch[1] : '0';
+              const label = labelMatch[1];
+              const iteration = parseInt(iterationMatch?.[1] || '0');
+              const ver = `${major}.${minor}`;
+
+              if (label === 'servicing') {
+                core.info('Main branch is branded as servicing, skipping');
+                return null;
+              }
+
+              // Alpha always maps to preview1
+              if (label === 'alpha') {
+                return `${ver}-preview1`;
+              }
+
+              // Check if a release branch matching current branding exists
+              const fullLabel = `${label}${iteration}`;
+              const candidateBranch = `release/${ver}.1xx-${fullLabel}`;
+              let branchExists = false;
+              try {
+                await github.rest.repos.getBranch({
+                  owner: 'dotnet', repo: 'dotnet',
+                  branch: candidateBranch,
+                });
+                branchExists = true;
+              } catch (e) {
+                if (e.status !== 404) throw e;
+              }
+
+              if (!branchExists) {
+                // Normal case: branding matches
+                return `${ver}-${fullLabel}`;
+              }
+
+              // Branch exists → branding may be stale, OR the PR was merged just before the snap.
+              // Check if this PR's merge commit is in the release branch.
+              // If it is, the PR shipped in this preview — use current branding.
+              if (mergeCommitSha) {
+                try {
+                  const { data: comparison } = await github.rest.repos.compareCommits({
+                    owner: 'dotnet', repo: 'dotnet',
+                    base: mergeCommitSha,
+                    head: candidateBranch,
+                  });
+                  // If merge commit is behind or equal to the branch, it's included
+                  if (comparison.status === 'ahead' || comparison.status === 'identical') {
+                    core.info(`Merge commit ${mergeCommitSha.substring(0, 8)} is in ${candidateBranch} — using current branding`);
+                    return `${ver}-${fullLabel}`;
+                  }
+                } catch (e) {
+                  core.warning(`Could not check branch reachability: ${e.message}`);
+                }
+              }
+
+              // Merge commit is NOT in the release branch — branding is stale.
+              // Deterministically increment.
+              // RC snap means main is now vNext
+              if (label === 'rc') {
+                return `${major + 1}.0-preview1`;
+              }
+
+              // Preview snap: preview7→rc1, previewN→preview(N+1)
+              return nextPreviewMilestone(ver, iteration);
+            }
+
+            // --- Step 2: Extract child-repo PRs from source-manifest.json diff ---
+
+            async function extractChildPRs(prNumber) {
+              // Get the files changed in the PR (paginated)
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                owner: 'dotnet', repo: 'dotnet', pull_number: prNumber,
+              });
+
+              const manifestFile = files.find(f => f.filename === 'src/source-manifest.json');
+              if (!manifestFile) {
+                core.info('No source-manifest.json change found');
+                return [];
+              }
+
+              // Fetch the merge commit SHA from the PR itself (works for both
+              // current event and deferred PRs)
+              const { data: pr } = await github.rest.pulls.get({
+                owner: 'dotnet', repo: 'dotnet', pull_number: prNumber,
+              });
+              const mergeCommitSha = pr.merge_commit_sha;
+              if (!mergeCommitSha) {
+                core.warning(`PR #${prNumber} has no merge commit`);
+                return [];
+              }
+
+              const { data: mergeCommit } = await github.rest.repos.getCommit({
+                owner: 'dotnet', repo: 'dotnet', ref: mergeCommitSha,
+              });
+              const parentSha = mergeCommit.parents[0].sha;
+
+              const [oldManifest, newManifest] = await Promise.all([
+                github.rest.repos.getContent({
+                  owner: 'dotnet', repo: 'dotnet',
+                  path: 'src/source-manifest.json',
+                  ref: parentSha,
+                }),
+                github.rest.repos.getContent({
+                  owner: 'dotnet', repo: 'dotnet',
+                  path: 'src/source-manifest.json',
+                  ref: mergeCommitSha,
+                }),
+              ]);
+
+              const oldRepos = JSON.parse(Buffer.from(oldManifest.data.content, 'base64').toString()).repositories;
+              const newRepos = JSON.parse(Buffer.from(newManifest.data.content, 'base64').toString()).repositories;
+
+              // Find repos whose commitSha changed
+              const changes = [];
+              for (const newRepo of newRepos) {
+                const oldRepo = oldRepos.find(r => r.path === newRepo.path);
+                if (oldRepo && oldRepo.commitSha !== newRepo.commitSha) {
+                  changes.push({
+                    path: newRepo.path,
+                    remoteUri: newRepo.remoteUri,
+                    oldSha: oldRepo.commitSha,
+                    newSha: newRepo.commitSha,
+                  });
+                }
+              }
+
+              return changes;
+            }
+
+            // --- Step 3: Find PRs in commit range using GraphQL ---
+
+            async function findPRsInRange(owner, repo, oldSha, newSha, octokit) {
+              // Collect all commits in range, paginating if > 250
+              const allCommits = [];
+              let currentBase = oldSha;
+
+              while (true) {
+                const { data: comparison } = await octokit.rest.repos.compareCommits({
+                  owner, repo,
+                  base: currentBase,
+                  head: newSha,
+                  per_page: 250,
+                });
+
+                if (comparison.commits.length === 0) break;
+
+                allCommits.push(...comparison.commits);
+
+                // If we got all commits, we're done
+                if (allCommits.length >= comparison.total_commits) break;
+
+                // Move the base forward to the last commit we got
+                currentBase = comparison.commits[comparison.commits.length - 1].sha;
+              }
+
+              if (allCommits.length === 0) return [];
+
+              core.info(`${owner}/${repo}: ${allCommits.length} commits in range`);
+
+              // Batch query associatedPullRequests via GraphQL
+              const commitAliases = allCommits.map((c, i) =>
+                `c${i}: object(oid: "${c.sha}") { ... on Commit { associatedPullRequests(first: 10) { nodes { number } } } }`
+              );
+
+              const prNumbers = new Set();
+              for (let i = 0; i < commitAliases.length; i += 50) {
+                const batch = commitAliases.slice(i, i + 50);
+                const query = `query { repository(owner: "${owner}", name: "${repo}") { ${batch.join('\n')} } }`;
+
+                const result = await octokit.graphql(query);
+
+                for (const [key, value] of Object.entries(result.repository)) {
+                  if (value?.associatedPullRequests?.nodes) {
+                    for (const pr of value.associatedPullRequests.nodes) {
+                      prNumbers.add(pr.number);
+                    }
+                  }
+                }
+              }
+
+              return [...prNumbers];
+            }
+
+            // --- Step 4: Ensure milestone exists and apply ---
+
+            async function ensureMilestone(owner, repo, milestoneName, octokit) {
+              // Check if milestone already exists (open then closed)
+              const openMilestones = await octokit.paginate(octokit.rest.issues.listMilestones, {
+                owner, repo, state: 'open', per_page: 100,
+              });
+              let milestone = openMilestones.find(m => m.title === milestoneName);
+
+              if (!milestone) {
+                const closedMilestones = await octokit.paginate(octokit.rest.issues.listMilestones, {
+                  owner, repo, state: 'closed', per_page: 100,
+                });
+                milestone = closedMilestones.find(m => m.title === milestoneName);
+              }
+
+              if (!milestone) {
+                if (DRY_RUN) {
+                  core.info(`[DRY RUN] Would create milestone "${milestoneName}" in ${owner}/${repo}`);
+                  return -1;  // Sentinel value for dry run
+                }
+                core.info(`Creating milestone "${milestoneName}" in ${owner}/${repo}`);
+                try {
+                  const { data: created } = await octokit.rest.issues.createMilestone({
+                    owner, repo, title: milestoneName,
+                  });
+                  return created.number;
+                } catch (e) {
+                  // Handle race condition — another run may have created it
+                  if (e.status === 422) {
+                    const retryMilestones = await octokit.paginate(octokit.rest.issues.listMilestones, {
+                      owner, repo, state: 'open', per_page: 100,
+                    });
+                    milestone = retryMilestones.find(m => m.title === milestoneName);
+                    if (milestone) return milestone.number;
+                  }
+                  throw e;
+                }
+              }
+
+              return milestone.number;
+            }
+
+            async function applyMilestone(owner, repo, prNumber, milestoneNumber, octokit) {
+              if (DRY_RUN) {
+                core.info(`[DRY RUN] Would apply milestone to ${owner}/${repo}#${prNumber}`);
+                return;
+              }
+
+              // Check if already milestoned
+              const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
+              if (pr.milestone?.number === milestoneNumber) {
+                core.info(`PR ${owner}/${repo}#${prNumber} already has correct milestone`);
+                return;
+              }
+
+              await octokit.rest.issues.update({
+                owner, repo, issue_number: prNumber,
+                milestone: milestoneNumber,
+              });
+              core.info(`Applied milestone to ${owner}/${repo}#${prNumber}`);
+            }
+
+            // --- Core logic: process a single dotnet/dotnet PR ---
+
+            async function processOnePR(prNumber, milestoneName) {
+              const changes = await extractChildPRs(prNumber);
+
+              for (const change of changes) {
+                try {
+                  const urlMatch = change.remoteUri.match(/github\.com\/([^/]+)\/([^/]+)/);
+                  if (!urlMatch) {
+                    core.warning(`Could not parse remote URI: ${change.remoteUri}`);
+                    continue;
+                  }
+
+                  const [, owner, repoRaw] = urlMatch;
+                  const repo = repoRaw.replace(/\.git$/, '');
+
+                  if (OPTED_OUT_REPOS.has(`${owner}/${repo}`.toLowerCase())) {
+                    core.info(`Skipping ${owner}/${repo} — opted out of auto-milestoning`);
+                    continue;
+                  }
+
+                  const octokit = getOctokit(owner);
+                  if (!octokit) {
+                    core.info(`Skipping ${owner}/${repo} — org not configured for milestoning`);
+                    continue;
+                  }
+
+                  core.info(`Processing ${owner}/${repo}: ${change.oldSha.substring(0, 8)}..${change.newSha.substring(0, 8)}`);
+
+                  const prNumbers = await findPRsInRange(owner, repo, change.oldSha, change.newSha, octokit);
+                  core.info(`Found ${prNumbers.length} PRs: ${prNumbers.join(', ')}`);
+
+                  if (prNumbers.length === 0) continue;
+
+                  const milestoneNumber = await ensureMilestone(owner, repo, milestoneName, octokit);
+
+                  for (const childPR of prNumbers) {
+                    try {
+                      await applyMilestone(owner, repo, childPR, milestoneNumber, octokit);
+                    } catch (e) {
+                      core.warning(`Failed to milestone ${owner}/${repo}#${childPR}: ${e.message}`);
+                    }
+                  }
+                } catch (e) {
+                  core.warning(`Failed to process repo ${change.remoteUri}: ${e.message}`);
+                }
+              }
+            }
+
+            // --- Main ---
+
+            // Resolve the PR number — from event payload or workflow_dispatch input
+            const prNumber = context.payload.pull_request?.number
+              || parseInt(context.payload.inputs?.['pr-number']);
+
+            if (!prNumber) {
+              core.setFailed('No PR number available. For workflow_dispatch, provide pr-number input.');
+              return;
+            }
+
+            // For workflow_dispatch, fetch the PR to get its base branch and checkout its merge commit
+            let baseBranch;
+            let mergeCommitSha;
+            if (context.payload.pull_request) {
+              baseBranch = context.payload.pull_request.base.ref;
+              mergeCommitSha = context.payload.pull_request.merge_commit_sha;
+            } else {
+              const { data: pr } = await github.rest.pulls.get({
+                owner: 'dotnet', repo: 'dotnet', pull_number: prNumber,
+              });
+              baseBranch = pr.base.ref;
+              mergeCommitSha = pr.merge_commit_sha;
+              if (!pr.merged) {
+                core.setFailed(`PR #${prNumber} has not been merged`);
+                return;
+              }
+              // Checkout the merge commit so eng/Versions.props matches the PR's state
+              const { execSync } = require('child_process');
+              execSync(`git fetch origin ${pr.merge_commit_sha} --depth=2 && git checkout ${pr.merge_commit_sha}`, { stdio: 'inherit' });
+            }
+
+            core.info(`Processing PR #${prNumber} against ${baseBranch}`);
+
+            const milestoneName = await resolveMilestone(baseBranch, mergeCommitSha);
+
+            if (!milestoneName) {
+              core.info('Could not resolve milestone, skipping');
+              return;
+            }
+
+            core.info(`Resolved milestone: ${milestoneName}`);
+
+            // Process the current PR
+            await processOnePR(prNumber, milestoneName);
