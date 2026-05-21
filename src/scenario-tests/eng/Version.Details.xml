@@ -8,10 +8,6 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>94ea82652cdd4e0f8046b5bd5becbd11461482ca</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26177.113">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c7f1e00d178d0803482a25106a6de6b8f0babd11</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26230.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>c7f1e00d178d0803482a25106a6de6b8f0babd11</Sha>
