@@ -598,6 +598,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="Error_RestoreInLockedMode" xml:space="preserve">
     <value>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file.</value>
   </data>
+  <data name="Error_ReadingProjectInformation" xml:space="preserve">
+    <value>Unable to read project information for '{0}': {1}</value>
+    <comment>{0} - project name; {1} - error details</comment>
+  </data>
   <data name="Error_PackageValidationFailed" xml:space="preserve">
     <value>Package content hash validation failed for {0}. The package is different than the last restore.</value>
     <comment>{0} - package id and version</comment>

@@ -18,6 +18,16 @@
 
 - All files in the repository are nullable by default (project-level nullable enable). No need to add `#nullable enable` directives to individual files.
 
+## Benchmarking
+
+When asked to benchmark code or measure performance, use the `NuGet.Benchmarks` project at `test/TestExtensions/NuGet.Benchmarks/`. Create a new `.cs` file in that directory (it is git-ignored) with a class that implements `IBenchmark` and annotates benchmark methods with `[Benchmark]`. No changes to `Program.cs` are needed — it auto-discovers all `IBenchmark` implementations. Run with:
+
+```bash
+dotnet run -c Release --project test/TestExtensions/NuGet.Benchmarks/NuGet.Benchmarks.csproj
+```
+
+See `test/TestExtensions/NuGet.Benchmarks/README.md` for details and an example.
+
 ## Nullable Migration Rules
 
 - **Shipped.txt format must be precise** — e.g. `string![]!` not `string![]`, `byte[]?` not `byte?[]`. Always match the format of existing base class entries in the same file.

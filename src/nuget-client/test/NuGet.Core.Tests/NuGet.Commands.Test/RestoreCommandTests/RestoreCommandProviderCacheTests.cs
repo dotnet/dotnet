@@ -10,6 +10,7 @@ using NuGet.Configuration;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.Test.RestoreCommandTests
@@ -38,7 +39,8 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 auditSources,
                 sourceCacheContext,
                 logger,
-                updateLastAccess: true);
+                updateLastAccess: true,
+                environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
 
             IReadOnlyList<IVulnerabilityInformationProvider> actual = restoreCommandProviders.VulnerabilityInfoProviders;
 
@@ -70,7 +72,8 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 auditSources,
                 sourceCacheContext,
                 logger,
-                updateLastAccess: true);
+                updateLastAccess: true,
+                environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
 
             IReadOnlyList<IVulnerabilityInformationProvider> actual = restoreCommandProviders.VulnerabilityInfoProviders;
 
