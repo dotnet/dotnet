@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.InternalTesting;
@@ -11,6 +13,7 @@ namespace Microsoft.AspNetCore.Tools.NativeAot.Tests;
 
 public class NativeAotToolScenarioTests
 {
+    private static readonly string TestTargetFramework = GetTestTargetFramework();
     private readonly ITestOutputHelper _output;
 
     public NativeAotToolScenarioTests(ITestOutputHelper output)
@@ -138,7 +141,7 @@ public class NativeAotToolScenarioTests
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <OutputType>Exe</OutputType>
-                <TargetFramework>net11.0</TargetFramework>
+                <TargetFramework>{{TestTargetFramework}}</TargetFramework>
                 {{userSecretsProperty}}
                 <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
               </PropertyGroup>
@@ -146,6 +149,19 @@ public class NativeAotToolScenarioTests
             """);
 
         return projectPath;
+    }
+
+    private static string GetTestTargetFramework()
+    {
+        var targetFrameworkName = typeof(NativeAotToolScenarioTests).Assembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
+        if (string.IsNullOrEmpty(targetFrameworkName))
+        {
+            throw new InvalidOperationException($"Could not determine the target framework for {nameof(NativeAotToolScenarioTests)}.");
+        }
+
+        var frameworkName = new FrameworkName(targetFrameworkName);
+
+        return $"net{frameworkName.Version.Major}.{frameworkName.Version.Minor}";
     }
 
     private static string CreateUserJwtsProject(string root)

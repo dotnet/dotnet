@@ -147,9 +147,12 @@ internal sealed class ProjectIdResolver
         if (!string.IsNullOrEmpty(assemblyLocation))
         {
             var assemblyDir = Path.GetDirectoryName(assemblyLocation);
-            // Preserve search order from previous versions before the check of the assembly location value was added.
-            searchPaths.Insert(1, Path.Combine(Path.GetDirectoryName(assemblyDir), "assets"));
-            searchPaths.Add(assemblyDir);
+            if (!string.IsNullOrEmpty(assemblyDir))
+            {
+                // Preserve search order from previous versions before the check of the assembly location value was added.
+                searchPaths.Insert(1, Path.Combine(assemblyDir, "assets"));
+                searchPaths.Add(assemblyDir);
+            }
         }
 
         var targetPath = searchPaths.Select(p => Path.Combine(p, "SecretManager.targets")).FirstOrDefault(File.Exists);
