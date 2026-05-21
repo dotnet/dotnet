@@ -3,20 +3,24 @@
   <UsingTask TaskName="Microsoft.NET.Build.Tasks.SelectRuntimeIdentifierSpecificItems" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
 
   <PropertyGroup>
-    <AspNetCoreRidSpecificToolPackageRids>linux-x64;linux-arm;linux-arm64;win-x64;win-x86;win-arm64;osx-x64;osx-arm64</AspNetCoreRidSpecificToolPackageRids>
+    <AspNetCoreRidSpecificToolPackageRids>linux-x64;linux-arm;linux-arm64;linux-musl-x64;linux-musl-arm;linux-musl-arm64;win-x64;win-x86;win-arm64;osx-x64;osx-arm64</AspNetCoreRidSpecificToolPackageRids>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IncludeAspNetCoreRuntime)' != 'false'">
+    <!-- RID-specific tool packages are produced by aspnetcore and use the current aspnetcore package version. -->
     <BundledDotnetTool Include="dotnet-dev-certs"
                        Version="$(DotnetDevCertsPackageVersion)"
-                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)" />
+                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)"
+                       RidSpecificPackageVersion="$(MicrosoftAspNetCoreAppRefPackageVersion)" />
     <BundledDotnetTool Include="dotnet-user-jwts"
                        Version="$(DotnetUserJwtsPackageVersion)"
-                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)" />
+                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)"
+                       RidSpecificPackageVersion="$(MicrosoftAspNetCoreAppRefPackageVersion)" />
     <BundledDotnetTool Include="dotnet-user-secrets"
                        Version="$(DotnetUserSecretsPackageVersion)"
                        ObsoletesCliTool="Microsoft.Extensions.SecretManager.Tools"
-                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)" />
+                       RidSpecificPackageRids="$(AspNetCoreRidSpecificToolPackageRids)"
+                       RidSpecificPackageVersion="$(MicrosoftAspNetCoreAppRefPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,17 +43,20 @@
       <_RidSpecificBundledDotnetTool Include="@(BundledDotnetTool)"
                                       Condition="'$(DotNetBuildSourceOnly)' != 'true' and '%(BundledDotnetTool.RidSpecificPackageRids)' != ''">
         <ToolId>%(BundledDotnetTool.Identity)</ToolId>
-        <ToolVersion>%(BundledDotnetTool.Version)</ToolVersion>
+        <ToolVersion>%(BundledDotnetTool.RidSpecificPackageVersion)</ToolVersion>
+        <ToolVersion Condition="'%(BundledDotnetTool.RidSpecificPackageVersion)' == ''">%(BundledDotnetTool.Version)</ToolVersion>
+        <RidSpecificPackageVersion>%(BundledDotnetTool.RidSpecificPackageVersion)</RidSpecificPackageVersion>
       </_RidSpecificBundledDotnetTool>
       <_RidSpecificBundledDotnetToolPackage Include="%(_RidSpecificBundledDotnetTool.RidSpecificPackageRids)">
         <ToolId>%(_RidSpecificBundledDotnetTool.ToolId)</ToolId>
         <ToolVersion>%(_RidSpecificBundledDotnetTool.ToolVersion)</ToolVersion>
+        <PackageVersion>%(_RidSpecificBundledDotnetTool.RidSpecificPackageVersion)</PackageVersion>
       </_RidSpecificBundledDotnetToolPackage>
       <_RidSpecificBundledDotnetToolPackage Update="@(_RidSpecificBundledDotnetToolPackage)">
         <PackageId>%(ToolId).%(Identity)</PackageId>
-        <PackageVersion>%(ToolVersion)</PackageVersion>
+        <PackageVersion Condition="'%(PackageVersion)' == ''">%(ToolVersion)</PackageVersion>
         <RuntimeIdentifier>%(Identity)</RuntimeIdentifier>
-        <RestoredPackagePath>$(NuGetPackageRoot)%(ToolId).%(Identity)/%(ToolVersion)/</RestoredPackagePath>
+        <RestoredPackagePath>$(NuGetPackageRoot)$([MSBuild]::ValueOrDefault('%(ToolId).%(Identity)/%(PackageVersion)/', '').ToLowerInvariant())</RestoredPackagePath>
       </_RidSpecificBundledDotnetToolPackage>
     </ItemGroup>
 
@@ -61,6 +68,13 @@
     </SelectRuntimeIdentifierSpecificItems>
 
     <ItemGroup>
+      <_ExactRidSpecificBundledDotnetToolPackage Include="@(_SelectedRidSpecificBundledDotnetToolPackage)"
+                                                 Condition="'%(_SelectedRidSpecificBundledDotnetToolPackage.RuntimeIdentifier)' == '$(ProductMonikerRid)'" />
+      <_SelectedRidSpecificBundledDotnetToolPackage Remove="@(_SelectedRidSpecificBundledDotnetToolPackage)"
+                                                    Condition="'@(_ExactRidSpecificBundledDotnetToolPackage)' != ''" />
+      <_SelectedRidSpecificBundledDotnetToolPackage Include="@(_ExactRidSpecificBundledDotnetToolPackage)"
+                                                    Condition="'@(_ExactRidSpecificBundledDotnetToolPackage)' != ''" />
+
       <_SelectedBundledDotnetToolPackage Include="@(BundledDotnetTool)">
         <ToolId>%(BundledDotnetTool.Identity)</ToolId>
         <ToolVersion>%(BundledDotnetTool.Version)</ToolVersion>
