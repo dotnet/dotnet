@@ -2,14 +2,20 @@
 
 ## Supported Versions
 
-The .NET Core and ASP.NET Core support policy, including supported versions can be found at the [.NET Core Support Policy Page](https://dotnet.microsoft.com/platform/support/policy/dotnet-core).
+| Version | Supported | End-of-life date |
+| ------- | --------- | ---------------- |
+| 1.x     | ❌ |
+| 2.x     | ✅ | 2025-12-31 |
+| 3.x     | ✅ | not yet determined |
+
+Each supported major version is only serviced for security issues at its tip.
+For example 2.5 will receive updates but 2.4 will not.
+3.0 will receive updates until 3.1 is stable, at which point 3.0 will no longer received security updates.
 
 ## Reporting a Vulnerability
 
-Security issues and bugs should be reported privately to the Microsoft Security Response Center (MSRC), either by emailing secure@microsoft.com or via the portal at https://msrc.microsoft.com.
-You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your
-original message. Further information, including the MSRC PGP key, can be found in the [MSRC Report an Issue FAQ](https://www.microsoft.com/en-us/msrc/faqs-report-an-issue).
+Please use [the Security tab](https://github.com/MessagePack-CSharp/MessagePack-CSharp/security) to responsibly report security vulnerabilities.
 
-Reports via MSRC may qualify for the .NET Core Bug Bounty. Details of the .NET Core Bug Bounty including terms and conditions are at [https://aka.ms/corebounty](https://aka.ms/corebounty).
+Alternatively, email the project's main contributors with any vulnerability you become aware of.
 
-Please do not open issues for anything you think might have a security implication.
+    Yoshifumi Kawai <ils@neue.cc>; Andrew Arnott <andrewarnott@live.com>
