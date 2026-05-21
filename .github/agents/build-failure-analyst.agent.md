@@ -89,9 +89,28 @@ Group every error under exactly one root-cause cluster. If two clusters share a 
 - What component versions changed in `eng/Version.Details.xml`
 - Whether the errors come from a single `src/<repo>/` or cascade across repos
 
+### Step 3b — Use NuGet MCP Server for package issues
+
+When the errors include NuGet resolution failures (`NU1605`, `NU1608`, `NU1100`, `NU1102`, etc.) or vulnerable package warnings, use the **NuGet MCP Server** (installed as a dotnet global tool) via the `bash` tool:
+
+```bash
+# Get a remediation plan for vulnerable/conflicting packages
+dotnet NuGet.Mcp.Server -- --source https://api.nuget.org/v3/index.json --project /path/to/project.csproj
+```
+
+The NuGet MCP Server can resolve version conflicts by analyzing the full transitive dependency graph. Use it to generate concrete version updates for `Directory.Packages.props`, `eng/Versions.props`, or `.csproj` files.
+
+**Example workflow for NU1605 in VMR insertion:**
+1. Read the error to identify which package was downgraded and which `src/<repo>/` projects are involved.
+2. Run `dotnet NuGet.Mcp.Server` to get a resolution plan.
+3. Check if the fix belongs in `eng/Versions.props`, `Directory.Packages.props`, or the upstream component repo.
+4. Use the resolution plan to construct a concrete `suggestion` block.
+
 ### Step 4 — Read source context
 
 For each root cause, read the source files at the reported `file:line` (paths are absolute — convert with `GH_AW_WORKSPACE`). Read 6 lines above and 10 lines below.
+
+- For NuGet failures: read the `.csproj`, `Directory.Packages.props`, and `eng/Versions.props` rows mentioning the package. Then run `dotnet NuGet.Mcp.Server` to get a concrete resolution plan.
 
 If the error is at a *call site*, search PR-changed files for the symbol and use that as the suggestion target instead.
 

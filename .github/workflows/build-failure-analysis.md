@@ -43,6 +43,7 @@ concurrency:
 
 env:
   BINLOG_MCP_VERSION: '1.0.0-preview.26268.3'
+  NUGET_MCP_VERSION: '1.4.3'
   AZDO_ORG: 'dnceng-public'
   AZDO_PROJECT: ${{ inputs.azdo-project || 'public' }}
 
@@ -135,6 +136,11 @@ steps:
         --version "$BINLOG_MCP_VERSION"
       echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
+  - name: Install NuGet MCP Server
+    if: steps.download.outputs.found == 'true'
+    continue-on-error: true
+    run: dotnet tool install --global NuGet.Mcp.Server --version "$NUGET_MCP_VERSION"
+
   - name: Dump binlog as JSON
     if: steps.download.outputs.found == 'true'
     continue-on-error: true
@@ -180,6 +186,7 @@ tools:
     - "find"
     - "curl"
     - "jq"
+    - "dotnet"
 
 safe-outputs:
   add-comment:
