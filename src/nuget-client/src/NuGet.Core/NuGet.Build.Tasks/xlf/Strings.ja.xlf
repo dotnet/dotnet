@@ -47,6 +47,12 @@
         <target state="translated">packages.config ファイルの解析で、{0} でエラーが発生しました: {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>0 - The project name
+1 - The error message</note>
+      </trans-unit>
       <trans-unit id="Error_StaticGraphNonZeroExitCode">
         <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
         <target state="translated">静的グラフ ベースの復元は終了コード '{0}' で失敗しましたが、エラーはログに記録されませんでした。https://github.com/NuGet/Home で問題を提出してください。</target>

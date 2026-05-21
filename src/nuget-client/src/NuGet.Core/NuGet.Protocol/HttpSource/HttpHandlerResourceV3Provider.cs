@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -42,18 +40,18 @@ namespace NuGet.Protocol
             _proxyCache = proxyCache ?? throw new ArgumentNullException(nameof(proxyCache));
         }
 
-        public override Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
             Debug.Assert(source.PackageSource.IsHttp, "HTTP handler requested for a non-http source.");
 
-            HttpHandlerResourceV3 curResource = null;
+            HttpHandlerResourceV3? curResource = null;
 
             if (source.PackageSource.IsHttp)
             {
                 curResource = CreateResource(source.PackageSource);
             }
 
-            return Task.FromResult(new Tuple<bool, INuGetResource>(curResource != null, curResource));
+            return Task.FromResult(new Tuple<bool, INuGetResource?>(curResource != null, curResource));
         }
 
         private HttpHandlerResourceV3 CreateResource(PackageSource packageSource)

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Packaging;
@@ -17,10 +15,11 @@ namespace NuGet.Repositories
     /// </summary>
     public class LocalPackageInfo
     {
+        private string _expandedPath;
         private readonly Lazy<NuspecReader> _nuspec;
         private readonly Lazy<IReadOnlyList<string>> _files;
         private readonly Lazy<string> _sha512;
-        private readonly Lazy<RuntimeGraph> _runtimeGraph;
+        private readonly Lazy<RuntimeGraph?> _runtimeGraph;
 
         public LocalPackageInfo(
             string packageId,
@@ -32,25 +31,30 @@ namespace NuGet.Repositories
             Lazy<NuspecReader> nuspec,
             Lazy<IReadOnlyList<string>> files,
             Lazy<string> sha512,
-            Lazy<RuntimeGraph> runtimeGraph)
+            Lazy<RuntimeGraph?> runtimeGraph)
         {
-            Id = packageId;
-            Version = version;
-            ExpandedPath = path;
-            ManifestPath = manifestPath;
-            ZipPath = zipPath;
-            Sha512Path = sha512Path;
-            _nuspec = nuspec;
-            _files = files;
-            _sha512 = sha512;
-            _runtimeGraph = runtimeGraph;
+            Id = packageId ?? throw new ArgumentNullException(nameof(packageId));
+            Version = version ?? throw new ArgumentNullException(nameof(version));
+            _expandedPath = path ?? throw new ArgumentNullException(nameof(path));
+            ManifestPath = manifestPath ?? throw new ArgumentNullException(nameof(manifestPath));
+            ZipPath = zipPath ?? throw new ArgumentNullException(nameof(zipPath));
+            Sha512Path = sha512Path ?? throw new ArgumentNullException(nameof(sha512Path));
+            _nuspec = nuspec ?? throw new ArgumentNullException(nameof(nuspec));
+            _files = files ?? throw new ArgumentNullException(nameof(files));
+            _sha512 = sha512 ?? throw new ArgumentNullException(nameof(sha512));
+            _runtimeGraph = runtimeGraph ?? throw new ArgumentNullException(nameof(runtimeGraph));
         }
 
         public string Id { get; }
 
         public NuGetVersion Version { get; }
 
-        public string ExpandedPath { get; set; }
+        public string ExpandedPath
+        {
+            get => _expandedPath;
+            [Obsolete("Setting ExpandedPath is obsolete and will be removed in a future version.")]
+            set => _expandedPath = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         public string ManifestPath { get; }
 
@@ -79,7 +83,7 @@ namespace NuGet.Repositories
         /// runtime.json
         /// </summary>
         /// <remarks>Returns null if runtime.json does not exist in the package.</remarks>
-        public RuntimeGraph RuntimeGraph => _runtimeGraph.Value;
+        public RuntimeGraph? RuntimeGraph => _runtimeGraph.Value;
 
         public override string ToString()
         {

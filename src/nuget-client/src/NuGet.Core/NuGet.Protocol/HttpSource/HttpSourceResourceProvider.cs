@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -29,7 +27,7 @@ namespace NuGet.Protocol
         /// <summary>
         /// The throttle to apply to all <see cref="HttpSource"/> HTTP requests.
         /// </summary>
-        public static IThrottle Throttle { get; set; }
+        public static IThrottle? Throttle { get; set; }
 
         public HttpSourceResourceProvider()
             : base(typeof(HttpSourceResource),
@@ -38,11 +36,11 @@ namespace NuGet.Protocol
         {
         }
 
-        public override Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
             Debug.Assert(source.PackageSource.IsHttp, "HTTP source requested for a non-http source.");
 
-            HttpSourceResource curResource = null;
+            HttpSourceResource? curResource = null;
 
             if (source.PackageSource.IsHttp)
             {
@@ -68,7 +66,7 @@ namespace NuGet.Protocol
                     packageSource => new HttpSourceResource(HttpSource.Create(source, throttle)));
             }
 
-            return Task.FromResult(new Tuple<bool, INuGetResource>(curResource != null, curResource));
+            return Task.FromResult(new Tuple<bool, INuGetResource?>(curResource != null, curResource));
         }
     }
 }
