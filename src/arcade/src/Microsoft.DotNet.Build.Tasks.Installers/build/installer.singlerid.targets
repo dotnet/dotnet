@@ -54,39 +54,39 @@
       This is especially problematic in MSBuild -mt (multithreaded) mode where all nodes are in-proc
       threads and file locks are per-file-description, not per-process.
 
-      MSBuildProjectExtensionPath must be preserved so that the re-entered project still finds its
+      MSBuildProjectExtensionsPath must be preserved so that the re-entered project still finds its
       NuGet-generated imports (.nuget.g.props/.targets) in the original obj/ folder.
     -->
     <ItemGroup>
       <_InstallerBuildProject
         Include="$(MSBuildProjectFile)"
         Targets="GenerateDeb"
-        Properties="_IsIndividualInstallerBuild=true;GenerateDeb=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/deb/;MSBuildProjectExtensionPath=$(MSBuildProjectExtensionPath)"
+        Properties="_IsIndividualInstallerBuild=true;GenerateDeb=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/deb/;MSBuildProjectExtensionsPath=$(MSBuildProjectExtensionsPath)"
         Condition="'$(GenerateDeb)' == 'true'" />
       <_InstallerBuildProject
         Include="$(MSBuildProjectFile)"
         Targets="GenerateRpm"
-        Properties="_IsIndividualInstallerBuild=true;GenerateRpm=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/rpm/;MSBuildProjectExtensionPath=$(MSBuildProjectExtensionPath)"
+        Properties="_IsIndividualInstallerBuild=true;GenerateRpm=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/rpm/;MSBuildProjectExtensionsPath=$(MSBuildProjectExtensionsPath)"
         Condition="'$(GenerateRpm)' == 'true'" />
       <_InstallerBuildProject
         Include="$(MSBuildProjectFile)"
         Targets="GenerateMsi"
-        Properties="_IsIndividualInstallerBuild=true;GenerateMSI=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/msi/;MSBuildProjectExtensionPath=$(MSBuildProjectExtensionPath)"
+        Properties="_IsIndividualInstallerBuild=true;GenerateMSI=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/msi/;MSBuildProjectExtensionsPath=$(MSBuildProjectExtensionsPath)"
         Condition="'$(GenerateMSI)' == 'true'" />
       <_InstallerBuildProject
         Include="$(MSBuildProjectFile)"
         Targets="GenerateCrossArchMsi"
-        Properties="_IsIndividualInstallerBuild=true;GenerateCrossArchMsi=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/crossarchmsi/;MSBuildProjectExtensionPath=$(MSBuildProjectExtensionPath)"
+        Properties="_IsIndividualInstallerBuild=true;GenerateCrossArchMsi=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/crossarchmsi/;MSBuildProjectExtensionsPath=$(MSBuildProjectExtensionsPath)"
         Condition="'$(GenerateCrossArchMsi)' == 'true'" />
       <_InstallerBuildProject
         Include="$(MSBuildProjectFile)"
         Targets="GeneratePkg"
-        Properties="_IsIndividualInstallerBuild=true;GeneratePkg=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/pkg/;MSBuildProjectExtensionPath=$(MSBuildProjectExtensionPath)"
+        Properties="_IsIndividualInstallerBuild=true;GeneratePkg=true;BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/pkg/;MSBuildProjectExtensionsPath=$(MSBuildProjectExtensionsPath)"
         Condition="'$(GeneratePkg)' == 'true'" />
       <_InstallerBuildProject
         Include="$(MSBuildProjectFile)"
         Targets="GenerateVSInsertionNupkg"
-        Properties="_IsIndividualInstallerBuild=true;GenerateMSI=$(GenerateMSI);GenerateCrossArchMsi=$(GenerateCrossArchMsi);BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/vsinsertion/;MSBuildProjectExtensionPath=$(MSBuildProjectExtensionPath)"
+        Properties="_IsIndividualInstallerBuild=true;GenerateMSI=$(GenerateMSI);GenerateCrossArchMsi=$(GenerateCrossArchMsi);BaseIntermediateOutputPath=$(BaseIntermediateOutputPath)installers/vsinsertion/;MSBuildProjectExtensionsPath=$(MSBuildProjectExtensionsPath)"
         Condition="'$(GenerateVSInsertionPackages)' == 'true'" />
     </ItemGroup>
     <MSBuild Projects="@(_InstallerBuildProject)"
