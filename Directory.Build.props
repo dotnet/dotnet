@@ -66,6 +66,11 @@
     <LangVersion>latest</LangVersion>
     <!-- Don't run NuGetAudit on offline builds. -->
     <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
+    <!-- Disable NuGet audit in official builds. MSBuild does not correctly handle
+         WarningsNotAsErrors for NuGet warnings (https://github.com/dotnet/msbuild/issues/10801),
+         so audit findings become errors via TreatWarningsAsErrors
+         with no way to downgrade them. Keep audit enabled for local/CI dev builds. -->
+    <NuGetAudit Condition="'$(OfficialBuild)' == 'true'">false</NuGetAudit>
     <!-- Explicitly set NuGetAuditModel level as it's currently disabled in the product. -->
     <NuGetAuditMode>all</NuGetAuditMode>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->

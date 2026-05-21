@@ -817,6 +817,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to read project information for &apos;{0}&apos;: {1}.
+        /// </summary>
+        internal static string Error_ReadingProjectInformation {
+            get {
+                return ResourceManager.GetString("Error_ReadingProjectInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The packages lock file is inconsistent with the project dependencies so restore can&apos;t be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file..
         /// </summary>
         internal static string Error_RestoreInLockedMode {

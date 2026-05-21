@@ -133,20 +133,20 @@ namespace Dotnet.Integration.Test
         internal CommandRunnerResult RestoreToolProjectExpectSuccess(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)
             => RunDotnetExpectSuccess(workingDirectory, $"restore {projectName}.csproj {args}", testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreProjectExpectFailure(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: false, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreProjectExpectFailure(string workingDirectory, string projectName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: false, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreProjectExpectSuccess(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: true, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreProjectExpectSuccess(string workingDirectory, string projectName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: true, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        private CommandRunnerResult RestoreProjectOrSolution(string workingDirectory, string fileName, string args, bool expectSuccess, ITestOutputHelper testOutputHelper = null)
-            => RunDotnet(workingDirectory, $"restore {fileName} {args ?? string.Empty} -nodereuse:false", expectSuccess, testOutputHelper: testOutputHelper);
+        private CommandRunnerResult RestoreProjectOrSolution(string workingDirectory, string fileName, string args, bool expectSuccess, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RunDotnet(workingDirectory, $"restore {fileName} {args ?? string.Empty} -nodereuse:false", expectSuccess, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
         /// <summary>
         /// Runs dotnet with the specified arguments and expects the command to succeed. If dotnet returns a non-zero exit code, an assertion is thrown with diagnostic information.
