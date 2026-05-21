@@ -14,7 +14,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(PublishAot)' == 'true' ">
-    <RuntimeIdentifiers Condition=" '$(RuntimeIdentifiers)' == '' ">$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
     <InvariantGlobalization>true</InvariantGlobalization>
     <OptimizationPreference>Size</OptimizationPreference>
     <StackTraceSupport>false</StackTraceSupport>
