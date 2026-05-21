@@ -17,6 +17,7 @@ using NuGet.Commands;
 using NuGet.Frameworks;
 using NuGet.ProjectManagement;
 using NuGet.VisualStudio;
+using VSLangProj150;
 
 namespace NuGet.PackageManagement.VisualStudio
 {
@@ -274,6 +275,12 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             return VsHierarchy.IsCapabilityMatch(capabilityExpression);
+        }
+
+        public bool IsSupported(Reference6 projectReference)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return EnvDTEProjectUtility.IsSupported(projectReference.SourceProject.Kind, VsHierarchy);
         }
 
         #endregion Getters

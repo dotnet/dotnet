@@ -21,13 +21,15 @@ namespace NuGet.Protocol.Tests
 
             var pkgInfo1 = new PackageInfo
             {
-                Version = NuGetVersion.Parse("0.0.1")
+                Version = NuGetVersion.Parse("0.0.1"),
+                PackageContent = new System.Uri("https://example.com/package1/0.0.1")
             };
             regInfo.Add(pkgInfo1);
 
             var pkgInfo2 = new PackageInfo
             {
-                Version = NuGetVersion.Parse("1.0.0")
+                Version = NuGetVersion.Parse("1.0.0"),
+                PackageContent = new System.Uri("https://example.com/package1/1.0.0")
             };
             regInfo.Add(pkgInfo2);
 

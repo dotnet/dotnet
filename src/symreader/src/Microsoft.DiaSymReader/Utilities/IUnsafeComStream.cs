@@ -10,10 +10,6 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices.Marshalling;
 #endif
 
-#if NETSTANDARD2_0
-using STATSTG = System.Runtime.InteropServices.ComTypes.STATSTG;
-#endif
-
 namespace Microsoft.DiaSymReader
 {
     /// <summary>
@@ -37,15 +33,19 @@ namespace Microsoft.DiaSymReader
         void Revert();
         void LockRegion(long libOffset, long cb, int dwLockType);
         void UnlockRegion(long libOffset, long cb, int dwLockType);
-        void Stat(out STATSTG pstatstg, int grfStatFlag);
+        void Stat(ref NativeSTATSTG pstatstg, int grfStatFlag);
         void Clone(out IntPtr ppstm);
     }
 
-#if NET9_0_OR_GREATER
-    [NativeMarshalling(typeof(STATSTGMarshaller))]
-    public struct STATSTG
+    /// <summary>
+    /// Native definition of `STATSTG`. Needed because the implementation of <see cref="IUnsafeComStream.Stat" /> in mscordbi 
+    /// (see https://github.com/dotnet/runtime/blob/87523393fdb14746ceb529ab308f11047819fd01/src/coreclr/inc/memorystreams.h#L115) doesn't 
+    /// zero-initialize the structure, so normal marshaling would corrupt the heap trying to process unitialized memory for (e.g. <see cref="STATSTG.pwcsName"/>).
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 8)]
+    internal struct NativeSTATSTG
     {
-        public string pwcsName;
+        public IntPtr pwcsName;
         public int type;
         public long cbSize;
         public FILETIME mtime;
@@ -57,65 +57,4 @@ namespace Microsoft.DiaSymReader
         public int grfStateBits;
         public int reserved;
     }
-
-    [CustomMarshaller(typeof(STATSTG), MarshalMode.ManagedToUnmanagedOut, typeof(STATSTGMarshaller))]
-    [CustomMarshaller(typeof(STATSTG), MarshalMode.UnmanagedToManagedOut, typeof(STATSTGMarshaller))]
-    public static unsafe class STATSTGMarshaller
-    {
-        public struct Native
-        {
-            public ushort* pwcsName;
-            public int type;
-            public long cbSize;
-            public FILETIME mtime;
-            public FILETIME ctime;
-            public FILETIME atime;
-            public int grfMode;
-            public Guid clsid;
-            public int grfLocksSupported;
-            public int grfStateBits;
-            public int reserved;
-        }
-
-        public static STATSTG ConvertToManaged(Native n)
-        {
-            string name = null;
-            if (n.pwcsName != null)
-            {
-                name = Utf16StringMarshaller.ConvertToManaged(n.pwcsName);
-                Marshal.FreeCoTaskMem((IntPtr)n.pwcsName);
-            }
-
-            return new()
-            {
-                pwcsName = name,
-                type = n.type,
-                cbSize = n.cbSize,
-                mtime = n.mtime,
-                ctime = n.ctime,
-                atime = n.atime,
-                grfMode = n.grfMode,
-                clsid = n.clsid,
-                grfLocksSupported = n.grfLocksSupported,
-                grfStateBits = n.grfStateBits,
-                reserved = n.reserved
-            };
-        }
-
-        public static Native ConvertToUnmanaged(STATSTG n) => new ()
-            {
-                pwcsName = n.pwcsName is null ? null : Utf16StringMarshaller.ConvertToUnmanaged(n.pwcsName),
-                type = n.type,
-                cbSize = n.cbSize,
-                mtime = n.mtime,
-                ctime = n.ctime,
-                atime = n.atime,
-                grfMode = n.grfMode,
-                clsid = n.clsid,
-                grfLocksSupported = n.grfLocksSupported,
-                grfStateBits = n.grfStateBits,
-                reserved = n.reserved
-            };
-}
-#endif
 }

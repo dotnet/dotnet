@@ -281,11 +281,10 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             if (payload == null)
             {
-                return new Message(
+                return MessageUtilities.Create(
                     requestId: "a",
                     type: type,
-                    method: MessageMethod.GetCredentials,
-                    payload: null);
+                    method: MessageMethod.GetCredentials);
             }
 
             return MessageUtilities.Create(

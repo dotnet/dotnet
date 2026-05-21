@@ -40,13 +40,22 @@ internal class ExclusionFileValidation : IValidationStep
 
     public async Task<bool> Validate(PrInfo prInfo)
     {
+        LogInfo($"Starting exclusion file validation against target branch: {prInfo.TargetBranch}");
+        LogInfo($"VMR path: {_vmrInfo.VmrPath}");
+
         ILocalGitRepo vmr = _localGitRepoFactory.Create(_vmrInfo.VmrPath);
 
         var newExclusionRules = await GetExclusionPatterns(); // We are already checked to the PR Head commit, just parse exclusions from file
+        LogInfo($"Found {newExclusionRules.Count} exclusion rules from PR head.");
+
         var originalExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.TargetBranch);
+        LogInfo($"Found {originalExclusionRules.Count} exclusion rules from target branch.");
 
         var newExcludedFiles = FindMatchingFiles(newExclusionRules);
+        LogInfo($"Files matching new exclusion rules: {newExcludedFiles.Count}");
+
         var originalExcludedFiles = FindMatchingFiles(originalExclusionRules);
+        LogInfo($"Files matching original exclusion rules: {originalExcludedFiles.Count}");
 
         var excludedFilesInPr = prInfo.ChangedFiles
             .Where(file => newExcludedFiles.Contains(NormalizePath(file)))
@@ -89,14 +98,17 @@ internal class ExclusionFileValidation : IValidationStep
     private async Task<List<string>> GetExclusionPatternsFromBranch(ILocalGitRepo vmr, string branchName)
     {
         string originalRef = await vmr.GetCheckedOutBranchAsync();
+        LogInfo($"Current checked out ref: {originalRef}");
         try
         {
             LogInfo($"Checking out branch {branchName} to get exclusion patterns.");
             await vmr.CheckoutAsync(branchName);
+            LogInfo($"Successfully checked out {branchName}.");
             return await GetExclusionPatterns();
         }
         finally
         {
+            LogInfo($"Restoring checkout to {originalRef}.");
             await vmr.CheckoutAsync(originalRef);
         }
     }

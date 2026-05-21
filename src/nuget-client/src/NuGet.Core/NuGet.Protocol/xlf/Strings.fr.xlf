@@ -81,8 +81,18 @@
       </trans-unit>
       <trans-unit id="Error_PackageIdentityDoesNotMatch">
         <source>Expected package {0} {1}, but got package {2} {3}</source>
-        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <target state="translated">Paquet attendu {0} {1}, mais paquet reçu {2} {3}</target>
         <note>0 and 2 are package names, and 1 and 3 are version numbers</note>
+      </trans-unit>
+      <trans-unit id="Error_RequiredJsonPropertyMissing">
+        <source>Required property '{0}' not found in JSON.</source>
+        <target state="translated">La propriété requise « {0} » est introuvable dans le JSON.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnexpectedJsonToken">
+        <source>Unexpected JSON token type '{0}'.</source>
+        <target state="translated">Type de jeton JSON « {0} » inattendu.</target>
+        <note />
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>

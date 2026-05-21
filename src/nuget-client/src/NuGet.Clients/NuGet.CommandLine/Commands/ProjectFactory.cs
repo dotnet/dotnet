@@ -40,6 +40,9 @@ namespace NuGet.CommandLine
 
         private IEnvironmentVariableReader _environmentVariableReader;
 
+        private bool _deterministic;
+        private string _deterministicTimestamp;
+
         // Files we want to always exclude from the resulting package
         private static readonly HashSet<string> ExcludeFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
             NuGetConstants.PackageReferenceFile,
@@ -73,6 +76,8 @@ namespace NuGet.CommandLine
         {
             return new ProjectFactory(packArgs.MsBuildDirectory.Value, path, packArgs.Properties)
             {
+                _deterministic = packArgs.Deterministic,
+                _deterministicTimestamp = packArgs.DeterministicTimestamp,
                 IsTool = packArgs.Tool,
                 LogLevel = packArgs.LogLevel,
                 Logger = packArgs.Logger,
@@ -236,7 +241,10 @@ namespace NuGet.CommandLine
                 }
             }
 
-            builder = new PackageBuilder(false, Logger);
+            builder = new PackageBuilder(_deterministic, Logger)
+            {
+                DeterministicTimestamp = _deterministicTimestamp,
+            };
 
             try
             {

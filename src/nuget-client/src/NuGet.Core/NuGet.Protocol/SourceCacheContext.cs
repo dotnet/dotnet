@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -19,7 +17,7 @@ namespace NuGet.Protocol.Core.Types
         /// <summary>
         /// Path of temp folder if requested by GeneratedTempFolder
         /// </summary>
-        private string _generatedTempFolder = null;
+        private string? _generatedTempFolder;
 
         /// <summary>
         /// Default amount of time to cache version lists.
@@ -121,16 +119,17 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         public virtual SourceCacheContext Clone()
         {
-            return new SourceCacheContext()
+            var clone = new SourceCacheContext()
             {
                 DirectDownload = DirectDownload,
                 IgnoreFailedSources = IgnoreFailedSources,
                 MaxAge = MaxAge,
                 NoCache = NoCache,
-                GeneratedTempFolder = _generatedTempFolder,
                 RefreshMemoryCache = RefreshMemoryCache,
                 SessionId = SessionId
             };
+            clone._generatedTempFolder = _generatedTempFolder;
+            return clone;
         }
 
         /// <summary>
@@ -161,7 +160,7 @@ namespace NuGet.Protocol.Core.Types
             {
                 try
                 {
-                    Directory.Delete(_generatedTempFolder, recursive: true);
+                    Directory.Delete(currentTempFolder, recursive: true);
                 }
                 catch
                 {

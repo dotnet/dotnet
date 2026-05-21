@@ -3241,7 +3241,7 @@ namespace ClassLibrary
                         xml,
                         itemType,
                         "abc.png",
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
 
@@ -4347,7 +4347,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         licenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
@@ -4449,7 +4449,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         realLicenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
 
@@ -4608,7 +4608,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         licenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
@@ -4692,7 +4692,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         licenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
@@ -4951,9 +4951,13 @@ namespace ClassLibrary
             }
         }
 
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Home/issues/8601")]
+        [PlatformFact(Platform.Windows)]
         public void PackCommand_Deterministic_MultiplePackInvocations_CreateIdenticalPackages()
         {
+            var deterministicTimestamp = new DateTimeOffset(year: 2020, month: 1, day: 1,
+                                                            hour: 0, minute: 0, second: 0,
+                                                            offset: TimeSpan.Zero);
+
             using (var testDirectory = _dotnetFixture.CreateTestDirectory())
             {
                 var projectName = "ClassLibrary1";
@@ -4965,6 +4969,7 @@ namespace ClassLibrary
                 {
                     var xml = XDocument.Load(stream);
                     ProjectFileUtils.AddProperty(xml, "Deterministic", "true");
+                    ProjectFileUtils.AddProperty(xml, "DeterministicTimestamp", deterministicTimestamp.ToString("o"));
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
