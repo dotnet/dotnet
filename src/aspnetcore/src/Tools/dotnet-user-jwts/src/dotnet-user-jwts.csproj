@@ -8,11 +8,14 @@
     <PackageTags>configuration;authentication;authorization;jwt</PackageTags>
     <RootNamespace>Microsoft.AspNetCore.Authentication.JwtBearer.Tools</RootNamespace>
     <PackAsTool>true</PackAsTool>
-    <PublishAot Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</PublishAot>
-    <RuntimeIdentifiers Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
     <!-- This package is for internal use only. It contains a CLI which is bundled in the .NET Core SDK. -->
     <IsShippingPackage>false</IsShippingPackage>
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <PublishAot>true</PublishAot>
+    <RuntimeIdentifiers>$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
