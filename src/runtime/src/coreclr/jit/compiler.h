@@ -7519,6 +7519,8 @@ public:
     bool optCanonicalizeExits(FlowGraphNaturalLoop* loop);
     bool optCanonicalizeExit(FlowGraphNaturalLoop* loop, BasicBlock* exit);
 
+    bool optCanonicalizeBackedges(FlowGraphNaturalLoop* loop);
+
     template <typename TFunc>
     bool optLoopComplexityExceeds(FlowGraphNaturalLoop* loop, unsigned limit, TFunc getTreeComplexity);
 
@@ -9812,6 +9814,7 @@ public:
     void unwindSaveRegPair(regNumber reg1, regNumber reg2, int offset);           // stp reg1, reg2, [sp, #offset]
     void unwindSaveRegPairPreindexed(regNumber reg1, regNumber reg2, int offset); // stp reg1, reg2, [sp, #offset]!
     void unwindSaveNext();                                                        // unwind code: save_next
+    void unwindPacSignLR();                                                       // unwind code: pac_sign_lr
     void unwindReturn(regNumber reg);                                             // ret lr
 #endif                                                                            // defined(TARGET_ARM64)
 
@@ -11146,6 +11149,13 @@ public:
         {
             return jitFlags->IsSet(JitFlags::JIT_FLAG_USE_PINVOKE_HELPERS) ||
                    jitFlags->IsSet(JitFlags::JIT_FLAG_REVERSE_PINVOKE);
+        }
+
+        // true if the JIT should use helpers for interface dispatch
+        // instead of virtual stub dispatch
+        bool ShouldUseDispatchHelpers()
+        {
+            return jitFlags->IsSet(JitFlags::JIT_FLAG_USE_DISPATCH_HELPERS);
         }
 
         // true if we should use insert the REVERSE_PINVOKE_{ENTER,EXIT} helpers in the method
