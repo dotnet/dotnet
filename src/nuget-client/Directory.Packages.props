@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageVersion Include="AwesomeAssertions" Version="8.1.0" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="ILRepack" Version="2.0.42" />
     <PackageVersion Include="Lucene.Net" Version="3.0.3" />
     <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
