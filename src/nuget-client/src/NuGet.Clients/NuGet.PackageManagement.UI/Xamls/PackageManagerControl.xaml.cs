@@ -188,8 +188,8 @@ namespace NuGet.PackageManagement.UI
             await IsCentralPackageManagementEnabledAsync(CancellationToken.None);
 
             // UI is initialized. Start the first search
-            _packageList.CheckBoxesEnabled = _topPanel.Filter == ItemFilter.UpdatesAvailable;
-            _packageList.IsSolution = Model.IsSolution;
+            _packageList.ViewModel.IsUpdateMode = _topPanel.Filter == ItemFilter.UpdatesAvailable;
+            _packageList.ViewModel.IsSolution = Model.IsSolution;
 
             Loaded += PackageManagerLoaded;
 
@@ -965,7 +965,7 @@ namespace NuGet.PackageManagement.UI
                 // start SearchAsync task for initial loading of packages
                 var searchResultTask = loader.SearchAsync(cancellationToken: _loadCts.Token);
                 // this will wait for searchResultTask to complete instead of creating a new task
-                await _packageList.LoadItemsAsync(loader, loadingMessage, _uiLogger, searchResultTask, _loadCts.Token);
+                await _packageList.ViewModel.LoadItemsAsync(loader, loadingMessage, _uiLogger, searchResultTask, _loadCts.Token);
 
                 if (ActiveFilter == ItemFilter.Installed)
                 {
@@ -1153,9 +1153,9 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         internal async Task UpdateDetailPaneAsync(CancellationToken cancellationToken)
         {
-            PackageItemViewModel selectedItem = _packageList.SelectedItem;
+            PackageItemViewModel selectedItem = _packageList.ViewModel.SelectedPackageItem;
             int selectedIndex = _packageList.SelectedIndex;
-            int recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
+            int recommendedCount = _packageList.ViewModel.PackageItems.Count(item => item.Recommended == true);
 
             if (selectedItem == null)
             {
@@ -1168,7 +1168,7 @@ namespace NuGet.PackageManagement.UI
 
                 EmitSearchSelectionTelemetry(selectedItem);
 
-                await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.SelectedItem, cancellationToken);
+                await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.ViewModel.SelectedPackageItem, cancellationToken);
                 Model.UIController.SelectedPackageId = selectedItem.Id;
                 _detailModel.SetCurrentSelectionInfo(selectedIndex, recommendedCount, _recommendPackages, selectedItem.RecommenderVersion);
 
@@ -1183,9 +1183,9 @@ namespace NuGet.PackageManagement.UI
 
         private void EmitSearchSelectionTelemetry(PackageItemViewModel selectedPackage)
         {
-            var operationId = _packageList.OperationId;
+            var operationId = _packageList.ViewModel.OperationId;
             var selectedIndex = _packageList.SelectedIndex;
-            var recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
+            var recommendedCount = _packageList.ViewModel.PackageItems.Count(item => item.Recommended == true);
             var hasDeprecationAlternative = selectedPackage.AlternatePackage != null;
 
             if (_topPanel.Filter == ItemFilter.All
@@ -1206,7 +1206,7 @@ namespace NuGet.PackageManagement.UI
 
         private void IncrementInstalledPackageSelectionCount()
         {
-            PackageItemViewModel selectedItem = _packageList.SelectedItem;
+            PackageItemViewModel selectedItem = _packageList.ViewModel.SelectedPackageItem;
             if (selectedItem == null || ActiveFilter != ItemFilter.Installed)
             {
                 return;
@@ -1287,11 +1287,10 @@ namespace NuGet.PackageManagement.UI
             if (_initialized)
             {
                 var timeSpan = GetTimeSinceLastRefreshAndRestart();
-                _packageList.ResetLoadingStatusIndicator();
+                _packageList.ViewModel.ResetLoadingStatusIndicator();
                 var sw = Stopwatch.StartNew();
                 // Collapse the Update controls when the current tab is not "Updates".
-                _packageList.CheckBoxesEnabled = _topPanel.Filter == ItemFilter.UpdatesAvailable;
-                _packageList._updateButtonContainer.Visibility = _topPanel.Filter == ItemFilter.UpdatesAvailable ? Visibility.Visible : Visibility.Collapsed;
+                _packageList.ViewModel.IsUpdateMode = _topPanel.Filter == ItemFilter.UpdatesAvailable;
 
                 // Set a new cancellation token source which will be used to cancel this task in case
                 // new loading task starts or manager ui is closed while loading packages.
@@ -1331,7 +1330,7 @@ namespace NuGet.PackageManagement.UI
                     Model.Context.ServiceBroker,
                     Model.Context.Projects,
                     CancellationToken.None);
-                await _packageList.UpdatePackageStatusAsync(installedPackages.ToArray(), CancellationToken.None, clearCache);
+                await _packageList.ViewModel.UpdatePackageStatusAsync(installedPackages.ToArray(), CancellationToken.None, clearCache);
 
                 await RefreshInstalledAndUpdatesTabsAsync();
             }
@@ -1527,10 +1526,10 @@ namespace NuGet.PackageManagement.UI
                 EventHandler handler = null;
                 handler = (s, e) =>
                 {
-                    _packageList.LoadItemsCompleted -= handler;
+                    _packageList.ViewModel.LoadItemsCompleted -= handler;
                     SelectMatchingUpdatePackages(updatePackageOptions);
                 };
-                _packageList.LoadItemsCompleted += handler;
+                _packageList.ViewModel.LoadItemsCompleted += handler;
             }
         }
 
@@ -1545,7 +1544,7 @@ namespace NuGet.PackageManagement.UI
 
             if (updatePackageOptions.ShouldUpdateAllPackages)
             {
-                foreach (var packageItem in _packageList.PackageItems)
+                foreach (var packageItem in _packageList.ViewModel.PackageItems)
                 {
                     packageItem.IsSelected = true;
                 }
@@ -1554,7 +1553,7 @@ namespace NuGet.PackageManagement.UI
             {
                 var packagesToSelect = new HashSet<string>(updatePackageOptions.PackagesToUpdate);
                 PackageItemViewModel firstSelectedItem = null;
-                foreach (var packageItem in _packageList.PackageItems)
+                foreach (var packageItem in _packageList.ViewModel.PackageItems)
                 {
                     packageItem.IsSelected = packagesToSelect.Contains(packageItem.Id, StringComparer.OrdinalIgnoreCase);
 
@@ -1624,6 +1623,7 @@ namespace NuGet.PackageManagement.UI
             _packageDetail.Cleanup();
             _detailModel.Dispose();
             _packageList.SelectionChanged -= PackageList_SelectionChanged;
+            _packageList.Dispose();
 
             EmitPMUIClosingTelemetry();
         }
