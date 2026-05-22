@@ -46,7 +46,7 @@
   <Target Name="BuildIlFile" DependsOnTargets="ResolveIlToolPaths">
     <Error Condition="'$(IlasmPath)' == ''" Text="The 'IlasmPath' property must be set." />
 
-    <Exec Command="$(IlasmPath) $(IlFile) -dll -quiet -nologo &quot;-output=$(OutputFile)&quot;"
+    <Exec Command="$(IlasmPath) $(IlFile) -dll -quiet -nologo -deterministic &quot;-output=$(OutputFile)&quot;"
           IgnoreStandardErrorWarningFormat="true"
           CustomErrorRegularExpression=": error : " />
   </Target>
