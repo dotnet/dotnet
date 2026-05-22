@@ -38,6 +38,10 @@
     <IntermediateOutputPath Condition="'$(PlatformName)' == 'AnyCPU'">$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
     <IntermediateOutputPath Condition="'$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
 
+    <!-- DefaultVersions.props -->
+    <OfficialBuild>false</OfficialBuild>
+    <OfficialBuild Condition="'$(OfficialBuildId)' != ''">true</OfficialBuild>
+
     <!-- TargetFrameworkDefaults.props -->
     <NetCurrent>net10.0</NetCurrent>
   </PropertyGroup>
