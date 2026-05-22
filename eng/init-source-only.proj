@@ -30,13 +30,6 @@
           WorkingDirectory="$(PreviouslySourceBuiltPackagesPath)" />
   </Target>
 
-  <ItemGroup>
-    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
-  </ItemGroup>
-  <PropertyGroup>
-    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
-  </PropertyGroup>
-
   <Target Name="ValidateSourceOnlySigning">
     <Error Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true' and '$(DotNetSourceOnlyPublishArtifacts)' != 'true'" 
            Text="Source-only signing requires publishing artifacts through Arcade. Please set 'DotNetSourceOnlyPublishArtifacts' to 'true', or disable signing by setting 'DotNetSourceOnlyPostBuildSign' to 'false'." />
@@ -49,6 +42,14 @@
 
     <Error Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(SharedComponentsPrereqsArchiveFile)' == ''"
            Text="Shared components must be provided as input to a build which does not produce shared components." />
+
+    <!-- Guard against multiple matches from the SharedComponentsPrereqsArchivePathItem glob.
+         If more than one archive is present, @(SharedComponentsPrereqsArchivePathItem) stringifies
+         to a semicolon-separated list, which would be split into multiple shell commands by the
+         unquoted tar invocations in UnpackSharedComponentsPrereqsArchive. Only validate when the
+         archive path would actually be consumed (not when CustomSharedComponentsArtifactsPath is set). -->
+    <Error Condition="'$(CustomSharedComponentsArtifactsPath)' == '' and '@(SharedComponentsPrereqsArchivePathItem->Count())' != '0' and '@(SharedComponentsPrereqsArchivePathItem->Count())' != '1'"
+           Text="Multiple $(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension) tarballs exist at $(ExternalTarballsDir). Expecting only one." />
   </Target>
 
   <ItemGroup Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
@@ -79,6 +80,7 @@
           Outputs="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete">
 
     <MakeDir Directories="$(SharedComponentsArtifactsPath)" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
 
     <!-- Extract everything except the assets directory to the shared components packages path -->
     <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --exclude='assets'"
