@@ -408,14 +408,16 @@
       </Style>
     </ResourceDictionary>
   </UserControl.Resources>
-  <DockPanel LastChildFill="True">
+  <DockPanel
+    LastChildFill="True"
+    DataContext="{Binding ViewModel, ElementName=_infiniteScrollList}">
     <Border
       x:Name="_updateButtonContainer"
       DockPanel.Dock="Top"
       BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
       BorderThickness="0,0,0,1"
       Background="{DynamicResource {x:Static nuget:Brushes.LegalMessageBackground}}"
-      Visibility="Collapsed">
+      Visibility="{Binding HasUpdatablePackages, Converter={StaticResource BooleanToVisibilityConverter}}">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="auto" />
@@ -427,6 +429,7 @@
           Grid.Column="0"
           Margin="4, 8"
           VerticalAlignment="Center"
+          IsChecked="{Binding SelectionState, Mode=OneWay}"
           Checked="SelectAllPackagesCheckBox_Checked"
           Unchecked="SelectAllPackagesCheckBox_Unchecked"
           Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
@@ -438,6 +441,7 @@
           MinHeight="24"
           Margin="24,8"
           VerticalAlignment="Center"
+          IsEnabled="{Binding HasSelectedPackages, Mode=OneWay}"
           Click="_updateButton_Click"
           Content="{x:Static nuget:Resources.Button_Update}" />
       </Grid>
@@ -450,14 +454,16 @@
         x:Name="_loadingStatusBar"
         ShowMoreResultsClick="_loadingStatusBar_ShowMoreResultsClick"
         DismissClick="_loadingStatusBar_DismissClick"
+        ItemsLoaded="{Binding ViewModel.ItemsLoaded, ElementName=_infiniteScrollList}"
         Style="{StaticResource FadeAnimationStyle}"
-        Visibility="Hidden"/>
+        Visibility="{Binding ViewModel.HasStatusBarContent, ElementName=_infiniteScrollList, Converter={StaticResource BooleanToHiddenVisibilityConverter}}"/>
       <!--
         Special TextBlock to report loading status to assistive technologies (narrator).
         Code behind changes to the Text property will trigger a narrator event.
       -->
       <vs:LiveTextBlock
         x:Name="_ltbLoading"
+        Text="{Binding LoadingStatusLocalizedText}"
         Visibility="Collapsed"
         IsFrequencyLimited="True"
         Focusable="False"
@@ -481,6 +487,7 @@
       VirtualizingPanel.IsVirtualizingWhenGrouping="True"
       BorderThickness="0,0,0,0"
       HorizontalContentAlignment="Stretch"
+      SelectedItem="{Binding DataContext.SelectedPackageItem, RelativeSource={RelativeSource AncestorType=DockPanel}, Mode=TwoWay}"
       SelectionChanged="List_SelectionChanged"
       Loaded="List_Loaded"
       ItemsSource="{Binding}">

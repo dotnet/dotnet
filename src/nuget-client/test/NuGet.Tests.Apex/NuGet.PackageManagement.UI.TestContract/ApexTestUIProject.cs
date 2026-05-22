@@ -24,7 +24,7 @@ namespace NuGet.PackageManagement.UI.TestContract
         {
             get
             {
-                return UIInvoke(() => _packageManagerControl.PackageList.PackageItems);
+                return UIInvoke(() => _packageManagerControl.PackageList.ViewModel.PackageItems);
             }
         }
 
@@ -32,11 +32,11 @@ namespace NuGet.PackageManagement.UI.TestContract
         {
             get
             {
-                return UIInvoke(() => _packageManagerControl.PackageList.SelectedItem);
+                return UIInvoke(() => _packageManagerControl.PackageList.ViewModel.SelectedPackageItem);
             }
             set
             {
-                UIInvoke(() => _packageManagerControl.PackageList.SelectedItem = value);
+                UIInvoke(() => _packageManagerControl.PackageList.ViewModel.SelectedPackageItem = value);
             }
         }
 
@@ -69,7 +69,7 @@ namespace NuGet.PackageManagement.UI.TestContract
 
         public bool VerifyFirstPackageOnTab(string tabName, string packageId, string packageVersion = null)
         {
-            var result = UIInvoke(() => _packageManagerControl.PackageList.PackageItems.FirstOrDefault());
+            var result = UIInvoke(() => _packageManagerControl.PackageList.ViewModel.PackageItems.FirstOrDefault());
             if (result is null)
             {
                 return false;
@@ -87,19 +87,19 @@ namespace NuGet.PackageManagement.UI.TestContract
 
         public bool VerifyVulnerablePackageOnTopOfInstalledTab()
         {
-            var result = UIInvoke(() => _packageManagerControl.PackageList.PackageItems.FirstOrDefault());
+            var result = UIInvoke(() => _packageManagerControl.PackageList.ViewModel.PackageItems.FirstOrDefault());
             return result?.IsPackageVulnerable == true;
         }
 
         public bool VerifyDeprecatedPackageOnTopOfInstalledTab()
         {
-            var result = UIInvoke(() => _packageManagerControl.PackageList.PackageItems.FirstOrDefault());
+            var result = UIInvoke(() => _packageManagerControl.PackageList.ViewModel.PackageItems.FirstOrDefault());
             return result?.IsPackageDeprecated == true;
         }
 
         public List<PackageItemViewModel> GetPackageItemsOnInstalledTab()
         {
-            return _packageManagerControl.PackageList.PackageItems.ToList();
+            return _packageManagerControl.PackageList.ViewModel.PackageItems.ToList();
         }
 
         public void InstallPackage(string packageId, string version)
@@ -151,7 +151,7 @@ namespace NuGet.PackageManagement.UI.TestContract
 
             try
             {
-                _packageManagerControl.PackageList.LoadItemsCompleted += eventHandler;
+                _packageManagerControl.PackageList.ViewModel.LoadItemsCompleted += eventHandler;
 
                 search();
 
@@ -166,7 +166,7 @@ namespace NuGet.PackageManagement.UI.TestContract
             }
             finally
             {
-                _packageManagerControl.PackageList.LoadItemsCompleted -= eventHandler;
+                _packageManagerControl.PackageList.ViewModel.LoadItemsCompleted -= eventHandler;
             }
         }
 
