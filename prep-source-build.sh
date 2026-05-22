@@ -12,19 +12,14 @@
 ###   --no-artifacts              Exclude the download of the previously source-built artifacts archive
 ###   --no-bootstrap              Don't replace portable packages in the download source-built artifacts
 ###   --no-prebuilts              Exclude the download of the prebuilts archive
-###   --no-sdk                    Skip installing the Microsoft .NET SDK. On non-1xx (feature
-###                               band) branches, this is already the default because the 1xx
-###                               source-built SDK is used instead; use --no-source-built-sdk
-###                               to skip that download.
+###   --no-sdk                    Skip SDK acquisition. On 1xx branches this skips the Microsoft
+###                               .NET SDK install. On non-1xx (feature band) branches this skips
+###                               downloading the 1xx source-built SDK published by Microsoft. In both
+###                               cases, use --with-sdk to supply your own SDK.
 ###   --no-shared-components      Exclude the download of the 1xx shared components archive.
 ###                               Only applies on non-1xx (feature band) branches, where the shared
 ###                               components archive is downloaded by default. On 1xx branches this
 ###                               flag has no effect because shared components are built from source.
-###   --no-source-built-sdk       Exclude the download of the 1xx source-built SDK and revert to
-###                               installing the Microsoft .NET SDK + running the local bootstrap.
-###                               Only applies on non-1xx (feature band) branches, where the source-
-###                               built SDK is downloaded by default and used in place of those
-###                               steps. On 1xx branches this flag has no effect.
 ###   --artifacts-rid             The RID of the previously source-built artifacts archive to download
 ###                               Default is centos.9-x64
 ###   --bootstrap-rid <value>     The (portable) RID for the bootstrap artifacts to restore. For example, linux-arm64, linux-musl-x64
@@ -102,7 +97,7 @@ sourceBuiltSdkBaseFileName="dotnet-sdk"
 #      Microsoft SDK install + bootstrap that 1xx branches use).
 #   2. Downloads the 1xx shared components archive into prereqs/packages/archive/
 #      where init-source-only.proj auto-discovers it.
-# The matching --no-source-built-sdk and --no-shared-components flags opt out of each
+# The matching --no-sdk and --no-shared-components flags opt out of each
 # step independently (e.g. for distro maintainers who supply their own assets via
 # --with-sdk and build.sh --with-shared-components).
 versionSDKMinor=$(GetXmlPropertyValue "VersionSDKMinor" "$REPO_ROOT/eng/Versions.props")
@@ -139,12 +134,10 @@ while :; do
       ;;
     --no-sdk)
       installDotnet=false
+      downloadSourceBuiltSdk=false
       ;;
     --no-shared-components)
       downloadSharedComponents=false
-      ;;
-    --no-source-built-sdk)
-      downloadSourceBuiltSdk=false
       ;;
     --artifacts-rid)
       artifactsRid=$2
@@ -189,10 +182,9 @@ source "$REPO_ROOT/eng/common/tools.sh"
 
 # Apply feature band overrides now that arg parsing is complete. On feature band branches
 # the SDK comes from either the downloaded source-built SDK (default, controlled by
-# --no-source-built-sdk) or from a user-supplied --with-sdk path. In both cases, the
-# local Microsoft SDK install + bootstrap steps are unnecessary because the supplied
-# SDK already contains everything BootstrapArtifacts would otherwise restore from
-# Private.SourceBuilt.Artifacts.
+# --no-sdk) or from a user-supplied --with-sdk path. In both cases, the local Microsoft
+# SDK install + bootstrap steps are unnecessary because the supplied SDK already contains
+# everything BootstrapArtifacts would otherwise restore from Private.SourceBuilt.Artifacts.
 if [[ "$isFeatureBand" == "true" && -n "$customSdkDir" ]]; then
   downloadSourceBuiltSdk=false
   installDotnet=false
@@ -330,7 +322,7 @@ fi
 
 if [ "$downloadSourceBuiltSdk" == true ]; then
   echo "  Detected non-1xx feature band branch; using 1xx source-built .NET SDK $expectedSdkVersion."
-  echo "  Pass --no-source-built-sdk to skip this and install the Microsoft .NET SDK + bootstrap instead."
+  echo "  Pass --no-sdk to skip this (and use --with-sdk to supply your own SDK)."
 
   if [ "$downloadSourceBuiltSdkArchive" == true ]; then
     DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" true "$artifactsRid" "$packagesArchiveDir"
