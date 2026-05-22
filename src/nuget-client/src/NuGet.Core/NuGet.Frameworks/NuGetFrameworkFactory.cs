@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -42,8 +41,6 @@ namespace NuGet.Frameworks
         {
             if (folderName == null) throw new ArgumentNullException(nameof(folderName));
             if (mappings == null) throw new ArgumentNullException(nameof(mappings));
-
-            Debug.Assert(folderName.IndexOf(";", StringComparison.Ordinal) < 0, "invalid folder name, this appears to contain multiple frameworks");
 
             NuGetFramework framework = folderName.IndexOf(',') > -1
                 ? ParseFrameworkName(folderName, mappings)

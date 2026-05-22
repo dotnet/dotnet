@@ -47,6 +47,12 @@
         <target state="translated">Erro ao analisar o arquivo packages.config em {0}: {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>0 - The project name
+1 - The error message</note>
+      </trans-unit>
       <trans-unit id="Error_StaticGraphNonZeroExitCode">
         <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
         <target state="translated">Falha na restauração baseada em grafo estático com o código de saída "{0}", mas não foi registrado um erro. Registre um problema em https://github.com/NuGet/Home.</target>

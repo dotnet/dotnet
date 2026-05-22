@@ -229,4 +229,9 @@
     <value>An error occurred starting static graph-based restore. {0}. Please file an issue at https://github.com/NuGet/Home</value>
     <comment>0 - The exception message</comment>
   </data>
+  <data name="Error_ReadingProjectInformation" xml:space="preserve">
+    <value>Unable to read project information for '{0}': {1}</value>
+    <comment>0 - The project name
+1 - The error message</comment>
+  </data>
 </root>
