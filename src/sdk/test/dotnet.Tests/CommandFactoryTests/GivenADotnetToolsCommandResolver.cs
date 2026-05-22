@@ -61,23 +61,16 @@ namespace Microsoft.DotNet.Tests
         }
 
         [Fact]
-        public void ItReturnsAnExecutableCommandSpecFromToolSettings()
+        public void ItReturnsAnExecutableCommandSpecWhenExecutableExists()
         {
             var dotnetToolPath = TestAssetsManager.CreateTestDirectory().Path;
             var commandName = "dotnet-user-secrets";
             var toolDirectory = Path.Combine(dotnetToolPath, commandName, "1.0.0", "tools", "any", "win-x64");
             Directory.CreateDirectory(toolDirectory);
-            var executablePath = Path.Combine(toolDirectory, commandName);
+            var executableName = OperatingSystem.IsWindows() ? $"{commandName}.exe" : commandName;
+            var executablePath = Path.Combine(toolDirectory, executableName);
 
             File.WriteAllText(executablePath, "test command that does nothing.");
-            File.WriteAllText(
-                Path.Combine(toolDirectory, "DotnetToolSettings.xml"),
-                string.Join(Environment.NewLine,
-                    "<DotNetCliTool Version=\"2\">",
-                    "  <Commands>",
-                    $"    <Command Name=\"{commandName}\" EntryPoint=\"{commandName}\" Runner=\"executable\" />",
-                    "  </Commands>",
-                    "</DotNetCliTool>"));
 
             var resolver = new DotnetToolsCommandResolver(dotnetToolPath);
             var result = resolver.Resolve(new CommandResolverArguments()

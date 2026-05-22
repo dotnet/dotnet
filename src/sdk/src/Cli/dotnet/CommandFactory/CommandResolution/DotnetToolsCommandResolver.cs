@@ -2,14 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.DotNet.Cli.Commands.Tool;
-using Microsoft.DotNet.Cli.ToolPackage;
 
 namespace Microsoft.DotNet.Cli.CommandFactory.CommandResolution;
 
 public class DotnetToolsCommandResolver : ICommandResolver
 {
-    private const string ToolSettingsFileName = "DotnetToolSettings.xml";
-
     private readonly string _dotnetToolPath;
 
     public DotnetToolsCommandResolver(string? dotnetToolPath = null)
@@ -35,16 +32,14 @@ public class DotnetToolsCommandResolver : ICommandResolver
             .GetDirectories()[0] // TFM
             .GetDirectories()[0]; // RID
 
-        var toolSettingsFile = Path.Combine(toolDirectory.FullName, ToolSettingsFileName);
-        if (File.Exists(toolSettingsFile))
+        var executableName = OperatingSystem.IsWindows() ? $"{arguments.CommandName}.exe" : arguments.CommandName;
+        var executable = toolDirectory.GetFiles(executableName).FirstOrDefault();
+        if (executable is not null)
         {
-            var toolConfiguration = ToolConfigurationDeserializer.Deserialize(toolSettingsFile);
-            var toolEntryPoint = Path.Combine(toolDirectory.FullName, toolConfiguration.ToolAssemblyEntryPoint);
-
             return ToolCommandSpecCreator.CreateToolCommandSpec(
-                toolConfiguration.CommandName,
-                toolEntryPoint,
-                toolConfiguration.Runner,
+                arguments.CommandName,
+                executable.FullName,
+                "executable",
                 allowRollForward: false,
                 arguments.CommandArguments ?? []);
         }
