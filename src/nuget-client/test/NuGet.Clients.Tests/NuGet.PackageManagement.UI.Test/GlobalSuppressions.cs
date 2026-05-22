@@ -10,3 +10,4 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Unit-test names don't have to follow naming style")]
 [assembly: SuppressMessage("Usage", "xUnit1041:Fixture arguments to test classes must have fixture sources", Justification = "<Pending>", Scope = "member", Target = "~M:NuGet.PackageManagement.UI.Test.Models.LocalPackageDetailControlModelTests.#ctor(Microsoft.VisualStudio.Sdk.TestFramework.GlobalServiceProvider,NuGet.Test.Utility.LocalPackageSearchMetadataFixture)")]
+[assembly: SuppressMessage("Usage", "VSSDK005:Avoid instantiating JoinableTaskContext", Justification = "Test requires JoinableTaskFactory without VS service provider", Scope = "member", Target = "~M:NuGet.PackageManagement.UI.Test.ViewModels.InfiniteScrollListViewModelTests.#ctor")]
