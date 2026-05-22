@@ -798,6 +798,7 @@ TEST(ExpectThat, TakesLiterals) {
   EXPECT_THAT(1, 1);
   EXPECT_THAT(1.0, 1.0);
   EXPECT_THAT(std::string(), "");
+  EXPECT_THAT(std::shared_ptr<int>(), nullptr);
 }
 
 TEST(ExpectThat, TakesFunctions) {
@@ -1124,6 +1125,16 @@ TEST(IsNullTest, CanDescribeSelf) {
   Matcher<int*> m = IsNull();
   EXPECT_EQ("is NULL", Describe(m));
   EXPECT_EQ("isn't NULL", DescribeNegation(m));
+}
+
+struct SmartPtrHelper {
+  MOCK_METHOD(void, Call, (std::shared_ptr<int>));
+};
+
+TEST(IsNullTest, WorksWithSmartPtr) {
+  SmartPtrHelper helper;
+  EXPECT_CALL(helper, Call(nullptr));
+  helper.Call(nullptr);
 }
 
 // Tests that NotNull() matches any non-NULL pointer of any type.
@@ -2389,22 +2400,19 @@ PolymorphicMatcher<DivisibleByImpl> DivisibleBy(int n) {
   return MakePolymorphicMatcher(DivisibleByImpl(n));
 }
 
-// Tests that when AllOf() fails, only the first failing matcher is
-// asked to explain why.
+// Tests that when AllOf() fails, all failing matchers are asked to explain why.
 TEST(ExplainMatchResultTest, AllOf_False_False) {
   const Matcher<int> m = AllOf(DivisibleBy(4), DivisibleBy(3));
-  EXPECT_EQ("which is 1 modulo 4", Explain(m, 5));
+  EXPECT_EQ("which is 1 modulo 4, and which is 2 modulo 3", Explain(m, 5));
 }
 
-// Tests that when AllOf() fails, only the first failing matcher is
-// asked to explain why.
+// Tests that when AllOf() fails, all failing matchers are asked to explain why.
 TEST(ExplainMatchResultTest, AllOf_False_True) {
   const Matcher<int> m = AllOf(DivisibleBy(4), DivisibleBy(3));
   EXPECT_EQ("which is 2 modulo 4", Explain(m, 6));
 }
 
-// Tests that when AllOf() fails, only the first failing matcher is
-// asked to explain why.
+// Tests that when AllOf() fails, all failing matchers are asked to explain why.
 TEST(ExplainMatchResultTest, AllOf_True_False) {
   const Matcher<int> m = AllOf(Ge(1), DivisibleBy(3));
   EXPECT_EQ("which is 2 modulo 3", Explain(m, 5));
