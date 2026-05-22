@@ -109,6 +109,7 @@ extends:
         tsaEnabled: true
       binskim:
         enabled: false
+        justificationForDisabling: "Binskim is consistently crashing on unpacked binaries, temporarily disablign in preview 5 release branch"
       policheck:
         enabled: true
       tsa:
