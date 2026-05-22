@@ -482,6 +482,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>547c640d5626b2976499cb3433abc741a63d67c5</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.McpServer.ProjectTemplates.11.0" Version="11.0.0-preview.5.26261.101">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>547c640d5626b2976499cb3433abc741a63d67c5</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26261.101">
