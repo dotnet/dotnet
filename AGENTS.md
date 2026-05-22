@@ -77,9 +77,42 @@ Repos are categorized in `eng/VmrLayout.props` as `SharedRepositoryReference` it
 - **Intermediate objects**: `artifacts/obj/`
 - **Test results**: `artifacts/TestResults/`
 
+## Arcade SDK and SkipArcadeSdkImport
+
+The VMR uses the [Microsoft.DotNet.Arcade.Sdk](https://github.com/dotnet/arcade) for shared build infrastructure. Arcade provides the common `eng/common/` scripts, signing, packaging, and CI patterns used across all .NET repos. The `eng/common/` directory at the VMR root (and within each `src/<repo>/`) is effectively read-only — it is sourced from arcade and overwritten during re-bootstrap or code flow. Do not modify these files directly; changes to shared build scripts must be made in the [dotnet/arcade](https://github.com/dotnet/arcade) repository.
+
+The root `Directory.Build.props` imports the Arcade SDK conditionally:
+
+```xml
+<Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk"
+        Condition="'$(SkipArcadeSdkImport)' != 'true'" />
+```
+
+**Some VMR tooling projects set `SkipArcadeSdkImport=true`** because they build before the custom SDK resolver is available (required for source-only builds). These projects have their own `Directory.Build.props` that sets `SkipArcadeSdkImport=true` before importing the parent chain. Known projects:
+
+- `eng/tools/BinaryToolKit/BinaryToolKit.csproj`
+- `eng/tools/tasks/Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver/Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj`
+
+The root `Directory.Build.props` has a fallback block for `SkipArcadeSdkImport=true` projects that mirrors key Arcade SDK properties (e.g., `OfficialBuild`, `Configuration`). **If you add a condition that depends on an Arcade-derived property, verify it works for SkipArcadeSdkImport projects too — or add the property to the fallback block.**
+
+### Key Arcade-derived properties
+
+These properties are set by Arcade's `DefaultVersions.props` and are **not available** when `SkipArcadeSdkImport=true` unless the fallback block defines them:
+
+| Property | Derived from | Notes |
+|---|---|---|
+| `OfficialBuild` | `OfficialBuildId` | `true` when `OfficialBuildId` is non-empty; `OfficialBuildId` is a pipeline global property (e.g., `20260520.29`) |
+
+### NuGet audit configuration
+
+NuGet audit is configured in the root `Directory.Build.props` and `eng/tools/Directory.Build.props`:
+- Disabled for offline builds (`DotNetBuildWithOnlineFeeds != true`)
+- Disabled for official builds (`OfficialBuild == true`) because MSBuild does not correctly handle `WarningsNotAsErrors` for NuGet warnings ([dotnet/msbuild#10801](https://github.com/dotnet/msbuild/issues/10801))
+- `NuGetAuditMode` is set to `all` (audit both direct and transitive)
+- NU1901-NU1904 are excluded from `WarningsAsErrors` for non-official builds
+
 ## Key Conventions
 
-- The VMR uses the [Microsoft.DotNet.Arcade.Sdk](https://github.com/dotnet/arcade) for shared build infrastructure. Arcade provides the common `eng/common/` scripts, signing, packaging, and CI patterns used across all .NET repos. The `eng/common/` directory at the VMR root (and within each `src/<repo>/`) is effectively read-only — it is sourced from arcade and overwritten during re-bootstrap or code flow. Do not modify these files directly; changes to shared build scripts must be made in the [dotnet/arcade](https://github.com/dotnet/arcade) repository.
 - Default build configuration is `Release` (set in root `Directory.Build.props`).
 - `Nullable` is enabled globally for VMR-level projects.
 - `LangVersion` is set to `latest` for VMR-level projects.
