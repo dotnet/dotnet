@@ -47,6 +47,12 @@
         <target state="translated">Při parsování souboru packages.config na cestě {0} došlo k chybě: {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>0 - The project name
+1 - The error message</note>
+      </trans-unit>
       <trans-unit id="Error_StaticGraphNonZeroExitCode">
         <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
         <target state="translated">Statické obnovení založené na grafu selhalo s ukončovacím kódem {0}, ale nezaprotokolovalo chybu. Nahlaste prosím problém na https://github.com/NuGet/Home.</target>

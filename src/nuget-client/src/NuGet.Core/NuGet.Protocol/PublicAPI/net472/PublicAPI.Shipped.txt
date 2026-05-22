@@ -504,7 +504,7 @@ NuGet.Protocol.HttpSource.ProcessStreamAsync<T>(NuGet.Protocol.HttpSourceRequest
 NuGet.Protocol.HttpSource.RetryHandler.get -> NuGet.Protocol.IHttpRetryHandler!
 NuGet.Protocol.HttpSource.RetryHandler.set -> void
 NuGet.Protocol.HttpSourceAuthenticationHandler
-~NuGet.Protocol.HttpSourceAuthenticationHandler.HttpSourceAuthenticationHandler(NuGet.Configuration.PackageSource packageSource, System.Net.Http.HttpClientHandler clientHandler, NuGet.Configuration.ICredentialService credentialService) -> void
+NuGet.Protocol.HttpSourceAuthenticationHandler.HttpSourceAuthenticationHandler(NuGet.Configuration.PackageSource! packageSource, System.Net.Http.HttpClientHandler! clientHandler, NuGet.Configuration.ICredentialService? credentialService) -> void
 NuGet.Protocol.HttpSourceCachedRequest
 NuGet.Protocol.HttpSourceCachedRequest.AcceptHeaderValues.get -> System.Collections.Generic.IList<System.Net.Http.Headers.MediaTypeWithQualityHeaderValue!>!
 NuGet.Protocol.HttpSourceCachedRequest.CacheContext.get -> NuGet.Protocol.Core.Types.HttpSourceCacheContext!
@@ -619,7 +619,7 @@ NuGet.Protocol.LocalPackageArchiveDownloader.Dispose() -> void
 ~NuGet.Protocol.LocalPackageArchiveDownloader.Source.get -> string
 NuGet.Protocol.LocalPackageFileCache
 NuGet.Protocol.LocalPackageFileCache.LocalPackageFileCache() -> void
-~NuGet.Protocol.LocalPackageFileCache.UpdateLastAccessTime(string nupkgMetadataPath) -> void
+NuGet.Protocol.LocalPackageFileCache.UpdateLastAccessTime(string! nupkgMetadataPath) -> void
 NuGet.Protocol.LocalPackageInfo
 NuGet.Protocol.LocalPackageInfo.LocalPackageInfo() -> void
 ~NuGet.Protocol.LocalPackageInfo.LocalPackageInfo(NuGet.Packaging.Core.PackageIdentity identity, string path, System.DateTime lastWriteTimeUtc, System.Lazy<NuGet.Packaging.NuspecReader> nuspec, bool useFolder) -> void
@@ -1511,32 +1511,32 @@ NuGet.Protocol.VersionRangeConverter
 NuGet.Protocol.VersionRangeConverter.VersionRangeConverter() -> void
 NuGet.Protocol.VisualStudio.FactoryExtensionsVS
 NuGet.Repositories.LocalPackageInfo
-~NuGet.Repositories.LocalPackageInfo.ExpandedPath.get -> string
-~NuGet.Repositories.LocalPackageInfo.ExpandedPath.set -> void
-~NuGet.Repositories.LocalPackageInfo.Files.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Repositories.LocalPackageInfo.Id.get -> string
-~NuGet.Repositories.LocalPackageInfo.LocalPackageInfo(string packageId, NuGet.Versioning.NuGetVersion version, string path, string manifestPath, string zipPath, string sha512Path, System.Lazy<NuGet.Packaging.NuspecReader> nuspec, System.Lazy<System.Collections.Generic.IReadOnlyList<string>> files, System.Lazy<string> sha512, System.Lazy<NuGet.RuntimeModel.RuntimeGraph> runtimeGraph) -> void
-~NuGet.Repositories.LocalPackageInfo.ManifestPath.get -> string
-~NuGet.Repositories.LocalPackageInfo.Nuspec.get -> NuGet.Packaging.NuspecReader
-~NuGet.Repositories.LocalPackageInfo.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
-~NuGet.Repositories.LocalPackageInfo.Sha512.get -> string
-~NuGet.Repositories.LocalPackageInfo.Sha512Path.get -> string
-~NuGet.Repositories.LocalPackageInfo.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.Repositories.LocalPackageInfo.ZipPath.get -> string
+NuGet.Repositories.LocalPackageInfo.ExpandedPath.get -> string!
+NuGet.Repositories.LocalPackageInfo.ExpandedPath.set -> void
+NuGet.Repositories.LocalPackageInfo.Files.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Repositories.LocalPackageInfo.Id.get -> string!
+NuGet.Repositories.LocalPackageInfo.LocalPackageInfo(string! packageId, NuGet.Versioning.NuGetVersion! version, string! path, string! manifestPath, string! zipPath, string! sha512Path, System.Lazy<NuGet.Packaging.NuspecReader!>! nuspec, System.Lazy<System.Collections.Generic.IReadOnlyList<string!>!>! files, System.Lazy<string!>! sha512, System.Lazy<NuGet.RuntimeModel.RuntimeGraph?>! runtimeGraph) -> void
+NuGet.Repositories.LocalPackageInfo.ManifestPath.get -> string!
+NuGet.Repositories.LocalPackageInfo.Nuspec.get -> NuGet.Packaging.NuspecReader!
+NuGet.Repositories.LocalPackageInfo.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph?
+NuGet.Repositories.LocalPackageInfo.Sha512.get -> string!
+NuGet.Repositories.LocalPackageInfo.Sha512Path.get -> string!
+NuGet.Repositories.LocalPackageInfo.Version.get -> NuGet.Versioning.NuGetVersion!
+NuGet.Repositories.LocalPackageInfo.ZipPath.get -> string!
 NuGet.Repositories.LocalPackageSourceInfo
-~NuGet.Repositories.LocalPackageSourceInfo.LocalPackageSourceInfo(NuGet.Repositories.NuGetv3LocalRepository repository, NuGet.Repositories.LocalPackageInfo package) -> void
-~NuGet.Repositories.LocalPackageSourceInfo.Package.get -> NuGet.Repositories.LocalPackageInfo
-~NuGet.Repositories.LocalPackageSourceInfo.Repository.get -> NuGet.Repositories.NuGetv3LocalRepository
+NuGet.Repositories.LocalPackageSourceInfo.LocalPackageSourceInfo(NuGet.Repositories.NuGetv3LocalRepository! repository, NuGet.Repositories.LocalPackageInfo! package) -> void
+NuGet.Repositories.LocalPackageSourceInfo.Package.get -> NuGet.Repositories.LocalPackageInfo!
+NuGet.Repositories.LocalPackageSourceInfo.Repository.get -> NuGet.Repositories.NuGetv3LocalRepository!
 NuGet.Repositories.NuGetv3LocalRepository
-~NuGet.Repositories.NuGetv3LocalRepository.ClearCacheForIds(System.Collections.Generic.IEnumerable<string> packageIds) -> void
-~NuGet.Repositories.NuGetv3LocalRepository.Exists(string packageId, NuGet.Versioning.NuGetVersion version) -> bool
-~NuGet.Repositories.NuGetv3LocalRepository.FindPackage(string packageId, NuGet.Versioning.NuGetVersion version) -> NuGet.Repositories.LocalPackageInfo
-~NuGet.Repositories.NuGetv3LocalRepository.FindPackagesById(string packageId) -> System.Collections.Generic.IEnumerable<NuGet.Repositories.LocalPackageInfo>
-~NuGet.Repositories.NuGetv3LocalRepository.NuGetv3LocalRepository(string path) -> void
-~NuGet.Repositories.NuGetv3LocalRepository.NuGetv3LocalRepository(string path, NuGet.Protocol.LocalPackageFileCache packageFileCache, bool isFallbackFolder) -> void
-~NuGet.Repositories.NuGetv3LocalRepository.NuGetv3LocalRepository(string path, NuGet.Protocol.LocalPackageFileCache packageFileCache, bool isFallbackFolder, bool updateLastAccessTime) -> void
-~NuGet.Repositories.NuGetv3LocalRepository.PathResolver.get -> NuGet.Packaging.VersionFolderPathResolver
-~NuGet.Repositories.NuGetv3LocalRepository.RepositoryRoot.get -> string
+NuGet.Repositories.NuGetv3LocalRepository.ClearCacheForIds(System.Collections.Generic.IEnumerable<string!>! packageIds) -> void
+NuGet.Repositories.NuGetv3LocalRepository.Exists(string! packageId, NuGet.Versioning.NuGetVersion! version) -> bool
+NuGet.Repositories.NuGetv3LocalRepository.FindPackage(string! packageId, NuGet.Versioning.NuGetVersion! version) -> NuGet.Repositories.LocalPackageInfo?
+NuGet.Repositories.NuGetv3LocalRepository.FindPackagesById(string! packageId) -> System.Collections.Generic.IEnumerable<NuGet.Repositories.LocalPackageInfo!>!
+NuGet.Repositories.NuGetv3LocalRepository.NuGetv3LocalRepository(string! path) -> void
+NuGet.Repositories.NuGetv3LocalRepository.NuGetv3LocalRepository(string! path, NuGet.Protocol.LocalPackageFileCache? packageFileCache, bool isFallbackFolder) -> void
+NuGet.Repositories.NuGetv3LocalRepository.NuGetv3LocalRepository(string! path, NuGet.Protocol.LocalPackageFileCache? packageFileCache, bool isFallbackFolder, bool updateLastAccessTime) -> void
+NuGet.Repositories.NuGetv3LocalRepository.PathResolver.get -> NuGet.Packaging.VersionFolderPathResolver!
+NuGet.Repositories.NuGetv3LocalRepository.RepositoryRoot.get -> string!
 NuGet.Repositories.NuGetv3LocalRepositoryUtility
 ~abstract NuGet.Protocol.Core.Types.AutoCompleteResource.IdStartsWith(string packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
 ~abstract NuGet.Protocol.Core.Types.AutoCompleteResource.VersionStartsWith(string packageId, string versionPrefix, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
@@ -1712,10 +1712,10 @@ override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResource.GetPackageDow
 ~override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 override NuGet.Protocol.HttpHandlerResourceV3.ClientHandler.get -> System.Net.Http.HttpClientHandler!
 override NuGet.Protocol.HttpHandlerResourceV3.MessageHandler.get -> System.Net.Http.HttpMessageHandler!
-~override NuGet.Protocol.HttpHandlerResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.HttpHandlerResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.HttpSourceAuthenticationHandler.Dispose(bool disposing) -> void
-~override NuGet.Protocol.HttpSourceAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage>
-~override NuGet.Protocol.HttpSourceResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.HttpSourceAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
+override NuGet.Protocol.HttpSourceResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~override NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.SupportsSearchAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~override NuGet.Protocol.LocalAutoCompleteResource.IdStartsWith(string packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
@@ -1889,7 +1889,7 @@ override NuGet.Protocol.VersionInfoConverter.WriteJson(Newtonsoft.Json.JsonWrite
 override NuGet.Protocol.VersionRangeConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.VersionRangeConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
 override NuGet.Protocol.VersionRangeConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
-~override NuGet.Repositories.LocalPackageInfo.ToString() -> string
+override NuGet.Repositories.LocalPackageInfo.ToString() -> string!
 static NuGet.Protocol.CachingUtility.ComputeHash(string! value, bool addIdentifiableCharacters = true) -> string!
 static NuGet.Protocol.CachingUtility.IsFileAlreadyOpen(string! filePath) -> bool
 static NuGet.Protocol.CachingUtility.ReadCacheFile(System.TimeSpan maxAge, string! cacheFile) -> System.IO.Stream?
@@ -1952,8 +1952,8 @@ static NuGet.Protocol.HttpRequestMessageFactory.Create(System.Net.Http.HttpMetho
 ~static NuGet.Protocol.HttpResponseMessageExtensions.LogServerWarning(this System.Net.Http.HttpResponseMessage response, NuGet.Common.ILogger log) -> void
 static NuGet.Protocol.HttpSource.Create(NuGet.Protocol.Core.Types.SourceRepository! source) -> NuGet.Protocol.HttpSource!
 static NuGet.Protocol.HttpSource.Create(NuGet.Protocol.Core.Types.SourceRepository! source, NuGet.Protocol.IThrottle! throttle) -> NuGet.Protocol.HttpSource!
-~static NuGet.Protocol.HttpSourceResourceProvider.Throttle.get -> NuGet.Protocol.IThrottle
-~static NuGet.Protocol.HttpSourceResourceProvider.Throttle.set -> void
+static NuGet.Protocol.HttpSourceResourceProvider.Throttle.get -> NuGet.Protocol.IThrottle?
+static NuGet.Protocol.HttpSourceResourceProvider.Throttle.set -> void
 static NuGet.Protocol.HttpStreamValidation.ValidateJObject(string! uri, System.IO.Stream! stream) -> void
 static NuGet.Protocol.HttpStreamValidation.ValidateNupkg(string! uri, System.IO.Stream! stream) -> void
 static NuGet.Protocol.HttpStreamValidation.ValidateXml(string! uri, System.IO.Stream! stream) -> void
@@ -2037,7 +2037,7 @@ static NuGet.Protocol.TokenStore.Instance.get -> NuGet.Protocol.TokenStore!
 ~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.ProviderFactory factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
 ~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
 ~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, string source) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Repositories.NuGetv3LocalRepositoryUtility.GetPackage(System.Collections.Generic.IReadOnlyList<NuGet.Repositories.NuGetv3LocalRepository> repositories, string id, NuGet.Versioning.NuGetVersion version) -> NuGet.Repositories.LocalPackageSourceInfo
+static NuGet.Repositories.NuGetv3LocalRepositoryUtility.GetPackage(System.Collections.Generic.IReadOnlyList<NuGet.Repositories.NuGetv3LocalRepository!>! repositories, string! id, NuGet.Versioning.NuGetVersion! version) -> NuGet.Repositories.LocalPackageSourceInfo?
 static readonly NuGet.Protocol.Core.Types.UserAgentStringBuilder.DefaultNuGetClientName -> string!
 static readonly NuGet.Protocol.HttpRequestMessageConfiguration.Default -> NuGet.Protocol.HttpRequestMessageConfiguration!
 static readonly NuGet.Protocol.HttpRetryHandlerRequest.DefaultDownloadTimeout -> System.TimeSpan
@@ -2105,11 +2105,11 @@ virtual NuGet.Protocol.HttpSource.Dispose(bool disposing) -> void
 virtual NuGet.Protocol.HttpSource.GetAsync<T>(NuGet.Protocol.HttpSourceCachedRequest! request, System.Func<NuGet.Protocol.HttpSourceResult!, System.Threading.Tasks.Task<T>!>! processAsync, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>!
 virtual NuGet.Protocol.HttpSource.TryReadCacheFile(string! uri, System.TimeSpan maxAge, string! cacheFile) -> System.IO.Stream?
 virtual NuGet.Protocol.HttpSourceResult.Dispose(bool disposing) -> void
-~virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddFiles(string expandedPath) -> System.Lazy<System.Collections.Generic.IReadOnlyList<string>>
-~virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddNuspec(string manifestPath, string expandedPath) -> System.Lazy<NuGet.Packaging.NuspecReader>
-~virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddRuntimeGraph(string expandedPath) -> System.Lazy<NuGet.RuntimeModel.RuntimeGraph>
-~virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddSha512(string sha512Path) -> System.Lazy<string>
-~virtual NuGet.Protocol.LocalPackageFileCache.Sha512Exists(string sha512Path) -> bool
+virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddFiles(string! expandedPath) -> System.Lazy<System.Collections.Generic.IReadOnlyList<string!>!>!
+virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddNuspec(string! manifestPath, string! expandedPath) -> System.Lazy<NuGet.Packaging.NuspecReader!>!
+virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddRuntimeGraph(string! expandedPath) -> System.Lazy<NuGet.RuntimeModel.RuntimeGraph?>!
+virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddSha512(string! sha512Path) -> System.Lazy<string!>!
+virtual NuGet.Protocol.LocalPackageFileCache.Sha512Exists(string! sha512Path) -> bool
 ~virtual NuGet.Protocol.LocalPackageInfo.GetReader() -> NuGet.Packaging.PackageReaderBase
 ~virtual NuGet.Protocol.LocalPackageInfo.Identity.get -> NuGet.Packaging.Core.PackageIdentity
 virtual NuGet.Protocol.LocalPackageInfo.IsNupkg.get -> bool
