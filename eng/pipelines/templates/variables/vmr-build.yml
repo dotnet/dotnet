@@ -288,7 +288,7 @@ variables:
       value: windows.vs2026.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
-    value: $(DncEngInternalBuildPool)
+    value: NetCore1ESPool-Internal
   - name: shortStackPoolName
     value: $(DncEngInternalBuildPool)
   - name: poolImage_Linux
