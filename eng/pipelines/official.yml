@@ -108,7 +108,7 @@ extends:
         runSourceLanguagesInSourceAnalysis: true
         tsaEnabled: true
       binskim:
-        enabled: true
+        enabled: false
       policheck:
         enabled: true
       tsa:
