@@ -42,7 +42,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BINLOG_MCP_VERSION: '1.0.0-preview.26268.3'
+  BINLOG_MCP_VERSION: '1.0.0-preview.26272.1'
   NUGET_MCP_VERSION: '1.4.3'
   AZDO_ORG: 'dnceng-public'
   AZDO_PROJECT: ${{ inputs.azdo-project || 'public' }}
@@ -131,7 +131,7 @@ steps:
   - name: Install binlog-mcp
     if: steps.download.outputs.found == 'true'
     run: |
-      dotnet tool install --global AITools.BinlogMcp \
+      dotnet tool install --global Microsoft.AITools.BinlogMcp \
         --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" \
         --version "$BINLOG_MCP_VERSION"
       echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
