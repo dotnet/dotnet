@@ -3,9 +3,8 @@
   <UsingTask TaskName="Microsoft.NET.Build.Tasks.SelectRuntimeIdentifierSpecificItems" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" />
 
   <PropertyGroup>
-    <AspNetCoreRidSpecificToolPackageRids>linux-x64;linux-arm;linux-arm64;linux-musl-x64;linux-musl-arm;linux-musl-arm64;win-x64;win-x86;win-arm64;osx-x64;osx-arm64</AspNetCoreRidSpecificToolPackageRids>
-    <_AspNetCoreRidSpecificToolPackageRidsWithDelimiters>;$(AspNetCoreRidSpecificToolPackageRids);</_AspNetCoreRidSpecificToolPackageRidsWithDelimiters>
-    <AspNetCoreRidSpecificToolPackageRids Condition="'$(ProductMonikerRid)' != '' and !$(_AspNetCoreRidSpecificToolPackageRidsWithDelimiters.Contains(';$(ProductMonikerRid);'))">$(AspNetCoreRidSpecificToolPackageRids);$(ProductMonikerRid)</AspNetCoreRidSpecificToolPackageRids>
+    <AspNetCoreRidSpecificToolPackageRids>;linux-x64;linux-arm;linux-arm64;linux-musl-x64;linux-musl-arm;linux-musl-arm64;win-x64;win-x86;win-arm64;osx-x64;osx-arm64;</AspNetCoreRidSpecificToolPackageRids>
+    <AspNetCoreRidSpecificToolPackageRids Condition="'$(ProductMonikerRid)' != '' and !$(AspNetCoreRidSpecificToolPackageRids.Contains(';$(ProductMonikerRid);'))">$(AspNetCoreRidSpecificToolPackageRids)$(ProductMonikerRid);</AspNetCoreRidSpecificToolPackageRids>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IncludeAspNetCoreRuntime)' != 'false'">
