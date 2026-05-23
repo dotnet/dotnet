@@ -16,6 +16,8 @@
   <PropertyGroup Condition=" '$(PublishAot)' == 'true' ">
     <InvariantGlobalization>true</InvariantGlobalization>
     <OptimizationPreference>Size</OptimizationPreference>
+    <!-- NativeAOT defaults Linux to bfd, but the VMR musl cross-build images provide lld instead. -->
+    <LinkerFlavor Condition=" '$(LinkerFlavor)' == '' and $(RuntimeIdentifier.StartsWith('linux-musl-')) ">lld</LinkerFlavor>
     <StackTraceSupport>false</StackTraceSupport>
     <EventSourceSupport>false</EventSourceSupport>
     <MetricsSupport>false</MetricsSupport>
