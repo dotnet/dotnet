@@ -387,6 +387,7 @@ extends:
       - template: /eng/common/templates-official/job/publish-build-assets.yml@self
         parameters:
           publishUsingPipelines: true
+          publishAssetsImmediately: true
           dependsOn:
           - OfficialBuild
           pool:
@@ -395,7 +396,7 @@ extends:
 
     - stage: insert
       dependsOn:
-      - publish_using_darc
+      - build
       displayName: Insert to VS
 
       jobs:
@@ -422,6 +423,9 @@ extends:
       - template: /eng/common/templates-official/post-build/post-build.yml@self
         parameters:
           publishingInfraVersion: 3
+          publishAssetsImmediately: true
+          enableSigningValidation: false
+          enableNugetValidation: false
           enableSourceLinkValidation: false
           # Enable SDL validation, passing through values from the 'DotNet-Roslyn-SDLValidation-Params' group.
           SDLValidationParameters:
