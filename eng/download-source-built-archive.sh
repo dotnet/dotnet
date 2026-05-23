@@ -129,6 +129,20 @@ function DownloadArchive {
   local downloadedFilename=$(basename "${archiveFileName}")
   local downloadSucceeded=false
 
+  # When a destination filename prefix is provided, download to a temp directory
+  # first and then move the renamed file into outputDir. This avoids the in-place
+  # rename clobbering an existing file in outputDir whose name happens to match
+  # the URL's basename (e.g. when downloading shared components alongside an
+  # already-present Private.SourceBuilt.Artifacts archive of the same version).
+  local downloadDir="$outputDir"
+  if [[ -n "$destinationFileNamePrefix" ]]; then
+    downloadDir=$(mktemp -d)
+  fi
+
+  # Track the overall result via a local variable so the function has a single
+  # exit point.
+  local result=0
+
   # Try each base URL in order
   for entry in "${baseUrls[@]}"; do
     # Parse the entry: "url" or "url=storageKey"
@@ -150,7 +164,7 @@ function DownloadArchive {
     fi
     
     echo "  Downloading $label from $displayUrl..."
-    if DownloadWithRetries "$archiveUrl" "$outputDir"; then
+    if DownloadWithRetries "$archiveUrl" "$downloadDir"; then
       downloadSucceeded=true
       break
     else
@@ -158,19 +172,20 @@ function DownloadArchive {
       # Only continue to next URL if it was a 404
       if [[ $downloadResult -ne 22 ]]; then
         echo "  ERROR: Failed to download $displayUrl"
-        return 1
+        result=1
+        break
       fi
       echo "  Not found, trying next location..."
     fi
   done
 
-  if [[ "$downloadSucceeded" == false ]]; then
+  if [[ $result -eq 0 && "$downloadSucceeded" == false ]]; then
     echo "  ERROR: Failed to download from all available locations"
-    return 1
+    result=1
   fi
 
-  # Rename the file if a destination filename prefix is provided
-  if [[ -n "$destinationFileNamePrefix" ]]; then
+  # Move the file to outputDir, renaming it if a destination filename prefix is provided.
+  if [[ $result -eq 0 && -n "$destinationFileNamePrefix" ]]; then
     # Extract the suffix from the downloaded filename
     local baseFilenameForSuffix="$artifactsBaseFileName"
     if [[ "$propertyName" == *Prebuilts* ]]; then
@@ -180,9 +195,14 @@ function DownloadArchive {
     fi
     local suffix="${downloadedFilename#$baseFilenameForSuffix}"
     local newFilename="$destinationFileNamePrefix$suffix"
-    mv "$outputDir/$downloadedFilename" "$outputDir/$newFilename"
+    mv "$downloadDir/$downloadedFilename" "$outputDir/$newFilename"
     echo "  Renamed $downloadedFilename to $newFilename"
   fi
 
-  return 0
+  # Clean up the temp directory, if we created one. Runs on both success and failure paths.
+  if [[ -n "$destinationFileNamePrefix" ]]; then
+    rm -rf "$downloadDir"
+  fi
+
+  return $result
 }
