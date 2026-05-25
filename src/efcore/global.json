@@ -21,5 +21,8 @@
     "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.26266.103",
     "Microsoft.DotNet.Helix.Sdk": "11.0.0-beta.26266.103",
     "Microsoft.Build.NoTargets": "3.7.134"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
   }
 }
