@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
@@ -113,23 +114,83 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
             var depsFileName = string.IsNullOrEmpty(SharedFrameworkDepsNameOverride) ? $"{SharedFrameworkName}.deps.json" : $"{SharedFrameworkDepsNameOverride}.deps.json";
 
             var depsFilePath = Path.Combine(IntermediateOutputPath, depsFileName);
-            try
+
+            // When multiple project configurations build in parallel (e.g. in -mt mode),
+            // they may converge on the same output file via RemoveProperties in nested MSBuild calls.
+            // All invocations produce identical content, so if another writer is active or has
+            // already completed, we can safely retry or reuse the existing file.
+            const int maxRetries = 5;
+            const int retryDelayMs = 200;
+
+            for (int attempt = 0; attempt < maxRetries; attempt++)
             {
-                using var depsStream = File.Create(depsFilePath);
-                new DependencyContextWriter().Write(context, depsStream);
-                GeneratedDepsFile = new TaskItem(depsFilePath);
-            }
-            catch (Exception ex)
-            {
-                // If there is a problem, ensure we don't write a partially complete version to disk.
-                if (File.Exists(depsFilePath))
+                try
                 {
-                    File.Delete(depsFilePath);
+                    // Write to a temporary file first, then move atomically to avoid
+                    // partial-file reads by concurrent builds.
+                    var tempFilePath = depsFilePath + ".tmp" + Path.GetRandomFileName();
+                    using (var depsStream = File.Create(tempFilePath))
+                    {
+                        new DependencyContextWriter().Write(context, depsStream);
+                    }
+
+                    try
+                    {
+                        File.Move(tempFilePath, depsFilePath
+#if !NETFRAMEWORK
+                            , overwrite: true
+#endif
+                            );
+                    }
+                    catch (IOException)
+                    {
+                        // Another writer may have placed the file already — that's fine,
+                        // the content is identical. Clean up our temp file.
+                        try { File.Delete(tempFilePath); } catch { }
+
+                        // If the target exists, we're done — another invocation wrote it.
+                        if (File.Exists(depsFilePath) && new FileInfo(depsFilePath).Length > 0)
+                        {
+                            GeneratedDepsFile = new TaskItem(depsFilePath);
+                            return true;
+                        }
+
+                        // Target doesn't exist or is empty — rethrow to trigger retry.
+                        throw;
+                    }
+
+                    GeneratedDepsFile = new TaskItem(depsFilePath);
+                    return true;
                 }
-                Log.LogErrorFromException(ex, false);
-                return false;
+                catch (IOException) when (attempt < maxRetries - 1)
+                {
+                    // File is locked by another concurrent build writing the same deps.json.
+                    // Since all invocations produce identical output, wait and retry.
+                    Log.LogMessage(MessageImportance.Low,
+                        $"Deps file '{depsFilePath}' is locked (attempt {attempt + 1}/{maxRetries}), retrying...");
+                    Thread.Sleep(retryDelayMs * (attempt + 1));
+
+                    // If the file now exists and is non-empty, another writer completed successfully.
+                    if (File.Exists(depsFilePath) && new FileInfo(depsFilePath).Length > 0)
+                    {
+                        GeneratedDepsFile = new TaskItem(depsFilePath);
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // If there is a problem, ensure we don't write a partially complete version to disk.
+                    if (File.Exists(depsFilePath))
+                    {
+                        try { File.Delete(depsFilePath); } catch { }
+                    }
+                    Log.LogErrorFromException(ex, false);
+                    return false;
+                }
             }
-            return true;
+
+            Log.LogError($"Failed to write deps file '{depsFilePath}' after {maxRetries} attempts.");
+            return false;
         }
     }
 }
