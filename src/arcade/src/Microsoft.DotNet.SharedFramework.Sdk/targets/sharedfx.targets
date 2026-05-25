@@ -572,7 +572,8 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
           Targets="_GetAllSharedFrameworkFiles"
-          RemoveProperties="OutputPath;SymbolsOutputPath">
+          RemoveProperties="OutputPath;SymbolsOutputPath"
+          Properties="IntermediateOutputPath=$(IntermediateOutputPath)publish/">
       <Output TaskParameter="TargetOutputs" ItemName="_FilesToPackage" />
     </MSBuild>
 
