@@ -198,7 +198,9 @@ namespace System.Threading
 
         private bool WaitAsWaiter(int timeoutMs)
         {
-            Debug.Assert(timeoutMs == -1 || timeoutMs > 0);
+            Debug.Assert(timeoutMs > 0 || timeoutMs == -1);
+
+            _onWait();
 
             while (true)
             {
@@ -317,20 +319,41 @@ namespace System.Threading
 
             if (blocker != null)
             {
-                _onWait();
-                while (!blocker.TimedWait(timeoutMs))
+                if (OperatingSystem.IsWindows())
                 {
-                    if (TryRemove(blocker))
-                    {
-                        return false;
-                    }
+                    // Disable the priority boost that Windows would normally apply
+                    // when this thread is unblocked. The semaphore is used to park
+                    // thread-pool workers; a transient priority boost on wake provides
+                    // no benefit here and can disturb scheduling of other work.
+                    // GetCurrentThread() returns a pseudo-handle (-2) that is valid
+                    // only on the calling thread and does not need to be closed.
+                    Interop.Kernel32.SetThreadPriorityBoost(Interop.Kernel32.GetCurrentThread(), bDisablePriorityBoost: true);
+                }
 
-                    // We timed out, but our waiter is already popped. Someone is waking
-                    // our blocker. This is a very rare case.
-                    // We can't leave or the wake could be lost, so let's wait again.
-                    // The blocker is likely woken already, but give it some extra time,
-                    // just so we do not keep coming here again.
-                    timeoutMs = 10;
+                try
+                {
+                    while (!blocker.TimedWait(timeoutMs))
+                    {
+                        if (TryRemove(blocker))
+                        {
+                            return false;
+                        }
+
+                        // We timed out, but our waiter is already popped. Someone is waking
+                        // our blocker. This is a very rare case.
+                        // We can't leave or the wake could be lost, so let's wait again.
+                        // The blocker is likely woken already, but give it some extra time,
+                        // just so we do not keep coming here again.
+                        timeoutMs = 10;
+                    }
+                }
+                finally
+                {
+                    if (OperatingSystem.IsWindows())
+                    {
+                        // restore the default.
+                        Interop.Kernel32.SetThreadPriorityBoost(Interop.Kernel32.GetCurrentThread(), bDisablePriorityBoost: false);
+                    }
                 }
             }
 
