@@ -17,3 +17,7 @@ updates:
       - dependency-name: "Microsoft.DncEng.SecretManager"
       # Manually updated dependencies
       - dependency-name: "Microsoft.Build.NoTargets"
+      # Moq 4.20.x introduced the SponsorLink telemetry component, which raised
+      # privacy/compliance concerns across the .NET ecosystem. Stay pinned on
+      # 4.18.x until a vetted replacement (or a SponsorLink-free Moq) is adopted.
+      - dependency-name: "Moq"

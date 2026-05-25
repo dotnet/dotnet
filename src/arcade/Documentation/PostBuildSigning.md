@@ -44,10 +44,10 @@ Post build signing is intended to sign a full set of product inputs.  Given that
 ## Additional Information
 
 More information about the file types that are signed and the certificates used to sign them can be found here:
-../src/Microsoft.DotNet.Arcade.Sdk/toolset/Sign.props
+[../src/Microsoft.DotNet.Arcade.Sdk/toolset/Sign.props](../src/Microsoft.DotNet.Arcade.Sdk/toolset/Sign.props)
 
 Additional information about the publishing process in general can be found here:
-Publishing.md
+[Publishing.md](Publishing.md)
 
 Additional information about the in-build signing process can be found here:
-Signing.md
+[Signing.md](Signing.md)

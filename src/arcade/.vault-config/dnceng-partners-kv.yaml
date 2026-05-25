@@ -42,16 +42,6 @@ secrets:
       permissions: rl
       service: blob|file
 
-  dn-dependabot-dnceng-package-rw-pat:
-    type: azure-devops-access-token
-    parameters:
-      organizations: dnceng
-      scopes: packaging_write
-      domainAccountName: dn-dependabot
-      domainAccountSecret:
-        name: dn-dependabot-account-redmond
-        location: helixkv
-
   BotAccount-dotnet-bot-content-rw-grained-pat:
     type: github-access-token
     parameters:

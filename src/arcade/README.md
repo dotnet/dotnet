@@ -23,7 +23,7 @@ Arcade is intended to provide well-understood and consistent mechanisms for cons
 
 ## Getting Started
 
-Documentation, tutorials, and guides how to use Arcade may be found in the [Start Here](Documentation/StartHere.md) index.
+Documentation, tutorials, and guides on how to use Arcade may be found in the [Documentation index](Documentation/README.md).
 
 Packages are published daily to our tools feed: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
 
