@@ -172,9 +172,3 @@ Given the infrastructure ecosystem requirements, this section identifies the set
 - **Repository API** – A set of primitive commands common to each repository used to perform typical repository actions.
 - **Dependency Flow Automation** – A set of tools and services used to automate the movement of dependencies among repositories based on configurable policies. Maestro++ implements most of this functionality, utilizing the repository tooling.
 - **Visualization/Reporting System** – A set of services used to report the status of the product.  Currently implemented in Azure DevOps Tests.
-
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CInfrastructureEcosystemOverview.md)](https://helix.dot.net/f/p/5?p=Documentation%5CInfrastructureEcosystemOverview.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CInfrastructureEcosystemOverview.md)</sub>
-<!-- End Generated Content-->

@@ -90,7 +90,3 @@ To view the available Helix queues:
 [@dotnet/dnceng]: https://github.com/orgs/dotnet/teams/dnceng
 [dotnet-helix-machines]: https://dev.azure.com/dnceng/internal/internal%20Team/_git/dotnet-helix-machines?path=%2FREADME.md&version=GBmain
 [Helix Queue Info Api]: https://helix.dot.net/swagger/ui/index#!/Information/Information_QueueInfoList
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CChoosingAMachinePool.md)](https://helix.dot.net/f/p/5?p=Documentation%5CChoosingAMachinePool.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CChoosingAMachinePool.md)</sub>
-<!-- End Generated Content-->

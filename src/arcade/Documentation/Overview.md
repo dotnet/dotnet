@@ -63,8 +63,3 @@ This approach publishes what amounts to “public surface area” for the shared
 - A repo level API is explicitly defined and implemented, not just implied
 - Method exist to directly maintain and update Arcade in each participating repo
 - Arcade (and its packages) is reasonably serviceable
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5COverview.md)](https://helix.dot.net/f/p/5?p=Documentation%5COverview.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5COverview.md)</sub>
-<!-- End Generated Content-->

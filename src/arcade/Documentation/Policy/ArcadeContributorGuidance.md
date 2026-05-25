@@ -69,8 +69,3 @@ Time and again differences get worked out when these items occur.  To be sure, i
 * Refrain (where possible) from relying solely on GH comments to find resolution to a particular tricky disagreement.  Face-to-face when possible, or at the very least, voice conversations are much higher bandwidth and thus, dramatically more effective.
 * Initially, leave your own personal 'principles' at the door.  Instead work with others to find the right pragmatic next step, but then circle back around and use your principles to help you push for the right longer term solution/approach over time.
 * Take the opportunity to learn from others.  We're all learning together, and the skills required to reconcile differences are very valuable in every venue.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CArcadeContributorGuidance.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CArcadeContributorGuidance.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CArcadeContributorGuidance.md)</sub>
-<!-- End Generated Content-->

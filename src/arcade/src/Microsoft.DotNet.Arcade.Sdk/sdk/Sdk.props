@@ -9,8 +9,6 @@
     <CustomBeforeMicrosoftCommonTargets>$(ArcadeSdkDir)BeforeCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
     <CustomBeforeMicrosoftCommonCrossTargetingTargets>$(ArcadeSdkDir)BeforeCommonTargets.CrossTargeting.targets</CustomBeforeMicrosoftCommonCrossTargetingTargets>
     <BeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets);$(ArcadeSdkDir)BeforeNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
-
-    <NETCORE_ENGINEERING_TELEMETRY Condition="'$(NETCORE_ENGINEERING_TELEMETRY)' == ''">$(_NETCORE_ENGINEERING_TELEMETRY)</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
   <Import Project="$(ArcadeSdkDir)BuildTasks.props" />

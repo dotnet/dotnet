@@ -4,8 +4,6 @@
   <Target Name="RunTests"
           Outputs="%(TestToRun.ResultsStdOutPath)"
           Condition="'@(TestToRun)' != ''">
-    <Telemetry EventName="NETCORE_ENGINEERING_TELEMETRY" EventData="Category=Test" />
-
     <PropertyGroup Condition="'$(UseMicrosoftTestingPlatformRunner)' == 'true'">
       <_TestResultDirectory>$([System.IO.Path]::GetDirectoryName('%(TestToRun.ResultsTrxPath)'))</_TestResultDirectory>
       <_TestResultTrxFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsTrxPath)'))</_TestResultTrxFileName>

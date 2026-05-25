@@ -14,7 +14,6 @@
   <PropertyGroup>
     <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MicrosoftDotNetHelixSdkTasksAssembly)' == ''">$(MSBuildThisFileDirectory)net/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
     <MicrosoftDotNetHelixSdkTasksFactory Condition="'$(MicrosoftDotNetHelixSdkTasksFactory)' == ''">AssemblyTaskFactory</MicrosoftDotNetHelixSdkTasksFactory>
-    <NETCORE_ENGINEERING_TELEMETRY>Helix</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
   <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->

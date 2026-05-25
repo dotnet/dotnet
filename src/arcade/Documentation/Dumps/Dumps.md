@@ -14,9 +14,4 @@ To retrieve the dump files:
 
 3. Click on the `Attachments` tab (not `Attachments*`) to see the UploadFileResults.txt. Click on that file to open the preview.
 
-4. You will find a list of files that link back to the file that was uploaded to Azure Storage. From there, you can download the dump files or log files or other files that were uploaded as a result from the work item. 
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDumps%5CDumps.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDumps%5CDumps.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDumps%5CDumps.md)</sub>
-<!-- End Generated Content-->
+4. You will find a list of files that link back to the file that was uploaded to Azure Storage. From there, you can download the dump files or log files or other files that were uploaded as a result from the work item.

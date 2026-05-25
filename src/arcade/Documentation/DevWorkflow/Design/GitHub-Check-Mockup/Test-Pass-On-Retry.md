@@ -22,8 +22,3 @@ Actual:   typeof(System.Net.WebException): An error occurred while sending the r
 </ul></dd>
 <dt>:grey_exclamation: This is a new test, introduced on 2/8</dt>
 </dl>
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CTest-Pass-On-Retry.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CTest-Pass-On-Retry.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CTest-Pass-On-Retry.md)</sub>
-<!-- End Generated Content-->

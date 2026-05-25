@@ -56,15 +56,14 @@ some highlights
 - [Arcade communications](./Policy/ArcadeCommunications.md)
 - [How dependency flow works in .NET](BranchesChannelsAndSubscriptions.md)
 - [Guidance for defaults](./Policy/DefaultsGuidance.md)
-- [Versioning rules](CorePackages/Versioning.md)
+- [Versioning rules](Versioning.md)
 - [Dependencies Flow Plan](DependenciesFlowPlan.md): Flowing dependencies with Darc, Maestro and BAR.
 - [How to Create an Arcade Package](HowToCreatePackages.md)
 - [.NET Core Infrastructure Ecosystem Overview](InfrastructureEcosystemOverview.md)
-- [Toolset Publish/Consume Contract](PublishConsumeContract.md)
 - [Servicing](Servicing.md)
 - [Toolsets](Toolsets.md)
 - [Version Querying and Updating](VersionQueryingAndUpdating.md)
-- [How Arcade tests itself](Validation/Overview.md)
+- [How Arcade tests itself](Validation.md)
 
 ### Tools we are using and how we are using them
 
@@ -74,10 +73,8 @@ some highlights
     - [Mirroring public projects](AzureDevOps/internal-mirror.md)
     - Bots and connectors
   - [Dependency Description Format](DependencyDescriptionFormat.md)
-  - [How to See What's the Latest Version of an Arcade Package](SeePackagesLatestVersion.md)
 
 #### Building projects
-  - [Telemetry](CorePackages/Telemetry.md)
   - [MSBuild Task Packages](TaskPackages.md)
   - Azure Pipelines: Orchestrating continuous integration
     - [Goals](AzureDevOps/WritingBuildDefinitions.md)
@@ -96,9 +93,8 @@ some highlights
   - [Dump file retrieval](Dumps/Dumps.md)
 
 #### Deploying projects
-  - [Packaging](CorePackages/Packaging.md)
-  - [Publishing](CorePackages/Publishing.md)
-  - [SignTool](CorePackages/Signing.md) (and Microbuild)
+  - [Publishing](Publishing.md)
+  - [SignTool](Signing.md) (and Microbuild)
   - BAR
 
 
@@ -106,12 +102,3 @@ some highlights
 
 Contact 'dnceng' for additional guidance.  Either @dotnet/dnceng on GitHub, or
 dnceng@microsoft.com
-
-## Frequently Asked Questions
-
-See the [FAQ](FAQ.md).
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CStartHere.md)](https://helix.dot.net/f/p/5?p=Documentation%5CStartHere.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CStartHere.md)</sub>
-<!-- End Generated Content-->

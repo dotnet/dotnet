@@ -45,7 +45,6 @@
   <Project Path="src/Microsoft.Cci.Extensions/Microsoft.Cci.Extensions.csproj" />
   <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
-  <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
   <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
