@@ -48,7 +48,7 @@
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
-    <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
+    <SystemCommandLineVersion>2.0.8</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
     <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
