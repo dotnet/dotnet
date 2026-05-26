@@ -50,7 +50,7 @@
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.8</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
-    <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>18.0.2</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
     <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
@@ -62,6 +62,7 @@
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.7</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftExtensionsLoggingVersion>10.0.7</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.7</MicrosoftExtensionsHostingVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.8</SystemSecurityCryptographyXmlVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
   </PropertyGroup>
