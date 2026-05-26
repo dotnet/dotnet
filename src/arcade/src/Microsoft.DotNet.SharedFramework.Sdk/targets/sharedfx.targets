@@ -185,9 +185,11 @@
           DependsOnTargets="GetFilesToPackage"
           Condition="'$(PlatformPackageType)' == 'RuntimePack'">
     <PropertyGroup>
+      <_DepsFileOutputDir>$([MSBuild]::ValueOrDefault('$(_DepsFileIntermediateDir)', '$(IntermediateOutputPath)'))</_DepsFileOutputDir>
       <_TargetRootForFilesForDepsFile Condition="'$(HostJsonTargetPath)' == '$(_DefaultHostJsonTargetPath)'">runtimes/$(RuntimeIdentifier)</_TargetRootForFilesForDepsFile>
       <_TargetRootForFilesForDepsFile Condition="'$(HostJsonTargetPath)' != '$(_DefaultHostJsonTargetPath)'">$(HostJsonTargetPath)</_TargetRootForFilesForDepsFile>
     </PropertyGroup>
+    <MakeDir Directories="$(_DepsFileOutputDir)" Condition="'$(_DepsFileIntermediateDir)' != ''" />
     <ItemGroup>
       <_FilesForDepsFile Include="@(FilesToPackage)"
                          Condition="'%(FilesToPackage.IsSymbolFile)' != 'true' and
@@ -201,7 +203,7 @@
                                      SharedFrameworkPackName="$(PackageId)"
                                      Version="$(Version)"
                                      Files="@(_FilesForDepsFile)"
-                                     IntermediateOutputPath="$(IntermediateOutputPath)"
+                                     IntermediateOutputPath="$(_DepsFileOutputDir)"
                                      SharedFrameworkDepsNameOverride="$(SharedFrameworkHostFileNameOverride)"
                                      RuntimeIdentifierGraph="$([MSBuild]::ValueOrDefault('$(RuntimeIdentifierGraphPath)', '$(BundledRuntimeIdentifierGraphFile)'))"
                                      IncludeFallbacksInDepsFile="$(IncludeFallbacksInDepsFile)">
@@ -573,7 +575,7 @@
     <MSBuild Projects="$(MSBuildProjectFullPath)"
           Targets="_GetAllSharedFrameworkFiles"
           RemoveProperties="OutputPath;SymbolsOutputPath"
-          Properties="IntermediateOutputPath=$(IntermediateOutputPath)publish/">
+          Properties="_DepsFileIntermediateDir=$(IntermediateOutputPath)publish/">
       <Output TaskParameter="TargetOutputs" ItemName="_FilesToPackage" />
     </MSBuild>
 
