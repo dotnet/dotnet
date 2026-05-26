@@ -147,6 +147,11 @@ parameters:
   type: stepList
   default: []
 
+# Custom steps to run before the build (after checkout and setup)
+- name: initSteps
+  type: stepList
+  default: []
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -453,6 +458,8 @@ jobs:
   - checkout: self
     fetchDepth: 1
     retryCountOnTaskFailure: 5
+
+  - ${{ parameters.initSteps }}
 
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
   # These directories are referenced in templateContext.outputs which validates paths at job start

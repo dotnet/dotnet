@@ -87,6 +87,12 @@ stages:
       createSourceArtifact: false
       brandingType: ${{ variables.brandingType }}
       setDeterministicTimestamp: true
+      initSteps:
+      - script: |
+          echo "Current date: $(date)"
+          sudo date -s "+1 day"
+          echo "Shifted date: $(date)"
+        displayName: Shift system clock forward by 1 day
 
   - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
     parameters:
@@ -102,6 +108,12 @@ stages:
       runTests: false
       brandingType: ${{ variables.brandingType }}
       setDeterministicTimestamp: true
+      initSteps:
+      - script: |
+          echo "Current date: $(date)"
+          sudo date -s "+1 day"
+          echo "Shifted date: $(date)"
+        displayName: Shift system clock forward by 1 day
 
 # Compare stage: download both stages' SDK tarballs and run the reproducibility tests.
 - stage: Compare
