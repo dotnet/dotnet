@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
 
@@ -89,5 +90,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
 
             return CommandLineBuilder.ToString();
         }
+        
+        public string GetWixCommandLine() => Path.Combine(ToolPath, ToolExe) + " " + 
+            CommandLineBuilder.ToString();
     }
 }

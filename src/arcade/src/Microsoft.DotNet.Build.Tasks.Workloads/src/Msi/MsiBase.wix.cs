@@ -217,16 +217,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// Creates a RegistryKey for the workload installation record.
         /// </summary>
         /// <returns>The RegistryKey element for the workload installation record.</returns>
-        protected XElement CreateInstallationRecord()
-        {
-            return WixDocument.CreateRegistryKey(InstallationRecordKey,
-                "HKLM",
-                WixDocument.CreateRegistryValue("DependencyProviderKey", ProviderKeyName, keyPath: true),
-                WixDocument.CreateRegistryValue("ProductCode", $"{ProductCode:B}"),
-                WixDocument.CreateRegistryValue("UpgradeCode", $"{UpgradeCode:B}"),
-                WixDocument.CreateRegistryValue("ProductVersion", Metadata.MsiVersion.ToString()),
-                WixDocument.CreateRegistryValue("ProductLanguage", DefaultValues.Wix.Language, type: "integer"));
-        }
+        protected virtual XElement CreateInstallationRecord() =>
+            WixDocument.CreateRegistryKey(InstallationRecordKey, "HKLM")
+                .AddRegistryValue("DependencyProviderKey", ProviderKeyName, keyPath: true)
+                .AddRegistryValue("ProductCode", $"{ProductCode:B}")
+                .AddRegistryValue("UpgradeCode", $"{UpgradeCode:B}")
+                .AddRegistryValue("ProductVersion", Metadata.MsiVersion.ToString())
+                .AddRegistryValue("ProductLanguage", DefaultValues.Wix.Language, type: "integer");
 
         /// <summary>
         /// Produces an MSI and returns a task item with metadata about the MSI.
@@ -246,7 +243,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             if (!_wixToolTask.Execute())
             {
-                throw new Exception(Strings.FailedToCompileMsi);
+                throw new Exception(string.Format(Strings.FailedToCompileMsi, _wixToolTask.GetWixCommandLine()));
             }
 
             TaskItem msiItem = new TaskItem(_wixToolTask.OutputPath);

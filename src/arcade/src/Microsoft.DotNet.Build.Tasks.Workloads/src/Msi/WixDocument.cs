@@ -23,7 +23,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         string _path;
 
-
+        public static string GetDirectoryReference() 
+            => $"dir{Guid.NewGuid():N}";
 
         public XElement Package => _doc.Root.Descendants(s_wixNamespace + "Package").FirstOrDefault();
 
@@ -257,51 +258,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             return rk;
         }
-
-        public static XElement CreateRegistryValue(string name, string value, string type = "string", bool keyPath = false) =>
-            new XElement(s_wixNamespace + "RegistryValue",
-                new XAttribute("Name", name),
-                new XAttribute("Type", type),
-                new XAttribute("Value", value),
-                new XAttribute("KeyPath", keyPath ? "yes" : "no"));
-
-
-
-
-    }
-
-
-    public static class FFFF
-    {
-        private static readonly XNamespace s_wixNamespace = "http://wixtoolset.org/schemas/v4/wxs";
-
-        private static readonly string[] _directoryParentElements =
-            ["Package", "Module", "Fragment", "Directory", "DirectoryRef", "StandardDirectory"];
-
-        /// <summary>
-        /// Adds a Directory element to an existing directory element. Directory elements can be added
-        /// to existing Directory or DirectoryRef elements to create a subdirectory.
-        /// </summary>        
-        /// <param name="id">The identifier used when referencing the directory.</param>
-        /// <param name="name">The name of the directory.</param>
-        /// <returns>The new Directory element.</returns>
-        /// <exception cref="InvalidOperationException"/>
-        public static XElement AddDirectory(this XElement element, string id, string name)
-        {
-            if (_directoryParentElements.Any(e => string.Equals(e, element.Name.LocalName)))
-            {
-                var directory = new XElement(s_wixNamespace + "Directory",
-                    new XAttribute("Id", id),
-                    new XAttribute("Name", name));
-
-                element.Add(directory);
-
-                return directory;
-            }
-
-            throw new InvalidOperationException($"Cannot add a Directory element to {element}");
-        }
-
 
     }
 

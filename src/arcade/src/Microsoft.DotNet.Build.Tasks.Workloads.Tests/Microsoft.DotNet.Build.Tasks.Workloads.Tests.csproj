@@ -43,6 +43,43 @@
     <PackageDownload Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Python.win-x64" Version="[$(MicrosoftNETRuntimeEmscripten2023Pythonwin_x64)]" />
     <PackageDownload Include="Microsoft.NET.Runtime.Emscripten.2.0.23.Sdk.win-x64" Version="[$(MicrosoftNETRuntimeEmscripten2023Sdkwin_x64)]" />
     <PackageDownload Include="Microsoft.NET.Workloads.9.0.100" Version="[$(MicrosoftNETWorkloadBaselineVersion)]" />
+
+    <!-- Required for testing workload pack group installers -->
+    <PackageDownload Include="Microsoft.NET.Workload.Mono.ToolChain.Current.Manifest-10.0.100" Version="[10.0.100]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.WebAssembly.Sdk" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.browser-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.browser-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.browser-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.multithread.browser-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.WebAssembly.Wasi.Sdk" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.wasi-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.WebAssembly.Templates.net10" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.wasi-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.wasi-wasm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.LibraryBuilder.Sdk" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.android-arm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.android-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.android-x64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.android-x86" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-x86" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-x86" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-x64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-x64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-arm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-arm" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.ios-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.iossimulator-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.iossimulator-x64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.maccatalyst-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.maccatalyst-x64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.tvos-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.tvossimulator-arm64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NETCore.App.Runtime.Mono.tvossimulator-x64" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.MonoAOTCompiler.Task" Version="[10.0.0]" />
+    <PackageDownload Include="Microsoft.NET.Runtime.MonoTargets.Sdk" Version="[10.0.0]" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
@@ -64,6 +101,44 @@
     <Content Include="$(NuGetPackageRoot)microsoft.net.runtime.emscripten.2.0.23.python.win-x64\$(MicrosoftNETRuntimeEmscripten2023Pythonwin_x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)microsoft.net.runtime.emscripten.2.0.23.sdk.win-x64\$(MicrosoftNETRuntimeEmscripten2023Sdkwin_x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)microsoft.net.workloads.9.0.100\$(MicrosoftNETWorkloadBaselineVersion)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+
+    <Content Include="$(NuGetPackageRoot)microsoft.net.workload.mono.toolchain.current.manifest-10.0.100\10.0.100\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+
+
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.WebAssembly.Sdk\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Sdk.WebAssembly.Pack\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.browser-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.browser-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.browser-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.WebAssembly.Templates.net10\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.multithread.browser-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.WebAssembly.Wasi.Sdk\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.wasi-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.wasi-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.wasi-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.LibraryBuilder.Sdk\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.android-arm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.android-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.android-x64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.android-x86\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-x86\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-x86\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-x64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-x64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-arm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-arm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.android-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.AOT.win-arm64.Cross.android-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.ios-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.iossimulator-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.iossimulator-x64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.maccatalyst-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.maccatalyst-x64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.tvos-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.tvossimulator-arm64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.tvossimulator-x64\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.MonoAOTCompiler.Task\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.MonoTargets.Sdk\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>

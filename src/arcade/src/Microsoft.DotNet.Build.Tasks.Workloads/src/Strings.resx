@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -142,7 +142,7 @@
     <value>Components cannot have a null title. Either provide a custom resource or add a description to the workload definition.</value>
   </data>
   <data name="FailedToCompileMsi" xml:space="preserve">
-    <value>Failed to compile MSI. </value>
+    <value>Failed to compile MSI, command line: {0}</value>
   </data>
   <data name="FailedToLinkMsi" xml:space="preserve">
     <value>Failed to link MSI.</value>

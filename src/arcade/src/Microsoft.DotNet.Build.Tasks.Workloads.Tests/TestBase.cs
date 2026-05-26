@@ -21,8 +21,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         public static readonly string MsiOutputPath = Path.Combine(BaseOutputPath, "msi");
         public static readonly string TestAssetsPath = Path.Combine(AppContext.BaseDirectory, "testassets");
 
-//        public static readonly string WixToolsetPath = Path.Combine(TestAssetsPath, "wix");
-
         public static readonly string TestOutputRoot = Path.Combine(AppContext.BaseDirectory, "TEST_OUTPUT");
 
         /// <summary>
@@ -110,6 +108,26 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             keys.Should().Contain(r =>
                 r.Name == "ProductLanguage" &&
                 r.Value == expectedProductLanguage);
+        }
+
+        /// <summary>
+        /// Validates that the specified registry keys collection contains an entry for each provided pack key with the
+        /// expected properties.
+        /// </summary>
+        /// <param name="registryKeys">The collection of registry key records to validate. Each record is checked for the presence of the specified
+        /// pack keys.</param>
+        /// <param name="packKeys">The names of the pack keys to verify within the registry keys collection. Each key must correspond to a
+        /// registry entry with a root value of 2 and an empty value.</param>
+        protected static void ValidatePackGroupInstallRecordKeys(IEnumerable<RegistryRow> registryKeys,
+            params string[] packKeys)
+        {
+            foreach (var key in packKeys)
+            {
+                registryKeys.Should().Contain(r => r.Key == key &&
+                    r.Root == 2 &&
+                    r.Name == "" &&
+                    r.Value == "");
+            }
         }
 
         /// <summary>

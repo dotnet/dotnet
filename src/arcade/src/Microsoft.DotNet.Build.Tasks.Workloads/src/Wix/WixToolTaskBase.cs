@@ -49,7 +49,5 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
         }
         
         protected override string GenerateFullPathToTool() => ToolPath;
-
-        internal string GetCommandLine() => GenerateCommandLineCommands();
     }
 }

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AwesomeAssertions;
@@ -12,6 +13,7 @@ using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
 using WixToolset.Dtf.WindowsInstaller;
 using Xunit;
+using static Microsoft.DotNet.Build.Tasks.Workloads.Msi.WorkloadManifestMsi;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 {
@@ -258,6 +260,91 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             ValidateInstallationRecord(registryKeys, installationRecordKey,
                 "Microsoft.iOS.Templates,15.2.302-preview.14.122,x64", expectedProductCode, upgradeCode, "15.2.302.0");
             ValidateDependencyProviderKey(registryKeys, dependencyProviderKey);
+        }
+
+        [WindowsOnlyFact]
+        public void ItCanBuildAWorkPackGroupMsi()
+        {
+            string outputDirectory = GetTestCaseDirectory();
+            string packageContentsDirectory = Path.Combine(outputDirectory, "pkg");
+            string msiOutputDirectory = Path.Combine(outputDirectory, "msi");
+            string packageSource = Path.Combine(TestAssetsPath, "wasm");
+
+            TaskItem packageItem = new(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.current.manifest-10.0.100.10.0.100.nupkg"));
+            WorkloadManifestPackage manifestPackage = new(packageItem, packageContentsDirectory, new Version("1.2.3"));
+            // Parse the manifest to extract information related to workload packs so we can extract a specific
+            // workload.
+            WorkloadManifest manifest = manifestPackage.GetManifest();
+            WorkloadId workloadId = new("wasm-tools");
+            WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads[workloadId];
+
+            string packGroupId = null;
+            WorkloadPackGroupJson packGroupJson = null;
+
+            packGroupId = WorkloadPackGroupPackage.GetPackGroupID(workload.Id);
+            packGroupJson = new WorkloadPackGroupJson()
+            {
+                GroupPackageId = packGroupId,
+                GroupPackageVersion = manifestPackage.PackageVersion.ToString()
+            };
+
+            List<WorkloadPackPackage> workloadPackPackages = [];
+
+            foreach (WorkloadPackId packId in workload.Packs)
+            {
+                WorkloadPack pack = manifest.Packs[packId];
+
+                packGroupJson.Packs.Add(new WorkloadPackJson()
+                {
+                    PackId = pack.Id,
+                    PackVersion = pack.Version
+                });
+
+                string sourcePackage = WorkloadPackPackage.GetSourcePackage(packageSource, pack, "x64");
+
+                if (!string.IsNullOrWhiteSpace(sourcePackage))
+                {
+                    workloadPackPackages.Add(WorkloadPackPackage.Create(pack, sourcePackage, ["x64"],
+                        packageContentsDirectory, null, null));
+                }
+            }
+
+            var groupPackage = new WorkloadPackGroupPackage(workload.Id);
+            groupPackage.Packs.AddRange(workloadPackPackages);
+            groupPackage.ManifestsPerPlatform["x64"] = new([manifestPackage]);
+
+            var buildEngine = new MockBuildEngine();
+
+            foreach (var p in workloadPackPackages)
+            {
+                p.Extract();
+            }
+
+            WorkloadPackGroupMsi msi = new(groupPackage, "x64", buildEngine, WixToolsetConfig, outputDirectory);
+
+            ITaskItem msiItem = msi.Build(msiOutputDirectory);
+            string msiPath = msiItem.GetMetadata(Metadata.FullPath);
+
+            // UpgradeCode is predictable/stable for pack MSIs since they are seeded using the package identity (ID & version).
+            string upgradeCode = MsiUtils.GetProperty(msiPath, MsiProperty.UpgradeCode);
+            Assert.Equal("{31FEB1C7-842A-33EE-8267-2E46C6DCF3D4}", upgradeCode);
+
+            // Verify the installation record and dependency provider registry entries
+            var registryKeys = MsiUtils.GetAllRegistryKeys(msiPath);
+            string expectedProductCode = MsiUtils.GetProperty(msiPath, MsiProperty.ProductCode);
+            string installationRecordKey = @"SOFTWARE\Microsoft\dotnet\InstalledPackGroups\x64\wasm.tools.WorkloadPacks\10.0.100";
+            string dependencyProviderKey = @"Software\Classes\Installer\Dependencies\wasm.tools.WorkloadPacks,10.0.100,x64";
+
+            ValidateInstallationRecord(registryKeys, installationRecordKey,
+                "wasm.tools.WorkloadPacks,10.0.100,x64", expectedProductCode, upgradeCode, "1.2.3");
+            ValidateDependencyProviderKey(registryKeys, dependencyProviderKey);
+
+            // Pack groups carry additional keys for each pack in the group.
+            ValidatePackGroupInstallRecordKeys(registryKeys,
+                @"SOFTWARE\Microsoft\dotnet\InstalledPackGroups\x64\wasm.tools.WorkloadPacks\10.0.100\Microsoft.NET.Runtime.WebAssembly.Sdk\10.0.0",
+                @"SOFTWARE\Microsoft\dotnet\InstalledPackGroups\x64\wasm.tools.WorkloadPacks\10.0.100\Microsoft.NET.Sdk.WebAssembly.Pack\10.0.0",
+                @"SOFTWARE\Microsoft\dotnet\InstalledPackGroups\x64\wasm.tools.WorkloadPacks\10.0.100\Microsoft.NETCore.App.Runtime.Mono.browser-wasm\10.0.0",
+                @"SOFTWARE\Microsoft\dotnet\InstalledPackGroups\x64\wasm.tools.WorkloadPacks\10.0.100\Microsoft.NETCore.App.Runtime.AOT.win-x64.Cross.browser-wasm\10.0.0");
         }
     }
 }
