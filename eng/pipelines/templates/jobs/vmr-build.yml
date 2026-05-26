@@ -178,7 +178,7 @@ parameters:
   default: ''
 
 # When true, export SOURCE_DATE_EPOCH (Unix seconds derived from
-# System.PipelineStartTime) on every build script invocation in this job so that
+# Build.BuildNumber) on every build script invocation in this job so that
 # NuGet pack stamps the same wall-clock time into every .nupkg ZIP envelope.
 # Enabled by pipelines that need byte-stable package envelopes across builds
 # (e.g. reproducibility validation).
@@ -438,16 +438,15 @@ jobs:
 
   steps:
   - ${{ if eq(parameters.setDeterministicTimestamp, 'true') }}:
-    # Compute SourceDateEpoch (Unix seconds since epoch) from System.PipelineStartTime
-    # and export it via SOURCE_DATE_EPOCH on every build script invocation in this job
+    # Compute SourceDateEpoch (Unix seconds since epoch) from Build.BuildNumber
+    # (format YYYYMMDD.Revision, consistent across all stages/jobs in a run) and
+    # export it via SOURCE_DATE_EPOCH on every build script invocation in this job
     # so that every NuGet pack invocation stamps the same wall-clock time into its
-    # .nupkg ZIP envelope. System.PipelineStartTime is set once per pipeline run and
-    # is identical across all stages/jobs in the run, so two independent builds in
-    # the same run get matching package envelopes.
-    # AzDO YAML expressions cannot compute Unix-epoch seconds, so the conversion is
-    # done in this pwsh step (cross-platform: Windows, Linux, macOS).
+    # .nupkg ZIP envelope.
     - pwsh: |
-        $epoch = [DateTimeOffset]::Parse('$(System.PipelineStartTime)').ToUnixTimeSeconds()
+        $parts = '$(Build.BuildNumber)'.Split('.')
+        $epoch = ([DateTimeOffset]::ParseExact($parts[0], 'yyyyMMdd', $null, 'AssumeUniversal')).ToUnixTimeSeconds() + [int]$parts[1]
+        Write-Host "Calculated SOURCE_DATE_EPOCH: $epoch from Build.BuildNumber: $(Build.BuildNumber)"
         Write-Host "##vso[task.setvariable variable=SourceDateEpoch]$epoch"
       displayName: Compute SourceDateEpoch
 
