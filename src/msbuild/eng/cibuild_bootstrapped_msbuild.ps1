@@ -143,13 +143,13 @@ try {
   # single token.
   $stage2Args = @(if ($stage2Properties) { $stage2Properties -split '\s+' | Where-Object { $_ } } else { @() })
   if ($onlyDocChanged) {
-    & $PSScriptRoot\Common\Build.ps1 -restore -build -ci /p:CreateBootstrap=false /nr:false @properties @stage2Args
+    & $PSScriptRoot\Common\Build.ps1 -restore -build -ci /p:CreateBootstrap=false @properties @stage2Args
   }
   elseif ($skipTests) {
-    & $PSScriptRoot\Common\Build.ps1 -restore -build -ci /nr:false @properties @stage2Args
+    & $PSScriptRoot\Common\Build.ps1 -restore -build -ci @properties @stage2Args
   }
   else {
-    & $PSScriptRoot\Common\Build.ps1 -restore -build -test -ci /nr:false @properties @stage2Args
+    & $PSScriptRoot\Common\Build.ps1 -restore -build -test -ci @properties @stage2Args
   }
 
   exit $lastExitCode

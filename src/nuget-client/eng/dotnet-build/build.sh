@@ -130,7 +130,6 @@ if [[ "$binary_log" == true ]]; then
 fi
 
 if [[ "$ci" == true ]]; then
-  node_reuse=false
 fi
 
 warnnotaserror_switch=""

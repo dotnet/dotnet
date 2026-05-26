@@ -206,7 +206,6 @@ if [[ -z "$configuration" ]]; then
 fi
 
 if [[ "$ci" == true ]]; then
-  node_reuse=false
   if [[ "$exclude_ci_binary_log" == false ]]; then
     binary_log=true
   fi
