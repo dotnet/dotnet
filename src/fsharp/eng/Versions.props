@@ -16,8 +16,9 @@
     <PreReleaseVersionLabel>servicing$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
     <FSMajorVersion>10</FSMajorVersion>
     <FSMinorVersion>0</FSMinorVersion>
-    <FSBuildVersion>301</FSBuildVersion>
+    <FSBuildVersion>302</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>    
+
 
     <!-- F# Language version -->
     <FSLanguageVersion>$(FSMajorVersion).$(FSMinorVersion)</FSLanguageVersion>
