@@ -41,7 +41,8 @@ stages:
       withPreviousSDK: false
       createSourceArtifact: false
       brandingType: ${{ variables.brandingType }}
-      setDeterministicTimestamp: true
+      initSteps:
+      - template: /eng/pipelines/templates/steps/set-source-date-epoch.yml@self
 
   # Microsoft build (Linux x64, cross-build, unsigned). Both Build1 and Build2 stages
   # produce delay-signed (zero-filled signature) outputs; they should be byte-identical
@@ -59,7 +60,8 @@ stages:
       targetArchitecture: x64
       runTests: false
       brandingType: ${{ variables.brandingType }}
-      setDeterministicTimestamp: true
+      initSteps:
+      - template: /eng/pipelines/templates/steps/set-source-date-epoch.yml@self
 
 - stage: Build2
   dependsOn: []
@@ -86,8 +88,8 @@ stages:
       withPreviousSDK: false
       createSourceArtifact: false
       brandingType: ${{ variables.brandingType }}
-      setDeterministicTimestamp: true
       initSteps:
+      - template: /eng/pipelines/templates/steps/set-source-date-epoch.yml@self
       - script: |
           echo "Current date: $(date)"
           sudo date -s "+1 day"
@@ -107,8 +109,8 @@ stages:
       targetArchitecture: x64
       runTests: false
       brandingType: ${{ variables.brandingType }}
-      setDeterministicTimestamp: true
       initSteps:
+      - template: /eng/pipelines/templates/steps/set-source-date-epoch.yml@self
       - script: |
           echo "Current date: $(date)"
           sudo date -s "+1 day"
