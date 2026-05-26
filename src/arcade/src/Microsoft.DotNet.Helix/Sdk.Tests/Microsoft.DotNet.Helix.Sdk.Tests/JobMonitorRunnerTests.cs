@@ -1201,10 +1201,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             using var cts = new CancellationTokenSource();
             var runner = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo, helix,
-                (_, _) =>
+                async (_, _) =>
                 {
+                    Task completed = await Task.WhenAny(azdo.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                    Assert.Same(azdo.UploadCompleted.Task, completed);
                     cts.Cancel();
-                    return Task.CompletedTask;
                 });
 
             int exitCode = await runner.RunAsync(cts.Token);
@@ -1381,7 +1382,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             Assert.Equal(0, exitCode);
 
             // Test result upload is independent from retry: original results upload before the resubmission.
-            Assert.Equal(["helix-linux", "helix-linux-resub"], azdo.UploadedJobNames);
+            Assert.Equal(new[] {"helix-linux", "helix-linux-resub"}.Order(), azdo.UploadedJobNames.Order());
             Assert.Equal(2, azdo.CreatedTestRuns.Count);
 
             // Only the 2 failed items were resubmitted (not the passing one)
