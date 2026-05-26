@@ -121,7 +121,7 @@ build_native()
             fi
         else
             # Generate the dummy version.c and runtime_version.h, but only if they didn't exist to make sure we don't trigger unnecessary rebuild
-            __versionSourceLine="static char sccsid[] __attribute__((used)) = \"@(#)No version information produced\";"
+            __versionSourceLine="static char sccsid[] __attribute__((used,retain)) = \"@(#)No version information produced\";"
             if [[ -e "$__versionSourceFile" ]]; then
                 read existingVersionSourceLine < "$__versionSourceFile"
             fi
