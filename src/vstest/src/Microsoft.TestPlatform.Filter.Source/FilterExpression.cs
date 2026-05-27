@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 #if !IS_VSTEST_REPO
 using Microsoft.CodeAnalysis;
@@ -187,14 +186,46 @@ internal sealed class FilterExpression
         ValidateArg.NotNull(filterString, nameof(filterString));
 #endif
 
-        // Below parsing doesn't error out on pattern (), so explicitly search for that (empty parenthesis).
-        var invalidInput = Regex.Match(filterString, @"\(\s*\)");
-        if (invalidInput.Success)
+        // Tokenize the filter once and reuse the materialized list for both the pre-check
+        // below and the parsing loop further down. The tokenizer already understands the
+        // escape semantics of the filter language (e.g., that "\(" is part of a value token
+        // and not an open-parenthesis grouping operator, and that "\\" is an escaped
+        // backslash so the following "(" is unescaped), so inspecting tokens rather than the
+        // raw string avoids the corner cases of a regex-based pre-check.
+        List<string> tokens = TokenizeFilterExpressionString(filterString).ToList();
+
+        // Below parsing doesn't error out on pattern (), so explicitly search for that
+        // (empty parenthesis). Token-based scan: an unescaped "(" immediately followed by
+        // an unescaped ")" (ignoring whitespace-only tokens, mirroring what the parser
+        // below does with token.Trim()) is an empty group.
+        for (int i = 0; i < tokens.Count; i++)
         {
-            throw new FormatException(string.Format(CultureInfo.CurrentCulture, TestCaseFilterFormatException, EmptyParenthesis));
+            if (tokens[i] != "(")
+            {
+                continue;
+            }
+
+            int j = i + 1;
+            while (j < tokens.Count)
+            {
+                var trimmed = tokens[j].Trim();
+#if IS_VSTEST_REPO
+                if (!trimmed.IsNullOrEmpty())
+#else
+                if (!string.IsNullOrEmpty(trimmed))
+#endif
+                {
+                    break;
+                }
+                j++;
+            }
+
+            if (j < tokens.Count && tokens[j] == ")")
+            {
+                throw new FormatException(string.Format(CultureInfo.CurrentCulture, TestCaseFilterFormatException, EmptyParenthesis));
+            }
         }
 
-        var tokens = TokenizeFilterExpressionString(filterString);
         var operatorStack = new Stack<Operator>();
         var filterStack = new Stack<FilterExpression>();
 
