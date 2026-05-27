@@ -62,18 +62,6 @@ function Test-FindPackageByIdAndPrereleaseVersion {
 	Assert-True $packages[0].Versions[0].ToString() -eq "5.0.0-beta"
 }
 
-function Test-FindPackageByIdExactMatch {
-    [SkipTest('https://github.com/NuGet/Home/issues/10066')]
-    param()
-
-   # Act 
-    $packages = Find-Package TestPackage.OverwriteTest -ExactMatch
-    
-    # Assert 
-	Assert-True $packages[0].Count -eq 1
-    Assert-True $packages[0].Id -eq TestPackage.OverwriteTest
-	Assert-True $packages[0].Versions[0].ToString() -eq "1.0.0"
-}
 
 function Test-FindPackageByIdWithAllVersions {
     # Act 

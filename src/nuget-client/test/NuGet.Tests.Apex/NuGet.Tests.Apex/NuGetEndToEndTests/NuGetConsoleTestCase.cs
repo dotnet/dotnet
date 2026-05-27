@@ -638,7 +638,6 @@ namespace NuGet.Tests.Apex
             Assert.IsTrue(File.Exists(uniqueContentFile), $"'{uniqueContentFile}' should exist");
         }
 
-        [Ignore("https://github.com/NuGet/Home/issues/12899")]
         [DataTestMethod]
         [DataRow(ProjectTemplate.ClassLibrary, false)]
         [DataRow(ProjectTemplate.NetStandardClassLib, true)]
@@ -669,7 +668,7 @@ namespace NuGet.Tests.Apex
             nugetConsole.Execute("Update-Package -Reinstall");
 
             // Assert
-            var expectedMessage = $"The `-Reinstall` parameter does not apply to PackageReference based projects `{Path.GetFileNameWithoutExtension(testContext.Project.UniqueName)}`.";
+            var expectedMessage = $"The -Reinstall parameter does not apply to PackageReference based projects `{Path.GetFileNameWithoutExtension(testContext.Project.UniqueName)}`.";
             nugetConsole.IsMessageFoundInPMC(expectedMessage).Should().Be(warns, because: nugetConsole.GetText());
             VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
             VisualStudio.HasNoErrorsInOutputWindows().Should().BeTrue();
