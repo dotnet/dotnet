@@ -12,7 +12,6 @@
     <FileSignInfo Include="DistributedLock.Redis.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Handlebars.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="LibGit2Sharp.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="Mono.Options.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="NetTopologySuite.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Newtonsoft.Json.Bson.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="3PartySHA2" />

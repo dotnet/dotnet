@@ -1,12 +1,10 @@
 ---
 name: apex-migration
 description: >-
-  Migrate NuGet PowerShell E2E tests to C# Apex tests. Use this skill whenever the user asks to
-  migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test
-  in test/NuGet.Tests.Apex/. Also trigger when the user mentions "Apex test", "migrate PS test",
-  "E2E test migration", "PMC test", or references any PowerShell test function like
-  Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just
-  says "migrate this test" while looking at a PS E2E file, use this skill.
+  Migrate NuGet PowerShell E2E tests to C# Apex tests. 
+Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/. 
+Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
+Also trigger whenever the user wants to write a new Apex test.
 ---
 
 # Migrating PowerShell E2E Tests to Apex Tests
@@ -88,6 +86,18 @@ session. It can execute **any** PowerShell command, not just NuGet commands. Thi
 state — global variables (`$global:InstallVar`), registered functions
 (`Test-Path function:\Get-World`), environment checks — can all be queried and asserted via
 `Execute()` + `IsMessageFoundInPMC()`. Do not skip tests just because they assert PS session state.
+
+**Project-level build operations:**
+
+| Scenario | Apex API |
+|---|---|
+| Clean (deletes obj/bin) | `testContext.Project.Clean()` |
+| Rebuild | `testContext.Project.Rebuild()` |
+| Cache file path | `CommonUtility.GetCacheFilePath(testContext.Project)` |
+| Wait for file to appear | `CommonUtility.WaitForFileExists(path)` |
+| Wait for file to disappear | `CommonUtility.WaitForFileNotExists(path)` |
+
+For single-project solutions, project-level Clean/Rebuild is equivalent to solution-level.
 
 ## Assertion mapping
 
@@ -208,18 +218,37 @@ public async Task DescriptiveTestNameAsync()
 
 ### Data-driven tests (multiple project templates)
 
-When the same scenario applies to multiple project types, use `[DataTestMethod]`:
+When the same scenario applies to multiple project types, use `[DataTestMethod]` or `[DynamicData]`:
 ```csharp
 [DataTestMethod]
-[DataRow(ProjectTemplate.NetCoreConsoleApp)]
-[DataRow(ProjectTemplate.NetStandardClassLib)]
+[DynamicData(nameof(GetPackageReferenceTemplates), DynamicDataSourceType.Method)]
 [Timeout(DefaultTimeout)]
-public async Task InstallPackageForMultipleProjectTypesAsync(ProjectTemplate projectTemplate)
+public async Task InstallPackageAsync(ProjectTemplate projectTemplate)
 {
-    using var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger);
+    using var simpleTestPathContext = new SimpleTestPathContext();
+    EnsurePackageReferenceFormat(simpleTestPathContext, projectTemplate);
+    using var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger,
+        simpleTestPathContext: simpleTestPathContext);
     // ... test body
 }
+
+// Yields both legacy and SDK-style PackageReference templates
+private static IEnumerable<object[]> GetPackageReferenceTemplates()
+{
+    yield return new object[] { ProjectTemplate.ConsoleApplication };
+    yield return new object[] { ProjectTemplate.NetCoreConsoleApp };
+}
+
+// Only legacy (ConsoleApplication) needs this; SDK projects ignore it
+private static void EnsurePackageReferenceFormat(SimpleTestPathContext context, ProjectTemplate template)
+{
+    if (template == ProjectTemplate.ConsoleApplication)
+        context.Settings.SetPackageFormatToPackageReference();
+}
 ```
+
+Use `[DynamicData]` over `[DataRow]` when the template set is reused across multiple tests in the
+same class. This ensures one test method covers both legacy and SDK-style PackageReference projects.
 
 ### Multi-targeted project tests
 
@@ -241,6 +270,8 @@ using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCor
 - Use `var` for local variables except value tuples (use decomposed names).
 - The test class inherits `SharedVisualStudioHostTestClass` which provides `VisualStudio` and `Logger`.
 - Get PMC console via `GetConsole(testContext.Project)` helper method in the test class.
+- Don't use the method-delegates-to-async-helper pattern unless the helper is actually called from
+  multiple classes. Inline the test logic directly in the test method.
 
 ## Tests that should NOT be migrated
 
@@ -292,4 +323,20 @@ Skip PS tests that:
   `httpCacheFolder` — causing packages to pollute the user's real global packages folder. Instead
   use `simpleTestPathContext.Settings.AddSource()` and `AddPackageSourceMapping()` to layer config
   on top of the defaults.
+- **Legacy PackageReference projects don't auto-restore** — never call `WaitForAutoRestore()` for
+  `ConsoleApplication` with `SetPackageFormatToPackageReference()`. Only SDK-style projects
+  (e.g., `NetCoreConsoleApp`) auto-restore on project open.
+- **Always check for existing Apex coverage before migrating** — search the Apex test files for
+  equivalent scenarios. Common negative tests like `UpdatePackageFromPMCNotInstalled_Fails` and
+  `UninstallPackageFromPMCNotInstalled_Fails` already exist. If covered, just delete the PS test.
+- **Daily vs regular Apex cadence matters** — a test in `NuGet.Tests.Apex.Daily` does NOT count as
+  coverage for removing an E2E test that runs on every PR. Only regular Apex tests
+  (`NuGet.Tests.Apex`) provide equivalent gating.
 
+## Learnings (continuously updated)
+
+This section captures lessons learned from actual migration runs that don't fit neatly into the sections above. **Update this section after every migration run** with new discoveries or corrections.
+
+### 2026-05-20: PackageReferenceTestCase patterns
+
+- **PR #7246 incorrectly removed `Test-NetCoreConsoleAppClean`** — it was claimed to be covered by Apex Daily's `VerifyCacheFileInsideObjFolder`, but that test is in Daily (different cadence) and bundles 3 behaviors. We properly covered it by adding `NetCoreConsoleApp` to `GetPackageReferenceTemplates()` in `PackageReferenceTestCase.CleanDeletesCacheFile`.

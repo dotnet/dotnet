@@ -2,6 +2,23 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" original="../Resources.resx" target-language="de">
     <body>
+      <trans-unit id="CouldNotFindTesthost">
+        <source>Could not find testhost for test source '{0}'.
+
+Verify that:
+  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
+  - The project has been built and the output is in '{1}'.
+  - The project's target framework matches the installed .NET runtime.
+</source>
+        <target state="new">Could not find testhost for test source '{0}'.
+
+Verify that:
+  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
+  - The project has been built and the output is in '{1}'.
+  - The project's target framework matches the installed .NET runtime.
+</target>
+        <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
+      </trans-unit>
       <trans-unit id="MultipleFileVersions">
         <source>Multiple versions of same extension found. Selecting the highest version.
 {0}</source>

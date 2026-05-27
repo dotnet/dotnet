@@ -629,6 +629,7 @@ jobs:
           -excludeCIBinarylog
           /bl:artifacts/log/Release/Test.binlog
         displayName: Run Tests
+        name: RunTests
         workingDirectory: ${{ variables.sourcesPath }}
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
@@ -906,6 +907,7 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
+        name: RunTests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ if eq(parameters.sign, 'True') }}:
@@ -959,7 +961,7 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
-  # Only copy test results when tests ran
+  # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: CopyFiles@2
       displayName: Copy TestResults to BuildLogs staging
@@ -969,7 +971,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -991,11 +993,11 @@ jobs:
       continueOnError: true
       condition: always()
 
-  # Only upload test results when tests ran
+  # Only upload test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
       continueOnError: true
       inputs:
         testRunner: VSTest
