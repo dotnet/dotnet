@@ -64,12 +64,12 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.56.0" />
+    <PackageVersion Include="Azure.Core" Version="1.57.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.28.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
-    <PackageVersion Include="Handlebars.Net" Version="1.11.5" />
+    <PackageVersion Include="Handlebars.Net" Version="2.1.6" />
     <PackageVersion Include="LZMA-SDK" Version="22.1.1" />
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />

@@ -1692,7 +1692,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 id: 10506,
                 isInternal: false,
                 publishingInfraVersion: PublishingInfraVersion.Latest,
-                akaMSChannelNames: ["dotnetup/daily"],
+                akaMSChannelNames: ["dotnetup"],
                 akaMSCreateLinkPatterns: DotnetupAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNetToolsFeeds,

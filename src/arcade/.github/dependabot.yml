@@ -21,3 +21,5 @@ updates:
       # privacy/compliance concerns across the .NET ecosystem. Stay pinned on
       # 4.18.x until a vetted replacement (or a SponsorLink-free Moq) is adopted.
       - dependency-name: "Moq"
+    exclude-paths:
+      - "eng/Version.Details.props"

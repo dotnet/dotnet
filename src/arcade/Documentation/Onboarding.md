@@ -28,7 +28,7 @@
     See the [Arcade documentation](README.md) for information on using various Arcade SDK sub-systems.
 
 - Set up pipelines
-  - Add pipeline to https://dnceng-public.visualstudio.com/public for public PR validation CI.
+  - Add pipeline to https://dev.azure.com/dnceng-public/public for public PR validation CI.
   - Add pipeline to https://dev.azure.com/dnceng/internal for internal validation CI and official builds.
   - Add pipeline to https://dev.azure.com/dnceng/internal for CodeQL compliance validation.
 
