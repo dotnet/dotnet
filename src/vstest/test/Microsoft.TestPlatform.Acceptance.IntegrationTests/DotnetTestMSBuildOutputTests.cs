@@ -39,6 +39,14 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
         StdOutputContains("FailingTest (");
         StdOutputContains("Expected: \"ğğğ𦮙我們剛才從𓋴𓅓𓏏𓇏𓇌𓀀\"");
         StdOutputContains("at TerminalLoggerUnitTests.UnitTest1.FailingTest() in");
+
+        // Verify that ~, !, |, and % characters in test output survive the MSBuildLogger encoding round-trip.
+        StdOutputContains("FailingTestWithSpecialChars (");
+        StdOutputContains("~~~~~");
+        StdOutputContains("!!!!");
+        StdOutputContains("||||");
+        StdOutputContains("%n");
+
         // We are sending those as low prio messages, they won't show up on screen but will be in binlog.
         //StdOutputContains("passed PassingTest");
         //StdOutputContains("skipped SkippingTest");
@@ -57,7 +65,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
         InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:VsTestUseMSBuildOutput=false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", workingDirectory: Path.GetDirectoryName(projectPath));
 
         // Check that we see the summary that is printed from the console logger, meaning the new output is disabled.
-        StdOutputContains("Failed! - Failed: 1, Passed: 1, Skipped: 1, Total: 3, Duration:");
+        StdOutputContains("Failed! - Failed: 2, Passed: 1, Skipped: 1, Total: 4, Duration:");
         // We are sending those as low prio messages, they won't show up on screen but will be in binlog.
         //StdOutputContains("passed PassingTest");
         //StdOutputContains("skipped SkippingTest");
@@ -77,7 +85,7 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
         InvokeDotnetTest($@"{projectPath} -nodereuse:false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}", environmentVariables: new Dictionary<string, string?> { ["MSBUILDENSURESTDOUTFORTASKPROCESSES"] = "1" }, workingDirectory: Path.GetDirectoryName(projectPath));
 
         // Check that we see the summary that is printed from the console logger, meaning the new output is disabled.
-        StdOutputContains("Failed! - Failed: 1, Passed: 1, Skipped: 1, Total: 3, Duration:");
+        StdOutputContains("Failed! - Failed: 2, Passed: 1, Skipped: 1, Total: 4, Duration:");
 
         ExitCodeEquals(1);
     }
