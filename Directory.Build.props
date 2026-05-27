@@ -39,7 +39,7 @@
     <IntermediateOutputPath Condition="'$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
 
     <!-- DefaultVersions.props -->
-    <OfficialBuild>false</OfficialBuild>
+    <OfficialBuild Condition="'$(OfficialBuild)' != ''">false</OfficialBuild>
     <OfficialBuild Condition="'$(OfficialBuildId)' != ''">true</OfficialBuild>
 
     <!-- TargetFrameworkDefaults.props -->
