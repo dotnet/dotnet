@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
+    <RootNamespace>Microsoft.SignCheck</RootNamespace>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.DotNet.StrongName\Microsoft.DotNet.StrongName.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.MacOsPkg\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LZMA-SDK" />
+    <PackageReference Include="Microsoft.Signed.Wix" />
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop"/>
+    <PackageReference Include="NuGet.Frameworks" />
+    <PackageReference Include="NuGet.Packaging" />
+    <PackageReference Include="System.IO.Packaging" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Resources.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.Cab.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.dll" />
+    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.Package.dll" />
+    <Reference Include="$(WixInstallPath)\wix.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(WixInstallPath)\winterop.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="SignCheckResources.resx"
+                      GenerateSource="true"
+                      ClassName="Microsoft.SignCheck.SignCheckResources" />
+    <EmbeddedResource Update="Verification\Jar\JarResources.resx"
+                      GenerateSource="true"
+                      ClassName="Microsoft.SignCheck.Verification.Jar.JarResources" />
+  </ItemGroup>
+
+</Project>

@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.VisualStudio" />
   </ItemGroup>
 
-  <Target Name="_BuildTrainingInputs" BeforeTargets="AfterBuild">
+  <Target Name="_BuildTrainingInputs" BeforeTargets="Pack">
     <Error Condition="('$(VisualStudioDropName)' == '' or '$(RepositoryName)' == '') and '$(OfficialBuild)' == 'true'"
            Text="Properties VisualStudioDropName and RepositoryName must be specified in official build that produces Visual Studio insertion components." />
 

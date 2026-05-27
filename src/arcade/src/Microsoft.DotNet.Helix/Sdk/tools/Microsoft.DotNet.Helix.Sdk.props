@@ -16,6 +16,20 @@
     <MicrosoftDotNetHelixSdkTasksFactory Condition="'$(MicrosoftDotNetHelixSdkTasksFactory)' == ''">AssemblyTaskFactory</MicrosoftDotNetHelixSdkTasksFactory>
   </PropertyGroup>
 
+  <!--
+    Feature flag: when 'true', the Helix Sdk emits jobs that are intended to be reported on by the
+    standalone dotnet-helix-job-monitor tool running in a separate Azure Pipelines job. This:
+      * disables the in-pipeline Python xunit/AzureDevOps reporter (no AzDO test runs are created
+        from this build job),
+      * copies any *.trx / *Results.xml / junit*results.xml produced by the work item into
+        $HELIX_WORKITEM_UPLOAD_ROOT so the monitor can download them, and
+      * causes the Helix Sdk targets to return immediately after submitting the Helix job rather
+        than waiting for it to complete.
+  -->
+  <PropertyGroup>
+    <EnableHelixJobMonitor Condition="'$(EnableHelixJobMonitor)' != 'true'">false</EnableHelixJobMonitor>
+  </PropertyGroup>
+
   <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
   <UsingTask TaskName="SendHelixJob" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="WaitForHelixJobCompletion" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />

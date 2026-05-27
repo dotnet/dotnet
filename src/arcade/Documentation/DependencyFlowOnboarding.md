@@ -16,7 +16,7 @@ The following pre-requisites are not hard requirements, but enabling dependency 
 
 - Internal builds produced out of https://dev.azure.com/dnceng/internal
 
-- Publishing using the [Arcade SDK](StartHere.md#im-ready-to-get-started-what-do-i-do)
+- Publishing using the [Arcade SDK](README.md#im-ready-to-get-started-what-do-i-do)
 
 ## Publishing
 
@@ -24,11 +24,11 @@ The following pre-requisites are not hard requirements, but enabling dependency 
 
 #### 1. Copy files from eng/ folder
 
-Copy `Versions.props`, `Versions.Details.xml` and the `common/` folder from the `eng/` folder of the [arcade-validation](https://github.com/dotnet/arcade-validation/tree/main/eng) repo. 
+Copy `Versions.props`, `Version.Details.xml` and the `common/` folder from the `eng/` folder of the [arcade-validation](https://github.com/dotnet/arcade-validation/tree/main/eng) repo. 
 
 This folder contains required version files as well as Pipeline templates used for publishing assets.
 
-For more information about version files go to: DependencyDescriptionFormat.md
+For more information about version files go to: [DependencyDescriptionFormat.md](DependencyDescriptionFormat.md)
 
 #### 2. Enable Arcade publishing and publishing to the Build Asset Registry
 
@@ -46,7 +46,7 @@ You can create this file or copy [Version.Details.xml](https://github.com/dotnet
 
 #### 2. Add or copy your expression files
 
-Dependency flow will update versions in your [expression files](https://github.com/dotnet/runtime/blob/main/eng/Version.Details.xml).
+Dependency flow will update versions in your [expression files](https://github.com/dotnet/runtime/blob/main/eng/Versions.props).
 
 You can create these files or copy them from dotnet/runtime:
 
