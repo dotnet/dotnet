@@ -7,7 +7,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using NuGet.Protocol.Core.Types;
 
 namespace NuGet.Protocol.Plugins
@@ -129,13 +128,11 @@ namespace NuGet.Protocol.Plugins
 
             if (serviceIndex == null)
             {
-                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndex: null);
+                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndex: (string)null);
             }
             else
             {
-                var serviceIndexJson = JObject.Parse(serviceIndex.Json);
-
-                responsePayload = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndexJson);
+                responsePayload = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndex.Json);
             }
 
             await responseHandler.SendResponseAsync(request, responsePayload, cancellationToken);
