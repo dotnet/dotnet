@@ -1,0 +1,177 @@
+{
+  "pr_number": 6622,
+  "branch": "dev/mthalman/sdk-tarball-repro-test",
+  "last_updated": "2026-05-26T19:32:25.0861748Z",
+  "comments": [
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "commit_sha": null,
+      "last_post_timestamp": "2026-05-14T19:26:36Z",
+      "action": "replied",
+      "line": 31,
+      "id": "3243753710"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "commit_sha": null,
+      "last_post_timestamp": "2026-05-14T19:26:35Z",
+      "action": "replied",
+      "line": 53,
+      "id": "3243753646"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "commit_sha": null,
+      "last_post_timestamp": "2026-05-14T19:26:35Z",
+      "action": "replied",
+      "line": 69,
+      "id": "3243753677"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "commit_sha": "9c3684e",
+      "last_post_timestamp": "2026-05-15T12:29:03Z",
+      "action": "auto_fixed",
+      "line": 109,
+      "id": "3247270438"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "commit_sha": "9c3684e",
+      "last_post_timestamp": "2026-05-15T12:30:34Z",
+      "action": "auto_fixed",
+      "line": 114,
+      "id": "3248174539"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/templates/stages/reproducibility-tests.yml",
+      "commit_sha": "2b8a7663355",
+      "last_post_timestamp": "2026-05-19T16:17:12Z",
+      "action": "auto_fixed",
+      "line": 43,
+      "id": "3248635690"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/unified-build-reproducibility-tests.yml",
+      "commit_sha": null,
+      "last_post_timestamp": "2026-05-15T09:37:06Z",
+      "action": "replied",
+      "line": 25,
+      "id": "3247255298"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/unified-build-reproducibility-tests.yml",
+      "commit_sha": "a43b153",
+      "last_post_timestamp": "2026-05-15T09:32:13Z",
+      "action": "auto_fixed",
+      "line": 53,
+      "id": "3247230888"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "eng/pipelines/unified-build-reproducibility-tests.yml",
+      "commit_sha": "a43b153",
+      "last_post_timestamp": "2026-05-15T09:32:20Z",
+      "action": "auto_fixed",
+      "line": 57,
+      "id": "3247231510"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "test/Microsoft.DotNet.Tests/Microsoft.DotNet.Tests.csproj",
+      "commit_sha": "9490784",
+      "last_post_timestamp": "2026-05-15T06:42:41Z",
+      "action": "auto_fixed",
+      "line": 1,
+      "id": "3246374841"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "test/Microsoft.DotNet.Tests/ReproducibilityTests.cs",
+      "commit_sha": "9f4203e",
+      "last_post_timestamp": "2026-05-14T19:26:34Z",
+      "action": "auto_fixed",
+      "line": 57,
+      "id": "3243753574"
+    },
+    {
+      "pending_replies": [],
+      "status": "completed",
+      "file": "test/Microsoft.DotNet.Tests/ReproducibilityTests.cs",
+      "commit_sha": "08ec137",
+      "last_post_timestamp": "2026-05-14T19:26:35Z",
+      "action": "auto_fixed",
+      "line": 81,
+      "id": "3243753612"
+    },
+    {
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "last_post_timestamp": "2026-05-15T18:57:30Z",
+      "status": "completed",
+      "line": 110,
+      "commit_sha": "84af90f",
+      "pending_replies": [],
+      "action": "auto_fixed",
+      "id": "3250354207"
+    },
+    {
+      "file": "eng/pipelines/templates/jobs/vmr-build.yml",
+      "last_post_timestamp": "2026-05-15T18:57:29Z",
+      "status": "completed",
+      "line": 195,
+      "commit_sha": "12f2a53",
+      "pending_replies": [],
+      "action": "auto_fixed",
+      "id": "3250354154"
+    },
+    {
+      "pending_replies": [],
+      "action": "auto_fixed",
+      "last_post_timestamp": "2026-05-18T07:50:30Z",
+      "line": 108,
+      "commit_sha": "2cbe27dfd4b",
+      "id": "3257193586",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "status": "completed"
+    },
+    {
+      "pending_replies": [],
+      "action": "auto_fixed",
+      "last_post_timestamp": "2026-05-18T07:51:40Z",
+      "line": 111,
+      "commit_sha": "2cbe27dfd4b",
+      "id": "3257201026",
+      "file": "eng/pipelines/templates/jobs/reproducibility-test.yml",
+      "status": "completed"
+    },
+    {
+      "id": "3304436062",
+      "file": "eng/pipelines/templates/jobs/vmr-build.yml",
+      "line": 446,
+      "status": "completed",
+      "commit_sha": "2daf5b8f61a",
+      "action": "auto_fixed",
+      "pending_replies": [],
+      "last_post_timestamp": "2026-05-26T14:54:29Z"
+    }
+  ]
+}

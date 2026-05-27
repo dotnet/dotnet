@@ -152,6 +152,11 @@ parameters:
   type: stepList
   default: []
 
+# When true, compute SOURCE_DATE_EPOCH from Build.BuildNumber and pass it to the build.
+- name: setSourceDateEpoch
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -439,6 +444,14 @@ jobs:
 
   - ${{ parameters.initSteps }}
 
+  - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+    - pwsh: |
+        $parts = '$(Build.BuildNumber)'.Split('.')
+        $epoch = ([DateTimeOffset]::ParseExact($parts[0], 'yyyyMMdd', $null, 'AssumeUniversal')).ToUnixTimeSeconds() + [int]$parts[1]
+        Write-Host "Calculated SOURCE_DATE_EPOCH: $epoch from Build.BuildNumber: $(Build.BuildNumber)"
+        Write-Host "##vso[task.setvariable variable=SOURCE_DATE_EPOCH]$epoch"
+      displayName: Compute SOURCE_DATE_EPOCH
+
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
   # These directories are referenced in templateContext.outputs which validates paths at job start
   - ${{ if eq(parameters.targetOS, 'windows') }}:
@@ -628,14 +641,12 @@ jobs:
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
       env:
-        # Propagate SOURCE_DATE_EPOCH to child processes if set by an initSteps template.
-        SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+        ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+          SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
         ${{ if eq(parameters.sign, 'true') }}:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
           ${{ if eq(parameters.signDac, 'true') }}:
             ESRP_TOKEN: $(System.AccessToken)
-
-    - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
           $(baseArguments)
           $(targetProperties)
@@ -863,8 +874,8 @@ jobs:
         displayName: Build
         workingDirectory: $(sourcesPath)
         env:
-          # Propagate SOURCE_DATE_EPOCH to child processes if set by an initSteps template.
-          SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+          ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+            SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
           ${{ if eq(parameters.sign, 'true') }}:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
