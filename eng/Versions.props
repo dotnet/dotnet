@@ -48,15 +48,16 @@
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
-    <MicrosoftBuildVersion>17.12.50</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>18.0.2</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
-    <NuGetProtocolVersion>6.13.1</NuGetProtocolVersion>
-    <NuGetProjectModelVersion>6.13.1</NuGetProjectModelVersion>
+    <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
+    <NuGetProjectModelVersion>7.0.3</NuGetProjectModelVersion>
     <!-- runtime dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.1</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.1</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftExtensionsLoggingVersion>10.0.1</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.1</MicrosoftExtensionsHostingVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.8</SystemSecurityCryptographyXmlVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <OctokitVersion>14.0.0</OctokitVersion>
