@@ -22,7 +22,7 @@ parameters:
       - OnSuccess
 
 stages:
-  - template: stages/cloudtest/visual-studio/single-runsettings.yml@DartLabTemplates
+  - template: /templates/stages/visual-studio/single-runsettings.yml@DartLabTemplates
     parameters:
       name: VS_Apex_Tests
       displayName: Apex Tests On Windows
