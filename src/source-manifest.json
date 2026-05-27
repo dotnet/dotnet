@@ -37,10 +37,10 @@
       "commitSha": "4fb38398b3058d2040cfdb033a1aae3945ddb78a"
     },
     {
-      "barId": 315909,
+      "barId": 315965,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "b7144e3cd7866ace58811dee4643f6be69e2b8f5"
+      "commitSha": "4e9c78d319b3952e186228101d1fc612045cacaf"
     },
     {
       "barId": 309003,
