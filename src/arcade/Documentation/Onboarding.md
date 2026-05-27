@@ -4,7 +4,7 @@
   interacting with Azure DevOps, as well as shared tooling for signing,
   packaging, publishing and general build infrastructure.  
   
-  Resources: [Reference documentation](ArcadeSdk.md), [walkthough video](https://msit.microsoftstream.com/video/e22d2dad-ef72-4cca-9b62-7e33621f86a1).
+  Resources: [Reference documentation](ArcadeSdk.md), [walkthrough video](https://msit.microsoftstream.com/video/e22d2dad-ef72-4cca-9b62-7e33621f86a1).
 
    Steps:
     1. Add a [global.json](../global.json).
@@ -25,10 +25,10 @@
        * `https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8/nuget/v3/index.json` (replace "8" with the latest .NET version)
        along with any other feeds your repo needs to restore packages from. You can see which feeds Arcade uses at: [NuGet.config](../NuGet.config).
 
-    See the [Arcade documentation](StartHere.md) for information on using various Arcade SDK sub-systems.
+    See the [Arcade documentation](README.md) for information on using various Arcade SDK sub-systems.
 
 - Set up pipelines
-  - Add pipeline to https://dnceng-public.visualstudio.com/public for public PR validation CI.
+  - Add pipeline to https://dev.azure.com/dnceng-public/public for public PR validation CI.
   - Add pipeline to https://dev.azure.com/dnceng/internal for internal validation CI and official builds.
   - Add pipeline to https://dev.azure.com/dnceng/internal for CodeQL compliance validation.
 

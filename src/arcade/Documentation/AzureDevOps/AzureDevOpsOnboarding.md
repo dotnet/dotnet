@@ -114,7 +114,7 @@ It is recommended that you do **NOT** enable the checkbox labeled "Make secrets 
 
 - Code reuse
 
-  For *most* teams, it is recommended that you author your yaml to use the [same yaml files for internal, CI, and Pull Request builds](./WritingBuildDefinitions.md).  See ../../azure-pipelines.yml, for how this is being done in Arcade with build steps conditioned on "build reason".
+  For *most* teams, it is recommended that you author your yaml to use the [same yaml files for internal, CI, and Pull Request builds](./WritingBuildDefinitions.md).  See [azure-pipelines.yml](../../azure-pipelines.yml) for how this is being done in Arcade with build steps conditioned on "build reason".
 
 - Shared templates
 
