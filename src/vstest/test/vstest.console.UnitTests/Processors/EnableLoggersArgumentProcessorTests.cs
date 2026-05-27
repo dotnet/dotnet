@@ -20,7 +20,14 @@ public class EnableLoggersArgumentProcessorTests
     [TestInitialize]
     public void Initialize()
     {
+        RunSettingsManager.Instance = null;
         RunTestsArgumentProcessorTests.SetupMockExtensions();
+    }
+
+    [TestCleanup]
+    public void Cleanup()
+    {
+        RunSettingsManager.Instance = null;
     }
 
     [TestMethod]
