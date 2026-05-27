@@ -118,7 +118,7 @@
       -->
       <_NativeVersionFileContents>
 <![CDATA[
-static char sccsid[] __attribute__((used)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+static char sccsid[] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
  ]]>
       </_NativeVersionFileContents>
     </PropertyGroup>
