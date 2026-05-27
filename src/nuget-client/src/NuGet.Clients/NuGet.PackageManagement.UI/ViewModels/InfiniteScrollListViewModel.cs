@@ -246,16 +246,11 @@ namespace NuGet.PackageManagement.UI.ViewModels
 
             try
             {
-                if (!Items.Contains(_loadingStatusIndicator))
-                {
-                    Items.Add(_loadingStatusIndicator);
-                    addedLoadingIndicator = true;
-                }
-
-                if (!Items.Contains(_loadingVulnerabilitiesStatusIndicator))
-                {
-                    Items.Add(_loadingVulnerabilitiesStatusIndicator);
-                }
+                addedLoadingIndicator = await EnsureLoadingIndicatorsAsync(
+                    Items,
+                    _loadingStatusIndicator,
+                    _loadingVulnerabilitiesStatusIndicator,
+                    ItemsLock);
 
                 await LoadItemsCoreAsync(currentLoader, loadCts.Token);
 
@@ -301,33 +296,83 @@ namespace NuGet.PackageManagement.UI.ViewModels
             }
             finally
             {
-                if (VulnerablePackagesCount == 0)
+                // Items is registered with BindingOperations.EnableCollectionSynchronization, so every
+                // cross-thread mutation must hold ItemsLock.
+                await ItemsLock.ExecuteAsync(() =>
                 {
-                    _loadingVulnerabilitiesStatusIndicator.Status = LoadingStatus.NoItemsFound;
-                }
-                else
-                {
-                    Items.Remove(_loadingVulnerabilitiesStatusIndicator);
-                }
-
-                if (_loadingStatusIndicator.Status != LoadingStatus.NoItemsFound
-                    && _loadingStatusIndicator.Status != LoadingStatus.ErrorOccurred)
-                {
-                    var emptyListCount = addedLoadingIndicator ? 1 : 0;
-                    if (Items.Count == emptyListCount)
+                    if (VulnerablePackagesCount == 0)
                     {
-                        _loadingStatusIndicator.Status = LoadingStatus.NoItemsFound;
+                        _loadingVulnerabilitiesStatusIndicator.Status = LoadingStatus.NoItemsFound;
                     }
                     else
                     {
-                        Items.Remove(_loadingStatusIndicator);
+                        Items.Remove(_loadingVulnerabilitiesStatusIndicator);
                     }
-                }
+
+                    if (_loadingStatusIndicator.Status != LoadingStatus.NoItemsFound
+                        && _loadingStatusIndicator.Status != LoadingStatus.ErrorOccurred)
+                    {
+                        var emptyListCount = addedLoadingIndicator ? 1 : 0;
+                        if (Items.Count == emptyListCount)
+                        {
+                            _loadingStatusIndicator.Status = LoadingStatus.NoItemsFound;
+                        }
+                        else
+                        {
+                            Items.Remove(_loadingStatusIndicator);
+                        }
+                    }
+
+                    return Task.CompletedTask;
+                });
             }
 
             UpdateSelectionState();
 
             LoadItemsCompleted?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Adds the two loading indicators to <paramref name="items"/> if they are not already present.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="items"/> is expected to be registered with
+        /// <see cref="System.Windows.Data.BindingOperations.EnableCollectionSynchronization(System.Collections.IEnumerable, object)"/>
+        /// using <paramref name="itemsLock"/>. Every cross-thread mutation must hold that lock,
+        /// otherwise <c>System.Windows.Data.ListCollectionView</c> can crash with
+        /// <see cref="ArgumentOutOfRangeException"/> when its cross-thread change log is later processed.
+        /// </remarks>
+        /// <returns><see langword="true"/> if <paramref name="loadingStatusIndicator"/> was added.</returns>
+        internal static async Task<bool> EnsureLoadingIndicatorsAsync(
+            ObservableCollection<object> items,
+            object loadingStatusIndicator,
+            object loadingVulnerabilitiesStatusIndicator,
+            ReentrantSemaphore itemsLock)
+        {
+            if (items == null) throw new ArgumentNullException(nameof(items));
+            if (loadingStatusIndicator == null) throw new ArgumentNullException(nameof(loadingStatusIndicator));
+            if (loadingVulnerabilitiesStatusIndicator == null) throw new ArgumentNullException(nameof(loadingVulnerabilitiesStatusIndicator));
+            if (itemsLock == null) throw new ArgumentNullException(nameof(itemsLock));
+
+            bool addedLoadingIndicator = false;
+
+            await itemsLock.ExecuteAsync(() =>
+            {
+                if (!items.Contains(loadingStatusIndicator))
+                {
+                    items.Add(loadingStatusIndicator);
+                    addedLoadingIndicator = true;
+                }
+
+                if (!items.Contains(loadingVulnerabilitiesStatusIndicator))
+                {
+                    items.Add(loadingVulnerabilitiesStatusIndicator);
+                }
+
+                return Task.CompletedTask;
+            });
+
+            return addedLoadingIndicator;
         }
 
         private async Task LoadItemsCoreAsync(IPackageItemLoader currentLoader, CancellationToken token)
