@@ -54,7 +54,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// Metadata for the MSI such as package ID, version, author information, etc.
         /// </summary>
-        public MsiMetadata Metadata
+        public IWorkloadPackageMetadata Metadata
         {
             get;
         }
@@ -161,7 +161,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// </summary>
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
-        public MsiBase(MsiMetadata metadata, IBuildEngine buildEngine, WixToolsetConfiguration wixToolsetConfig,
+        public MsiBase(IWorkloadPackageMetadata metadata, IBuildEngine buildEngine, WixToolsetConfiguration wixToolsetConfig,
             string platform, string baseIntermediateOutputPath) : base(baseIntermediateOutputPath, "")
         {
             BuildEngine = buildEngine;

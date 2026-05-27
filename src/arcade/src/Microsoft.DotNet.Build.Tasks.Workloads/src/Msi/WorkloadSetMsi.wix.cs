@@ -19,7 +19,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public WorkloadSetMsi(WorkloadSetPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediatOutputPath) :
-            base(MsiMetadata.Create(package), buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
+            base(package, buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
         {
             _package = package;
             InstallationRecordKey = $@"{InstallRecordBaseKey}\InstalledWorkloadSets\{Platform}\{_package.SdkFeatureBand}\{_package.PackageVersion}";

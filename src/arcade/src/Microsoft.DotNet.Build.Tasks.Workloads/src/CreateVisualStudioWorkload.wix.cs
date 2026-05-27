@@ -207,7 +207,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                         WorkloadPackGroupJson packGroupJson = null;
                         if (CreateWorkloadPackGroups)
                         {
-                            packGroupId = WorkloadPackGroupPackage.GetPackGroupID(workload.Id);
+                            packGroupId = WorkloadPackGroupPackage.GetPackGroupId(workload.Id);
                             packGroupJson = new WorkloadPackGroupJson()
                             {
                                 GroupPackageId = packGroupId,
@@ -289,7 +289,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 string uniquePackGroupKey = string.Join("\r\n", kvp.Value.Select(p => p.PackagePath).OrderBy(p => p));
                                 if (!packGroupPackages.TryGetValue(uniquePackGroupKey, out var groupPackage))
                                 {
-                                    groupPackage = new WorkloadPackGroupPackage(workload.Id);
+                                    groupPackage = new WorkloadPackGroupPackage(workload.Id, manifestPackage);
                                     groupPackage.Packs.AddRange(kvp.Value);
                                     packGroupPackages[uniquePackGroupKey] = groupPackage;
                                 }

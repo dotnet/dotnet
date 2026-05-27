@@ -12,8 +12,10 @@ using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Deployment.DotNet.Releases;
+using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
+using NuGet.Packaging.Licenses;
 using NuGet.Versioning;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
@@ -22,7 +24,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     /// Serves as a base class for implementing different types of workload packages. The class captures some common
     /// elements related to the underlying NuGet package.
     /// </summary>
-    public abstract class WorkloadPackageBase
+    public abstract class WorkloadPackageBase : IWorkloadPackageMetadata
     {
         /// <summary>
         /// The package authors.

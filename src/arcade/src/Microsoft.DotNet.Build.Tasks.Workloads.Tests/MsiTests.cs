@@ -281,7 +281,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string packGroupId = null;
             WorkloadPackGroupJson packGroupJson = null;
 
-            packGroupId = WorkloadPackGroupPackage.GetPackGroupID(workload.Id);
+            packGroupId = WorkloadPackGroupPackage.GetPackGroupId(workload.Id);
             packGroupJson = new WorkloadPackGroupJson()
             {
                 GroupPackageId = packGroupId,
@@ -309,7 +309,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 }
             }
 
-            var groupPackage = new WorkloadPackGroupPackage(workload.Id);
+            var groupPackage = new WorkloadPackGroupPackage(workload.Id, manifestPackage);
             groupPackage.Packs.AddRange(workloadPackPackages);
             groupPackage.ManifestsPerPlatform["x64"] = new([manifestPackage]);
 

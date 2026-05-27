@@ -22,7 +22,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public WorkloadPackMsi(WorkloadPackPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediatOutputPath) :
-            base(MsiMetadata.Create(package), buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
+            base(package, buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
         {
             _package = package;
 

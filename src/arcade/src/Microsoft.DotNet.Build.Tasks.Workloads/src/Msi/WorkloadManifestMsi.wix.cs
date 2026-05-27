@@ -39,7 +39,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public WorkloadManifestMsi(WorkloadManifestPackage package, string platform, IBuildEngine buildEngine, 
             WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediateOutputPath, bool isSxS = false) :
-            base(MsiMetadata.Create(package), buildEngine, wixToolsetConfig, platform, baseIntermediateOutputPath)
+            base(package, buildEngine, wixToolsetConfig, platform, baseIntermediateOutputPath)
         {
             Package = package;
             IsSxS = isSxS;

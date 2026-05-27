@@ -1,48 +1,39 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
 {
-    internal class WorkloadPackGroupPackage
+    internal class WorkloadPackGroupPackage : WorkloadPackageMetadata
     {
-        public List<WorkloadPackPackage> Packs { get; set; } = new();
+        /// <summary>
+        /// A list of all the workload pack packages associated with the workload pack group.
+        /// </summary>
+        public List<WorkloadPackPackage> Packs { get; } = new();
 
         public Dictionary<string, List<WorkloadManifestPackage>> ManifestsPerPlatform { get; } = new();
 
         public string WorkloadName { get; }
 
-        public string Id { get; }
-
-        public WorkloadPackGroupPackage(string workloadName)
+        public WorkloadPackGroupPackage(string workloadName, WorkloadManifestPackage manifestPackage) : base(GetPackGroupId(workloadName), manifestPackage.PackageVersion, manifestPackage.MsiVersion, manifestPackage.Authors,
+            manifestPackage.Copyright,
+            description: "Workload packs for " + workloadName,
+            title: "Workload packs for " + workloadName,
+            manifestPackage.LicenseUrl,
+            manifestPackage.ProjectUrl,
+            swixPackageId: GetPackGroupId(workloadName))
         {
             WorkloadName = workloadName;
-            Id = GetPackGroupID(workloadName);
         }
 
-        public static string GetPackGroupID(string workloadName)
-        {
-            return Utils.ToSafeId(workloadName) + ".WorkloadPacks";
-        }
-
-        public MsiMetadata GetMsiMetadata()
-        {
-            //  Take latest manifest from arbitrary platform to use for metadata
-            var manifestPackage = ManifestsPerPlatform.First().Value.OrderBy(m => m.Version).Last();
-
-            return new MsiMetadata(Id, manifestPackage.PackageVersion, manifestPackage.MsiVersion, manifestPackage.Authors,
-                manifestPackage.Copyright,
-                description: "Workload packs for " + WorkloadName,
-                title: "Workload packs for " + WorkloadName,
-                manifestPackage.LicenseUrl,
-                manifestPackage.ProjectUrl,
-                swixPackageId: Id);
-        }
+        /// <summary>
+        /// Generates a safe package identifier for the workload pack group based on the workload name.
+        /// </summary>
+        /// <param name="workloadName">The name of the workload.</param>
+        /// <returns>A safe package identifier for the workload pack group.</returns>
+        public static string GetPackGroupId(string workloadName) =>
+            Utils.ToSafeId(workloadName) + ".WorkloadPacks";
     }
 }

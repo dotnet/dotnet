@@ -23,21 +23,21 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         //  Key: path to file, value: path in package
         public Dictionary<string, string> PackageContents { get; set; } = new();
 
-        public MsiPayloadPackageProject(MsiMetadata package, ITaskItem msi, string baseIntermediateOutputPath, string baseOutputPath, Dictionary<string, string> packageContents) :
+        public MsiPayloadPackageProject(IWorkloadPackageMetadata packageMetadata, ITaskItem msi, string baseIntermediateOutputPath, string baseOutputPath, Dictionary<string, string> packageContents) :
             base(baseIntermediateOutputPath, baseOutputPath)
         {
             string platform = msi.GetMetadata(Metadata.Platform);
-            SourcePath = Path.Combine(SourcePath, "msiPackage", platform, package.Id);
+            SourcePath = Path.Combine(SourcePath, "msiPackage", platform, packageMetadata.Id);
             ProjectFile = "msi.csproj";
 
             PackageContents = packageContents;
 
-            ReplacementTokens[PayloadPackageTokens.__AUTHORS__] = package.Authors;
-            ReplacementTokens[PayloadPackageTokens.__COPYRIGHT__] = package.Copyright;
-            ReplacementTokens[PayloadPackageTokens.__DESCRIPTION__] = package.Description;
-            ReplacementTokens[PayloadPackageTokens.__PACKAGE_ID__] = $"{package.Id}.Msi.{platform}";
-            ReplacementTokens[PayloadPackageTokens.__PACKAGE_PROJECT_URL__] = package.ProjectUrl;
-            ReplacementTokens[PayloadPackageTokens.__PACKAGE_VERSION__] = $"{package.PackageVersion}";
+            ReplacementTokens[PayloadPackageTokens.__AUTHORS__] = packageMetadata.Authors;
+            ReplacementTokens[PayloadPackageTokens.__COPYRIGHT__] = packageMetadata.Copyright;
+            ReplacementTokens[PayloadPackageTokens.__DESCRIPTION__] = packageMetadata.Description;
+            ReplacementTokens[PayloadPackageTokens.__PACKAGE_ID__] = $"{packageMetadata.Id}.Msi.{platform}";
+            ReplacementTokens[PayloadPackageTokens.__PACKAGE_PROJECT_URL__] = packageMetadata.ProjectUrl;
+            ReplacementTokens[PayloadPackageTokens.__PACKAGE_VERSION__] = $"{packageMetadata.PackageVersion}";
         }
 
         /// <inheritdoc />
