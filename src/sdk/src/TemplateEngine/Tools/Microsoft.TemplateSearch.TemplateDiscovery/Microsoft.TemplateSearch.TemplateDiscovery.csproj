@@ -43,9 +43,10 @@
        on referenced projects' obj/ output DLLs (e.g. RunnableProjects.dll).
        Guard with IsCrossTargetingBuild so this runs only once in the outer build of a
        multi-targeting project, avoiding concurrent copies per inner TFM build.
-       Skipped in source-build where test infrastructure is not used. -->
+       Skip in VMR/source-build where integration tests don't run and versioning
+       properties may not be available in the outer cross-targeting evaluation. -->
   <Target Name="CopyPackageToTestPackagesDir" AfterTargets="Pack"
-          Condition="'$(TestLayoutDir)' != '' and '$(DotNetBuildSourceOnly)' != 'true' and ('$(IsCrossTargetingBuild)' == 'true' or '$(TargetFrameworks)' == '')">
+          Condition="'$(TestLayoutDir)' != '' and '$(DotNetBuild)' != 'true' and ('$(IsCrossTargetingBuild)' == 'true' or '$(TargetFrameworks)' == '')">
     <PropertyGroup>
       <_TestPackagesDir>$(TestLayoutDir)testpackages/</_TestPackagesDir>
     </PropertyGroup>
