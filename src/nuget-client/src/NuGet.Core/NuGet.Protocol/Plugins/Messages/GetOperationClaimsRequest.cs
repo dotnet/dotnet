@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -15,26 +16,50 @@ namespace NuGet.Protocol.Plugins
     public sealed class GetOperationClaimsRequest
     {
         /// <summary>
-        /// Gets the package source repository location for the <see cref="ServiceIndex" />.
+        /// Gets the package source repository location for the <see cref="ServiceIndexJson" />.
         /// </summary>
         public string PackageSourceRepository { get; }
+
+#nullable enable
+        /// <summary>
+        /// Gets the service index (index.json) for the <see cref="PackageSourceRepository" /> as a raw JSON string.
+        /// </summary>
+        [JsonProperty("ServiceIndex")]
+        [JsonConverter(typeof(NsjRawJsonStringConverter))]
+        public string? ServiceIndexJson { get; }
+#nullable disable
 
         /// <summary>
         /// Gets the service index (index.json) for the <see cref="PackageSourceRepository" />.
         /// </summary>
-        public JObject ServiceIndex { get; }
+        [Obsolete("Use ServiceIndexJson instead. This property always returns null.")]
+        [JsonIgnore]
+        public JObject ServiceIndex => null;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetOperationClaimsRequest" /> class.
+        /// </summary>
+        /// <param name="packageSourceRepository">The package source location.</param>
+        /// <param name="serviceIndex">The service index (index.json) as a raw JSON string.</param>
+        /// <remarks>Both packageSourceRepository and service index can be null. If they are, the operation claims request is considered as source agnostic</remarks>
+#nullable enable
+        [JsonConstructor]
+        public GetOperationClaimsRequest(string? packageSourceRepository, string? serviceIndex)
+        {
+            PackageSourceRepository = packageSourceRepository;
+            ServiceIndexJson = serviceIndex;
+        }
+#nullable disable
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetOperationClaimsRequest" /> class.
         /// </summary>
         /// <param name="packageSourceRepository">The package source location.</param>
         /// <param name="serviceIndex">The service index (index.json).</param>
-        /// <remarks>Both packageSourceRepository and service index can be null. If they are, the operation claims request is considered as source agnostic</remarks>
-        [JsonConstructor]
+        [Obsolete("Use GetOperationClaimsRequest(string, string) instead.")]
         public GetOperationClaimsRequest(string packageSourceRepository, JObject serviceIndex)
+            : this(packageSourceRepository, serviceIndex?.ToString(Formatting.None))
         {
-            PackageSourceRepository = packageSourceRepository;
-            ServiceIndex = serviceIndex;
         }
     }
 }

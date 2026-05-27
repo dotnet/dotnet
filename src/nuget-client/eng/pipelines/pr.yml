@@ -41,9 +41,12 @@ variables:
 trigger:
   branches:
     include:
-    - '*'
+    - dev
 
-pr: none
+pr:
+  branches:
+    include:
+    - '*'
 
 stages:
 - ${{ if eq(parameters.RunUnitTestsOnWindows, true) }}:
