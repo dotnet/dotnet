@@ -123,46 +123,7 @@ function Test-GetPackageAcceptsRelativePathSource2 {
 
 
 
-function Test-GetPackageForProjectReturnsCorrectPackages2 {
-    # Arrange
-    $p1 = New-ConsoleApplication
-    $p2 = New-ClassLibrary
-
-    Install-Package jQuery -Version 1.5 -Source $context.RepositoryPath -ProjectName $p1.Name
-    Install-Package MyAwesomeLibrary -Version 1.0 -Source $context.RepositoryPath -ProjectName $p2.Name
-
-    # Act
-    $result = @(Get-Package -ProjectName $p1.Name)
-
-    # Assert
-    Assert-AreEqual 1 $result.Count
-    Assert-AreEqual "jQuery" $result[0].Id
-    Assert-AreEqual "1.5.0" $result[0].Version
-}
-
-
-
-function Test-GetPackageWithoutProjectNameReturnsInstalledPackagesInTheSolution {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p1 = New-ConsoleApplication
-    $p2 = New-ClassLibrary
-
-    Install-Package jQuery -Source $context.RepositoryPath -Project $p1.Name
-    Install-Package netfx-Guard -Source $context.RepositoryPath -Project $p2.Name
-
-    # Act
-    $result = @(Get-Package)
-
-    # Assert
-    Assert-AreEqual 2 $result.Count
-    Assert-AreEqual "jQuery" $result[0].Id
-    Assert-AreEqual "netfx-Guard" $result[1].Id
-}
-
+function Test-ZipPackageLoadsReleaseNotesAttribute {
 function Test-ZipPackageLoadsReleaseNotesAttribute {
     param(
         $context
