@@ -1,0 +1,129 @@
+### Steps to process multiple per-repo Build.binlog files into SLN format and upload
+### as source index stage 1 data for https://github.com/dotnet/source-indexer.
+###
+### Unlike eng/common/core-templates/steps/source-index-stage1-publish.yml which
+### handles a single binlog, this template processes all per-repo Build.binlog files
+### produced by a VMR build.
+
+parameters:
+  # The name to use when uploading the source index data (e.g., 'dotnet-dotnet')
+  sourceIndexName: ''
+
+  # The root directory of the VMR sources
+  sourcesPath: ''
+
+  # The directory containing per-repo build logs (artifacts/log/<RepoName>/Build.binlog)
+  logsPath: ''
+
+  # Repos to exclude from source indexing (space-separated list of repo directory names)
+  excludeRepos: ''
+
+  # Repos to include (if set, ONLY these repos will be indexed; space-separated)
+  includeRepos: ''
+
+  sourceIndexUploadPackageVersion: 2.0.0-20260521.2
+  sourceIndexProcessBinlogPackageVersion: 1.0.1-20260521.2
+  sourceIndexPackageSource: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+  sourceIndexBaseDir: $(Agent.TempDirectory)/.source-index
+
+steps:
+- task: UseDotNet@2
+  displayName: "Source Index: Install .NET SDK"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
+  inputs:
+    packageType: sdk
+    version: 10.0.x
+    installationPath: ${{ parameters.sourceIndexBaseDir }}/dotnet
+    workingDirectory: $(Agent.TempDirectory)
+
+- pwsh: |
+    $baseDir = "${{ parameters.sourceIndexBaseDir }}"
+    $dotnet = Join-Path $baseDir 'dotnet' 'dotnet'
+    if ($IsWindows) { $dotnet += '.exe' }
+    $toolPath = Join-Path $baseDir 'tools'
+    & $dotnet tool install BinLogToSln --version ${{ parameters.sourceIndexProcessBinlogPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+    & $dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+  displayName: "Source Index: Install Tools"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
+  workingDirectory: $(Agent.TempDirectory)
+
+- pwsh: |
+    $ErrorActionPreference = 'Stop'
+
+    $baseDir = "${{ parameters.sourceIndexBaseDir }}"
+    $sourcesPath = "${{ parameters.sourcesPath }}"
+    $logsPath = "${{ parameters.logsPath }}"
+    $outputDir = Join-Path $baseDir 'stage1output'
+    $toolPath = Join-Path $baseDir 'tools'
+    $excludeRepos = "${{ parameters.excludeRepos }}" -split '\s+' | Where-Object { $_ }
+    $includeRepos = "${{ parameters.includeRepos }}" -split '\s+' | Where-Object { $_ }
+
+    New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
+
+    $binLogToSln = Join-Path $toolPath 'BinLogToSln'
+    if ($IsWindows) { $binLogToSln += '.exe' }
+
+    # Only look for Build.binlog in immediate subdirectories (per-repo logs).
+    # This avoids picking up the VMR orchestrator log at artifacts/log/Release/Build.binlog.
+    $binlogs = Get-ChildItem -Path $logsPath -Directory |
+      ForEach-Object { Get-ChildItem -Path $_.FullName -Filter "Build.binlog" -File -ErrorAction SilentlyContinue } |
+      Where-Object { $_ }
+
+    foreach ($binlog in $binlogs) {
+      $repoName = $binlog.Directory.Name
+
+      if ($includeRepos.Count -gt 0 -and $repoName -notin $includeRepos) {
+        Write-Host "Skipping repo not in include list: $repoName"
+        continue
+      }
+
+      if ($excludeRepos -contains $repoName) {
+        Write-Host "Skipping excluded repo: $repoName"
+        continue
+      }
+
+      Write-Host "Processing binlog for repo: $repoName"
+      try {
+        & $binLogToSln -i $binlog.FullName -r $sourcesPath -n $repoName -o $outputDir
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "##vso[task.logissue type=warning]BinLogToSln failed for $repoName (exit code $LASTEXITCODE), continuing..."
+          $global:LASTEXITCODE = 0
+        }
+      } catch {
+        Write-Host "##vso[task.logissue type=warning]BinLogToSln threw an exception for ${repoName}: $_"
+      }
+    }
+
+    # Verify output
+    if (Test-Path $outputDir) {
+      $files = Get-ChildItem -Path $outputDir -Recurse -File
+      if ($files.Count -gt 0) {
+        Write-Host "Source index stage 1 output produced successfully. $($files.Count) files."
+        $files | Select-Object -First 20 | ForEach-Object { Write-Host $_.FullName }
+      } else {
+        Write-Host "##vso[task.logissue type=warning]No source index stage 1 output was produced."
+      }
+    }
+  displayName: "Source Index: Process Binlogs into indexable SLN files"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
+
+- task: AzureCLI@2
+  displayName: "Source Index: Upload to Azure (${{ parameters.sourceIndexName }})"
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
+  inputs:
+    azureSubscription: 'SourceDotNet Stage1 Publish'
+    addSpnToEnvironment: true
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $baseDir = "${{ parameters.sourceIndexBaseDir }}"
+      $outputDir = Join-Path $baseDir 'stage1output'
+      $toolPath = Join-Path $baseDir 'tools'
+      $uploadTool = Join-Path $toolPath 'UploadIndexStage1'
+      if ($IsWindows) { $uploadTool += '.exe' }
+
+      if ((Test-Path $outputDir) -and (Get-ChildItem -Path $outputDir -Recurse -File).Count -gt 0) {
+        & $uploadTool -i $outputDir -n "${{ parameters.sourceIndexName }}" -s netsourceindexstage1 -b stage1
+      } else {
+        Write-Host "No source index output to upload."
+      }

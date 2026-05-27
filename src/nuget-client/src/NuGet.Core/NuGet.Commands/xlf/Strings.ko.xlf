@@ -454,6 +454,11 @@
         <target state="translated">'{0}' 속성은 null이거나 비어 있을 수 없습니다.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">신뢰할 수 있는 리포지토리를 추가할 수 없습니다. 패키지에 리포지토리 서명 또는 연대 서명이 없습니다.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0}은(는) 잘리지 않습니다. 이 패키지는 불필요할 수 있으므로 종속성에서 제거하는 것이 좋습니다.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">{0} PackageReferenc는 정리할 수 없습니다. 이 패키지는 자동으로 사용할 수 있으며 명시적으로 참조할 필요가 없습니다. PackageReference 항목을 제거합니다.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1495,6 +1500,12 @@ NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhe
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
         <target state="translated">{0}은(는) 종속성 {1}에 대한 포괄적인 하한을 제공하지 않습니다. 대신 {2}이(가) 확인되었습니다.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">패키지 '{0}' {1}이(가) 'net6.0-android' 이상 대신 사용 중단된 MonoAndroid 프레임워크를 사용합니다. 이 패키지의 최신 버전으로 업그레이드하거나 패키지 작성자에게 문의하는 것이 좋습니다.</target>
+        <note>{0} - package id
+{1} - package version</note>
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>

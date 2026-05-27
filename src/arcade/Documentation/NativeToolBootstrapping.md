@@ -127,8 +127,8 @@ This will likely come up very quickly and deserves consideration.  The current p
 
 * **Linux**
   * There is no requirement for a strict naming convention for Linux tools, taking into account that there may be different packages available for different distros and configurations.  Upload the tool packages to the `linux/<tool-name>` folder structure in the container.
-  * Write an installer for the tool. This should be a script called 'install-tool.sh' and create a Pull Request to the dotnet/arcade repo to introduce the installer in the [eng/common/native](https://github.com/dotnet/arcade/tree/master/eng/common/native) folder.
-    * Example: [install-cmake.sh](https://github.com/dotnet/arcade/tree/master/eng/common/native/install-cmake.sh)
+  * Write an installer for the tool. This should be a script called 'install-tool.sh' and create a Pull Request to the dotnet/arcade repo to introduce the installer in the [eng/common/native](../eng/common/native) folder.
+    * Example: [install-cmake.sh](../eng/common/native/install-cmake.sh)
 
 **How do you determine which version of the common libraries / installers to use?**
 
@@ -159,8 +159,3 @@ Example:
 I think that this model will allow us to be a bit more flexible in the types of dependencies that we install and provide a method for non-xcopy deployable dependencies to be installed in the future.  The tool installers may make use of common libraries for installs though.
 
 We are looking into improving this experience to genericize the installers and reduce boilerplate.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CNativeToolBootstrapping.md)](https://helix.dot.net/f/p/5?p=Documentation%5CNativeToolBootstrapping.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CNativeToolBootstrapping.md)</sub>
-<!-- End Generated Content-->

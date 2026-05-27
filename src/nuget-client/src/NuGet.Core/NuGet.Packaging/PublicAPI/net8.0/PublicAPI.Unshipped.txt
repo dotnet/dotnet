@@ -1,1 +1,2 @@
 #nullable enable
+NuGet.Packaging.PackageBuilder.DeterministicTimestamp.init -> void

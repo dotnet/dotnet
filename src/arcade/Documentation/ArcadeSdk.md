@@ -93,17 +93,17 @@ Having a common output directory structure makes it possible to unify MicroBuild
 
 ### Build scripts
 
-Arcade provides common build scripts in the [eng/common](https://github.com/dotnet/arcade/tree/master/eng/common) folder:
+Arcade provides common build scripts in the [eng/common](../eng/common) folder:
 
-- eng/common/[build.ps1](https://github.com/dotnet/arcade/tree/master/eng/common/build.ps1)|[build.sh](https://github.com/dotnet/arcade/tree/master/eng/common/build.sh)
+- eng/common/[build.ps1](../eng/common/build.ps1)|[build.sh](../eng/common/build.sh)
 
   The scripts are designed to be used by repos that need a single `MSBuild` invocation to restore, build, package and test all projects in the repo. These scripts are thin wrappers calling into functions defined in `eng/common/tools.ps1|sh`. If the repository needs to run additional builds or commands it is recommended to create `eng/build.ps1|sh` scripts in the repository using `eng/common/build.ps1|sh` as a template and customize the implementation as necessary. These custom scripts should use common helpers and global variables defined in `eng/common/tools.ps1|sh` and provide command line switches that are a superset of the ones provided by `eng/common/build.ps1|sh`. 
 
-- eng/common/[tools.ps1](https://github.com/dotnet/arcade/tree/master/eng/common/tools.ps1)|[tools.sh](https://github.com/dotnet/arcade/tree/master/eng/common/tools.sh)
+- eng/common/[tools.ps1](../eng/common/tools.ps1)|[tools.sh](../eng/common/tools.sh)
 
   Defines global variables and functions used in all builds scripts. This includes helpers that install .NET SDK, invoke MSBuild, locate Visual Studio, report build telemetry, etc.
 
-- eng/common/[CIBuild.cmd](https://github.com/dotnet/arcade/tree/master/eng/common/CIBuild.cmd)|[cibuild.sh](https://github.com/dotnet/arcade/tree/master/eng/common/cibuild.sh)
+- eng/common/[CIBuild.cmd](../eng/common/CIBuild.cmd)|[cibuild.sh](../eng/common/cibuild.sh)
 
   Repositories that use `eng/common/build.ps1|sh` (as opposed to a customized `eng/build.ps1|sh`) should use this build script for the main build step in their pipeline definition. Repositories with custom `eng/build.ps1|sh` should also add the corresponding `eng/CIBuild.cmd|cibuild.sh` for use in their pipeline definition.
    
@@ -111,9 +111,9 @@ Arcade provides common build scripts in the [eng/common](https://github.com/dotn
 
 Repos may also provide a few convenience build scripts in the repository root that dispatch to either `eng/common/build.ps1|sh` or `eng/build.ps1|sh` (if repo uses customized build scripts) but do not implement any logic:
 
-- [Build.cmd](https://github.com/dotnet/arcade/blob/master/Build.cmd) | [build.sh](https://github.com/dotnet/arcade/blob/master/build.sh) - default wrapper script for building and restoring the repo.
-- [Restore.cmd](https://github.com/dotnet/arcade/blob/master/Restore.cmd) | [restore.sh](https://github.com/dotnet/arcade/blob/master/restore.sh) - default wrapper script for restoring the repo.
-- [Test.cmd](https://github.com/dotnet/arcade/blob/master/Test.cmd) | [test.sh](https://github.com/dotnet/arcade/blob/master/test.sh) - default wrapper script for running tests in the repo.
+- [Build.cmd](../Build.cmd) | [build.sh](../build.sh) - default wrapper script for building and restoring the repo.
+- [Restore.cmd](../Restore.cmd) | [restore.sh](../restore.sh) - default wrapper script for restoring the repo.
+- [Test.cmd](../Test.cmd) | [test.sh](../test.sh) - default wrapper script for running tests in the repo.
 
 Since the default scripts pass along additional arguments, you could restore, build, and test a repo by running `Build.cmd -test`.
 
@@ -278,7 +278,7 @@ The toolset defines a set of tools (or features) that each repo can opt into or 
 
 The toolset also defines default versions for various tools and dependencies, such as MicroBuild, XUnit, VSSDK, etc. These defaults can be overridden in the Versions.props file.
 
-See [DefaultVersions](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Arcade.Sdk/tools/DefaultVersions.props) for a list of *UsingTool* properties and default versions.
+See [DefaultVersions](../src/Microsoft.DotNet.Arcade.Sdk/tools/DefaultVersions.props) for a list of *UsingTool* properties and default versions.
 
 ### /eng/Tools.props (optional)
 
@@ -318,7 +318,7 @@ Properties:
     - `ItemsToSignPostBuild` is tracked during the publishing process and these files will be signed during post-build.
     - `ItemsToSignPostBuild` is populated with the default arcade `ItemsToSign`.
 
-See [Signing.md](https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Signing.md#arguments-metadata) for details.
+See [Signing.md](Signing.md#arguments-metadata) for details.
 
 To change the key used for strong-naming assemblies see `StrongNameKeyId` property.
 
@@ -332,9 +332,9 @@ Configurable item groups:
   Supported Metadata:
   - `Visibility`
     - Visibility of the artifact. Default is `External`. Visibility options are listed below:
-      - `External`: The artifact is visible outside of the build. It will be uploaded to AzDO artifacts and published to [the Build Asset Registry (BAR)](./Maestro/BuildAssetRegistry.md) as an artifact of the build.
+      - `External`: The artifact is visible outside of the build. It will be uploaded to AzDO artifacts and published to the Build Asset Registry (BAR) as an artifact of the build.
       - `Internal`: The artifact is visible only within the build. It will be uploaded to AzDO artifacts but not published to BAR.
-      - `Vertical`: The artifact is only visible within a given vertical in a Vertical Build. It will be copied into the local artifacts folder for the repository on disk during a vertical build. It will not be uploaded to AzDO artifacts, nor published to BAR. Any artifacts marked with `Vertical` visibility are also not available in any other Join Points in a Unified Build. See [here](./UnifiedBuild/Unified-Build-Join-Point.md) for more information. `Vertical` visibility is only available in a Vertical Build.
+      - `Vertical`: The artifact is only visible within a given vertical in a Vertical Build. It will be copied into the local artifacts folder for the repository on disk during a vertical build. It will not be uploaded to AzDO artifacts, nor published to BAR. Any artifacts marked with `Vertical` visibility are also not available in any other Join Points in a Unified Build. `Vertical` visibility is only available in a Vertical Build.
 
 ### /eng/AfterSolutionBuild.targets (optional)
 
@@ -511,11 +511,11 @@ It is a common practice to specify properties applicable to all (most) projects 
 The root of the repository shall include a license file named `license.txt`, `license.md` or `license` (any casing is allowed).
 It is expected that all packages built from the repository have the same license, which is the license declared in the repository root license file.
 
-If the repository uses open source license it shall specify the license name globally using `PackageLicenseExpression` property, e.g. in [Directory.Build.props](https://github.com/dotnet/arcade/blob/master/Documentation/ArcadeSdk.md#directorybuildprops).
+If the repository uses open source license it shall specify the license name globally using `PackageLicenseExpression` property, e.g. in [Directory.Build.props](ArcadeSdk.md#directorybuildprops).
 If the repository uses a closed source license it shall specify the license name using `PackageLicenseExpressionInternal` property. In this case the closed source license file is automatically added to any package build by the repository.
 
 If `PackageLicenseExpression(Internal)` property is set Arcade SDK validates that the content of the license file in the repository root matches the content of 
-the [well-known license file](https://github.com/dotnet/arcade/tree/master/src/Microsoft.DotNet.Arcade.Sdk/tools/Licenses) that corresponds to the value of the license expression.
+the [well-known license file](../src/Microsoft.DotNet.Arcade.Sdk/tools/Licenses) that corresponds to the value of the license expression.
 This validation can be suppressed by setting `SuppressLicenseValidation` to `true` if necessary (not recommended).
 
 See [NuGet documentation](https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets#packing-a-license-expression-or-a-license-file) for details.
@@ -677,7 +677,7 @@ The following task restores tools that are only available from internal feeds.
       restoreDirectory: '$(System.DefaultWorkingDirectory)\.packages'
 ```
 
-[The tools](https://github.com/dotnet/arcade/blob/master/eng/common/internal/Tools.csproj) are restored conditionally based on which Arcade SDK features the repository uses (these are specified via `UsingToolXxx` properties).
+[The tools](../eng/common/internal/Tools.csproj) are restored conditionally based on which Arcade SDK features the repository uses (these are specified via `UsingToolXxx` properties).
 
 ### Official build script
 
@@ -916,7 +916,7 @@ build -configuration Release -restore -ci /p:EnableNgenOptimization=true /p:Repo
 
 The id of the key used to generate assembly strong name for signed assemblies (`SignAssembly` is `true`).
 By default, `SignAssembly` is set to `true` and `StrongNameKeyId` is set to `MicrosoftShared`.
-Available values are listed in [StrongName.targets](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Arcade.Sdk/tools/StrongName.targets).
+Available values are listed in [StrongName.targets](../src/Microsoft.DotNet.Arcade.Sdk/tools/StrongName.targets).
 
 `AssemblyOriginatorKeyFile`, `PublicKey`, `PublicKeyToken`, `DelaySign`, `PublicSign` properties are set based on the value of `StrongNameKeyId`.
 
@@ -1060,7 +1060,3 @@ If set to `true` calls to GetResourceString receive a default resource string va
 
 #### `GenerateResxSourceOmitGetResourceString` (bool)
 If set to `true` the GetResourceString method is not included in the generated class and must be specified in a separate source file.
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CArcadeSdk.md)](https://helix.dot.net/f/p/5?p=Documentation%5CArcadeSdk.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CArcadeSdk.md)</sub>
-<!-- End Generated Content-->

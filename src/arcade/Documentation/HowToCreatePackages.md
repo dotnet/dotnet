@@ -24,27 +24,18 @@ One of the goals of Arcade is to be a vehicle to provide code sharing. One of th
 
 - Include the package on the `Arcade.slnx` file. This way it will be compiled automatically when the solution is built.
 
-- Make sure that library dependencies of the new package use the Arcade defined version of the library. The versions are defined in the [`..\eng\Versions.props`](../eng/Versions.props) file. For instance, if the project has a dependence on Newtonsoft.Json you must add it as follows:
-
-  `<PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />`
-
-  If there is no version specified for a required library feel free to add a new property defining it.
-
 - If your package produces binaries that need to be signed, make sure to mark it as <IsPackable>true</IsPackable> or check the SignTool [documentation](../src/Microsoft.DotNet.SignTool/README.md) to see how to sign specific files.
 
-- If the package needs to target a version of .NET Framework we recommend you to use the Arcade defined version, which is stored in the $(NetFrameworkMinimum), $(NetFrameworkCurrent) or $(NetFrameworkToolCurrent) properties. For instance:
+- If the package needs to target .NET, use the `$(NetMinimum)` or `$(NetCurrent)` properties. For instance:
 
-  `<TargetFrameworks>$(NetFrameworkMinimum);netcoreapp2.0</TargetFrameworks>`
+  `<TargetFrameworks>$(NetMinimum)</TargetFrameworks>`
 
-- There is no requirement to create a separate `.nuspec` file for the package. The package information will be automatically extracted from the `.csproj` file.
+- If the package needs to target .NET Framework, use the `$(NetFrameworkMinimum)` property. For instance:
+
+  `<TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>`
 
 ## Further References
 
 - [`Overview.md`](Overview.md)
 
 - [`..\eng\Versions.props`](../eng/Versions.props)
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CHowToCreatePackages.md)](https://helix.dot.net/f/p/5?p=Documentation%5CHowToCreatePackages.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CHowToCreatePackages.md)</sub>
-<!-- End Generated Content-->

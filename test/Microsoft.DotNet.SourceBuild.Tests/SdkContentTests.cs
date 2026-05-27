@@ -11,8 +11,6 @@ using System.IO.Enumeration;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
 using Microsoft.Extensions.FileSystemGlobbing;
 using NuGet.Packaging;
 using TestUtilities;
@@ -37,6 +35,23 @@ public partial class SdkContentTests : SdkTests
 
     [GeneratedRegex(@"(,\s*Version=)(0|[1-9]\d*)(\.\d+){2,3}")]
     private static partial Regex AssemblyVersionRegex { get; }
+
+    // Matches a PackageReference element, either self-closing or with child content.
+    // The child-content alternative is listed first so it takes priority over the self-closing one.
+    [GeneratedRegex(@"<PackageReference\b[^>]*>.*?</PackageReference\s*>|<PackageReference\b[^>]*/>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
+    private static partial Regex PackageReferenceElementRegex { get; }
+
+    // Matches the Include or Update attribute within a PackageReference element
+    [GeneratedRegex(@"\b(?:Include|Update)=""([^""]*)""", RegexOptions.IgnoreCase)]
+    private static partial Regex PackageReferenceNameRegex { get; }
+
+    // Matches the Version attribute within a PackageReference element
+    [GeneratedRegex(@"\bVersion=""([^""]*)""", RegexOptions.IgnoreCase)]
+    private static partial Regex PackageReferenceVersionAttributeRegex { get; }
+
+    // Matches a child Version element within a PackageReference element
+    [GeneratedRegex(@"<Version\s*>([^<]*)</Version\s*>", RegexOptions.IgnoreCase)]
+    private static partial Regex PackageReferenceVersionElementRegex { get; }
 
     private record VersionInfo(Version? AssemblyVersion, string? FileVersion, Version? FileVersionNumber, string? ProductVersion, Version? ProductVersionNumber);
 
@@ -212,38 +227,48 @@ public partial class SdkContentTests : SdkTests
 
     /// <summary>
     /// Parses PackageReference elements from a project file (.csproj/.fsproj) zip entry and returns package name to version mappings.
+    /// Template source files (.csproj in nupkg template feeds) may contain template-engine directives
+    /// (e.g., &lt;!--#if/else/endif--&gt;) that make them not valid standalone XML. A regex-based scan is used
+    /// to handle both standard project files and template source files.
     /// </summary>
     private static Dictionary<string, string> GetPackageReferencesFromProjectFile(ZipArchiveEntry entry)
     {
         Dictionary<string, string> versions = [];
 
         using Stream stream = entry.Open();
-        XDocument doc;
-        try
-        {
-            doc = XDocument.Load(stream);
-        }
-        catch (XmlException ex)
-        {
-            throw new Exception($"Failed to parse project file '{entry.FullName}' from package archive.", ex);
-        }
+        using StreamReader reader = new(stream);
+        string content = reader.ReadToEnd();
 
-        IEnumerable<XElement> packageRefs = doc.Descendants()
-            .Where(e => e.Name.LocalName == "PackageReference");
-
-        foreach (XElement packageRef in packageRefs)
+        // Use regex-based extraction to handle both valid XML project files and template source files.
+        // Template source files may contain template-engine directives (<!--#if/else/endif-->) that
+        // make them not valid standalone XML.
+        foreach (Match elementMatch in PackageReferenceElementRegex.Matches(content))
         {
-            string? packageName = packageRef.Attribute("Include")?.Value
-                ?? packageRef.Attribute("Update")?.Value;
+            string element = elementMatch.Value;
 
-            if (string.IsNullOrEmpty(packageName))
+            // Extract package name from Include or Update attribute
+            Match nameMatch = PackageReferenceNameRegex.Match(element);
+            if (!nameMatch.Success || string.IsNullOrEmpty(nameMatch.Groups[1].Value))
             {
                 continue;
             }
+            string packageName = nameMatch.Groups[1].Value;
 
-            // Version can be an attribute or a child element
-            string? version = packageRef.Attribute("Version")?.Value
-                ?? packageRef.Elements().FirstOrDefault(e => e.Name.LocalName == "Version")?.Value;
+            // Extract version from Version attribute, falling back to child Version element
+            string? version = null;
+            Match versionAttrMatch = PackageReferenceVersionAttributeRegex.Match(element);
+            if (versionAttrMatch.Success)
+            {
+                version = versionAttrMatch.Groups[1].Value;
+            }
+            else
+            {
+                Match versionElemMatch = PackageReferenceVersionElementRegex.Match(element);
+                if (versionElemMatch.Success)
+                {
+                    version = versionElemMatch.Groups[1].Value;
+                }
+            }
 
             if (!string.IsNullOrEmpty(version))
             {

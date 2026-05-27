@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
@@ -203,6 +204,25 @@ namespace NuGet.VisualStudio.Telemetry
             {
                 data.NupkgCount++;
                 data.NupkgSize += ncEvent.FileSize;
+                data.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter = data.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter || (ncEvent.PackageId.Length > 0 && HasNonAlphanumericDotDashOrUnderscoreCharacters(ncEvent.PackageId));
+            }
+
+            bool HasNonAlphanumericDotDashOrUnderscoreCharacters(string packageId)
+            {
+                foreach (char c in packageId.AsSpan())
+                {
+                    if (!IsCharacterAlphanumericDotDashOrUnderscore(c))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+
+                bool IsCharacterAlphanumericDotDashOrUnderscore(char c)
+                {
+                    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '_';
+                }
             }
         }
 
@@ -261,6 +281,7 @@ namespace NuGet.VisualStudio.Telemetry
                 telemetry[PropertyNames.Duration.Total] = data.Resources.Values.Sum(r => r.duration.TotalMilliseconds);
                 telemetry[PropertyNames.Nupkgs.Copied] = data.NupkgCount;
                 telemetry[PropertyNames.Nupkgs.Bytes] = data.NupkgSize;
+                telemetry[PropertyNames.Nupkgs.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter] = data.IdContainsNonAlphanumericDotDashOrUnderscoreCharacter;
                 AddResourceProperties(telemetry, data.Resources);
 
                 if (data.Http.Requests > 0)
@@ -426,6 +447,7 @@ namespace NuGet.VisualStudio.Telemetry
             internal HttpData Http { get; }
             internal int NupkgCount { get; set; }
             internal long NupkgSize { get; set; }
+            internal bool IdContainsNonAlphanumericDotDashOrUnderscoreCharacter { get; set; }
 
             internal Data()
             {
@@ -475,6 +497,7 @@ namespace NuGet.VisualStudio.Telemetry
             {
                 internal const string Copied = "nupkgs.copied";
                 internal const string Bytes = "nupkgs.bytes";
+                internal const string IdContainsNonAlphanumericDotDashOrUnderscoreCharacter = "nupkgs.idcontainsNonAlphanumericDotDashOrUnderscorecharacter";
             }
 
             internal static class Resources

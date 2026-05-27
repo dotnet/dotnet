@@ -24,7 +24,7 @@ namespace NuGet.Protocol.FuncTest
 
             var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
 
-            var package = new SourcePackageDependencyInfo("WindowsAzure.Storage", new NuGetVersion("6.2.0"), null, true, repo, new Uri($@"{TestSources.NuGetV2Uri}/package/WindowsAzure.Storage/6.2.0"), "");
+            var package = new SourcePackageDependencyInfo("WindowsAzure.Storage", new NuGetVersion("6.2.0"), Enumerable.Empty<PackageDependency>(), true, repo, new Uri($@"{TestSources.NuGetV2Uri}/package/WindowsAzure.Storage/6.2.0"), "");
 
             // Act & Assert
             using (var packagesFolder = TestDirectory.Create())
@@ -78,7 +78,7 @@ namespace NuGet.Protocol.FuncTest
 
             var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
 
-            var package = new SourcePackageDependencyInfo("not-found", new NuGetVersion("6.2.0"), null, true, repo, new Uri($@"{TestSources.NuGetV2Uri}/package/not-found/6.2.0"), "");
+            var package = new SourcePackageDependencyInfo("not-found", new NuGetVersion("6.2.0"), Enumerable.Empty<PackageDependency>(), true, repo, new Uri($@"{TestSources.NuGetV2Uri}/package/not-found/6.2.0"), "");
 
             // Act
             using (var packagesFolder = TestDirectory.Create())

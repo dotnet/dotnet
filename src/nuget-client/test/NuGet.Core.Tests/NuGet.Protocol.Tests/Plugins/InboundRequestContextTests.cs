@@ -196,11 +196,10 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => test.Context.BeginFaultAsync(
-                        new Message(
+                        MessageUtilities.Create(
                             test.RequestId,
                             MessageType.Request,
-                            MessageMethod.GetOperationClaims,
-                            payload: null),
+                            MessageMethod.GetOperationClaims),
                         exception: null));
 
                 Assert.Equal("exception", exception.ParamName);
@@ -226,11 +225,10 @@ namespace NuGet.Protocol.Plugins.Tests
                     .Returns(Task.CompletedTask);
 
                 test.Context.BeginFaultAsync(
-                    new Message(
+                    MessageUtilities.Create(
                         test.RequestId,
                         MessageType.Request,
-                        MessageMethod.GetOperationClaims,
-                        payload: null),
+                        MessageMethod.GetOperationClaims),
                     new Exception("test"));
 
                 sentEvent.Wait();
@@ -272,11 +270,10 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => test.Context.BeginResponseAsync(
-                        new Message(
+                        MessageUtilities.Create(
                             test.RequestId,
                             MessageType.Progress,
-                            MessageMethod.GetOperationClaims,
-                            payload: null),
+                            MessageMethod.GetOperationClaims),
                         requestHandler: null,
                         responseHandler: Mock.Of<IResponseHandler>()));
 
@@ -291,11 +288,10 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => test.Context.BeginResponseAsync(
-                        new Message(
+                        MessageUtilities.Create(
                             test.RequestId,
                             type: MessageType.Progress,
-                            method: MessageMethod.GetOperationClaims,
-                            payload: null),
+                            method: MessageMethod.GetOperationClaims),
                         requestHandler: Mock.Of<IRequestHandler>(),
                         responseHandler: null));
 
@@ -324,11 +320,10 @@ namespace NuGet.Protocol.Plugins.Tests
                     .Returns(Task.CompletedTask);
 
                 test.Context.BeginResponseAsync(
-                    new Message(
+                    MessageUtilities.Create(
                         test.RequestId,
                         MessageType.Request,
-                        MessageMethod.GetOperationClaims,
-                        payload: null),
+                        MessageMethod.GetOperationClaims),
                     requestHandler.Object,
                     Mock.Of<IResponseHandler>());
 
@@ -370,11 +365,10 @@ namespace NuGet.Protocol.Plugins.Tests
                     .Returns(Task.CompletedTask);
 
                 test.Context.BeginResponseAsync(
-                    new Message(
+                    MessageUtilities.Create(
                         test.RequestId,
                         MessageType.Request,
-                        MessageMethod.GetOperationClaims,
-                        payload: null),
+                        MessageMethod.GetOperationClaims),
                     requestHandler.Object,
                     Mock.Of<IResponseHandler>());
 

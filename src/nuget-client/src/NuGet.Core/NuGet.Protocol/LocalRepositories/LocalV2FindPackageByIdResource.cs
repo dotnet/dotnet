@@ -176,7 +176,7 @@ namespace NuGet.Protocol
                     using (var fileStream = File.OpenRead(info.Path))
                     {
                         await fileStream.CopyToAsync(destination, cancellationToken);
-                        ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length));
+                        ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length, id));
                         return true;
                     }
                 }

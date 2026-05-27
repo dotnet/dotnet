@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <SignAssembly>false</SignAssembly>
+    <IsPackable>true</IsPackable>
+    <Description>Build artifact signing validation tool</Description>
+    <PackageTags>Arcade Signing Validation Tool</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RootNamespace>SignCheck</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>signcheck</ToolCommandName>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <ProjectReference Include="..\Microsoft.DotNet.SignCheckLibrary\Microsoft.DotNet.SignCheckLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Microsoft.DotNet.SignCheckLibrary\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

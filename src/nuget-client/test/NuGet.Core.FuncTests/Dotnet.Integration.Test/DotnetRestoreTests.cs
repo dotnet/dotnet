@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
+using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -115,22 +116,7 @@ EndGlobal";
 
                 _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.0", testOutputHelper: _testOutputHelper);
 
-                using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
-                {
-                    var xml = XDocument.Load(stream);
-
-                    var attributes = new Dictionary<string, string>() { { "Version", "1.0.0" } };
-
-                    ProjectFileUtils.AddItem(
-                        xml,
-                        "PackageReference",
-                        "TestPackage.AuthorSigned",
-                        string.Empty,
-                        new Dictionary<string, string>(),
-                        attributes);
-
-                    ProjectFileUtils.WriteXmlToFile(xml, stream);
-                }
+                ProjectFileUtils.AddItem(projectFile, "PackageReference", "TestPackage.AuthorSigned", string.Empty, new Dictionary<string, string>() { { "Version", "1.0.0" } });
 
                 _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
             }
@@ -804,7 +790,7 @@ EndGlobal";
 
                 Dictionary<string, string> environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 // Act
@@ -1412,7 +1398,7 @@ EndGlobal";
 
                 var environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 // Preconditions
@@ -1447,7 +1433,7 @@ EndGlobal";
 
                 var environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName1, " classlib", testOutputHelper: _testOutputHelper);
@@ -1485,7 +1471,7 @@ EndGlobal";
 
                 var environmentVariables = new Dictionary<string, string>
                 {
-                    { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                    { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
                 };
 
                 string directoryBuildPropsPath = Path.Combine(testDirectory, "Directory.Build.props");
@@ -3046,7 +3032,7 @@ EndGlobal";
 
             var environmentVariables = new Dictionary<string, string>()
             {
-                { "NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString() }
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
             };
 
             var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile}" + (isStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty), environmentVariables, testOutputHelper: _testOutputHelper);
@@ -4220,6 +4206,433 @@ EndGlobal";
             buildResult.AllOutput.Should().Contain("NU1702");
         }
 
+        // When a referenced project has an empty/invalid TargetFramework, the error should be attributed
+        // to the offending project (ProjectB), not the referencing project (ProjectA) or the solution.
+        [Theory]
+        [InlineData("", false, false)]
+        [InlineData("invalid", false, false)]
+        [InlineData("net8.0;net472", false, false)]
+        [InlineData("", true, false)]
+        [InlineData("invalid", true, false)]
+        [InlineData("net8.0;net472", true, false)]
+        [InlineData("", true, true)]
+        [InlineData("invalid", true, true)]
+        [InlineData("net8.0;net472", true, true)]
+        public void DotnetRestore_ProjectReferencesProjectWithInvalidTargetFramework_ErrorAttributedToReferencedProject(string invalidTargetFramework, bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            // Create ProjectB with an invalid TargetFramework
+            var projectBName = "ProjectB";
+            var projectBDirectory = Path.Combine(testDirectory, projectBName);
+            var projectBFile = Path.Combine(projectBDirectory, $"{projectBName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectBName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectBFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFramework", invalidTargetFramework);
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create ProjectA (valid TFM) with a ProjectReference to ProjectB
+            var projectAName = "ProjectA";
+            var projectADirectory = Path.Combine(testDirectory, projectAName);
+            var projectAFile = Path.Combine(projectADirectory, $"{projectAName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectAName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectAFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    projectBFile,
+                    string.Empty,
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>());
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act - restore ProjectA (which references ProjectB with the bad TFM)
+            var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            var result = _dotnetFixture.RestoreProjectExpectFailure(projectADirectory, projectAName, additionalArgs, environmentVariables, testOutputHelper: _testOutputHelper);
+
+            // Assert - the restore should fail and attribute the error to ProjectB (the offending project)
+            result.ExitCode.Should().NotBe(0);
+            result.AllOutput.Should().Contain("ProjectB");
+
+            // Assert - ProjectB's assets file behavior depends on the error path:
+            // Empty TFM throws during PackageSpec creation → caught → error spec with assets file
+            // Invalid/semicolon TFM parses silently → SpecValidationUtility rejects → no assets file
+            // https://github.com/NuGet/Home/issues/12943 tracks generating assets files in all error scenarios
+            var projectBAssetsFile = Path.Combine(projectBDirectory, "obj", "project.assets.json");
+            if (string.IsNullOrEmpty(invalidTargetFramework))
+            {
+                File.Exists(projectBAssetsFile).Should().BeTrue();
+                var lockFileFormat = new LockFileFormat();
+                var projectBLockFile = lockFileFormat.Read(projectBAssetsFile);
+                projectBLockFile.LogMessages.Should().NotBeEmpty();
+                projectBLockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1105);
+                var frameworkError = Assert.Throws<FrameworkException>(() => new NuGetFramework("").GetShortFolderName());
+                projectBLockFile.LogMessages[0].Message.Should().Be(
+                    string.Format(NuGet.Commands.Strings.Error_ReadingProjectInformation, projectBName, frameworkError.Message));
+            }
+            else
+            {
+                File.Exists(projectBAssetsFile).Should().BeFalse();
+                result.AllOutput.Should().Contain(string.Format(NuGet.Commands.Strings.SpecValidationInvalidFramework, invalidTargetFramework));
+            }
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void DotnetRestore_ProjectWithBadVersion_ErrorAttributedToProject(bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            // Create a project with a bad Version
+            var projectName = "ProjectA";
+            var projectDirectory = Path.Combine(testDirectory, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                xml.Root.Descendants("PropertyGroup").First().Add(new XElement("Version", "1.0.badversion"));
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act - restore the project with the bad Version
+            var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            var result = _dotnetFixture.RestoreProjectExpectFailure(projectDirectory, projectName, additionalArgs, environmentVariables, testOutputHelper: _testOutputHelper);
+
+            // Assert - the restore should fail with NU1105 attributed to the project
+            result.ExitCode.Should().NotBe(0);
+            result.AllOutput.Should().Contain(projectName);
+
+            // Assert - the assets file should exist and contain a NU1105 log entry about the bad version
+            var lockFileFormat = new LockFileFormat();
+            var assetsFile = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            File.Exists(assetsFile).Should().BeTrue();
+            var lockFile = lockFileFormat.Read(assetsFile);
+            lockFile.LogMessages.Should().NotBeEmpty();
+            lockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1105);
+            var versionError = Assert.Throws<ArgumentException>(() => NuGetVersion.Parse("1.0.badversion"));
+            lockFile.LogMessages[0].Message.Should().Be(
+                string.Format(NuGet.Commands.Strings.Error_ReadingProjectInformation, projectName, versionError.Message));
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void DotnetRestore_ProjectWithInvalidNuGetVersion_CreatesAssetsFileWithError(bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            // Create a project with a version that is valid semver but not a valid NuGet version (e.g. iOS app version)
+            var projectName = "ProjectA";
+            var projectDirectory = Path.Combine(testDirectory, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                xml.Root.Descendants("PropertyGroup").First().Add(new XElement("Version", "3.1.3a1"));
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Act - restore the project with the invalid NuGet version
+            var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            var result = _dotnetFixture.RestoreProjectExpectFailure(projectDirectory, projectName, additionalArgs, environmentVariables, testOutputHelper: _testOutputHelper);
+
+            // Assert - the restore should fail with the error attributed to the project
+            result.ExitCode.Should().NotBe(0);
+            result.AllOutput.Should().Contain(projectName);
+
+            // Assert - the assets file should exist and contain a NU1105 log entry
+            var lockFileFormat = new LockFileFormat();
+            var assetsFile = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            File.Exists(assetsFile).Should().BeTrue();
+            var lockFile = lockFileFormat.Read(assetsFile);
+            lockFile.LogMessages.Should().NotBeEmpty();
+            lockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1105);
+            var versionError = Assert.Throws<ArgumentException>(() => NuGetVersion.Parse("3.1.3a1"));
+            lockFile.LogMessages[0].Message.Should().Be(
+                string.Format(NuGet.Commands.Strings.Error_ReadingProjectInformation, projectName, versionError.Message));
+        }
+
+        [Theory]
+        [InlineData("", false, false)]
+        [InlineData("invalid", false, false)]
+        [InlineData("net8.0;net472", false, false)]
+        [InlineData("", true, false)]
+        [InlineData("invalid", true, false)]
+        [InlineData("net8.0;net472", true, false)]
+        [InlineData("", true, true)]
+        [InlineData("invalid", true, true)]
+        [InlineData("net8.0;net472", true, true)]
+        public void DotnetRestore_SolutionWithProjectWithInvalidTargetFramework_ErrorAttributedToReferencedProject(string invalidTargetFramework, bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            // Create ProjectB with an invalid TargetFramework
+            var projectBName = "ProjectB";
+            var projectBDirectory = Path.Combine(testDirectory, projectBName);
+            var projectBFile = Path.Combine(projectBDirectory, $"{projectBName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectBName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectBFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFramework", invalidTargetFramework);
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create ProjectA (valid TFM) with a ProjectReference to ProjectB
+            var projectAName = "ProjectA";
+            var projectADirectory = Path.Combine(testDirectory, projectAName);
+            var projectAFile = Path.Combine(projectADirectory, $"{projectAName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectAName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectAFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "ProjectReference",
+                    projectBFile,
+                    string.Empty,
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>());
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create a solution containing both projects
+            var solutionName = "TestSolution";
+            _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"new sln --name {solutionName}", testOutputHelper: _testOutputHelper);
+            var solutionFile = Path.Combine(testDirectory, $"{solutionName}.slnx");
+            _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln {solutionFile} add {projectAFile} {projectBFile}", testOutputHelper: _testOutputHelper);
+
+            // Act - restore the solution
+            var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            var result = _dotnetFixture.RestoreSolutionExpectFailure(testDirectory, solutionName, additionalArgs, environmentVariables, testOutputHelper: _testOutputHelper);
+
+            // Assert - the restore should fail and attribute the error to ProjectB (the offending project)
+            result.ExitCode.Should().NotBe(0);
+            result.AllOutput.Should().Contain("ProjectB");
+
+            // Assert - ProjectB's assets file behavior depends on the error path:
+            // Empty TFM throws during PackageSpec creation → caught → error spec with assets file
+            // Invalid/semicolon TFM parses silently → SpecValidationUtility rejects → no assets file
+            // https://github.com/NuGet/Home/issues/12943 tracks generating assets files in all error scenarios
+            var projectBAssetsFile = Path.Combine(projectBDirectory, "obj", "project.assets.json");
+            if (string.IsNullOrEmpty(invalidTargetFramework))
+            {
+                File.Exists(projectBAssetsFile).Should().BeTrue();
+                var lockFileFormat = new LockFileFormat();
+                var projectBLockFile = lockFileFormat.Read(projectBAssetsFile);
+                projectBLockFile.LogMessages.Should().NotBeEmpty();
+                projectBLockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1105);
+                var frameworkError = Assert.Throws<FrameworkException>(() => new NuGetFramework("").GetShortFolderName());
+                projectBLockFile.LogMessages[0].Message.Should().Be(
+                    string.Format(NuGet.Commands.Strings.Error_ReadingProjectInformation, projectBName, frameworkError.Message));
+            }
+            else
+            {
+                File.Exists(projectBAssetsFile).Should().BeFalse();
+                result.AllOutput.Should().Contain(string.Format(NuGet.Commands.Strings.SpecValidationInvalidFramework, invalidTargetFramework));
+            }
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public void DotnetRestore_SolutionWithCPMBadPackageVersion_ErrorAttributedToProject(bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            // Create ProjectA (valid)
+            var projectAName = "ProjectA";
+            var projectADirectory = Path.Combine(testDirectory, projectAName);
+            var projectAFile = Path.Combine(projectADirectory, $"{projectAName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectAName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectAFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "Newtonsoft.Json",
+                    string.Empty,
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>());
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create ProjectB (valid) with a package reference
+            var projectBName = "ProjectB";
+            var projectBDirectory = Path.Combine(testDirectory, projectBName);
+            var projectBFile = Path.Combine(projectBDirectory, $"{projectBName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectBName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectBFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "NuGet.Versioning",
+                    string.Empty,
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>());
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create Directory.Packages.props with CPM enabled and a bad version for one package
+            var directoryPackagesProps = Path.Combine(testDirectory, "Directory.Packages.props");
+            File.WriteAllText(directoryPackagesProps,
+@"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include=""Newtonsoft.Json"" Version=""13.0.3"" />
+    <PackageVersion Include=""NuGet.Versioning"" Version=""1.0.badversion"" />
+  </ItemGroup>
+</Project>");
+
+            // Create a solution containing both projects
+            var solutionName = "TestSolution";
+            _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"new sln --name {solutionName}", testOutputHelper: _testOutputHelper);
+            var solutionFile = Path.Combine(testDirectory, $"{solutionName}.slnx");
+            _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln {solutionFile} add {projectAFile} {projectBFile}", testOutputHelper: _testOutputHelper);
+
+            // Act - restore the solution
+            var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            var result = _dotnetFixture.RestoreSolutionExpectFailure(testDirectory, solutionName, additionalArgs, environmentVariables, testOutputHelper: _testOutputHelper);
+
+            // Assert - the restore should fail with the error attributed to ProjectB
+            result.ExitCode.Should().NotBe(0);
+            result.AllOutput.Should().Contain("ProjectB");
+
+            // Assert - ProjectB's assets file should exist and contain a NU1105 log entry
+            var lockFileFormat = new LockFileFormat();
+            var projectBAssetsFile = Path.Combine(projectBDirectory, "obj", "project.assets.json");
+            File.Exists(projectBAssetsFile).Should().BeTrue();
+            var projectBLockFile = lockFileFormat.Read(projectBAssetsFile);
+            projectBLockFile.LogMessages.Should().NotBeEmpty();
+            projectBLockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1105);
+            var versionError = Assert.Throws<ArgumentException>(() => VersionRange.Parse("1.0.badversion"));
+            projectBLockFile.LogMessages[0].Message.Should().Be(
+                string.Format(NuGet.Commands.Strings.Error_ReadingProjectInformation, projectBName, versionError.Message));
+
+            // Assert - ProjectA's assets file should exist (it has a valid version and should restore fine)
+            var projectAAssetsFile = Path.Combine(projectADirectory, "obj", "project.assets.json");
+            File.Exists(projectAAssetsFile).Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task DotnetRestore_CPMProjectWithSemicolonInTargetFramework_ErrorAttributedToProject(bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var testDirectory = pathContext.SolutionRoot;
+
+            // Create a local package
+            var packageX = new SimpleTestPackageContext("PackageX", "1.0.0");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageX);
+
+            // Create a project with TargetFramework (singular) containing semicolons — common mistake for multi-targeting
+            var projectName = "ProjectA";
+            var projectDirectory = Path.Combine(testDirectory, projectName);
+            var projectFile = Path.Combine(projectDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(testDirectory, projectName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFramework", "net10.0;net8.0");
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "PackageX",
+                    string.Empty,
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, string>());
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            // Create Directory.Packages.props with CPM enabled
+            var directoryPackagesProps = Path.Combine(testDirectory, "Directory.Packages.props");
+            File.WriteAllText(directoryPackagesProps,
+@"<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include=""PackageX"" Version=""1.0.0"" />
+  </ItemGroup>
+</Project>");
+
+            // Create a solution containing the project
+            var solutionName = "TestSolution";
+            _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"new sln --name {solutionName}", testOutputHelper: _testOutputHelper);
+            var solutionFile = Path.Combine(testDirectory, $"{solutionName}.slnx");
+            _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln {solutionFile} add {projectFile}", testOutputHelper: _testOutputHelper);
+
+            // Act - restore the solution
+            var additionalArgs = useStaticGraphRestore ? "/p:RestoreUseStaticGraphEvaluation=true" : string.Empty;
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            var result = _dotnetFixture.RestoreSolutionExpectFailure(testDirectory, solutionName, additionalArgs, environmentVariables, testOutputHelper: _testOutputHelper);
+
+            // Assert - the restore should fail with NU1105 attributed to the project
+            result.ExitCode.Should().NotBe(0);
+            result.AllOutput.Should().Contain(string.Format("{0} : error NU1105: {1}", projectFile, string.Format(NuGet.Commands.Strings.SpecValidationInvalidFramework, "net10.0;net8.0")));
+
+            // Assert - no assets file since SpecValidationUtility rejects the non-specific framework
+            // https://github.com/NuGet/Home/issues/12943 tracks generating assets files in all error scenarios
+            var assetsFile = Path.Combine(projectDirectory, "obj", "project.assets.json");
+            File.Exists(assetsFile).Should().BeFalse();
+        }
+
         private void AssertRelatedProperty(IList<LockFileItem> items, string path, string related)
         {
             var item = items.Single(i => i.Path.Equals(path));
@@ -4231,6 +4644,75 @@ EndGlobal";
             {
                 Assert.Equal(related, item.Properties["related"]);
             }
+        }
+
+        [Theory]
+        [InlineData(false, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(true, true, false)]
+        [InlineData(true, true, true)]
+        public async Task DotnetRestore_RestoreSourcesWithRelativePaths_ResolvedCorrectPath(bool useGlobalProperty, bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            const string packageId = "TestPackage";
+            var package100 = new SimpleTestPackageContext(packageId, "1.0.0");
+            var package200 = new SimpleTestPackageContext(packageId, "2.0.0");
+
+            // Create two source directories with different versions
+            var source1 = Path.Combine(pathContext.WorkingDirectory, "source1");
+            var source2 = Path.Combine(pathContext.WorkingDirectory, "source2");
+            Directory.CreateDirectory(source1);
+            Directory.CreateDirectory(source2);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(source1, PackageSaveMode.Defaultv3, package100);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(source2, PackageSaveMode.Defaultv3, package200);
+
+            // Create project with a floating version PackageReference, and RestoreSources pointing to source1 (which has v1.0.0)
+            var projectA = SimpleTestProjectContext.CreateNETCore(
+                "projectA",
+                pathContext.SolutionRoot,
+                NuGetFramework.Parse("net8.0"));
+
+            var packageRef = new SimpleTestPackageContext(packageId, "1.0.0");
+            packageRef.Version = "*";
+            projectA.AddPackageToAllFrameworks(packageRef);
+            projectA.Properties.Add("RestoreSources", "../../source1");
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            solution.Projects.Add(projectA);
+            solution.Create();
+
+            var environmentVariables = new Dictionary<string, string>
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+
+            // Build restore arguments
+            string arguments = $"restore projectA{Path.DirectorySeparatorChar}projectA.csproj";
+            if (useStaticGraphRestore)
+            {
+                arguments += " /p:RestoreUseStaticGraphEvaluation=true";
+            }
+            if (useGlobalProperty)
+            {
+                arguments += " /p:RestoreSources=../source2";
+            }
+
+            // Act
+            _dotnetFixture.RunDotnetExpectSuccess(
+                pathContext.SolutionRoot,
+                arguments,
+                environmentVariables,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert - check which version was extracted into the global packages folder
+            string expectedVersion = useGlobalProperty ? "2.0.0" : "1.0.0";
+            var packageDirectory = Path.Combine(pathContext.UserPackagesFolder, packageId.ToLowerInvariant(), expectedVersion);
+            Directory.Exists(packageDirectory).Should().BeTrue($"expected {packageId} {expectedVersion} to be in the global packages folder");
         }
     }
 }

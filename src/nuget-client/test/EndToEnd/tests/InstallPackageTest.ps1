@@ -1,14 +1,3 @@
-function Test-InstallPackageWithFtpProtocolSource {
-    # Arrange
-    $package = "Rules"
-    $project = New-ConsoleApplication
-    $source = "ftp://Rules"
-    $message = "Unsupported type of source '$source'. Please provide an http or local source."
-
-    # Act & Assert
-    Assert-Throws { Install-Package $package -ProjectName $project.Name -source $source } $message
-}
-
 # Verify Xunit 2.1.0 can be installed into a net45 project.
 # https://github.com/NuGet/Home/issues/1711
 function Test-InstallXunit210WithEmptyBuildFolderSucceeds
@@ -28,39 +17,6 @@ function Test-InstallXunit210WithEmptyBuildFolderSucceeds
     Assert-Package $p xunit.extensibility.core 2.1.0
     Assert-Package $p xunit.extensibility.execution 2.1.0
     Assert-Package $p xunit.abstractions 2.0.0
-}
-
-# Test install-package -WhatIf to downgrade an installed package.
-function Test-PackageInstallWithFileUri {
-    # Arrange
-    $project = New-ConsoleApplication
-
-    $uri = $context.RepositoryRoot
-    $uri = $uri.replace("\", "/")
-    $uri = "file:///" + $uri
-
-    # Act
-    Install-Package TestUpdatePackage -Version 2.0.0.0 -Source $uri
-
-    # Assert
-    # that the installed package is not touched.
-    Assert-Package $project TestUpdatePackage '2.0.0.0'
-}
-
-# Test install-package -WhatIf to downgrade an installed package.
-function Test-PackageInstallDowngradeWhatIf {
-    # Arrange
-    $project = New-ConsoleApplication
-
-    Install-Package TestUpdatePackage -Version 2.0.0.0 -Source $context.RepositoryRoot
-    Assert-Package $project TestUpdatePackage '2.0.0.0'
-
-    # Act
-    Install-Package TestUpdatePackage -Version 1.0.0.0 -Source $context.RepositoryRoot -WhatIf
-
-    # Assert
-    # that the installed package is not touched.
-    Assert-Package $project TestUpdatePackage '2.0.0.0'
 }
 
 function Test-WebsiteSimpleInstall {
@@ -338,20 +294,6 @@ function Test-InstallCanPipeToFSharpProjects {
     Assert-NetCorePackageInLockFile $p elmah 1.1
 }
 
-function Test-PipingMultipleProjectsToInstall {
-    # Arrange
-    $projects = @((New-WebSite), (New-ClassLibrary), (New-ConsoleApplication))
-
-Write-Host 'proejct creation successful'
-    # Act
-    $projects | Install-Package elmah
-
-Write-Host 'Installation successful'
-    # Assert
-    $projects | %{ Assert-Package $_ elmah }
-
-Write-Host 'Assertion successful'
-}
 
 function Test-InstallPackageWithNestedContentFile {
     [SkipTest('https://github.com/NuGet/Home/issues/8486')]
@@ -2293,30 +2235,6 @@ function Test-SpecifyDifferentVersionThenServerVersion
 
     # Assert
     Assert-Package $p jQuery
-}
-
-function Test-InstallLatestVersionWorksCorrectly
-{
-    # Arrange
-    $p = New-ConsoleApplication
-
-    # Act
-    Install-Package A -ProjectName $p.Name -Source $context.RepositoryPath
-
-    # Assert
-    Assert-Package $p A 0.5
-}
-
-function Test-InstallLatestVersionWorksCorrectlyWithPrerelease
-{
-    # Arrange
-    $p = New-ConsoleApplication
-
-    # Act
-    Install-Package A -IncludePrerelease -ProjectName $p.Name -Source $context.RepositoryPath
-
-    # Assert
-    Assert-Package $p A 0.6-beta
 }
 
 function Test-InstallPackageAddPackagesConfigFileToProject

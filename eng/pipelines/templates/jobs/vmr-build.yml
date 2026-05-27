@@ -163,6 +163,20 @@ parameters:
   type: boolean
   default: false
 
+# Source Index: name for the uploaded source index bundle (e.g., 'dotnet-dotnet').
+# When set, processes per-repo Build.binlog files and uploads SLN data.
+- name: sourceIndexName
+  type: string
+  default: ''
+
+- name: sourceIndexExcludeRepos
+  type: string
+  default: ''
+
+- name: sourceIndexIncludeRepos
+  type: string
+  default: ''
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -615,6 +629,7 @@ jobs:
           -excludeCIBinarylog
           /bl:artifacts/log/Release/Test.binlog
         displayName: Run Tests
+        name: RunTests
         workingDirectory: ${{ variables.sourcesPath }}
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
@@ -758,7 +773,7 @@ jobs:
             extraBuildProperties="$extraBuildProperties $(signProperties)"
           else
             customBuildArgs="$customBuildArgs --source-only"
-            extraBuildProperties="$extraBuildProperties /p:ReportSbrpUsage=true"
+            extraBuildProperties="$extraBuildProperties /p:ReportSbaUsage=true"
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
@@ -892,6 +907,7 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
+        name: RunTests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ if eq(parameters.sign, 'True') }}:
@@ -925,6 +941,15 @@ jobs:
           enableMicrobuild: true
           enableMicrobuildForMacAndLinux: true
 
+  - ${{ if and(ne(parameters.sourceIndexName, ''), eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - template: ../steps/source-index-stage1.yml
+      parameters:
+        sourceIndexName: ${{ parameters.sourceIndexName }}
+        sourcesPath: $(sourcesPath)
+        logsPath: $(sourcesPath)/artifacts/log/Release
+        excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
+        includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
+
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
     displayName: Copy logs to BuildLogs staging
@@ -936,7 +961,7 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
-  # Only copy test results when tests ran
+  # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: CopyFiles@2
       displayName: Copy TestResults to BuildLogs staging
@@ -946,7 +971,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -968,11 +993,11 @@ jobs:
       continueOnError: true
       condition: always()
 
-  # Only upload test results when tests ran
+  # Only upload test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
       continueOnError: true
       inputs:
         testRunner: VSTest

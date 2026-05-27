@@ -36,7 +36,7 @@ Some pipelines we cannot give an accurate prediction for. Typically, this is bec
 
 ### Known Issues
 
-If a [Critical Known Issue](../Projects/Build%20Analysis/KnownIssues.md) has been created, we will not show a prediction, and instead inform you that there is a critical known issue that could affect the estimated times.
+If a [Critical Known Issue](../Build%20Analysis/KnownIssues.md) has been created, we will not show a prediction, and instead inform you that there is a critical known issue that could affect the estimated times.
 
 ### Not enough data
 
@@ -76,8 +76,3 @@ This list are queues that are hosted in a data center managed by DDFUN. These qu
 # Build Pools
 
 This section shows you what build pools are used, separated by 1ES Hosted and Microsoft Hosted. There are hyperlinks here to direct you to documentation about packages and software installed by default on these build machines.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CQueue-Insights-Documentation.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CQueue-Insights-Documentation.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CQueue-Insights-Documentation.md)</sub>
-<!-- End Generated Content-->

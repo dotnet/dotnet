@@ -77,7 +77,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                                 assetsFile.PackageSpec.Name,
                                 targetPackage));
 
-                        DependencyGraphPrinter.PrintAllDependencyGraphs(dependencyGraphPerFramework, targetPackage, whyCommandArgs.Logger);
+                        DependencyGraphPrinter.PrintAllDependencyGraphs(dependencyGraphPerFramework, targetPackage, whyCommandArgs.Logger, whyCommandArgs.DotnetVersionChecker);
                     }
                     else
                     {

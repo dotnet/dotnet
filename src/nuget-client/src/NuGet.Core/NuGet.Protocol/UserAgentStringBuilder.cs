@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 #if NETCOREAPP
 using System;
 #endif
@@ -22,9 +20,9 @@ namespace NuGet.Protocol.Core.Types
         private const string UserAgentTemplate = "{0}/{1}";
 
         private readonly string _clientName;
-        private string _vsInfo;
-        private string _osInfo;
-        private string _ciInfo;
+        private string? _vsInfo;
+        private string? _osInfo;
+        private string? _ciInfo;
 
         public UserAgentStringBuilder()
             : this(DefaultNuGetClientName)
@@ -54,7 +52,7 @@ namespace NuGet.Protocol.Core.Types
 
         public string NuGetClientVersion { get; }
 
-        public UserAgentStringBuilder WithVisualStudioSKU(string vsInfo)
+        public UserAgentStringBuilder WithVisualStudioSKU(string? vsInfo)
         {
             _vsInfo = vsInfo;
             return this;

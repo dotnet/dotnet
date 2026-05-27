@@ -19,7 +19,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_InitializesMessageProperty()
         {
-            var message = new Message(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
+            var message = MessageUtilities.Create(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
             var args = new MessageEventArgs(message);
 
             Assert.Same(message, args.Message);

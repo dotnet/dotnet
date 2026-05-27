@@ -70,8 +70,16 @@ namespace Microsoft.DotNet.SignTool
                 var output = new StringBuilder();
                 var error = new StringBuilder();
 
-                process.OutputDataReceived += (sender, e) => output.AppendLine(e.Data);
-                process.ErrorDataReceived += (sender, e) => error.AppendLine(e.Data);
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null) return;
+                    output.AppendLine(e.Data);
+                };
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    if (e.Data == null) return;
+                    error.AppendLine(e.Data);
+                };
 
                 process.Start();
                 process.BeginOutputReadLine();
@@ -87,6 +95,14 @@ namespace Microsoft.DotNet.SignTool
                     process.Kill();
                     process.WaitForExit();
                     success = false;
+                }
+                else
+                {
+                    // When WaitForExit(timeout) returns true, the asynchronous output/error
+                    // event handlers are not guaranteed to have drained. The parameterless
+                    // WaitForExit() overload blocks until they have, which is required before
+                    // reading the StringBuilders below.
+                    process.WaitForExit();
                 }
 
                 if (process.ExitCode != 0)
@@ -105,7 +121,7 @@ namespace Microsoft.DotNet.SignTool
                 {
                     File.WriteAllText(logPath, outputStr);
                 }
-                
+
                 string errorStr = error.ToString().Trim();
                 if (!string.IsNullOrWhiteSpace(errorStr))
                 {

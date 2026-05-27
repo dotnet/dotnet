@@ -454,6 +454,11 @@
         <target state="translated">La proprietà '{0}' non deve essere Null o vuota.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">Non è possibile aggiungere il repository attendibile. Il pacchetto non è firmato o controfirmato dal repository.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">{0} PackageReference non verrà rimosso. È consigliabile rimuovere questo pacchetto dalle dipendenze, poiché è probabile che non sia necessario.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} non verrà rimosso. Questo pacchetto è disponibile automaticamente e non è necessario fare riferimento ad esso in modo esplicito. Rimuovere l'elemento PackageReference.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1495,6 +1500,12 @@ NuGet richiede origini HTTPS. Vedi https://aka.ms/nuget-https-everywhere per alt
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
         <target state="translated">In {0} non è specificato un limite inferiore inclusivo per la dipendenza {1}. {2} è stato risolto.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">Il pacchetto ''{0}'' {1} usa il framework MonoAndroid deprecato invece di ''net6.0-android'' o versione successiva. Prendere in considerazione l'aggiornamento a una versione più recente di questo pacchetto o contattare l'autore del pacchetto.</target>
+        <note>{0} - package id
+{1} - package version</note>
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>

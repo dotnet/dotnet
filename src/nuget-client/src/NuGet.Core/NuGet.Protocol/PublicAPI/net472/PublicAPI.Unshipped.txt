@@ -1,1 +1,6 @@
 #nullable enable
+NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.PackageId.get -> string!
+NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.ProtocolDiagnosticNupkgCopiedEvent(string! source, long fileSize, string! packageId) -> void
+NuGet.Protocol.RepositoryCertificateInfo.NotAfter.init -> void
+NuGet.Protocol.RepositoryCertificateInfo.NotBefore.init -> void
+~static NuGet.Protocol.Plugins.MessageUtilities.SerializePayload(NuGet.Protocol.Plugins.Message message) -> string

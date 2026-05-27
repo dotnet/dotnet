@@ -90,9 +90,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. Open a PR.
 
-1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
-   This will validate the new external will build without adding prebuilts.
-   It will also ensure the external does not contain prohibited checked-in binaries.
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-assets-unified-build` comment.
 
 #### Updating an External Component to a Newer Version
 
@@ -134,7 +132,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. Open a PR.
 
-1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-assets-unified-build` comment.
    This will validate the new version will build without adding prebuilts.
    It will also ensure the new version does not contain prohibited checked-in binaries.
 
@@ -300,20 +298,25 @@ Other source build related issues should be opened in [dotnet/source-build](http
 Periodically, packages that are unreferenced by the product source build should be deleted. The number of
 unreferenced packages build up over time as the product repositories upgrade their dependencies to newer
 versions. Ideally this cleanup would be performed around RC1 timeframe as the product locks down in preparation
-for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbrpUsage`
-option to generate an SBRP package usage report. The resulting report will be written to
-`artifacts/log/<configuration>/sbrpPackageUsage.json`.
+for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbaUsage`
+option to generate an SBA package usage report. The resulting report will be written to
+`artifacts/log/<configuration>/sbaPackageUsage.json`.
 
 ``` bash
-./build.sh -sb /p:ReportSbrpUsage=true
+./build.sh -sb /p:ReportSbaUsage=true
 ```
 
-The VMR CI runs with the `ReportSbrpUsage` option set therefore you can grab the usage report from any build's
+The VMR CI runs with the `ReportSbaUsage` option set therefore you can grab the usage report from any build's
 artifacts.
 
-> **Note:** [The package usage report does not currently support external packages](https://github.com/dotnet/source-build/issues/3405).
+The [cleanup-unreferenced-packages](.github/skills/cleanup-unreferenced-packages/skill.md) AI skill
+provides an intelligent cleanup workflow that:
 
-The [source-build-reference-packages-cleanup-unreferenced-packages](https://dev.azure.com/dnceng/internal/_build?definitionId=1426) pipeline can be utilized to remove unreferenced packages.
+- Automatically detects packages added to SBA that haven't flowed into the VMR yet
+- Reads a [config file](.github/skills/cleanup-unreferenced-packages/cleanup-packages-config.json) of known false positives
+- Prompts the user to identify packages whose uptake in the VMR is still in progress before deletion
+
+To invoke the skill, ask an AI agent to "clean up unreferenced packages" in this repository.
 
 ## License
 

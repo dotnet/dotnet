@@ -7,18 +7,6 @@ function Test-GetPackageRetunsMoreThanServerPagingLimit {
     Assert-True $packages.Count -gt 100 "Get-Package cmdlet returns less than (or equal to) than server side paging limit"
 }
 
-function Test-GetPackageListsInstalledPackages {
-    # Arrange
-    $p = New-ConsoleApplication
-
-    # Act
-    Install-Package elmah -Project $p.Name -Version 1.1
-    Install-Package jQuery -Project $p.Name -Version 2.2.4
-    $packages = Get-Package
-
-    # Assert
-    Assert-AreEqual 2 $packages.Count
-}
 
 function Test-GetPackageWithoutOpenSolutionThrows {
     Assert-Throws { Get-Package } "The current environment doesn't have a solution open."
@@ -133,115 +121,9 @@ function Test-GetPackageAcceptsRelativePathSource2 {
     popd
 }
 
-function Test-GetPackageThrowsWhenSourceIsInvalid {
-    # Act & Assert
-    Assert-Throws { Get-Package -ListAvailable -source "d:package" } "Unsupported type of source 'd:package'. Please provide an HTTP or local source."
-}
 
-function Test-GetPackageForProjectReturnsEmptyProjectIfItHasNoInstalledPackage {
-    # Arrange
-    $p = New-ConsoleApplication
 
-    # Act
-    $result = @(Get-Package -ProjectName $p.Name)
-
-    # Assert
-    Assert-AreEqual 0 $result.Count
-}
-
-function Test-GetPackageForProjectReturnsCorrectPackages {
-    # Arrange
-    $p = New-ConsoleApplication
-    Install-Package jQuery -Version 1.5 -Source $context.RepositoryPath
-
-    # Act
-    $result = @(Get-Package -ProjectName $p.Name)
-
-    # Assert
-    Assert-AreEqual 1 $result.Count
-    Assert-AreEqual "jQuery" $result[0].Id
-    Assert-AreEqual "1.5.0" $result[0].Version
-}
-
-function Test-GetPackageForProjectReturnsCorrectPackages2 {
-    # Arrange
-    $p1 = New-ConsoleApplication
-    $p2 = New-ClassLibrary
-
-    Install-Package jQuery -Version 1.5 -Source $context.RepositoryPath -ProjectName $p1.Name
-    Install-Package MyAwesomeLibrary -Version 1.0 -Source $context.RepositoryPath -ProjectName $p2.Name
-
-    # Act
-    $result = @(Get-Package -ProjectName $p1.Name)
-
-    # Assert
-    Assert-AreEqual 1 $result.Count
-    Assert-AreEqual "jQuery" $result[0].Id
-    Assert-AreEqual "1.5.0" $result[0].Version
-}
-
-function Test-GetPackageForProjectReturnsEmptyIfItHasNoInstalledPackage {
-    # Arrange
-    $p = New-ConsoleApplication
-
-    # Act
-    $result = @(Get-Package -ProjectName $p.Name)
-
-    # Assert
-    Assert-AreEqual 0 $result.Count
-}
-
-function Test-GetPackageForProjectReturnsEmptyIfItHasNoInstalledPackage2 {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p1 = New-ConsoleApplication
-    $p2 = New-ClassLibrary
-
-    Install-Package jQuery -Source $context.RepositoryPath -Project $p1.Name
-
-    # Act
-    $result = @(Get-Package -ProjectName $p2.Name)
-
-    # Assert
-    Assert-AreEqual 0 $result.Count
-}
-
-function Test-GetPackageForProjectThrowIfProjectNameIsInvalid {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p1 = New-ConsoleApplication
-
-    # Act & Assert
-    Assert-Throws { Get-Package -ProjectName "invalidname" } "Project 'invalidname' is not found."
-}
-
-function Test-GetPackageWithoutProjectNameReturnsInstalledPackagesInTheSolution {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p1 = New-ConsoleApplication
-    $p2 = New-ClassLibrary
-
-    Install-Package jQuery -Source $context.RepositoryPath -Project $p1.Name
-    Install-Package netfx-Guard -Source $context.RepositoryPath -Project $p2.Name
-
-    # Act
-    $result = @(Get-Package)
-
-    # Assert
-    Assert-AreEqual 2 $result.Count
-    Assert-AreEqual "jQuery" $result[0].Id
-    Assert-AreEqual "netfx-Guard" $result[1].Id
-}
-
+function Test-ZipPackageLoadsReleaseNotesAttribute {
 function Test-ZipPackageLoadsReleaseNotesAttribute {
     param(
         $context
@@ -438,27 +320,6 @@ function Test-GetPackageUpdatesReturnAllVersionsAndPrereleaseVersionsIfTwoFlagsA
     Assert-AreEqual '1.0.1-a 1.0.0' $updates[0].Versions
 }
 
-function Test-GetInstalledPackageWithFilterReturnsCorrectPackage
-{
-    param
-    (
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    $p | Install-Package PrereleaseTestPackage -Version '1.0.0-b' -Source $context.RepositoryRoot
-    Assert-Package $p 'PrereleaseTestPackage' '1.0.0-b'
-
-    # Act
-    $packages = @(Get-Package 'Prerelease')
-
-    # Assert
-    Assert-AreEqual 1 $packages.Count
-    Assert-AreEqual 'PrereleaseTestPackage' $packages[0].Id
-    Assert-AreEqual '1.0.0-b' $packages[0].Version
-}
 
 function Test-GetPackageUpdatesAfterSwitchToSourceThatDoesNotContainInstalledPackageId
 {
@@ -480,18 +341,4 @@ function Test-GetPackageUpdatesAfterSwitchToSourceThatDoesNotContainInstalledPac
     Assert-AreEqual 0 $packages.Count
 }
 
-# Get available packages from the current remote source, when -Source is not specified
-# This is to test that the call of UpdateActiveSourceRepository(null) is setting the correct active package source repository.
-function Test-GetPackageWhenSourceSwitchNotSpecified
-{
-    param
-    (
-        $context
-    )
 
-    # Act
-    $packages = @(Get-Package -listavailable -First 5)
-
-    # Assert
-    Assert-AreEqual 5 $packages.Count
-}

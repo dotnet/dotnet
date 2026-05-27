@@ -735,12 +735,8 @@ An upstack build on a PR is a typical channel branch with the following modifica
 
 ### Unified Build
 
-Unified Build is a new way of constructing .NET used for .NET 10 onwards. Documentation on this topic can be found at [UnifiedBuild](UnifiedBuild)
+Unified Build is a new way of constructing .NET used for .NET 10 onwards.
 
 ## Tooling
 
 Documentation on the tooling used to create and manipulate channels and subscriptions can be found at [Darc.md](Darc.md)
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CBranchesChannelsAndSubscriptions.md)](https://helix.dot.net/f/p/5?p=Documentation%5CBranchesChannelsAndSubscriptions.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CBranchesChannelsAndSubscriptions.md)</sub>
-<!-- End Generated Content-->

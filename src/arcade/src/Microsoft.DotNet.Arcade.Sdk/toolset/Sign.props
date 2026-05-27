@@ -135,8 +135,6 @@
 
     <!-- Verbosity for DotNet MicroBuild build command. -->
     <SignToolMSBuildVerbosity Condition="'$(SignToolMSBuildVerbosity)' == ''">quiet</SignToolMSBuildVerbosity>
-
-    <NETCORE_ENGINEERING_TELEMETRY>Signing</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
   <!-- Sign tool parallelism limits. These may be overridden by a repo. -->

@@ -103,7 +103,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <_RemoveProps>Projects;Restore;Deploy;Sign;Publish;NETCORE_ENGINEERING_TELEMETRY;@(_SolutionBuildTargets)</_RemoveProps>
+      <_RemoveProps>Projects;Restore;Deploy;Sign;Publish;@(_SolutionBuildTargets)</_RemoveProps>
     </PropertyGroup>
 
     <ItemGroup>
@@ -164,7 +164,7 @@
     -->
     <MSBuild Projects="Tools.proj"
              Targets="Restore"
-             Properties="@(_RestoreToolsProps);_NETCORE_ENGINEERING_TELEMETRY=Restore"
+             Properties="@(_RestoreToolsProps)"
              Condition="'$(Restore)' == 'true'"/>
 
     <!--
@@ -184,7 +184,6 @@
     <ItemGroup>
       <_SolutionRestoreProps Include="@(_SolutionBuildProps)" />
       <_SolutionRestoreProps Include="__BuildPhase=SolutionRestore" />
-      <_SolutionRestoreProps Include="_NETCORE_ENGINEERING_TELEMETRY=Restore" />
       <_SolutionRestoreProps Include="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
       <_SolutionRestoreProps Include="RestoreUseStaticGraphEvaluation=$(RestoreUseStaticGraphEvaluation)" />
       <_SolutionRestoreProps Include="RestoreEmbedFilesInBinlog=true" />
@@ -226,8 +225,15 @@
         <RestoreInParallel>true</RestoreInParallel>
       </_ProjectToRestore>
 
-      <!-- Invoke the 'Restore' target on solutions and projects which do not support NuGet. -->
-      <_ProjectToRestore Include="@(ProjectToBuild)" Exclude="@(_ProjectToRestoreWithNuGet)" />
+      <!--
+        Invoke the 'Restore' target on solutions and projects which do not support NuGet.
+        Project paths are normalized via %(FullPath) on both sides so that user-supplied
+        paths with redundant separators (e.g. '/repo//src/foo.csproj') still match the
+        NuGet-normalized paths returned by _IsProjectRestoreSupported. Without this
+        normalization the Exclude can miss, causing the same project to be restored
+        twice in parallel and racing on project.assets.json.
+      -->
+      <_ProjectToRestore Include="@(ProjectToBuild->'%(FullPath)')" Exclude="@(_ProjectToRestoreWithNuGet->'%(FullPath)')" />
     </ItemGroup>
 
     <!-- Enable binlog generation during static graph restore evaluation -->
@@ -257,7 +263,7 @@
     <CallTarget Targets="ExecuteBuildTargets" Condition="'@(_SolutionBuildTargets)' != ''" />
 
     <MSBuild Projects="AfterSolutionBuild.proj"
-             Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Build"
+             Properties="@(_CommonProps)"
              Targets="@(_SolutionBuildTargets)"
              Condition="'@(_SolutionBuildTargets)' != ''" />
 
@@ -270,7 +276,7 @@
              Condition="'$(Sign)' == 'true'"/>
 
     <MSBuild Projects="AfterSigning.proj"
-             Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=Sign"
+             Properties="@(_CommonProps)"
              Targets="@(_SolutionBuildTargets)"
              Condition="'@(_SolutionBuildTargets)' != ''" />
 
@@ -281,7 +287,7 @@
     </ItemGroup>
 
     <MSBuild Projects="Publish.proj"
-             Properties="@(_PublishProps);_NETCORE_ENGINEERING_TELEMETRY=Publish"
+             Properties="@(_PublishProps)"
              Targets="Execute"
              Condition="'$(Publish)' == 'true'"/>
   </Target>
@@ -291,7 +297,7 @@
           Outputs="unused"
           DependsOnTargets="InitializeSolutionBuildInputs">
     <MSBuild Projects="@(ProjectToBuild)"
-             Properties="@(_SolutionBuildProps);__BuildPhase=SolutionBuild;_NETCORE_ENGINEERING_TELEMETRY=Build"
+             Properties="@(_SolutionBuildProps);__BuildPhase=SolutionBuild"
              RemoveProperties="$(_RemoveProps)"
              Targets="@(_SolutionBuildTargets)"
              BuildInParallel="%(ProjectToBuild.BuildInParallel)" />

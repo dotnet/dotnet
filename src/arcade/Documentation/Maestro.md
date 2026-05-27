@@ -45,8 +45,3 @@ For example, a change originating in CoreCLR would have bits flowed in the follo
 It answers the question of “what would the product (or subproduct) look like if a specific version of a repo was injected into the dependency graph. 
 While these assets are generated in the process of flowing dependencies, the “default” model is to abort the flow if tests fail.  When attempting a speculative product build, the flow could be continued, without committing results, as long as builds complete successfully.
 The important part to recognize is that a speculative product build is NOT a shippable product.  It is intended to be used by devs as a “what if” tool to view a commit in context of other repositories.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CMaestro.md)](https://helix.dot.net/f/p/5?p=Documentation%5CMaestro.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CMaestro.md)</sub>
-<!-- End Generated Content-->

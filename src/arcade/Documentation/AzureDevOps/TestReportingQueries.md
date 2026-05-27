@@ -289,8 +289,3 @@ This Power BI page contains the following reports:
 This report tracks the usage and trends of the feedback we receive via the sentiment tracker in the Build Analysis check on the PRs. 
 
 :part_alternation_mark: [Link](https://msit.powerbi.com/groups/de8c4cb8-b06d-4af8-8609-3182bb4bdc7c/reports/e6deb422-46fc-4f80-8892-ba7036081986/ReportSection) to Power BI Report
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CAzureDevOps%5CTestReportingQueries.md)](https://helix.dot.net/f/p/5?p=Documentation%5CAzureDevOps%5CTestReportingQueries.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CAzureDevOps%5CTestReportingQueries.md)</sub>
-<!-- End Generated Content-->

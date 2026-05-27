@@ -73,8 +73,3 @@ Actual:   typeof(System.Net.WebException): An error occurred while sending the r
 </dl>
 
 #### ... and 3 other tests [[All Test Results]](https://dev.azure.com/dnceng/public/_build/results?buildId=975143&view=ms.vss-test-web.build-test-results-tab)
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CUnique-Test-Failure.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CUnique-Test-Failure.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CUnique-Test-Failure.md)</sub>
-<!-- End Generated Content-->
