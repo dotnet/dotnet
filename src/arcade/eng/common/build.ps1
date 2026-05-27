@@ -173,7 +173,6 @@ try {
     if (-not $excludeCIBinarylog) {
       $binaryLog = $true
     }
-    $nodeReuse = $false
   }
 
   if (-not [string]::IsNullOrEmpty($binaryLogName)) {

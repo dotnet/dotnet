@@ -103,10 +103,10 @@ if [ $onlyDocChanged = 0 ]
 then
     if [ "$skipTests" = true ]
     then
-        . "$ScriptRoot/common/build.sh" --restore --build --ci --nodereuse false --configuration $configuration $properties $extra_properties $stage2Properties
+        . "$ScriptRoot/common/build.sh" --restore --build --ci --configuration $configuration $properties $extra_properties $stage2Properties
     else
-        . "$ScriptRoot/common/build.sh" --restore --build --test --ci --nodereuse false --configuration $configuration $properties $extra_properties $stage2Properties
+        . "$ScriptRoot/common/build.sh" --restore --build --test --ci --configuration $configuration $properties $extra_properties $stage2Properties
     fi
 else
-    . "$ScriptRoot/common/build.sh" --restore --build --ci --nodereuse false --configuration $configuration /p:CreateBootstrap=false $properties $extra_properties $stage2Properties
+    . "$ScriptRoot/common/build.sh" --restore --build --ci --configuration $configuration /p:CreateBootstrap=false $properties $extra_properties $stage2Properties
 fi
