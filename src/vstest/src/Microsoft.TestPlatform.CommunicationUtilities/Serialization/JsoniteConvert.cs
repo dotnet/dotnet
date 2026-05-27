@@ -327,6 +327,12 @@ internal static class JsoniteConvert
     private static object? DeserializeTestObject(object? value, Type targetType)
     {
         if (value is not IDictionary<string, object> dict) return null;
+
+        // TestObject is abstract — use TestCase as a concrete property-bag carrier,
+        // matching the approach used in the STJ TestObjectBaseConverter.
+        if (targetType.IsAbstract)
+            targetType = typeof(TestCase);
+
         var ctor = targetType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
         var inst = ctor is not null ? (TestObject)ctor.Invoke(Array.Empty<object>()) : (TestObject)FormatterServices.GetUninitializedObject(targetType);
         if (dict.TryGetValue("Properties", out var po) && po is IList pl)
@@ -492,7 +498,7 @@ internal static class JsoniteConvert
         if (targetType == typeof(TestExecutionContext)) return DeserializeTestExecutionContext(value);
         if (targetType == typeof(TestProcessAttachDebuggerPayload)) return DeserializeTestProcessAttachDebuggerPayload(value);
         if (targetType == typeof(AfterTestRunEndResult)) return DeserializeAfterTestRunEndResult(value);
-        if (typeof(TestObject).IsAssignableFrom(targetType) && targetType != typeof(TestObject)) return DeserializeTestObject(value, targetType);
+        if (typeof(TestObject).IsAssignableFrom(targetType)) return DeserializeTestObject(value, targetType);
 
         if (targetType == typeof(string)) return Convert.ToString(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(bool)) { if (value is bool bv) return bv; if (value is string bs) return bool.Parse(bs); return Convert.ToBoolean(value, CultureInfo.InvariantCulture); }
