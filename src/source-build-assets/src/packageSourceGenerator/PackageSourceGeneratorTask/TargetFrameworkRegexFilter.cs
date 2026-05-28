@@ -3,16 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
     internal class TargetFrameworkRegexFilter
     {
-        private const char TargetFrameworkDelimiter = ';';
         private readonly Regex? _includeTargetFrameworks;
         private readonly Regex? _excludeTargetFrameworks;
         private readonly HashSet<string> _foundExcludedTargetFrameworks = new();
@@ -22,8 +19,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// </summary>
         public IReadOnlySet<string> FoundExcludedTargetFrameworks => _foundExcludedTargetFrameworks;
 
-        public TargetFrameworkRegexFilter(string? includeTargetFrameworks,
-            string? excludeTargetFrameworks)
+        public TargetFrameworkRegexFilter(IEnumerable<string>? includeTargetFrameworks,
+            IEnumerable<string>? excludeTargetFrameworks)
         {
             _includeTargetFrameworks = TransformPatternsToRegexList(includeTargetFrameworks);
             _excludeTargetFrameworks = TransformPatternsToRegexList(excludeTargetFrameworks);
@@ -53,12 +50,19 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             return true;
         }
 
-        private static Regex? TransformPatternsToRegexList(string? patterns)
+        private static Regex? TransformPatternsToRegexList(IEnumerable<string>? patterns)
         {
-            if (string.IsNullOrWhiteSpace(patterns))
+            if (patterns is null)
                 return null;
 
-            string pattern = patterns.Split(TargetFrameworkDelimiter, StringSplitOptions.RemoveEmptyEntries)
+            string[] patternArray = patterns
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .ToArray();
+
+            if (patternArray.Length == 0)
+                return null;
+
+            string pattern = patternArray
                 .Select(p => Regex.Escape(p).Replace("\\*", ".*"))
                 .Aggregate((p1, p2) => p1 + "|" + p2);
             pattern = $"^(?:{pattern})$";
