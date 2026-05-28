@@ -223,7 +223,17 @@ generated packages show changes when being regenerated.
     1. The generate tooling has changed since the last time this package was generated.
        The new changes should be considered better/correct and should be committed.
 
-1. Run build with the `./build.sh -sb` command.
+1. Run build with the `./build.sh -sb` command. This includes API compatibility validation
+   that compares the generated package against the official baseline from NuGet.
+
+1. If the build produces **API compatibility errors** (e.g., CP0001, CP0002, CP0008, CP0021):
+   - Determine whether the difference is a real API gap (fix the generated code) or a
+     generator limitation (the generator cannot perfectly reproduce certain metadata).
+   - For generator limitations, ensure there is a tracking issue in
+     [dotnet/sdk](https://github.com/dotnet/sdk/issues) with the `Area-GenAPI` label.
+   - Add a `CompatibilitySuppressions.xml` file in the package version directory.
+     You can auto-generate it by building with `/p:GenerateCompatibilitySuppressionFile=true`.
+   - Commit the suppression file as part of the package.
 
 1. If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>`
    command for each generated reference package separately.
@@ -239,6 +249,13 @@ generated packages show changes when being regenerated.
 
    You can search the code base to see example usages.
    The benefit of using these files is that they will be preserved when the packages are regenerated.
+
+   1. Common source files - The `src/referencePackages/common/` directory contains shared
+   source files that fix known GenAPI limitations (e.g. `IsExternalInit.cs`,
+   `RequiredModifierAttributes.cs`). Including these via `Customizations.props` is
+   preferred over hand-editing generated code. See the
+   [Known Generator Issues](docs/known_generator_issues.md#common-source-files) documentation
+   for the full list and usage instructions.
 
 1. Add comments calling out any modifications to the generated code that were necessary.
 

@@ -71,7 +71,7 @@ public class GenerateScriptTests
 
         // Copy any customization files from the source directory to the sandbox directory.
         // This is necessary because git diff doesn't support exclusions when comparing files outside of the repository.
-        string[] customFiles = { "Customizations.cs", "Customizations.props" };
+        string[] customFiles = { "Customizations.cs", "Customizations.props", "CompatibilitySuppressions.xml" };
         foreach (string customFile in customFiles)
         {
             string srcFile = Path.Combine(pkgSrcDirectory, customFile);
