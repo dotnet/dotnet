@@ -292,7 +292,8 @@ public partial class SdkContentTests : SdkTests
     {
         // Remove any excluded files as long as SB SDK's file has the same or greater assembly version compared to the corresponding
         // file in the MSFT SDK. If the version is less, the file will show up in the results as this is not a scenario
-        // that is valid for shipping.
+        // that is valid for shipping. Only mark an exclusion as "used" when it actually suppresses a version difference;
+        // exclusions matching files with identical versions are stale and should be cleaned up.
         ExclusionsHelper exclusionsHelper = new ExclusionsHelper("SdkAssemblyVersionDiffExclusions.txt", Config.LogsDirectory, BaselineSubDir);
         string[] sbSdkFileArray = sbSdkAssemblyVersions.Keys.ToArray();
         for (int i = sbSdkFileArray.Length - 1; i >= 0; i--)
@@ -308,6 +309,7 @@ public partial class SdkContentTests : SdkTests
             if (sbVersionInfo.AssemblyVersion is not null &&
                 msftVersionInfo.AssemblyVersion is not null &&
                 sbVersionInfo.AssemblyVersion >= msftVersionInfo.AssemblyVersion &&
+                sbVersionInfo != msftVersionInfo &&
                 exclusionsHelper.IsFileExcluded(assemblyPath))
             {
                 sbSdkAssemblyVersions.Remove(assemblyPath);
