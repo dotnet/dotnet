@@ -1,9 +1,0 @@
-﻿┌─────────────────┬─────────────────┐
-│ Column1         │ Column2         │
-├─────────────────┼─────────────────┤
-│ foo             │ Short text      │
-│ pneumonoultrami │                 │
-│ croscopicsilico │                 │
-│ volcanoconiosis │                 │
-│ bar             │                 │
-└─────────────────┴─────────────────┘

@@ -1,3 +1,0 @@
-
-{ new ISomething with
-    a = () }

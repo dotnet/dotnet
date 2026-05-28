@@ -1,2 +1,0 @@
-// #Conformance #FSI 
-printfn "Hello"

@@ -1,3 +1,0 @@
-namespace Ns
-
-module A =

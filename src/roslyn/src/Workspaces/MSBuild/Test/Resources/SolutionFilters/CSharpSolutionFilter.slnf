@@ -1,8 +1,0 @@
-﻿{
-  "solution": {
-    "path": "TestSolution.sln",
-    "projects": [
-      "CSharpProject\\CSharpProject.csproj"
-    ]
-  }
-}

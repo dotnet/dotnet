@@ -1,4 +1,0 @@
-#r "provider_EVIL_PROVIDER_NamespaceName_Empty.dll"
-
-open FSharp.EvilProviderWhereNamespaceNameReturnsEmpty
-

@@ -1,9 +1,0 @@
-<Solution>
-    <Configurations>
-        <ProjectType Name="Apple" BasedOn="Orange" />
-        <ProjectType Name="Pear" BasedOn="Apple" />
-        <ProjectType Name="Mango" BasedOn="Lime" />
-        <ProjectType Name="Lime" BasedOn="Pear" />
-        <ProjectType Name="Orange" BasedOn="Mango" />
-    </Configurations>
-</Solution>

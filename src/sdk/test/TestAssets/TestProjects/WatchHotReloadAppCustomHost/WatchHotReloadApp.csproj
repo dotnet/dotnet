@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>$(CurrentTargetFramework)</TargetFramework>
-    <OutputType>Exe</OutputType>
-    <RunArguments>&quot;Argument Specified in Props&quot;</RunArguments>
-  </PropertyGroup>
-</Project>

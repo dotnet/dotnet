@@ -1,4 +1,0 @@
-root = true
-
-[*.cs]
-dotnet_diagnostic.IDE0051.severity = warning # Remove unused private member

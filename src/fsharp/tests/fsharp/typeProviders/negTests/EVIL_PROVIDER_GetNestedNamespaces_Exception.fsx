@@ -1,5 +1,0 @@
-
-#r "provider_EVIL_PROVIDER_GetNestedNamespaces_Exception.dll"
-
-open FSharp.EvilProviderWhereGetNestedNamespacesRaisesException
-

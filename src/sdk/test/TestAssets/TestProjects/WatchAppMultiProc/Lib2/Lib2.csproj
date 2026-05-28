@@ -1,6 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>$(CurrentTargetFramework)</TargetFramework>
-    <OutDir>bin</OutDir>
-  </PropertyGroup>
-</Project>

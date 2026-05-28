@@ -1,4 +1,0 @@
-{
-    "__comment": "CFS0013 intended for src\\Assets\\TestPackages\\dotnet-new\\test_templates\\TemplateWithConditions\\nuget.config",
-    "cfs" : ["CFS0013"]
-}

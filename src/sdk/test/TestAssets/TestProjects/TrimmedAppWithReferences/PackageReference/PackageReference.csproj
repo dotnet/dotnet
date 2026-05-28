@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>$(CurrentTargetFramework)</TargetFramework>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)../App/TestPackages</PackageOutputPath>
-  </PropertyGroup>
-
-</Project>

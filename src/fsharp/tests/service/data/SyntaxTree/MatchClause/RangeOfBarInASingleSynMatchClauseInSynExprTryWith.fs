@@ -1,5 +1,0 @@
-
-try
-    foo ()
-with
-| exn -> ()

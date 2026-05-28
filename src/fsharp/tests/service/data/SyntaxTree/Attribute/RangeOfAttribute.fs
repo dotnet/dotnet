@@ -1,3 +1,0 @@
-
-[<MyAttribute(foo ="bar")>]
-do ()

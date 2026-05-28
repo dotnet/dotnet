@@ -1,3 +1,0 @@
-module Module
-
-((): a * * c)

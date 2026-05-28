@@ -1,7 +1,0 @@
-namespace
-
-()
-
-namespace Ns2
-
-()

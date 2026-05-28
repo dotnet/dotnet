@@ -1,3 +1,0 @@
-[*.cs]
-# Field is never assigned to, and will always have its default value null
-dotnet_diagnostic.CS0649.severity = none

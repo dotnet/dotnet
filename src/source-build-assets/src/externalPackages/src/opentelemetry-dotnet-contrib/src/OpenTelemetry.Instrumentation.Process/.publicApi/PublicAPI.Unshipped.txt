@@ -1,2 +1,0 @@
-OpenTelemetry.Metrics.MeterProviderBuilderExtensions
-static OpenTelemetry.Metrics.MeterProviderBuilderExtensions.AddProcessInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!

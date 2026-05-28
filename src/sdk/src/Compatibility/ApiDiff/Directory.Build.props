@@ -1,9 +1,0 @@
-<Project>
-
-  <Import Project="..\Directory.Build.props" />
-
-  <PropertyGroup>
-    <SkipMicrosoftCodeAnalysisCSharpPinning>true</SkipMicrosoftCodeAnalysisCSharpPinning>
-  </PropertyGroup>
-
-</Project>

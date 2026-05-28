@@ -1,5 +1,0 @@
-module Module
-
-type T
-
-()

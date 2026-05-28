@@ -1,6 +1,0 @@
-This document aims to establish the necessary actions to update the xunit version in Arcade which then gets propagated into consuming repositories.
-
-1. For security reasons, nuget packages need to be manually mirrored from nuget.org to the dotnet-public AzDO feed. [See the instructions](/Documentation/MirroringPackages.md). Mirror the following xunit packages: `xunit,xunit.console,xunit.runner.reporters,xunit.runner.utility,xunit.runner.console,xunit.runner.visualstudio` with version `latest`.
-2. Update `XUnitVersion`, `XUnitAnalyzersVersion`, `XUnitRunnerVisualStudioVersion`, `XUnitV3Version` and `MicrosoftTestingPlatformVersion` properties in [Arcade SDK's DefaultVersions.props](/src/Microsoft.DotNet.Arcade.Sdk/tools/DefaultVersions.props) to the desired values. Make sure to use a coherent version of `xunit.analyzers`. Note that `MicrosoftTestingPlatformVersion` must be compatible with the `XUnitV3Version` (xunit.v3.mtp-v1 depends on a specific minimum version of Microsoft.Testing.Platform).
-3. Update other hardcoded values of `XUnitVersion` inside the Arcade repository (i.e. in [SendingJobsToHelix.md](/Documentation/AzureDevOps/SendingJobsToHelix.md), [Directory.Packages.props](/Directory.Packages.props) and others).
-4. Submit a Pull request with these changes to [dotnet/arcade](https://github.com/dotnet/arcade).

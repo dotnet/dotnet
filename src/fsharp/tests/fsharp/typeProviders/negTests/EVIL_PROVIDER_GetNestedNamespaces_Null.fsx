@@ -1,5 +1,0 @@
-
-#r "provider_EVIL_PROVIDER_GetNestedNamespaces_Null.dll"
-
-open FSharp.EvilProviderWhereGetNestedNamespacesReturnsNull
-

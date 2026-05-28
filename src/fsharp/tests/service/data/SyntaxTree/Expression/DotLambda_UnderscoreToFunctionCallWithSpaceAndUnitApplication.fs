@@ -1,1 +1,0 @@
-let myFunc = _.MyMethodCall ()

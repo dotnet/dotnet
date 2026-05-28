@@ -1,1 +1,0 @@
-Differs from the ja-jp package

@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>InferredTypeVaraibleName</RootNamespace>
-    <TargetFramework>$(CurrentTargetFramework)</TargetFramework>
-  </PropertyGroup>
-
-</Project>

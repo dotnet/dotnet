@@ -1,3 +1,0 @@
-{%- macro attribute_name(attribute) -%}
-{{ attribute.name | pascal_case }}{%- if "template" in attribute.type -%}Template{%- endif -%}
-{%- endmacro -%}

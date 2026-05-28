@@ -1,3 +1,0 @@
-<StoreArtifacts>
-    <Package Id="Newtonsoft.Json" Version ="$(NewtonsoftJsonPackageVersion)"/>
-</StoreArtifacts>

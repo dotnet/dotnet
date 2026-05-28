@@ -1,8 +1,0 @@
-<Project>
-
-  <ItemGroup>
-    <NuspecProperty Include="Configuration=$(Configuration)" />
-    <NuspecProperty Include="Owners=$(Authors)" />
-  </ItemGroup>
-
-</Project>

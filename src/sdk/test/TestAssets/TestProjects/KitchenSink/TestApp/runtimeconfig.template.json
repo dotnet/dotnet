@@ -1,7 +1,0 @@
-{
-    "configProperties": {
-        "System.GC.Concurrent": true,
-        "extraProperty": true
-    },
-    "applyPatches": true
-}

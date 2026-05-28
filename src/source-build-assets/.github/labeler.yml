@@ -1,3 +1,0 @@
-# Add 'untriaged' label to any issue that gets opened
-untriaged:
-- '/.*/'

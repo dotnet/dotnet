@@ -1,7 +1,0 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-
-  <PropertyGroup>
-    <PackageProjectUrl>https://localhost/</PackageProjectUrl>
-  </PropertyGroup>
-</Project>

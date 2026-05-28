@@ -1,7 +1,0 @@
-<Project>
-  <Target Name="t">
-    <Message Importance="high" Text="## in root building children ##"/>
-    <MSBuild Projects="1.csproj;2.csproj" BuildInParallel="true"/>
-    <Message Importance="high" Text="## in root done building ##"/>
-  </Target>
-</Project>

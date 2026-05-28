@@ -1,5 +1,0 @@
-<Project ToolsVersion="14.0" DefaultTargets="Validate">
-  <ItemGroup>
-    <Sdk Include="Microsoft.NET.Sdk" Version="$(MicrosoftNETSdkPackageVersion)" />
-  </ItemGroup>
-</Project>

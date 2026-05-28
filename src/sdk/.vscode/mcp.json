@@ -1,9 +1,0 @@
-{
-	"servers": {
-		"ms-docs": {
-			"url": "https://learn.microsoft.com/api/mcp",
-			"type": "http"
-		}
-	},
-	"inputs": []
-}

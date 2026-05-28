@@ -1,3 +1,0 @@
-﻿// TestFiles/IntegrationTests/CodeGenerationIntegrationTest/OpenedIf.cshtml(60,14): error CS1513: } expected
-//             }
-Diagnostic(ErrorCode.ERR_RbraceExpected, "").WithLocation(60, 14)

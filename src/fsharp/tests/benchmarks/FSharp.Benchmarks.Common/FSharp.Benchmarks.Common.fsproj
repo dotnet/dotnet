@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <Compile Include="Categories.fs" />
-  </ItemGroup>
-
-</Project>

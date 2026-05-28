@@ -1,8 +1,0 @@
-{
-    "dotnet.defaultSolution": "disable",
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#530856",
-        "titleBar.activeBackground": "#740B78",
-        "titleBar.activeForeground": "#FEFBFF"
-    }
-}

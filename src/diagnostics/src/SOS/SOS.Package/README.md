@@ -1,1 +1,0 @@
-We use this manifest with windbg so it knows when to load SOS. You can see some example manifests at https://github.com/microsoft/WinDbg-Samples/blob/master/TargetComposition/TextDump/TextDump_GalleryManifest.xml

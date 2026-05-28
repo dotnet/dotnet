@@ -1,5 +1,0 @@
-
-try
-x
-finally
-()

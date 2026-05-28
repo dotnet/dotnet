@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="TestProject/TestProject.csproj" />
-  <Project Path="OtherTestProject/OtherTestProject.csproj" />
-  <Project Path="SharedProject/SharedProject.shproj" />
-</Solution>

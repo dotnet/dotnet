@@ -1,2 +1,0 @@
-
-let bytes = @"yo"B

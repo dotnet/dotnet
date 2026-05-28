@@ -1,1 +1,0 @@
-[Microsoft.VisualStudio.Threading.JoinableTaskFactory]::SwitchToMainThreadAsync

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "CSConsoleApp": {
-      "commandName": "Project",
-      "nativeDebugging": true
-    }
-  }
-}

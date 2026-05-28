@@ -1,4 +1,0 @@
-
-module Module
-
-A.B.

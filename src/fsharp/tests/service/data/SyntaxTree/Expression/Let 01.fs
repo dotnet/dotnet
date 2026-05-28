@@ -1,6 +1,0 @@
-module Module
-
-let _ =
-    ()
-
-()

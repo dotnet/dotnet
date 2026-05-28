@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <DefaultNetCoreTargetFramework>DefaultNetCoreTargetFramework</DefaultNetCoreTargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-</Project>

@@ -1,2 +1,0 @@
-#nullable enable
-Microsoft.VisualStudio.TestPlatform.Common.Interfaces.ITestDiscovererCapabilities.IsDirectoryBased.get -> bool

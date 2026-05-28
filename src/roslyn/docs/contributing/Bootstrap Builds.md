@@ -1,1 +1,0 @@
-Moved to [bootstrap-builds.md](docs/contributing/bootstrap-builds.md)

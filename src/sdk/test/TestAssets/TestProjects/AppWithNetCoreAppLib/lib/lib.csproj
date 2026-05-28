@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>$(CurrentTargetFramework)</TargetFrameworks>
-  </PropertyGroup>
-
-</Project>

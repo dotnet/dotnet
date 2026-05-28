@@ -1,3 +1,0 @@
-module A.B.C
-
-()

@@ -1,6 +1,0 @@
-<RunSettings>
-	<MSTest>
-		<ForcedLegacyMode>true</ForcedLegacyMode>
-		<SettingsFile>.\oldTestsettings.testsettings</SettingsFile>	
-	</MSTest>
-</RunSettings>

@@ -1,9 +1,0 @@
-<Project>
-
-  <PropertyGroup>
-    <!-- This file is also imported in Publish.proj, so condition on the Sign project. -->
-    <EnableDefaultArtifacts Condition="'$(MSBuildProjectName)' == 'Sign'">false</EnableDefaultArtifacts>
-    <AllowEmptySignList>true</AllowEmptySignList>
-  </PropertyGroup>
-
-</Project>
