@@ -45,4 +45,26 @@
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
   </PropertyGroup>
 
+  <!-- Target frameworks that source-build doesn't support/include.
+       Consumed by the package source generator (TFM filtering) and package validation (baseline framework ignore list).
+       MSBuild::Escape() prevents wildcard glob expansion when used in ItemGroup Include attributes. -->
+  <ItemGroup>
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('monoandroid*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('monotouch*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('net20'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('net35'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('net4*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('net5.0'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netcore50'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netcoreapp*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netstandard1*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('portable*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('uap*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('win8'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('win81'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('wp8'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('wpa81'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('xamarin*'))" />
+  </ItemGroup>
+
 </Project>
