@@ -648,6 +648,8 @@ jobs:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             ${{ if eq(parameters.signDac, 'true') }}:
               ESRP_TOKEN: $(System.AccessToken)
+
+    - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
           $(baseArguments)
           $(targetProperties)
