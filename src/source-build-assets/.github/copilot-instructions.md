@@ -75,14 +75,65 @@ find src/referencePackages/src/package.name/version -name "Customizations.*"
 - Test patches with `git am` before suggesting
 - Follow guidelines from [README.md](../README.md#patches) for patch creation and maintenance
 
+## API Compatibility Validation
+
+Package validation with baseline comparison is enabled for reference packages and targeting
+packs. This ensures the public API surface of source-built packages matches the official
+NuGet releases.
+
+### When API Compat Fails After Adding/Regenerating a Package
+
+If `./build.sh -sb` produces API compatibility errors (CP0001, CP0002, CP0008, CP0021, etc.):
+
+1. **Determine if the difference is a real API break or a generator limitation.**
+   - A real break means the generated reference assembly is missing public API that
+     consumers depend on — fix the generated code or add a `Customizations.cs`.
+   - A generator limitation means GenAPI/the package source generator cannot perfectly
+     reproduce the original assembly metadata (e.g., missing `notnull` constraints,
+     missing `[Serializable]` attributes).
+
+2. **For generator limitations, check for an existing tracking issue:**
+   - Search [dotnet/sdk issues with `Area-GenAPI` label](https://github.com/dotnet/sdk/labels/Area-GenAPI)
+   - If no issue exists, **file one** in dotnet/sdk with the `Area-GenAPI` label describing
+     the gap (include the diagnostic ID, affected type/member, and what the generator
+     should emit but doesn't).
+
+3. **Add a `CompatibilitySuppressions.xml` file** in the package version directory:
+   - Run the build with `/p:GenerateCompatibilitySuppressionFile=true` to auto-generate it,
+     or create it manually.
+   - Include a code comment or commit message referencing the tracking issue.
+   - Only suppress diagnostics that are confirmed generator limitations — never suppress
+     to hide a real API gap.
+
+4. **Commit the suppression file** — it is a required part of the package source.
+
+### Known Generator Limitations (common suppressions)
+
+| Diagnostic | Description | Tracking |
+|-----------|-------------|----------|
+| CP0021 | Missing `notnull` generic constraint | No issue filed yet |
+| CP0008 | Missing `[Serializable]` attribute | No issue filed yet |
+| CP0002 | Missing event accessors (add_/remove_) | No issue filed yet |
+
+### Common Compilation Errors and Shared Workaround Files
+
+The `src/referencePackages/common/` directory contains shared
+   source files that fix known GenAPI limitations (e.g. `IsExternalInit.cs`,
+   `RequiredModifierAttributes.cs`). Including these via `Customizations.props` is
+   preferred over hand-editing generated code. See the
+   [Known Generator Issues](../docs/known_generator_issues.md#common-source-files) documentation
+   for the full list and usage instructions.
+
 ## Validation Checklist
 
 After any package changes:
 
-- [ ] `./build.sh -sb` succeeds
+- [ ] `./build.sh -sb` succeeds (includes API compat checks)
 - [ ] Check `artifacts/packages/*` for expected output
 - [ ] Verify no new files in submodule directories
 - [ ] Confirm Customizations files preserved if they existed
+- [ ] If new `CompatibilitySuppressions.xml` entries were needed, verify a tracking
+      issue exists in dotnet/sdk for the underlying generator gap
 
 ## 🔗 References
 
