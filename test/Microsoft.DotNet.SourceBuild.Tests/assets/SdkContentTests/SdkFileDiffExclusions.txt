@@ -69,7 +69,7 @@
 # Exclude bincore directory due to too much noise - https://github.com/dotnet/source-build/issues/4534
 ./sdk/x.y.z/Roslyn/bincore/
 
-# OTel upgrade removed Azure Monitor transitive deps from MSFT SDK: https://github.com/dotnet/source-build/issues/5577
+# OTel upgrade added Azure Monitor transitive deps to MSFT SDK that source-build doesn't produce: https://github.com/dotnet/source-build/issues/5577
 ./sdk/x.y.z/Azure.Core.dll|msft
 ./sdk/x.y.z/Azure.Monitor.OpenTelemetry.Exporter.dll|msft
 ./sdk/x.y.z/Microsoft.Bcl.AsyncInterfaces.dll|msft
