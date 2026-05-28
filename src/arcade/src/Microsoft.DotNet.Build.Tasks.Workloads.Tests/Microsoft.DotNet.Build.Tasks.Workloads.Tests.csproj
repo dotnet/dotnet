@@ -101,10 +101,7 @@
     <Content Include="$(NuGetPackageRoot)microsoft.net.runtime.emscripten.2.0.23.python.win-x64\$(MicrosoftNETRuntimeEmscripten2023Pythonwin_x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)microsoft.net.runtime.emscripten.2.0.23.sdk.win-x64\$(MicrosoftNETRuntimeEmscripten2023Sdkwin_x64)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)microsoft.net.workloads.9.0.100\$(MicrosoftNETWorkloadBaselineVersion)\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
-
-    <Content Include="$(NuGetPackageRoot)microsoft.net.workload.mono.toolchain.current.manifest-10.0.100\10.0.100\*.nupkg" Link="testassets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
-
-
+    <Content Include="$(NuGetPackageRoot)microsoft.net.workload.mono.toolchain.current.manifest-10.0.100\10.0.100\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)Microsoft.NET.Runtime.WebAssembly.Sdk\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)Microsoft.NET.Sdk.WebAssembly.Pack\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(NuGetPackageRoot)Microsoft.NETCore.App.Runtime.Mono.browser-wasm\10.0.0\*.nupkg" Link="testassets\wasm\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" />

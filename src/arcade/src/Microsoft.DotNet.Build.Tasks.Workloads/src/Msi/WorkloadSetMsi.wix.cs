@@ -16,6 +16,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         protected override string BaseOutputName => Path.GetFileNameWithoutExtension(_package.PackagePath);
 
+        protected override string? MsiPackageType => DefaultValues.WorkloadSetMsi;
+
         public WorkloadSetMsi(WorkloadSetPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediatOutputPath) :

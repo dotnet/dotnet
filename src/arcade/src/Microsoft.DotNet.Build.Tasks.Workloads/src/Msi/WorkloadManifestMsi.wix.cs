@@ -36,6 +36,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             get;
         }
 
+        protected override string? MsiPackageType => DefaultValues.ManifestMsi;
+
         public WorkloadManifestMsi(WorkloadManifestPackage package, string platform, IBuildEngine buildEngine, 
             WixToolsetConfiguration wixToolsetConfig,
             string baseIntermediateOutputPath, bool isSxS = false) :

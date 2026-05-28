@@ -107,6 +107,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             DefaultValues.Manufacturer;
 
         /// <summary>
+        /// The package type represented by the MSI.
+        /// </summary>
+        protected abstract string? MsiPackageType
+        {
+            get;
+        }
+
+        /// <summary>
         /// The provider key name used to manage MSI dependents.
         /// </summary>
         protected string? ProviderKeyName
@@ -250,6 +258,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             msiItem.SetMetadata(Workloads.Metadata.Platform, Platform);
             msiItem.SetMetadata(Workloads.Metadata.Version, $"{Metadata.MsiVersion}");
             msiItem.SetMetadata(Workloads.Metadata.SwixPackageId, Metadata.SwixPackageId);
+            msiItem.SetMetadata(Workloads.Metadata.PackageType, MsiPackageType);
 
             // Create the JSON manifest for CLI based installations.
             string msiJsonPath = MsiProperties.Create(msiItem.ItemSpec);

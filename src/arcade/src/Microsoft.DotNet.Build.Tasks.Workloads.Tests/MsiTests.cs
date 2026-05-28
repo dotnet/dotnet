@@ -96,6 +96,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 platform: platform,
                 allowSideBySideInstalls: allowSideBySideInstalls);
 
+            msi.GetMetadata(Metadata.PackageType).Should().Be("manifest", "because we're building a manifest MSI");
+
             string msiPath = msi.GetMetadata(Metadata.FullPath);
 
             string upgradeCode = MsiUtils.GetProperty(msiPath, MsiProperty.UpgradeCode);
@@ -222,6 +224,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetConfig, outputDirectory);
             ITaskItem msiItem = msi.Build(msiDirectory);
 
+            msiItem.GetMetadata(Metadata.PackageType).Should().Be("pack", "because we're building a template pack MSI");
+
             string msiPath = msiItem.GetMetadata(Metadata.FullPath);
 
             // Process the summary information stream's template to extract the MSIs target platform.
@@ -323,6 +327,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadPackGroupMsi msi = new(groupPackage, "x64", buildEngine, WixToolsetConfig, outputDirectory);
 
             ITaskItem msiItem = msi.Build(msiOutputDirectory);
+
+            msiItem.GetMetadata(Metadata.PackageType).Should().Be("pack-group", "because we're building a workload pack group MSI");
+
             string msiPath = msiItem.GetMetadata(Metadata.FullPath);
 
             // UpgradeCode is predictable/stable for pack MSIs since they are seeded using the package identity (ID & version).

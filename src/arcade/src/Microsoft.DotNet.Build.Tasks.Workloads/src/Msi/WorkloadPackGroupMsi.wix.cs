@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable enable
+
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
@@ -14,6 +16,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         /// <inheritdoc />
         protected override string BaseOutputName => Metadata.Id;
+
+        protected override string? MsiPackageType => DefaultValues.WorkloadPackGroupMsi;
 
         public WorkloadPackGroupMsi(WorkloadPackGroupPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,

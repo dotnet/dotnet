@@ -60,6 +60,26 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public static readonly string PackageTypeMsiWorkloadSet = "msi-workload-set";
 
         /// <summary>
+        /// A value indicating the MSI represents a workload manifest.
+        /// </summary>
+        public static readonly string ManifestMsi = "manifest";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload pack.
+        /// </summary>
+        public static readonly string WorkloadPackMsi = "pack";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload set.
+        /// </summary>
+        public static readonly string WorkloadSetMsi = "workload-set";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload pack group.
+        /// </summary>
+        public static readonly string WorkloadPackGroupMsi = "pack-group";
+
+        /// <summary>
         /// Default values specific to SWIX authoring.
         /// </summary>
         internal static class Swix
