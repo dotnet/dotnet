@@ -103,7 +103,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 NuGetPackageFiles[file] = @"\data\extractedManifest\" + Path.GetFileName(file);
             }
 
-            if (WorkloadPackGroups.Any())
+            if (WorkloadPackGroups.Count > 0)
             {
                 string jsonAsString = JsonSerializer.Serialize(WorkloadPackGroups, typeof(IList<WorkloadPackGroupJson>), new JsonSerializerOptions() { WriteIndented = true });
                 string jsonDirectory = Path.Combine(SourcePath, "json");

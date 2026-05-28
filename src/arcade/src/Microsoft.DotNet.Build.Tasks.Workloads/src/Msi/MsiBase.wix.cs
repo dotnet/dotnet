@@ -259,10 +259,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             msiItem.SetMetadata(Workloads.Metadata.Version, $"{Metadata.MsiVersion}");
             msiItem.SetMetadata(Workloads.Metadata.SwixPackageId, Metadata.SwixPackageId);
             msiItem.SetMetadata(Workloads.Metadata.PackageType, MsiPackageType);
+            msiItem.SetMetadata(Workloads.Metadata.SourcePath, SourcePath);
 
             // Create the JSON manifest for CLI based installations.
             string msiJsonPath = MsiProperties.Create(msiItem.ItemSpec);
-            NuGetPackageFiles[Path.GetFullPath(msiJsonPath)] = "\\data\\msi.json";
+            NuGetPackageFiles[Path.GetFullPath(msiJsonPath)] = @"\data\msi.json";
             NuGetPackageFiles[msiItem.GetMetadata(Workloads.Metadata.FullPath)] = @"\data";
             NuGetPackageFiles["LICENSE.TXT"] = @"\";
 

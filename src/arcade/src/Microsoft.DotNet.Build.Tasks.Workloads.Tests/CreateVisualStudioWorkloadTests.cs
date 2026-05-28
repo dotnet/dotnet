@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
@@ -65,6 +66,18 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             // Manifest installers should contain additional JSON files describing pack groups.
             ITaskItem manifestMsi = createWorkloadTask.Msis.First(m => m.GetMetadata(Metadata.PackageType) == "manifest");
             MsiUtils.GetAllFiles(manifestMsi.ItemSpec).Should().Contain(f => f.FileName.EndsWith("WorkloadPackGroups.json"));
+
+            // Verify the package group JSON and ensure there are no duplicates.
+            var json = File.ReadAllText(Path.Combine(manifestMsi.GetMetadata(Metadata.SourcePath), "json", "WorkloadPackGroups.json"));
+            var groupIds = JsonSerializer.Deserialize<JsonElement>(json).EnumerateArray();
+            groupIds.Count().Should().Be(groupIds.Distinct().Count(), "because there should be no duplicate pack group IDs");
+
+            // Verify that the workload component contains a reference to a workload pack group package.
+            string iosComponentSwr = File.ReadAllText(
+                Path.Combine(Path.GetDirectoryName(
+                    createWorkloadTask.SwixProjects.FirstOrDefault(
+                        i => i.ItemSpec.Contains("microsoft.net.runtime.ios.10.0.swixproj")).ItemSpec), "component.swr"));
+            iosComponentSwr.Should().Contain("vs.dependency id=microsoft.net.runtime.ios.WorkloadPacks");
         }
 
         [WindowsOnlyFact]
@@ -74,7 +87,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             // conflicting sources from previous runs.
             string testCaseDirectory = GetTestCaseDirectory();
             string baseIntermediateOutputPath = testCaseDirectory;
-                        
+
             ITaskItem[] manifestsPackages =
             [
                 new TaskItem(Path.Combine(TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"))
@@ -206,7 +219,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             // conflicting sources from previous runs.
             string testCaseDirectory = GetTestCaseDirectory();
             string baseIntermediateOutputPath = testCaseDirectory;
-            
+
             ITaskItem[] manifestsPackages =
             [
                 new TaskItem(Path.Combine(TestBase.TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"))

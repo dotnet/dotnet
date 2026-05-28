@@ -36,6 +36,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public static readonly string SdkFeatureBand = nameof(SdkFeatureBand);
         public static readonly string ShortName = nameof(ShortName);
         public static readonly string SourcePackage = nameof(SourcePackage);
+        public static readonly string SourcePath = nameof(SourcePath);
         public static readonly string SwixPackageId = nameof(SwixPackageId);
         public static readonly string SwixProject = nameof(SwixProject);
 
