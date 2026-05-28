@@ -90,9 +90,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. Open a PR.
 
-1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
-   This will validate the new external will build without adding prebuilts.
-   It will also ensure the external does not contain prohibited checked-in binaries.
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-assets-unified-build` comment.
 
 #### Updating an External Component to a Newer Version
 
@@ -134,7 +132,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
 
 1. Open a PR.
 
-1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-reference-packages-unified-build` comment.
+1. Trigger a full source build within the VMR from your PR by adding a `/azp run source-build-assets-unified-build` comment.
    This will validate the new version will build without adding prebuilts.
    It will also ensure the new version does not contain prohibited checked-in binaries.
 
@@ -225,7 +223,17 @@ generated packages show changes when being regenerated.
     1. The generate tooling has changed since the last time this package was generated.
        The new changes should be considered better/correct and should be committed.
 
-1. Run build with the `./build.sh -sb` command.
+1. Run build with the `./build.sh -sb` command. This includes API compatibility validation
+   that compares the generated package against the official baseline from NuGet.
+
+1. If the build produces **API compatibility errors** (e.g., CP0001, CP0002, CP0008, CP0021):
+   - Determine whether the difference is a real API gap (fix the generated code) or a
+     generator limitation (the generator cannot perfectly reproduce certain metadata).
+   - For generator limitations, ensure there is a tracking issue in
+     [dotnet/sdk](https://github.com/dotnet/sdk/issues) with the `Area-GenAPI` label.
+   - Add a `CompatibilitySuppressions.xml` file in the package version directory.
+     You can auto-generate it by building with `/p:GenerateCompatibilitySuppressionFile=true`.
+   - Commit the suppression file as part of the package.
 
 1. If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>`
    command for each generated reference package separately.
@@ -241,6 +249,13 @@ generated packages show changes when being regenerated.
 
    You can search the code base to see example usages.
    The benefit of using these files is that they will be preserved when the packages are regenerated.
+
+   1. Common source files - The `src/referencePackages/common/` directory contains shared
+   source files that fix known GenAPI limitations (e.g. `IsExternalInit.cs`,
+   `RequiredModifierAttributes.cs`). Including these via `Customizations.props` is
+   preferred over hand-editing generated code. See the
+   [Known Generator Issues](docs/known_generator_issues.md#common-source-files) documentation
+   for the full list and usage instructions.
 
 1. Add comments calling out any modifications to the generated code that were necessary.
 
@@ -301,7 +316,7 @@ Periodically, packages that are unreferenced by the product source build should 
 unreferenced packages build up over time as the product repositories upgrade their dependencies to newer
 versions. Ideally this cleanup would be performed around RC1 timeframe as the product locks down in preparation
 for the GA release. To find which packages are unreferenced, you can run a VMR build with the `ReportSbaUsage`
-option to generate a package usage report. The resulting report will be written to
+option to generate an SBA package usage report. The resulting report will be written to
 `artifacts/log/<configuration>/sbaPackageUsage.json`.
 
 ``` bash
@@ -311,9 +326,14 @@ option to generate a package usage report. The resulting report will be written 
 The VMR CI runs with the `ReportSbaUsage` option set therefore you can grab the usage report from any build's
 artifacts.
 
-> **Note:** [The package usage report does not currently support external packages](https://github.com/dotnet/source-build/issues/3405).
+The [cleanup-unreferenced-packages](.github/skills/cleanup-unreferenced-packages/skill.md) AI skill
+provides an intelligent cleanup workflow that:
 
-The [source-build-reference-packages-cleanup-unreferenced-packages](https://dev.azure.com/dnceng/internal/_build?definitionId=1426) pipeline can be utilized to remove unreferenced packages.
+- Automatically detects packages added to SBA that haven't flowed into the VMR yet
+- Reads a [config file](.github/skills/cleanup-unreferenced-packages/cleanup-packages-config.json) of known false positives
+- Prompts the user to identify packages whose uptake in the VMR is still in progress before deletion
+
+To invoke the skill, ask an AI agent to "clean up unreferenced packages" in this repository.
 
 ## License
 

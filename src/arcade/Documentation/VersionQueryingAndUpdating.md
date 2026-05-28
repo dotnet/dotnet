@@ -115,7 +115,3 @@ into subscribed repos using Darc. Main Maestro++ scenario is:
     * Change existing dependency (using Darc for versions)
     * Remove dependency (using Darc for versions)
 for each participating repo depending on each repo’s subscriptions
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CVersionQueryingAndUpdating.md)](https://helix.dot.net/f/p/5?p=Documentation%5CVersionQueryingAndUpdating.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CVersionQueryingAndUpdating.md)</sub>
-<!-- End Generated Content-->

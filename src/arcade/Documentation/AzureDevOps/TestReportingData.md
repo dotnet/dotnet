@@ -77,9 +77,4 @@ Notable fields in this table include:
 
 **Significance**: The closer this value is to 1, the more likely something changed recently to cause this test to start failing. This value also indicates the difference between "Current" and "Historical"
 
-**SplitDate**: The date of the first day of the week of data aggregated. This date also represents the difference between the "Current" and "Historical" columns. 
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CAzureDevOps%5CTestReportingData.md)](https://helix.dot.net/f/p/5?p=Documentation%5CAzureDevOps%5CTestReportingData.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CAzureDevOps%5CTestReportingData.md)</sub>
-<!-- End Generated Content-->
+**SplitDate**: The date of the first day of the week of data aggregated. This date also represents the difference between the "Current" and "Historical" columns.

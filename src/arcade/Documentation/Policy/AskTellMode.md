@@ -30,8 +30,3 @@ When multiple products share the same infrastructure, the most "strict" product 
 There are a few things to keep in mind with servicing:
 - Shared infra servicing workflow and policies are [found here](ArcadeServicing.md). 
 - Servicing release are basically in perpetual 'Stabilization' mode.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CAskTellMode.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CAskTellMode.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CAskTellMode.md)</sub>
-<!-- End Generated Content-->

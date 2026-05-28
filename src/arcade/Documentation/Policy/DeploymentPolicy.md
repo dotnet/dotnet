@@ -5,9 +5,9 @@ The Deployment principles and policies defined in this document applies to all s
 
 -	The rollout updates and impact are known beforehand by our customers
 -   Deployment quality shows a continual, positive trend over time
--	Key metrics are measured for each rollout and displayed on a dashboard ([Rollout Score Card](../Rollout-Scorecards/README.md)), and a clear rollback threshold is defined.
+-	Key metrics are measured for each rollout and displayed on a dashboard (Rollout Score Card), and a clear rollback threshold is defined.
 -	Deploying multiple small updates is much more preferable to single large updates.
--	No breaking changes ([exceptions granted via policy](https://github.com/dotnet/arcade/blob/main/Documentation/Policy/ChangesPolicy.md))
+-	No breaking changes ([exceptions granted via policy](ChangesPolicy.md))
 -	Rollouts themselves are frictionless, automated, and meet deployment quality goals
 -   Rollbacks (when triggered by clear thresholds) are also frictionless, automated, and meet quality goals
 -	Scenario tests are automated, accurately represent our customers, run prior to every deployment, and block deployment on failure
@@ -18,7 +18,7 @@ The Deployment principles and policies defined in this document applies to all s
 It is important that we have metrics, with clear targets to measure how we're doing against these principles over time.
 
 # What is the deployment process?
-Builds and Deployment for all our services are executed via AzDO Pipelines and the deployments follow the pattern described in the [Deployment Process](../Validation/DeploymentProcess.md). A typical deployment involves kicking off the CI Pipeline for the services which involves Building the code, publishing artifacts, pre-deployment checks, deployment of bits that were built to the environment (staging or production), post-deployment checks. Each service or unit of deployment has its own pipeline for build and deploy.
+Builds and Deployment for all our services are executed via AzDO Pipelines. A typical deployment involves kicking off the CI Pipeline for the services which involves Building the code, publishing artifacts, pre-deployment checks, deployment of bits that were built to the environment (staging or production), post-deployment checks. Each service or unit of deployment has its own pipeline for build and deploy.
 
 # Who owns deployments?
 The deployments themselves can be done by anyone on the team, but point of accountability for deployments lies with Mark Wilkie (mawilkie@microsoft.com)
@@ -38,7 +38,7 @@ See the sections [GitHub Issue Tagging](#GitHub-Issue-Tagging), [Rollbacks](#Rol
 [Pipeline runs](https://dev.azure.com/dnceng/internal/_build/results?buildId=495249&view=logs&j=a56e1ba3-a390-516c-722b-3bd40c7def9a) store the logs for each deployment. History of deployments can be obtained from [AzDO environments](https://dev.azure.com/dnceng/internal/_environments/10?view=resources)
 
 # Process of filing out rollout score card
-[Rollout Score Card Documentation](../Rollout-Scorecards/README.md)
+Rollout Score Card Documentation
 
 # Policy
 
@@ -97,8 +97,3 @@ Every issue that arises as a result of a rollout must be filed on GitHub in dotn
 * Every service should have post-deployment checks/scenario tests to ensure the services are up and running taking work. If post-deployment checks/tests fail, changes need to be reverted/fixed via PR in Staging to ensure the deployed services in staging are not broken.
 * All exploratory / experimental changes need to be done on a dev branch. Any change that is known/expected to temproraily break staging, needs to be communicated to the team (dotnetes@microsoft.com) well in advance and be reasonably timeboxed (case-by-case). This communication should be sent out explaining the period of time in which we expect staging will be down/broken, and put back into a working state by kicking off a build/deploy from master at the appropriate time.
 * All merges to staging/master need to stop **two days** prior to the day of rollout for e.g. if the rollout is happening on a Wednesday, the last merge to staging/master should happen on EOD Sunday giving us 2 full days for stabilization. Only changes that unblock the staging build would go into staging/master during the stabilization period.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CDeploymentPolicy.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CDeploymentPolicy.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CDeploymentPolicy.md)</sub>
-<!-- End Generated Content-->

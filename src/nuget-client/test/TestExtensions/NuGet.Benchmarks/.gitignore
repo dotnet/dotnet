@@ -1,0 +1,5 @@
+# Benchmark class files are intentionally not checked in.
+# Create *.cs files here freely – they are git-ignored so you won't accidentally commit them.
+# Only Program.cs (which contains the auto-discovery logic) is tracked.
+*.cs
+!Program.cs

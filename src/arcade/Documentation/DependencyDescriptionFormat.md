@@ -161,8 +161,3 @@ The dependency description is comprised of two types of assets:
   }
 }
 ```
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDependencyDescriptionFormat.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDependencyDescriptionFormat.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDependencyDescriptionFormat.md)</sub>
-<!-- End Generated Content-->

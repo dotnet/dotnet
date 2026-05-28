@@ -459,7 +459,8 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 
             if (testHostPath.IsNullOrEmpty())
             {
-                throw new TestPlatformException("Could not find testhost");
+                string message = string.Format(CultureInfo.CurrentCulture, Resources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+                throw new TestPlatformException(message);
             }
 
             // We silently force x64 only if the target architecture is the default one and is not specified by user

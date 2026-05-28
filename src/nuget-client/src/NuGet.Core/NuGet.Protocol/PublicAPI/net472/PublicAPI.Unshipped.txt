@@ -3,4 +3,8 @@ NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.PackageId.get -> string
 NuGet.Protocol.Events.ProtocolDiagnosticNupkgCopiedEvent.ProtocolDiagnosticNupkgCopiedEvent(string! source, long fileSize, string! packageId) -> void
 NuGet.Protocol.RepositoryCertificateInfo.NotAfter.init -> void
 NuGet.Protocol.RepositoryCertificateInfo.NotBefore.init -> void
+NuGet.Protocol.Plugins.GetOperationClaimsRequest.GetOperationClaimsRequest(string? packageSourceRepository, string? serviceIndex) -> void
+NuGet.Protocol.Plugins.GetOperationClaimsRequest.ServiceIndexJson.get -> string?
+NuGet.Protocol.Plugins.GetServiceIndexResponse.GetServiceIndexResponse(NuGet.Protocol.Plugins.MessageResponseCode responseCode, string? serviceIndex) -> void
+NuGet.Protocol.Plugins.GetServiceIndexResponse.ServiceIndexJson.get -> string?
 ~static NuGet.Protocol.Plugins.MessageUtilities.SerializePayload(NuGet.Protocol.Plugins.Message message) -> string

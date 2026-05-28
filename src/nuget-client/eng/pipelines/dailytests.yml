@@ -20,12 +20,14 @@ resources:
   pipelines:
   - pipeline: DartLab
     source: DartLab
-    branch: main
+    branch: refs/heads/main
+    tags:
+    - Production
   repositories:
   - repository: DartLabTemplates
     type: git
-    name: DartLab.Templates
-    ref: refs/heads/main
+    name: DevDiv/DartLab
+    ref: refs/tags/Production
 
 variables:
   DOTNET_NOLOGO: 1

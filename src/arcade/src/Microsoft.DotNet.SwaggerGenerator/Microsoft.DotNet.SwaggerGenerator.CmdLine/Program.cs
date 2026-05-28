@@ -3,83 +3,91 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.DotNet.SwaggerGenerator.Modeler;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
-using Mono.Options;
 
 namespace Microsoft.DotNet.SwaggerGenerator.CmdLine
 {
     internal static class Program
     {
-        private static void Error(string message)
-        {
-            Console.Error.WriteLine("fatal: " + message);
-            Environment.Exit(-1);
-        }
-
-        private static void MissingArgument(string name)
-        {
-            Error($"Missing required argument {name}");
-        }
-
         private static async Task<int> Main(string[] args)
         {
-            string input = null;
-            string output = null;
-            var version = false;
-            var showHelp = false;
-            var generatorOptions = new GeneratorOptions
+            Option<string> inputOption = new("--input", "-i")
             {
-                LanguageName = "csharp",
-                Namespace = "Generated",
-                ClientName = "ApiClient",
+                Description = "The input swagger spec uri",
+            };
+            Option<string> outputOption = new("--output", "-o")
+            {
+                Description = "The output directory for generated code",
+            };
+            Option<string> namespaceOption = new("--namespace", "-n", "--ns")
+            {
+                Description = "The namespace for generated code",
+                DefaultValueFactory = _ => "Generated",
+            };
+            Option<string> languageOption = new("--language", "-l")
+            {
+                Description = "The language to generate code for",
+                DefaultValueFactory = _ => "csharp",
+            };
+            Option<string> clientNameOption = new("--client-name", "-c")
+            {
+                Description = "The name of the generated client",
+                DefaultValueFactory = _ => "ApiClient",
             };
 
-            var options = new OptionSet
+            RootCommand rootCommand = new("dotnet-swaggergen")
             {
-                {"i|input=", "The input swagger spec uri", s => input = s},
-                {"o|output=", "The output directory for generated code", o => output = o},
-                {"n|ns|namespace=", "The namespace for generated code", n => generatorOptions.Namespace = n},
-                {"l|language=", "The language to generate code for", l => generatorOptions.LanguageName = l},
-                {"c|client-name=", "The name of the generated client", c => generatorOptions.ClientName = c},
-                {"version", "Display the version of this program.", v => version = v != null},
-                {"h|?|help", "Display this help message.", h => showHelp = h != null},
+                inputOption,
+                outputOption,
+                namespaceOption,
+                languageOption,
+                clientNameOption,
             };
 
-            List<string> arguments = options.Parse(args);
-
-            if (version)
+            rootCommand.SetAction((result, cancellationToken) =>
             {
-                string versionString = Assembly.GetEntryAssembly()
-                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                    .InformationalVersion;
-                Console.WriteLine(versionString);
-                return 0;
-            }
+                string input = result.GetValue(inputOption);
+                string output = result.GetValue(outputOption);
 
-            if (showHelp)
-            {
-                options.WriteOptionDescriptions(Console.Out);
-                return 0;
-            }
+                if (string.IsNullOrEmpty(input))
+                {
+                    return Task.FromResult(MissingArgument(nameof(input)));
+                }
 
-            if (string.IsNullOrEmpty(input))
-            {
-                MissingArgument(nameof(input));
-            }
+                if (string.IsNullOrEmpty(output))
+                {
+                    return Task.FromResult(MissingArgument(nameof(output)));
+                }
 
-            if (string.IsNullOrEmpty(output))
-            {
-                MissingArgument(nameof(output));
-            }
+                var generatorOptions = new GeneratorOptions
+                {
+                    LanguageName = result.GetValue(languageOption),
+                    Namespace = result.GetValue(namespaceOption),
+                    ClientName = result.GetValue(clientNameOption),
+                };
 
+                return RunAsync(input, output, generatorOptions);
+            });
+
+            return await rootCommand.Parse(args).InvokeAsync();
+        }
+
+        private static int MissingArgument(string name)
+        {
+            Console.Error.WriteLine($"fatal: Missing required argument {name}");
+            return -1;
+        }
+
+        private static async Task<int> RunAsync(string input, string output, GeneratorOptions generatorOptions)
+        {
             ILogger logger = LoggerFactory.Create(builder => builder.AddSimpleConsole()).CreateLogger("dotnet-swaggergen");
 
             var (diagnostic, document) = await GetSwaggerDocument(input);

@@ -95,8 +95,9 @@ variables:
   - group: DotNet-Symbol-Server-Pats
   # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
   - group: DotNet-VSTS-Infra-Access
+  # DevDiv drop access token is acquired via WIF service connection (dnceng-devdiv-drop-rw-code-rw-wif)
   - name: _DevDivDropAccessToken
-    value: $(dn-bot-devdiv-drop-rw-code-rw)
+    value: ''
   - name: _SignType
     value: real
   - name: _SignArgs
@@ -337,6 +338,16 @@ extends:
 
               # Publishes setup VSIXes to a drop.
               # Note: The insertion tool looks for the display name of this task in the logs.
+              - task: AzureCLI@2
+                displayName: Get DevDiv Drop Access Token
+                inputs:
+                  azureSubscription: 'dnceng-devdiv-drop-rw-code-rw-wif'
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    $token = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
+                    Write-Host "##vso[task.setvariable variable=_DevDivDropAccessToken;issecret=true]$token"
+                condition: succeeded()
               - task: 1ES.MicroBuildVstsDrop@1
                 displayName: Upload VSTS Drop
                 inputs:

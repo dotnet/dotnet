@@ -17,7 +17,6 @@ using Xunit.Abstractions;
 #if IS_DESKTOP
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Xunit;
@@ -192,8 +191,7 @@ namespace NuGet.Protocol.FuncTest
                     MessageMethod.GetOperationClaims,
                     new GetOperationClaimsResponse(new OperationClaim[] { OperationClaim.DownloadPackage }));
 
-                var serviceIndex = JObject.Parse("{}");
-                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: serviceIndex);
+                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: "{}");
 
                 var response = await test.Plugin.Connection.SendRequestAndReceiveResponseAsync<GetOperationClaimsRequest, GetOperationClaimsResponse>(
                     MessageMethod.GetOperationClaims,
@@ -213,8 +211,7 @@ namespace NuGet.Protocol.FuncTest
             {
                 Assert.Equal(PluginProtocolConstants.CurrentVersion, test.Plugin.Connection.ProtocolVersion);
 
-                var serviceIndex = JObject.Parse("{}");
-                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: serviceIndex);
+                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: "{}");
 
                 var stopwatch = Stopwatch.StartNew();
 
@@ -254,8 +251,7 @@ namespace NuGet.Protocol.FuncTest
                     MessageMethod.Initialize,
                     new InitializeResponse(MessageResponseCode.Success));
 
-                var serviceIndex = JObject.Parse("{}");
-                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: serviceIndex);
+                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: "{}");
 
                 string consoleOutput;
 

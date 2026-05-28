@@ -33,22 +33,6 @@ namespace NuGet.Commands
             return request.DependencyGraphSpec != null;
         }
 
-        /// <summary>
-        /// The cache file path is $(MSBuildProjectExtensionsPath)\$(project).nuget.cache
-        /// </summary>
-        private static string GetBuildIntegratedProjectCacheFilePath(RestoreRequest request)
-        {
-
-            if (request.ProjectStyle == ProjectStyle.ProjectJson
-                || request.ProjectStyle == ProjectStyle.PackageReference)
-            {
-                var cacheRoot = request.MSBuildProjectExtensionsPath ?? request.RestoreOutputPath;
-                return request.Project.RestoreMetadata.CacheFilePath = GetProjectCacheFilePath(cacheRoot);
-            }
-
-            return null;
-        }
-
         public static string GetProjectCacheFilePath(string cacheRoot, string projectPath)
         {
             return GetProjectCacheFilePath(cacheRoot);
@@ -90,14 +74,6 @@ namespace NuGet.Commands
         /// <summary>
         /// Evaluate the location of the cache file path, based on ProjectStyle.
         /// </summary>
-        internal static string GetCacheFilePath(RestoreRequest request)
-        {
-            return GetCacheFilePath(request, lockFile: null);
-        }
-
-        /// <summary>
-        /// Evaluate the location of the cache file path, based on ProjectStyle.
-        /// </summary>
         internal static string GetCacheFilePath(RestoreRequest request, LockFile lockFile)
         {
             var projectCacheFilePath = request.Project.RestoreMetadata?.CacheFilePath;
@@ -107,7 +83,8 @@ namespace NuGet.Commands
                 if (request.ProjectStyle == ProjectStyle.PackageReference
                     || request.ProjectStyle == ProjectStyle.ProjectJson)
                 {
-                    projectCacheFilePath = GetBuildIntegratedProjectCacheFilePath(request);
+                    var cacheRoot = request.MSBuildProjectExtensionsPath ?? request.RestoreOutputPath;
+                    projectCacheFilePath = request.Project.RestoreMetadata.CacheFilePath = GetProjectCacheFilePath(cacheRoot);
                 }
                 else if (request.ProjectStyle == ProjectStyle.DotnetCliTool)
                 {

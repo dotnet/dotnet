@@ -40,8 +40,3 @@ Pipelines for the .NET Core Ecosystem should be written with the following goals
   - Allow usage of EOL operating systems to be removed or at least identified more easily.
   - Simultaneously roll out new changes to repo scripting and pipeline logic.
   - Update older servicing branches to ensure their pipelines are not broken by changes in external systems.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CAzureDevOps%5CWritingBuildDefinitions.md)](https://helix.dot.net/f/p/5?p=Documentation%5CAzureDevOps%5CWritingBuildDefinitions.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CAzureDevOps%5CWritingBuildDefinitions.md)</sub>
-<!-- End Generated Content-->
