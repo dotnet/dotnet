@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
@@ -143,7 +142,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// The filename of the MSI file to generate.
         /// </summary>
-        protected string OutputName => 
+        protected string OutputName =>
             $"{Utils.GetTruncatedHash(BaseOutputName, HashAlgorithmName.SHA256)}-{Platform}.msi";
 
         /// <summary>
@@ -185,8 +184,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             ReplacementTokens[MsiTokens.__NAME__] = GetProductName(Platform);
             ReplacementTokens[MsiTokens.__PACKAGE_ID__] = metadata.Id;
             ReplacementTokens[MsiTokens.__PACKAGE_VERSION__] = metadata.PackageVersion.ToString();
-            ReplacementTokens[MsiTokens.__PRODUCTCODE__] = ProductCode.ToString("B");            
-            ReplacementTokens[MsiTokens.__VERSION__] = metadata.MsiVersion.ToString();            
+            ReplacementTokens[MsiTokens.__PRODUCTCODE__] = ProductCode.ToString("B");
+            ReplacementTokens[MsiTokens.__VERSION__] = metadata.MsiVersion.ToString();
 
             // Candle expects the output path to be terminated with a single '\'.
             CompilerOutputPath = Utils.EnsureTrailingSlash(Path.Combine(baseIntermediateOutputPath, "wixobj", metadata.Id, $"{metadata.PackageVersion}", platform));
@@ -261,6 +260,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             msiItem.SetMetadata(Workloads.Metadata.PackageType, MsiPackageType);
             msiItem.SetMetadata(Workloads.Metadata.SourcePath, SourcePath);
 
+            var fi = new FileInfo(msiItem.ItemSpec);
+            if (fi.Length > DefaultValues.MaxMsiSize)
+            {
+                throw new IOException($"The generated MSI, {msiItem.ItemSpec}, exceeded the maximum allowed size ({DefaultValues.MaxMsiSize} bytes).");
+            }
+
             // Create the JSON manifest for CLI based installations.
             string msiJsonPath = MsiProperties.Create(msiItem.ItemSpec);
             NuGetPackageFiles[Path.GetFullPath(msiJsonPath)] = @"\data\msi.json";
@@ -303,7 +308,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// globs. The authoring is generated in memory instead of a separate source file, making it incompatible with 
         /// wixpacks Arcade uses for signing.
         /// </remarks>
-        protected XElement HarvestDirectory(string sourcePath, string directoryReference, 
+        protected XElement HarvestDirectory(string sourcePath, string directoryReference,
             string sourceVariableName = DefaultValues.Wix.SourceVariableName)
         {
             // Generate a random component group ID. The generated ComponentGroupRef XML element will have the same ID

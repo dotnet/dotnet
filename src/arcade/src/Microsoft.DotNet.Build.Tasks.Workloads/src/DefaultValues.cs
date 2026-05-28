@@ -9,6 +9,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     internal static class DefaultValues
     {
         /// <summary>
+        /// Maximum size of an MSI in bytes.
+        /// </summary>
+        /// <remarks>
+        /// Workload MSIs are distributed in NuGet packages and cannot exceed the maximum size of a NuGet package (250 MB). The limit
+        /// is set to 245 MB to account for package metadata, signatures, etc.
+        /// </remarks>
+        public const int MaxMsiSize = 256901120;
+
+        /// <summary>
         /// Prefix used in Visual Studio for SWIX based package group.
         /// </summary>
         public const string PackageGroupPrefix = "PackageGroup";
