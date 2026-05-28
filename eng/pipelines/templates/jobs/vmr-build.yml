@@ -640,13 +640,14 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      env:
-        ${{ if eq(parameters.setSourceDateEpoch, true) }}:
-          SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
-        ${{ if eq(parameters.sign, 'true') }}:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-          ${{ if eq(parameters.signDac, 'true') }}:
-            ESRP_TOKEN: $(System.AccessToken)
+      ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
+        env:
+          ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+            SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+          ${{ if eq(parameters.sign, 'true') }}:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            ${{ if eq(parameters.signDac, 'true') }}:
+              ESRP_TOKEN: $(System.AccessToken)
       - script: build.cmd
           $(baseArguments)
           $(targetProperties)
@@ -874,11 +875,12 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        env:
-          ${{ if eq(parameters.setSourceDateEpoch, true) }}:
-            SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
-          ${{ if eq(parameters.sign, 'true') }}:
-            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
+          env:
+            ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+              SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+            ${{ if eq(parameters.sign, 'true') }}:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
