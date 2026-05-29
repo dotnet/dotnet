@@ -19,7 +19,6 @@
     <Left>/msft/sdk/x.y.z/Newtonsoft.Json.dll</Left>
     <Right>/sb/sdk/x.y.z/Newtonsoft.Json.dll</Right>
   </Suppression>
-  <!-- OTel version/API mismatch: https://github.com/dotnet/source-build/issues/5577 -->
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:OpenTelemetry.Logs.Logger</Target>
@@ -80,7 +79,6 @@
     <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
     <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
   </Suppression>
-  <!-- OTel version/API mismatch: https://github.com/dotnet/source-build/issues/5577 -->
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:OpenTelemetry.Logs.LoggerProvider.GetLogger</Target>
@@ -189,7 +187,6 @@
     <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
   </Suppression>
-  <!-- OTel version/API mismatch: https://github.com/dotnet/source-build/issues/5577 -->
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
     <Target>OpenTelemetry.Api, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
