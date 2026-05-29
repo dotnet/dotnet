@@ -9,6 +9,8 @@
   <ItemGroup>
     <None Include="..\..\test\resources\**"
           CopyToOutputDirectory="Always" />
+    <None Include="assets\**"
+          CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

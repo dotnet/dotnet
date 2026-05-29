@@ -16,6 +16,8 @@ internal class DotNetSdkHelper
     private readonly string? _binlogDir;
     private readonly ITestOutputHelper _outputHelper;
 
+    private static string EmbedFileInBinlogTargetsPath { get; } = Path.Combine(AppContext.BaseDirectory, "assets", "EmbedFileInBinlog.targets");
+
     public string DotNetRoot { get; }
 
     public string? SdkVersion { get; }
@@ -281,7 +283,17 @@ internal class DotNetSdkHelper
             fileName += $"-{differentiator}";
         }
 
-        return $"/bl:{Path.Combine(binlogDir, $"{fileName}.binlog")}";
+        string binlogArgs = $"/bl:{Path.Combine(binlogDir, $"{fileName}.binlog")}";
+
+        // Embed the NuGet.Config used by NuGet restore in the binlog
+        string? restoreConfigFile = Environment.GetEnvironmentVariable("RestoreConfigFile");
+        if (!string.IsNullOrEmpty(restoreConfigFile))
+        {
+            binlogArgs += $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
+                + $" /p:EmbedFileInBinlogPath={restoreConfigFile}";
+        }
+
+        return binlogArgs;
     }
 
     public void ExecuteAddClassReference(string projectDirectory)

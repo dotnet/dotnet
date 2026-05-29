@@ -21,6 +21,8 @@ internal class DotNetHelper
     public static string DotNetPath { get; } = Path.Combine(Config.DotNetDirectory, "dotnet");
     public static string PackagesDirectory { get; } = Path.Combine(Directory.GetCurrentDirectory(), "packages");
     public static string ProjectsDirectory { get; } = Path.Combine(Directory.GetCurrentDirectory(), $"projects-{DateTime.Now:yyyyMMddHHmmssffff}");
+    public static string NuGetConfigPath { get; } = Path.Combine(ProjectsDirectory, "NuGet.Config");
+    private static string EmbedFileInBinlogTargetsPath { get; } = Path.Combine(BaselineHelper.GetAssetsDirectory(), "EmbedFileInBinlog.targets");
 
     private ITestOutputHelper OutputHelper { get; }
     public bool IsMonoRuntime { get; }
@@ -50,10 +52,9 @@ internal class DotNetHelper
     {
         bool useCustomPackages = !string.IsNullOrEmpty(Config.CustomPackagesPath);
         string nugetConfigPrefix = useCustomPackages ? "custom" : "default";
-        string nugetConfigPath = Path.Combine(ProjectsDirectory, "NuGet.Config");
         File.Copy(
             Path.Combine(BaselineHelper.GetAssetsDirectory(), $"{nugetConfigPrefix}.NuGet.Config"),
-            nugetConfigPath);
+            NuGetConfigPath);
 
         if (useCustomPackages)
         {
@@ -64,9 +65,9 @@ internal class DotNetHelper
                 throw new ArgumentException($"Specified CustomPackagesPath '{Config.CustomPackagesPath}' does not exist.");
             }
 
-            string nugetConfig = File.ReadAllText(nugetConfigPath)
+            string nugetConfig = File.ReadAllText(NuGetConfigPath)
                 .Replace("CUSTOM_PACKAGE_FEED", Config.CustomPackagesPath);
-            File.WriteAllText(nugetConfigPath, nugetConfig);
+            File.WriteAllText(NuGetConfigPath, nugetConfig);
         }
     }
 
@@ -221,7 +222,10 @@ internal class DotNetHelper
             fileName += $"-{differentiator}";
         }
 
-        return $"/bl:{Path.Combine(Config.LogsDirectory, $"{fileName}.binlog")}";
+        // Embed the test's generated NuGet.Config in the binlog
+        return $"/bl:{Path.Combine(Config.LogsDirectory, $"{fileName}.binlog")}"
+            + $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
+            + $" /p:EmbedFileInBinlogPath={NuGetConfigPath}";
     }
 
     private static bool DetermineIsMonoRuntime(string dotnetRoot)
