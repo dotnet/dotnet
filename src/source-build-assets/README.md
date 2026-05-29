@@ -113,7 +113,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
        There are a number of projects that utilize MSBuild properties to specify the version.
        These need to be manually updated with each upgrade.
 
-    1. Run the metadata update script to refresh `SourceRevisionId` and `FileVersionRevision`:
+    1. Run the metadata update script to refresh `SourceRevisionId` and package-derived version metadata (for example `FileVersionRevision`, `AssemblyVersionOverride`, and `InformationalVersionOverride`):
 
        ```bash
        # Linux/macOS
