@@ -34,6 +34,7 @@ jobs:
     ${{ else }}:
       InternalMSBuildArgs: ''
     Codeql.Enabled: ${{ parameters.codeql }}
+    Codeql.Language: csharp,cpp
   steps:
   - powershell: Remove-Item -Recurse -ErrorAction Ignore "$env:LocalAppData\NuGet\v3-cache"
     displayName: Clear NuGet http cache (if exists)
