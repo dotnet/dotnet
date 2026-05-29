@@ -225,6 +225,7 @@ internal class DotNetHelper
         // Embed the test's generated NuGet.Config in the binlog
         return $"/bl:{Path.Combine(Config.LogsDirectory, $"{fileName}.binlog")}"
             + $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
+            + $" /p:CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}"
             + $" /p:EmbedFileInBinlogPath={NuGetConfigPath}";
     }
 

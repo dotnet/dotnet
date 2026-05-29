@@ -290,6 +290,7 @@ internal class DotNetSdkHelper
         if (!string.IsNullOrEmpty(restoreConfigFile))
         {
             binlogArgs += $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
+                + $" /p:CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}"
                 + $" /p:EmbedFileInBinlogPath={restoreConfigFile}";
         }
 
