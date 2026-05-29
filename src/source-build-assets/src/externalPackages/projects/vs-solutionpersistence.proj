@@ -15,6 +15,9 @@
     <FileVersionRevision>6595</FileVersionRevision>
     <!-- Used by the update-external-metadata script to determine the package to download. -->
     <FileVersionValidationPackage>Microsoft.VisualStudio.SolutionPersistence</FileVersionValidationPackage>
+    <!-- NBGV is disabled in source-build, so pin these to the official package values. -->
+    <AssemblyVersionOverride>1.0.0.0</AssemblyVersionOverride>
+    <InformationalVersionOverride>1.0.52+19c3ca7dc9.RR</InformationalVersionOverride>
 
     <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
@@ -22,7 +25,9 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:SignAssembly=true</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:PublicSign=true</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:Version=$(VsSolutionPersistenceReleaseVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:AssemblyVersion=$(AssemblyVersionOverride)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(VsSolutionPersistenceReleaseVersion).$(FileVersionRevision)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:InformationalVersion=$(InformationalVersionOverride)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(VsSolutionPersistenceReleaseVersion)</DotNetToolArgs>
 
     <BuildCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
