@@ -27,6 +27,7 @@ jobs:
     ${{ else }}:
       InternalMSBuildArgs: ''
     Codeql.Enabled: ${{ parameters.codeql }}
+    Codeql.Language: csharp,cpp
   templateContext:
     outputs:
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['DisableVSPublish'], 'true'), eq(variables['_BuildConfig'], 'Release')) }}:
