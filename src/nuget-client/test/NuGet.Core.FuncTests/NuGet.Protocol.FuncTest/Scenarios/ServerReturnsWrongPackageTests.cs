@@ -53,7 +53,8 @@ public class ServerReturnsWrongPackageTests(ServerReturnsWrongPackageTests.Fixtu
         };
 
         SourceRepository testSource = StaticHttpHandler.CreateSource(url, Repository.Provider.GetCoreV3(), _fixture.Responses);
-        var findPackageByIdResource = await testSource.GetResourceAsync<FindPackageByIdResource>();
+        FindPackageByIdResource findPackageByIdResource = await testSource.GetResourceAsync<FindPackageByIdResource>()
+            ?? throw new InvalidOperationException();
 
         using var destination1 = new MemoryStream();
         using var destination2 = new MemoryStream();
@@ -139,7 +140,8 @@ public class ServerReturnsWrongPackageTests(ServerReturnsWrongPackageTests.Fixtu
         };
 
         SourceRepository testSource = StaticHttpHandler.CreateSource(url, Repository.Provider.GetCoreV3(), _fixture.Responses);
-        var downloadResource = await testSource.GetResourceAsync<DownloadResource>();
+        DownloadResource downloadResource = await testSource.GetResourceAsync<DownloadResource>()
+            ?? throw new InvalidOperationException();
 
         using var testDirectory = TestDirectory.Create();
         using var sourceCacheContext = new SourceCacheContext() { NoCache = noHttpCache };
@@ -214,9 +216,11 @@ public class ServerReturnsWrongPackageTests(ServerReturnsWrongPackageTests.Fixtu
                 ClientPolicyContext.GetClientPolicy(NullSettings.Instance, NullLogger.Instance),
                 NullLogger.Instance);
             var packagesConfigPathResolver = new PackagePathResolver(LocalPackagesConfigPath);
+            Stream packageStream = result.PackageStream
+                ?? throw new InvalidOperationException();
             await PackageExtractor.ExtractPackageAsync(
                 "local",
-                result.PackageStream,
+                packageStream,
                 packagesConfigPathResolver,
                 packageExtractionContext,
                 CancellationToken.None);

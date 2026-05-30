@@ -194,6 +194,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.PackageDownload
             foreach (var repo in sourceRepositories)
             {
                 var finder = await repo.GetResourceAsync<PackageMetadataResource>(token);
+                if (finder is null)
+                {
+                    continue;
+                }
+
                 var packages = await finder.GetMetadataAsync(
                     packageWithNuGetVersion.Id,
                     includePrerelease,
