@@ -160,7 +160,6 @@ stages:
           /p:SymbolRequestProject='dotnet'
           ${{ parameters.symbolPublishingAdditionalParameters}}
           /p:BuildQuality='${{ parameters.buildQuality }}'
-          /p:AzdoApiToken='$(dn-bot-all-orgs-build-rw-code-rw)'
           /p:ArtifactsBasePath='$(Build.ArtifactStagingDirectory)/'
           /p:BuildId='$(AzDOBuildId)'
           /p:AzureDevOpsOrg='$(AzDOAccount)'
