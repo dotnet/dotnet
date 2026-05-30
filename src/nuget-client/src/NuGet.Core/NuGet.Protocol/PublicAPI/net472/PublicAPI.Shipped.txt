@@ -18,13 +18,13 @@ NuGet.Protocol.AutoCompleteResourceV3
 NuGet.Protocol.AutoCompleteResourceV3Provider
 NuGet.Protocol.AutoCompleteResourceV3Provider.AutoCompleteResourceV3Provider() -> void
 NuGet.Protocol.CachingSourceProvider
-~NuGet.Protocol.CachingSourceProvider.AddSourceRepository(NuGet.Protocol.Core.Types.SourceRepository source) -> void
-~NuGet.Protocol.CachingSourceProvider.CachingSourceProvider(NuGet.Configuration.IPackageSourceProvider packageSourceProvider) -> void
-~NuGet.Protocol.CachingSourceProvider.CreateRepository(NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.CachingSourceProvider.CreateRepository(NuGet.Configuration.PackageSource source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.CachingSourceProvider.CreateRepository(string source) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.CachingSourceProvider.GetRepositories() -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository>
-~NuGet.Protocol.CachingSourceProvider.PackageSourceProvider.get -> NuGet.Configuration.IPackageSourceProvider
+NuGet.Protocol.CachingSourceProvider.AddSourceRepository(NuGet.Protocol.Core.Types.SourceRepository! source) -> void
+NuGet.Protocol.CachingSourceProvider.CachingSourceProvider(NuGet.Configuration.IPackageSourceProvider! packageSourceProvider) -> void
+NuGet.Protocol.CachingSourceProvider.CreateRepository(NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.CachingSourceProvider.CreateRepository(NuGet.Configuration.PackageSource! source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.CachingSourceProvider.CreateRepository(string! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.CachingSourceProvider.GetRepositories() -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository!>!
+NuGet.Protocol.CachingSourceProvider.PackageSourceProvider.get -> NuGet.Configuration.IPackageSourceProvider!
 NuGet.Protocol.CachingUtility
 NuGet.Protocol.Core.Types.AutoCompleteResource
 NuGet.Protocol.Core.Types.AutoCompleteResource.AutoCompleteResource() -> void
@@ -34,13 +34,13 @@ NuGet.Protocol.Core.Types.DownloadResource
 NuGet.Protocol.Core.Types.DownloadResource.DownloadResource() -> void
 NuGet.Protocol.Core.Types.DownloadResourceResult
 NuGet.Protocol.Core.Types.DownloadResourceResult.Dispose() -> void
-~NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(NuGet.Packaging.PackageReaderBase packageReader, string source) -> void
+NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(NuGet.Packaging.PackageReaderBase! packageReader, string? source) -> void
 NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(NuGet.Protocol.Core.Types.DownloadResourceResultStatus status) -> void
-~NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(System.IO.Stream stream, NuGet.Packaging.PackageReaderBase packageReader, string source) -> void
-~NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(System.IO.Stream stream, string source) -> void
-~NuGet.Protocol.Core.Types.DownloadResourceResult.PackageReader.get -> NuGet.Packaging.PackageReaderBase
-~NuGet.Protocol.Core.Types.DownloadResourceResult.PackageSource.get -> string
-~NuGet.Protocol.Core.Types.DownloadResourceResult.PackageStream.get -> System.IO.Stream
+NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(System.IO.Stream! stream, NuGet.Packaging.PackageReaderBase? packageReader, string? source) -> void
+NuGet.Protocol.Core.Types.DownloadResourceResult.DownloadResourceResult(System.IO.Stream! stream, string? source) -> void
+NuGet.Protocol.Core.Types.DownloadResourceResult.PackageReader.get -> NuGet.Packaging.PackageReaderBase?
+NuGet.Protocol.Core.Types.DownloadResourceResult.PackageSource.get -> string?
+NuGet.Protocol.Core.Types.DownloadResourceResult.PackageStream.get -> System.IO.Stream?
 NuGet.Protocol.Core.Types.DownloadResourceResult.SignatureVerified.get -> bool
 NuGet.Protocol.Core.Types.DownloadResourceResult.SignatureVerified.set -> void
 NuGet.Protocol.Core.Types.DownloadResourceResult.Status.get -> NuGet.Protocol.Core.Types.DownloadResourceResultStatus
@@ -104,10 +104,10 @@ NuGet.Protocol.Core.Types.IPackageSearchMetadata.RequireLicenseAcceptance.get ->
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.Title.get -> string
 ~NuGet.Protocol.Core.Types.IPackageSearchMetadata.Vulnerabilities.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.PackageVulnerabilityMetadata>
 NuGet.Protocol.Core.Types.ISourceRepositoryProvider
-~NuGet.Protocol.Core.Types.ISourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.Core.Types.ISourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.Core.Types.ISourceRepositoryProvider.GetRepositories() -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository>
-~NuGet.Protocol.Core.Types.ISourceRepositoryProvider.PackageSourceProvider.get -> NuGet.Configuration.IPackageSourceProvider
+NuGet.Protocol.Core.Types.ISourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.Core.Types.ISourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource! source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.Core.Types.ISourceRepositoryProvider.GetRepositories() -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository!>!
+NuGet.Protocol.Core.Types.ISourceRepositoryProvider.PackageSourceProvider.get -> NuGet.Configuration.IPackageSourceProvider!
 NuGet.Protocol.Core.Types.LegacyFeedCapabilityResource
 NuGet.Protocol.Core.Types.LegacyFeedCapabilityResource.LegacyFeedCapabilityResource() -> void
 NuGet.Protocol.Core.Types.ListResource
@@ -307,16 +307,16 @@ NuGet.Protocol.Core.Types.SourcePackageDependencyInfo.SourcePackageDependencyInf
 NuGet.Protocol.Core.Types.SourceRepository
 NuGet.Protocol.Core.Types.SourceRepository.FeedTypeOverride.get -> NuGet.Protocol.FeedType
 NuGet.Protocol.Core.Types.SourceRepository.SourceRepository() -> void
-~NuGet.Protocol.Core.Types.SourceRepository.SourceRepository(NuGet.Configuration.PackageSource source, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider> providers) -> void
-~NuGet.Protocol.Core.Types.SourceRepository.SourceRepository(NuGet.Configuration.PackageSource source, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> providers) -> void
-~NuGet.Protocol.Core.Types.SourceRepository.SourceRepository(NuGet.Configuration.PackageSource source, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> providers, NuGet.Protocol.FeedType feedTypeOverride) -> void
+NuGet.Protocol.Core.Types.SourceRepository.SourceRepository(NuGet.Configuration.PackageSource! source, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider!>! providers) -> void
+NuGet.Protocol.Core.Types.SourceRepository.SourceRepository(NuGet.Configuration.PackageSource! source, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! providers) -> void
+NuGet.Protocol.Core.Types.SourceRepository.SourceRepository(NuGet.Configuration.PackageSource! source, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! providers, NuGet.Protocol.FeedType feedTypeOverride) -> void
 NuGet.Protocol.Core.Types.SourceRepositoryProvider
-~NuGet.Protocol.Core.Types.SourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.Core.Types.SourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository
-~NuGet.Protocol.Core.Types.SourceRepositoryProvider.GetRepositories() -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository>
-~NuGet.Protocol.Core.Types.SourceRepositoryProvider.PackageSourceProvider.get -> NuGet.Configuration.IPackageSourceProvider
-~NuGet.Protocol.Core.Types.SourceRepositoryProvider.SourceRepositoryProvider(NuGet.Configuration.IPackageSourceProvider packageSourceProvider, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> resourceProviders) -> void
-~NuGet.Protocol.Core.Types.SourceRepositoryProvider.SourceRepositoryProvider(NuGet.Configuration.ISettings settings, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> resourceProviders) -> void
+NuGet.Protocol.Core.Types.SourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.Core.Types.SourceRepositoryProvider.CreateRepository(NuGet.Configuration.PackageSource! source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository!
+NuGet.Protocol.Core.Types.SourceRepositoryProvider.GetRepositories() -> System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository!>!
+NuGet.Protocol.Core.Types.SourceRepositoryProvider.PackageSourceProvider.get -> NuGet.Configuration.IPackageSourceProvider!
+NuGet.Protocol.Core.Types.SourceRepositoryProvider.SourceRepositoryProvider(NuGet.Configuration.IPackageSourceProvider! packageSourceProvider, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders) -> void
+NuGet.Protocol.Core.Types.SourceRepositoryProvider.SourceRepositoryProvider(NuGet.Configuration.ISettings! settings, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders) -> void
 NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3
 ~NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3.SourceUri.get -> System.Uri
 ~NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3.SymbolPackageUpdateResourceV3(string source, NuGet.Protocol.HttpSource httpSource) -> void
@@ -408,7 +408,7 @@ NuGet.Protocol.FeedType.HttpV3 = 2 -> NuGet.Protocol.FeedType
 NuGet.Protocol.FeedType.Undefined = 0 -> NuGet.Protocol.FeedType
 NuGet.Protocol.FeedTypePackageSource
 NuGet.Protocol.FeedTypePackageSource.FeedType.get -> NuGet.Protocol.FeedType
-~NuGet.Protocol.FeedTypePackageSource.FeedTypePackageSource(string source, NuGet.Protocol.FeedType feedType) -> void
+NuGet.Protocol.FeedTypePackageSource.FeedTypePackageSource(string! source, NuGet.Protocol.FeedType feedType) -> void
 NuGet.Protocol.FeedTypeResource
 NuGet.Protocol.FeedTypeResource.FeedType.get -> NuGet.Protocol.FeedType
 NuGet.Protocol.FeedTypeResource.FeedTypeResource(NuGet.Protocol.FeedType feedType) -> void
@@ -1649,7 +1649,7 @@ override NuGet.Protocol.Core.Types.NullSourceCacheContext.WithRefreshCacheTrue()
 override NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.Equals(object? obj) -> bool
 override NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.GetHashCode() -> int
 override NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.ToString() -> string!
-~override NuGet.Protocol.Core.Types.SourceRepository.ToString() -> string
+override NuGet.Protocol.Core.Types.SourceRepository.ToString() -> string!
 ~override NuGet.Protocol.DependencyInfoResourceV2Feed.ResolvePackage(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
 ~override NuGet.Protocol.DependencyInfoResourceV2Feed.ResolvePackages(string packageId, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>>
 ~override NuGet.Protocol.DependencyInfoResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
@@ -1911,15 +1911,15 @@ static NuGet.Protocol.Core.Types.OfflineFeedUtility.ThrowIfInvalidOrNotFound(str
 ~static NuGet.Protocol.Core.Types.PackageSearchMetadataExtensions.WithVersions(this NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, System.Func<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>> valueFactory) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
 ~static NuGet.Protocol.Core.Types.PackageSearchMetadataExtensions.WithVersions(this NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, System.Func<System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>>> asyncValueFactory) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
 ~static NuGet.Protocol.Core.Types.PackageUpdateResource.ForceDeleteDirectory(string path) -> void
-~static NuGet.Protocol.Core.Types.Repository.CreateProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider> resourceProviders) -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider
-~static NuGet.Protocol.Core.Types.Repository.CreateProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider> resourceProviders, string rootPath) -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider
-~static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> resourceProviders, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> resourceProviders, NuGet.Configuration.PackageSource source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> resourceProviders, string sourceUrl) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>> resourceProviders, string sourceUrl, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.Core.Types.Repository.Factory.get -> NuGet.Protocol.Core.Types.Repository.RepositoryFactory
-~static NuGet.Protocol.Core.Types.Repository.Provider.get -> NuGet.Protocol.Core.Types.Repository.ProviderFactory
-~static NuGet.Protocol.Core.Types.Repository.Provider.set -> void
+static NuGet.Protocol.Core.Types.Repository.CreateProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider!>! resourceProviders) -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider!
+static NuGet.Protocol.Core.Types.Repository.CreateProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider!>! resourceProviders, string? rootPath) -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider!
+static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders, NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders, NuGet.Configuration.PackageSource! source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders, string! sourceUrl) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders, string! sourceUrl, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.Core.Types.Repository.Factory.get -> NuGet.Protocol.Core.Types.Repository.RepositoryFactory!
+static NuGet.Protocol.Core.Types.Repository.Provider.get -> NuGet.Protocol.Core.Types.Repository.ProviderFactory!
+static NuGet.Protocol.Core.Types.Repository.Provider.set -> void
 static NuGet.Protocol.Core.Types.UserAgent.SetUserAgent(System.Net.Http.HttpClient! client) -> void
 static NuGet.Protocol.Core.Types.UserAgent.SetUserAgentString(NuGet.Protocol.Core.Types.UserAgentStringBuilder! builder) -> void
 static NuGet.Protocol.Core.Types.UserAgent.UserAgentString.get -> string!
@@ -1949,7 +1949,7 @@ static NuGet.Protocol.HttpRequestMessageFactory.Create(System.Net.Http.HttpMetho
 static NuGet.Protocol.HttpRequestMessageFactory.Create(System.Net.Http.HttpMethod! method, System.Uri! requestUri, NuGet.Protocol.HttpRequestMessageConfiguration! configuration) -> System.Net.Http.HttpRequestMessage!
 static NuGet.Protocol.HttpRequestMessageFactory.Create(System.Net.Http.HttpMethod! method, string! requestUri, NuGet.Common.ILogger! log) -> System.Net.Http.HttpRequestMessage!
 static NuGet.Protocol.HttpRequestMessageFactory.Create(System.Net.Http.HttpMethod! method, string! requestUri, NuGet.Protocol.HttpRequestMessageConfiguration! configuration) -> System.Net.Http.HttpRequestMessage!
-~static NuGet.Protocol.HttpResponseMessageExtensions.LogServerWarning(this System.Net.Http.HttpResponseMessage response, NuGet.Common.ILogger log) -> void
+static NuGet.Protocol.HttpResponseMessageExtensions.LogServerWarning(this System.Net.Http.HttpResponseMessage! response, NuGet.Common.ILogger! log) -> void
 static NuGet.Protocol.HttpSource.Create(NuGet.Protocol.Core.Types.SourceRepository! source) -> NuGet.Protocol.HttpSource!
 static NuGet.Protocol.HttpSource.Create(NuGet.Protocol.Core.Types.SourceRepository! source, NuGet.Protocol.IThrottle! throttle) -> NuGet.Protocol.HttpSource!
 static NuGet.Protocol.HttpSourceResourceProvider.Throttle.get -> NuGet.Protocol.IThrottle?
@@ -2083,7 +2083,7 @@ static readonly NuGet.Protocol.ServiceTypes.Version510 -> string!
 static readonly NuGet.Protocol.ServiceTypes.Versioned -> string!
 static readonly NuGet.Protocol.StreamExtensions.BufferSize -> int
 ~virtual NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string packageId, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo>>
-~virtual NuGet.Protocol.Core.Types.Repository.ProviderFactory.GetCoreV3() -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
+virtual NuGet.Protocol.Core.Types.Repository.ProviderFactory.GetCoreV3() -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>!
 virtual NuGet.Protocol.Core.Types.ResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string!>!
 virtual NuGet.Protocol.Core.Types.ResourceProvider.Before.get -> System.Collections.Generic.IEnumerable<string!>!
 virtual NuGet.Protocol.Core.Types.ResourceProvider.Name.get -> string!
@@ -2093,12 +2093,12 @@ virtual NuGet.Protocol.Core.Types.SourceCacheContext.Dispose(bool disposing) -> 
 virtual NuGet.Protocol.Core.Types.SourceCacheContext.GeneratedTempFolder.get -> string!
 virtual NuGet.Protocol.Core.Types.SourceCacheContext.GeneratedTempFolder.set -> void
 virtual NuGet.Protocol.Core.Types.SourceCacheContext.WithRefreshCacheTrue() -> NuGet.Protocol.Core.Types.SourceCacheContext!
-~virtual NuGet.Protocol.Core.Types.SourceRepository.GetFeedType(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.FeedType>
-~virtual NuGet.Protocol.Core.Types.SourceRepository.GetResource<T>() -> T
-~virtual NuGet.Protocol.Core.Types.SourceRepository.GetResource<T>(System.Threading.CancellationToken token) -> T
-~virtual NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync<T>() -> System.Threading.Tasks.Task<T>
-~virtual NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync<T>(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>
-~virtual NuGet.Protocol.Core.Types.SourceRepository.PackageSource.get -> NuGet.Configuration.PackageSource
+virtual NuGet.Protocol.Core.Types.SourceRepository.GetFeedType(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.FeedType>!
+virtual NuGet.Protocol.Core.Types.SourceRepository.GetResource<T>() -> T?
+virtual NuGet.Protocol.Core.Types.SourceRepository.GetResource<T>(System.Threading.CancellationToken token) -> T?
+virtual NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync<T>() -> System.Threading.Tasks.Task<T?>!
+virtual NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync<T>(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T?>!
+virtual NuGet.Protocol.Core.Types.SourceRepository.PackageSource.get -> NuGet.Configuration.PackageSource!
 ~virtual NuGet.Protocol.FindLocalPackagesResource.Exists(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> bool
 ~virtual NuGet.Protocol.FindLocalPackagesResource.Exists(string packageId, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> bool
 virtual NuGet.Protocol.HttpSource.Dispose(bool disposing) -> void
