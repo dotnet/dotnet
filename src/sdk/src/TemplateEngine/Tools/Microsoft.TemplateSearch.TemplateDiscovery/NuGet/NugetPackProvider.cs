@@ -212,7 +212,7 @@ namespace Microsoft.TemplateSearch.TemplateDiscovery.NuGet
 
             try
             {
-                PackageMetadataResource resource = await _repository.GetResourceAsync<PackageMetadataResource>(cancellationToken).ConfigureAwait(false);
+                PackageMetadataResource resource = await _repository.GetResourceAsync<PackageMetadataResource>(cancellationToken).ConfigureAwait(false) ?? throw new InvalidOperationException("NuGet feed does not provide PackageMetadataResource.");
                 IEnumerable<IPackageSearchMetadata> foundPackages = await resource.GetMetadataAsync(
                     packageIdentifier,
                     includePrerelease: _includePreview,
