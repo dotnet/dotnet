@@ -22,10 +22,12 @@
       <CommonBuildArgs>$(CommonBuildArgs) /p:PublicSign=$(PublicSign)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
-      <!-- Source-build behavioral overrides (keeps patches minimal) -->
+      <!-- IntegrationBuild=true disables the MinVer PackageReference (avoids needing
+           the package in the source-build feed). We manually set Version and AssemblyVersion
+           to match what MinVer+AssemblyVersionTarget would produce in MSFT CI. -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:IntegrationBuild=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:DotNetBuildSourceOnly=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:UseArtifactsOutput=false</CommonBuildArgs>
-      <CommonBuildArgs>$(CommonBuildArgs) /p:IntegrationBuild=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:EnablePublicApi=false</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:SkipAnalysis=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:EnforceCodeStyleInBuild=false</CommonBuildArgs>
@@ -35,25 +37,30 @@
       <CommonBuildArgs>$(CommonBuildArgs) /p:DisablePackageBaselineValidation=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:IsAotCompatible=false</CommonBuildArgs>
 
+      <!-- AssemblyVersion 4th component: upstream uses GITHUB_RUN_NUMBER (a plain
+           integer) via the BuildNumber property, defaulting to 0 when unset.
+           Source-build cannot replicate the upstream run number, so use 0. -->
+      <OTelContribRevision>0</OTelContribRevision>
+
       <PackArgs>$(CommonBuildArgs) --output $(ProjectDirectory)pack</PackArgs>
     </PropertyGroup>
 
     <!-- OpenTelemetry.Instrumentation.Http -->
-    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Http.binlog $(HttpProject) $(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion)"
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Http.binlog $(HttpProject) $(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribHttpReleaseVersion).$(OTelContribRevision)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
-    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Http.binlog $(HttpProject) $(PackArgs) /p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Http.binlog $(HttpProject) $(PackArgs) /p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribHttpReleaseVersion).$(OTelContribRevision)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
 
     <!-- OpenTelemetry.Instrumentation.Runtime -->
-    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Runtime.binlog $(RuntimeProject) $(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion)"
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_Runtime.binlog $(RuntimeProject) $(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribRuntimeReleaseVersion).$(OTelContribRevision)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
-    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Runtime.binlog $(RuntimeProject) $(PackArgs) /p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion)"
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Runtime.binlog $(RuntimeProject) $(PackArgs) /p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribRuntimeReleaseVersion).$(OTelContribRevision)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

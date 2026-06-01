@@ -20,11 +20,15 @@
       <CommonBuildArgs>$(CommonBuildArgs) /p:PublicSign=$(PublicSign)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
+      <!-- IntegrationBuild=true disables the MinVer PackageReference (avoids needing
+           the package in the source-build feed). We manually set AssemblyVersion=1.0.0.0
+           to match what MinVer would produce (Major.0.0.0 policy). -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:IntegrationBuild=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetReleaseVersion)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:AssemblyVersion=1.0.0.0</CommonBuildArgs>
       <!-- Source-build behavioral overrides (keeps patches minimal) -->
       <CommonBuildArgs>$(CommonBuildArgs) /p:DotNetBuildSourceOnly=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:UseArtifactsOutput=false</CommonBuildArgs>
-      <CommonBuildArgs>$(CommonBuildArgs) /p:IntegrationBuild=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:SkipAnalysis=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:EnforceCodeStyleInBuild=false</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:NuGetAudit=false</CommonBuildArgs>
