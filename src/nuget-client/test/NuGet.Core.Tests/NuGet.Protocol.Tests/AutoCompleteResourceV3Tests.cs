@@ -29,7 +29,8 @@ namespace NuGet.Protocol.Tests
                 JsonData.AutoCompleteEndpointNewtResult);
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.test/v3/index.json", Repository.Provider.GetCoreV3(), responses);
-            var resource = (AutoCompleteResourceV3)await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
+            var resource = (AutoCompleteResourceV3)(await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected AutoCompleteResource."));
 
             var envReader = new Mock<IEnvironmentVariableReader>();
             envReader.Setup(e => e.GetEnvironmentVariable(NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar)).Returns(useStj);
