@@ -1,0 +1,15 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!-- Imported after the consuming project has been evaluated, so $(TargetFramework) is set
+       for single-target projects (and for each inner build of multi-targeting projects).
+       If the package ships a host matching the consumer's .NET version (e.g. 'tools/net10.0'
+       for a net10.0 consumer), prefer it so the test host runs on the same runtime as the
+       test assemblies it loads. Otherwise the default 'tools/net' (NetCurrent) host from the
+       props file is used. -->
+  <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(TargetFrameworkVersion)' != ''">
+    <_XunitConsoleRunnerConsumerHost>$(MSBuildThisFileDirectory)..\tools\net$(TargetFrameworkVersion.TrimStart('v'))\xunit.console.dll</_XunitConsoleRunnerConsumerHost>
+    <XunitConsoleNetCoreAppPath Condition="Exists('$(_XunitConsoleRunnerConsumerHost)')">$(_XunitConsoleRunnerConsumerHost)</XunitConsoleNetCoreAppPath>
+  </PropertyGroup>
+
+</Project>

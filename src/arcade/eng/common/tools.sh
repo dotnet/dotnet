@@ -373,7 +373,7 @@ function InitializeBuildTool {
   _InitializeBuildToolCommand="msbuild"
 }
 
-function GetNuGetPackageCachePath {
+function InitializeNuGetPackageCachePath {
   if [[ -z ${NUGET_PACKAGES:-} ]]; then
     if [[ "$use_global_nuget_cache" == true ]]; then
       export NUGET_PACKAGES="$HOME/.nuget/packages/"
@@ -383,7 +383,7 @@ function GetNuGetPackageCachePath {
   fi
 
   # return value
-  _GetNuGetPackageCachePath=$NUGET_PACKAGES
+  _InitializeNuGetPackageCachePath=$NUGET_PACKAGES
 }
 
 function InitializeNativeTools() {
@@ -404,8 +404,6 @@ function InitializeToolset {
   if [[ -n "${_InitializeToolset:-}" ]]; then
     return
   fi
-
-  GetNuGetPackageCachePath
 
   ReadGlobalVersion "Microsoft.DotNet.Arcade.Sdk"
 
@@ -429,7 +427,7 @@ function InitializeToolset {
     ExitWithExitCode 2
   fi
 
-  local download_args=("package" "download" "Microsoft.DotNet.Arcade.Sdk@$toolset_version" "--verbosity" "minimal" "--prerelease" "--output" "$_GetNuGetPackageCachePath")
+  local download_args=("package" "download" "Microsoft.DotNet.Arcade.Sdk@$toolset_version" "--verbosity" "minimal" "--prerelease" "--output" "$_InitializeNuGetPackageCachePath")
   local nuget_config="${NUGET_CONFIG:-}"
   if [[ -z "$nuget_config" ]]; then
     # Search for any variation of nuget.config in the RepoRoot
@@ -446,7 +444,7 @@ function InitializeToolset {
   fi
   DotNet "${download_args[@]}"
 
-  local package_dir="$_GetNuGetPackageCachePath/microsoft.dotnet.arcade.sdk/$toolset_version"
+  local package_dir="$_InitializeNuGetPackageCachePath/microsoft.dotnet.arcade.sdk/$toolset_version"
 
   if [[ ! -d "$package_dir/toolset" ]]; then
     Write-PipelineTelemetryError -category 'InitializeToolset' "Arcade SDK package does not contain a toolset folder: $package_dir"
@@ -502,21 +500,6 @@ function DotNet {
 }
 
 function MSBuild {
-  local args=( "$@" )
-
-  if [[ "$ci" == true ]]; then
-    InitializeToolset
-
-    export NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS=20
-    export NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS=20
-    Write-PipelineSetVariable -name "NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS" -value "20"
-    Write-PipelineSetVariable -name "NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS" -value "20"
-  fi
-
-  MSBuild-Core "${args[@]}"
-}
-
-function MSBuild-Core {
   if [[ "$ci" == true ]]; then
     if [[ "$binary_log" != true && "$exclude_ci_binary_log" != true ]]; then
       Write-PipelineTelemetryError -category 'Build'  "Binary log must be enabled in CI build, or explicitly opted-out from with the -noBinaryLog switch."
@@ -665,3 +648,6 @@ fi
 if [[ -n "${useInstalledDotNetCli:-}" ]]; then
   use_installed_dotnet_cli="$useInstalledDotNetCli"
 fi
+
+# Initialize the nuget package cache vars
+InitializeNuGetPackageCachePath
