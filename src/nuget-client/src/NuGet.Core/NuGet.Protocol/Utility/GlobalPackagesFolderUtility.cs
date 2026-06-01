@@ -3,7 +3,6 @@
 
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,11 +126,9 @@ namespace NuGet.Protocol
                 extractionContext,
                 token,
                 parentId);
-
-            var package = GetPackage(packageIdentity, globalPackagesFolder);
-
-            Debug.Assert(package!.PackageStream.CanSeek);
-            Debug.Assert(package.PackageReader != null);
+            // It is hard for to enforce this via the compiler, but at this point we are guaranteed to have the package. 
+            // If there were installation failured, PackageExtractor.InstallFromSourceAsync would have thrown.
+            var package = GetPackage(packageIdentity, globalPackagesFolder)!;
 
             return package;
         }

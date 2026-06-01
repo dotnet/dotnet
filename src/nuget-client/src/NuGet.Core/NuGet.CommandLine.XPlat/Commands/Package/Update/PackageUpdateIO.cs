@@ -377,6 +377,10 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
         CancellationToken cancellationToken)
     {
         var packageMetadataResource = await source.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+        if (packageMetadataResource is null)
+        {
+            return null;
+        }
 
         var packageDetails = await packageMetadataResource.GetMetadataAsync(
             packageId,
@@ -428,6 +432,10 @@ internal class PackageUpdateIO : IPackageUpdateIO, IDisposable
         CancellationToken cancellationToken)
     {
         var packageMetadataResource = await source.GetResourceAsync<PackageMetadataResource>(cancellationToken);
+        if (packageMetadataResource is null)
+        {
+            return null;
+        }
 
         var packageDetails = await packageMetadataResource.GetMetadataAsync(
             packageId,
