@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    Updates SourceRevisionId and FileVersionRevision in an external package .proj file.
+    Updates SourceRevisionId and package version metadata in an external package .proj file.
 .DESCRIPTION
     After adding or updating a git submodule for an external component, run this script
     to automatically set the correct SourceRevisionId (from the submodule commit) and
-    FileVersionRevision (from the Microsoft-shipped NuGet package) in the component's
+    package version metadata (from the Microsoft-shipped NuGet package) in the component's
     .proj file.
 
     The script honors the repo's NuGet.config when downloading packages.

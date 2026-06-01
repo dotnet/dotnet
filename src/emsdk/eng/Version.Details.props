@@ -66,14 +66,14 @@ This file should be imported by eng/Versions.props
     <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>19.1.0-alpha.1.26256.1</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>19.1.0-alpha.1.26256.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
     <!-- dotnet-node dependencies -->
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26268.1</runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26279.1</runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>

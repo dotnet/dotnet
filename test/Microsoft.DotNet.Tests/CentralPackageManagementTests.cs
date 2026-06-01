@@ -142,6 +142,16 @@ public class CentralPackageManagementTests
         {
             if (element.Name.LocalName.Equals("PackageVersion", StringComparison.OrdinalIgnoreCase))
             {
+                // Skip conditional entries — they're often intentional fallbacks
+                // gated to be mutually exclusive with an implicit declaration elsewhere
+                // (e.g. <PackageVersion … Condition="'$(DisableArcade)' == '1'" />). NuGet
+                // only raises NU1009 when both sides evaluate to active simultaneously,
+                // which we cannot determine statically.
+                if (HasConditionOnSelfOrAncestor(element))
+                {
+                    continue;
+                }
+
                 string? id = element.Attribute("Include")?.Value
                     ?? element.Attribute("Update")?.Value;
                 if (id != null)
@@ -195,6 +205,12 @@ public class CentralPackageManagementTests
             string? isImplicit = element.Attribute("IsImplicitlyDefined")?.Value;
             if (string.Equals(isImplicit, "true", StringComparison.OrdinalIgnoreCase))
             {
+                // Same conditional-skip rationale as PackageVersion above.
+                if (HasConditionOnSelfOrAncestor(element))
+                {
+                    continue;
+                }
+
                 string? id = element.Attribute("Include")?.Value;
                 if (id != null)
                 {
@@ -204,34 +220,66 @@ public class CentralPackageManagementTests
         }
     }
 
+    /// <summary>
+    /// Returns true if the element itself or any ancestor (e.g. enclosing
+    /// <c>ItemGroup</c>) carries a <c>Condition</c> attribute. Such entries cannot
+    /// be statically proven to conflict because their activation depends on
+    /// MSBuild property evaluation.
+    /// </summary>
+    private static bool HasConditionOnSelfOrAncestor(XElement element)
+    {
+        for (XElement? e = element; e != null; e = e.Parent)
+        {
+            if (!string.IsNullOrWhiteSpace(e.Attribute("Condition")?.Value))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static IEnumerable<string> EnumerateMSBuildFiles(string directory)
     {
-        var options = new EnumerationOptions
+        // Use `git ls-files` to enumerate *checked-in* .targets/.props only.
+        // This is the strongest possible filter against false positives: it
+        // structurally eliminates restored NuGet packages (artifacts/.packages/),
+        // build intermediates (bin/, obj/), and any other untracked output the
+        // VMR build may have produced before the test runs.
+        var psi = new System.Diagnostics.ProcessStartInfo("git", "ls-files -- *.targets *.props")
         {
-            RecurseSubdirectories = true,
-            IgnoreInaccessible = true,
+            WorkingDirectory = directory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
         };
 
-        foreach (string file in Directory.EnumerateFiles(directory, "*.targets", options))
+        using var process = System.Diagnostics.Process.Start(psi)!;
+        string stdout = process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+        if (process.ExitCode != 0)
         {
-            // Skip test assets and node_modules
-            if (file.Contains("testassets", StringComparison.OrdinalIgnoreCase) ||
-                file.Contains("node_modules", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-            yield return file;
+            yield break;
         }
 
-        foreach (string file in Directory.EnumerateFiles(directory, "*.props", options))
+        foreach (string line in stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries))
         {
-            if (file.Contains("testassets", StringComparison.OrdinalIgnoreCase) ||
-                file.Contains("node_modules", StringComparison.OrdinalIgnoreCase) ||
-                file.EndsWith("Directory.Packages.props", StringComparison.OrdinalIgnoreCase))
+            string relative = line.Trim();
+            if (relative.Length == 0)
             {
                 continue;
             }
-            yield return file;
+
+            if (relative.EndsWith("Directory.Packages.props", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            string fullPath = Path.GetFullPath(Path.Combine(directory, relative));
+            if (File.Exists(fullPath))
+            {
+                yield return fullPath;
+            }
         }
     }
 }
