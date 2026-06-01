@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="88de4039266188e751a415d96cf6dc7f5dee77ac" BarId="315454" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="120c8618524f060b1a8a22bd51099c5193d1ba06" BarId="316441" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -20,13 +20,13 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26222.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26278.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>58713cb9a664ed67642127fcaf70b8c0c3b55ef2</Sha>
+      <Sha>a7bf38d04c8247b059c688f5448dc556e0cd6bb5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.26222.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.26278.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>58713cb9a664ed67642127fcaf70b8c0c3b55ef2</Sha>
+      <Sha>a7bf38d04c8247b059c688f5448dc556e0cd6bb5</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25424.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -36,9 +36,9 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>e6a28a549cc932140719fd63ba0387254db0ac51</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="11.0.0-prerelease.26230.4">
+    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="11.0.0-prerelease.26279.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
-      <Sha>92962e5c46ac08a66ded4c5696209cc60f1a232f</Sha>
+      <Sha>2cee83bf4841d72c9734a343f3003aeabdd46edf</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
