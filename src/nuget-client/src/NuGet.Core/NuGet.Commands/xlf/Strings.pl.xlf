@@ -1424,27 +1424,27 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Critical">
         <source>critical</source>
-        <target state="translated">krytyczna</target>
+        <target state="translated">krytyczne</target>
         <note>As in "This package has a critical severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_High">
         <source>high</source>
-        <target state="translated">wysoka</target>
+        <target state="translated">wysokie</target>
         <note>As in "This package has a high severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Low">
         <source>low</source>
-        <target state="translated">niska</target>
+        <target state="translated">niskie</target>
         <note>As in "This package has a low severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Moderate">
         <source>moderate</source>
-        <target state="translated">umiarkowana</target>
+        <target state="translated">umiarkowane</target>
         <note>As in "This package has a moderate severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">
         <source>unknown</source>
-        <target state="translated">nieznana</target>
+        <target state="translated">nieznane</target>
         <note>As in "This package has a unknown severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="WarningAsError">
