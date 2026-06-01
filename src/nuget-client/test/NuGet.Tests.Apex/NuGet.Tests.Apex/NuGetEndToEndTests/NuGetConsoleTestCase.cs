@@ -668,7 +668,7 @@ namespace NuGet.Tests.Apex
             nugetConsole.Execute("Update-Package -Reinstall");
 
             // Assert
-            var expectedMessage = $"The -Reinstall parameter does not apply to PackageReference based projects `{Path.GetFileNameWithoutExtension(testContext.Project.UniqueName)}`.";
+            var expectedMessage = $"The `-Reinstall` parameter does not apply to PackageReference based projects `{Path.GetFileNameWithoutExtension(testContext.Project.UniqueName)}'.";
             nugetConsole.IsMessageFoundInPMC(expectedMessage).Should().Be(warns, because: nugetConsole.GetText());
             VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
             VisualStudio.HasNoErrorsInOutputWindows().Should().BeTrue();
