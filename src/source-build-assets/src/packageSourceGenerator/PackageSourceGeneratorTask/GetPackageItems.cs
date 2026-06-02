@@ -39,12 +39,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// <summary>
         /// Include only the package compile items and dependencies with a matching target framework.
         /// </summary>
-        public string? IncludeTargetFrameworks { get; set; }
+        public string[]? IncludeTargetFrameworks { get; set; }
 
         /// <summary>
         /// Exclude package compile items and dependencies with a matching target framework.
         /// </summary>
-        public string? ExcludeTargetFrameworks { get; set; }
+        public string[]? ExcludeTargetFrameworks { get; set; }
 
         /// <summary>
         /// The package's compile items, including target framework metadata.

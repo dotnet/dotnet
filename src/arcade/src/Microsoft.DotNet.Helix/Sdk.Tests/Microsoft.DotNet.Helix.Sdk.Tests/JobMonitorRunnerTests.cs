@@ -1218,6 +1218,74 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         /// <summary>
+        /// Regression: a Helix job that was "running" in the first poll and "finished" in a
+        /// later poll must not be listed in the timeout error message or cancelled, because the
+        /// monitor's cached snapshot has to reflect the latest Helix-side state when the
+        /// timeout fires. Only jobs that are still genuinely in flight at timeout should be
+        /// reported / cancelled.
+        /// </summary>
+        [Fact]
+        public async Task MonitorTimesOut_DoesNotReportOrCancelJobsThatFinishedAfterFirstPoll()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "inProgress"));
+
+            // Poll 1: both jobs running.
+            helix.AddResponse(jobs:
+            [
+                HelixJob("helix-good", "running"),
+                HelixJob("helix-stuck", "running"),
+            ]);
+            // Poll 2+: helix-good has finished on Helix, helix-stuck still running.
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-good", "finished"),
+                    HelixJob("helix-stuck", "running"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-good"] = PassFail(passed: ["good-wi"]),
+                });
+
+            int pollCount = 0;
+            using var cts = new CancellationTokenSource();
+            var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix,
+                async (_, _) =>
+                {
+                    pollCount++;
+                    if (pollCount >= 2)
+                    {
+                        // Wait until helix-good's results have actually been uploaded before
+                        // cancelling, so the monitor has had a chance to record its terminal
+                        // state.
+                        Task completed = await Task.WhenAny(azdo.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                        Assert.Same(azdo.UploadCompleted.Task, completed);
+                        cts.Cancel();
+                    }
+                });
+
+            int exitCode = await runner.RunAsync(cts.Token);
+
+            Assert.Equal(1, exitCode);
+
+            // helix-good must not appear in the timeout's "had not finished" list because its
+            // cached snapshot was overwritten with the latest (finished) state.
+            string timeoutMessage = Assert.Single(logger.Messages, m =>
+                m.Contains("Helix Job Monitor timed out", StringComparison.Ordinal));
+            Assert.Contains("helix-stuck", timeoutMessage, StringComparison.Ordinal);
+            Assert.DoesNotContain("helix-good", timeoutMessage, StringComparison.Ordinal);
+
+            // And the best-effort cancel pass must only target the still-in-flight job.
+            Assert.Equal(["helix-stuck"], helix.CanceledJobs.OrderBy(j => j, StringComparer.OrdinalIgnoreCase).ToArray());
+        }
+
+        /// <summary>
         /// The monitor times out while some pipeline jobs haven't submitted Helix work yet,
         /// but one job's Helix results were already uploaded. On relaunch, the monitor picks up:
         /// skips already-processed Helix jobs, processes the new ones that have now completed.

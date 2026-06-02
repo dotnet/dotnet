@@ -1,0 +1,147 @@
+parameters:
+# Job name of the Build1 stage's vmr-build job (for downloading first-build artifacts)
+- name: build1JobName
+  type: string
+
+# Job name of the Build2 stage's vmr-build job (for downloading second-build artifacts)
+- name: build2JobName
+  type: string
+
+- name: targetRid
+  type: string
+
+- name: architecture
+  type: string
+
+- name: buildType
+  type: string
+  values:
+  - SourceBuilt
+  - Msft
+
+- name: publishTestResultsPr
+  type: boolean
+  default: false
+
+- name: pullRequestTitle
+  type: string
+  default: 'Update Reproducibility Test Baselines and Exclusions'
+
+jobs:
+- job: Reproducibility_${{ parameters.buildType }}_${{ parameters.build1JobName }}_${{ parameters.architecture }}
+  timeoutInMinutes: 150
+  variables:
+  - template: ../variables/pipelines.yml
+  templateContext:
+    outputs:
+    - output: pipelineArtifact
+      displayName: 'Publish BuildLogs'
+      condition: succeededOrFailed()
+      targetPath: '$(Build.StagingDirectory)/BuildLogs'
+      artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+  steps:
+
+  # Download the first SDK tarball from this pipeline's Build1 stage.
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      artifact: ${{ parameters.build1JobName }}_Artifacts
+      ${{ if eq(parameters.buildType, 'Msft') }}:
+        patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      ${{ else }}:
+        patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      downloadPath: $(Pipeline.Workspace)/Artifacts
+      checkDownloadedFiles: true
+    displayName: Download First SDK Tarball (from Build1 stage)
+
+  - script: |
+      # Move artifacts to root for easy discovery
+      find $(Pipeline.Workspace)/Artifacts -type f -exec mv {} $(Pipeline.Workspace)/Artifacts \;
+    displayName: Move first build artifacts to root
+
+  - script: |
+      first_sdk_tarball=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$first_sdk_tarball" ]]; then
+        echo "First SDK tarball not found in '$(Pipeline.Workspace)/Artifacts'. The Build1 stage's '${{ parameters.build1JobName }}' job might have failed to publish the expected artifact."
+        exit 1
+      fi
+
+      echo "First SDK tarball: $first_sdk_tarball"
+      echo "##vso[task.setvariable variable=FirstSdkTarballPath]$(Pipeline.Workspace)/Artifacts/$first_sdk_tarball"
+    displayName: Locate first SDK tarball
+
+  # Download the second SDK tarball from this pipeline's Build2 stage
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      artifact: ${{ parameters.build2JobName }}_Artifacts
+      ${{ if eq(parameters.buildType, 'Msft') }}:
+        patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      ${{ else }}:
+        patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      downloadPath: $(Pipeline.Workspace)/RebuildArtifacts
+      checkDownloadedFiles: true
+    displayName: Download Second SDK Tarball (from Build2 stage)
+
+  - script: |
+      find $(Pipeline.Workspace)/RebuildArtifacts -type f -exec mv {} $(Pipeline.Workspace)/RebuildArtifacts \;
+    displayName: Move rebuild artifacts to root
+
+  - script: |
+      second_sdk_tarball=$(find "$(Pipeline.Workspace)/RebuildArtifacts" -name "dotnet-sdk-*-${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$second_sdk_tarball" ]]; then
+        echo "Second SDK tarball not found in rebuild artifacts."
+        exit 1
+      fi
+
+      echo "Second SDK tarball: $second_sdk_tarball"
+      echo "##vso[task.setvariable variable=SecondSdkTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_sdk_tarball"
+    displayName: Locate second SDK tarball
+
+  - script: >
+      eng/common/dotnet.sh test
+      $(Build.SourcesDirectory)/test/Microsoft.DotNet.Reproducibility.Tests/Microsoft.DotNet.Reproducibility.Tests.csproj
+      -bl:$(Build.SourcesDirectory)/artifacts/log/Release/ReproducibilityTests.binlog
+      /p:${{ parameters.buildType }}SdkTarballPath1=$(FirstSdkTarballPath)
+      /p:${{ parameters.buildType }}SdkTarballPath2=$(SecondSdkTarballPath)
+    displayName: Run Reproducibility Tests
+    workingDirectory: $(Build.SourcesDirectory)
+
+  # Collect logs
+  - script: |
+      set -x
+      targetFolder=$(Build.StagingDirectory)/BuildLogs/
+      mkdir -p ${targetFolder}
+      cd "$(Build.SourcesDirectory)"
+      find artifacts/log/ -type f -name "ReproducibilityTests*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "*.diff" -exec cp {} --parents -t ${targetFolder} \;
+      find artifacts/TestResults/ -type f -name "Updated*.txt" -exec cp {} --parents -t ${targetFolder} \;
+    displayName: Prepare BuildLogs staging directory
+    continueOnError: true
+    condition: succeededOrFailed()
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    condition: succeededOrFailed()
+    continueOnError: true
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: 'artifacts/TestResults/Release/*.trx'
+      searchFolder: $(Build.SourcesDirectory)
+      mergeTestResults: true
+      publishRunAttachments: true
+      testRunTitle: Tests_$(Agent.JobName)
+
+  - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
+      # Publish both Updated*Exclusions.txt and Updated*Baseline.diff. The CreateBaselineUpdatePR
+      # tool filters to files prefixed with "Updated", so other build logs in BuildLogs are ignored.
+      - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
+        parameters:
+          pipeline: reproducibility
+          repo: dotnet/dotnet
+          originalFilesDirectory: test/Microsoft.DotNet.Reproducibility.Tests/assets
+          updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
+          pullRequestTitle: ${{ parameters.pullRequestTitle }}

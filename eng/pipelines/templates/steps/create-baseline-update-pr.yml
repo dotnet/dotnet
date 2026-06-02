@@ -5,7 +5,7 @@ parameters:
 
 # The pipeline that is being run
 # Used to determine the correct baseline update tool to run
-# Currently only supports "sdk" and "license"
+# Currently supports "sdk", "license", and "reproducibility"
 - name: pipeline
   type: string
 

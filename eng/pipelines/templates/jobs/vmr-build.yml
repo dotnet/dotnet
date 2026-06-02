@@ -147,6 +147,16 @@ parameters:
   type: stepList
   default: []
 
+# Custom steps to run before the build (after checkout and setup)
+- name: initSteps
+  type: stepList
+  default: []
+
+# When true, compute SOURCE_DATE_EPOCH from Build.BuildNumber and pass it to the build.
+- name: setSourceDateEpoch
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -177,6 +187,11 @@ parameters:
   type: string
   default: ''
 
+# Additional job dependencies beyond reuseBuildArtifactsFrom
+- name: dependsOn
+  type: object
+  default: []
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
   pool: ${{ parameters.pool }}
@@ -197,9 +212,12 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
+  ${{ if or(gt(length(parameters.reuseBuildArtifactsFrom), 0), gt(length(parameters.dependsOn), 0)) }}:
     dependsOn:
-    - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ each dep in parameters.reuseBuildArtifactsFrom }}:
+      - ${{ dep }}
+    - ${{ each dep in parameters.dependsOn }}:
+      - ${{ dep }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -210,7 +228,7 @@ jobs:
     value: ''
   - name: runTestsTimeout
     value: 30
-  
+
   - ${{ if parameters.buildSourceOnly }}:
     - name: sharedComponentsDir
       value: $(Agent.TempDirectory)/shared-components
@@ -424,6 +442,16 @@ jobs:
     fetchDepth: 1
     retryCountOnTaskFailure: 5
 
+  - ${{ parameters.initSteps }}
+
+  - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+    - pwsh: |
+        # extract the date and revision from the build number (YYYYMMDD.Revision) and use it to calculate the SOURCE_DATE_EPOCH
+        $parts = '$(Build.BuildNumber)'.Split('.')
+        $epoch = ([DateTimeOffset]::ParseExact($parts[0], 'yyyyMMdd', $null, 'AssumeUniversal')).ToUnixTimeSeconds() + [int]$parts[1]
+        Write-Host "Calculated SOURCE_DATE_EPOCH: $epoch from Build.BuildNumber: $(Build.BuildNumber)"
+        Write-Host "##vso[task.setvariable variable=SOURCE_DATE_EPOCH]$epoch"
+      displayName: Compute SOURCE_DATE_EPOCH
 
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
   # These directories are referenced in templateContext.outputs which validates paths at job start
@@ -569,7 +597,12 @@ jobs:
     # Authenticate with service connections to be able to pull packages to external nuget feeds.
     - task: NuGetAuthenticate@1
       inputs:
-        nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
+        nuGetServiceConnections: devdiv/dotnet-core-internal-tooling
+    - task: NuGetAuthenticate@1
+      displayName: Authenticate devdiv/Engineering feed (WIF)
+      inputs:
+        azureDevOpsServiceConnection: devdiv-engineering-feed-r-wif
+        feedUrl: https://devdiv.pkgs.visualstudio.com/_packaging/Engineering/nuget/v3/index.json
 
   - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
@@ -613,11 +646,14 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      ${{ if eq(parameters.sign, 'true') }}:
+      ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
         env:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-          ${{ if eq(parameters.signDac, 'true') }}:
-            ESRP_TOKEN: $(System.AccessToken)
+          ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+            SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+          ${{ if eq(parameters.sign, 'true') }}:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            ${{ if eq(parameters.signDac, 'true') }}:
+              ESRP_TOKEN: $(System.AccessToken)
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
@@ -629,6 +665,7 @@ jobs:
           -excludeCIBinarylog
           /bl:artifacts/log/Release/Test.binlog
         displayName: Run Tests
+        name: RunTests
         workingDirectory: ${{ variables.sourcesPath }}
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
@@ -846,9 +883,12 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if eq(parameters.sign, 'true') }}:
+        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
           env:
-            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+              SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+            ${{ if eq(parameters.sign, 'true') }}:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
@@ -906,6 +946,7 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
+        name: RunTests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ if eq(parameters.sign, 'True') }}:
@@ -959,7 +1000,7 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
-  # Only copy test results when tests ran
+  # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: CopyFiles@2
       displayName: Copy TestResults to BuildLogs staging
@@ -969,7 +1010,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -991,11 +1032,11 @@ jobs:
       continueOnError: true
       condition: always()
 
-  # Only upload test results when tests ran
+  # Only upload test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
       continueOnError: true
       inputs:
         testRunner: VSTest

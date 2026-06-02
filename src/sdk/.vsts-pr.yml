@@ -22,7 +22,9 @@ pr:
     - '*.yml'
     - '*.props'
     - '*.targets'
+    - global.json
     exclude:
+    - .github/ISSUE_TEMPLATE/*
     - documentation/*
     - README.md
     - CODEOWNERS

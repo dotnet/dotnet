@@ -373,37 +373,37 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>0eae08ed2f094f44e0151e4815e7cdd1a334fcdf</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.linux-musl-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.linux-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.linux-musl-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26268.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="11.0.0-alpha.1.26279.1">
       <Uri>https://github.com/dotnet/node</Uri>
-      <Sha>ed4e4d33e0dd62c67c8039bf4ac4153b2f01a7b8</Sha>
+      <Sha>79236bbd235e8349185d4832bfc91ef372fa43f8</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.HostModel.TestData" Version="11.0.0-beta.26261.1">
       <Uri>https://github.com/dotnet/runtime-assets</Uri>
@@ -416,6 +416,10 @@
     <Dependency Name="Microsoft.DotNet.HotReload.Utils.Generator.BuildTool" Version="11.0.0-alpha.0.26180.1">
       <Uri>https://github.com/dotnet/hotreload-utils</Uri>
       <Sha>28af8e7016d4b1ad30ed932f15bd56c033402457</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="5.8.0-1.26266.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>3a62cc842c76761d4742f1d103892f19fd06dd3a</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

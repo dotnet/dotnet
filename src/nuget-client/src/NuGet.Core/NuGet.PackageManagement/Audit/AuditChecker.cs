@@ -219,7 +219,7 @@ namespace NuGet.PackageManagement
             {
                 try
                 {
-                    IVulnerabilityInfoResource vulnerabilityInfoResource =
+                    IVulnerabilityInfoResource? vulnerabilityInfoResource =
                         await source.GetResourceAsync<IVulnerabilityInfoResource>(CancellationToken.None);
                     if (vulnerabilityInfoResource is null)
                     {
