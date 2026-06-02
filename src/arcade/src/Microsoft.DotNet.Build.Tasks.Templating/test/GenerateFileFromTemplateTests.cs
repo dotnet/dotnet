@@ -103,8 +103,9 @@ namespace Microsoft.DotNet.Build.Tasks.Templating.Tests
                 Assert.True(task.Execute());
 
                 // Move the timestamp into the past so a rewrite would be observable.
-                DateTime originalWriteTime = DateTime.UtcNow.AddDays(-1);
-                File.SetLastWriteTimeUtc(filePath, originalWriteTime);
+                // Capture the on-disk value after setting it, since the filesystem may round it.
+                File.SetLastWriteTimeUtc(filePath, DateTime.UtcNow.AddDays(-1));
+                DateTime originalWriteTime = File.GetLastWriteTimeUtc(filePath);
                 long originalLength = new FileInfo(filePath).Length;
 
                 Assert.True(task.Execute());

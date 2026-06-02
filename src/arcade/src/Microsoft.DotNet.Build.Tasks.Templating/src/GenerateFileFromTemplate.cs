@@ -89,7 +89,12 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
                 return !Log.HasLoggedErrors;
             }
 
-            Directory.CreateDirectory(Path.GetDirectoryName(ResolvedOutputPath));
+            string directory = Path.GetDirectoryName(ResolvedOutputPath);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             File.WriteAllBytes(ResolvedOutputPath, resultBytes);
 
             return !Log.HasLoggedErrors;
@@ -109,6 +114,12 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
             int bytesRead;
             while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
             {
+                // Guard against the file growing after the initial length check.
+                if (offset + bytesRead > expectedBytes.Length)
+                {
+                    return false;
+                }
+
                 for (int i = 0; i < bytesRead; i++)
                 {
                     if (buffer[i] != expectedBytes[offset + i])
@@ -120,7 +131,8 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
                 offset += bytesRead;
             }
 
-            return true;
+            // Ensure every expected byte was compared (guards against the file being truncated).
+            return offset == expectedBytes.Length;
         }
 
         public string Replace(string template, IDictionary<string, string> values)
