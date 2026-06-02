@@ -28,5 +28,3 @@ sdk/*/Sdks/Microsoft.SourceLink.Bitbucket.Git/tools/net/Microsoft.SourceLink.Bit
 sdk/*/Sdks/Microsoft.SourceLink.GitHub/tools/net/Microsoft.SourceLink.GitHub.deps.json
 sdk/*/Sdks/Microsoft.SourceLink.GitLab/tools/net/Microsoft.SourceLink.GitLab.deps.json
 sdk/*/vstest.console.deps.json
-
-# https://github.com/dotnet/source-build-assets/issues/1662
