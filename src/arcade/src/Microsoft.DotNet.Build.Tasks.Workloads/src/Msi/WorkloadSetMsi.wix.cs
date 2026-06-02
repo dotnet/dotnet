@@ -46,7 +46,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             string packageDataDirectory = Path.Combine(_package.DestinationDirectory, "data");
             productDoc.GetFeature("F_PackageContents")
-                .Add(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDirectory));
+                .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDirectory));
 
             return "";
         }

@@ -66,7 +66,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 }
 
                 productDoc.GetFeature("F_PackageContents")
-                    .Add(HarvestDirectory(pack.DestinationDirectory, packDirReference, $"SourceDir{packCount:D4}"));
+                    .AddComponentGroupRef(HarvestDirectory(pack.DestinationDirectory, packDirReference, $"SourceDir{packCount:D4}"));
 
                 // Add an install record for each pack in the pack group. Setting the root to null allows
                 // nesting RegistryKey elements.

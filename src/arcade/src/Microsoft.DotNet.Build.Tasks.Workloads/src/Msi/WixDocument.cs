@@ -2,28 +2,23 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Xml.Linq;
-using NuGet.Common;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 {
     /// <summary>
-    /// Class for loading and modifying existing WiX XML source files.
+    /// Class for loading and modifying existing WiX XML source files to support compositional authoring.
     /// </summary>
     public class WixDocument : IDisposable
     {
         private static readonly XNamespace s_wixNamespace = "http://wixtoolset.org/schemas/v4/wxs";
 
-        XDocument _doc;
+        private XDocument _doc;
 
-        string _path;
+        private string _path;
 
-        public static string GetDirectoryReference() 
+        public static string GetDirectoryReference()
             => $"dir{Guid.NewGuid():N}";
 
         public XElement Package => _doc.Root.Descendants(s_wixNamespace + "Package").FirstOrDefault();
@@ -85,13 +80,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public XElement GetFeature(string id) =>
             GetElement("Feature", id);
 
-        public void AddProperty(XElement package, string id, string value)
-        {
-            package.Add(new XElement(s_wixNamespace + "Property",
-                new XAttribute("Id", id),
-                new XAttribute("Value", value)));
-        }
-
         /// <summary>
         /// Creates a new ComponentGroup with a Files element (for harvesting) and adds a ComponentGroupRef
         /// to the specified Feature element. The ComponentGroup will be added as a Fragment if the document
@@ -121,19 +109,28 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             component.Add(registryKey);
         }
 
-        public void AddProperty(string id, string value)
-        {
+        /// <summary>
+        /// Adds a Property element to the Package.
+        /// </summary>
+        /// <param name="id">The property identifier.</param>
+        /// <param name="value"></param>
+        public void AddProperty(string id, string value) =>
             Package.Add(new XElement(s_wixNamespace + "Property",
                 new XAttribute("Id", id),
                 new XAttribute("Value", value)));
-        }
 
-        public void AddPropertyRef(string id)
-        {
+        /// <summary>
+        /// Adds a PropertyRef element to the Package.
+        /// </summary>
+        /// <param name="id"></param>
+        public void AddPropertyRef(string id) =>
             Package.Add(new XElement(s_wixNamespace + "PropertyRef",
                 new XAttribute("Id", id)));
-        }
 
+        /// <summary>
+        /// Adds a CustomActionRef element to the Package.
+        /// </summary>
+        /// <param name="id"></param>
         public void AddCustomActionRef(string id) =>
             Package.Add(new XElement(s_wixNamespace + "CustomActionRef",
                 new XAttribute("Id", id)));
@@ -146,6 +143,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <param name="feature">The Feature to update.</param>
         /// <param name="directory">Directory reference for the root of the harvested files.</param>
         /// <param name="include">Specifies the file selection pattern.</param>
+        /// <remarks>
+        /// The Files element replaces HEAT in WiX v7. The harvested content is generated in memory by WiX.
+        /// </remarks>
         public void AddFiles(XElement feature, string directory, string include)
         {
             if (feature.Name.LocalName == "Feature")
@@ -202,177 +202,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 new XAttribute("Name", name));
 
         /// <summary>
-        /// Creates a new Feature element with the provided description and title.
+        /// Creates a RegistryKey element with the specified key path and root hive. The new element can be added as a child to any existing Component or RegistryKey element.
         /// </summary>
-        /// <param name="description">The description of the feature.</param>
-        /// /// <param name="description">The short description of the feature.</param>
-        /// <returns>A new element representing the feature.</returns>
-        public static XElement CreateFeature(string description, string title) =>
-            CreateFeature($"feat{Guid.NewGuid():N}", description, title);
-
-        public static XElement CreateComponentGroupRef(string id) =>
-            new XElement(s_wixNamespace + "ComponentGroupRef",
-                new XAttribute("Id", id));
-
-        /// <summary>
-        /// Creates a new WiX <Feature> XML element with the specified identifier, description, and title.
-        /// </summary>
-        /// <remarks>The created <Feature> element includes several default attributes, such as
-        /// 'AllowAbsent', 'AllowAdvertise', and 'Display', which are set to restrict feature visibility and
-        /// installation options. This method is intended for use when generating WiX installer XML
-        /// programmatically.</remarks>
-        /// <param name="id">The unique identifier for the feature. This value is assigned to the 'Id' attribute of the <Feature>
-        /// element. Cannot be null or empty.</param>
-        /// <param name="description">The description of the feature. This value is assigned to the 'Description' attribute of the <Feature>
-        /// element. Cannot be null.</param>
-        /// <param name="title">The display title of the feature. This value is assigned to the 'Title' attribute of the <Feature> element.
-        /// Cannot be null.</param>
-        /// <returns>An <see cref="XElement"/> representing the WiX <Feature> element with the specified attributes.</returns>
-        public static XElement CreateFeature(string id, string description, string title) =>
-            new XElement(s_wixNamespace + "Feature",
-                new XAttribute("AllowAbsent", "no"),
-                new XAttribute("AllowAdvertise", "no"),
-                new XAttribute("Description", description),
-                new XAttribute("Display", "hidden"),
-                new XAttribute("Id", id),
-                new XAttribute("InstallDefault", "local"),
-                new XAttribute("Level", "1"),
-                new XAttribute("Title", title),
-                new XAttribute("TypicalDefault", "install"));
-
+        /// <param name="key">The name of the registry key.</param>
+        /// <param name="root">The registry key (HKLM, HKCR, etc.).</param>
+        /// <returns></returns>
         public static XElement CreateRegistryKey(string key, string root = "HKLM") =>
             new XElement(s_wixNamespace + "RegistryKey",
                 new XAttribute("Root", root),
                 new XAttribute("Key", key));
-
-        public static XElement CreateRegistryKey(string key, string root = "HKLM", params XElement[] content)
-        {
-            var rk = new XElement(s_wixNamespace + "RegistryKey",
-                new XAttribute("Key", key),
-                new XAttribute("Root", root));
-
-            if (content != null && content.Length > 0)
-            {
-                rk.Add(content);
-            }
-
-            return rk;
-        }
-
-    }
-
-    public class WixElement : XElement
-    {
-        private static readonly XNamespace s_wixNamespace = "http://wixtoolset.org/schemas/v4/wxs";
-
-        public WixElement(string name) : base(s_wixNamespace + name)
-        {
-
-        }
-    }
-
-    public class Component : WixElement
-    {
-        public Component(string id, string directory, string bitness = "default") : base("Component")
-        {
-            Add(new XAttribute("Id", id),
-                new XAttribute("Bitness", bitness),
-                new XAttribute("Directory", directory));
-        }
-
-        public Component WithRegistryKey(string key, string root = "HKLM")
-        {
-            Add(new RegistryKey(key, root));
-            return this;
-        }
-
-        public Component WithRegistryKey(RegistryKey key)
-        {
-            Add(key);
-            return this;
-        }
-    }
-
-    public class Files : WixElement
-    {
-        /// <summary>
-        /// Creates a Files element used for harvesting files.
-        /// </summary>
-        /// <param name="directory">Directory reference for the root of the harvested files.</param>
-        /// <param name="include">Specifies the file selection pattern.</param>
-        public Files(string directory, string include) : base("Files")
-        {
-            Add(new XAttribute("Directory", directory),
-                new XAttribute("Include", include));
-        }
-    }
-
-    public class RegistryKey : WixElement
-    {
-        public RegistryKey(string key, string root = "HKLM") : base("RegistryKey")
-        {
-            Add(new XAttribute("Key", key), new XAttribute("Root", root));
-        }
-
-        public RegistryKey WithRegistryValue(string name, string value, string type = "string", bool keyPath = false)
-        {
-            Add(new RegistryValue(name, value, type, keyPath));
-            return this;
-        }
-
-        public RegistryKey WithRegistryValue(RegistryValue value)
-        {
-            Add(value);
-            return this;
-        }
-
-        public RegistryKey WithValues(params RegistryValue[] values)
-        {
-            Add(values);
-            return this;
-        }
-    }
-
-    public class RegistryValue : WixElement
-    {
-        public RegistryValue(string name, string value, string type = "string", bool keyPath = false) : base("RegistryValue")
-        {
-            Add(new XAttribute("Name", name),
-                new XAttribute("Value", value),
-                new XAttribute("Type", type));
-
-            if (keyPath)
-            {
-                Add(new XAttribute("KeyPath", "yes"));
-            }
-        }
-    }
-
-    public class Feature : WixElement
-    {
-        public Feature(string id, string description, string title) : base("Feature")
-        {
-            Add(new XAttribute("AllowAbsent", "no"),
-                new XAttribute("AllowAdvertise", "no"),
-                new XAttribute("Description", description),
-                new XAttribute("Display", "hidden"),
-                new XAttribute("Id", id),
-                new XAttribute("InstallDefault", "local"),
-                new XAttribute("Level", "1"),
-                new XAttribute("Title", title),
-                new XAttribute("TypicalDefault", "install"));
-        }
-
-        public Feature WithComponent(Component component)
-        {
-            Add(component);
-            return this;
-        }
-
-        public Feature WithFiles(Files files)
-        {
-            Add(files);
-            return this;
-        }
     }
 }

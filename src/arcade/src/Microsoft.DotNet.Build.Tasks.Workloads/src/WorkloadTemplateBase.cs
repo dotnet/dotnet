@@ -92,11 +92,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// <summary>
         /// Generates the template content like project and source files.
         /// </summary>
-        /// <returns>The path to the project file.</returns>
-        public virtual string Create()
-        {
-            return "";
-        }
+        /// <returns>The path to the project file if applicable.</returns>
+        public virtual string Create() => "";        
 
         /// <summary>
         /// Extracts the specified template file into the source directory and optionally replace tokens.

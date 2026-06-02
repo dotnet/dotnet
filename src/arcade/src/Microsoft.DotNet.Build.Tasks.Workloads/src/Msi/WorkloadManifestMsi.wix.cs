@@ -87,13 +87,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
 
-            // Harvest the package content and add it to the authoring.
+            // Harvest the package content and add the generated component group reference to an
+            // existing feature.
             string packageDataDirectory = Path.Combine(Package.DestinationDirectory, "data");
             string filesDirectoryId = IsSxS ?
                 MsiDirectories.ManifestVersionDirectory :
                 MsiDirectories.ManifestIdDirectory;
             productDoc.GetFeature("F_PackageContents")
-                .Add(HarvestDirectory(packageDataDirectory, filesDirectoryId));
+                .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, filesDirectoryId));
 
             foreach (var file in Directory.GetFiles(packageDataDirectory))
             {
@@ -110,7 +111,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 File.WriteAllText(jsonFullPath, jsonAsString);
 
                 productDoc.GetFeature("F_PackageContents")
-                    .Add(HarvestDirectory(jsonDirectory, filesDirectoryId, "JsonSourceDir"));
+                    .AddComponentGroupRef(HarvestDirectory(jsonDirectory, filesDirectoryId, "JsonSourceDir"));
 
                 NuGetPackageFiles[jsonFullPath] = @"\data\extractedManifest\" + Path.GetFileName(jsonFullPath);
             }

@@ -16,6 +16,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         private static readonly string[] _directoryParentElements =
             ["Package", "Module", "Fragment", "Directory", "DirectoryRef", "StandardDirectory"];
 
+        private static readonly string[] _componentGroupRefParentElements =
+            ["Package", "Module", "ComponentGroup", "Feature", "FeatureGroup", "FeatureRef"];
+
         private static readonly string[] _registryKeyParentElements = ["Component", "RegistryKey"];
 
         private static readonly string[] _registryValueParentElements = ["Component", "RegistryKey"];
@@ -26,9 +29,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// </summary>
         /// <param name="element">The parent element to which the RegistryValue will be added.</param>
         /// <param name="name">The registry value name.</param>
-        /// <param name="value">The registry value</param>
-        /// <param name="type"></param>
-        /// <param name="keyPath"></param>
+        /// <param name="value">The registry value.</param>
+        /// <param name="type">The registry value's type.</param>
+        /// <param name="keyPath">Determines whether the registry value is the keypath of the parent component.</param>
         /// <returns>The parent element.</returns>
         /// <exception cref="InvalidOperationException"></exception>
         public static XElement AddRegistryValue(this XElement element, string name, string value, string type = "string", bool keyPath = false)
@@ -81,7 +84,28 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 element.Add(registryKey);
                 return registryKey;
             }
-            throw new InvalidOperationException($"Cannot add a RegistryKey element to {element}");
+            throw new InvalidOperationException($"Cannot add a RegistryKey element to {element.Name}");
+        }
+
+        /// <summary>
+        /// Adds a new ComponentGroupRef element with the specified identifier as a child of the given XElement, if the
+        /// element supports ComponentGroupRef children.
+        /// </summary>
+        /// <param name="element">The parent XElement to which the ComponentGroupRef element will be added. Must be an element type that
+        /// allows ComponentGroupRef children.</param>
+        /// <param name="id">The identifier to assign to the Id attribute of the new ComponentGroupRef element.</param>
+        /// <returns>The newly created ComponentGroupRef XElement that was added as a child of the specified element.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the specified element does not support ComponentGroupRef child elements.</exception>
+        public static XElement AddComponentGroupRef(this XElement element, string id)
+        {
+            if (_componentGroupRefParentElements.Any(e => string.Equals(e, element.Name.LocalName)))
+            {
+                var componentGroupRef = new XElement(s_wixNamespace + "ComponentGroupRef",
+                new XAttribute("Id", id));
+                element.Add(componentGroupRef);
+                return componentGroupRef;
+            }
+            throw new InvalidOperationException($"Cannot add a ComponentGroupRef element to {element.Name}");
         }
 
         /// <summary>
@@ -105,7 +129,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 return directory;
             }
 
-            throw new InvalidOperationException($"Cannot add a Directory element to {element}");
+            throw new InvalidOperationException($"Cannot add a Directory element to {element.Name}");
         }
 
         public static XElement AddDirectory(this XElement element, XElement directory)

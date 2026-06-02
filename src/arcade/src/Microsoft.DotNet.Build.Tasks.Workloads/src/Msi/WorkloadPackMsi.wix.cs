@@ -60,7 +60,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             // Harvest the template.
             productDoc.GetFeature("F_PackageContents")
-                .Add(HarvestDirectory(_package.DestinationDirectory, directoryReference));
+                .AddComponentGroupRef(HarvestDirectory(_package.DestinationDirectory, directoryReference));
 
             return "";
         }

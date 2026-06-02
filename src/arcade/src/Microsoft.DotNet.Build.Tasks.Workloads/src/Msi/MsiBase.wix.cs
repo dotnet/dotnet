@@ -82,14 +82,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         /// <summary>
-        /// The directory where the compiler output (.wixobj files) will be generated.
-        /// </summary>
-        protected string CompilerOutputPath
-        {
-            get;
-        }
-
-        /// <summary>
         /// The root intermediate output directory. 
         /// </summary>
         protected string BaseIntermediateOutputPath
@@ -197,10 +189,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             ReplacementTokens[MsiTokens.__PACKAGE_VERSION__] = metadata.PackageVersion.ToString();
             ReplacementTokens[MsiTokens.__PRODUCTCODE__] = ProductCode.ToString("B");
             ReplacementTokens[MsiTokens.__VERSION__] = metadata.MsiVersion.ToString();
-
-            // Candle expects the output path to be terminated with a single '\'.
-            CompilerOutputPath = Utils.EnsureTrailingSlash(Path.Combine(baseIntermediateOutputPath, "wixobj", metadata.Id, $"{metadata.PackageVersion}", platform));
-
+            
             SourcePath = Path.Combine(SourcePath, "wix", metadata.Id, $"{metadata.PackageVersion}", platform);
 
             _wixToolTask = new WixToolTask(buildEngine, wixToolsetConfig);
@@ -216,7 +205,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         protected WixDocument CreateProduct()
         {
             // Generate the EULA on disk and include its path as a replacement token before
-            // the primary .wxs template is created.
+            // the primary .wxs template is created since AddFile always applies the replacement tokens.
             ReplacementTokens[MsiTokens.__EULA_RTF__] = GenerateEula();
             var productDoc = new WixDocument(AddFile("Productv5.wxs", "Product.wxs"));
 
@@ -271,6 +260,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             msiItem.SetMetadata(Workloads.Metadata.PackageType, MsiPackageType);
             msiItem.SetMetadata(Workloads.Metadata.SourcePath, SourcePath);
 
+            // NuGet limits package sizes to 250MB and Visual Studio has seen degraded performance for online installs
+            // when files exceed this. The actual limit is capped below 250MB to account for additional metadata and files
+            // we may include in the NuGet package that will wrap the workload MSI.
             var fi = new FileInfo(msiItem.ItemSpec);
             if (fi.Length > DefaultValues.MaxMsiSize)
             {
@@ -326,13 +318,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <param name="sourcePath">The file system of the directory to harvest.</param>
         /// <param name="directoryReference">The directory reference to use for root directories.</param>
         /// <param name="sourceVariableName">The preprocessor variable to use for substituting File@Source.</param>
-        /// <returns>A new element containing a component group reference that can be added to a feature.</returns>
+        /// <returns>A string containing the component group ID associated with the harvested files.</returns>
         /// <exception cref="Exception">If Heat failed to execute.</exception>
         /// <remarks>Starting with v5, WiX supports a Files element that can be used to perform simple harvesting using
         /// globs. The authoring is generated in memory instead of a separate source file, making it incompatible with 
         /// wixpacks Arcade uses for signing.
         /// </remarks>
-        protected XElement HarvestDirectory(string sourcePath, string directoryReference,
+        protected string HarvestDirectory(string sourcePath, string directoryReference,
             string sourceVariableName = DefaultValues.Wix.SourceVariableName)
         {
             // Generate a random component group ID. The generated ComponentGroupRef XML element will have the same ID
@@ -359,7 +351,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             AddSourceFile(outputFile);
             _wixToolTask.AddPreprocessorDefinition(sourceVariableName, sourcePath);
 
-            return WixDocument.CreateComponentGroupRef(componentGroupId);
+            return componentGroupId;
         }
     }
 }
