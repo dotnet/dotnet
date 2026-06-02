@@ -49,6 +49,16 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
         public string[] Properties { get; set; }
 
         /// <summary>
+        /// When <see langword="true"/>, the output file is only written if it does not already exist
+        /// or if its current contents differ from what the task would write. Defaults to <see langword="false"/>.
+        /// <para>
+        /// Enabling this preserves the output file's timestamp when its contents are unchanged, which can
+        /// significantly speed up incremental builds by avoiding unnecessary invalidation of downstream targets.
+        /// </para>
+        /// </summary>
+        public bool SkipUnchanged { get; set; }
+
+        /// <summary>
         /// The destination for the generated file resolved by this task.
         /// </summary>
         [Output]
@@ -68,10 +78,49 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
             string template = File.ReadAllText(TemplateFile);
 
             string result = Replace(template, values);
+
+            // File.WriteAllText writes UTF-8 without a byte-order mark, so compare against the same encoding
+            // to determine whether the on-disk bytes would actually change.
+            byte[] resultBytes = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false).GetBytes(result);
+
+            if (SkipUnchanged && FileContentsMatch(ResolvedOutputPath, resultBytes))
+            {
+                Log.LogMessage(MessageImportance.Low, $"Skipping unchanged file {ResolvedOutputPath}");
+                return !Log.HasLoggedErrors;
+            }
+
             Directory.CreateDirectory(Path.GetDirectoryName(ResolvedOutputPath));
-            File.WriteAllText(ResolvedOutputPath, result);
+            File.WriteAllBytes(ResolvedOutputPath, resultBytes);
 
             return !Log.HasLoggedErrors;
+        }
+
+        private static bool FileContentsMatch(string path, byte[] expectedBytes)
+        {
+            var fileInfo = new FileInfo(path);
+            if (!fileInfo.Exists || fileInfo.Length != expectedBytes.Length)
+            {
+                return false;
+            }
+
+            using FileStream stream = fileInfo.OpenRead();
+            byte[] buffer = new byte[4096];
+            int offset = 0;
+            int bytesRead;
+            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                for (int i = 0; i < bytesRead; i++)
+                {
+                    if (buffer[i] != expectedBytes[offset + i])
+                    {
+                        return false;
+                    }
+                }
+
+                offset += bytesRead;
+            }
+
+            return true;
         }
 
         public string Replace(string template, IDictionary<string, string> values)
