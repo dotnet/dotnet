@@ -218,13 +218,18 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
 
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
-            TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, pkgDirectory);
+            TemplatePackPackage pkg = new(p, packagePath, [ "x64" ], pkgDirectory);
             pkg.Extract();
             var buildEngine = new MockBuildEngine();
-            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetConfig, outputDirectory);
+            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetConfig, outputDirectory, createWixPack: true);
             ITaskItem msiItem = msi.Build(msiDirectory);
 
             msiItem.GetMetadata(Metadata.PackageType).Should().Be("pack", "because we're building a template pack MSI");
+
+            // Just do basic sanity checks. Validating the contents is outside the scope of this test.
+            string wixPack = msiItem.GetMetadata(Metadata.WixPack);
+            wixPack.Should().NotBeEmpty("because we're generating a wixpack for signing");
+            File.Exists(wixPack).Should().BeTrue("because the wixpack path should point to an existing file");
 
             string msiPath = msiItem.GetMetadata(Metadata.FullPath);
 

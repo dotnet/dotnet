@@ -6,11 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
@@ -38,10 +35,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         protected override string? MsiPackageType => DefaultValues.ManifestMsi;
 
-        public WorkloadManifestMsi(WorkloadManifestPackage package, string platform, IBuildEngine buildEngine, 
+        public WorkloadManifestMsi(WorkloadManifestPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,
-            string baseIntermediateOutputPath, bool isSxS = false) :
-            base(package, buildEngine, wixToolsetConfig, platform, baseIntermediateOutputPath)
+            string baseIntermediateOutputPath, bool isSxS = false, bool createWixPack = true) :
+            base(package, buildEngine, wixToolsetConfig, platform, baseIntermediateOutputPath, createWixPack)
         {
             Package = package;
             IsSxS = isSxS;

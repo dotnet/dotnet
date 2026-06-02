@@ -60,6 +60,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// The file system path where intermediate outputs are generated.
+        /// </summary>
+        protected string IntermediateOutputPath
+        {
+            get;
+            init;
+        }
+
+        /// <summary>
         /// Creates a new <see cref="WorkloadTemplateBase"/> instance.
         /// </summary>
         /// <param name="outputPath">The file system path where the template will be generated. </param>
@@ -68,6 +77,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         {
             OutputPath = outputPath;
             SourcePath = Path.Combine(OutputPath, "src");
+            IntermediateOutputPath = Path.Combine(OutputPath, "obj");
             _ = baseOutputPath;
         }
 

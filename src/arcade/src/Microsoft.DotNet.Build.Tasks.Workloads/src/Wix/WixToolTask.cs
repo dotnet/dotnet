@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Tasks.Installers;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
 {
@@ -35,6 +37,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
             get;
             set;
         }
+
+        /// <summary>
+        /// All the source files to compile and link the MSI.
+        /// </summary>
+        public string[] SourceFiles => _sourceFiles.ToArray();
 
         /// <summary>
         /// Creates a new <see cref="WixToolTask"/> instance that can be used to invoke the WiX CLI to build an MSI.
@@ -93,5 +100,27 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
         
         public string GetWixCommandLine() => Path.Combine(ToolPath, ToolExe) + " " + 
             CommandLineBuilder.ToString();
+
+        /// <summary>
+        /// Gets a new instance of the <see cref="CreateWixBuildWixpack"/> task that can be used to create a wixpack to sign
+        /// the installer.
+        /// </summary>
+        /// <returns>A new instance of the <see cref="CreateWixBuildWixpack"/> task.</returns>
+        public CreateWixBuildWixpack GetCreateWixBuildWixpackTask(IBuildEngine buildEngine, string intermediateOutputPath,
+            string outputPath, string installerFile, string workingDirectory) =>
+            new CreateWixBuildWixpack
+            {
+                AdditionalOptions = "-bcgg",
+                BuildEngine = buildEngine,
+                Cultures = ["en-us"],
+                DefineConstants = [.. _preprocessorDefinitions.ToArray()],
+                Extensions = [.. _wixToolsetConfig.Extensions.Select(e => new TaskItem(e))],
+                InstallerFile = installerFile,
+                InstallerPlatform = Architecture,
+                IntermediateDirectory = new TaskItem(intermediateOutputPath),
+                OutputFolder = outputPath,
+                SourceFiles = [.. _sourceFiles.Select(s => new TaskItem(s))],
+                WixpackWorkingDir = workingDirectory
+            };
     }
 }

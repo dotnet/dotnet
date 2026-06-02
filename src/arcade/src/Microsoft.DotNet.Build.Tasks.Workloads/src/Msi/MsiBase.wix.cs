@@ -5,7 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
@@ -67,6 +69,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         protected IBuildEngine BuildEngine
+        {
+            get;
+        }
+
+        /// <summary>
+        /// When <see langword="true"/>, a wixpack archive will be generated that can be used to sign the MSI.
+        /// </summary>
+        protected bool CreateWixPack
         {
             get;
         }
@@ -169,11 +179,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
         public MsiBase(IWorkloadPackageMetadata metadata, IBuildEngine buildEngine, WixToolsetConfiguration wixToolsetConfig,
-            string platform, string baseIntermediateOutputPath) : base(baseIntermediateOutputPath, "")
+            string platform, string baseIntermediateOutputPath, bool createWixPack = true) : base(baseIntermediateOutputPath, "")
         {
             BuildEngine = buildEngine;
             Metadata = metadata;
             WixToolsetConfig = wixToolsetConfig;
+            CreateWixPack = createWixPack;
 
             InstallationRecordKey = InstallRecordBaseKey;
             Platform = platform;
@@ -263,7 +274,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             var fi = new FileInfo(msiItem.ItemSpec);
             if (fi.Length > DefaultValues.MaxMsiSize)
             {
-                throw new IOException($"The generated MSI, {msiItem.ItemSpec}, exceeded the maximum allowed size ({DefaultValues.MaxMsiSize} bytes).");
+                throw new Exception($"The generated MSI, {msiItem.ItemSpec}, exceeded the maximum allowed size ({DefaultValues.MaxMsiSize} bytes).");
             }
 
             // Create the JSON manifest for CLI based installations.
@@ -271,6 +282,19 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             NuGetPackageFiles[Path.GetFullPath(msiJsonPath)] = @"\data\msi.json";
             NuGetPackageFiles[msiItem.GetMetadata(Workloads.Metadata.FullPath)] = @"\data";
             NuGetPackageFiles["LICENSE.TXT"] = @"\";
+
+            if (CreateWixPack)
+            {
+                var createWixPackTask = _wixToolTask.GetCreateWixBuildWixpackTask(BuildEngine, IntermediateOutputPath,
+                    OutputPath, _wixToolTask.OutputPath, Path.Combine(SourcePath, "wixpack"));
+
+                if (!createWixPackTask.Execute())
+                {
+                    throw new Exception("Failed to generate wixpack.");
+                }
+
+                msiItem.SetMetadata(Workloads.Metadata.WixPack, createWixPackTask.OutputFile);
+            }
 
             return msiItem;
         }

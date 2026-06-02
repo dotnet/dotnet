@@ -21,8 +21,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public WorkloadPackGroupMsi(WorkloadPackGroupPackage package, string platform, IBuildEngine buildEngine,
             WixToolsetConfiguration wixToolsetConfig,
-            string baseIntermediatOutputPath)
-             : base(package, buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath)
+            string baseIntermediatOutputPath,
+            bool createWixPack = true)
+             : base(package, buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath, createWixPack)
         {
             _package = package;
 

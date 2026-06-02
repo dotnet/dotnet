@@ -51,7 +51,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 foreach (string platform in SupportedPlatforms)
                 {
                     var workloadSetMsi = new WorkloadSetMsi(workloadSetPackage, platform, BuildEngine,
-                        WixToolsetConfig, BaseIntermediateOutputPath);
+                        WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
                     workloadSetMsisToBuild.Add(workloadSetMsi);
                 }
 

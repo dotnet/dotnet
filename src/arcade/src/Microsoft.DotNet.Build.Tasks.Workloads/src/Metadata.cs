@@ -41,6 +41,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public static readonly string SwixProject = nameof(SwixProject);
 
         /// <summary>
+        /// The file system path of the generated wixpack archive used for signing.
+        /// </summary>
+        public static readonly string WixPack = nameof(WixPack);
+
+        /// <summary>
         /// Metadata describing whether the VS authoring supports the machineArch SWIX property.
         /// </summary>
         public static readonly string SupportsMachineArch = nameof(SupportsMachineArch);

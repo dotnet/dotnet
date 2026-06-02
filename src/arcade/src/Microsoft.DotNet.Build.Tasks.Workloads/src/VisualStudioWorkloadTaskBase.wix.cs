@@ -42,6 +42,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// Determines whether wixpack archives should be generated for each workload MSI.
+        /// </summary>
+        public bool CreateWixPacks
+        {
+            get;
+            set;
+        } = true;
+
+        /// <summary>
         /// A set of Internal Consistency Evaluators (ICEs) to suppress.
         /// </summary>
         public ITaskItem[] IceSuppressions
