@@ -42,5 +42,6 @@ index ------------
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/nethost.h
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/singlefilehost
  ./packs/Microsoft.NETCore.App.Ref/
+ foo
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
