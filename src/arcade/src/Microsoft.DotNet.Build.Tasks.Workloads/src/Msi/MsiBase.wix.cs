@@ -207,7 +207,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             // Generate the EULA on disk and include its path as a replacement token before
             // the primary .wxs template is created since AddFile always applies the replacement tokens.
             ReplacementTokens[MsiTokens.__EULA_RTF__] = GenerateEula();
-            var productDoc = new WixDocument(AddFile("Productv5.wxs", "Product.wxs"));
+            var productDoc = new WixDocument(AddFile("Product.wxs"));
 
             // Add additional authoring to set DOTNETHOME property based on the native machine
             // type. This is needed to support non-native installs like x64 on arm64.

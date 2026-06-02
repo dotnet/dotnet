@@ -279,7 +279,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string msiOutputDirectory = Path.Combine(outputDirectory, "msi");
             string packageSource = Path.Combine(TestAssetsPath, "wasm");
 
-            TaskItem packageItem = new(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.current.manifest-10.0.100.10.0.100.nupkg"));
+            TaskItem packageItem = new(Path.Combine(TestAssetsPath, "wasm", "microsoft.net.workload.mono.toolchain.current.manifest-10.0.100.10.0.100.nupkg"));
             WorkloadManifestPackage manifestPackage = new(packageItem, packageContentsDirectory, new Version("1.2.3"));
             // Parse the manifest to extract information related to workload packs so we can extract a specific
             // workload.
@@ -324,10 +324,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             var buildEngine = new MockBuildEngine();
 
-            foreach (var p in workloadPackPackages)
-            {
-                p.Extract();
-            }
+            workloadPackPackages.ForEach(p => p.Extract());
 
             WorkloadPackGroupMsi msi = new(groupPackage, "x64", buildEngine, WixToolsetConfig, outputDirectory);
 
