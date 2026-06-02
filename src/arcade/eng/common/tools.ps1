@@ -162,12 +162,6 @@ function InitializeDotNetCli([bool]$install, [bool]$createSdkLocationFile) {
     $env:DOTNET_CLI_TELEMETRY_OPTOUT=1
   }
 
-  # Keep repo builds isolated from machine-installed SDK state and workload advertising.
-  # This avoids preview SDK builds picking up mismatched workloads on CI images.
-  $env:DOTNET_MULTILEVEL_LOOKUP = '0'
-  $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
-  $env:DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE = '1'
-
   # Find the first path on %PATH% that contains the dotnet.exe
   if ($useInstalledDotNetCli -and (-not $globalJsonHasRuntimes) -and ($env:DOTNET_INSTALL_DIR -eq $null)) {
     $dotnetExecutable = GetExecutableFileName 'dotnet'
@@ -230,9 +224,6 @@ function InitializeDotNetCli([bool]$install, [bool]$createSdkLocationFile) {
   Write-PipelinePrependPath -Path $dotnetRoot
 
   Write-PipelineSetVariable -Name 'DOTNET_NOLOGO' -Value '1'
-  Write-PipelineSetVariable -Name 'DOTNET_MULTILEVEL_LOOKUP' -Value '0'
-  Write-PipelineSetVariable -Name 'DOTNET_SKIP_FIRST_TIME_EXPERIENCE' -Value '1'
-  Write-PipelineSetVariable -Name 'DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE' -Value '1'
 
   return $global:_DotNetInstallDir = $dotnetRoot
 }
@@ -759,10 +750,6 @@ function MSBuild() {
   $buildTool = InitializeBuildTool
 
   $cmdArgs = "$($buildTool.Command) /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
-
-  if ($ci -and $buildTool.Tool -eq 'dotnet') {
-    $cmdArgs += ' /p:MSBuildEnableWorkloadResolver=false'
-  }
 
   # Add -mt flag for MSBuild multithreaded mode if enabled via environment variable
   if ($env:MSBUILD_MT_ENABLED -eq "1") {
