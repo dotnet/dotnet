@@ -4,7 +4,7 @@
     <SourceBranchName Condition=" '$(SourceBranchName)' == '' ">dev</SourceBranchName>
   </PropertyGroup>
 
-  <Target Name="_VerifyNuGetPackages" AfterTargets="Pack" Condition=" '$(OS)' == 'Windows_NT' ">
+  <Target Name="_VerifyNuGetPackages" AfterTargets="Pack" Condition=" '$(OS)' == 'Windows_NT' and '$(DotNetBuild)' != 'true' ">
     <Exec Command="powershell -NoProfile -NoLogo -ExecutionPolicy Bypass $(RepositoryEngineeringDir)\verify-nupkgs.ps1 -configuration $(Configuration) -versionPrefix $(versionPrefix) -currentBranch $(SourceBranchName)" />
   </Target>
 
