@@ -5,18 +5,43 @@
 using Microsoft.DotNet.ScenarioTests.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using System.Xml;
 using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 
-internal class DotNetSdkHelper
+internal partial class DotNetSdkHelper
 {
     private readonly string? _binlogDir;
     private readonly ITestOutputHelper _outputHelper;
+    private const string PackageSourceCredentialsElementName = "packageSourceCredentials";
+
+    [GeneratedRegex(
+        $@"<{PackageSourceCredentialsElementName}\b[^>]*>.*?</{PackageSourceCredentialsElementName}>",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    private static partial Regex PackageSourceCredentialsRegex { get; }
 
     private static string EmbedFileInBinlogTargetsPath { get; } = Path.Combine(AppContext.BaseDirectory, "assets", "EmbedFileInBinlog.targets");
+
+    // Sanitized copy of the RestoreConfigFile env var with any packageSourceCredentials element
+    // removed. This is what we embed in binlogs so that CI feed credentials are never leaked.
+    private static Lazy<string?> SanitizedRestoreConfigPathLazy { get; } = new(() =>
+    {
+        string? restoreConfigFile = Environment.GetEnvironmentVariable("RestoreConfigFile");
+        if (string.IsNullOrEmpty(restoreConfigFile) || !File.Exists(restoreConfigFile))
+        {
+            return null;
+        }
+
+        string? binlogDir = Environment.GetEnvironmentVariable(ScenarioTestFixture.BinlogDirEnvironmentVariable);
+        string outDir = string.IsNullOrEmpty(binlogDir) ? Path.GetTempPath() : binlogDir;
+        Directory.CreateDirectory(outDir);
+        string destPath = Path.Combine(outDir, "NuGet.Config.sanitized");
+        SanitizeNuGetConfig(restoreConfigFile, destPath);
+        return destPath;
+    });
 
     public string DotNetRoot { get; }
 
@@ -285,16 +310,34 @@ internal class DotNetSdkHelper
 
         string binlogArgs = $"/bl:{Path.Combine(binlogDir, $"{fileName}.binlog")}";
 
-        // Embed the NuGet.Config used by NuGet restore in the binlog
-        string? restoreConfigFile = Environment.GetEnvironmentVariable("RestoreConfigFile");
-        if (!string.IsNullOrEmpty(restoreConfigFile))
+        // Embed a sanitized copy of the NuGet.Config used by NuGet restore in the binlog so that
+        // failures originating from the config (e.g. malformed XML breaking restore) can be
+        // debugged from the binlog alone. Credentials (packageSourceCredentials) are stripped
+        // before embedding. See https://github.com/dotnet/source-build/issues/5350.
+        string? sanitizedConfigPath = SanitizedRestoreConfigPathLazy.Value;
+        if (!string.IsNullOrEmpty(sanitizedConfigPath))
         {
             binlogArgs += $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
                 + $" /p:CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}"
-                + $" /p:EmbedFileInBinlogPath={restoreConfigFile}";
+                + $" /p:EmbedFileInBinlogPath={sanitizedConfigPath}";
         }
 
         return binlogArgs;
+    }
+
+    /// <summary>
+    /// Writes a copy of <paramref name="sourcePath"/> to <paramref name="destPath"/> with any
+    /// <c>packageSourceCredentials</c> element removed and replaced by a comment placeholder.
+    /// </summary>
+    private static void SanitizeNuGetConfig(string sourcePath, string destPath)
+    {
+        const string PlaceholderComment = $"{PackageSourceCredentialsElementName} removed for binlog embedding";
+
+        string content = File.ReadAllText(sourcePath);
+        string sanitized = PackageSourceCredentialsRegex.Replace(
+            content,
+            "<!-- " + PlaceholderComment + " -->");
+        File.WriteAllText(destPath, sanitized);
     }
 
     public void ExecuteAddClassReference(string projectDirectory)

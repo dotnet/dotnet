@@ -8,13 +8,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
-internal class DotNetHelper
+internal partial class DotNetHelper
 {
     private static readonly object s_lockObj = new();
 
@@ -23,6 +24,21 @@ internal class DotNetHelper
     public static string ProjectsDirectory { get; } = Path.Combine(Directory.GetCurrentDirectory(), $"projects-{DateTime.Now:yyyyMMddHHmmssffff}");
     public static string NuGetConfigPath { get; } = Path.Combine(ProjectsDirectory, "NuGet.Config");
     private static string EmbedFileInBinlogTargetsPath { get; } = Path.Combine(BaselineHelper.GetAssetsDirectory(), "EmbedFileInBinlog.targets");
+    private const string PackageSourceCredentialsElementName = "packageSourceCredentials";
+
+    [GeneratedRegex(
+        $@"<{PackageSourceCredentialsElementName}\b[^>]*>.*?</{PackageSourceCredentialsElementName}>",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    private static partial Regex PackageSourceCredentialsRegex { get; }
+
+    // Sanitized copy of NuGetConfigPath with any packageSourceCredentials element removed.
+    // This is what we embed in binlogs so that CI feed credentials are never leaked.
+    private static Lazy<string> SanitizedNuGetConfigPathLazy { get; } = new(() =>
+    {
+        string destPath = NuGetConfigPath + ".sanitized";
+        SanitizeNuGetConfig(NuGetConfigPath, destPath);
+        return destPath;
+    });
 
     private ITestOutputHelper OutputHelper { get; }
     public bool IsMonoRuntime { get; }
@@ -222,11 +238,26 @@ internal class DotNetHelper
             fileName += $"-{differentiator}";
         }
 
-        // Embed the test's generated NuGet.Config in the binlog
+        // Embed a sanitized copy of the test's NuGet.Config in the binlog
         return $"/bl:{Path.Combine(Config.LogsDirectory, $"{fileName}.binlog")}"
             + $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
             + $" /p:CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}"
-            + $" /p:EmbedFileInBinlogPath={NuGetConfigPath}";
+            + $" /p:EmbedFileInBinlogPath={SanitizedNuGetConfigPathLazy.Value}";
+    }
+
+    /// <summary>
+    /// Writes a copy of <paramref name="sourcePath"/> to <paramref name="destPath"/> with any
+    /// <c>packageSourceCredentials</c> element removed and replaced by a comment placeholder.
+    /// </summary>
+    private static void SanitizeNuGetConfig(string sourcePath, string destPath)
+    {
+        const string PlaceholderComment = $"{PackageSourceCredentialsElementName} removed for binlog embedding";
+
+        string content = File.ReadAllText(sourcePath);
+        string sanitized = PackageSourceCredentialsRegex.Replace(
+            content,
+            "<!-- " + PlaceholderComment + " -->");
+        File.WriteAllText(destPath, sanitized);
     }
 
     private static bool DetermineIsMonoRuntime(string dotnetRoot)
