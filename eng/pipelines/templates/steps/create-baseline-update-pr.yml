@@ -27,7 +27,7 @@ parameters:
 # branch conditions. This is defensive programming to ensure that an internal
 # branch isn't accidentally pushed to a public repository.
 steps:
-- ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+- ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), eq(variables['Build.SourceBranch'], 'refs/heads/dev/mthalman/issue5352')) }}:
   - template: run-baseline-update-pr-tool.yml
     parameters:
       dotnetPath: ${{ parameters.dotnetPath }}
@@ -38,7 +38,7 @@ steps:
       updatedFilesDirectory: ${{ parameters.updatedFilesDirectory }}
       pullRequestTitle: ${{ parameters.pullRequestTitle }}
 
-- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/') }}:
+- ${{ if or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), eq(variables['Build.SourceBranch'], 'refs/heads/dev/mthalman/issue5352')) }}:
   - template: run-baseline-update-pr-tool.yml
     parameters:
       dotnetPath: ${{ parameters.dotnetPath }}
