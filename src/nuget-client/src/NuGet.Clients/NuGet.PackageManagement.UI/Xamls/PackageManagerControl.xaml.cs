@@ -246,7 +246,20 @@ namespace NuGet.PackageManagement.UI
             {
                 _detailModel.PackageSourceMappingViewModel.SettingsChanged();
                 _detailModel.SetInstalledOrUpdateButtonIsEnabled();
-                RefreshAfterSettingsChanged(sender, e);
+
+                // When an action is executing, this settings change is a side effect of that action
+                // (e.g. auto-creating a package source mapping on install). The mapping is saved before
+                // the action's package changes are applied, so refreshing now would read pre-action state
+                // and race the post-action refresh, leaving the UI stale. Defer to the action's completion,
+                // which already performs a full refresh.
+                if (_isExecutingAction)
+                {
+                    _isRefreshRequired = true;
+                }
+                else
+                {
+                    RefreshAfterSettingsChanged(sender, e);
+                }
             }
             finally
             {
