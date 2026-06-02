@@ -446,6 +446,7 @@ jobs:
 
   - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
     - pwsh: |
+        # extract the date and revision from the build number (YYYYMMDD.Revision) and use it to calculate the SOURCE_DATE_EPOCH
         $parts = '$(Build.BuildNumber)'.Split('.')
         $epoch = ([DateTimeOffset]::ParseExact($parts[0], 'yyyyMMdd', $null, 'AssumeUniversal')).ToUnixTimeSeconds() + [int]$parts[1]
         Write-Host "Calculated SOURCE_DATE_EPOCH: $epoch from Build.BuildNumber: $(Build.BuildNumber)"
