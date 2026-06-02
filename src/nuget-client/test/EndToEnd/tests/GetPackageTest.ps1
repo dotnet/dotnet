@@ -121,9 +121,6 @@ function Test-GetPackageAcceptsRelativePathSource2 {
     popd
 }
 
-
-
-function Test-ZipPackageLoadsReleaseNotesAttribute {
 function Test-ZipPackageLoadsReleaseNotesAttribute {
     param(
         $context
