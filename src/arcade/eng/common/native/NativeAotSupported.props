@@ -3,21 +3,21 @@
 
     <!-- Reject unsupported OS via RID prefix match -->
     <_NativeAotSupportedOS Condition="
-      !$(TargetRid.StartsWith('browser-')) and
-      !$(TargetRid.StartsWith('haiku-')) and
-      !$(TargetRid.StartsWith('illumos-')) and
-      !$(TargetRid.StartsWith('netbsd-')) and
-      !$(TargetRid.StartsWith('solaris-'))
+      '$(TargetOS)' != 'browser' and
+      '$(TargetOS)' != 'haiku' and
+      '$(TargetOS)' != 'illumos' and
+      '$(TargetOS)' != 'netbsd' and
+      '$(TargetOS)' != 'solaris'
     ">true</_NativeAotSupportedOS>
 
     <!-- Allow architectures via RID suffix match -->
     <_NativeAotSupportedArch Condition="
-      $(TargetRid.EndsWith('-x64')) or
-      $(TargetRid.EndsWith('-arm64')) or
-      $(TargetRid.EndsWith('-arm')) or
-      $(TargetRid.EndsWith('-loongarch64')) or
-      $(TargetRid.EndsWith('-riscv64')) or
-      '$(TargetRid)' == 'win-x86'
+      '$(TargetArchitecture)' == 'x64' or
+      '$(TargetArchitecture)' == 'arm64' or
+      '$(TargetArchitecture)' == 'arm' or
+      '$(TargetArchitecture)' == 'loongarch64' or
+      '$(TargetArchitecture)' == 'riscv64' or
+      ('$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x86')
     ">true</_NativeAotSupportedArch>
 
     <NativeAotSupported Condition="
