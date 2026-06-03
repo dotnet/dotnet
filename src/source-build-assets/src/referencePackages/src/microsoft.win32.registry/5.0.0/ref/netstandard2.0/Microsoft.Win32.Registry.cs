@@ -38,6 +38,7 @@ namespace Microsoft.Win32
         public static void SetValue(string keyName, string? valueName, object value, RegistryValueKind valueKind) { }
         public static void SetValue(string keyName, string? valueName, object value) { }
     }
+
     public enum RegistryHive
     {
         ClassesRoot = int.MinValue,
@@ -56,7 +57,6 @@ namespace Microsoft.Win32
         public int SubKeyCount { get { throw null; } }
         public int ValueCount { get { throw null; } }
         public RegistryView View { get { throw null; } }
-
         public void Close() { }
         public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions, System.Security.AccessControl.RegistrySecurity? registrySecurity) { throw null; }
         public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions) { throw null; }
@@ -190,7 +190,6 @@ namespace System.Security.AccessControl
         public override Type AccessRightType { get { throw null; } }
         public override Type AccessRuleType { get { throw null; } }
         public override Type AuditRuleType { get { throw null; } }
-
         public override AccessRule AccessRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type) { throw null; }
         public void AddAccessRule(RegistryAccessRule rule) { }
         public void AddAuditRule(RegistryAuditRule rule) { }

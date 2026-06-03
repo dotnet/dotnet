@@ -36,12 +36,12 @@ namespace System.Security.Cryptography.Xml
         public CipherData(CipherReference cipherReference) { }
         public CipherReference? CipherReference { get { throw null; } set { } }
         public byte[]? CipherValue { get { throw null; } set { } }
-
         public System.Xml.XmlElement GetXml() { throw null; }
         [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
         [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public sealed partial class CipherReference : EncryptedReference
     {
         public CipherReference() { }
@@ -69,10 +69,10 @@ namespace System.Security.Cryptography.Xml
         public string? Encoding { get { throw null; } set { } }
         public string? Id { get { throw null; } set { } }
         public string? MimeType { get { throw null; } set { } }
-
         public System.Xml.XmlElement GetXml() { throw null; }
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public sealed partial class DataReference : EncryptedReference
     {
         public DataReference() { }
@@ -87,7 +87,6 @@ namespace System.Security.Cryptography.Xml
         public DSAKeyValue() { }
         public DSAKeyValue(DSA key) { }
         public DSA Key { get { throw null; } set { } }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
         public override void LoadXml(System.Xml.XmlElement value) { }
     }
@@ -105,7 +104,6 @@ namespace System.Security.Cryptography.Xml
         public string? CarriedKeyName { get { throw null; } set { } }
         public string Recipient { get { throw null; } set { } }
         public ReferenceList ReferenceList { get { throw null; } }
-
         public void AddReference(DataReference dataReference) { }
         public void AddReference(KeyReference keyReference) { }
         public override System.Xml.XmlElement GetXml() { throw null; }
@@ -124,13 +122,13 @@ namespace System.Security.Cryptography.Xml
         protected string? ReferenceType { get { throw null; } set { } }
         public TransformChain TransformChain { get { throw null; } set { } }
         public string Uri { get { throw null; } set { } }
-
         public void AddTransform(Transform transform) { }
         public virtual System.Xml.XmlElement GetXml() { throw null; }
         [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
         [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
         public virtual void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public abstract partial class EncryptedType
     {
         public virtual CipherData CipherData { get { throw null; } set { } }
@@ -141,13 +139,13 @@ namespace System.Security.Cryptography.Xml
         public KeyInfo KeyInfo { get { throw null; } set { } }
         public virtual string? MimeType { get { throw null; } set { } }
         public virtual string? Type { get { throw null; } set { } }
-
         public void AddProperty(EncryptionProperty ep) { }
         public abstract System.Xml.XmlElement GetXml();
         [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
         [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
         public abstract void LoadXml(System.Xml.XmlElement value);
     }
+
     public partial class EncryptedXml
     {
         public const string XmlEncAES128KeyWrapUrl = "http://www.w3.org/2001/04/xmlenc#kw-aes128";
@@ -183,7 +181,6 @@ namespace System.Security.Cryptography.Xml
         public string Recipient { get { throw null; } set { } }
         public System.Xml.XmlResolver? Resolver { get { throw null; } set { } }
         public int XmlDSigSearchDepth { get { throw null; } set { } }
-
         public void AddKeyNameMapping(string keyName, object keyObject) { }
         public void ClearKeyNameMappings() { }
         public byte[] DecryptData(EncryptedData encryptedData, SymmetricAlgorithm symmetricAlgorithm) { throw null; }
@@ -213,16 +210,17 @@ namespace System.Security.Cryptography.Xml
         public void ReplaceData(System.Xml.XmlElement inputElement, byte[] decryptedData) { }
         public static void ReplaceElement(System.Xml.XmlElement inputElement, EncryptedData encryptedData, bool content) { }
     }
+
     public partial class EncryptionMethod
     {
         public EncryptionMethod() { }
         public EncryptionMethod(string? algorithm) { }
         public string? KeyAlgorithm { get { throw null; } set { } }
         public int KeySize { get { throw null; } set { } }
-
         public System.Xml.XmlElement GetXml() { throw null; }
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public sealed partial class EncryptionProperty
     {
         public EncryptionProperty() { }
@@ -230,24 +228,20 @@ namespace System.Security.Cryptography.Xml
         public string? Id { get { throw null; } }
         public System.Xml.XmlElement? PropertyElement { get { throw null; } set { } }
         public string? Target { get { throw null; } }
-
         public System.Xml.XmlElement GetXml() { throw null; }
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public sealed partial class EncryptionPropertyCollection : Collections.IList, Collections.ICollection, Collections.IEnumerable
     {
         public int Count { get { throw null; } }
         public bool IsFixedSize { get { throw null; } }
         public bool IsReadOnly { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
-        [System.Runtime.CompilerServices.IndexerName("ItemOf")]
+        [System.Runtime.CompilerServices.IndexerName("ItemOf")] // Adding attribute manually as GenAPI filters it out
         public EncryptionProperty this[int index] { get { throw null; } set { } }
-
         public object SyncRoot { get { throw null; } }
-
         object? Collections.IList.this[int index] { get { throw null; } set { } }
-
         public int Add(EncryptionProperty value) { throw null; }
         public void Clear() { }
         public bool Contains(EncryptionProperty value) { throw null; }
@@ -275,7 +269,6 @@ namespace System.Security.Cryptography.Xml
     {
         public int Count { get { throw null; } }
         public string? Id { get { throw null; } set { } }
-
         public void AddClause(KeyInfoClause clause) { }
         public Collections.IEnumerator GetEnumerator() { throw null; }
         public Collections.IEnumerator GetEnumerator(Type requestedObjectType) { throw null; }
@@ -289,6 +282,7 @@ namespace System.Security.Cryptography.Xml
         public abstract System.Xml.XmlElement GetXml();
         public abstract void LoadXml(System.Xml.XmlElement element);
     }
+
     [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
     [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
     public partial class KeyInfoEncryptedKey : KeyInfoClause
@@ -296,7 +290,6 @@ namespace System.Security.Cryptography.Xml
         public KeyInfoEncryptedKey() { }
         public KeyInfoEncryptedKey(EncryptedKey encryptedKey) { }
         public EncryptedKey? EncryptedKey { get { throw null; } set { } }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
         public override void LoadXml(System.Xml.XmlElement value) { }
     }
@@ -306,7 +299,6 @@ namespace System.Security.Cryptography.Xml
         public KeyInfoName() { }
         public KeyInfoName(string? keyName) { }
         public string? Value { get { throw null; } set { } }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
         public override void LoadXml(System.Xml.XmlElement value) { }
     }
@@ -316,7 +308,6 @@ namespace System.Security.Cryptography.Xml
         public KeyInfoNode() { }
         public KeyInfoNode(System.Xml.XmlElement node) { }
         public System.Xml.XmlElement? Value { get { throw null; } set { } }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
         public override void LoadXml(System.Xml.XmlElement value) { }
     }
@@ -328,7 +319,6 @@ namespace System.Security.Cryptography.Xml
         public KeyInfoRetrievalMethod(string? strUri) { }
         public string? Type { get { throw null; } set { } }
         public string? Uri { get { throw null; } set { } }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
         public override void LoadXml(System.Xml.XmlElement value) { }
     }
@@ -344,7 +334,6 @@ namespace System.Security.Cryptography.Xml
         public Collections.ArrayList? IssuerSerials { get { throw null; } }
         public Collections.ArrayList? SubjectKeyIds { get { throw null; } }
         public Collections.ArrayList? SubjectNames { get { throw null; } }
-
         public void AddCertificate(X509Certificates.X509Certificate certificate) { }
         public void AddIssuerSerial(string issuerName, string serialNumber) { }
         public void AddSubjectKeyId(byte[] subjectKeyId) { }
@@ -372,29 +361,23 @@ namespace System.Security.Cryptography.Xml
         public TransformChain TransformChain { get { throw null; } set { } }
         public string? Type { get { throw null; } set { } }
         public string? Uri { get { throw null; } set { } }
-
         public void AddTransform(Transform transform) { }
         public System.Xml.XmlElement GetXml() { throw null; }
         [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
         [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public sealed partial class ReferenceList : Collections.IList, Collections.ICollection, Collections.IEnumerable
     {
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
-        [System.Runtime.CompilerServices.IndexerName("ItemOf")]
+        [System.Runtime.CompilerServices.IndexerName("ItemOf")] // Adding attribute manually as GenAPI filters it out
         public EncryptedReference this[int index] { get { throw null; } set { } }
-
         public object SyncRoot { get { throw null; } }
-
         bool Collections.IList.IsFixedSize { get { throw null; } }
-
         bool Collections.IList.IsReadOnly { get { throw null; } }
-
         object? Collections.IList.this[int index] { get { throw null; } set { } }
-
         public int Add(object? value) { throw null; }
         public void Clear() { }
         public bool Contains(object? value) { throw null; }
@@ -412,7 +395,6 @@ namespace System.Security.Cryptography.Xml
         public RSAKeyValue() { }
         public RSAKeyValue(RSA key) { }
         public RSA Key { get { throw null; } set { } }
-
         public override System.Xml.XmlElement GetXml() { throw null; }
         public override void LoadXml(System.Xml.XmlElement value) { }
     }
@@ -424,13 +406,13 @@ namespace System.Security.Cryptography.Xml
         public Collections.IList ObjectList { get { throw null; } set { } }
         public byte[]? SignatureValue { get { throw null; } set { } }
         public SignedInfo? SignedInfo { get { throw null; } set { } }
-
         public void AddObject(DataObject dataObject) { }
         public System.Xml.XmlElement GetXml() { throw null; }
         [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
         [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
     [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
     public partial class SignedInfo : Collections.ICollection, Collections.IEnumerable
@@ -445,7 +427,6 @@ namespace System.Security.Cryptography.Xml
         public string? SignatureLength { get { throw null; } set { } }
         public string? SignatureMethod { get { throw null; } set { } }
         public object SyncRoot { get { throw null; } }
-
         public void AddReference(Reference reference) { }
         public void CopyTo(Array array, int index) { }
         public Collections.IEnumerator GetEnumerator() { throw null; }
@@ -502,7 +483,6 @@ namespace System.Security.Cryptography.Xml
         public SignedInfo? SignedInfo { get { throw null; } }
         public AsymmetricAlgorithm? SigningKey { get { throw null; } set { } }
         public string? SigningKeyName { get { throw null; } set { } }
-
         public void AddObject(DataObject dataObject) { }
         public void AddReference(Reference reference) { }
         public bool CheckSignature() { throw null; }
@@ -520,6 +500,7 @@ namespace System.Security.Cryptography.Xml
         [Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("ILLink", "IL2026:RequiresUnreferencedCode", Justification = "ctors are marked as RUC")]
         public void LoadXml(System.Xml.XmlElement value) { }
     }
+
     public abstract partial class Transform
     {
         public string? Algorithm { get { throw null; } set { } }
@@ -528,7 +509,6 @@ namespace System.Security.Cryptography.Xml
         public abstract Type[] OutputTypes { get; }
         public Collections.Hashtable PropagatedNamespaces { get { throw null; } }
         public System.Xml.XmlResolver? Resolver { set { } }
-
         public virtual byte[] GetDigestedOutput(HashAlgorithm hash) { throw null; }
         protected abstract System.Xml.XmlNodeList? GetInnerXml();
         public abstract object GetOutput();
@@ -537,15 +517,15 @@ namespace System.Security.Cryptography.Xml
         public abstract void LoadInnerXml(System.Xml.XmlNodeList nodeList);
         public abstract void LoadInput(object obj);
     }
+
     public partial class TransformChain
     {
         public int Count { get { throw null; } }
-
         public Transform this[int index] { get { throw null; } }
-
         public void Add(Transform transform) { }
         public Collections.IEnumerator GetEnumerator() { throw null; }
     }
+
     [Diagnostics.CodeAnalysis.RequiresDynamicCode("XmlDsigXsltTransform uses XslCompiledTransform which requires dynamic code.")]
     [Diagnostics.CodeAnalysis.RequiresUnreferencedCode("The algorithm implementations referenced in the XML payload might be removed. Ensure the required algorithm implementations are preserved in your application.")]
     public partial class XmlDecryptionTransform : Transform
@@ -553,7 +533,6 @@ namespace System.Security.Cryptography.Xml
         public EncryptedXml EncryptedXml { get { throw null; } set { } }
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         public void AddExceptUri(string uri) { }
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
@@ -567,7 +546,6 @@ namespace System.Security.Cryptography.Xml
     {
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
         public override object GetOutput(Type type) { throw null; }
@@ -581,7 +559,6 @@ namespace System.Security.Cryptography.Xml
         public XmlDsigC14NTransform(bool includeComments) { }
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         public override byte[] GetDigestedOutput(HashAlgorithm hash) { throw null; }
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
@@ -600,7 +577,6 @@ namespace System.Security.Cryptography.Xml
         public XmlDsigEnvelopedSignatureTransform(bool includeComments) { }
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
         public override object GetOutput(Type type) { throw null; }
@@ -617,7 +593,6 @@ namespace System.Security.Cryptography.Xml
         public string? InclusiveNamespacesPrefixList { get { throw null; } set { } }
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         public override byte[] GetDigestedOutput(HashAlgorithm hash) { throw null; }
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
@@ -636,7 +611,6 @@ namespace System.Security.Cryptography.Xml
     {
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
         public override object GetOutput(Type type) { throw null; }
@@ -651,7 +625,6 @@ namespace System.Security.Cryptography.Xml
         public XmlDsigXsltTransform(bool includeComments) { }
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
         public override object GetOutput(Type type) { throw null; }
@@ -666,7 +639,6 @@ namespace System.Security.Cryptography.Xml
         public IRelDecryptor? Decryptor { get { throw null; } set { } }
         public override Type[] InputTypes { get { throw null; } }
         public override Type[] OutputTypes { get { throw null; } }
-
         protected override System.Xml.XmlNodeList? GetInnerXml() { throw null; }
         public override object GetOutput() { throw null; }
         public override object GetOutput(Type type) { throw null; }

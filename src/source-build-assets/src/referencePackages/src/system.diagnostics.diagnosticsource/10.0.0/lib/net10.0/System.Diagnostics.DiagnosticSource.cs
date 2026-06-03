@@ -65,12 +65,7 @@ namespace System.Diagnostics
         public ActivityTraceId TraceId { get { throw null; } }
         public static Func<ActivityTraceId>? TraceIdGenerator { get { throw null; } set { } }
         public string? TraceStateString { get { throw null; } set { } }
-
-        public static event EventHandler<ActivityChangedEventArgs>? CurrentChanged {
-            add { }
-            remove { }
-        }
-
+        public static event EventHandler<ActivityChangedEventArgs>? CurrentChanged { add { } remove { } }
         public Activity AddBaggage(string key, string? value) { throw null; }
         public Activity AddEvent(ActivityEvent e) { throw null; }
         public Activity AddException(Exception exception, in TagList tags = default, DateTimeOffset timestamp = default) { throw null; }
@@ -101,7 +96,6 @@ namespace System.Diagnostics
             private object _dummy;
             private int _dummyPrimitive;
             public ref T Current { get { throw null; } }
-
             public readonly Enumerator<T> GetEnumerator() { throw null; }
             public bool MoveNext() { throw null; }
         }
@@ -125,7 +119,6 @@ namespace System.Diagnostics
         public ActivityTraceFlags TraceFlags { get { throw null; } }
         public ActivityTraceId TraceId { get { throw null; } }
         public string? TraceState { get { throw null; } }
-
         public readonly bool Equals(ActivityContext value) { throw null; }
         public override readonly bool Equals(object? obj) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -161,7 +154,6 @@ namespace System.Diagnostics
         public string Name { get { throw null; } }
         public Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>> Tags { get { throw null; } }
         public DateTimeOffset Timestamp { get { throw null; } }
-
         public readonly Activity.Enumerator<Collections.Generic.KeyValuePair<string, object?>> EnumerateTagObjects() { throw null; }
     }
 
@@ -188,7 +180,6 @@ namespace System.Diagnostics
         public ActivityLink(ActivityContext context, ActivityTagsCollection? tags = null) { }
         public ActivityContext Context { get { throw null; } }
         public Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? Tags { get { throw null; } }
-
         public readonly Activity.Enumerator<Collections.Generic.KeyValuePair<string, object?>> EnumerateTagObjects() { throw null; }
         public readonly bool Equals(ActivityLink value) { throw null; }
         public override readonly bool Equals(object? obj) { throw null; }
@@ -205,7 +196,6 @@ namespace System.Diagnostics
         public SampleActivity<ActivityContext>? Sample { get { throw null; } set { } }
         public SampleActivity<string>? SampleUsingParentId { get { throw null; } set { } }
         public Func<ActivitySource, bool>? ShouldListenTo { get { throw null; } set { } }
-
         public void Dispose() { }
     }
 
@@ -227,7 +217,6 @@ namespace System.Diagnostics
         public Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? Tags { get { throw null; } }
         public string? TelemetrySchemaUrl { get { throw null; } }
         public string? Version { get { throw null; } }
-
         public static void AddActivityListener(ActivityListener listener) { }
         public Activity? CreateActivity(string name, ActivityKind kind, ActivityContext parentContext, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags = null, Collections.Generic.IEnumerable<ActivityLink>? links = null, ActivityIdFormat idFormat = ActivityIdFormat.Unknown) { throw null; }
         public Activity? CreateActivity(string name, ActivityKind kind, string? parentId, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags = null, Collections.Generic.IEnumerable<ActivityLink>? links = null, ActivityIdFormat idFormat = ActivityIdFormat.Unknown) { throw null; }
@@ -248,6 +237,7 @@ namespace System.Diagnostics
         public string? TelemetrySchemaUrl { get { throw null; } set { } }
         public string? Version { get { throw null; } set { } }
     }
+
     public readonly partial struct ActivitySpanId : IEquatable<ActivitySpanId>
     {
         private readonly object _dummy;
@@ -279,12 +269,9 @@ namespace System.Diagnostics
         public ActivityTagsCollection(Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>> list) { }
         public int Count { get { throw null; } }
         public bool IsReadOnly { get { throw null; } }
-
         public object? this[string key] { get { throw null; } set { } }
-
         public Collections.Generic.ICollection<string> Keys { get { throw null; } }
         public Collections.Generic.ICollection<object?> Values { get { throw null; } }
-
         public void Add(Collections.Generic.KeyValuePair<string, object?> item) { }
         public void Add(string key, object? value) { }
         public void Clear() { }
@@ -300,9 +287,7 @@ namespace System.Diagnostics
         public partial struct Enumerator : Collections.Generic.IEnumerator<Collections.Generic.KeyValuePair<string, object?>>, Collections.IEnumerator, IDisposable
         {
             public Collections.Generic.KeyValuePair<string, object?> Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
@@ -339,7 +324,6 @@ namespace System.Diagnostics
         public DiagnosticListener(string name) { }
         public static IObservable<DiagnosticListener> AllListeners { get { throw null; } }
         public string Name { get { throw null; } }
-
         public virtual void Dispose() { }
         public bool IsEnabled() { throw null; }
         public override bool IsEnabled(string name, object? arg1, object? arg2 = null) { throw null; }
@@ -374,11 +358,11 @@ namespace System.Diagnostics
         [CodeAnalysis.RequiresUnreferencedCode("Only the properties of the T type will be preserved. Properties of referenced types and properties of derived types may be trimmed.")]
         public void Write<T>(string name, T value) { }
     }
+
     public abstract partial class DistributedContextPropagator
     {
         public static DistributedContextPropagator Current { get { throw null; } set { } }
         public abstract Collections.Generic.IReadOnlyCollection<string> Fields { get; }
-
         public static DistributedContextPropagator CreateDefaultPropagator() { throw null; }
         public static DistributedContextPropagator CreateNoOutputPropagator() { throw null; }
         public static DistributedContextPropagator CreatePassThroughPropagator() { throw null; }
@@ -388,10 +372,14 @@ namespace System.Diagnostics
         public abstract void ExtractTraceIdAndState(object? carrier, PropagatorGetterCallback? getter, out string? traceId, out string? traceState);
         public abstract void Inject(Activity? activity, object? carrier, PropagatorSetterCallback? setter);
         public delegate void PropagatorGetterCallback(object? carrier, string fieldName, out string? fieldValue, out Collections.Generic.IEnumerable<string>? fieldValues);
+
         public delegate void PropagatorSetterCallback(object? carrier, string fieldName, string fieldValue);
     }
+
     public delegate void ExceptionRecorder(Activity activity, Exception exception, ref TagList tags);
+
     public delegate ActivitySamplingResult SampleActivity<T>(ref ActivityCreationOptions<T> options);
+
     public partial struct TagList : Collections.Generic.IList<Collections.Generic.KeyValuePair<string, object?>>, Collections.Generic.ICollection<Collections.Generic.KeyValuePair<string, object?>>, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>, Collections.IEnumerable, Collections.Generic.IReadOnlyList<Collections.Generic.KeyValuePair<string, object?>>, Collections.Generic.IReadOnlyCollection<Collections.Generic.KeyValuePair<string, object?>>
     {
         private object _dummy;
@@ -399,9 +387,7 @@ namespace System.Diagnostics
         public TagList(params scoped ReadOnlySpan<Collections.Generic.KeyValuePair<string, object?>> tagList) { }
         public int Count { get { throw null; } }
         public bool IsReadOnly { get { throw null; } }
-
         public Collections.Generic.KeyValuePair<string, object?> this[int index] { get { throw null; } set { } }
-
         public void Add(Collections.Generic.KeyValuePair<string, object?> tag) { }
         public void Add(string key, object? value) { }
         public void Clear() { }
@@ -418,9 +404,7 @@ namespace System.Diagnostics
         {
             private int _dummyPrimitive;
             public Collections.Generic.KeyValuePair<string, object?> Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -483,13 +467,14 @@ namespace System.Diagnostics.Metrics
         public string Name { get { throw null; } }
         public Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? Tags { get { throw null; } }
         public string? Unit { get { throw null; } }
-
         protected void Publish() { }
     }
+
     public sealed partial class InstrumentAdvice<T> where T : struct
     {
         public Collections.Generic.IReadOnlyList<T>? HistogramBucketBoundaries { get { throw null; } init { } }
     }
+
     public abstract partial class Instrument<T> : Instrument where T : struct
     {
         protected Instrument(Meter meter, string name, string? unit = null, string? description = null, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags = null, InstrumentAdvice<T>? advice = null) : base(default!, default!) { }
@@ -497,7 +482,6 @@ namespace System.Diagnostics.Metrics
         protected Instrument(Meter meter, string name, string? unit, string? description) : base(default!, default!) { }
         protected Instrument(Meter meter, string name) : base(default!, default!) { }
         public InstrumentAdvice<T>? Advice { get { throw null; } }
-
         protected void RecordMeasurement(T measurement, Collections.Generic.KeyValuePair<string, object?> tag1, Collections.Generic.KeyValuePair<string, object?> tag2, Collections.Generic.KeyValuePair<string, object?> tag3) { }
         protected void RecordMeasurement(T measurement, Collections.Generic.KeyValuePair<string, object?> tag1, Collections.Generic.KeyValuePair<string, object?> tag2) { }
         protected void RecordMeasurement(T measurement, Collections.Generic.KeyValuePair<string, object?> tag) { }
@@ -508,6 +492,7 @@ namespace System.Diagnostics.Metrics
 
     public delegate void MeasurementCallback<T>(Instrument instrument, T measurement, ReadOnlySpan<Collections.Generic.KeyValuePair<string, object?>> tags, object? state)
         where T : struct;
+
     public readonly partial struct Measurement<T>
         where T : struct
     {
@@ -534,7 +519,6 @@ namespace System.Diagnostics.Metrics
         public Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? Tags { get { throw null; } }
         public string? TelemetrySchemaUrl { get { throw null; } }
         public string? Version { get { throw null; } }
-
         public Counter<T> CreateCounter<T>(string name, string? unit, string? description, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags) where T : struct { throw null; }
         public Counter<T> CreateCounter<T>(string name, string? unit = null, string? description = null) where T : struct { throw null; }
         public Gauge<T> CreateGauge<T>(string name, string? unit = null, string? description = null, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags = null) where T : struct { throw null; }
@@ -571,11 +555,11 @@ namespace System.Diagnostics.Metrics
     {
         public static Meter Create(this IMeterFactory meterFactory, string name, string? version = null, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags = null) { throw null; }
     }
+
     public sealed partial class MeterListener : IDisposable
     {
         public Action<Instrument, MeterListener>? InstrumentPublished { get { throw null; } set { } }
         public Action<Instrument, object?>? MeasurementsCompleted { get { throw null; } set { } }
-
         public object? DisableMeasurementEvents(Instrument instrument) { throw null; }
         public void Dispose() { }
         public void EnableMeasurementEvents(Instrument instrument, object? state = null) { }
@@ -593,6 +577,7 @@ namespace System.Diagnostics.Metrics
         public string? TelemetrySchemaUrl { get { throw null; } set { } }
         public string? Version { get { throw null; } set { } }
     }
+
     public sealed partial class ObservableCounter<T> : ObservableInstrument<T> where T : struct
     {
         internal ObservableCounter() : base(default!, default!, default, default) { }
@@ -610,7 +595,6 @@ namespace System.Diagnostics.Metrics
         protected ObservableInstrument(Meter meter, string name, string? unit, string? description, Collections.Generic.IEnumerable<Collections.Generic.KeyValuePair<string, object?>>? tags) : base(default!, default!) { }
         protected ObservableInstrument(Meter meter, string name, string? unit, string? description) : base(default!, default!) { }
         public override bool IsObservable { get { throw null; } }
-
         protected abstract Collections.Generic.IEnumerable<Measurement<T>> Observe();
     }
 

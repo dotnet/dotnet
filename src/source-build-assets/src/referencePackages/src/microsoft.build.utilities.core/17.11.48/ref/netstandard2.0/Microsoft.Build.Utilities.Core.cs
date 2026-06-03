@@ -38,7 +38,6 @@ namespace Microsoft.Build.Utilities
         public Framework.ITaskHost HostObject { get { throw null; } set { } }
         public TaskLoggingHelper Log { get { throw null; } }
         protected System.Resources.ResourceManager TaskResources { get { throw null; } set { } }
-
         public abstract bool Execute();
         [System.Obsolete("AppDomains are no longer supported in .NET Core or .NET 5.0 or higher.")]
         public override object InitializeLifetimeService() { throw null; }
@@ -53,12 +52,14 @@ namespace Microsoft.Build.Utilities
         public System.Version TargetFrameworkVersion { get { throw null; } }
         public Win32.RegistryView View { get { throw null; } }
     }
+
     public partial class AssemblyFoldersFromConfigInfo
     {
         public AssemblyFoldersFromConfigInfo(string directoryPath, System.Version targetFrameworkVersion) { }
         public string DirectoryPath { get { throw null; } }
         public System.Version TargetFrameworkVersion { get { throw null; } }
     }
+
     public partial class CommandLineBuilder
     {
         public CommandLineBuilder() { }
@@ -66,7 +67,6 @@ namespace Microsoft.Build.Utilities
         public CommandLineBuilder(bool quoteHyphensOnCommandLine) { }
         protected System.Text.StringBuilder CommandLine { get { throw null; } }
         public int Length { get { throw null; } }
-
         public void AppendFileNameIfNotNull(Framework.ITaskItem fileItem) { }
         public void AppendFileNameIfNotNull(string fileName) { }
         public void AppendFileNamesIfNotNull(Framework.ITaskItem[] fileItems, string delimiter) { }
@@ -89,6 +89,7 @@ namespace Microsoft.Build.Utilities
         public override string ToString() { throw null; }
         protected virtual void VerifyThrowNoEmbeddedDoubleQuotes(string switchName, string parameter) { }
     }
+
     public enum DotNetFrameworkArchitecture
     {
         Current = 0,
@@ -108,11 +109,11 @@ namespace Microsoft.Build.Utilities
     {
         public static string GetLockedFileMessage(string filePath) { throw null; }
     }
+
     public abstract partial class Logger : Framework.ILogger
     {
         public virtual string Parameters { get { throw null; } set { } }
         public virtual Framework.LoggerVerbosity Verbosity { get { throw null; } set { } }
-
         public virtual string FormatErrorEvent(Framework.BuildErrorEventArgs args) { throw null; }
         public virtual string FormatWarningEvent(Framework.BuildWarningEventArgs args) { throw null; }
         public abstract void Initialize(Framework.IEventSource eventSource);
@@ -135,7 +136,6 @@ namespace Microsoft.Build.Utilities
         public bool IncludeTaskInputs { get { throw null; } set { } }
         public string Parameters { get { throw null; } set { } }
         public Framework.LoggerVerbosity Verbosity { get { throw null; } set { } }
-
         public void Initialize(Framework.IEventSource eventSource, int maxNodeCount) { }
         public void Initialize(Framework.IEventSource eventSource) { }
         public void RegisterLogger(int submissionId, Framework.ILogger logger) { }
@@ -158,6 +158,7 @@ namespace Microsoft.Build.Utilities
         public const string X86 = "x86";
         public static string CurrentProcessArchitecture { get { throw null; } }
     }
+
     public partial class SDKManifest
     {
         public SDKManifest(string pathToSdk) { }
@@ -183,7 +184,6 @@ namespace Microsoft.Build.Utilities
         public string TargetPlatform { get { throw null; } }
         public string TargetPlatformMinVersion { get { throw null; } }
         public string TargetPlatformVersion { get { throw null; } }
-
         public static partial class Attributes
         {
             public const string APPX = "APPX";
@@ -213,6 +213,7 @@ namespace Microsoft.Build.Utilities
             public const string TargetPlatformVersion = "TargetPlatformVersion";
         }
     }
+
     public enum SDKType
     {
         Unspecified = 0,
@@ -252,7 +253,6 @@ namespace Microsoft.Build.Utilities
         public string Path { get { throw null; } set { } }
         public string TargetPlatformIdentifier { get { throw null; } }
         public System.Version TargetPlatformVersion { get { throw null; } }
-
         public bool ContainsPlatform(string targetPlatformIdentifier, string targetPlatformVersion) { throw null; }
         public bool Equals(TargetPlatformSDK other) { throw null; }
         public override bool Equals(object obj) { throw null; }
@@ -277,7 +277,6 @@ namespace Microsoft.Build.Utilities
         public Framework.ITaskHost HostObject { get { throw null; } set { } }
         public TaskLoggingHelper Log { get { throw null; } }
         protected System.Resources.ResourceManager TaskResources { get { throw null; } set { } }
-
         public abstract bool Execute();
     }
 
@@ -290,9 +289,7 @@ namespace Microsoft.Build.Utilities
         public string ItemSpec { get { throw null; } set { } }
         public int MetadataCount { get { throw null; } }
         public System.Collections.ICollection MetadataNames { get { throw null; } }
-
         string Framework.ITaskItem2.EvaluatedIncludeEscaped { get { throw null; } set { } }
-
         public System.Collections.IDictionary CloneCustomMetadata() { throw null; }
         public void CopyMetadataTo(Framework.ITaskItem destinationItem) { }
         public string GetMetadata(string metadataName) { throw null; }
@@ -315,7 +312,6 @@ namespace Microsoft.Build.Utilities
         public bool IsTaskInputLoggingEnabled { get { throw null; } }
         protected string TaskName { get { throw null; } }
         public System.Resources.ResourceManager TaskResources { get { throw null; } set { } }
-
         public string ExtractMessageCode(string message, out string messageWithoutCodePrefix) { throw null; }
         public virtual string FormatResourceString(string resourceName, params object[] args) { throw null; }
         public virtual string FormatString(string unformatted, params object[] args) { throw null; }
@@ -358,11 +354,11 @@ namespace Microsoft.Build.Utilities
         public void LogWarningWithCodeFromResources(string messageResourceName, params object[] messageArgs) { }
         public void LogWarningWithCodeFromResources(string subcategoryResourceName, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string messageResourceName, params object[] messageArgs) { }
     }
+
     public static partial class ToolLocationHelper
     {
         public static string CurrentToolsVersion { get { throw null; } }
         public static string PathToSystem { get { throw null; } }
-
         public static void ClearSDKStaticCache() { }
         public static System.Collections.Generic.IDictionary<string, string> FilterPlatformExtensionSDKs(System.Version targetPlatformVersion, System.Collections.Generic.IDictionary<string, string> extensionSdks) { throw null; }
         public static System.Collections.Generic.IList<TargetPlatformSDK> FilterTargetPlatformSdks(System.Collections.Generic.IList<TargetPlatformSDK> targetPlatformSdkList, System.Version osVersion, System.Version vsVersion) { throw null; }
@@ -453,6 +449,7 @@ namespace Microsoft.Build.Utilities
         public static System.Collections.Generic.IList<TargetPlatformSDK> GetTargetPlatformSdks(string[] diskRoots, string registryRoot) { throw null; }
         public static System.Runtime.Versioning.FrameworkName HighestVersionOfTargetFrameworkIdentifier(string targetFrameworkRootDirectory, string frameworkIdentifier) { throw null; }
     }
+
     public abstract partial class ToolTask : Task, Framework.IIncrementalTask, Framework.ICancelableTask, Framework.ITask
     {
         protected ToolTask() { }
@@ -460,11 +457,9 @@ namespace Microsoft.Build.Utilities
         protected ToolTask(System.Resources.ResourceManager taskResources) { }
         protected bool canBeIncremental { get { throw null; } set { } }
         public bool EchoOff { get { throw null; } set { } }
-
         [System.Obsolete("Use EnvironmentVariables property")]
         protected virtual System.Collections.Generic.Dictionary<string, string> EnvironmentOverride { get { throw null; } }
         public string[] EnvironmentVariables { get { throw null; } set { } }
-
         [Framework.Output]
         public int ExitCode { get { throw null; } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
@@ -488,7 +483,6 @@ namespace Microsoft.Build.Utilities
         public bool UseCommandProcessor { get { throw null; } set { } }
         public string UseUtf8Encoding { get { throw null; } set { } }
         public bool YieldDuringToolExecution { get { throw null; } set { } }
-
         protected virtual string AdjustCommandsForOperatingSystem(string input) { throw null; }
         protected virtual bool CallHostObjectToExecute() { throw null; }
         public virtual void Cancel() { }
@@ -520,6 +514,7 @@ namespace Microsoft.Build.Utilities
     {
         public static Framework.ITaskItem[] ExpandWildcards(Framework.ITaskItem[] expand) { throw null; }
     }
+
     public enum VisualStudioVersion
     {
         Version100 = 0,

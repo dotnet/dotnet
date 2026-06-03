@@ -39,6 +39,7 @@ namespace System.Diagnostics
     }
 
     public delegate void EntryWrittenEventHandler(object sender, EntryWrittenEventArgs e);
+
     public partial class EventInstance
     {
         public EventInstance(long instanceId, int categoryId, EventLogEntryType entryType) { }
@@ -47,6 +48,7 @@ namespace System.Diagnostics
         public EventLogEntryType EntryType { get { throw null; } set { } }
         public long InstanceId { get { throw null; } set { } }
     }
+
     [ComponentModel.DefaultEvent("EntryWritten")]
     public partial class EventLog : ComponentModel.Component, ComponentModel.ISupportInitialize
     {
@@ -57,48 +59,34 @@ namespace System.Diagnostics
         [ComponentModel.Browsable(false)]
         [ComponentModel.DefaultValue(false)]
         public bool EnableRaisingEvents { get { throw null; } set { } }
-
         [ComponentModel.Browsable(false)]
         [ComponentModel.DesignerSerializationVisibility(ComponentModel.DesignerSerializationVisibility.Hidden)]
         public EventLogEntryCollection Entries { get { throw null; } }
-
         [ComponentModel.DefaultValue("")]
         [ComponentModel.ReadOnly(true)]
         [ComponentModel.SettingsBindable(true)]
         public string Log { get { throw null; } set { } }
-
         [ComponentModel.Browsable(false)]
         public string LogDisplayName { get { throw null; } }
-
         [ComponentModel.DefaultValue(".")]
         [ComponentModel.ReadOnly(true)]
         [ComponentModel.SettingsBindable(true)]
         public string MachineName { get { throw null; } set { } }
-
         [ComponentModel.Browsable(false)]
         [ComponentModel.DesignerSerializationVisibility(ComponentModel.DesignerSerializationVisibility.Hidden)]
         public long MaximumKilobytes { get { throw null; } set { } }
-
         [ComponentModel.Browsable(false)]
         public int MinimumRetentionDays { get { throw null; } }
-
         [ComponentModel.Browsable(false)]
         public OverflowAction OverflowAction { get { throw null; } }
-
         [ComponentModel.DefaultValue("")]
         [ComponentModel.ReadOnly(true)]
         [ComponentModel.SettingsBindable(true)]
         public string Source { get { throw null; } set { } }
-
         [ComponentModel.Browsable(false)]
         [ComponentModel.DefaultValue(null)]
         public ComponentModel.ISynchronizeInvoke SynchronizingObject { get { throw null; } set { } }
-
-        public event EntryWrittenEventHandler EntryWritten {
-            add { }
-            remove { }
-        }
-
+        public event EntryWrittenEventHandler EntryWritten { add { } remove { } }
         public void BeginInit() { }
         public void Clear() { }
         public void Close() { }
@@ -146,7 +134,6 @@ namespace System.Diagnostics
         public short CategoryNumber { get { throw null; } }
         public byte[] Data { get { throw null; } }
         public EventLogEntryType EntryType { get { throw null; } }
-
         [Obsolete("EventLogEntry.EventID has been deprecated. Use System.Diagnostics.EventLogEntry.InstanceId instead.")]
         public int EventID { get { throw null; } }
         public int Index { get { throw null; } }
@@ -158,7 +145,6 @@ namespace System.Diagnostics
         public DateTime TimeGenerated { get { throw null; } }
         public DateTime TimeWritten { get { throw null; } }
         public string UserName { get { throw null; } }
-
         public bool Equals(EventLogEntry otherEntry) { throw null; }
         void Runtime.Serialization.ISerializable.GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) { }
     }
@@ -167,13 +153,9 @@ namespace System.Diagnostics
     {
         internal EventLogEntryCollection() { }
         public int Count { get { throw null; } }
-
         public virtual EventLogEntry this[int index] { get { throw null; } }
-
         bool Collections.ICollection.IsSynchronized { get { throw null; } }
-
         object Collections.ICollection.SyncRoot { get { throw null; } }
-
         public void CopyTo(EventLogEntry[] entries, int index) { }
         public Collections.IEnumerator GetEnumerator() { throw null; }
         void Collections.ICollection.CopyTo(Array array, int index) { }
@@ -195,7 +177,6 @@ namespace System.Diagnostics
         public EventLogTraceListener(string source) { }
         public EventLog EventLog { get { throw null; } set { } }
         public override string Name { get { throw null; } set { } }
-
         public override void Close() { }
         protected override void Dispose(bool disposing) { }
         public override void TraceData(TraceEventCache eventCache, string source, TraceEventType severity, int id, object data) { }
@@ -217,6 +198,7 @@ namespace System.Diagnostics
         public string ParameterResourceFile { get { throw null; } set { } }
         public string Source { get { throw null; } set { } }
     }
+
     public enum OverflowAction
     {
         DoNotOverwrite = -1,
@@ -232,6 +214,7 @@ namespace System.Diagnostics.Eventing.Reader
         public EventBookmark(string bookmarkXml) { }
         public string BookmarkXml { get { throw null; } }
     }
+
     public sealed partial class EventKeyword
     {
         internal EventKeyword() { }
@@ -239,6 +222,7 @@ namespace System.Diagnostics.Eventing.Reader
         public string Name { get { throw null; } }
         public long Value { get { throw null; } }
     }
+
     public sealed partial class EventLevel
     {
         internal EventLevel() { }
@@ -246,6 +230,7 @@ namespace System.Diagnostics.Eventing.Reader
         public string Name { get { throw null; } }
         public int Value { get { throw null; } }
     }
+
     public partial class EventLogConfiguration : IDisposable
     {
         public EventLogConfiguration(string logName, EventLogSession session) { }
@@ -268,7 +253,6 @@ namespace System.Diagnostics.Eventing.Reader
         public int? ProviderMinimumNumberOfBuffers { get { throw null; } }
         public Collections.Generic.IEnumerable<string> ProviderNames { get { throw null; } }
         public string SecurityDescriptor { get { throw null; } set { } }
-
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
         public void SaveChanges() { }
@@ -283,7 +267,6 @@ namespace System.Diagnostics.Eventing.Reader
         public EventLogException(string message, Exception innerException) { }
         public EventLogException(string message) { }
         public override string Message { get { throw null; } }
-
         [Obsolete("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.", DiagnosticId = "SYSLIB0051", UrlFormat = "https://aka.ms/dotnet-warnings/{0}")]
         public override void GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) { }
     }
@@ -300,6 +283,7 @@ namespace System.Diagnostics.Eventing.Reader
         public long? OldestRecordNumber { get { throw null; } }
         public long? RecordCount { get { throw null; } }
     }
+
     public partial class EventLogInvalidDataException : EventLogException
     {
         public EventLogInvalidDataException() { }
@@ -323,6 +307,7 @@ namespace System.Diagnostics.Eventing.Reader
         public bool IsImported { get { throw null; } }
         public string LogName { get { throw null; } }
     }
+
     public enum EventLogMode
     {
         Circular = 0,
@@ -363,6 +348,7 @@ namespace System.Diagnostics.Eventing.Reader
         public EventLogSession Session { get { throw null; } set { } }
         public bool TolerateQueryErrors { get { throw null; } set { } }
     }
+
     public partial class EventLogReader : IDisposable
     {
         public EventLogReader(EventLogQuery eventQuery, EventBookmark bookmark) { }
@@ -371,7 +357,6 @@ namespace System.Diagnostics.Eventing.Reader
         public EventLogReader(string path) { }
         public int BatchSize { get { throw null; } set { } }
         public Collections.Generic.IList<EventLogStatus> LogStatus { get { throw null; } }
-
         public void CancelReading() { }
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
@@ -420,7 +405,6 @@ namespace System.Diagnostics.Eventing.Reader
         public override DateTime? TimeCreated { get { throw null; } }
         public override Security.Principal.SecurityIdentifier UserId { get { throw null; } }
         public override byte? Version { get { throw null; } }
-
         protected override void Dispose(bool disposing) { }
         public override string FormatDescription() { throw null; }
         public override string FormatDescription(Collections.Generic.IEnumerable<object> values) { throw null; }
@@ -434,7 +418,6 @@ namespace System.Diagnostics.Eventing.Reader
         public EventLogSession(string server, string domain, string user, Security.SecureString password, SessionAuthentication logOnType) { }
         public EventLogSession(string server) { }
         public static EventLogSession GlobalSession { get { throw null; } }
-
         public void CancelCurrentOperations() { }
         public void ClearLog(string logName, string backupPath) { }
         public void ClearLog(string logName) { }
@@ -455,6 +438,7 @@ namespace System.Diagnostics.Eventing.Reader
         public string LogName { get { throw null; } }
         public int StatusCode { get { throw null; } }
     }
+
     public enum EventLogType
     {
         Administrative = 0,
@@ -470,12 +454,7 @@ namespace System.Diagnostics.Eventing.Reader
         public EventLogWatcher(EventLogQuery eventQuery) { }
         public EventLogWatcher(string path) { }
         public bool Enabled { get { throw null; } set { } }
-
-        public event EventHandler<EventRecordWrittenEventArgs> EventRecordWritten {
-            add { }
-            remove { }
-        }
-
+        public event EventHandler<EventRecordWrittenEventArgs> EventRecordWritten { add { } remove { } }
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
     }
@@ -493,6 +472,7 @@ namespace System.Diagnostics.Eventing.Reader
         public string Template { get { throw null; } }
         public byte Version { get { throw null; } }
     }
+
     public sealed partial class EventOpcode
     {
         internal EventOpcode() { }
@@ -500,11 +480,13 @@ namespace System.Diagnostics.Eventing.Reader
         public string Name { get { throw null; } }
         public int Value { get { throw null; } }
     }
+
     public sealed partial class EventProperty
     {
         internal EventProperty() { }
         public object Value { get { throw null; } }
     }
+
     public abstract partial class EventRecord : IDisposable
     {
         public abstract Guid? ActivityId { get; }
@@ -531,7 +513,6 @@ namespace System.Diagnostics.Eventing.Reader
         public abstract DateTime? TimeCreated { get; }
         public abstract Security.Principal.SecurityIdentifier UserId { get; }
         public abstract byte? Version { get; }
-
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
         public abstract string FormatDescription();
@@ -554,6 +535,7 @@ namespace System.Diagnostics.Eventing.Reader
         public string Name { get { throw null; } }
         public int Value { get { throw null; } }
     }
+
     public enum PathType
     {
         LogName = 1,
@@ -577,7 +559,6 @@ namespace System.Diagnostics.Eventing.Reader
         public string ParameterFilePath { get { throw null; } }
         public string ResourceFilePath { get { throw null; } }
         public Collections.Generic.IList<EventTask> Tasks { get { throw null; } }
-
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
     }
