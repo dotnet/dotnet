@@ -59,10 +59,8 @@
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'freebsd'">freebsd-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'osx'">osx-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'linux'">linux-$(TargetArchitecture)</PortableTargetRid>
-    <PortableTargetRid Condition="$(TargetRid.StartsWith('linux-musl')) or $(TargetRid.StartsWith('alpine'))">linux-musl-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and $(TargetRid.StartsWith('linux-musl')) or $(TargetRid.StartsWith('alpine'))">linux-musl-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'windows'">win-$(TargetArchitecture)</PortableTargetRid>
-    <PortableTargetRid Condition="'$(ShortStack)' == 'true' and '$(TargetOS)' != 'windows'">$(TargetOS)-$(TargetArchitecture)</PortableTargetRid>
-    <PortableTargetRid Condition="'$(ShortStack)' == 'true' and '$(TargetOS)' == 'windows'">win-$(TargetArchitecture)</PortableTargetRid>
 
     <TargetRid Condition="'$(PortableBuild)' == 'true' or '$(ShortStack)' == 'true'">$(PortableTargetRid)</TargetRid>
   </PropertyGroup>
