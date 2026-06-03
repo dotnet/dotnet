@@ -41,14 +41,10 @@ variables:
   - name: ibcEnabled
     value: false
 - ${{ elseif or(startsWith(parameters.desiredIBC, 'Default'), eq(parameters.desiredIBC, '')) }}:
-  # Enable IBC on the internal project if this is an official build of a release branch and is not a source-only build.
-  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
-    - name: ibcEnabled
-      value: true
-  # No IBC otherwise.
-  - ${{ else }}:
-    - name: ibcEnabled
-      value: false
+  # IBC is disabled by default. The source branch in the VMR doesn't match individual repo branches,
+  # so IBC optimization data lookup would fail.
+  - name: ibcEnabled
+    value: false
 - ${{ else }}:
   - name: ibcEnabled
     value: false
