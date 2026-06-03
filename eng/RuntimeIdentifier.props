@@ -56,7 +56,7 @@
     <PortableBuild Condition="'$(PortableBuild)' == ''">true</PortableBuild>
 
     <PortableTargetRid Condition="'$(PortableTargetOS)' != ''">$(PortableTargetOS)-$(TargetArchitecture)</PortableTargetRid>
-    <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and $(TargetRid.StartsWith('linux-musl')) or $(TargetRid.StartsWith('alpine'))">linux-musl-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="$(PortableTargetRid) == '' and ($(TargetRid.StartsWith('linux-musl')) or $(TargetRid.StartsWith('alpine')))">linux-musl-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'windows'">win-$(TargetArchitecture)</PortableTargetRid>
     <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' != ''">$(TargetOS)-$(TargetArchitecture)</PortableTargetRid>
 
