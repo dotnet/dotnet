@@ -37,7 +37,6 @@ namespace Microsoft.Extensions.Logging
         public EventId(int id, string? name = null) { }
         public int Id { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public readonly bool Equals(EventId other) { throw null; }
         public override readonly bool Equals(object? obj) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -55,7 +54,8 @@ namespace Microsoft.Extensions.Logging
 
     public partial interface ILogger
     {
-        System.IDisposable? BeginScope<TState>(TState state);
+        System.IDisposable? BeginScope<TState>(TState state)
+            where TState : notnull;
         bool IsEnabled(LogLevel logLevel);
         void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string> formatter);
     }
@@ -89,6 +89,7 @@ namespace Microsoft.Extensions.Logging
     {
         public bool SkipEnabledCheck { get { throw null; } set { } }
     }
+
     public static partial class LoggerExtensions
     {
         public static System.IDisposable? BeginScope(this ILogger logger, string messageFormat, params object?[] args) { throw null; }
@@ -121,6 +122,7 @@ namespace Microsoft.Extensions.Logging
         public static void LogWarning(this ILogger logger, System.Exception? exception, string? message, params object?[] args) { }
         public static void LogWarning(this ILogger logger, string? message, params object?[] args) { }
     }
+
     public partial class LoggerExternalScopeProvider : IExternalScopeProvider
     {
         public void ForEachScope<TState>(System.Action<object?, TState> callback, TState state) { }
@@ -132,6 +134,7 @@ namespace Microsoft.Extensions.Logging
         public static ILogger CreateLogger(this ILoggerFactory factory, System.Type type) { throw null; }
         public static ILogger<T> CreateLogger<T>(this ILoggerFactory factory) { throw null; }
     }
+
     public static partial class LoggerMessage
     {
         public static System.Action<ILogger, System.Exception?> Define(LogLevel logLevel, EventId eventId, string formatString, LogDefineOptions? options) { throw null; }
@@ -156,6 +159,7 @@ namespace Microsoft.Extensions.Logging
         public static System.Func<ILogger, T1, T2, T3, T4, T5, System.IDisposable?> DefineScope<T1, T2, T3, T4, T5>(string formatString) { throw null; }
         public static System.Func<ILogger, T1, T2, T3, T4, T5, T6, System.IDisposable?> DefineScope<T1, T2, T3, T4, T5, T6>(string formatString) { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Method)]
     public sealed partial class LoggerMessageAttribute : System.Attribute
     {
@@ -213,6 +217,7 @@ namespace Microsoft.Extensions.Logging.Abstractions
         public virtual string? MessageTemplate { get { throw null; } }
         public abstract System.DateTimeOffset Timestamp { get; }
     }
+
     public partial interface IBufferedLogger
     {
         void LogRecords(System.Collections.Generic.IEnumerable<BufferedLogRecord> records);
@@ -237,8 +242,7 @@ namespace Microsoft.Extensions.Logging.Abstractions
     {
         internal NullLogger() { }
         public static NullLogger Instance { get { throw null; } }
-
-        public System.IDisposable BeginScope<TState>(TState state) { throw null; }
+        public System.IDisposable BeginScope<TState>(TState state) where TState : notnull { throw null; }
         public bool IsEnabled(LogLevel logLevel) { throw null; }
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string> formatter) { }
     }
@@ -255,7 +259,6 @@ namespace Microsoft.Extensions.Logging.Abstractions
     {
         internal NullLoggerProvider() { }
         public static NullLoggerProvider Instance { get { throw null; } }
-
         public ILogger CreateLogger(string categoryName) { throw null; }
         public void Dispose() { }
     }
@@ -263,7 +266,7 @@ namespace Microsoft.Extensions.Logging.Abstractions
     public partial class NullLogger<T> : ILogger<T>, ILogger
     {
         public static readonly NullLogger<T> Instance;
-        public System.IDisposable BeginScope<TState>(TState state) { throw null; }
+        public System.IDisposable BeginScope<TState>(TState state) where TState : notnull { throw null; }
         public bool IsEnabled(LogLevel logLevel) { throw null; }
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, System.Exception? exception, System.Func<TState, System.Exception?, string> formatter) { }
     }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>System.Numerics.Vectors</PackageId>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>4.5.0</PackageVersion>
     <AssemblyName>System.Numerics.Vectors</AssemblyName>
     <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
@@ -25,6 +25,7 @@ System.Numerics.Vector&lt;T&gt;
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
     <MinClientVersion>2.8.6</MinClientVersion>
+    <PlaceholderTargetFrameworks>netcoreapp2.0</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
 </Project>

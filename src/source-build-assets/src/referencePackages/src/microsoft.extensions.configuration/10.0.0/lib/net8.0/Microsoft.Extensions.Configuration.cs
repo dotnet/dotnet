@@ -35,11 +35,11 @@ namespace Microsoft.Extensions.Configuration
         public static IConfigurationBuilder AddConfiguration(this IConfigurationBuilder configurationBuilder, IConfiguration config, bool shouldDisposeConfiguration) { throw null; }
         public static IConfigurationBuilder AddConfiguration(this IConfigurationBuilder configurationBuilder, IConfiguration config) { throw null; }
     }
+
     public partial class ChainedConfigurationProvider : IConfigurationProvider, System.IDisposable
     {
         public ChainedConfigurationProvider(ChainedConfigurationSource source) { }
         public IConfiguration Configuration { get { throw null; } }
-
         public void Dispose() { }
         public System.Collections.Generic.IEnumerable<string> GetChildKeys(System.Collections.Generic.IEnumerable<string> earlierKeys, string? parentPath) { throw null; }
         public Primitives.IChangeToken GetReloadToken() { throw null; }
@@ -52,7 +52,6 @@ namespace Microsoft.Extensions.Configuration
     {
         public IConfiguration? Configuration { get { throw null; } set { } }
         public bool ShouldDisposeConfiguration { get { throw null; } set { } }
-
         public IConfigurationProvider Build(IConfigurationBuilder builder) { throw null; }
     }
 
@@ -60,7 +59,6 @@ namespace Microsoft.Extensions.Configuration
     {
         public System.Collections.Generic.IDictionary<string, object> Properties { get { throw null; } }
         public System.Collections.Generic.IList<IConfigurationSource> Sources { get { throw null; } }
-
         public IConfigurationBuilder Add(IConfigurationSource source) { throw null; }
         public IConfigurationRoot Build() { throw null; }
     }
@@ -68,19 +66,15 @@ namespace Microsoft.Extensions.Configuration
     public partial class ConfigurationKeyComparer : System.Collections.Generic.IComparer<string>
     {
         public static ConfigurationKeyComparer Instance { get { throw null; } }
-
         public int Compare(string? x, string? y) { throw null; }
     }
 
     public sealed partial class ConfigurationManager : IConfigurationManager, IConfiguration, IConfigurationBuilder, IConfigurationRoot, System.IDisposable
     {
         public string? this[string key] { get { throw null; } set { } }
-
         System.Collections.Generic.IDictionary<string, object> IConfigurationBuilder.Properties { get { throw null; } }
-
         System.Collections.Generic.IEnumerable<IConfigurationProvider> IConfigurationRoot.Providers { get { throw null; } }
         public System.Collections.Generic.IList<IConfigurationSource> Sources { get { throw null; } }
-
         public void Dispose() { }
         public System.Collections.Generic.IEnumerable<IConfigurationSection> GetChildren() { throw null; }
         public IConfigurationSection GetSection(string key) { throw null; }
@@ -93,7 +87,6 @@ namespace Microsoft.Extensions.Configuration
     public abstract partial class ConfigurationProvider : IConfigurationProvider
     {
         protected System.Collections.Generic.IDictionary<string, string?> Data { get { throw null; } set { } }
-
         public virtual System.Collections.Generic.IEnumerable<string> GetChildKeys(System.Collections.Generic.IEnumerable<string> earlierKeys, string? parentPath) { throw null; }
         public Primitives.IChangeToken GetReloadToken() { throw null; }
         public virtual void Load() { }
@@ -107,7 +100,6 @@ namespace Microsoft.Extensions.Configuration
     {
         public bool ActiveChangeCallbacks { get { throw null; } }
         public bool HasChanged { get { throw null; } }
-
         public void OnReload() { }
         public System.IDisposable RegisterChangeCallback(System.Action<object?> callback, object? state) { throw null; }
     }
@@ -116,9 +108,7 @@ namespace Microsoft.Extensions.Configuration
     {
         public ConfigurationRoot(System.Collections.Generic.IList<IConfigurationProvider> providers) { }
         public string? this[string key] { get { throw null; } set { } }
-
         public System.Collections.Generic.IEnumerable<IConfigurationProvider> Providers { get { throw null; } }
-
         public void Dispose() { }
         public System.Collections.Generic.IEnumerable<IConfigurationSection> GetChildren() { throw null; }
         public Primitives.IChangeToken GetReloadToken() { throw null; }
@@ -130,11 +120,9 @@ namespace Microsoft.Extensions.Configuration
     {
         public ConfigurationSection(IConfigurationRoot root, string path) { }
         public string? this[string key] { get { throw null; } set { } }
-
         public string Key { get { throw null; } }
         public string Path { get { throw null; } }
         public string? Value { get { throw null; } set { } }
-
         public System.Collections.Generic.IEnumerable<IConfigurationSection> GetChildren() { throw null; }
         public Primitives.IChangeToken GetReloadToken() { throw null; }
         public IConfigurationSection GetSection(string key) { throw null; }
@@ -146,11 +134,11 @@ namespace Microsoft.Extensions.Configuration
         public static IConfigurationBuilder AddInMemoryCollection(this IConfigurationBuilder configurationBuilder, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string?>>? initialData) { throw null; }
         public static IConfigurationBuilder AddInMemoryCollection(this IConfigurationBuilder configurationBuilder) { throw null; }
     }
+
     public abstract partial class StreamConfigurationProvider : ConfigurationProvider
     {
         public StreamConfigurationProvider(StreamConfigurationSource source) { }
         public StreamConfigurationSource Source { get { throw null; } }
-
         public override void Load() { }
         public abstract void Load(System.IO.Stream stream);
     }
@@ -158,7 +146,6 @@ namespace Microsoft.Extensions.Configuration
     public abstract partial class StreamConfigurationSource : IConfigurationSource
     {
         public System.IO.Stream? Stream { get { throw null; } set { } }
-
         public abstract IConfigurationProvider Build(IConfigurationBuilder builder);
     }
 }
@@ -176,7 +163,6 @@ namespace Microsoft.Extensions.Configuration.Memory
     public partial class MemoryConfigurationSource : IConfigurationSource
     {
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string?>>? InitialData { get { throw null; } set { } }
-
         public IConfigurationProvider Build(IConfigurationBuilder builder) { throw null; }
     }
 }

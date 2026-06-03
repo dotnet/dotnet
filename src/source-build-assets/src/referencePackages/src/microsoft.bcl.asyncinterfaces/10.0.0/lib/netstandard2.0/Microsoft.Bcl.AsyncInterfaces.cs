@@ -44,7 +44,6 @@ namespace System.Collections.Generic
     public partial interface IAsyncEnumerator<out T> : IAsyncDisposable
     {
         T Current { get; }
-
         Threading.Tasks.ValueTask<bool> MoveNextAsync();
     }
 }
@@ -89,7 +88,6 @@ namespace System.Runtime.CompilerServices
             private readonly object _dummy;
             private readonly int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             public readonly ConfiguredValueTaskAwaitable DisposeAsync() { throw null; }
             public readonly ConfiguredValueTaskAwaitable<bool> MoveNextAsync() { throw null; }
         }
@@ -120,7 +118,6 @@ namespace System.Threading.Tasks.Sources
         private int _dummyPrimitive;
         public bool RunContinuationsAsynchronously { get { throw null; } set { } }
         public short Version { get { throw null; } }
-
         public TResult GetResult(short token) { throw null; }
         public ValueTaskSourceStatus GetStatus(short token) { throw null; }
         public void OnCompleted(Action<object?> continuation, object? state, short token, ValueTaskSourceOnCompletedFlags flags) { }

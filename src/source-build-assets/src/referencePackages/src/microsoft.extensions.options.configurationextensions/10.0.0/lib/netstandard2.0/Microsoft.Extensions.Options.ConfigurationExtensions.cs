@@ -34,6 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static Options.OptionsBuilder<TOptions> Bind<TOptions>(this Options.OptionsBuilder<TOptions> optionsBuilder, Configuration.IConfiguration config) where TOptions : class { throw null; }
         public static Options.OptionsBuilder<TOptions> BindConfiguration<TOptions>(this Options.OptionsBuilder<TOptions> optionsBuilder, string configSectionPath, System.Action<Configuration.BinderOptions>? configureBinder = null) where TOptions : class { throw null; }
     }
+
     public static partial class OptionsConfigurationServiceCollectionExtensions
     {
         public static IServiceCollection Configure<TOptions>(this IServiceCollection services, Configuration.IConfiguration config, System.Action<Configuration.BinderOptions>? configureBinder) where TOptions : class { throw null; }
@@ -50,7 +51,6 @@ namespace Microsoft.Extensions.Options
         public ConfigurationChangeTokenSource(Configuration.IConfiguration config) { }
         public ConfigurationChangeTokenSource(string? name, Configuration.IConfiguration config) { }
         public string Name { get { throw null; } }
-
         public Primitives.IChangeToken GetChangeToken() { throw null; }
     }
 

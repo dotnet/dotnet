@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>System.Threading.Tasks.Extensions</PackageId>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0</TargetFrameworks>
     <PackageVersion>4.5.4</PackageVersion>
     <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
@@ -17,6 +17,7 @@ System.Threading.Tasks.ValueTask&lt;TResult&gt;
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
     <MinClientVersion>2.8.6</MinClientVersion>
+    <PlaceholderTargetFrameworks>netcoreapp2.1</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
