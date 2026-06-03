@@ -96,7 +96,12 @@ steps:
   displayName: 'Authenticate to AzDO Feeds'
 
 - pwsh: |
-    $nupkg = Get-Item "${{ parameters.signCheckNuGetPackagesDirectory }}/packages/Release/NonShipping/arcade/Microsoft.DotNet.SignCheckTask.*.nupkg"
+    $pkgFiles = @(Get-ChildItem -LiteralPath "${{ parameters.signCheckNuGetPackagesDirectory }}/packages/Release/NonShipping/arcade" -Filter "Microsoft.DotNet.SignCheckTask.*.nupkg" -ErrorAction SilentlyContinue)
+    if ($pkgFiles.Count -ne 1) {
+      Write-Error "Expected exactly one Microsoft.DotNet.SignCheckTask nupkg in '${{ parameters.signCheckNuGetPackagesDirectory }}/packages/Release/NonShipping/arcade', found $($pkgFiles.Count)."
+      exit 1
+    }
+    $nupkg = $pkgFiles[0]
     $version = $nupkg.BaseName -replace '^Microsoft\.DotNet\.SignCheckTask\.'
 
     $dotnetExt = if ($IsWindows) { 'cmd' } else { 'sh' }
