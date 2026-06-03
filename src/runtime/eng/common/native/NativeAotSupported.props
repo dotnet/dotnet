@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+
+    <!-- Reject unsupported OS via RID prefix match -->
+    <_NativeAotSupportedOS Condition="
+      !$(TargetRid.StartsWith('browser-')) and
+      !$(TargetRid.StartsWith('haiku-')) and
+      !$(TargetRid.StartsWith('illumos-')) and
+      !$(TargetRid.StartsWith('netbsd-')) and
+      !$(TargetRid.StartsWith('solaris-'))
+    ">true</_NativeAotSupportedOS>
+
+    <!-- Allow architectures via RID suffix match -->
+    <_NativeAotSupportedArch Condition="
+      $(TargetRid.EndsWith('-x64')) or
+      $(TargetRid.EndsWith('-arm64')) or
+      $(TargetRid.EndsWith('-arm')) or
+      $(TargetRid.EndsWith('-loongarch64')) or
+      $(TargetRid.EndsWith('-riscv64')) or
+      '$(TargetRid)' == 'win-x86'
+    ">true</_NativeAotSupportedArch>
+
+    <NativeAotSupported Condition="
+      '$(NativeAotSupported)' == '' and
+      '$(_NativeAotSupportedOS)' == 'true' and
+      '$(_NativeAotSupportedArch)' == 'true'
+    ">true</NativeAotSupported>
+
+  </PropertyGroup>
+</Project>
