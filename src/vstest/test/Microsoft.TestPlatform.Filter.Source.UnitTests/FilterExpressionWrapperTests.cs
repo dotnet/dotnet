@@ -35,6 +35,56 @@ public class FilterExpressionWrapperTests
     }
 
     [TestMethod]
+    public void ParseErrorShouldBeSetForEmptyParenthesis()
+    {
+        var wrapper = new FilterExpressionWrapper("Name=Test1 & ()");
+        Assert.IsNotNull(wrapper.ParseError);
+        Assert.Contains("Empty parenthesis", wrapper.ParseError!);
+    }
+
+    [TestMethod]
+    public void ParseErrorShouldBeSetForEmptyParenthesisAfterEscapedBackslash()
+    {
+        // An escaped backslash "\\" leaves the following "(" unescaped, so "\\()" is still
+        // a genuine empty parenthesis group and must be reported.
+        var wrapper = new FilterExpressionWrapper(@"Name~foo\\&()");
+        Assert.IsNotNull(wrapper.ParseError);
+        Assert.Contains("Empty parenthesis", wrapper.ParseError!);
+    }
+
+    [TestMethod]
+    public void ParseErrorShouldNotBeSetWhenOpenParenthesisIsEscaped()
+    {
+        // Regression for https://github.com/microsoft/testfx/issues/7515 — an escaped
+        // open parenthesis must not be flagged as the start of an empty parenthesis group.
+        var wrapper = new FilterExpressionWrapper(@"Name~aaa \(");
+        Assert.IsNull(wrapper.ParseError);
+    }
+
+    [TestMethod]
+    public void ParseErrorShouldNotBeSetWhenWrappedEscapedOpenParenthesisIsAtEnd()
+    {
+        // Regression for https://github.com/microsoft/testfx/issues/7515 — when a caller
+        // wraps the filter in an outer parenthesis pair (as the MTP VSTestBridge does),
+        // the trailing `\()` must not be misinterpreted as an empty group.
+        var wrapper = new FilterExpressionWrapper(@"(Name~aaa \()");
+        Assert.IsNull(wrapper.ParseError);
+    }
+
+    [TestMethod]
+    public void EvaluateShouldMatchParametrizedTestNamePrefix()
+    {
+        // Regression for https://github.com/microsoft/testfx/issues/7515 — filtering
+        // parametrized tests by display-name prefix using an escaped `(` should match
+        // tests whose display name starts with the prefix followed by `(parameters)`.
+        var wrapper = new FilterExpressionWrapper(@"Name~aaa \(");
+
+        Assert.IsNull(wrapper.ParseError);
+        Assert.IsTrue(wrapper.Evaluate(prop => prop == "Name" ? "aaa (1, 2)" : null));
+        Assert.IsFalse(wrapper.Evaluate(prop => prop == "Name" ? "aaa2 (1, 2)" : null));
+    }
+
+    [TestMethod]
     public void EvaluateShouldReturnTrueWhenPropertyMatches()
     {
         var wrapper = new FilterExpressionWrapper("Name=Test1");

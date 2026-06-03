@@ -394,12 +394,22 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.Present(envDTEProject);
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             var hierarchy = await envDTEProject.ToVsHierarchyAsync();
+            return IsSupported(envDTEProject.Kind, hierarchy);
+        }
+
+        public static bool IsSupported(string projectKind, IVsHierarchy hierarchy)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            Assumes.Present(projectKind);
+            Assumes.Present(hierarchy);
+
             if (VsHierarchyUtility.IsProjectCapabilityCompliant(hierarchy))
             {
                 return true;
             }
 
-            return envDTEProject.Kind != null && ProjectType.IsSupported(envDTEProject.Kind) && !VsHierarchyUtility.HasUnsupportedProjectCapability(hierarchy);
+            return projectKind != null && ProjectType.IsSupported(projectKind) && !VsHierarchyUtility.HasUnsupportedProjectCapability(hierarchy);
         }
 
         public async static Task<NuGetProject> GetNuGetProjectAsync(EnvDTE.Project project, ISolutionManager solutionManager)

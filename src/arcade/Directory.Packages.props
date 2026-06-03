@@ -8,15 +8,13 @@
   <!-- Version properties used outside of PackageReference items -->
   <PropertyGroup>
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
-    <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
-    <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
     <MicrosoftSignedWixVersion>3.14.1-9323.2545153</MicrosoftSignedWixVersion>
     <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.4</MicrosoftWixToolsetSdkVersion>
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion/MicrosoftTestingPlatformVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.3</XUnitVersion>
     <XUnitV3Version>4.0.0-pre.81</XUnitV3Version>
-    <XUnitAnalyzersVersion>1.27.0</XUnitAnalyzersVersion>
+    <XUnitAnalyzersVersion>2.0.0-pre.51</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
     <XUnitRunnerVisualStudioVersion>4.0.0-pre.4</XUnitRunnerVisualStudioVersion>
     <MicrosoftTestingPlatformVersion>2.2.1</MicrosoftTestingPlatformVersion>
@@ -55,6 +53,7 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="$(MicrosoftExtensionsFileProvidersAbstractionsVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsLoggingAbstractionsVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsoleVersion)" />
     <PackageVersion Include="System.Composition" Version="$(SystemCompositionVersion)" />
     <PackageVersion Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
@@ -65,31 +64,27 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.51.1" />
-    <PackageVersion Include="Azure.Identity" Version="1.17.1" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="12.19.1" />
-    <PackageVersion Include="CommandLineParser" Version="2.5.0" />
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="AwesomeAssertions" Version="9.0.0" />
-    <PackageVersion Include="Handlebars.Net" Version="1.11.5" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2018.2.1" />
+    <PackageVersion Include="Azure.Core" Version="1.57.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.28.0" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageVersion Include="Handlebars.Net" Version="2.1.6" />
     <PackageVersion Include="LZMA-SDK" Version="22.1.1" />
-    <PackageVersion Include="McMaster.Extensions.CommandLineUtils" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.23.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.1" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
-    <PackageVersion Include="Microsoft.Data.Services.Client" Version="$(MicrosoftDataServicesClientVersion)" />
+    <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.4" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.80.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="1.3.2" />
-    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.3.2" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.84.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.29" />
+    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.29" />
     <PackageVersion Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
     <PackageVersion Include="Microsoft.WixToolset.Sdk" Version="$(MicrosoftWixToolsetSdkVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.OLE.Interop" Version="17.14.40260" />
-    <PackageVersion Include="Mono.Options" Version="5.3.0.1" />
     <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Octokit" Version="14.0.0" />
-    <PackageVersion Include="Polly.Core" Version="8.4.1" />
+    <PackageVersion Include="Polly.Core" Version="8.6.6" />
     <PackageVersion Include="sn" Version="1.0.0" />
     <PackageVersion Include="xunit" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
@@ -97,7 +92,6 @@
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="$(XUnitV3Version)" />
     <PackageVersion Include="xunit.runner.reporters" Version="$(XUnitVersion)" />
-    <PackageVersion Include="nsubstitute" Version="5.1.0" />
   </ItemGroup>
 
 </Project>

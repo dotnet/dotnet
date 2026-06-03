@@ -13,9 +13,9 @@ Therefore, all strings that are displayed to users must use resx file resources,
      The entries in the resx are not sorted, so you can add the new string as the last element in the file.
 1. Build the project.
    If you did not use Visual Studio to edit the *resx* file, this will update the corresponding *.Designer.cs* file with a new class property that can be used to get the string value.
-   Regardless of how you edited the resx file, building will update all the *xlf* files, copying the English translation.
-   This is normal.
-   It sets an attribute to specify that the resource is new, and the [OneLocBuild][1] workflow will later create a pull request with the actual translations.
+   Regardless of how you edited the resx file, building will update all the *xlf* files locally, copying the English translation.
+   This is expected — **include the `.xlf` changes in your pull request** along with the `.resx` and `.Designer.cs` changes.
+   The [OneLocBuild][1] pipeline will later create a separate PR with the actual translations for the new strings.
 1. Use the string in whatever output message the code change requires.
 
 If the string has words or phrases that should not be translated in any language, in the comment section of the resx, use something like `{Locked="allowUntrustedRoot"}`.

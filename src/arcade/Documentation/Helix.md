@@ -45,8 +45,3 @@ A major requirement for this system was to be able to execute work across multip
 
 ### Docker Image Support
 For any Helix queue where Docker is installed (viewable via the Queue info API), work items may be executed in a docker image via the syntax `(Fake.Queue.Name)real.queue.name@docker.tag`.  This allows running on OS combinations we either can't install on Azure (e.g. Fedora Linuxes) or which only support Docker (Windows Nano, etc.)
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CHelix.md)](https://helix.dot.net/f/p/5?p=Documentation%5CHelix.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CHelix.md)</sub>
-<!-- End Generated Content-->

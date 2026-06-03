@@ -3293,6 +3293,30 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
             }
         }
 
+        [Theory]
+        [InlineData(null, false, null)]
+        [InlineData("asdf", false, null)]
+        [InlineData("true", false, null)]
+        [InlineData("false", false, null)]
+        [InlineData("1234567890", true, "2009-02-13T23:31:30+00:00")]
+        [InlineData("1990-12-31T23:59:49Z", true, "1990-12-31T23:59:49Z")]
+        [InlineData("1985-04-12T23:20:50.52Z", true, "1985-04-12T23:20:50.52Z")]
+        [InlineData("1996-12-19T16:39:57-08:00", true, "1996-12-19T16:39:57-08:00")]
+        [InlineData("1996-12-19T16:39:57.9-08:00", true, "1996-12-19T16:39:57.9-08:00")]
+        [InlineData("1996-12-19T16:39:57.999999-08:00", true, "1996-12-19T16:39:57.999999-08:00")]
+        [InlineData("1996-12-19T16:39:60-08:00", false, null)]
+        [InlineData("1996-12-19T16:39:60.ADAFG-08:00", false, null)]
+        public void PackageBuilderHandlesTimestampsCorrectly(string timestamp, bool expectedParsed, string dateString)
+        {
+            var parsed = PackageBuilder.TryParseTimestamp(timestamp, out var parsedTimestamp);
+            Assert.Equal(expectedParsed, parsed);
+            if (parsed)
+            {
+                DateTimeOffset expectedTimestamp = DateTimeOffset.Parse(dateString);
+                Assert.Equal(expectedTimestamp, parsedTimestamp);
+            }
+        }
+
         private static PackageBuilder CreateEmitRequireLicenseAcceptancePackageBuilder(bool emitRequireLicenseAcceptance, bool requireLicenseAcceptance)
         {
             return new PackageBuilder

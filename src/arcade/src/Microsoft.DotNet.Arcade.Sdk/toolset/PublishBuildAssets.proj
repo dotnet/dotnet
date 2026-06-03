@@ -13,7 +13,6 @@
     <!-- Block stable versioning so that the merged asset manifest is pushed
          to a unique location -->
     <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
-    <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
   <ItemGroup>

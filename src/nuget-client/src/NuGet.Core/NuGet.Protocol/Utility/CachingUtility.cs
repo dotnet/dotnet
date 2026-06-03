@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Linq;
@@ -36,7 +34,7 @@ namespace NuGet.Protocol
             return EncodingUtility.ToHex(hash, HashLength) + (addIdentifiableCharacters ? "$" + trailing : string.Empty);
         }
 
-        public static Stream ReadCacheFile(TimeSpan maxAge, string cacheFile)
+        public static Stream? ReadCacheFile(TimeSpan maxAge, string cacheFile)
         {
             var fileInfo = new FileInfo(cacheFile);
 
@@ -61,7 +59,7 @@ namespace NuGet.Protocol
 
         public static bool IsFileAlreadyOpen(string filePath)
         {
-            FileStream stream = null;
+            FileStream? stream = null;
 
             try
             {

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 #if !IS_CORECLR
 using System;
 using System.Collections.Generic;
@@ -43,14 +41,14 @@ namespace NuGet.Protocol
 
         private readonly TokenStore _tokenStore;
 
-        private readonly Func<string, string, string> _tokenFactory;
+        private readonly Func<string, string, string?> _tokenFactory;
 
         public StsAuthenticationHandler(Configuration.PackageSource packageSource, TokenStore tokenStore)
             : this(packageSource, tokenStore, tokenFactory: (endpoint, realm) => AcquireSTSToken(endpoint, realm))
         {
         }
 
-        public StsAuthenticationHandler(Configuration.PackageSource packageSource, TokenStore tokenStore, Func<string, string, string> tokenFactory)
+        public StsAuthenticationHandler(Configuration.PackageSource packageSource, TokenStore tokenStore, Func<string, string, string?> tokenFactory)
         {
             if (packageSource == null)
             {
@@ -76,7 +74,7 @@ namespace NuGet.Protocol
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            HttpResponseMessage response = null;
+            HttpResponseMessage? response = null;
             bool shouldRetry = false;
 
             do
@@ -127,7 +125,7 @@ namespace NuGet.Protocol
 
             } while (shouldRetry);
 
-            return response;
+            return response!;
         }
 
         /// <summary>
@@ -160,7 +158,7 @@ namespace NuGet.Protocol
 
             if (string.IsNullOrEmpty(STSToken))
             {
-                var rawStsToken = _tokenFactory.Invoke(endpoint, realm);
+                var rawStsToken = _tokenFactory.Invoke(endpoint!, realm!);
                 if (rawStsToken != null)
                 {
                     STSToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(rawStsToken));
@@ -172,7 +170,7 @@ namespace NuGet.Protocol
             return false;
         }
 
-        private static string AcquireSTSToken(string endpoint, string realm)
+        private static string? AcquireSTSToken(string endpoint, string realm)
         {
             var binding = new WS2007HttpBinding(SecurityMode.Transport);
 
@@ -191,10 +189,9 @@ namespace NuGet.Protocol
             return responseToken?.TokenXml.OuterXml;
         }
 
-        private static string GetHeader(HttpResponseMessage response, string header)
+        private static string? GetHeader(HttpResponseMessage response, string header)
         {
-            IEnumerable<string> values;
-            if (response.Headers.TryGetValues(header, out values))
+            if (response.Headers.TryGetValues(header, out IEnumerable<string>? values))
             {
                 return values.FirstOrDefault();
             }

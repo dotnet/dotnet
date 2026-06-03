@@ -64,8 +64,6 @@ namespace NuGet.PackageManagement.UI
         // This tells the operation execution part that it needs to trigger a refresh when done.
         private bool _isRefreshRequired;
         private bool _isExecutingAction; // Signifies where an action is being executed. Should be updated in a coordinated fashion with IsEnabled
-        private bool _projectUpdateOccurredDuringRestore;
-        private IVsNuGetProjectUpdateEvents _projectUpdateEvents;
         private RestartRequestBar _restartBar;
         private bool _missingPackageStatus;
         private bool _loadedAndInitialized = false;
@@ -190,8 +188,8 @@ namespace NuGet.PackageManagement.UI
             await IsCentralPackageManagementEnabledAsync(CancellationToken.None);
 
             // UI is initialized. Start the first search
-            _packageList.CheckBoxesEnabled = _topPanel.Filter == ItemFilter.UpdatesAvailable;
-            _packageList.IsSolution = Model.IsSolution;
+            _packageList.ViewModel.IsUpdateMode = _topPanel.Filter == ItemFilter.UpdatesAvailable;
+            _packageList.ViewModel.IsSolution = Model.IsSolution;
 
             Loaded += PackageManagerLoaded;
 
@@ -209,9 +207,7 @@ namespace NuGet.PackageManagement.UI
             solutionManager.ProjectRemoved += OnProjectChanged;
             solutionManager.ProjectUpdated += OnProjectUpdated;
             solutionManager.ProjectRenamed += OnProjectRenamed;
-            _projectUpdateEvents = await ServiceLocator.GetComponentModelServiceAsync<IVsNuGetProjectUpdateEvents>();
-            _projectUpdateEvents.ProjectUpdateFinished += OnProjectUpdateFinished;
-            _projectUpdateEvents.SolutionRestoreFinished += OnSolutionRestoreFinished;
+            solutionManager.AfterNuGetCacheUpdated += OnNuGetCacheUpdated;
 
             Model.Context.ProjectActionsExecuted += OnProjectActionsExecuted;
 
@@ -410,77 +406,47 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private void OnProjectUpdateFinished(string projectUniqueName, IReadOnlyList<string> updatedFiles)
+        private void OnNuGetCacheUpdated(object sender, string e)
         {
             var timeSpan = GetTimeSinceLastRefreshAndRestart();
-
-            if (Model.IsSolution)
+            // Do not refresh if the UI is not visible. It will be refreshed later when the loaded event is called.
+            if (IsVisible)
             {
-                // Solution-level PM UI: record that a non-no-op project update occurred.
-                // The actual refresh will happen in OnSolutionRestoreFinished.
-                _projectUpdateOccurredDuringRestore = true;
-                return;
-            }
-
-            if (!IsVisible)
-            {
-                _isRefreshRequired = true;
-                EmitRefreshEvent(timeSpan, RefreshOperationSource.RestoreCompleted, RefreshOperationStatus.NoOp);
-                return;
-            }
-
-            // Project-level PM UI: only refresh when the updated project matches the viewed project.
-            NuGetUIThreadHelper.JoinableTaskFactory
-                .RunAsync(() => ProjectUpdateFinishedAsync(timeSpan, projectUniqueName))
-                .PostOnFailure(nameof(PackageManagerControl), nameof(OnProjectUpdateFinished));
-        }
-
-        private async Task ProjectUpdateFinishedAsync(TimeSpan timeSpan, string projectUniqueName)
-        {
-            IProjectContextInfo project = Model.Context.Projects.First();
-            IProjectMetadataContextInfo projectMetadata = await project.GetMetadataAsync(
-                Model.Context.ServiceBroker,
-                CancellationToken.None);
-
-            if (string.Equals(projectMetadata.FullPath, projectUniqueName, StringComparison.OrdinalIgnoreCase))
-            {
-                await RefreshWhenNotExecutingActionAsync(RefreshOperationSource.RestoreCompleted, timeSpan);
+                NuGetUIThreadHelper.JoinableTaskFactory
+                    .RunAsync(() => SolutionManager_CacheUpdatedAsync(timeSpan, e))
+                    .PostOnFailure(nameof(PackageManagerControl), nameof(OnNuGetCacheUpdated));
             }
             else
             {
-                EmitRefreshEvent(timeSpan, RefreshOperationSource.RestoreCompleted, RefreshOperationStatus.NotApplicable);
+                EmitRefreshEvent(timeSpan, RefreshOperationSource.CacheUpdated, RefreshOperationStatus.NoOp);
             }
         }
 
-        private void OnSolutionRestoreFinished(IReadOnlyList<string> projects)
+        private async Task SolutionManager_CacheUpdatedAsync(TimeSpan timeSpan, string eventProjectFullName)
         {
-            var timeSpan = GetTimeSinceLastRefreshAndRestart();
-
-            if (!Model.IsSolution)
+            if (Model.IsSolution)
             {
-                // Project-level PM UI handles refresh via OnProjectUpdateFinished.
-                return;
+                await RefreshWhenNotExecutingActionAsync(RefreshOperationSource.CacheUpdated, timeSpan);
             }
-
-            // Only refresh if at least one project had a non-no-op restore.
-            if (!_projectUpdateOccurredDuringRestore)
+            else
             {
-                EmitRefreshEvent(timeSpan, RefreshOperationSource.RestoreCompleted, RefreshOperationStatus.NoOp);
-                return;
+                // This is a project package manager, so there is one and only one project.
+                IProjectContextInfo project = Model.Context.Projects.First();
+                IProjectMetadataContextInfo projectMetadata = await project.GetMetadataAsync(
+                    Model.Context.ServiceBroker,
+                    CancellationToken.None);
+
+                // This ensures that we refresh the UI only if the event.project.FullName matches the NuGetProject.FullName.
+                // We also refresh the UI if projectFullPath is not present.
+                if (projectMetadata.FullPath == eventProjectFullName)
+                {
+                    await RefreshWhenNotExecutingActionAsync(RefreshOperationSource.CacheUpdated, timeSpan);
+                }
+                else
+                {
+                    EmitRefreshEvent(timeSpan, RefreshOperationSource.CacheUpdated, RefreshOperationStatus.NotApplicable);
+                }
             }
-
-            _projectUpdateOccurredDuringRestore = false;
-
-            if (!IsVisible)
-            {
-                _isRefreshRequired = true;
-                EmitRefreshEvent(timeSpan, RefreshOperationSource.RestoreCompleted, RefreshOperationStatus.NoOp);
-                return;
-            }
-
-            NuGetUIThreadHelper.JoinableTaskFactory
-                .RunAsync(async () => await RefreshWhenNotExecutingActionAsync(RefreshOperationSource.RestoreCompleted, timeSpan))
-                .PostOnFailure(nameof(PackageManagerControl), nameof(OnSolutionRestoreFinished));
         }
 
         private async ValueTask RefreshWhenNotExecutingActionAsync(RefreshOperationSource source, TimeSpan timeSpanSinceLastRefresh)
@@ -575,11 +541,6 @@ namespace NuGet.PackageManagement.UI
                     await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false);
                 },
                 RefreshOperationSource.PackageManagerLoaded, timeSpan, sw);
-            }
-            else if (_isRefreshRequired)
-            {
-                _isRefreshRequired = false;
-                await RunAndEmitRefreshAsync(async () => await RefreshAsync(), RefreshOperationSource.PackageManagerLoaded, timeSpan, sw);
             }
             else
             {
@@ -1004,7 +965,7 @@ namespace NuGet.PackageManagement.UI
                 // start SearchAsync task for initial loading of packages
                 var searchResultTask = loader.SearchAsync(cancellationToken: _loadCts.Token);
                 // this will wait for searchResultTask to complete instead of creating a new task
-                await _packageList.LoadItemsAsync(loader, loadingMessage, _uiLogger, searchResultTask, _loadCts.Token);
+                await _packageList.ViewModel.LoadItemsAsync(loader, loadingMessage, _uiLogger, searchResultTask, _loadCts.Token);
 
                 if (ActiveFilter == ItemFilter.Installed)
                 {
@@ -1192,9 +1153,9 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         internal async Task UpdateDetailPaneAsync(CancellationToken cancellationToken)
         {
-            PackageItemViewModel selectedItem = _packageList.SelectedItem;
+            PackageItemViewModel selectedItem = _packageList.ViewModel.SelectedPackageItem;
             int selectedIndex = _packageList.SelectedIndex;
-            int recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
+            int recommendedCount = _packageList.ViewModel.PackageItems.Count(item => item.Recommended == true);
 
             if (selectedItem == null)
             {
@@ -1207,7 +1168,7 @@ namespace NuGet.PackageManagement.UI
 
                 EmitSearchSelectionTelemetry(selectedItem);
 
-                await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.SelectedItem, cancellationToken);
+                await _detailModel.SetCurrentPackageAsync(selectedItem, _topPanel.Filter, () => _packageList.ViewModel.SelectedPackageItem, cancellationToken);
                 Model.UIController.SelectedPackageId = selectedItem.Id;
                 _detailModel.SetCurrentSelectionInfo(selectedIndex, recommendedCount, _recommendPackages, selectedItem.RecommenderVersion);
 
@@ -1222,9 +1183,9 @@ namespace NuGet.PackageManagement.UI
 
         private void EmitSearchSelectionTelemetry(PackageItemViewModel selectedPackage)
         {
-            var operationId = _packageList.OperationId;
+            var operationId = _packageList.ViewModel.OperationId;
             var selectedIndex = _packageList.SelectedIndex;
-            var recommendedCount = _packageList.PackageItems.Count(item => item.Recommended == true);
+            var recommendedCount = _packageList.ViewModel.PackageItems.Count(item => item.Recommended == true);
             var hasDeprecationAlternative = selectedPackage.AlternatePackage != null;
 
             if (_topPanel.Filter == ItemFilter.All
@@ -1245,7 +1206,7 @@ namespace NuGet.PackageManagement.UI
 
         private void IncrementInstalledPackageSelectionCount()
         {
-            PackageItemViewModel selectedItem = _packageList.SelectedItem;
+            PackageItemViewModel selectedItem = _packageList.ViewModel.SelectedPackageItem;
             if (selectedItem == null || ActiveFilter != ItemFilter.Installed)
             {
                 return;
@@ -1326,11 +1287,10 @@ namespace NuGet.PackageManagement.UI
             if (_initialized)
             {
                 var timeSpan = GetTimeSinceLastRefreshAndRestart();
-                _packageList.ResetLoadingStatusIndicator();
+                _packageList.ViewModel.ResetLoadingStatusIndicator();
                 var sw = Stopwatch.StartNew();
                 // Collapse the Update controls when the current tab is not "Updates".
-                _packageList.CheckBoxesEnabled = _topPanel.Filter == ItemFilter.UpdatesAvailable;
-                _packageList._updateButtonContainer.Visibility = _topPanel.Filter == ItemFilter.UpdatesAvailable ? Visibility.Visible : Visibility.Collapsed;
+                _packageList.ViewModel.IsUpdateMode = _topPanel.Filter == ItemFilter.UpdatesAvailable;
 
                 // Set a new cancellation token source which will be used to cancel this task in case
                 // new loading task starts or manager ui is closed while loading packages.
@@ -1370,7 +1330,7 @@ namespace NuGet.PackageManagement.UI
                     Model.Context.ServiceBroker,
                     Model.Context.Projects,
                     CancellationToken.None);
-                await _packageList.UpdatePackageStatusAsync(installedPackages.ToArray(), CancellationToken.None, clearCache);
+                await _packageList.ViewModel.UpdatePackageStatusAsync(installedPackages.ToArray(), CancellationToken.None, clearCache);
 
                 await RefreshInstalledAndUpdatesTabsAsync();
             }
@@ -1566,10 +1526,10 @@ namespace NuGet.PackageManagement.UI
                 EventHandler handler = null;
                 handler = (s, e) =>
                 {
-                    _packageList.LoadItemsCompleted -= handler;
+                    _packageList.ViewModel.LoadItemsCompleted -= handler;
                     SelectMatchingUpdatePackages(updatePackageOptions);
                 };
-                _packageList.LoadItemsCompleted += handler;
+                _packageList.ViewModel.LoadItemsCompleted += handler;
             }
         }
 
@@ -1584,7 +1544,7 @@ namespace NuGet.PackageManagement.UI
 
             if (updatePackageOptions.ShouldUpdateAllPackages)
             {
-                foreach (var packageItem in _packageList.PackageItems)
+                foreach (var packageItem in _packageList.ViewModel.PackageItems)
                 {
                     packageItem.IsSelected = true;
                 }
@@ -1593,7 +1553,7 @@ namespace NuGet.PackageManagement.UI
             {
                 var packagesToSelect = new HashSet<string>(updatePackageOptions.PackagesToUpdate);
                 PackageItemViewModel firstSelectedItem = null;
-                foreach (var packageItem in _packageList.PackageItems)
+                foreach (var packageItem in _packageList.ViewModel.PackageItems)
                 {
                     packageItem.IsSelected = packagesToSelect.Contains(packageItem.Id, StringComparer.OrdinalIgnoreCase);
 
@@ -1642,12 +1602,7 @@ namespace NuGet.PackageManagement.UI
             solutionManager.ProjectRemoved -= OnProjectChanged;
             solutionManager.ProjectUpdated -= OnProjectUpdated;
             solutionManager.ProjectRenamed -= OnProjectRenamed;
-
-            if (_projectUpdateEvents != null)
-            {
-                _projectUpdateEvents.ProjectUpdateFinished -= OnProjectUpdateFinished;
-                _projectUpdateEvents.SolutionRestoreFinished -= OnSolutionRestoreFinished;
-            }
+            solutionManager.AfterNuGetCacheUpdated -= OnNuGetCacheUpdated;
 
             Model.Context.ProjectActionsExecuted -= OnProjectActionsExecuted;
 
@@ -1668,6 +1623,7 @@ namespace NuGet.PackageManagement.UI
             _packageDetail.Cleanup();
             _detailModel.Dispose();
             _packageList.SelectionChanged -= PackageList_SelectionChanged;
+            _packageList.Dispose();
 
             EmitPMUIClosingTelemetry();
         }

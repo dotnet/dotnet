@@ -12,10 +12,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Newtonsoft.Json.Linq;
-using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -79,7 +77,38 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        // https://github.com/NuGet/Home/issues/14823: This should use `dotnet package list` when it supports file-based apps.
+        [Theory]
+        [InlineData("list {0} package")]
+        [InlineData("package list --project {0}")]
+        public async Task DotnetListPackage_RelativeProjectPath_Succeeds(string commandTemplate)
+        {
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageX = XPlatTestUtils.CreatePackage();
+
+            // Generate Package
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            {
+                using var stream = File.Open(projectA.ProjectPath, FileMode.Open, FileAccess.ReadWrite);
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(xml, "PackageReference", "packageX", string.Empty, [], new Dictionary<string, string>() { { "Version", "1.0.0" } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var relativeProjectPath = Path.GetRelativePath(pathContext.SolutionRoot, projectA.ProjectPath);
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(
+                pathContext.SolutionRoot,
+                string.Format(CultureInfo.InvariantCulture, commandTemplate, relativeProjectPath),
+                testOutputHelper: _testOutputHelper);
+
+            Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageX1.0.01.0.0"));
+        }
+
         [Fact]
         public async Task DotnetListPackage_FileBasedApp()
         {
@@ -102,45 +131,11 @@ namespace Dotnet.Integration.Test
             // Restore.
             _fixture.RunDotnetExpectSuccess(fbaDir, "restore app.cs", testOutputHelper: _testOutputHelper);
 
-            // Get project content.
-            var virtualProject = _fixture.GetFileBasedAppVirtualProject(appFile, _testOutputHelper);
-            using var builder = new TestVirtualProjectBuilder(virtualProject);
-
             // List packages.
-            using var outWriter = new StringWriter();
-            using var errorWriter = new StringWriter();
-            var testApp = new CommandLineApplication
-            {
-                Out = outWriter,
-                Error = errorWriter,
-            };
-            var logger = new TestLogger(_testOutputHelper);
-            var msbuild = new MSBuildAPIUtility(logger, builder);
-            ListPackageCommand.Register(
-                testApp,
-                () => logger,
-                (_) => { },
-                () => new ListPackageCommandRunner(msbuild));
-            int result = testApp.Execute([
-                "list", appFile,
-                "--source", pathContext.PackageSource,
-                "--format", "json",
-            ]);
+            var result = _fixture.RunDotnetExpectSuccess(fbaDir, "package list --file app.cs --format json", testOutputHelper: _testOutputHelper);
 
-            var output = outWriter.ToString();
-            var error = errorWriter.ToString();
-
-            _testOutputHelper.WriteLine(output);
-            _testOutputHelper.WriteLine(error);
-
-            Assert.Equal(0, result);
-
-            Assert.Empty(error);
-
-            Assert.Contains("packageX", output);
-            Assert.Contains("1.0.0", output);
-
-            Assert.Null(builder.ModifiedContent);
+            Assert.Contains("packageX", result.AllOutput);
+            Assert.Contains("1.0.0", result.AllOutput);
         }
 
         [PlatformFact(Platform.Windows)]

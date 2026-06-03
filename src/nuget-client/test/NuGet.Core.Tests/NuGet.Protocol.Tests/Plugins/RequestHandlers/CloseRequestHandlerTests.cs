@@ -54,11 +54,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
                         connection: null,
-                        request: new Message(
+                        request: MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
-                            method: MessageMethod.Close,
-                            payload: null),
+                            method: MessageMethod.Close),
                         responseHandler: Mock.Of<IResponseHandler>(),
                         cancellationToken: CancellationToken.None));
 
@@ -90,11 +89,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        new Message(
+                        MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
-                            method: MessageMethod.Close,
-                            payload: null),
+                            method: MessageMethod.Close),
                         responseHandler: null,
                         cancellationToken: CancellationToken.None));
 
@@ -110,11 +108,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 await Assert.ThrowsAsync<OperationCanceledException>(
                     () => test.Handler.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        new Message(
+                        MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
-                            method: MessageMethod.Close,
-                            payload: null),
+                            method: MessageMethod.Close),
                         Mock.Of<IResponseHandler>(),
                         new CancellationToken(canceled: true)));
             }
@@ -129,11 +126,10 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 await test.Handler.HandleResponseAsync(
                     Mock.Of<IConnection>(),
-                    new Message(
+                    MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
-                        method: MessageMethod.Close,
-                        payload: null),
+                        method: MessageMethod.Close),
                     Mock.Of<IResponseHandler>(),
                     CancellationToken.None);
 

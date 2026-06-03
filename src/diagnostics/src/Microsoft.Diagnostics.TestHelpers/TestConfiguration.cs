@@ -53,18 +53,10 @@ namespace Microsoft.Diagnostics.TestHelpers
                 // This emulates that logic so the VS Test Explorer can still run the tests for
                 // config files that don't set the NugetPackagesCacheDir value (like the SOS unit
                 // tests).
-                string nugetPackagesRoot = null;
-                if (OS.Kind == OSKind.Windows)
+                string basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                if (!string.IsNullOrEmpty(basePath))
                 {
-                    nugetPackagesRoot = Environment.GetEnvironmentVariable("UserProfile");
-                }
-                else if (OS.Kind is OSKind.Linux or OSKind.OSX)
-                {
-                    nugetPackagesRoot = Environment.GetEnvironmentVariable("HOME");
-                }
-                if (nugetPackagesRoot != null)
-                {
-                    nugetPackages = Path.Combine(nugetPackagesRoot, ".nuget", "packages");
+                    nugetPackages = Path.Combine(basePath, ".nuget", "packages");
                 }
             }
             // The TargetArchitecture and NuGetPackageCacheDir can still be overridden
@@ -80,7 +72,9 @@ namespace Microsoft.Diagnostics.TestHelpers
                 ["TargetRid"] = GetRid(),
                 ["TargetArchitecture"] = OS.TargetArchitecture.ToString().ToLowerInvariant(),
                 ["NuGetPackageCacheDir"] = nugetPackages,
-                ["TestCDAC"] = Environment.GetEnvironmentVariable("SOS_TEST_CDAC")
+                ["TestCDAC"] = Environment.GetEnvironmentVariable("SOS_TEST_CDAC"),
+                ["TestCDACNoFallback"] = Environment.GetEnvironmentVariable("SOS_TEST_CDAC_NO_FALLBACK"),
+                ["TestInterpreter"] = Environment.GetEnvironmentVariable("SOS_TEST_INTERPRETER")
             };
             if (OS.Kind == OSKind.Windows)
             {
@@ -462,9 +456,17 @@ namespace Microsoft.Diagnostics.TestHelpers
             {
                 sb.Append(".singlefile");
             }
-            if (TestCDAC)
+            if (TestCDACNoFallback)
+            {
+                sb.Append(".cdac_no_fallback");
+            }
+            else if (TestCDAC)
             {
                 sb.Append(".cdac");
+            }
+            if (TestInterpreter)
+            {
+                sb.Append(".interpreter");
             }
             if (!string.IsNullOrEmpty(version))
             {
@@ -566,6 +568,24 @@ namespace Microsoft.Diagnostics.TestHelpers
         public bool TestCDAC
         {
             get { return string.Equals(GetValue("TestCDAC"), "true", StringComparison.InvariantCultureIgnoreCase); }
+        }
+
+        /// <summary>
+        /// Returns true if tests should use the cDAC with no fallback to the legacy DAC.
+        /// </summary>
+        public bool TestCDACNoFallback
+        {
+            get { return string.Equals(GetValue("TestCDACNoFallback"), "true", StringComparison.InvariantCultureIgnoreCase); }
+        }
+
+        /// <summary>
+        /// Returns true if interpreter-frame SOS tests should run. Requires a Debug/Checked
+        /// CoreCLR drop with FEATURE_INTERPRETER compiled in. When true, opted-in tests
+        /// launch their debuggee with DOTNET_Interpreter set so user methods are interpreted.
+        /// </summary>
+        public bool TestInterpreter
+        {
+            get { return string.Equals(GetValue("TestInterpreter"), "true", StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>

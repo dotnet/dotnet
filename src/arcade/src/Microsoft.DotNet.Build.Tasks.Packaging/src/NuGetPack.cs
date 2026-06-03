@@ -6,9 +6,10 @@ using NuGet;
 using NuGet.Versioning;
 using NuGet.Packaging;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using NuGet.Common;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
@@ -138,6 +139,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             set;
         }
 
+        public string DeterministicTimestamp
+        {
+            get;
+            set;
+        }
+
         public override bool Execute()
         {
             if (Nuspecs == null || Nuspecs.Length == 0)
@@ -261,6 +268,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             try
             {
                 PackageBuilder builder = new PackageBuilder(deterministic: Deterministic);
+                SetDeterministicTimestamp(builder, DeterministicTimestamp);
 
                 string baseDirectoryPath = (string.IsNullOrEmpty(BaseDirectory)) ? Path.GetDirectoryName(nuspecPath) : BaseDirectory;
                 builder.Populate(manifest.Metadata);
@@ -325,6 +333,30 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 }
                 Log.LogError($"Error when creating nuget {packageType} package from {nuspecPath}. {e}");
             }
+        }
+
+        private void SetDeterministicTimestamp(PackageBuilder packageBuilder, string deterministicTimestamp)
+        {
+            // Use reflection to set the PackageBuilder.DeterministicTimestamp
+            // property. This property may or may not be available depending on
+            // the NuGet.Client version.
+
+            var type = packageBuilder.GetType();
+            var deterministicTimestampPropertyName = "DeterministicTimestamp";
+            var propertyInfo = type.GetProperty(deterministicTimestampPropertyName, BindingFlags.Public | BindingFlags.Instance);
+            if (propertyInfo == null)
+            {
+                Log.LogMessage(LogImportance.Low, $"{type.FullName} does not contain property {deterministicTimestampPropertyName}. Not setting {nameof(deterministicTimestamp)}.");
+                return;
+            }
+
+            if (!propertyInfo.CanWrite)
+            {
+                Log.LogWarning($"{type.FullName}.{deterministicTimestampPropertyName} is not writable.");
+                return;
+            }
+
+            propertyInfo.SetValue(packageBuilder, deterministicTimestamp);
         }
 
         private Manifest TransformManifestToPackedPackageManifest(Manifest manifest)

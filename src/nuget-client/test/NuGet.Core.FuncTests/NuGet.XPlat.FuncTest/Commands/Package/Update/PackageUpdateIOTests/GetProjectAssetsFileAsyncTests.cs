@@ -18,7 +18,12 @@ public class GetProjectAssetsFileAsyncTests
     private static PackageUpdateIO CreatePackageUpdateIO(string solutionRoot)
     {
         var msbuildUtility = new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null);
-        var packageUpdateIO = new PackageUpdateIO(solutionRoot, msbuildUtility, TestEnvironmentVariableReader.EmptyInstance);
+        var envReader = new TestEnvironmentVariableReader(
+            new System.Collections.Generic.Dictionary<string, string>
+            {
+                ["DOTNET_HOST_PATH"] = TestFileSystemUtility.GetDotnetCli()
+            });
+        var packageUpdateIO = new PackageUpdateIO(solutionRoot, msbuildUtility, envReader);
         return packageUpdateIO;
     }
 

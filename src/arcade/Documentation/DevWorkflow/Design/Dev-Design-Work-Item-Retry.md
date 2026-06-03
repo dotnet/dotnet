@@ -90,8 +90,3 @@ is not well structured for testing.
 
 Most of the code logic will be made in the helix-machines repository, because that is where the python code resides today.  It could theoretically be
 moved, but the value isn't there for that.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Work-Item-Retry.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Work-Item-Retry.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Work-Item-Retry.md)</sub>
-<!-- End Generated Content-->

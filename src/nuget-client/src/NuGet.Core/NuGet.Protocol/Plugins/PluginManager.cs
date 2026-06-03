@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging;
@@ -126,8 +125,6 @@ namespace NuGet.Protocol.Plugins
 
                 if (serviceIndex != null)
                 {
-                    var serviceIndexJson = JObject.Parse(serviceIndex.Json);
-
                     foreach (var result in await FindAvailablePluginsAsync(cancellationToken))
                     {
                         var pluginCreationResult = await TryCreatePluginAsync(
@@ -135,7 +132,7 @@ namespace NuGet.Protocol.Plugins
                             OperationClaim.DownloadPackage,
                             new PluginRequestKey(result.PluginFile.Path, source.PackageSource.Source),
                             source.PackageSource.Source,
-                            serviceIndexJson,
+                            serviceIndex.Json,
                             cancellationToken);
 
                         if (pluginCreationResult.Item1)
@@ -192,7 +189,7 @@ namespace NuGet.Protocol.Plugins
             OperationClaim requestedOperationClaim,
             PluginRequestKey requestKey,
             string packageSourceRepository,
-            JObject serviceIndex,
+            string serviceIndex,
             CancellationToken cancellationToken)
         {
             // This is a non cancellable task.
@@ -325,10 +322,10 @@ namespace NuGet.Protocol.Plugins
                 StringComparer.OrdinalIgnoreCase);
         }
 
-        private async Task<IReadOnlyList<OperationClaim>> GetPluginOperationClaimsAsync(
+        private static async Task<IReadOnlyList<OperationClaim>> GetPluginOperationClaimsAsync(
             IPlugin plugin,
             string packageSourceRepository,
-            JObject serviceIndex,
+            string serviceIndex,
             CancellationToken cancellationToken)
         {
             if (plugin.Connection.ProtocolVersion.Equals(Plugins.ProtocolConstants.Version100) && (string.IsNullOrEmpty(packageSourceRepository) || serviceIndex == null))

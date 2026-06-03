@@ -55,14 +55,16 @@ namespace NuGet.Build.Tasks.Console
 
         public string GetGlobalProperty(string property)
         {
-            string value = GetPropertyValue(property).Trim();
-
-            if (string.IsNullOrWhiteSpace(value))
+            if (_projectInstance.GlobalProperties.TryGetValue(property, out string value))
             {
-                return null;
+                string trimmed = value?.Trim();
+                if (!string.IsNullOrWhiteSpace(trimmed))
+                {
+                    return trimmed;
+                }
             }
 
-            return value;
+            return null;
         }
     }
 }

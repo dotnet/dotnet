@@ -182,12 +182,11 @@ namespace NuGet.Protocol.Plugins
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            var responsePayload = new Fault(exception.Message);
             var response = new Message(
                 request.RequestId,
                 MessageType.Fault,
                 request.Method,
-                JsonSerializationUtilities.FromObject(responsePayload));
+                new Fault(exception.Message));
 
             if (_logger.IsEnabled)
             {

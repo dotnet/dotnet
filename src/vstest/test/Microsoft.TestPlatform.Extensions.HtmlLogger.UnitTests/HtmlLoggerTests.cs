@@ -249,6 +249,50 @@ public class HtmlLoggerTests
     }
 
     [TestMethod]
+    public void TestResultHandlerShouldSanitizeInvalidXmlCharsInDisplayName()
+    {
+        // Characters like \x01 (SOH) are invalid in XML 1.0 and would cause DataContractSerializer to throw.
+        var testCase = CreateTestCase("Pass1");
+        testCase.FullyQualifiedName = "fully";
+        testCase.Source = "abc/def.dll";
+
+        var testResult = new ObjectModel.TestResult(testCase)
+        {
+            DisplayName = "TestMethod(\x01value)",
+            ErrorMessage = "error\x02message",
+            ErrorStackTrace = "stack\x03trace",
+        };
+
+        _htmlLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(testResult).Object);
+
+        var result = _htmlLogger.TestRunDetails!.ResultCollectionList!.First().ResultList!.First();
+
+        Assert.AreEqual(@"TestMethod(\u0001value)", result.DisplayName);
+        Assert.AreEqual(@"error\u0002message", result.ErrorMessage);
+        Assert.AreEqual(@"stack\u0003trace", result.ErrorStackTrace);
+    }
+
+    [TestMethod]
+    public void TestResultHandlerShouldPreserveValidSurrogatePairsInDisplayName()
+    {
+        // Valid surrogate pairs (e.g. emoji U+1F600 = 😀) are valid XML 1.0 chars and must NOT be mangled.
+        var testCase = CreateTestCase("Pass1");
+        testCase.FullyQualifiedName = "fully";
+        testCase.Source = "abc/def.dll";
+
+        var testResult = new ObjectModel.TestResult(testCase)
+        {
+            DisplayName = "Test(😀)",  // 😀 is U+1F600, encoded as surrogate pair \uD83D\uDE00
+        };
+
+        _htmlLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(testResult).Object);
+
+        var result = _htmlLogger.TestRunDetails!.ResultCollectionList!.First().ResultList!.First();
+
+        Assert.AreEqual("Test(😀)", result.DisplayName, "Valid surrogate pairs should pass through unchanged.");
+    }
+
+    [TestMethod]
     public void GetFormattedDurationStringShouldGiveCorrectFormat()
     {
         TimeSpan ts1 = new(0, 0, 0, 0, 1);
@@ -602,6 +646,35 @@ public class HtmlLoggerTests
             @"\d{8}_\d{6}\.\d{7}$",
             fileName,
             $"Filename should end with yyyyMMdd_HHmmss.fffffff pattern: {fileName}");
+    }
+
+    [TestMethod]
+    public void TestCompleteHandlerShouldRetryUniqueFileNameWhenCreateNewCollides()
+    {
+        var collisionInjected = false;
+
+        _mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
+
+        _mockFileHelper.Setup(x => x.GetStream(It.IsAny<string>(), FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            .Returns<string, FileMode, FileAccess, FileShare>((path, _, _, _) =>
+            {
+                if (!collisionInjected)
+                {
+                    collisionInjected = true;
+                    throw new IOException("collision");
+                }
+
+                return new Mock<Stream>().Object;
+            });
+
+        _mockFileHelper.Setup(x => x.GetStream(It.IsAny<string>(), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            .Returns(new Mock<Stream>().Object);
+
+        _htmlLogger.TestRunCompleteHandler(new object(), new TestRunCompleteEventArgs(null, false, true, null, null, null, TimeSpan.Zero));
+
+        Assert.IsNotNull(_htmlLogger.XmlFilePath);
+        Assert.Contains("[1].xml", _htmlLogger.XmlFilePath);
+        _mockFileHelper.Verify(x => x.GetStream(It.IsAny<string>(), FileMode.CreateNew, FileAccess.Write, FileShare.None), Times.AtLeast(2));
     }
 
     private static TestCase CreateTestCase(string testCaseName)

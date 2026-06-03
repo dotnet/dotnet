@@ -66,16 +66,19 @@ public class Program
     {
         var sdkDiffTestsCommand = CreateCommand("sdk", "Creates a PR that updates baselines and exclusion files published by the sdk diff tests.");
         var licenseScanTestsCommand = CreateCommand("license", "Creates a PR that updates baselines and exclusion files published by the license scan tests.");
+        var reproducibilityTestsCommand = CreateCommand("reproducibility", "Creates a PR that updates baseline and exclusion files published by the reproducibility tests.");
 
         var rootCommand = new RootCommand("Tool for creating PRs that update baselines and exclusion files.")
         {
             Level,
             sdkDiffTestsCommand,
-            licenseScanTestsCommand
+            licenseScanTestsCommand,
+            reproducibilityTestsCommand
         };
 
         SetCommandAction(sdkDiffTestsCommand, Pipelines.Sdk);
         SetCommandAction(licenseScanTestsCommand, Pipelines.License);
+        SetCommandAction(reproducibilityTestsCommand, Pipelines.Reproducibility);
 
         await rootCommand.Parse(args).InvokeAsync();
 

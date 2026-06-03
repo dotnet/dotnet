@@ -22,10 +22,9 @@ stages:
         publish:
           artifacts: true
           logs: true
-      enableMicrobuild: true
+      enableMicrobuild: false
       microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
       enablePublishBuildAssets: true
-      enableSourceIndex: true
       enableSourceBuild: true
       publishingVersion: 4
       workspace:

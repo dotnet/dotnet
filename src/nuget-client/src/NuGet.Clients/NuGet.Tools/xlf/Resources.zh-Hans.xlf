@@ -254,7 +254,7 @@
       </trans-unit>
       <trans-unit id="Text_Watermark_ExamplePackageIdPattern">
         <source>Contoso.Contracts or System.*</source>
-        <target state="translated">Contoso.Contracts 或 System。*</target>
+        <target state="translated">Contoso.Contracts 或 System.*</target>
         <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">

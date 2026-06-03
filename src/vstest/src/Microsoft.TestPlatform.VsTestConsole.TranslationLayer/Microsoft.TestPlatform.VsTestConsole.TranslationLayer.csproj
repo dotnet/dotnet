@@ -7,6 +7,13 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
+  <!-- NativeAOT / trimming compatibility analysis (net8.0+ only) -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+  </PropertyGroup>
+
   <PropertyGroup>
     <DocumentationFile>$(BaseIntermediateOutputPath)\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.XML</DocumentationFile>
   </PropertyGroup>

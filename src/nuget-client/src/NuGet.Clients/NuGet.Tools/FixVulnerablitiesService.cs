@@ -4,15 +4,12 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Copilot;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.ServiceBroker;
 using NuGet.Common;
 using NuGet.PackageManagement.Telemetry;
 using NuGet.PackageManagement.VisualStudio;
@@ -25,18 +22,16 @@ namespace NuGetVSExtension
     internal class FixVulnerablitiesService : IFixVulnerabilitiesService
     {
         private const string AgentModeResponderServiceMoniker = "Microsoft.VisualStudio.Copilot.AgentModeResponder";
-        private const string AuthStatusDetermined = "c936efcc-6baa-4ad3-9c2b-7ba750acf18f";
         private const string ServiceName = "Microsoft.VisualStudio.Copilot.SolutionContextProvider";
 
-        private static readonly Guid CopilotReadyUIContext = new(AuthStatusDetermined);
         private static readonly ServiceRpcDescriptor ProviderDescriptor = CopilotDescriptors.CreateContextProviderDescriptor(ServiceName);
         private static readonly CopilotContextDescriptor ContextDescriptor = new CopilotContextDescriptor(
                     "SolutionFile",
                     "solution file context",
                     CopilotDefaultTypes.StringName);
 
-        [Import(typeof(SVsFullAccessServiceBroker))]
-        public IServiceBroker? ServiceBroker { get; set; }
+        [Import(typeof(ICopilotToolInvocationService))]
+        public ICopilotToolInvocationService? ToolInvocationService { get; set; }
 
         [Import(typeof(IVsSolutionManager))]
         public IVsSolutionManager? SolutionManager { get; set; }
@@ -46,81 +41,63 @@ namespace NuGetVSExtension
 
         public async Task LaunchFixVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
-            UIContext copilotReady = UIContext.FromUIContextGuid(CopilotReadyUIContext);
-            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            if (!copilotReady.IsActive)
+            CopilotClientId clientId = new("Microsoft.VisualStudio.NuGet.VulnerabilitiesInfoBar");
+
+            // Build the request first so we have a stable CorrelationId for function discovery
+            CopilotRequest request = new(Resources.Prompt_FixNuGetPackageVulnerabilities)
             {
-                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotNotReady);
-                ShowWarningMessage(Resources.Error_CopilotNotReady);
+                Guidance = "Use absolute paths when invoking MCP Tools.",
+                DirectedResponders = [new(AgentModeResponderServiceMoniker, new(CopilotDescriptors.CurrentResponderVersion))]
+            };
+
+            Assumes.Present(ToolInvocationService);
+
+            CopilotToolSessionResult result = await ToolInvocationService.TryCreateToolSessionAsync(
+                clientId,
+                request.CorrelationId,
+                McpServerConstants.NuGetSolverFullyQualifiedToolName,
+                cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                HandleSessionError(result.Error);
                 return;
             }
 
-            if (ServiceBroker == null)
+            await using CopilotToolSession session = result.Session!;
+
+            // Attach solution context and available functions to the request
+            string solutionPathContext = $"The current solution file path is: {GetSolutionPath()}.";
+            CopilotContext context = new CopilotContext(ProviderDescriptor.Moniker, ContextDescriptor, request.CorrelationId, solutionPathContext);
+            CopilotRequest requestWithFunctionsAndContext = request.WithFunctions(session.Functions).WithContext(context);
+
+            try
             {
-                // Unlikely to occur and would indicate a problem with VS, but should still be handled.
-                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.ServiceBrokerNotAvailable);
-                ShowWarningMessage(Resources.Error_ServiceBrokerNotAvailable);
-                return;
+                _ = await session.Thread.Session.SendRequestAsync(requestWithFunctionsAndContext, cancellationToken);
+                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.None);
             }
-
-            ICopilotService? copilotService = await ServiceBroker.GetProxyAsync<ICopilotService>(CopilotDescriptors.CopilotService, cancellationToken);
-            using (copilotService as IDisposable)
+            catch (UnauthorizedAccessException ex)
             {
-                if (copilotService is null)
-                {
-                    SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotServiceNotAvailable);
-                    ShowWarningMessage(Resources.Error_CopilotServiceNotAvailable);
-                    return;
-                }
-
-                // Create an identifier that will be visible in the session's telemetry
-                CopilotClientId clientId = new("Microsoft.VisualStudio.NuGet.VulnerabilitiesInfoBar");
-                CopilotThreadOptions options = new(clientId);
-
-                await using var thread = await copilotService.StartThreadAsync(options, cancellationToken);
-                ICopilotFunctionProvider? cfp = await ServiceBroker.GetProxyAsync<ICopilotFunctionProvider>(CopilotDescriptors.McpToolService, cancellationToken);
-                using (cfp as IDisposable)
-                {
-                    if (cfp is null)
-                    {
-                        SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.McpToolServiceNotAvailable);
-                        ShowWarningMessage(Resources.Error_McpToolServiceNotAvailable);
-                        return;
-                    }
-
-                    // Requests from this session will be visible in the Chat window
-                    CopilotRequest request = new(Resources.Prompt_FixNuGetPackageVulnerabilities)
-                    {
-                        Guidance = "Use absolute paths when invoking MCP Tools.",
-                        DirectedResponders = [new(AgentModeResponderServiceMoniker, new(CopilotDescriptors.CurrentResponderVersion))]
-                    };
-
-                    // Prepare a request with the list of functions available to it and the solution path context.
-                    string solutionPathContext = $"The current solution file path is: {GetSolutionPath()}.";
-                    CopilotContext context = new CopilotContext(ProviderDescriptor.Moniker, ContextDescriptor, request.CorrelationId, solutionPathContext);
-                    IReadOnlyList<CopilotFunctionDescriptor> functions = await cfp.GetFunctionsAsync(request.CorrelationId, cancellationToken);
-                    if (functions is null || !functions.Any(f => string.Equals(f.Name, McpServerConstants.NuGetSolverFullyQualifiedToolName, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.NuGetSolverNotAvailable);
-                        ShowWarningMessage(Resources.Error_NuGetSolverNotAvailable);
-                        return;
-                    }
-
-                    CopilotRequest requestWithFunctionsAndContext = request.WithFunctions(functions).WithContext(context);
-
-                    try
-                    {
-                        _ = await thread.Session.SendRequestAsync(requestWithFunctionsAndContext, cancellationToken);
-                        SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.None);
-                    }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied);
-                        ActivityLogger?.LogError(ex.Message);
-                        ShowWarningMessage(Resources.Error_CopilotAccessDenied);
-                    }
-                }
+                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied);
+                ActivityLogger?.LogError(ex.Message);
+                ShowWarningMessage(Resources.Error_CopilotAccessDenied);
             }
+        }
+
+        private static void HandleSessionError(CopilotToolSessionError error)
+        {
+            (FixVulnerabilitiesWithCopilotErrorType telemetryError, string message) = error switch
+            {
+                CopilotToolSessionError.CopilotNotReady => (FixVulnerabilitiesWithCopilotErrorType.CopilotNotReady, Resources.Error_CopilotNotReady),
+                CopilotToolSessionError.ServiceBrokerNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.ServiceBrokerNotAvailable, Resources.Error_ServiceBrokerNotAvailable),
+                CopilotToolSessionError.CopilotServiceNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.CopilotServiceNotAvailable, Resources.Error_CopilotServiceNotAvailable),
+                CopilotToolSessionError.McpToolServiceNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.McpToolServiceNotAvailable, Resources.Error_McpToolServiceNotAvailable),
+                CopilotToolSessionError.ToolNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.NuGetSolverNotAvailable, Resources.Error_NuGetSolverNotAvailable),
+                _ => throw new ArgumentOutOfRangeException(nameof(error), error, null),
+            };
+
+            SendTelemetryEvent(telemetryError);
+            ShowWarningMessage(message);
         }
 
         private static void ShowWarningMessage(string message)

@@ -59,14 +59,12 @@ namespace NuGet.CommandLine.Test
                 ProjectFileUtils.AddItem(doc,
                     "PackageReference", "z",
                     NuGetFramework.Parse("netcoreapp1.0"),
-                    new Dictionary<string, string>(),
                     new Dictionary<string, string>() { { "Version", "1.*" } });
 
                 // x *
                 ProjectFileUtils.AddItem(doc,
                     "PackageReference", "x",
                     NuGetFramework.Parse("netcoreapp1.0"),
-                    new Dictionary<string, string>(),
                     new Dictionary<string, string>() { { "Version", "*" } });
 
                 doc.Save(projectA.ProjectPath);
