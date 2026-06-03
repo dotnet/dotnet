@@ -16,7 +16,6 @@
   <PropertyGroup>
     <PostCompileBinaryModificationSentinelFile>$(IntermediateOutputPath)$(TargetFileName).pcbm</PostCompileBinaryModificationSentinelFile>
 
-    <EnableNgenOptimization Condition="'$(EnableNgenOptimization)' == '' and '$(Configuration)' == 'Release' and '$(OfficialBuild)' == 'true'">true</EnableNgenOptimization>
     <EnableNgenOptimizationLogDetails Condition="'$(EnableNgenOptimizationLogDetails)' == ''">$(UsingToolVisualStudioIbcTraining)</EnableNgenOptimizationLogDetails>
 
     <_IbcMergeXmlOutputDir>$(ArtifactsTmpDir)ibcxml</_IbcMergeXmlOutputDir>

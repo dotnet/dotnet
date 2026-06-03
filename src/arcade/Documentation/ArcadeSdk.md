@@ -738,8 +738,8 @@ Typically, not all projects in a repository need IBC data embedded. Set `ApplyNg
 to `partial` or `full` in a project to indicate that the assemblies produced by the project should get IBC data embedded.
 
 Use `EnableNgenOptimization` property to control when IBC data embedding is gonna be performed. 
-Unless specified otherwise, `EnableNgenOptimization` is set to `true` if `Configuration` is `Release` 
-and `OfficialBuild` is `true`.
+Unless specified otherwise, `EnableNgenOptimization` is `false`. Set it to `true` explicitly in the
+project or in `/eng/Tools.props` to enable IBC optimization.
 
 The IBC data embedding is performed by an internal tool `ibcmerge.exe` provided by `Microsoft.Dotnet.IbcMerge` 
 package from an internal Azure DevOps feed. The repository build definition thus must invoke Azure DevOps task 
