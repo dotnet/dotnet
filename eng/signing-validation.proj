@@ -56,16 +56,20 @@
       <_ManifestFile Include="$(_CurrentManifestsDirectory)/**/*.xml" />
     </ItemGroup>
 
+    <!--
+      Arcade build manifests are rooted at <Build> (see Microsoft.DotNet.Build.Manifest.BuildModel),
+      not <Manifest>. Use a depth-agnostic XPath so this keeps working if the schema is ever wrapped.
+    -->
     <XmlPeek
       XmlInputPath="@(_ManifestFile)"
-      Query="/Manifest/Blob[@DotNetReleaseShipping='true' and @Visibility='External']/@PipelineArtifactPath"
+      Query="//Blob[@DotNetReleaseShipping='true' and @Visibility='External']/@PipelineArtifactPath"
       Condition="Exists('$(_CurrentManifestsDirectory)') and '@(_ManifestFile)' != ''">
       <Output TaskParameter="Result" ItemName="_ManifestRelativePath" />
     </XmlPeek>
 
     <XmlPeek
       XmlInputPath="@(_ManifestFile)"
-      Query="/Manifest/Package[@DotNetReleaseShipping='true' and @Visibility='External']/@PipelineArtifactPath"
+      Query="//Package[@DotNetReleaseShipping='true' and @Visibility='External']/@PipelineArtifactPath"
       Condition="Exists('$(_CurrentManifestsDirectory)') and '@(_ManifestFile)' != ''">
       <Output TaskParameter="Result" ItemName="_ManifestRelativePath" />
     </XmlPeek>
