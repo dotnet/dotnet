@@ -549,4 +549,10 @@ The "s" should be localized to the abbreviation for seconds.</comment>
   <data name="Error_RequiredJsonPropertyMissing" xml:space="preserve">
     <value>Required property '{0}' not found in JSON.</value>
   </data>
+  <data name="Error_UnexpectedPayloadTokenType" xml:space="preserve">
+    <value>Expected payload to be a JSON object but was `{0}`.</value>
+  </data>
+  <data name="Error_UnsupportedPayloadType" xml:space="preserve">
+    <value>Unsupported payload type `{0}`.</value>
+  </data>
 </root>

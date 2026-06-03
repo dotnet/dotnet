@@ -94,6 +94,16 @@
         <target state="translated">Tipo de token JSON inesperado "{0}".</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_UnexpectedPayloadTokenType">
+        <source>Expected payload to be a JSON object but was `{0}`.</source>
+        <target state="new">Expected payload to be a JSON object but was `{0}`.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedPayloadType">
+        <source>Unsupported payload type `{0}`.</source>
+        <target state="new">Unsupported payload type `{0}`.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">El servidor respondió con HTTP "403 Prohibido" al acceder al origen "{0}". Este hecho hace pensar que el servidor ha autenticado la identidad pero no le ha permitido acceder al recurso solicitado. Proporcione credenciales que tengan permiso para ver este recurso.</target>
