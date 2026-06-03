@@ -81,7 +81,7 @@
     <!-- Configure nuget.org as the audit source for non-official builds (PR validation).
          The Azure DevOps feeds in NuGet.config don't serve vulnerability data, so we need
          to explicitly point NuGet at nuget.org for audit advisory lookups. -->
-    <NuGetAuditSources Condition="'$(OfficialBuild)' != 'true'">https://api.nuget.org/v3/index.json</NuGetAuditSources>
+    <NuGetAuditSources Condition="'$(OfficialBuild)' != 'true'">https://data.nuget.org/v3/index.json</NuGetAuditSources>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuildId)' == ''">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
     
