@@ -129,7 +129,13 @@
   -->
   <Target Name="GenerateIntermediateSignCheckExclusionsFile" Condition="'$(IsDacSigningBranch)' != 'true'">
     <PropertyGroup>
-      <IntermediateSignCheckExclusionsFile>$(BaseIntermediateOutputPath)SignCheckExclusionsFile.txt</IntermediateSignCheckExclusionsFile>
+      <!--
+        Write the augmented exclusions file under OutputLogsDirectory rather than the obj/
+        intermediate directory: the logs directory is published as a build artifact, so the
+        actual exclusions file used by SignCheck is available for inspection when diagnosing
+        a signing-validation failure. This matches the old C# task's behavior.
+      -->
+      <IntermediateSignCheckExclusionsFile>$(OutputLogsDirectory)/SignCheckExclusionsFile.txt</IntermediateSignCheckExclusionsFile>
     </PropertyGroup>
 
     <ItemGroup>
