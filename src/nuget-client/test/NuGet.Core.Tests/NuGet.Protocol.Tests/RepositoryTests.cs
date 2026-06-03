@@ -32,7 +32,7 @@ namespace NuGet.Protocol.Tests
         [Fact]
         public void Provider_WhenSettingNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => Repository.Provider = null);
+            var exception = Assert.Throws<ArgumentNullException>(() => Repository.Provider = null!);
 
             Assert.Equal("value", exception.ParamName);
         }

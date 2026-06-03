@@ -7,7 +7,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using NuGet.Common;
+using NuGet.Shared;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -25,6 +26,7 @@ namespace NuGet.Protocol.Plugins
         private bool _isDisposed;
         private readonly object _sendLock;
         private readonly TextWriter _textWriter;
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="Sender" /> class.
@@ -32,6 +34,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="writer">A text writer.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="writer" /> is <see langword="null" />.</exception>
         public Sender(TextWriter writer)
+            : this(writer, environmentVariableReader: null)
+        {
+        }
+
+        internal Sender(TextWriter writer, IEnvironmentVariableReader environmentVariableReader)
         {
             if (writer == null)
             {
@@ -40,6 +47,7 @@ namespace NuGet.Protocol.Plugins
 
             _textWriter = writer;
             _sendLock = new object();
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <summary>
@@ -131,10 +139,16 @@ namespace NuGet.Protocol.Plugins
             {
                 lock (_sendLock)
                 {
-                    using (var jsonWriter = new JsonTextWriter(_textWriter))
+                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
+                        || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
                     {
-                        jsonWriter.CloseOutput = false;
-
+                        string json = System.Text.Json.JsonSerializer.Serialize(message, PluginJsonContext.Default.Message);
+                        _textWriter.WriteLine(json);
+                        _textWriter.Flush();
+                    }
+                    else
+                    {
+                        using var jsonWriter = new Newtonsoft.Json.JsonTextWriter(_textWriter) { CloseOutput = false };
                         JsonSerializationUtilities.Serialize(jsonWriter, message);
 
                         // We need to terminate JSON objects with a delimiter (i.e.:  a single

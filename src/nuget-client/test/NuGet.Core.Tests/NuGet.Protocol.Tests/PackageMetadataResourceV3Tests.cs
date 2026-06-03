@@ -31,14 +31,16 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("deepequal", NuGetVersion.Parse("0.9.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = (PackageSearchMetadataRegistration)await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = (PackageSearchMetadataRegistration)(await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata."));
 
                 // Assert
                 Assert.Equal("deepequal", result.Identity.Id, StringComparer.OrdinalIgnoreCase);
@@ -68,14 +70,16 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("unlistedpackagea", NuGetVersion.Parse("1.0.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = (PackageSearchMetadataRegistration)await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = (PackageSearchMetadataRegistration)(await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata."));
 
                 // Assert
                 Assert.False(result.IsListed);
@@ -92,12 +96,14 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = (IEnumerable<PackageSearchMetadataRegistration>)await resource.GetMetadataAsync("afine", true, true, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = (IEnumerable<PackageSearchMetadataRegistration>)(await resource.GetMetadataAsync("afine", true, true, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata list."));
 
                 var first = result.ElementAt(0);
                 var second = result.ElementAt(1);
@@ -117,7 +123,8 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("deepequal", NuGetVersion.Parse("0.0.0"));
 
@@ -153,14 +160,16 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(sourceName, Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata.");
 
                 // Assert
                 Assert.NotNull(result);
@@ -202,14 +211,16 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(sourceName, Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata.");
 
                 // Assert
                 Assert.NotNull(result);
@@ -256,7 +267,8 @@ namespace NuGet.Protocol.Tests
             };
 
             var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             //Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -292,7 +304,8 @@ namespace NuGet.Protocol.Tests
             };
 
             var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             //Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -314,14 +327,16 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("dependencyedgecases", NuGetVersion.Parse("0.1.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata.");
 
                 // Assert
                 result.Should().NotBeNull();
