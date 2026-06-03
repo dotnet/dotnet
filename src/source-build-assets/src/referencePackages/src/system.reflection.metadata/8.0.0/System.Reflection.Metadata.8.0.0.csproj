@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>System.Reflection.Metadata</PackageId>
     <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>8.0.0</PackageVersion>
     <AssemblyName>System.Reflection.Metadata</AssemblyName>
+    <Description>This package provides a low-level .NET (ECMA-335) metadata reader and writer. It's geared for performance and is the ideal choice for building higher-level libraries that intend to provide their own object model, such as compilers. The metadata format is defined by the ECMA-335 - Common Language Infrastructure (CLI) specification.
+
+The System.Reflection.Metadata library is built-in as part of the shared framework in .NET Runtime. The package can be installed when you need to use it in other target frameworks.</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">

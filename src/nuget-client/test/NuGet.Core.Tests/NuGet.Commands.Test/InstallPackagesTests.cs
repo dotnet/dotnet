@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.Test
@@ -63,7 +65,7 @@ namespace NuGet.Commands.Test
                 };
 
                 var request = (await RestoreRunner.GetRequests(restoreContext)).Single();
-                var providers = providerCache.GetOrCreate(pathContext.UserPackagesFolder, sources, new List<SourceRepository>(), cacheContext, logger, false);
+                var providers = providerCache.GetOrCreate(pathContext.UserPackagesFolder, sources, new List<SourceRepository>(), Array.Empty<SourceRepository>(), cacheContext, logger, false, TestEnvironmentVariableReader.EmptyInstance);
                 var command = new RestoreCommand(request.Request);
 
                 // Add to cache before install on all providers

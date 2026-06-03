@@ -171,7 +171,7 @@
         MaintainerEmail="dotnetpackages@dotnetfoundation.org"
         MaintainerName=".NET Team"
         PackageName="$(VersionedInstallerName)"
-        PackageVersion="$(InstallerPackageVersion)_$(InstallerPackageRelease)"
+        PackageVersion="$(InstallerPackageVersion)-$(InstallerPackageRelease)"
         ReleaseNotes="https://github.com/dotnet/core/tree/master/release-notes" />
   
     <ItemGroup>
@@ -210,7 +210,7 @@
     <CreateControlFile
         ControlFileOutputPath="@(_ControlFile)"
         PackageName="$(VersionedInstallerName)"
-        PackageVersion="$(InstallerPackageVersion)"
+        PackageVersion="$(InstallerPackageVersion)-$(InstallerPackageRelease)"
         PackageArchitecture="$(LinuxPackageArchitecture)"
         Maintainer=".NET Team &lt;dotnetpackages@dotnetfoundation.org&gt;"
         Description="$(_ShortDescription)%0A $(_PackageLongDescription)"

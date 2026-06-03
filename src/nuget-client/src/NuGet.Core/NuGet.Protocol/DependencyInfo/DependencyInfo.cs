@@ -1,9 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System;
 using System.Globalization;
 using NuGet.Versioning;
 
@@ -11,13 +8,17 @@ namespace NuGet.Protocol
 {
     internal class DependencyInfo
     {
-        public string Id { get; set; }
-        public VersionRange Range { get; set; }
-        public RegistrationInfo RegistrationInfo { get; set; }
+        public required string Id { get; init; }
+        public required VersionRange Range { get; init; }
+
+        /// <summary>
+        /// NULL_INC: Set externally by the resolver after construction.
+        /// </summary>
+        public RegistrationInfo RegistrationInfo { get; set; } = null!;
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0} {1}", Id, Range);
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", Id, Range);
         }
     }
 }

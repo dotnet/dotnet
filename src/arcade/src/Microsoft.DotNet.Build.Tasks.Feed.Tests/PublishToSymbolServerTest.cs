@@ -186,7 +186,63 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             Assert.Contains("to last 3650 days", registerLog.Message);
         }
 
-        private static (MockBuildEngine, PublishArtifactsInManifestV3, ReadOnlyDictionary<string, Asset>, string, string, ProductConstructionService.Client.Models.Build) GetCanonicalSymbolTestAssets(SymbolPublishVisibility targetServer = SymbolPublishVisibility.Public)
+        [Fact]
+        public async Task PublishSymbolsWithPatDoesNotLogDefaultIdentityFallback()
+        {
+            (var buildEngine, var task, var symbolPackages, var symbolFilesDir, var exclusionFile, var buildInfo) =
+                GetCanonicalSymbolTestAssets();
+
+            try
+            {
+                await task.HandleSymbolPublishingAsync(
+                    buildInfo: buildInfo,
+                    symbolPackages,
+                    pdbArtifactsBasePath: symbolFilesDir,
+                    symbolPublishingExclusionsFile: exclusionFile,
+                    publishSpecialClrFiles: false,
+                    clientThrottle: null,
+                    dryRun: true,
+                    Internal.SymbolHelper.SymbolPromotionHelper.Environment.PPE);
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("Windows x64 hosting"))
+            {
+            }
+
+            Assert.DoesNotContain(buildEngine.BuildMessageEvents, x => x.Message.Contains("Using DefaultIdentityTokenCredential for temporary symbol publishing"));
+        }
+
+        [Fact]
+        public async Task PublishSymbolsWithoutPatLogsDefaultIdentityFallback()
+        {
+            (var buildEngine, var task, var symbolPackages, var symbolFilesDir, var exclusionFile, var buildInfo) =
+                GetCanonicalSymbolTestAssets(
+                    SymbolPublishVisibility.Public,
+                    tempSymbolsAzureDevOpsOrgToken: null,
+                    managedIdentityClientId: "11111111-1111-1111-1111-111111111111");
+
+            try
+            {
+                await task.HandleSymbolPublishingAsync(
+                    buildInfo: buildInfo,
+                    symbolPackages,
+                    pdbArtifactsBasePath: symbolFilesDir,
+                    symbolPublishingExclusionsFile: exclusionFile,
+                    publishSpecialClrFiles: false,
+                    clientThrottle: null,
+                    dryRun: true,
+                    Internal.SymbolHelper.SymbolPromotionHelper.Environment.PPE);
+            }
+            catch (InvalidOperationException ex) when (ex.Message.Contains("Windows x64 hosting"))
+            {
+            }
+
+            Assert.Contains(buildEngine.BuildMessageEvents, x => x.Message.Contains("Using DefaultIdentityTokenCredential for temporary symbol publishing"));
+        }
+
+        private static (MockBuildEngine, PublishArtifactsInManifestV3, ReadOnlyDictionary<string, Asset>, string, string, ProductConstructionService.Client.Models.Build) GetCanonicalSymbolTestAssets(
+            SymbolPublishVisibility targetServer = SymbolPublishVisibility.Public,
+            string tempSymbolsAzureDevOpsOrgToken = "token",
+            string managedIdentityClientId = null)
         {
             const string symbolPackageName= "test-package-a.1.0.0.symbols.nupkg";
 
@@ -221,8 +277,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 BuildEngine = buildEngine,
                 ArtifactsBasePath = "testPath",
                 BlobAssetsBasePath = symbolFilesDir,
+                ManagedIdentityClientId = managedIdentityClientId ?? "00000000-0000-0000-0000-000000000000",
                 TempSymbolsAzureDevOpsOrg = "dncengtest",
-                TempSymbolsAzureDevOpsOrgToken = "token",
+                TempSymbolsAzureDevOpsOrgToken = tempSymbolsAzureDevOpsOrgToken,
                 SymbolRequestProject = "dotnettest"
             };
             task.FeedConfigs.Add(TargetFeedContentType.Symbols, feedConfigsForSymbols);

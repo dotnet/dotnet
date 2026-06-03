@@ -14,8 +14,3 @@ There are build failures in this build for pipelines that are not currently fail
   * :small_blue_diamond: This step is not failing in the [most recent master build](http://bing.com)
   * ❌  [[Log]](https://dev.azure.com/dnceng/public/_build/results?buildId=983865&view=logs&j=758ff361-657e-52c7-2383-2c9b9ea87442&t=5bdb2093-eed3-5c87-c252-b435d4bddc4c&l=3038) src/mono/mono.proj(496,5): error MSB3073: The command "cmake --build . --target install --config Debug --parallel 3" exited with code 2. 
 * 27 other jobs are failing
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CUnique-Build-Failure.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CUnique-Build-Failure.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CUnique-Build-Failure.md)</sub>
-<!-- End Generated Content-->

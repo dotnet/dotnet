@@ -1,7 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System.Diagnostics;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 
@@ -22,13 +21,10 @@ internal sealed class OtlpProtobufMetricExporter : IDisposable
         string? metricsNamespace,
         IReadOnlyDictionary<string, object>? prepopulatedMetricDimensions)
     {
-        Debug.Assert(getResource != null, "getResource was null");
-        Debug.Assert(transport != null, "transport was null");
-
-        this.getResource = getResource!;
+        this.getResource = getResource;
 
         this.otlpProtobufSerializer = new OtlpProtobufSerializer(
-            transport!,
+            transport,
             metricsAccount,
             metricsNamespace,
             prepopulatedMetricDimensions,

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -18,7 +16,7 @@ namespace NuGet.Protocol
     /// </summary>
     internal sealed class DedicatedAsynchronousProcessingThread : IDisposable
     {
-        private Task _processingThread;
+        private Task? _processingThread;
         private bool _isDisposed;
         private bool _isClosed;
         private TimeSpan _pollingDelay;

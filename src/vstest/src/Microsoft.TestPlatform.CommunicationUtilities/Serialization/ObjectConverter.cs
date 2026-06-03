@@ -63,7 +63,9 @@ internal class ObjectConverter : JsonConverter<object>
 
     public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, value, value.GetType(), options);
+        // Avoid JsonSerializer.Serialize(writer, value, value.GetType(), options) which requires
+        // reflection metadata that NativeAOT trims. Write known primitives directly.
+        TestObjectBaseConverter.WritePropertyValue(writer, value, options);
     }
 }
 
@@ -120,7 +122,16 @@ internal class ObjectDictionaryConverter : JsonConverter<IDictionary<string, obj
         foreach (var kvp in value)
         {
             writer.WritePropertyName(kvp.Key);
-            JsonSerializer.Serialize(writer, kvp.Value, kvp.Value?.GetType() ?? typeof(object), options);
+            if (kvp.Value is null)
+            {
+                writer.WriteNullValue();
+            }
+            else
+            {
+                // Avoid JsonSerializer.Serialize(writer, value, value.GetType(), options) which
+                // requires reflection metadata that NativeAOT trims.
+                TestObjectBaseConverter.WritePropertyValue(writer, kvp.Value, options);
+            }
         }
 
         writer.WriteEndObject();

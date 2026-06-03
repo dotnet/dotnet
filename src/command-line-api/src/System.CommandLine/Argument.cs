@@ -45,6 +45,21 @@ namespace System.CommandLine
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this argument captures all remaining tokens.
+        /// </summary>
+        /// <remarks>
+        /// When set to <see langword="true"/>, once the parser starts filling this argument,
+        /// all subsequent tokens are consumed as argument values regardless of whether they
+        /// match known options or commands. This behaves as if <c>--</c> were implicitly
+        /// inserted before the argument's first value.
+        /// <para>
+        /// An argument with this property set to <see langword="true"/> must be the last
+        /// argument defined on its parent command.
+        /// </para>
+        /// </remarks>
+        public bool CaptureRemainingTokens { get; set; }
+
+        /// <summary>
         /// Gets or sets the placeholder name shown in usage help for the argument's value.
         /// The value will be wrapped in angle brackets (<c>&lt;</c> and <c>&gt;</c>).
         /// </summary>

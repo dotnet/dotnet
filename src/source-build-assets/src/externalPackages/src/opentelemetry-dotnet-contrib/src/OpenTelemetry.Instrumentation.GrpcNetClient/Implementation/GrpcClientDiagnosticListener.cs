@@ -14,7 +14,9 @@ internal sealed class GrpcClientDiagnosticListener : ListenerHandler
 {
     internal static readonly Assembly Assembly = typeof(GrpcClientDiagnosticListener).Assembly;
     internal static readonly AssemblyName AssemblyName = Assembly.GetName();
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string ActivitySourceName = AssemblyName.Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly string Version = Assembly.GetPackageVersion();
     internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Version);
 
@@ -178,7 +180,7 @@ internal sealed class GrpcClientDiagnosticListener : ListenerHandler
             {
                 if (activity.Status == ActivityStatusCode.Unset)
                 {
-                    activity.SetStatus(GrpcTagHelper.ResolveSpanStatusForGrpcStatusCode(status));
+                    activity.SetStatus(GrpcTagHelper.ResolveSpanStatusForGrpcStatusCodeOnClient(status));
                 }
 
                 // setting rpc.grpc.status_code

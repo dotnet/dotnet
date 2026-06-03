@@ -5,6 +5,7 @@ using OpAmp.Proto.V1;
 using OpenTelemetry.Internal;
 using OpenTelemetry.OpAmp.Client.Internal.Services.Heartbeat;
 using OpenTelemetry.OpAmp.Client.Internal.Transport;
+using OpenTelemetry.OpAmp.Client.Messages;
 using OpenTelemetry.OpAmp.Client.Settings;
 
 namespace OpenTelemetry.OpAmp.Client.Internal;
@@ -62,7 +63,7 @@ internal sealed class FrameDispatcher : IDisposable
         await this.DispatchFrameAsync(
             BuildDisconnectMessage,
             OpAmpClientEventSource.Log.SendingAgentDisconnectMessage,
-            OpAmpClientEventSource.Log.SendHeartbeatMessageException,
+            OpAmpClientEventSource.Log.SendAgentDisconnectMessageException,
             token).ConfigureAwait(false);
 
         static AgentToServer BuildDisconnectMessage(FrameBuilder fb)
@@ -71,10 +72,49 @@ internal sealed class FrameDispatcher : IDisposable
         }
     }
 
-    public void Dispose()
+    public async Task DispatchEffectiveConfigAsync(IEnumerable<EffectiveConfigFile> files, CancellationToken token)
     {
-        this.syncRoot.Dispose();
+        await this.DispatchFrameAsync(
+            BuildEffectiveConfigMessage,
+            OpAmpClientEventSource.Log.SendingEffectiveConfigMessage,
+            OpAmpClientEventSource.Log.SendEffectiveConfigMessageException,
+            token).ConfigureAwait(false);
+
+        AgentToServer BuildEffectiveConfigMessage(FrameBuilder fb)
+        {
+            return fb.StartBaseMessage().AddEffectiveConfig(files).Build();
+        }
     }
+
+    public async Task DispatchCustomCapabilitiesAsync(IEnumerable<string> capabilities, CancellationToken token)
+    {
+        await this.DispatchFrameAsync(
+            BuildCustomCapabilitiesMessage,
+            OpAmpClientEventSource.Log.SendingCustomCapabilitiesMessage,
+            OpAmpClientEventSource.Log.SendCustomCapabilitiesMessageException,
+            token).ConfigureAwait(false);
+
+        AgentToServer BuildCustomCapabilitiesMessage(FrameBuilder fb)
+        {
+            return fb.StartBaseMessage().AddCustomCapabilities(capabilities).Build();
+        }
+    }
+
+    public async Task DispatchCustomMessageAsync(string capability, string type, ReadOnlyMemory<byte> data, CancellationToken token)
+    {
+        await this.DispatchFrameAsync(
+            BuildCustomMessageMessage,
+            OpAmpClientEventSource.Log.SendingCustomMessageMessage,
+            OpAmpClientEventSource.Log.SendCustomMessageMessageException,
+            token).ConfigureAwait(false);
+
+        AgentToServer BuildCustomMessageMessage(FrameBuilder fb)
+        {
+            return fb.StartBaseMessage().AddCustomMessage(capability, type, data).Build();
+        }
+    }
+
+    public void Dispose() => this.syncRoot.Dispose();
 
     private async Task DispatchFrameAsync(
         Func<FrameBuilder, AgentToServer> messageBuilder,
@@ -96,9 +136,10 @@ internal sealed class FrameDispatcher : IDisposable
         }
         catch (Exception ex)
         {
+            // Exceptions are deliberately swallowed to prevent transport errors from crashing the
+            // host application. The frame builder is reset so the next dispatch re-sends full state.
             exceptionLogger(ex);
-
-            this.frameBuilder.Reset(); // Reset the builder in case of failure
+            this.frameBuilder.Reset();
         }
         finally
         {

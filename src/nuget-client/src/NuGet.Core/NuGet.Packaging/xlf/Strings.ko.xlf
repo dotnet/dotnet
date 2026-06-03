@@ -44,6 +44,16 @@
         <note>0 -  start date
 1 - end date</note>
       </trans-unit>
+      <trans-unit id="CertUtilityCertificateCrlUrl">
+        <source>CRL URL: {0}</source>
+        <target state="translated">CRL URL: {0}</target>
+        <note>0 - CRL distribution point URL</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateOcspUrl">
+        <source>OCSP URL: {0}</source>
+        <target state="translated">OCSP URL: {0}</target>
+        <note>0 - OCSP responder URL</note>
+      </trans-unit>
       <trans-unit id="CertUtilityMultipleCertificatesFooter">
         <source>... {0} more.</source>
         <target state="translated">...기타 {0}개.</target>
@@ -163,6 +173,11 @@
 {1} is the package's identity.
 {2} is the dependency's version range.</note>
       </trans-unit>
+      <trans-unit id="ErrorInvalidTimestamp">
+        <source>Invalid timestamp: '{0}'</source>
+        <target state="translated">잘못된 타임스탬프: '{0}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ErrorManifestFileNotFound">
         <source>Manifest file not found at '{0}'</source>
         <target state="translated">'{0}'에서 매니페스트 파일을 찾을 수 없습니다.</target>
@@ -185,7 +200,7 @@
       </trans-unit>
       <trans-unit id="ErrorPackageIdentityDoesNotMatch">
         <source>Expected package {0} {1}, but got package {2} {3}</source>
-        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <target state="translated">패키지 이름은 {0} {1}이어야 하는데, {2} {3} 버전의 패키지가 왔습니다.</target>
         <note>0 and 2 are package names, and 1 and 3 are versions numbers.</note>
       </trans-unit>
       <trans-unit id="ErrorPackageNotSigned">

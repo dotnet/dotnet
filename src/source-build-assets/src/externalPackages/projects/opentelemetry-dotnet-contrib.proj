@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
-    <SourceRevisionId>dd5f5b71c1d6c9bc4d654b2c343b10fb362add06</SourceRevisionId>
+    <SourceRevisionId>b89c765905dbc6db1421ff0a098127d44665c71f</SourceRevisionId>
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
   </PropertyGroup>
 

@@ -197,6 +197,15 @@ namespace NuGet.Build.Tasks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to read project information for &apos;{0}&apos;: {1}.
+        /// </summary>
+        public static string Error_ReadingProjectInformation {
+            get {
+                return ResourceManager.GetString("Error_ReadingProjectInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
         ///{0}.
         /// </summary>

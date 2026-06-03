@@ -6598,7 +6598,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "PackageDownload",
                                     packageX1.Id,
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -6795,7 +6795,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "PackageDownload",
                                     packageX1.Id,
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -7092,7 +7092,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "FrameworkReference",
                                     "FrameworkRefY",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -7175,7 +7175,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "FrameworkReference",
                                     "FrameworkRefY",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
                 attributes.Add("PrivateAssets", "all");
@@ -7183,7 +7183,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "FrameworkReference",
                                     "FrameworkRefSupressed",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -10977,7 +10977,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                     xml,
                                     item,
                                     "X",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     new Dictionary<string, string>(),
                                     attributes);
 
@@ -10987,7 +10987,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                     xml,
                                     item,
                                     "X",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     new Dictionary<string, string>(),
                                     attributes);
                 xml.Save(projectA.ProjectPath);
@@ -11045,7 +11045,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                     xml,
                                     "PackageReference",
                                     "X",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     new Dictionary<string, string>(),
                                     new Dictionary<string, string>());
                 xml.Save(projectA.ProjectPath);
@@ -11268,7 +11268,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     xml,
                     "PackageReference",
                     "D",
-                    NuGetFramework.AnyFramework,
+                    string.Empty,
                     new Dictionary<string, string>(),
                     new Dictionary<string, string>());
 

@@ -1011,6 +1011,27 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         return null;
     }
 
+    /// <inheritdoc />
+    protected override ShapedQueryExpression? TranslateFullJoin(
+        ShapedQueryExpression outer,
+        ShapedQueryExpression inner,
+        LambdaExpression outerKeySelector,
+        LambdaExpression innerKeySelector,
+        LambdaExpression resultSelector)
+    {
+        var joinPredicate = CreateJoinPredicate(outer, outerKeySelector, inner, innerKeySelector);
+        if (joinPredicate != null)
+        {
+            var outerSelectExpression = (SelectExpression)outer.QueryExpression;
+            var outerShaperExpression = outerSelectExpression.AddFullJoin(inner, joinPredicate, outer.ShaperExpression);
+            outer = outer.UpdateShaperExpression(outerShaperExpression);
+
+            return TranslateTwoParameterSelector(outer, resultSelector);
+        }
+
+        return null;
+    }
+
     private SqlExpression CreateJoinPredicate(
         ShapedQueryExpression outer,
         LambdaExpression outerKeySelector,
@@ -2506,7 +2527,9 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         // Check if the inner key properties are covered by a unique index (e.g. unique FK in a 1:1 relationship).
         foreach (var index in entityType.GetIndexes())
         {
-            if (index.IsUnique && index.Properties.SequenceEqual(keyProperties))
+            if (index.IsUnique
+                && index.Properties.Count == keyProperties.Count
+                && index.Properties.OfType<IProperty>().SequenceEqual(keyProperties))
             {
                 return true;
             }

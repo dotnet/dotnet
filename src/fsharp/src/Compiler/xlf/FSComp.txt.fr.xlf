@@ -787,6 +787,11 @@
         <target state="translated">L’expression « if » doit retourner un tuple de longueur {0} de type\n    {1}    \npour répondre aux exigences de type de contexte. Il retourne actuellement un tuple de longueur {2} de type\n    {3}    \n</target>
         <note />
       </trans-unit>
+      <trans-unit id="ilCustomAttrInvalidArrayElemType">
+        <source>The type '{0}' is not a valid custom attribute argument type. Custom attribute arrays must have elements of primitive types, enums, string, System.Type, or System.Object.</source>
+        <target state="new">The type '{0}' is not a valid custom attribute argument type. Custom attribute arrays must have elements of primitive types, enums, string, System.Type, or System.Object.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ilxGenUnknownDebugPoint">
         <source>Unknown debug point '{0}'. The available debug points are '{1}'.</source>
         <target state="translated">Point de débogage inconnu « {0} ». Les points de débogage disponibles sont «{1}».</target>
@@ -8975,6 +8980,11 @@
         <trans-unit id="tcListLiteralWithSingleTupleElement">
           <source>This list expression contains a single tuple element. Did you mean to use ';' instead of ',' to separate list elements?</source>
           <target state="new">This list expression contains a single tuple element. Did you mean to use ';' instead of ',' to separate list elements?</target>
+          <note />
+        </trans-unit>
+        <trans-unit id="featureExceptionFieldSerializationSupport">
+          <source>emit GetObjectData and field-restoring deserialization constructor for exception types</source>
+          <target state="new">emit GetObjectData and field-restoring deserialization constructor for exception types</target>
           <note />
         </trans-unit>
     </body>

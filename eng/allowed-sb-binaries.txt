@@ -43,10 +43,10 @@ src/aspnetcore/src/ProjectTemplates/Web.ProjectTemplates/**/app.db
 # fsharp
 src/fsharp/src/fsi/fsi.res # Icon
 
-# razor
-src/razor/**/SampleApp/**/fonts/**/*.eot
-src/razor/**/SampleApp/**/fonts/**/*.otf
-src/razor/**/SampleApp/**/fonts/**/*.woff
+# roslyn
+src/roslyn/src/Razor/**/SampleApp/**/fonts/**/*.eot
+src/roslyn/src/Razor/**/SampleApp/**/fonts/**/*.otf
+src/roslyn/src/Razor/**/SampleApp/**/fonts/**/*.woff
 
 # runtime
 src/runtime/src/libraries/System.Diagnostics.EventLog/src/Messages/EventLogMessages.res # Icon

@@ -19,7 +19,12 @@
     <PackageReference Include="OpenTelemetry.Api.ProviderBuilderExtensions" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);INCLUDE_SQL_QUERY_PARSER</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\Shared\ActivitySourceFactory.cs" Link="Includes\ActivitySourceFactory.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\AssemblyVersionExtensions.cs" Link="Includes\AssemblyVersionExtensions.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\DatabaseSemanticConventionHelper.cs" Link="Includes\DatabaseSemanticConventionHelper.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\DiagnosticSourceListener.cs" Link="Includes\DiagnosticSourceListener.cs" />

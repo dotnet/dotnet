@@ -266,7 +266,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
             propertyValue.ShouldBe("InitialProperty3", StringCompareShould.IgnoreCase);
         }
 
-#if FEATURE_CODETASKFACTORY
         /// <summary>
         /// Verify that the environment between two msbuild calls to the same project are stored
         /// so that on the next call we get access to them
@@ -276,7 +275,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
         {
             string contents1 = CleanupFileContents(@"
 <Project xmlns='msbuildnamespace' ToolsVersion='msbuilddefaulttoolsversion'>
- <UsingTask TaskName='SetEnvv' TaskFactory='CodeTaskFactory' AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll' >
+ <UsingTask TaskName='SetEnvv' TaskFactory='RoslynCodeTaskFactory' AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll' >
                             <Task>
                                 <Code Language='cs'>
                                     System.Environment.SetEnvironmentVariable(""MOO"", ""When the dawn comes, tonight will be a memory too"");
@@ -314,7 +313,6 @@ namespace Microsoft.Build.UnitTests.BackEnd
             Assert.Equal(BuildResultCode.Success, result.OverallResult);
             _logger.AssertLogContains("What does a cat say : When the dawn comes, tonight will be a memory too");
         }
-#endif
 
         /// <summary>
         /// Verify if idle nodes are shutdown when BuildManager.ShutdownAllNodes is evoked.
@@ -1000,7 +998,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
             logger.AssertLogContains(normalMessage);
             logger.AssertLogContains(lowMessage);
 
-            var deferredMessages = logger.BuildMessageEvents.Where(e => e.Message.StartsWith("deferred")).ToArray();
+            var deferredMessages = logger.BuildMessageEvents.Where(e => e.Message.StartsWith("deferred", StringComparison.Ordinal)).ToArray();
 
             deferredMessages.Length.ShouldBe(3);
 
@@ -1514,6 +1512,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously: needs to be async for xunit's timeout system
 #pragma warning disable IDE0390 // Method can be made synchronous
+#pragma warning disable xUnit1069 // Test method 'CancelledBuild' has a Timeout but does not reference TestContext.Current.CancellationToken
         /// <summary>
         /// A canceled build
         /// </summary>
@@ -1521,6 +1520,7 @@ namespace Microsoft.Build.UnitTests.BackEnd
         public async System.Threading.Tasks.Task CancelledBuild()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 #pragma warning restore IDE0390 // Method can be made synchronous
+#pragma warning restore xUnit1069 // Test method 'CancelledBuild' has a Timeout but does not reference TestContext.Current.CancellationToken
         {
             Console.WriteLine("Starting CancelledBuild test that is known to hang.");
             string contents = CleanupFileContents(@"
@@ -4633,8 +4633,10 @@ $@"<Project InitialTargets=`Sleep`>
         /// The fix uses a static lock across all engine instances so a single trace file is safe,
         /// and catches non-critical exceptions so trace failures can never crash the build engine.
         /// </summary>
+#pragma warning disable xUnit1069 // Test method 'MultiThreadedBuild_WithDebugSchedulerTracing_DoesNotDeadlock' has a Timeout but does not reference TestContext.Current.CancellationToken
         [Fact(Timeout = 30_000)]
         public async System.Threading.Tasks.Task MultiThreadedBuild_WithDebugSchedulerTracing_DoesNotDeadlock()
+#pragma warning restore xUnit1069 // Test method 'MultiThreadedBuild_WithDebugSchedulerTracing_DoesNotDeadlock' has a Timeout but does not reference TestContext.Current.CancellationToken
         {
             await System.Threading.Tasks.Task.Run(() =>
             {

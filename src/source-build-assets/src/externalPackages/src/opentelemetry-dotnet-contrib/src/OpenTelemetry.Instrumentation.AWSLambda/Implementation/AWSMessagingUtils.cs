@@ -74,29 +74,22 @@ internal class AWSMessagingUtils
     }
 
     internal static PropagationContext ExtractParentContext(SNSEvent.SNSRecord? record)
-    {
-        return (record?.Sns?.MessageAttributes != null) ?
+        => (record?.Sns?.MessageAttributes != null) ?
             Propagators.DefaultTextMapPropagator.Extract(default, record.Sns.MessageAttributes, SnsMessageAttributeGetter) :
             default;
-    }
 
     internal static PropagationContext ExtractParentContext(SNSEvent.SNSMessage? message)
-    {
-        return (message?.MessageAttributes != null) ?
+        => (message?.MessageAttributes != null) ?
             Propagators.DefaultTextMapPropagator.Extract(default, message.MessageAttributes, SnsMessageAttributeGetter) :
             default;
-    }
 
     private static IEnumerable<string>? SqsMessageAttributeGetter(IDictionary<string, SQSEvent.MessageAttribute> attributes, string attributeName)
-    {
-        return !attributes.TryGetValue(attributeName, out var attribute) ? null :
+        => !attributes.TryGetValue(attributeName, out var attribute) ? null :
             attribute?.StringValue != null ? new[] { attribute.StringValue } :
             attribute?.StringListValues;
-    }
 
     private static IEnumerable<string>? SnsMessageAttributeGetter(IDictionary<string, SNSEvent.MessageAttribute> attributes, string attributeName)
-    {
-        return !attributes.TryGetValue(attributeName, out var attribute)
+        => !attributes.TryGetValue(attributeName, out var attribute)
             ? null
             : attribute?.Type switch
             {
@@ -105,7 +98,6 @@ internal class AWSMessagingUtils
                     attribute.Value.Split(','), // Multiple values are stored as CSV (https://docs.aws.amazon.com/sns/latest/dg/sns-message-attributes.html).
                 _ => null,
             };
-    }
 
     private static SNSEvent.SNSMessage? GetSnsMessage(SQSEvent.SQSMessage sqsMessage)
     {

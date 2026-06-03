@@ -5,7 +5,9 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Microsoft.DotNet.Helix/">
+    <Project Path="src/Microsoft.DotNet.Helix/AzureDevOpsTestPublisher/Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/Client/CSharp/Microsoft.DotNet.Helix.Client.csproj" />
+    <Project Path="src/Microsoft.DotNet.Helix/JobMonitor/Microsoft.DotNet.Helix.JobMonitor.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/JobSender/Microsoft.DotNet.Helix.JobSender.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/Sdk/Microsoft.DotNet.Helix.Sdk.csproj" />
   </Folder>
@@ -33,7 +35,6 @@
     <Project Path="src/Microsoft.DotNet.SignTool.Tests/Microsoft.DotNet.SignTool.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
-    <Project Path="src/Microsoft.DotNet.XUnitAssert/tests/Microsoft.DotNet.XUnitAssert.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitExtensions/tests/Microsoft.DotNet.XUnitExtensions.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/tests/Microsoft.DotNet.XUnitV3Extensions.Tests.csproj" />
     <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli.Tests/Microsoft.DotNet.VersionTools.Cli.Tests.csproj" />
@@ -46,7 +47,6 @@
   <Project Path="src/Microsoft.Cci.Extensions/Microsoft.Cci.Extensions.csproj" />
   <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
-  <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
   <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
@@ -73,14 +73,13 @@
   <Project Path="src/Microsoft.DotNet.SourceBuild/tasks/Microsoft.DotNet.SourceBuild.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.StrongName/Microsoft.DotNet.StrongName.csproj" />
   <Project Path="src/Microsoft.DotNet.XliffTasks/Microsoft.DotNet.XliffTasks.csproj" />
-  <Project Path="src/Microsoft.DotNet.XUnitAssert/src/Microsoft.DotNet.XUnitAssert.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitConsoleRunner/src/Microsoft.DotNet.XUnitConsoleRunner.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitExtensions.Shared/Microsoft.DotNet.XUnitExtensions.Shared.shproj" />
   <Project Path="src/Microsoft.DotNet.XUnitExtensions/src/Microsoft.DotNet.XUnitExtensions.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/src/Microsoft.DotNet.XUnitV3Extensions.csproj" />
-  <Project Path="src/SignCheck/Microsoft.SignCheck/Microsoft.DotNet.SignCheckLibrary.csproj" />
-  <Project Path="src/SignCheck/SignCheck/Microsoft.DotNet.SignCheck.csproj" />
-  <Project Path="src/SignCheck/SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignCheckLibrary/Microsoft.DotNet.SignCheckLibrary.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignCheck/Microsoft.DotNet.SignCheck.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
   <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
   <Project Path="src/WinShimmer/WinShimmer.csproj" />
 </Solution>

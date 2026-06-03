@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Net.Http;
-using JetBrains.Annotations;
 using Microsoft.OpenApi.Models;
 
 namespace Microsoft.DotNet.SwaggerGenerator.Modeler
@@ -37,7 +36,6 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
         public TypeReference ResponseType { get; }
         public TypeReference ErrorType { get; }
 
-        [CanBeNull]
         public PaginatedOpenApiExtension Paginated { get; }
 
         public bool ResponseIsVoid => ResponseType == TypeReference.Void;

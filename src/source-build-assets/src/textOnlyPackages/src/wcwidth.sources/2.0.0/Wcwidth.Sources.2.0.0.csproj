@@ -1,9 +1,46 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <PackageId>Wcwidth.Sources</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageVersion>2.0.0</PackageVersion>
     <AssemblyName>Wcwidth.Sources</AssemblyName>
+    <Authors>Patrik Svensson, Phil Scott</Authors>
+    <Description>A .NET library that calculates the width of Unicode characters.</Description>
+    <PackageProjectUrl>https://github.com/spectreconsole/wcwidth</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://github.com/spectreconsole/wcwidth/releases</PackageReleaseNotes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/Extensions/IntegerExtensions.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth/Extensions" />
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/Tables/WideTable.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/Tables/WideTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/Tables/ZeroTable.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/Unicode.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/net6.0/External/Wcwidth/UnicodeCalculator.cs" Pack="true" PackagePath="contentFiles/cs/net6.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/Extensions/IntegerExtensions.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth/Extensions" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/Tables/WideTable.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/Tables/WideTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/Tables/ZeroTable.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/Unicode.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/net7.0/External/Wcwidth/UnicodeCalculator.cs" Pack="true" PackagePath="contentFiles/cs/net7.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/Extensions/IntegerExtensions.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth/Extensions" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/Tables/WideTable.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/Tables/WideTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/Tables/ZeroTable.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/Unicode.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/net8.0/External/Wcwidth/UnicodeCalculator.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/Extensions/IntegerExtensions.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth/Extensions" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables/WideTable.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables/WideTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables/ZeroTable.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables/ZeroTable.Generated.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth/Tables" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/Unicode.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth" />
+    <None Include="contentFiles/cs/netstandard2.0/External/Wcwidth/UnicodeCalculator.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/External/Wcwidth" />
+  </ItemGroup>
 
 </Project>

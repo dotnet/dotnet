@@ -55,8 +55,3 @@ Goal: Understand FR workload balance
 Action:
 - Significant external customer load indicates issue in documentation or service quality
 - Significant internal customer load indicate technical debt
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CServiceKPIs.md)](https://helix.dot.net/f/p/5?p=Documentation%5CServiceKPIs.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CServiceKPIs.md)</sub>
-<!-- End Generated Content-->

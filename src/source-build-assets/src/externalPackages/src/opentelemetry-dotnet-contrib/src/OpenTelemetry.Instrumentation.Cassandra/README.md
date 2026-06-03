@@ -101,6 +101,6 @@ var cluster = new Builder()
 
 * [OpenTelemetry Project](https://opentelemetry.io/)
 
-* [OpenTelemetry semantic conventions for Cassandra](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/cassandra.md)
+* [OpenTelemetry semantic conventions for Cassandra](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/cassandra.md)
 
 * [Cassandra C# Driver](https://github.com/datastax/csharp-driver)

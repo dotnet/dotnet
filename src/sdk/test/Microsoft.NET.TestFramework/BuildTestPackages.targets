@@ -159,14 +159,19 @@
         <ProjectName>Microsoft.Net.Sdk.Compilers.Toolset.csproj</ProjectName>
         <Version>$(Version)</Version>
       </BaseTestPackageProject>
-      <BaseTestPackageProject Include="src/TemplateEngine/Tools/Microsoft.TemplateEngine.Authoring.Tasks">
-        <Name>Microsoft.TemplateEngine.Authoring.Tasks</Name>
-        <ProjectName>Microsoft.TemplateEngine.Authoring.Tasks.csproj</ProjectName>
+      <!-- Microsoft.TemplateEngine.Authoring.Tasks and Microsoft.TemplateSearch.TemplateDiscovery
+           are excluded here because they are already packed elsewhere. Packing them again with
+           different global properties (PackageOutputPath, Version) causes a parallel-build
+           race condition on referenced projects' obj/ output DLLs (e.g. RunnableProjects.dll).
+           Both projects copy their nupkg to TestPackagesDir themselves. -->
+      <BaseTestPackageProject Include="src/Compatibility/ApiCompat/Microsoft.DotNet.ApiCompat.Task">
+        <Name>Microsoft.DotNet.ApiCompat.Task</Name>
+        <ProjectName>Microsoft.DotNet.ApiCompat.Task.csproj</ProjectName>
         <Version>$(Version)</Version>
       </BaseTestPackageProject>
-      <BaseTestPackageProject Include="src/TemplateEngine/Tools/Microsoft.TemplateSearch.TemplateDiscovery">
-        <Name>Microsoft.TemplateSearch.TemplateDiscovery</Name>
-        <ProjectName>Microsoft.TemplateSearch.TemplateDiscovery.csproj</ProjectName>
+      <BaseTestPackageProject Include="src/Compatibility/GenAPI/Microsoft.DotNet.GenAPI.Task">
+        <Name>Microsoft.DotNet.GenAPI.Task</Name>
+        <ProjectName>Microsoft.DotNet.GenAPI.Task.csproj</ProjectName>
         <Version>$(Version)</Version>
       </BaseTestPackageProject>
 

@@ -9,12 +9,15 @@ stages:
     parameters:
       artifacts:
         publish:
-          artifacts: true
           logs: true
       enablePublishTestResults: true
       enableTelemetry: true
       isAssetlessBuild: true
       publishAssetsImmediately: true
+      # Assetless builds don't consume artifacts from the build jobs, so don't make the
+      # publish-build-assets job wait on Linux/Windows. An empty list overrides the default
+      # in eng/common/core-templates/jobs/jobs.yml, which would otherwise depend on every job.
+      publishBuildAssetsDependsOn: []
 
       jobs:
       - job: linux
@@ -36,6 +39,7 @@ stages:
           submodules: recursive
         - script: ./build.sh --ci --test -bl -c Release
           displayName: Build and Test
+        - template: /azure-pipelines/templates/steps/publish-packages.yml
 
       - job: windows
         displayName: Windows
@@ -57,3 +61,4 @@ stages:
           submodules: recursive
         - script: .\build.cmd -ci -test -bl -configuration Release
           displayName: Build and Test
+        - template: /azure-pipelines/templates/steps/publish-packages.yml

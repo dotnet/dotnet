@@ -6,6 +6,34 @@ Notes](../../RELEASENOTES.md).
 
 ## Unreleased
 
+## 1.15.3
+
+Released 2026-Apr-21
+
+* Fix resource leak in batch and periodic exporting task workers for Blazor/WASM.
+  ([#7069](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7069))
+
+* Fixed `LogRecord.LogLevel` to preserve `LogLevel.None` and handle
+  unspecified or out-of-range severities without returning invalid enum values.
+  ([#7092](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7092))
+
+* Fixed `OTEL_TRACES_SAMPLER_ARG` handling to treat out-of-range, `NaN`, and
+  infinite values as invalid and fall back to the default ratio when using
+  `traceidratio` and `parentbased_traceidratio` samplers.
+  ([#7103](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7103))
+
+## 1.15.2
+
+Released 2026-Apr-08
+
+* Added Task-based worker support for `BatchExportProcessor` and
+  `PeriodicExportingMetricReader` to enable OpenTelemetry to work in
+  single-threaded WebAssembly environments such as Blazor and Uno Platform.
+  The implementation automatically detects the WebAssembly runtime and switches
+  to Task-based workers accordingly; the Thread-based approach remains the
+  default on all other platforms.
+  ([#6379](https://github.com/open-telemetry/opentelemetry-dotnet/pull/6379))
+
 ## 1.15.1
 
 Released 2026-Mar-27
@@ -15,8 +43,8 @@ Released 2026-Mar-27
   ([#6257](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6257))
 
 * Fixed `OverflowException` in `TraceIdRatioBasedSampler` when trace ID bytes
-produced `long.MinValue`.
-([[#6928](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6928)])
+  produced `long.MinValue`.
+  ([#6928](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6928))
 
 * Fixed precision issues when using `Histogram<float>` with custom
   `HistogramBucketBoundaries`.

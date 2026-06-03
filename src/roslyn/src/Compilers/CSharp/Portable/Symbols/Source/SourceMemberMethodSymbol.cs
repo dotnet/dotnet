@@ -726,6 +726,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         #region Syntax
 
+        private SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return SyntaxNode switch
+                {
+                    BaseMethodDeclarationSyntax method => method.Modifiers,
+                    AccessorDeclarationSyntax accessor => accessor.Modifiers,
+                    _ => default,
+                };
+            }
+        }
+
         internal (BlockSyntax blockBody, ArrowExpressionClauseSyntax arrowBody) Bodies
         {
             get
@@ -974,11 +987,25 @@ done:
                 compilation.EnsureIsReadOnlyAttributeExists(diagnostics, _location, modifyCompilation: true);
             }
 
-            if (NeedsSynthesizedRequiresUnsafeAttribute)
+            if (ContainingModule.UseUpdatedMemorySafetyRules && AssociatedSymbol is null && IsExtern && !HasUnsafeModifier && !HasSafeModifier)
             {
-                Debug.Assert(CallerUnsafeMode == CallerUnsafeMode.Explicit);
-                MessageID.IDS_FeatureUnsafeEvolution.CheckFeatureAvailability(diagnostics, compilation, _location);
-                Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Diagnostics_CodeAnalysis_RequiresUnsafeAttribute__ctor, diagnostics, _location);
+                diagnostics.Add(ErrorCode.ERR_ExternMemberRequiresUnsafeOrSafe,
+                    Modifiers.GetModifierLocation(SyntaxKind.ExternKeyword, _location));
+            }
+
+            if (CallerUnsafeMode == CallerUnsafeMode.Explicit)
+            {
+                compilation.EnsureRequiresUnsafeAttributeExists(diagnostics,
+                    Modifiers.GetModifierLocation(SyntaxKind.UnsafeKeyword, _location),
+                    modifyCompilation: true);
+            }
+
+            // Event accessors get modifiers from the event (and don't have their own modifiers),
+            // hence we skip this error here and report it only at the event symbol.
+            if (AssociatedSymbol is not SourceEventSymbol && HasSafeModifier && (!IsExtern || HasUnsafeModifier))
+            {
+                diagnostics.Add(ErrorCode.ERR_SafeModifierUnsupportedTarget,
+                    Modifiers.GetModifierLocation(SyntaxKind.SafeKeyword, _location));
             }
 
             if (compilation.ShouldEmitNullableAttributes(this) &&
@@ -1058,13 +1085,37 @@ done:
 
                 if ((((hasBody || IsExtern) && !(IsStatic && IsVirtual)) || IsExplicitInterfaceImplementation) && !ContainingAssembly.RuntimeSupportsDefaultInterfaceImplementation)
                 {
-                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, location);
+                    if (IsStatic && !IsExplicitInterfaceImplementation)
+                    {
+                        ReportLackOfRuntimeSupportForStaticMembersInInterfaces(declarationSyntax, DeclaredAccessibility, diagnostics, location);
+                    }
+                    else
+                    {
+                        diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportDefaultInterfaceImplementation, location);
+                    }
                 }
 
                 if (((!hasBody && IsAbstract) || IsVirtual) && !IsExplicitInterfaceImplementation && IsStatic && !ContainingAssembly.RuntimeSupportsStaticAbstractMembersInInterfaces)
                 {
                     diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportStaticAbstractMembersInInterfaces, location);
                 }
+            }
+        }
+
+        public static void ReportLackOfRuntimeSupportForStaticMembersInInterfaces(SyntaxNode declarationSyntax, Accessibility declaredAccessibility, BindingDiagnosticBag diagnostics, Location location)
+        {
+            switch (declaredAccessibility)
+            {
+                case Accessibility.Protected:
+                case Accessibility.ProtectedOrInternal:
+                case Accessibility.ProtectedAndInternal:
+
+                    diagnostics.Add(ErrorCode.ERR_RuntimeDoesNotSupportProtectedAccessForInterfaceMember, location);
+                    break;
+
+                default:
+                    Binder.CheckFeatureAvailability(declarationSyntax, MessageID.IDS_FeatureStaticMembersInInterfaces, diagnostics, location);
+                    break;
             }
         }
 

@@ -263,7 +263,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 responseHandler.Setup(x => x.SendResponseAsync(
                         It.Is<Message>(r => r == request),
                         It.Is<GetServiceIndexResponse>(r => r.ResponseCode == MessageResponseCode.Success
-                            && r.ServiceIndex.ToString(Formatting.None) == serviceIndex.ToString(Formatting.None)),
+                            && r.ServiceIndexJson == serviceIndex.ToString(Formatting.None)),
                         It.IsAny<CancellationToken>()))
                     .Returns(Task.CompletedTask);
 
@@ -281,11 +281,10 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             if (payload == null)
             {
-                return new Message(
+                return MessageUtilities.Create(
                     requestId: "a",
                     type: type,
-                    method: MessageMethod.GetCredentials,
-                    payload: null);
+                    method: MessageMethod.GetCredentials);
             }
 
             return MessageUtilities.Create(

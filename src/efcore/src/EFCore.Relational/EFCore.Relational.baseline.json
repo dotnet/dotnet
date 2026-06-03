@@ -3040,6 +3040,35 @@
       ]
     },
     {
+      "Type": "class Microsoft.EntityFrameworkCore.Query.SqlExpressions.FullJoinExpression : Microsoft.EntityFrameworkCore.Query.SqlExpressions.PredicateJoinExpressionBase",
+      "Methods": [
+        {
+          "Member": "FullJoinExpression(Microsoft.EntityFrameworkCore.Query.SqlExpressions.TableExpressionBase table, Microsoft.EntityFrameworkCore.Query.SqlExpressions.SqlExpression joinPredicate, bool prunable = false);"
+        },
+        {
+          "Member": "override bool Equals(object? obj);"
+        },
+        {
+          "Member": "override int GetHashCode();"
+        },
+        {
+          "Member": "override void Print(Microsoft.EntityFrameworkCore.Query.ExpressionPrinter expressionPrinter);"
+        },
+        {
+          "Member": "override System.Linq.Expressions.Expression Quote();"
+        },
+        {
+          "Member": "virtual Microsoft.EntityFrameworkCore.Query.SqlExpressions.FullJoinExpression Update(Microsoft.EntityFrameworkCore.Query.SqlExpressions.TableExpressionBase table, Microsoft.EntityFrameworkCore.Query.SqlExpressions.SqlExpression joinPredicate);"
+        },
+        {
+          "Member": "virtual Microsoft.EntityFrameworkCore.Query.SqlExpressions.FullJoinExpression Update(Microsoft.EntityFrameworkCore.Query.SqlExpressions.TableExpressionBase table);"
+        },
+        {
+          "Member": "virtual Microsoft.EntityFrameworkCore.Query.SqlExpressions.FullJoinExpression WithAnnotations(System.Collections.Generic.IReadOnlyDictionary<string, Microsoft.EntityFrameworkCore.Infrastructure.IAnnotation> annotations);"
+        }
+      ]
+    },
+    {
       "Type": "class Microsoft.EntityFrameworkCore.Storage.GuidTypeMapping : Microsoft.EntityFrameworkCore.Storage.RelationalTypeMapping",
       "Methods": [
         {
@@ -7305,56 +7334,6 @@
       ]
     },
     {
-      "Type": "class Microsoft.EntityFrameworkCore.Infrastructure.StructuredJsonPath",
-      "Methods": [
-        {
-          "Member": "StructuredJsonPath(System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment> segments, int[] indices);"
-        },
-        {
-          "Member": "virtual System.Text.StringBuilder AppendTo(System.Text.StringBuilder builder);"
-        },
-        {
-          "Member": "override string ToString();"
-        }
-      ],
-      "Properties": [
-        {
-          "Member": "virtual bool IsRoot { get; }"
-        },
-        {
-          "Member": "virtual int[] Indices { get; }"
-        },
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Infrastructure.StructuredJsonPath Root { get; }"
-        },
-        {
-          "Member": "virtual System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment> Segments { get; }"
-        }
-      ]
-    },
-    {
-      "Type": "sealed class Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment",
-      "Methods": [
-        {
-          "Member": "StructuredJsonPathSegment(string propertyName);"
-        },
-        {
-          "Member": "override string ToString();"
-        }
-      ],
-      "Properties": [
-        {
-          "Member": "static Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment Array { get; }"
-        },
-        {
-          "Member": "bool IsArray { get; }"
-        },
-        {
-          "Member": "string? PropertyName { get; }"
-        }
-      ]
-    },
-    {
       "Type": "class Microsoft.EntityFrameworkCore.Query.JsonQueryExpression : System.Linq.Expressions.Expression, Microsoft.EntityFrameworkCore.Query.IPrintableExpression",
       "Methods": [
         {
@@ -7969,6 +7948,9 @@
         },
         {
           "Member": "int LastCommittedCommandIndex { get; set; }"
+        },
+        {
+          "Member": "bool SeedingCompleted { get; set; }"
         },
         {
           "Member": "Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? Transaction { get; set; }"
@@ -9504,6 +9486,9 @@
           "Member": "virtual System.Linq.Expressions.Expression VisitFromSql(Microsoft.EntityFrameworkCore.Query.SqlExpressions.FromSqlExpression fromSqlExpression);"
         },
         {
+          "Member": "virtual System.Linq.Expressions.Expression VisitFullJoin(Microsoft.EntityFrameworkCore.Query.SqlExpressions.FullJoinExpression fullJoinExpression);"
+        },
+        {
           "Member": "virtual System.Linq.Expressions.Expression VisitInnerJoin(Microsoft.EntityFrameworkCore.Query.SqlExpressions.InnerJoinExpression innerJoinExpression);"
         },
         {
@@ -10721,6 +10706,9 @@
           "Member": "static Microsoft.EntityFrameworkCore.Metadata.ConfigurationSource? GetJsonPropertyNameConfigurationSource(this Microsoft.EntityFrameworkCore.Metadata.IConventionComplexProperty complexProperty);"
         },
         {
+          "Member": "static System.Collections.Generic.IEnumerable<Microsoft.EntityFrameworkCore.Metadata.StoreObjectIdentifier> GetMappedStoreObjects(this Microsoft.EntityFrameworkCore.Metadata.IReadOnlyComplexProperty property, Microsoft.EntityFrameworkCore.Metadata.StoreObjectType storeObjectType);"
+        },
+        {
           "Member": "static void SetJsonPropertyName(this Microsoft.EntityFrameworkCore.Metadata.IMutableComplexProperty complexProperty, string? name);"
         },
         {
@@ -11326,6 +11314,9 @@
         },
         {
           "Member": "Microsoft.EntityFrameworkCore.Storage.IExecutionStrategy ExecutionStrategy { get; }"
+        },
+        {
+          "Member": "Microsoft.EntityFrameworkCore.Diagnostics.IDiagnosticsLogger<Microsoft.EntityFrameworkCore.DbLoggerCategory.Infrastructure> Logger { get; init; }"
         },
         {
           "Member": "Microsoft.EntityFrameworkCore.Migrations.IMigrationCommandExecutor MigrationCommandExecutor { get; init; }"
@@ -14156,7 +14147,7 @@
           "Member": "override void ValidateIndex(Microsoft.EntityFrameworkCore.Metadata.IIndex index, Microsoft.EntityFrameworkCore.Diagnostics.IDiagnosticsLogger<Microsoft.EntityFrameworkCore.DbLoggerCategory.Model.Validation> logger);"
         },
         {
-          "Member": "virtual void ValidateIndexMappedToTable(Microsoft.EntityFrameworkCore.Metadata.IIndex index, Microsoft.EntityFrameworkCore.Diagnostics.IDiagnosticsLogger<Microsoft.EntityFrameworkCore.DbLoggerCategory.Model.Validation> logger);"
+          "Member": "override void ValidateIndexOnComplexProperty(Microsoft.EntityFrameworkCore.Metadata.IIndex index, System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.IComplexProperty> complexProperties, Microsoft.EntityFrameworkCore.Diagnostics.IDiagnosticsLogger<Microsoft.EntityFrameworkCore.DbLoggerCategory.Model.Validation> logger);"
         },
         {
           "Member": "virtual void ValidateIndexPropertyMapping(Microsoft.EntityFrameworkCore.Metadata.IIndex index, Microsoft.EntityFrameworkCore.Diagnostics.IDiagnosticsLogger<Microsoft.EntityFrameworkCore.DbLoggerCategory.Model.Validation> logger);"
@@ -15333,6 +15324,9 @@
           "Member": "override Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression? TranslateFirstOrDefault(Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression source, System.Linq.Expressions.LambdaExpression? predicate, System.Type returnType, bool returnDefault);"
         },
         {
+          "Member": "override Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression? TranslateFullJoin(Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression outer, Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression inner, System.Linq.Expressions.LambdaExpression outerKeySelector, System.Linq.Expressions.LambdaExpression innerKeySelector, System.Linq.Expressions.LambdaExpression resultSelector);"
+        },
+        {
           "Member": "override Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression? TranslateGroupBy(Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression source, System.Linq.Expressions.LambdaExpression keySelector, System.Linq.Expressions.LambdaExpression? elementSelector, System.Linq.Expressions.LambdaExpression? resultSelector);"
         },
         {
@@ -16504,6 +16498,12 @@
           "Member": "static string IncorrectDefaultValueType(object? value, object? valueType, object? property, object? propertyType, object? entityType);"
         },
         {
+          "Member": "static string IndexOnNonJsonComplexProperty(object? indexProperties, object? entityType, object? property);"
+        },
+        {
+          "Member": "static string IndexPropertiesMixedJsonAndNonJsonMapping(object? indexProperties, object? entityType);"
+        },
+        {
           "Member": "static string InsertDataOperationNoModel(object? table);"
         },
         {
@@ -16613,6 +16613,9 @@
         },
         {
           "Member": "static string KeylessMappingStrategy(object? mappingStrategy, object? entityType);"
+        },
+        {
+          "Member": "static string KeyPropertyInJsonComplexType(object? keyProperties, object? entityType, object? property);"
         },
         {
           "Member": "static string LastUsedWithoutOrderBy(object? method);"
@@ -16888,6 +16891,9 @@
           "Member": "static string UnhandledExpressionInVisitor(object? expression, object? expressionType, object? visitor);"
         },
         {
+          "Member": "static string UniqueIndexOnComplexProperty(object? indexProperties, object? entityType, object? property);"
+        },
+        {
           "Member": "static string UnknownOperation(object? sqlGeneratorType, object? operationType);"
         },
         {
@@ -16941,7 +16947,8 @@
       ],
       "Properties": [
         {
-          "Member": "static string BadSequenceString { get; }"
+          "Member": "static string BadSequenceString { get; }",
+          "Stage": "Obsolete"
         },
         {
           "Member": "static string BadSequenceType { get; }"
@@ -18353,6 +18360,12 @@
         },
         {
           "Member": "System.Linq.Expressions.Expression AddCrossJoin(Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression innerSource, System.Linq.Expressions.Expression outerShaper);"
+        },
+        {
+          "Member": "void AddFullJoin(Microsoft.EntityFrameworkCore.Query.SqlExpressions.SelectExpression innerSelectExpression, Microsoft.EntityFrameworkCore.Query.SqlExpressions.SqlExpression joinPredicate);"
+        },
+        {
+          "Member": "System.Linq.Expressions.Expression AddFullJoin(Microsoft.EntityFrameworkCore.Query.ShapedQueryExpression innerSource, Microsoft.EntityFrameworkCore.Query.SqlExpressions.SqlExpression joinPredicate, System.Linq.Expressions.Expression outerShaper);"
         },
         {
           "Member": "void AddInnerJoin(Microsoft.EntityFrameworkCore.Query.SqlExpressions.SelectExpression innerSelectExpression, Microsoft.EntityFrameworkCore.Query.SqlExpressions.SqlExpression joinPredicate);"
@@ -19925,6 +19938,56 @@
         },
         {
           "Member": "override System.Type Type { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "class Microsoft.EntityFrameworkCore.Infrastructure.StructuredJsonPath",
+      "Methods": [
+        {
+          "Member": "StructuredJsonPath(System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment> segments, int[] indices);"
+        },
+        {
+          "Member": "virtual System.Text.StringBuilder AppendTo(System.Text.StringBuilder builder);"
+        },
+        {
+          "Member": "override string ToString();"
+        }
+      ],
+      "Properties": [
+        {
+          "Member": "virtual int[] Indices { get; }"
+        },
+        {
+          "Member": "virtual bool IsRoot { get; }"
+        },
+        {
+          "Member": "static Microsoft.EntityFrameworkCore.Infrastructure.StructuredJsonPath Root { get; }"
+        },
+        {
+          "Member": "virtual System.Collections.Generic.IReadOnlyList<Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment> Segments { get; }"
+        }
+      ]
+    },
+    {
+      "Type": "sealed class Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment",
+      "Methods": [
+        {
+          "Member": "StructuredJsonPathSegment(string propertyName);"
+        },
+        {
+          "Member": "override string ToString();"
+        }
+      ],
+      "Properties": [
+        {
+          "Member": "static Microsoft.EntityFrameworkCore.Metadata.StructuredJsonPathSegment Array { get; }"
+        },
+        {
+          "Member": "bool IsArray { get; }"
+        },
+        {
+          "Member": "string? PropertyName { get; }"
         }
       ]
     },

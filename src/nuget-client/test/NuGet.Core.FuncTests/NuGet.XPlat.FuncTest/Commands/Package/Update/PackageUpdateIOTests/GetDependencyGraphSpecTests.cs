@@ -19,7 +19,12 @@ public class GetDependencyGraphSpecTests
     private static PackageUpdateIO CreatePackageUpdateIO(string solutionRoot)
     {
         var msbuildUtility = new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null);
-        var packageUpdateIO = new PackageUpdateIO(solutionRoot, msbuildUtility, TestEnvironmentVariableReader.EmptyInstance);
+        var envReader = new TestEnvironmentVariableReader(
+            new Dictionary<string, string>
+            {
+                ["DOTNET_HOST_PATH"] = TestFileSystemUtility.GetDotnetCli()
+            });
+        var packageUpdateIO = new PackageUpdateIO(solutionRoot, msbuildUtility, envReader);
         return packageUpdateIO;
     }
 
@@ -40,11 +45,6 @@ public class GetDependencyGraphSpecTests
 
         File.WriteAllText(projectPath, projectContent);
 
-        var envVars = new Dictionary<string, string>
-        {
-            ["DOTNET_HOST_PATH"] = TestFileSystemUtility.GetDotnetCli()
-        };
-
         using var packageUpdateIO = CreatePackageUpdateIO(testContext.SolutionRoot);
 
         // Act
@@ -61,11 +61,6 @@ public class GetDependencyGraphSpecTests
         // Arrange
         using var testContext = new SimpleTestPathContext();
         var nonExistentProject = Path.Combine(testContext.SolutionRoot, "NonExistent.csproj");
-
-        var envVars = new Dictionary<string, string>
-        {
-            ["DOTNET_HOST_PATH"] = TestFileSystemUtility.GetDotnetCli()
-        };
 
         using var packageUpdateIO = CreatePackageUpdateIO(testContext.SolutionRoot);
 

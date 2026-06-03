@@ -22,11 +22,5 @@ internal static class TraceProviderIsolated
     /// Gets the current trace id from the LambdaTraceProvider in Amazon.Lambda.Core.
     /// </summary>
     /// <exception cref="TypeLoadException">If the version of Amazon.Lambda.Core used does not contain the LambdaTraceProvider method.</exception>
-    internal static string CurrentTraceId
-    {
-        get
-        {
-            return Amazon.Lambda.Core.LambdaTraceProvider.CurrentTraceId;
-        }
-    }
+    internal static string CurrentTraceId => Amazon.Lambda.Core.LambdaTraceProvider.CurrentTraceId;
 }

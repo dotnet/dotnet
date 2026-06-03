@@ -215,7 +215,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_MsBuildIsNetCoreMsBuild">
         <source>The MSBuild directory '{0}' appears to be a .NET SDK (dotnet) MSBuild installation. NuGet.exe requires the .NET Framework version of MSBuild, which is included with Visual Studio. Use 'dotnet restore' instead, or provide the path to a Visual Studio MSBuild installation.</source>
-        <target state="new">The MSBuild directory '{0}' appears to be a .NET SDK (dotnet) MSBuild installation. NuGet.exe requires the .NET Framework version of MSBuild, which is included with Visual Studio. Use 'dotnet restore' instead, or provide the path to a Visual Studio MSBuild installation.</target>
+        <target state="translated">Wygląda na to, że katalog MSBuild „{0}” jest instalacją MSBuild zestawu .NET SDK (dotnet). NuGet.exe wymaga programu MSBuild w wersji .NET Framework, która jest dołączona do programu Visual Studio. Zamiast tego użyj polecenia „dotnet restore” lub podaj ścieżkę do instalacji MSBuild programu Visual Studio.</target>
         <note>{0} is the MSBuild directory path. Do not localize 'NuGet.exe', 'MSBuild', '.NET SDK', '.NET Framework', 'dotnet restore', 'Visual Studio'.</note>
       </trans-unit>
       <trans-unit id="Error_MsBuildTimedOut">

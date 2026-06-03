@@ -1,5 +1,8 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
-from helix.public import TestResult
+try:
+    from helix.public import TestResult
+except ImportError:
+    from _helix_compat import TestResult
 from typing import Iterable
 
 

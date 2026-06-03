@@ -50,10 +50,7 @@ internal sealed class AWSEKSDetector : IResourceDetector
 
             using (var streamReader = ResourceDetectorUtils.GetStreamReader(path))
             {
-                while (!streamReader.EndOfStream)
-                {
-                    stringBuilder.Append(streamReader.ReadLine()?.Trim());
-                }
+                stringBuilder.Append(streamReader.ReadToEnd().Trim());
             }
 
             return stringBuilder.ToString();
@@ -71,10 +68,13 @@ internal sealed class AWSEKSDetector : IResourceDetector
         try
         {
             using var streamReader = ResourceDetectorUtils.GetStreamReader(path);
-            while (!streamReader.EndOfStream)
+
+            string? line = null;
+
+            while ((line = streamReader.ReadLine()) is not null)
             {
-                var trimmedLine = streamReader.ReadLine()?.Trim();
-                if (trimmedLine?.Length > 64)
+                var trimmedLine = line.Trim();
+                if (trimmedLine.Length > 64)
                 {
                     return trimmedLine.Substring(trimmedLine.Length - 64);
                 }
@@ -88,14 +88,12 @@ internal sealed class AWSEKSDetector : IResourceDetector
         return null;
     }
 
-    internal static AWSEKSClusterInformationModel? DeserializeResponse(string response)
-    {
+    internal static AWSEKSClusterInformationModel? DeserializeResponse(string response) =>
 #if NET
-        return ResourceDetectorUtils.DeserializeFromString(response, SourceGenerationContext.Default.AWSEKSClusterInformationModel);
+        ResourceDetectorUtils.DeserializeFromString(response, SourceGenerationContext.Default.AWSEKSClusterInformationModel);
 #else
-        return ResourceDetectorUtils.DeserializeFromString<AWSEKSClusterInformationModel>(response);
+        ResourceDetectorUtils.DeserializeFromString<AWSEKSClusterInformationModel>(response);
 #endif
-    }
 
     internal List<KeyValuePair<string, object>> ExtractResourceAttributes(string? clusterName, string? containerId)
     {
@@ -132,7 +130,7 @@ internal sealed class AWSEKSDetector : IResourceDetector
         try
         {
             using var scope = SuppressInstrumentationScope.Begin();
-            awsAuth = AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync(AWSAuthUrl, HttpMethod.Get, new KeyValuePair<string, string>("Authorization", credentials), httpClientHandler));
+            awsAuth = ResourceDetectorUtils.SendOutRequest(AWSAuthUrl, HttpMethod.Get, new KeyValuePair<string, string>("Authorization", credentials), httpClientHandler);
         }
         catch (Exception ex)
         {
@@ -145,7 +143,7 @@ internal sealed class AWSEKSDetector : IResourceDetector
     private static string GetEKSClusterInfo(string credentials, HttpClientHandler? httpClientHandler)
     {
         using var scope = SuppressInstrumentationScope.Begin();
-        return AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync(AWSClusterInfoUrl, HttpMethod.Get, new KeyValuePair<string, string>("Authorization", credentials), httpClientHandler));
+        return ResourceDetectorUtils.SendOutRequest(AWSClusterInfoUrl, HttpMethod.Get, new KeyValuePair<string, string>("Authorization", credentials), httpClientHandler);
     }
 }
 #endif

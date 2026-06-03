@@ -1,10 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +19,7 @@ namespace NuGet.Protocol
     {
         private const int BufferSize = 8192;
 
-        public static DownloadResourceResult GetPackage(PackageIdentity packageIdentity, string globalPackagesFolder)
+        public static DownloadResourceResult? GetPackage(PackageIdentity packageIdentity, string globalPackagesFolder)
         {
             if (packageIdentity == null)
             {
@@ -59,8 +57,8 @@ namespace NuGet.Protocol
 
         private static DownloadResourceResult CreateDownloadResourceResult(string nupkgPath, string installPath)
         {
-            Stream stream = null;
-            PackageReaderBase packageReader = null;
+            Stream? stream = null;
+            PackageReaderBase? packageReader = null;
             try
             {
                 stream = File.Open(nupkgPath, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -89,7 +87,7 @@ namespace NuGet.Protocol
             Stream packageStream,
             string globalPackagesFolder,
             Guid parentId,
-            ClientPolicyContext clientPolicyContext,
+            ClientPolicyContext? clientPolicyContext,
             ILogger logger,
             CancellationToken token)
         {
@@ -128,11 +126,9 @@ namespace NuGet.Protocol
                 extractionContext,
                 token,
                 parentId);
-
-            var package = GetPackage(packageIdentity, globalPackagesFolder);
-
-            Debug.Assert(package.PackageStream.CanSeek);
-            Debug.Assert(package.PackageReader != null);
+            // It is hard for to enforce this via the compiler, but at this point we are guaranteed to have the package. 
+            // If there were installation failured, PackageExtractor.InstallFromSourceAsync would have thrown.
+            var package = GetPackage(packageIdentity, globalPackagesFolder)!;
 
             return package;
         }

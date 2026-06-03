@@ -13,8 +13,6 @@ OpenTelemetry.Exporter.Geneva.GenevaExporterHelperExtensions
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.ConnectionString.get -> string?
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.ConnectionString.set -> void
-OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.ResourceFieldNames.get -> System.Collections.Generic.IEnumerable<string!>?
-OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.ResourceFieldNames.set -> void
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.CustomFields.get -> System.Collections.Generic.IEnumerable<string!>?
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.CustomFields.set -> void
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.EventNameExportMode.get -> OpenTelemetry.Exporter.Geneva.EventNameExportMode
@@ -26,6 +24,8 @@ OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.IncludeTraceStateForSpan.get
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.IncludeTraceStateForSpan.set -> void
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.PrepopulatedFields.get -> System.Collections.Generic.IReadOnlyDictionary<string!, object!>!
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.PrepopulatedFields.set -> void
+OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.ResourceFieldNames.get -> System.Collections.Generic.IEnumerable<string!>?
+OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.ResourceFieldNames.set -> void
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.TableNameMappings.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
 OpenTelemetry.Exporter.Geneva.GenevaExporterOptions.TableNameMappings.set -> void
 OpenTelemetry.Exporter.Geneva.GenevaLogExporter

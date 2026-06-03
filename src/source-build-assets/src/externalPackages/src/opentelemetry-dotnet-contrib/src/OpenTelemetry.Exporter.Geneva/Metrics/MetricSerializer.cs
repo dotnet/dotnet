@@ -1,6 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -178,23 +179,18 @@ internal static class MetricSerializer
     {
         if (!string.IsNullOrEmpty(value))
         {
-            if (bufferIndex + value!.Length + sizeof(short) >= buffer.Length)
-            {
-                // TODO: What should we do when the data is invalid?
-            }
-
-#if NETSTANDARD2_1_OR_GREATER
-            Span<byte> bufferSpan = new Span<byte>(buffer);
+#if NETSTANDARD2_1_OR_GREATER || NET
+            var bufferSpan = new Span<byte>(buffer);
             bufferSpan = bufferSpan.Slice(bufferIndex);
-            Span<byte> stringSpan = bufferSpan.Slice(2);
+            var stringSpan = bufferSpan.Slice(2);
             var lengthWritten = (short)Encoding.UTF8.GetBytes(value, stringSpan);
-            MemoryMarshal.Write(bufferSpan, ref lengthWritten);
+            MemoryMarshal.Write(bufferSpan, lengthWritten);
             bufferIndex += sizeof(short) + lengthWritten;
 #else
             // Advanced the buffer to account for the length, we will write it back after encoding.
             var currentIndex = bufferIndex;
             bufferIndex += sizeof(short);
-            var lengthWritten = Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, bufferIndex);
+            var lengthWritten = Encoding.UTF8.GetBytes(value, 0, value!.Length, buffer, bufferIndex);
             bufferIndex += lengthWritten;
 
             // Write the length now that it is known
@@ -216,18 +212,13 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeEncodedString(byte[] buffer, ref int bufferIndex, byte[] encodedValue)
     {
-        if (bufferIndex + encodedValue.Length + sizeof(short) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
-
-#if NETSTANDARD2_1_OR_GREATER
-        Span<byte> sourceSpan = new Span<byte>(encodedValue);
-        Span<byte> bufferSpan = new Span<byte>(buffer);
+#if NETSTANDARD2_1_OR_GREATER || NET
+        var sourceSpan = new Span<byte>(encodedValue);
+        var bufferSpan = new Span<byte>(buffer);
         bufferSpan = bufferSpan.Slice(bufferIndex);
         sourceSpan.CopyTo(bufferSpan.Slice(2));
-        short encodedLength = (short)encodedValue.Length;
-        MemoryMarshal.Write(bufferSpan, ref encodedLength);
+        var encodedLength = (short)encodedValue.Length;
+        MemoryMarshal.Write(bufferSpan, encodedLength);
         bufferIndex += sizeof(short) + encodedLength;
 #else
         SerializeInt16(buffer, ref bufferIndex, (short)encodedValue.Length);
@@ -245,11 +236,6 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeByte(byte[] buffer, ref int bufferIndex, byte value)
     {
-        if (bufferIndex + sizeof(byte) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
-
         buffer[bufferIndex] = value;
         bufferIndex += sizeof(byte);
     }
@@ -263,11 +249,6 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeUInt16(byte[] buffer, ref int bufferIndex, ushort value)
     {
-        if (bufferIndex + sizeof(ushort) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
-
         buffer[bufferIndex] = (byte)value;
         buffer[bufferIndex + 1] = (byte)(value >> 8);
         bufferIndex += sizeof(ushort);
@@ -282,11 +263,6 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeInt16(byte[] buffer, ref int bufferIndex, short value)
     {
-        if (bufferIndex + sizeof(short) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
-
         buffer[bufferIndex] = (byte)value;
         buffer[bufferIndex + 1] = (byte)(value >> 8);
         bufferIndex += sizeof(short);
@@ -301,11 +277,6 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeUInt32(byte[] buffer, ref int bufferIndex, uint value)
     {
-        if (bufferIndex + sizeof(uint) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
-
         buffer[bufferIndex] = (byte)value;
         buffer[bufferIndex + 1] = (byte)(value >> 8);
         buffer[bufferIndex + 2] = (byte)(value >> 0x10);
@@ -322,11 +293,6 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeUInt64(byte[] buffer, ref int bufferIndex, ulong value)
     {
-        if (bufferIndex + sizeof(ulong) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
-
         buffer[bufferIndex] = (byte)value;
         buffer[bufferIndex + 1] = (byte)(value >> 8);
         buffer[bufferIndex + 2] = (byte)(value >> 0x10);
@@ -347,10 +313,6 @@ internal static class MetricSerializer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeInt64(byte[] buffer, ref int bufferIndex, long value)
     {
-        if (bufferIndex + sizeof(long) >= buffer.Length)
-        {
-        }
-
         buffer[bufferIndex] = (byte)value;
         buffer[bufferIndex + 1] = (byte)(value >> 8);
         buffer[bufferIndex + 2] = (byte)(value >> 0x10);
@@ -369,17 +331,11 @@ internal static class MetricSerializer
     /// <param name="bufferIndex">Index of the buffer.</param>
     /// <param name="value">The value.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void SerializeFloat64(byte[] buffer, ref int bufferIndex, double value)
+    public static void SerializeFloat64(byte[] buffer, ref int bufferIndex, double value)
     {
-        if (bufferIndex + sizeof(double) >= buffer.Length)
-        {
-            // TODO: What should we do when the data is invalid?
-        }
+        CheckBounds(buffer, bufferIndex, sizeof(double));
 
-        fixed (byte* bp = buffer)
-        {
-            *(double*)(bp + bufferIndex) = value;
-        }
+        BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(bufferIndex, sizeof(double)), BitConverter.DoubleToInt64Bits(value));
 
         bufferIndex += sizeof(double);
     }
@@ -395,11 +351,6 @@ internal static class MetricSerializer
     {
         if (!string.IsNullOrEmpty(value))
         {
-            if (bufferIndex + value!.Length + sizeof(short) >= buffer.Length)
-            {
-                // TODO: What should we do when the data is invalid?
-            }
-
             var encodedValue = Encoding.UTF8.GetBytes(value);
             SerializeUInt64AsBase128(buffer, ref bufferIndex, (ulong)encodedValue.Length);
             Array.Copy(encodedValue, 0, buffer, bufferIndex, encodedValue.Length);
@@ -419,9 +370,7 @@ internal static class MetricSerializer
     /// <param name="value">Value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeUInt32AsBase128(byte[] buffer, ref int offset, uint value)
-    {
-        SerializeUInt64AsBase128(buffer, ref offset, value);
-    }
+        => SerializeUInt64AsBase128(buffer, ref offset, value);
 
     /// <summary>
     /// Writes ulong value Base-128 encoded to the buffer starting from the specified offset.
@@ -455,9 +404,7 @@ internal static class MetricSerializer
     /// <param name="value">Value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SerializeInt32AsBase128(byte[] buffer, ref int offset, int value)
-    {
-        SerializeInt64AsBase128(buffer, ref offset, value);
-    }
+        => SerializeInt64AsBase128(buffer, ref offset, value);
 
     /// <summary>
     /// Writes long value Base-128 encoded.
@@ -509,16 +456,28 @@ internal static class MetricSerializer
     /// <param name="data">Source data.</param>
     /// <param name="dataLength"> Number of bytes to copy.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SerializeSpanOfBytes(byte[] buffer, ref int bufferIndex, Span<byte> data, int dataLength)
+    public static void SerializeSpanOfBytes(byte[] buffer, ref int bufferIndex, ReadOnlySpan<byte> data, int dataLength)
     {
-        if (bufferIndex + dataLength + sizeof(short) >= buffer.Length)
-        {
-        }
-
-        ReadOnlySpan<byte> source = data.Slice(0, dataLength);
+        var source = data.Slice(0, dataLength);
         var target = new Span<byte>(buffer, bufferIndex, dataLength);
 
         source.CopyTo(target);
         bufferIndex += dataLength;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void CheckBounds(byte[] buffer, int index, int size, [CallerArgumentExpression(nameof(index))] string? paramName = default)
+#if NET
+        => ArgumentOutOfRangeException.ThrowIfGreaterThan(index + size, buffer.Length, paramName);
+#else
+    {
+        if (buffer.Length < index + size)
+        {
+            ThrowArgumentOutOfRange(index, paramName);
+        }
+    }
+
+    private static void ThrowArgumentOutOfRange(object value, [CallerArgumentExpression(nameof(value))] string? paramName = default)
+        => throw new ArgumentOutOfRangeException(paramName, value, "The buffer is too small to write a value at the specified index.");
+#endif
 }

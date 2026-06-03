@@ -218,6 +218,10 @@ Copyright (c) .NET Foundation. All rights reserved.
       <Output TaskParameter="AbsolutePaths" PropertyName="NuspecFileAbsolutePath" />
     </ConvertToAbsolutePath>
 
+    <PropertyGroup>
+      <DeterministicTimestamp Condition="'$(DeterministicTimestamp)' == '' AND '$(SOURCE_DATE_EPOCH)' != ''">$(SOURCE_DATE_EPOCH)</DeterministicTimestamp>
+    </PropertyGroup>
+
     <!-- Call Pack -->
     <PackTask PackItem="$(PackProjectInputFile)"
               PackageFiles="@(_PackageFiles)"
@@ -279,6 +283,7 @@ Copyright (c) .NET Foundation. All rights reserved.
               PackageLicenseExpressionVersion="$(PackageLicenseExpressionVersion)"
               Readme="$(PackageReadmeFile)"
               Deterministic="$(Deterministic)"
+              DeterministicTimestamp="$(DeterministicTimestamp)"
               PackageIcon="$(PackageIcon)"
               />
   </Target>

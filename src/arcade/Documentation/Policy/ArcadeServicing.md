@@ -76,7 +76,7 @@ which Arcade can be branched for major release 'N' of .NET Core.  Examples are g
 1. Create a new branch named `release/<N>` off of the `main` branch of `dotnet/arcade`, and push it to the public repository. Ensure the pool provider names in all yaml of this branch are updated to their "-Svc" versions.
 2. Create a new branch named `release/<N>` off of the `main` branch of `dotnet/arcade-validation`, and push it to the public repository. Ensure the pool provider names in all yaml of this branch are updated to their "-Svc" versions.
 3. Create and merge a pull request to update the package version numbers in the main branch to match the next major version of .NET (N+1). ([example](https://github.com/dotnet/arcade/pull/7829/files))
-4. [Add new channels](https://github.com/dotnet/arcade/blob/main/Documentation/Darc.md#add-channel)
+4. [Add new channels](../Darc.md#add-channel)
    for the new branches, classified (`-c`) as `tools`.  Make a note of these channel ids, as they will be used later in updating the publishing constants used by Arcade for these channels.
     - `.NET <N or next version> Eng`
     - `.NET <N or next version> Eng - Validation`
@@ -88,13 +88,13 @@ Successfully created new channel with name '.NET 7 Eng - Validation' and id 3115
 darc add-channel --name ".NET 7 Eng" -c "Tools"
 Successfully created new channel with name '.NET 7 Eng' and id 3114.
 ```
-5. [Add default channel associations](https://github.com/dotnet/arcade/blob/main/Documentation/Darc.md#add-default-channel)
+5. [Add default channel associations](../Darc.md#add-default-channel)
    for Arcade `release/<N>` to point to `.NET <N> Eng - Validation`
 Example:
 ```
 darc add-default-channel --channel ".NET 7 Eng - Validation" --branch release/7.0 --repo https://github.com/dotnet/arcade
 ```
-6. [Create a subscription](https://github.com/dotnet/arcade/blob/main/Documentation/Darc.md#add-subscription) from `arcade`  to `arcade-validation` (branch `release/<N>`) to take changes from the `.NET <N> Eng - Validation` channel.
+6. [Create a subscription](../Darc.md#add-subscription) from `arcade`  to `arcade-validation` (branch `release/<N>`) to take changes from the `.NET <N> Eng - Validation` channel.
 
 Example from .NET 7 Subscription: (this in the text editor popped by `darc add-subscription`)
 ``` 
@@ -117,7 +117,7 @@ Pull Request Failure Notification Tags: ''
    - Update the display name from `Promote Arcade to '.NET Eng - Latest' channel` to `Promote Arcade to 'Net <N> Eng' channel`
    - Update the display name from  `Promote Arcade to 'Latest' channel` to `Promote Arcade to 'Net <N> Eng' channel`
 
-9. Create and merge a pull request to update [PublishingConstants.cs](https://github.com/dotnet/arcade/blob/main/src/Microsoft.DotNet.Build.Tasks.Feed/src/model/PublishingConstants.cs)
+9. Create and merge a pull request to update [PublishingConstants.cs](../../src/Microsoft.DotNet.Build.Tasks.Feed/src/model/PublishingConstants.cs)
    in Arcade's `main` branch for new channels ([example](https://github.com/dotnet/arcade/pull/10666/files)). Use the channel ids generated in step 4 above.  Note that this will take some time before builds of dotnet-arcade can publish to these channels. Specifically, this pull request must merge, then arcade-validation's main branch must take the change, then the build must be "promoted".  Before this, you will get errors like `error : Channel with ID 'XXXX' is not configured to be published to.` After this, official arcade builds of this branch will publish to the appropriate channels.
 10. Reset arcade Maestro++ subscriptions targeting .NET release branches to source from `.NET <N> Eng`.  The simplest way to do this is to get the subscription ids from `darc get-subscriptions` filtered to source-repo `https://github.com/dotnet/arcade`, channel `.NET Eng - Latest`, and the target branch names of the release being branched.  The `--exact` argument allows filtering out values like "release/7.0-rc1" which you will typically not want to set up any permanent subscriptions for.
 
@@ -127,9 +127,3 @@ darc get-subscriptions --source-repo https://github.com/dotnet/arcade --channel 
 darc get-subscriptions --source-repo https://github.com/dotnet/arcade --channel ".NET Eng - Latest" --target-branch "release/7.0.1xx" --exact
 ```
 For each of these subscriptions, call `darc update-subscription --id <GUID id of Subscription> --no-trigger`, updating the channel to `.NET <N or next version> Eng`.  Once completed, the above two commands should show no subscriptions, while adjusting the commands for `.NET <N> Eng` should show all the ones from the initial versions of the command.
-
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CArcadeServicing.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CArcadeServicing.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CArcadeServicing.md)</sub>
-<!-- End Generated Content-->

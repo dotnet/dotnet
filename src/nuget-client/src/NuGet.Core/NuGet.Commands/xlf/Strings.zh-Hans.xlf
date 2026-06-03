@@ -454,6 +454,11 @@
         <target state="translated">属性 {0} 不应为 null 或为空。</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">无法读取“{0}”的项目信息: {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">无法添加受信任的存储库。包未经过存储库签名或加签。</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} 将不会删除。请考虑从依赖项中移除此包，因为可能不需要它。</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} 将不会被裁剪。此包自动可用，无需显式引用。移除 PackageReference 项。</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1495,6 +1500,12 @@ NuGet 需要 HTTPS 源。有关详细信息，请参阅 https://aka.ms/nuget-htt
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
         <target state="translated">{0} 不提供依赖项 {1} 的下限(含)。已改为解析 {2}。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">包 "{0}" {1}使用已弃用的 MonoAndroid 框架，而不是 "net6.0-android" 或更高版本。请考虑将此包升级到较新版本，或联系包作者。</target>
+        <note>{0} - package id
+{1} - package version</note>
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>

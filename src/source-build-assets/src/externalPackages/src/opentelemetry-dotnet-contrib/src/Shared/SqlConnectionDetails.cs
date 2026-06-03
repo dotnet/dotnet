@@ -8,6 +8,12 @@ namespace OpenTelemetry.Instrumentation;
 
 internal sealed partial class SqlConnectionDetails
 {
+    /// <summary>
+    /// Timeout in milliseconds for regex operations to mitigate potential ReDoS
+    /// attacks when the data source string contains unexpected input.
+    /// </summary>
+    private const int RegexTimeoutMs = 1_000;
+
     private static readonly ConcurrentDictionary<string, SqlConnectionDetails> ConnectionDetailCache = new(StringComparer.OrdinalIgnoreCase);
 
     private SqlConnectionDetails()
@@ -29,69 +35,76 @@ internal sealed partial class SqlConnectionDetails
             return connectionDetails;
         }
 
-        var match = DataSourceRegex().Match(dataSource);
-
-        var serverHostName = match.Groups[2].Value;
-        string? serverIpAddress = null;
-        string? instanceName = null;
-        int? port = null;
-
-        var uriHostNameType = Uri.CheckHostName(serverHostName);
-        if (uriHostNameType is UriHostNameType.IPv4 or UriHostNameType.IPv6)
+        try
         {
-            serverIpAddress = serverHostName;
-            serverHostName = null;
-        }
+            var match = DataSourceRegex().Match(dataSource);
 
-        var maybeProtocol = match.Groups[1].Value;
-        var isNamedPipe = maybeProtocol.Length > 0 &&
-                          maybeProtocol.StartsWith("np", StringComparison.OrdinalIgnoreCase);
+            var serverHostName = match.Groups["host"].Value;
+            string? serverIpAddress = null;
+            string? instanceName = null;
+            int? port = null;
 
-        if (isNamedPipe)
-        {
-            var pipeName = match.Groups[3].Value;
-            if (pipeName.Length > 0)
+            var uriHostNameType = Uri.CheckHostName(serverHostName);
+            if (uriHostNameType is UriHostNameType.IPv4 or UriHostNameType.IPv6)
             {
-                var namedInstancePipeMatch = NamedPipeRegex().Match(pipeName);
-                if (namedInstancePipeMatch.Success)
+                serverIpAddress = serverHostName;
+                serverHostName = null;
+            }
+
+            var maybeProtocol = match.Groups["protocol"].Value;
+            var isNamedPipe = maybeProtocol.Length > 0 &&
+                              maybeProtocol.StartsWith("np", StringComparison.OrdinalIgnoreCase);
+
+            if (isNamedPipe)
+            {
+                var pipeName = match.Groups["nameOrPort"].Value;
+                if (pipeName.Length > 0)
                 {
-                    instanceName = namedInstancePipeMatch.Groups[1].Value;
+                    var namedInstancePipeMatch = NamedPipeRegex().Match(pipeName);
+                    if (namedInstancePipeMatch.Success)
+                    {
+                        instanceName = namedInstancePipeMatch.Groups["instanceName"].Value;
+                    }
                 }
-            }
-        }
-        else
-        {
-            if (match.Groups[4].Length > 0)
-            {
-                instanceName = match.Groups[3].Value;
-                port = int.TryParse(match.Groups[4].Value, out var parsedPort)
-                    ? parsedPort == 1433 ? null : parsedPort
-                    : null;
-            }
-            else if (int.TryParse(match.Groups[3].Value, out var parsedPort))
-            {
-                instanceName = null;
-                port = parsedPort == 1433 ? null : parsedPort;
             }
             else
             {
-                instanceName = match.Groups[3].Value;
-                if (string.IsNullOrEmpty(instanceName))
+                if (match.Groups["port"].Length > 0)
+                {
+                    instanceName = match.Groups["nameOrPort"].Value;
+                    port = int.TryParse(match.Groups["port"].Value, out var parsedPort)
+                        ? parsedPort == 1433 ? null : parsedPort
+                        : null;
+                }
+                else if (int.TryParse(match.Groups["nameOrPort"].Value, out var parsedPort))
                 {
                     instanceName = null;
+                    port = parsedPort == 1433 ? null : parsedPort;
                 }
+                else
+                {
+                    instanceName = match.Groups["nameOrPort"].Value;
+                    if (string.IsNullOrEmpty(instanceName))
+                    {
+                        instanceName = null;
+                    }
 
-                port = null;
+                    port = null;
+                }
             }
-        }
 
-        connectionDetails = new SqlConnectionDetails
+            connectionDetails = new SqlConnectionDetails
+            {
+                ServerHostName = serverHostName,
+                ServerIpAddress = serverIpAddress,
+                InstanceName = instanceName,
+                Port = port,
+            };
+        }
+        catch (RegexMatchTimeoutException)
         {
-            ServerHostName = serverHostName,
-            ServerIpAddress = serverIpAddress,
-            InstanceName = instanceName,
-            Port = port,
-        };
+            connectionDetails = new SqlConnectionDetails();
+        }
 
         ConnectionDetailCache.TryAdd(dataSource, connectionDetails);
         return connectionDetails;
@@ -118,11 +131,11 @@ internal sealed partial class SqlConnectionDetails
      *  np:\\serverName\pipe\MSSQL$instanceName\pipeName - in this case a separate regex (see NamedPipeRegex below)
      *  is used to extract instanceName
      */
-    [GeneratedRegex("^([^[]*\\s*:\\s*\\\\{0,2})?(.*?)\\s*(?:[\\\\,]|$)\\s*(.*?)\\s*(?:,|$)\\s*(.*)$")]
+    [GeneratedRegex("^(?<protocol>[^[]*\\s*:\\s*\\\\{0,2})?(?<host>.*?)\\s*(?:[\\\\,]|$)\\s*(?<nameOrPort>.*?)\\s*(?:,|$)\\s*(?<port>.*)$", RegexOptions.None, RegexTimeoutMs)]
     private static partial Regex DataSourceRegex();
 #else
 #pragma warning disable SA1201 // A field should not follow a method
-    private static readonly Regex DataSourceRegexField = new("^([^[]*\\s*:\\s*\\\\{0,2})?(.*?)\\s*(?:[\\\\,]|$)\\s*(.*?)\\s*(?:,|$)\\s*(.*)$", RegexOptions.Compiled);
+    private static readonly Regex DataSourceRegexField = new("^(?<protocol>[^[]*\\s*:\\s*\\\\{0,2})?(?<host>.*?)\\s*(?:[\\\\,]|$)\\s*(?<nameOrPort>.*?)\\s*(?:,|$)\\s*(?<port>.*)$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(RegexTimeoutMs));
 #pragma warning restore SA1201 // A field should not follow a method
 
     private static Regex DataSourceRegex() => DataSourceRegexField;
@@ -135,11 +148,11 @@ internal sealed partial class SqlConnectionDetails
      * https://docs.microsoft.com/previous-versions/sql/sql-server-2016/ms189307(v=sql.130)
      */
 
-    [GeneratedRegex("pipe\\\\MSSQL\\$(.*?)\\\\")]
+    [GeneratedRegex("pipe\\\\MSSQL\\$(?<instanceName>.*?)\\\\", RegexOptions.None, RegexTimeoutMs)]
     private static partial Regex NamedPipeRegex();
 #else
 #pragma warning disable SA1201 // A field should not follow a method
-    private static readonly Regex NamedPipeRegexField = new("pipe\\\\MSSQL\\$(.*?)\\\\", RegexOptions.Compiled);
+    private static readonly Regex NamedPipeRegexField = new("pipe\\\\MSSQL\\$(?<instanceName>.*?)\\\\", RegexOptions.Compiled, TimeSpan.FromMilliseconds(RegexTimeoutMs));
 #pragma warning restore SA1201 // A field should not follow a method
 
     private static Regex NamedPipeRegex() => NamedPipeRegexField;

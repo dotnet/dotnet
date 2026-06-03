@@ -20,7 +20,7 @@ namespace NuGet.Core.FuncTest
             // Arrange & Act & Assert
             var exception = Assert.Throws<ArgumentNullException>(() =>
                 new DownloadTimeoutStream(
-                    downloadName: null,
+                    downloadName: null!,
                     networkStream: new MemoryStream(),
                     timeout: TimeSpan.Zero));
             Assert.Equal("downloadName", exception.ParamName);
@@ -33,7 +33,7 @@ namespace NuGet.Core.FuncTest
             var exception = Assert.Throws<ArgumentNullException>(() =>
                 new DownloadTimeoutStream(
                     downloadName: "downloadName",
-                    networkStream: null,
+                    networkStream: null!,
                     timeout: TimeSpan.Zero));
 
             Assert.Equal("networkStream", exception.ParamName);

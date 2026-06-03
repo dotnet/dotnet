@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +23,7 @@ namespace NuGet.Protocol
 
         private readonly PackageSource _packageSource;
         private readonly HttpClientHandler _clientHandler;
-        private readonly ICredentialService _credentialService;
+        private readonly ICredentialService? _credentialService;
 
         private readonly SemaphoreSlim _httpClientLock = new SemaphoreSlim(1, 1);
         private Dictionary<string, AmbientAuthenticationState> _authStates = new Dictionary<string, AmbientAuthenticationState>();
@@ -35,7 +33,7 @@ namespace NuGet.Protocol
         public HttpSourceAuthenticationHandler(
             PackageSource packageSource,
             HttpClientHandler clientHandler,
-            ICredentialService credentialService)
+            ICredentialService? credentialService)
             : base(clientHandler)
         {
             _packageSource = packageSource ?? throw new ArgumentNullException(nameof(packageSource));
@@ -74,8 +72,8 @@ namespace NuGet.Protocol
                 throw new ObjectDisposedException(objectName: null); // we don't know the caller name
             }
 
-            HttpResponseMessage response = null;
-            ICredentials promptCredentials = null;
+            HttpResponseMessage? response = null;
+            ICredentials? promptCredentials = null;
 
             var configuration = request.GetOrCreateConfiguration();
             bool areLastKnownGoodCredentialsTried = false;
@@ -105,7 +103,7 @@ namespace NuGet.Protocol
                 if (response.StatusCode == HttpStatusCode.Unauthorized ||
                     (configuration.PromptOn403 && response.StatusCode == HttpStatusCode.Forbidden))
                 {
-                    List<Stopwatch> stopwatches = null;
+                    List<Stopwatch>? stopwatches = null;
 
 #if NET5_0_OR_GREATER
                     if (request.Options.TryGetValue(
@@ -115,7 +113,10 @@ namespace NuGet.Protocol
 #else
                     if (request.Properties.TryGetValue(HttpRetryHandler.StopwatchPropertyName, out var value))
                     {
-                        stopwatches = value as List<Stopwatch>;
+                        if (value is List<Stopwatch> currentStopwatches)
+                        {
+                            stopwatches = currentStopwatches;
+                        }
 #endif
                         if (stopwatches != null)
                         {
@@ -129,6 +130,7 @@ namespace NuGet.Protocol
                     promptCredentials = await AcquireCredentialsAsync(
                         response.StatusCode,
                         beforeLockVersion,
+                        _credentialService,
                         configuration.Logger,
                         areLastKnownGoodCredentialsTried,
                         cancellationToken);
@@ -160,9 +162,10 @@ namespace NuGet.Protocol
             }
         }
 
-        private async Task<ICredentials> AcquireCredentialsAsync(
+        private async Task<ICredentials?> AcquireCredentialsAsync(
             HttpStatusCode statusCode,
             Guid credentialsVersion,
+            ICredentialService credentialService,
             ILogger log,
             bool areLastKnownGoodCredentialsTried,
             CancellationToken cancellationToken)
@@ -209,14 +212,15 @@ namespace NuGet.Protocol
                         _packageSource.Source);
                 }
 
-                ICredentials promptCredentials = default;
+                ICredentials? promptCredentials = null;
                 if (!areLastKnownGoodCredentialsTried)
                 {
                     // isProxy is false because the previous if statement allows only Unauthorized or Forbidden types, not Proxy.
-                    _ = _credentialService.TryGetLastKnownGoodCredentialsFromCache(uri: _packageSource.SourceUri, isProxy: false, out promptCredentials);
+                    _ = credentialService.TryGetLastKnownGoodCredentialsFromCache(uri: _packageSource.SourceUri, isProxy: false, out promptCredentials);
                 }
 
                 promptCredentials ??= await PromptForCredentialsAsync(
+                    credentialService,
                     type,
                     message,
                     authState,
@@ -242,7 +246,7 @@ namespace NuGet.Protocol
         {
             var correlationId = ActivityCorrelationId.Current;
 
-            AmbientAuthenticationState authState;
+            AmbientAuthenticationState? authState;
             if (!_authStates.TryGetValue(correlationId, out authState))
             {
                 authState = new AmbientAuthenticationState();
@@ -252,14 +256,15 @@ namespace NuGet.Protocol
             return authState;
         }
 
-        private async Task<ICredentials> PromptForCredentialsAsync(
+        private async Task<ICredentials?> PromptForCredentialsAsync(
+            ICredentialService credentialService,
             CredentialRequestType type,
             string message,
             AmbientAuthenticationState authState,
             ILogger log,
             CancellationToken token)
         {
-            ICredentials promptCredentials;
+            ICredentials? promptCredentials;
 
             // Only one prompt may display at a time.
             await _credentialPromptLock.WaitAsync(token);
@@ -271,7 +276,7 @@ namespace NuGet.Protocol
                 var proxyCache = ProxyCache.Instance;
                 var proxy = proxyCache?.GetProxy(_packageSource.SourceUri);
 
-                promptCredentials = await _credentialService
+                promptCredentials = await credentialService
                     .GetCredentialsAsync(_packageSource.SourceUri, proxy, type, message, token);
 
                 // If promptCredentials == null means none of the credential providers were able to
@@ -320,8 +325,8 @@ namespace NuGet.Protocol
             {
                 // free managed resources
                 _httpClientLock.Dispose();
-                _authStates = null;
-                _credentials = null;
+                _authStates = null!; // Release references after disposal; field is not read again.
+                _credentials = null!; // Release references after disposal; field is not read again.
             }
 
             _isDisposed = true;

@@ -6,4 +6,4 @@ is able to automatically infer the files that need to be signed given a list of
 container files (.nupkg, .vsix, etc) as input.
 
 For additional information on this package, please see the [documentation
-located here](../../Documentation/CorePackages/Signing.md)
+located here](../../Documentation/Signing.md)

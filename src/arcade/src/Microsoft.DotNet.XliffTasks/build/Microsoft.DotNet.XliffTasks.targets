@@ -6,13 +6,14 @@
     <XliffTasksAssembly>$(XliffTasksDirectory)Microsoft.DotNet.XliffTasks.dll</XliffTasksAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" Runtime="NET" Architecture="*" />
 
   <!--
     Note that .xlf files are source files, not build outputs. We therefore cannot use their modification time

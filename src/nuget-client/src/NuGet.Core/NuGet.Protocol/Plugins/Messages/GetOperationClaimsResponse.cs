@@ -51,5 +51,11 @@ namespace NuGet.Protocol.Plugins
 
             Claims = claims.ToList();
         }
+
+        [System.Text.Json.Serialization.JsonConstructor]
+        internal GetOperationClaimsResponse(IReadOnlyList<OperationClaim> claims)
+            : this((IEnumerable<OperationClaim>)claims)
+        {
+        }
     }
 }

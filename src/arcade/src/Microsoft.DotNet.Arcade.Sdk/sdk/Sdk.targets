@@ -10,10 +10,29 @@
     <_BeforeCommonTargetsHookUsed Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true'">false</_BeforeCommonTargetsHookUsed>
   </PropertyGroup>
 
-  <Import Project="..\tools\BeforeCommonTargets.targets" Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
-  <Import Project="..\tools\BeforeCommonTargets.CrossTargeting.targets" Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
+  <Import Project="$(ArcadeSdkDir)BeforeCommonTargets.targets" Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
+  <Import Project="$(ArcadeSdkDir)BeforeCommonTargets.CrossTargeting.targets" Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
 
-  <Import Project="..\tools\Imports.targets" Condition="'$(_SuppressAllTargets)' != 'true' or '$(_SuppressSdkImports)' == 'false'" />
-  <Import Project="..\tools\Empty.targets" Condition="'$(_SuppressAllTargets)' == 'true'" />
+  <ImportGroup Condition="'$(_SuppressAllTargets)' != 'true' or '$(_SuppressSdkImports)' == 'false'">
+    <Import Project="$(ArcadeSdkDir)ProjectDefaults.targets"/>
+    <Import Project="$(ArcadeSdkDir)StrongName.targets"/>
+    <Import Project="$(ArcadeSdkDir)GenerateChecksums.targets" />
+    <Import Project="$(ArcadeSdkDir)GenerateInternalsVisibleTo.targets" />
+    <Import Project="$(ArcadeSdkDir)GenerateResxSource.targets" />
+    <Import Project="$(ArcadeSdkDir)Workarounds.targets"/>
+    <Import Project="$(ArcadeSdkDir)RepositoryInfo.targets"/>
+    <Import Project="$(ArcadeSdkDir)Version.targets"/>
+
+    <Import Project="$(ArcadeSdkDir)Tests.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
+    <Import Project="$(ArcadeSdkDir)Pack.targets" Condition="'$(__ImportPackTargets)' == 'true'" />
+
+    <Import Project="$(ArcadeSdkDir)Performance.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
+    <Import Project="$(ArcadeSdkDir)Localization.targets" />
+    <Import Project="$(ArcadeSdkDir)VisualStudio.targets" Condition="'$(UsingToolVSSDK)' == 'true' and ('$(IsVsixProject)' == 'true' or '$(IsSwixProject)' == 'true' or '$(GeneratePkgDefFile)' == 'true') and '$(MSBuildRuntimeType)' != 'Core'"/>
+    <Import Project="$(ArcadeSdkDir)OptimizationData.targets" Condition="'$(UsingToolIbcOptimization)' == 'true'"/>
+    <Import Project="$(ArcadeSdkDir)SymStore.targets" Condition="'$(ContinuousIntegrationBuild)' == 'true' and '$(OS)' == 'Windows_NT'"/>
+  </ImportGroup>
+
+  <Import Project="$(ArcadeSdkDir)Empty.targets" Condition="'$(_SuppressAllTargets)' == 'true'" />
 
 </Project>

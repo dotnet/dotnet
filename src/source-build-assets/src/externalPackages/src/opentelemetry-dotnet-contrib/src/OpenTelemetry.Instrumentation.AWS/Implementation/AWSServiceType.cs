@@ -8,6 +8,7 @@ internal class AWSServiceType
     internal const string DynamoDbService = "DynamoDB";
     internal const string SQSService = "SQS";
     internal const string SNSService = "SNS";
+    internal const string S3Service = "S3";
     internal const string BedrockService = "Bedrock";
     internal const string BedrockAgentService = "Bedrock Agent";
     internal const string BedrockAgentRuntimeService = "Bedrock Agent Runtime";

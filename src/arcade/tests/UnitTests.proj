@@ -19,6 +19,11 @@
 
     <TestRunNamePrefix>$(AGENT_JOBNAME) run on </TestRunNamePrefix>
     <XUnitWorkitemTimeout>300</XUnitWorkitemTimeout>
+
+    <!-- Use the standalone Helix Job Monitor pipeline job to publish test results,
+         instead of the in-build Python reporter. The corresponding monitor job is
+         configured in the Arcade pipeline YAML. -->
+    <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,12 +54,10 @@
 
     <!-- XUnit v3 tests are self-hosting executables and use XUnitV3Project instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
-    <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
     <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
-    <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

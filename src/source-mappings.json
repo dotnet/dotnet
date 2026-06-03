@@ -1,191 +1,155 @@
-// This file configures where the VMR synchronizes the sources from.
-// Each development repository has a mapping record which says where the remote repo is,
-// what files are in/excluded from the sync, etc.
-//
-// This file does not contain information about what version of sources are synchronized in the VMR.
-// Please check the source-manifest.json file for that purpose.
-//
-// More details on this file's mechanics:
-// https://github.com/dotnet/dotnet/blob/main/docs/VMR-Full-Code-Flow.md#repository-source-mappings
 {
-    "thirdPartyNoticesTemplatePath": "eng/THIRD-PARTY-NOTICES.template.txt",
-
-    // These defaults are added to all mappings unless `ignoreDefaults: true` is specified
-    // When no "include" filter is specified, "**/*" is used
-    // The default filters do not apply to submodules
-    // Only filters which start with submodule's path are applied when syncing submodules
-    "defaults": {
-        "defaultRef": "main"
+  "defaults": {
+    "defaultRef": "main"
+  },
+  "thirdPartyNoticesTemplatePath": "eng/THIRD-PARTY-NOTICES.template.txt",
+  "mappings": [
+    {
+      "name": "arcade",
+      "defaultRemote": "https://github.com/dotnet/arcade"
     },
-
-    // Each of these mappings has a corresponding folder in the src/ directory
-    "mappings": [
-        {
-            "name": "arcade",
-            "defaultRemote": "https://github.com/dotnet/arcade"
-        },
-        {
-            "name": "aspnetcore",
-            "defaultRemote": "https://github.com/dotnet/aspnetcore",
-        },
-        {
-            "name": "cecil",
-            "defaultRemote": "https://github.com/dotnet/cecil"
-        },
-        {
-            "name": "command-line-api",
-            "defaultRemote": "https://github.com/dotnet/command-line-api"
-        },
-        {
-            "name": "deployment-tools",
-            "defaultRemote": "https://github.com/dotnet/deployment-tools"
-        },
-        {
-            "name": "diagnostics",
-            "defaultRemote": "https://github.com/dotnet/diagnostics"
-        },
-        {
-            "name": "efcore",
-            "defaultRemote": "https://github.com/dotnet/efcore"
-        },
-        {
-            "name": "emsdk",
-            "defaultRemote": "https://github.com/dotnet/emsdk"
-        },
-        {
-            "name": "fsharp",
-            "defaultRemote": "https://github.com/dotnet/fsharp"
-        },
-        {
-            "name": "msbuild",
-            "defaultRemote": "https://github.com/dotnet/msbuild"
-        },
-        {
-            "name": "nuget-client",
-            "defaultRemote": "https://github.com/NuGet/NuGet.Client",
-            "defaultRef": "dev"
-        },
-        {
-            "name": "razor",
-            "defaultRemote": "https://github.com/dotnet/razor"
-        },
-        {
-            "name": "roslyn",
-            "defaultRemote": "https://github.com/dotnet/roslyn",
-            "exclude": [
-                // Obfuscated files are blocking the source tarball signing
-                "src/Compilers/Test/Resources/Core/MetadataTests/Invalid/Obfuscated*.dll"
-            ]
-        },
-        {
-            "name": "runtime",
-            "defaultRemote": "https://github.com/dotnet/runtime"
-        },
-        {
-            "name": "scenario-tests",
-            "defaultRemote": "https://github.com/dotnet/scenario-tests"
-        },
-        {
-            "name": "sdk",
-            "defaultRemote": "https://github.com/dotnet/sdk"
-        },
-        {
-            "name": "source-build-assets",
-            "defaultRemote": "https://github.com/dotnet/source-build-assets",
-            "exclude": [
-              // Contains disallowed binaries
-              "src/externalPackages/src/spectre-console/docs/**/*",
-
-              // 1ES Secret Scanning does not allow any PFX files
-              // For submodule exclusions, we must use the full relative path of each submodule
-              "src/externalPackages/src/**/*.pfx",
-              "src/externalPackages/src/MSBuildLocator/**/*.pfx",
-              "src/externalPackages/src/antlr4/**/*.pfx",
-              "src/externalPackages/src/application-insights/**/*.pfx",
-              "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/**/*.pfx",
-              "src/externalPackages/src/cssparser/**/*.pfx",
-              "src/externalPackages/src/docker-creds-provider/**/*.pfx",
-              "src/externalPackages/src/humanizer/**/*.pfx",
-              "src/externalPackages/src/newtonsoft-json/**/*.pfx",
-              "src/externalPackages/src/spectre-console/**/*.pfx",
-              "src/externalPackages/src/vs-solutionpersistence/**/*.pfx",
-
-              // Don't include any parts of antlr4 that we don't use.
-              // We don't want 1ES scanning to pick up all of the different
-              // runtimes and add a bunch of compliance work for code we don't use. 
-              "src/externalPackages/src/antlr4/.github/**",
-              "src/externalPackages/src/antlr4/Package.swift",
-              "src/externalPackages/src/antlr4/antlr4-maven-plugin/**",
-              "src/externalPackages/src/antlr4/doc/**",
-              "src/externalPackages/src/antlr4/docker/**",
-              "src/externalPackages/src/antlr4/pom.xml",
-              "src/externalPackages/src/antlr4/runtime-testsuite/**",
-              "src/externalPackages/src/antlr4/scripts/**",
-              "src/externalPackages/src/antlr4/tool-testsuite/**",
-              "src/externalPackages/src/antlr4/tool/**",
-              "src/externalPackages/src/antlr4/runtime/CSharp/tests/**",
-              "src/externalPackages/src/antlr4/runtime/Cpp/**",
-              "src/externalPackages/src/antlr4/runtime/Dart/**",
-              "src/externalPackages/src/antlr4/runtime/Go/**",
-              "src/externalPackages/src/antlr4/runtime/Java/**",
-              "src/externalPackages/src/antlr4/runtime/JavaScript/**",
-              "src/externalPackages/src/antlr4/runtime/Python3/**",
-              "src/externalPackages/src/antlr4/runtime/Swift/**",
-
-              // Don't include any parts of opentelemetry-dotnet that we don't use.
-              "src/externalPackages/src/opentelemetry-dotnet/.github/**",
-              "src/externalPackages/src/opentelemetry-dotnet/.vscode/**",
-              "src/externalPackages/src/opentelemetry-dotnet/docs/**",
-              "src/externalPackages/src/opentelemetry-dotnet/examples/**",
-              "src/externalPackages/src/opentelemetry-dotnet/test/**",
-
-              // Don't include any parts of opentelemetry-dotnet-contrib that we don't use.
-              "src/externalPackages/src/opentelemetry-dotnet-contrib/.github/**",
-              "src/externalPackages/src/opentelemetry-dotnet-contrib/.vscode/**",
-              "src/externalPackages/src/opentelemetry-dotnet-contrib/examples/**",
-              "src/externalPackages/src/opentelemetry-dotnet-contrib/test/**"
-            ]
-        },
-        {
-            "name": "sourcelink",
-            "defaultRemote": "https://github.com/dotnet/sourcelink"
-        },
-        {
-            "name": "symreader",
-            "defaultRemote": "https://github.com/dotnet/symreader"
-        },
-        {
-            "name": "vstest",
-            "defaultRemote": "https://github.com/microsoft/vstest",
-            "exclude": [
-                // Non-OSS license used in VS specific build configurations.
-                // Non-OSS license - https://github.com/dotnet/source-build/issues/4255
-                "src/package/licenses/LICENSE_VS.txt",
-                "test/Microsoft.TestPlatform.CoreUtilities.UnitTests/TestAssets/dotnetWinX86.exe"
-            ]
-        },
-        {
-            "name": "xdt",
-            "defaultRemote": "https://github.com/dotnet/xdt"
-        },
-        {
-            "name": "winforms",
-            "defaultRemote": "https://github.com/dotnet/winforms",
-            "exclude": [
-                // Non-OSS license - https://github.com/dotnet/source-build/issues/3772
-                "src/test/integration/DesignSurface/**/*.cs",
-                "src/test/integration/DesignSurface/**/*.ico",
-                "src/test/integration/DesignSurface/**/*.resx",
-                "src/test/integration/DesignSurface/THIRD-PARTY-NOTICE.txt"
-            ]
-        },
-        {
-            "name": "wpf",
-            "defaultRemote": "https://github.com/dotnet/wpf"
-        },
-        {
-            "name": "windowsdesktop",
-            "defaultRemote": "https://github.com/dotnet/windowsdesktop"
-        }
-    ]
+    {
+      "name": "aspnetcore",
+      "defaultRemote": "https://github.com/dotnet/aspnetcore"
+    },
+    {
+      "name": "cecil",
+      "defaultRemote": "https://github.com/dotnet/cecil"
+    },
+    {
+      "name": "command-line-api",
+      "defaultRemote": "https://github.com/dotnet/command-line-api"
+    },
+    {
+      "name": "deployment-tools",
+      "defaultRemote": "https://github.com/dotnet/deployment-tools"
+    },
+    {
+      "name": "diagnostics",
+      "defaultRemote": "https://github.com/dotnet/diagnostics"
+    },
+    {
+      "name": "efcore",
+      "defaultRemote": "https://github.com/dotnet/efcore"
+    },
+    {
+      "name": "emsdk",
+      "defaultRemote": "https://github.com/dotnet/emsdk"
+    },
+    {
+      "name": "fsharp",
+      "defaultRemote": "https://github.com/dotnet/fsharp"
+    },
+    {
+      "name": "msbuild",
+      "defaultRemote": "https://github.com/dotnet/msbuild"
+    },
+    {
+      "name": "nuget-client",
+      "defaultRemote": "https://github.com/NuGet/NuGet.Client",
+      "defaultRef": "dev"
+    },
+    {
+      "name": "roslyn",
+      "defaultRemote": "https://github.com/dotnet/roslyn",
+      "exclude": [
+        "src/Compilers/Test/Resources/Core/MetadataTests/Invalid/Obfuscated*.dll"
+      ]
+    },
+    {
+      "name": "runtime",
+      "defaultRemote": "https://github.com/dotnet/runtime"
+    },
+    {
+      "name": "scenario-tests",
+      "defaultRemote": "https://github.com/dotnet/scenario-tests"
+    },
+    {
+      "name": "sdk",
+      "defaultRemote": "https://github.com/dotnet/sdk"
+    },
+    {
+      "name": "source-build-assets",
+      "defaultRemote": "https://github.com/dotnet/source-build-assets",
+      "exclude": [
+        "src/externalPackages/src/spectre-console/docs/**/*",
+        "src/externalPackages/src/**/*.pfx",
+        "src/externalPackages/src/MSBuildLocator/**/*.pfx",
+        "src/externalPackages/src/antlr4/**/*.pfx",
+        "src/externalPackages/src/application-insights/**/*.pfx",
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/**/*.pfx",
+        "src/externalPackages/src/cssparser/**/*.pfx",
+        "src/externalPackages/src/docker-creds-provider/**/*.pfx",
+        "src/externalPackages/src/humanizer/**/*.pfx",
+        "src/externalPackages/src/newtonsoft-json/**/*.pfx",
+        "src/externalPackages/src/spectre-console/**/*.pfx",
+        "src/externalPackages/src/vs-solutionpersistence/**/*.pfx",
+        "src/externalPackages/src/antlr4/.github/**",
+        "src/externalPackages/src/antlr4/Package.swift",
+        "src/externalPackages/src/antlr4/antlr4-maven-plugin/**",
+        "src/externalPackages/src/antlr4/doc/**",
+        "src/externalPackages/src/antlr4/docker/**",
+        "src/externalPackages/src/antlr4/pom.xml",
+        "src/externalPackages/src/antlr4/runtime-testsuite/**",
+        "src/externalPackages/src/antlr4/scripts/**",
+        "src/externalPackages/src/antlr4/tool-testsuite/**",
+        "src/externalPackages/src/antlr4/tool/**",
+        "src/externalPackages/src/antlr4/runtime/CSharp/tests/**",
+        "src/externalPackages/src/antlr4/runtime/Cpp/**",
+        "src/externalPackages/src/antlr4/runtime/Dart/**",
+        "src/externalPackages/src/antlr4/runtime/Go/**",
+        "src/externalPackages/src/antlr4/runtime/Java/**",
+        "src/externalPackages/src/antlr4/runtime/JavaScript/**",
+        "src/externalPackages/src/antlr4/runtime/Python3/**",
+        "src/externalPackages/src/antlr4/runtime/Swift/**",
+        "src/externalPackages/src/opentelemetry-dotnet/.github/**",
+        "src/externalPackages/src/opentelemetry-dotnet/.vscode/**",
+        "src/externalPackages/src/opentelemetry-dotnet/docs/**",
+        "src/externalPackages/src/opentelemetry-dotnet/examples/**",
+        "src/externalPackages/src/opentelemetry-dotnet/test/**",
+        "src/externalPackages/src/opentelemetry-dotnet-contrib/.github/**",
+        "src/externalPackages/src/opentelemetry-dotnet-contrib/.vscode/**",
+        "src/externalPackages/src/opentelemetry-dotnet-contrib/examples/**",
+        "src/externalPackages/src/opentelemetry-dotnet-contrib/test/**"
+      ]
+    },
+    {
+      "name": "sourcelink",
+      "defaultRemote": "https://github.com/dotnet/sourcelink"
+    },
+    {
+      "name": "symreader",
+      "defaultRemote": "https://github.com/dotnet/symreader"
+    },
+    {
+      "name": "vstest",
+      "defaultRemote": "https://github.com/microsoft/vstest",
+      "exclude": [
+        "src/package/licenses/LICENSE_VS.txt",
+        "test/Microsoft.TestPlatform.CoreUtilities.UnitTests/TestAssets/dotnetWinX86.exe"
+      ]
+    },
+    {
+      "name": "xdt",
+      "defaultRemote": "https://github.com/dotnet/xdt"
+    },
+    {
+      "name": "winforms",
+      "defaultRemote": "https://github.com/dotnet/winforms",
+      "exclude": [
+        "src/test/integration/DesignSurface/**/*.cs",
+        "src/test/integration/DesignSurface/**/*.ico",
+        "src/test/integration/DesignSurface/**/*.resx",
+        "src/test/integration/DesignSurface/THIRD-PARTY-NOTICE.txt"
+      ]
+    },
+    {
+      "name": "wpf",
+      "defaultRemote": "https://github.com/dotnet/wpf"
+    },
+    {
+      "name": "windowsdesktop",
+      "defaultRemote": "https://github.com/dotnet/windowsdesktop"
+    }
+  ]
 }

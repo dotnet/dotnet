@@ -12,15 +12,6 @@ namespace Utilities;
 internal static class SlnTestHelper
 {
     /// <summary>
-    /// We do not support mono, but xunit testing tries to run the .NET Framework tests on mono when running on Linux/Mac.
-    /// </summary>
-#if NETFRAMEWORK
-    internal static bool IsMono = Environment.OSVersion.Platform != PlatformID.Win32NT;
-#else
-    internal static bool IsMono = false;
-#endif
-
-    /// <summary>
     /// Converts the model to it's file contents using the specified serializer.
     /// </summary>
     internal static async Task<FileContents> ToLinesAsync<T>(this SolutionModel model, ISolutionSingleFileSerializer<T> serializer, int bufferSize = 1024 * 1024)

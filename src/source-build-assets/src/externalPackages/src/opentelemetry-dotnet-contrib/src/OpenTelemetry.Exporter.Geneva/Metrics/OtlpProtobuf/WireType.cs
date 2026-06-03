@@ -29,7 +29,7 @@ internal enum WireType : uint
 
     /// <summary>
     /// Group Start value.
-    /// (Deperecated).
+    /// (Deprecated).
     /// </summary>
     SGROUP = 3,
 

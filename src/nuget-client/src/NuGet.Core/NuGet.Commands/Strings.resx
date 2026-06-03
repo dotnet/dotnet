@@ -167,6 +167,11 @@
   <data name="Log_ImportsFallbackWarning" xml:space="preserve">
     <value>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</value>
   </data>
+  <data name="Warning_MonoAndroidFrameworkDeprecated" xml:space="preserve">
+    <value>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</value>
+    <comment>{0} - package id
+{1} - package version</comment>
+  </data>
   <data name="Log_CycleDetected" xml:space="preserve">
     <value>Cycle detected.</value>
   </data>
@@ -592,6 +597,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   </data>
   <data name="Error_RestoreInLockedMode" xml:space="preserve">
     <value>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file.</value>
+  </data>
+  <data name="Error_ReadingProjectInformation" xml:space="preserve">
+    <value>Unable to read project information for '{0}': {1}</value>
+    <comment>{0} - project name; {1} - error details</comment>
   </data>
   <data name="Error_PackageValidationFailed" xml:space="preserve">
     <value>Package content hash validation failed for {0}. The package is different than the last restore.</value>
@@ -1150,7 +1159,7 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
     <comment>0 - package id and version, 1 - version</comment>
   </data>
   <data name="Error_RestorePruningDirectPackageReference" xml:space="preserve">
-    <value>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</value>
+    <value>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</value>
     <comment>0 - package id and version</comment>
   </data>
   <data name="Error_RestorePruningProjectReference" xml:space="preserve">

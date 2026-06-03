@@ -234,11 +234,14 @@ namespace Microsoft.DotNet.Helix.Sdk
                 {
                     "System.JobId",
                     "System.JobName",
+                    "System.JobDisplayName",
                     "System.JobAttempt",
                     "System.PhaseName",
+                    "System.PhaseDisplayName",
                     "System.PhaseAttempt",
                     "System.PullRequest.TargetBranch",
                     "System.StageName",
+                    "System.StageDisplayName",
                     "System.StageAttempt",
                 };
                 foreach (var name in variablesToCopy)

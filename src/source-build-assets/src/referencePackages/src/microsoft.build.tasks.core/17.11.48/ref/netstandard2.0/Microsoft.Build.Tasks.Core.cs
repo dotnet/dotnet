@@ -30,16 +30,12 @@ namespace Microsoft.Build.Tasks
     {
         public AddToWin32Manifest() { }
         public Framework.ITaskItem? ApplicationManifest { get { throw null; } set { } }
-
         [Framework.Output]
         public string ManifestPath { get { throw null; } }
-
         [Framework.Required]
         public string OutputDirectory { get { throw null; } set { } }
-
         [Framework.Required]
         public string SupportedArchitectures { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -63,7 +59,6 @@ namespace Microsoft.Build.Tasks
         public string KeyFile { get { throw null; } set { } }
         public Framework.ITaskItem[] LinkResources { get { throw null; } set { } }
         public string MainEntryPoint { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputAssembly { get { throw null; } set { } }
         public string Platform { get { throw null; } set { } }
@@ -106,20 +101,15 @@ namespace Microsoft.Build.Tasks
         public AssignCulture() { }
         [Framework.Output]
         public Framework.ITaskItem[] AssignedFiles { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] AssignedFilesWithCulture { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] AssignedFilesWithNoCulture { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] CultureNeutralAssignedFiles { get { throw null; } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
         public bool RespectAlreadyAssignedItemCulture { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -127,17 +117,14 @@ namespace Microsoft.Build.Tasks
     {
         public AssignLinkMetadata() { }
         public Framework.ITaskItem[] Items { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] OutputItems { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
     public partial class AssignProjectConfiguration : ResolveProjectBase
     {
         public bool AddSyntheticProjectReferencesForSolutionDependencies { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] AssignedProjects { get { throw null; } set { } }
         public string CurrentProject { get { throw null; } set { } }
@@ -149,11 +136,9 @@ namespace Microsoft.Build.Tasks
         public bool ResolveConfigurationPlatformUsingMappings { get { throw null; } set { } }
         public bool ShouldUnsetParentConfigurationAndPlatform { get { throw null; } set { } }
         public string SolutionConfigurationContents { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] UnassignedProjects { get { throw null; } set { } }
         public string VcxToDefaultPlatformMapping { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -163,10 +148,8 @@ namespace Microsoft.Build.Tasks
         [Framework.Output]
         public Framework.ITaskItem[] AssignedFiles { get { throw null; } }
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
-
         [Framework.Required]
         public string RootFolder { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -175,12 +158,10 @@ namespace Microsoft.Build.Tasks
     {
         public CallTarget() { }
         public bool RunEachTargetSeparately { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] TargetOutputs { get { throw null; } }
         public string[] Targets { get { throw null; } set { } }
         public bool UseResultsCache { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -189,7 +170,6 @@ namespace Microsoft.Build.Tasks
     {
         public string FactoryName { get { throw null; } }
         public System.Type TaskType { get { throw null; } }
-
         public void CleanupTask(Framework.ITask task) { }
         public Framework.ITask CreateTask(Framework.IBuildEngine taskFactoryLoggingHost) { throw null; }
         public Framework.TaskPropertyInfo[] GetTaskParameters() { throw null; }
@@ -200,13 +180,10 @@ namespace Microsoft.Build.Tasks
     {
         public CombinePath() { }
         public string BasePath { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] CombinedPaths { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Paths { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -214,12 +191,10 @@ namespace Microsoft.Build.Tasks
     {
         public CombineTargetFrameworkInfoProperties() { }
         public Framework.ITaskItem[] PropertiesAndValues { get { throw null; } set { } }
-
         [Framework.Output]
         public string Result { get { throw null; } set { } }
         public string RootElementName { get { throw null; } set { } }
         public bool UseAttributeForTargetFrameworkInfoPropertyNames { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -230,7 +205,6 @@ namespace Microsoft.Build.Tasks
         public string Result { get { throw null; } set { } }
         public string RootElementName { get { throw null; } set { } }
         public Framework.ITaskItem[] XmlElements { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -246,10 +220,8 @@ namespace Microsoft.Build.Tasks
         public ConvertToAbsolutePath() { }
         [Framework.Output]
         public Framework.ITaskItem[] AbsolutePaths { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Paths { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -258,7 +230,6 @@ namespace Microsoft.Build.Tasks
         public Copy() { }
         [Framework.Output]
         public Framework.ITaskItem[] CopiedFiles { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] DestinationFiles { get { throw null; } set { } }
         public Framework.ITaskItem DestinationFolder { get { throw null; } set { } }
@@ -272,10 +243,8 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem[] SourceFolders { get { throw null; } set { } }
         public bool UseHardlinksIfPossible { get { throw null; } set { } }
         public bool UseSymboliclinksIfPossible { get { throw null; } set { } }
-
         [Framework.Output]
         public bool WroteAtLeastOneFile { get { throw null; } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -283,7 +252,6 @@ namespace Microsoft.Build.Tasks
     public partial class CreateCSharpManifestResourceName : CreateManifestResourceName
     {
         protected override string SourceFileExtension { get { throw null; } }
-
         protected override string CreateManifestName(string fileName, string linkFileName, string rootNamespace, string dependentUponFileName, System.IO.Stream binaryStream) { throw null; }
         protected override bool IsSourceFile(string fileName) { throw null; }
     }
@@ -293,11 +261,9 @@ namespace Microsoft.Build.Tasks
         public CreateItem() { }
         public string[] AdditionalMetadata { get { throw null; } set { } }
         public Framework.ITaskItem[] Exclude { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] Include { get { throw null; } set { } }
         public bool PreserveExistingMetadata { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -308,16 +274,13 @@ namespace Microsoft.Build.Tasks
         [Framework.Output]
         public Framework.ITaskItem[] ManifestResourceNames { get { throw null; } }
         public bool PrependCultureAsDirectory { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] ResourceFiles { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResourceFilesWithManifestResourceNames { get { throw null; } set { } }
         public string RootNamespace { get { throw null; } set { } }
         protected abstract string SourceFileExtension { get; }
         public bool UseDependentUponConvention { get { throw null; } set { } }
-
         protected abstract string CreateManifestName(string fileName, string linkFileName, string rootNamespaceName, string dependentUponFileName, System.IO.Stream binaryStream);
         public override bool Execute() { throw null; }
         protected abstract bool IsSourceFile(string fileName);
@@ -329,17 +292,14 @@ namespace Microsoft.Build.Tasks
         public CreateProperty() { }
         [Framework.Output]
         public string[] Value { get { throw null; } set { } }
-
         [Framework.Output]
         public string[] ValueSetByTask { get { throw null; } }
-
         public override bool Execute() { throw null; }
     }
 
     public partial class CreateVisualBasicManifestResourceName : CreateManifestResourceName
     {
         protected override string SourceFileExtension { get { throw null; } }
-
         protected override string CreateManifestName(string fileName, string linkFileName, string rootNamespace, string dependentUponFileName, System.IO.Stream binaryStream) { throw null; }
         protected override bool IsSourceFile(string fileName) { throw null; }
     }
@@ -350,13 +310,11 @@ namespace Microsoft.Build.Tasks
         [Framework.Output]
         public Framework.ITaskItem[] DeletedFiles { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
         public int Retries { get { throw null; } set { } }
         public int RetryDelayMilliseconds { get { throw null; } set { } }
         public bool TreatErrorsAsWarnings { get { throw null; } set { } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -365,21 +323,17 @@ namespace Microsoft.Build.Tasks
     {
         public DownloadFile() { }
         public Framework.ITaskItem DestinationFileName { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem DestinationFolder { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem DownloadedFile { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
         public int Retries { get { throw null; } set { } }
         public int RetryDelayMilliseconds { get { throw null; } set { } }
         public bool SkipUnchangedFiles { get { throw null; } set { } }
-
         [Framework.Required]
         public string SourceUrl { get { throw null; } set { } }
         public int Timeout { get { throw null; } set { } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -392,7 +346,6 @@ namespace Microsoft.Build.Tasks
         public string HelpKeyword { get { throw null; } set { } }
         public string HelpLink { get { throw null; } set { } }
         public string Text { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -403,10 +356,8 @@ namespace Microsoft.Build.Tasks
         public string Code { get { throw null; } set { } }
         public string File { get { throw null; } set { } }
         public string HelpKeyword { get { throw null; } set { } }
-
         [Framework.Required]
         public string Resource { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -415,7 +366,6 @@ namespace Microsoft.Build.Tasks
         public Exec() { }
         [Framework.Required]
         public string Command { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ConsoleOutput { get { throw null; } }
         public bool ConsoleToMSBuild { get { throw null; } set { } }
@@ -423,22 +373,18 @@ namespace Microsoft.Build.Tasks
         public string CustomWarningRegularExpression { get { throw null; } set { } }
         public bool IgnoreExitCode { get { throw null; } set { } }
         public bool IgnoreStandardErrorWarningFormat { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] Outputs { get { throw null; } set { } }
         protected override System.Text.Encoding StandardErrorEncoding { get { throw null; } }
         protected override Framework.MessageImportance StandardErrorLoggingImportance { get { throw null; } }
         protected override System.Text.Encoding StandardOutputEncoding { get { throw null; } }
         protected override Framework.MessageImportance StandardOutputLoggingImportance { get { throw null; } }
-
         [Framework.Output]
         public string StdErrEncoding { get { throw null; } set { } }
-
         [Framework.Output]
         public string StdOutEncoding { get { throw null; } set { } }
         protected override string ToolName { get { throw null; } }
         public string WorkingDirectory { get { throw null; } set { } }
-
         protected internal override void AddCommandLineCommands(CommandLineBuilderExtension commandLine) { }
         protected override int ExecuteTool(string pathToTool, string responseFileCommands, string commandLineCommands) { throw null; }
         protected override string GenerateFullPathToTool() { throw null; }
@@ -463,16 +409,12 @@ namespace Microsoft.Build.Tasks
         public FindAppConfigFile() { }
         [Framework.Output]
         public Framework.ITaskItem AppConfigFile { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] PrimaryList { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] SecondaryList { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPath { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -481,17 +423,13 @@ namespace Microsoft.Build.Tasks
         public FindInList() { }
         public bool CaseSensitive { get { throw null; } set { } }
         public bool FindLastMatch { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem ItemFound { get { throw null; } set { } }
-
         [Framework.Required]
         public string ItemSpecToFind { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] List { get { throw null; } set { } }
         public bool MatchFileNameOnly { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -501,13 +439,10 @@ namespace Microsoft.Build.Tasks
         [Framework.Output]
         public Framework.ITaskItem[] InvalidReferences { get { throw null; } }
         public Framework.ITaskItem[] ProjectReferences { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPlatformIdentifier { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPlatformVersion { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -515,17 +450,13 @@ namespace Microsoft.Build.Tasks
     {
         public FindUnderPath() { }
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] InPath { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] OutOfPath { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem Path { get { throw null; } set { } }
         public bool UpdateToAbsolutePaths { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -533,10 +464,8 @@ namespace Microsoft.Build.Tasks
     {
         public FormatUrl() { }
         public string InputUrl { get { throw null; } set { } }
-
         [Framework.Output]
         public string OutputUrl { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -544,12 +473,10 @@ namespace Microsoft.Build.Tasks
     {
         public FormatVersion() { }
         public string FormatType { get { throw null; } set { } }
-
         [Framework.Output]
         public string OutputVersion { get { throw null; } set { } }
         public int Revision { get { throw null; } set { } }
         public string Version { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -575,7 +502,6 @@ namespace Microsoft.Build.Tasks
         public string TargetFrameworkSubset { get { throw null; } set { } }
         public Framework.ITaskItem TrustInfoFile { get { throw null; } set { } }
         public bool UseApplicationTrust { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
         protected override System.Type GetObjectType() { throw null; }
         protected override bool OnManifestLoaded(Deployment.ManifestUtilities.Manifest manifest) { throw null; }
@@ -587,12 +513,10 @@ namespace Microsoft.Build.Tasks
     {
         public GenerateBindingRedirects() { }
         public Framework.ITaskItem AppConfigFile { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputAppConfigFile { get { throw null; } set { } }
         public Framework.ITaskItem[] SuggestedRedirects { get { throw null; } set { } }
         public string TargetName { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -603,11 +527,9 @@ namespace Microsoft.Build.Tasks
         public string ApplicationName { get { throw null; } set { } }
         public bool ApplicationRequiresElevation { get { throw null; } set { } }
         public string ApplicationUrl { get { throw null; } set { } }
-
         [Framework.Output]
         public string[] BootstrapperComponentFiles { get { throw null; } set { } }
         public Framework.ITaskItem[] BootstrapperItems { get { throw null; } set { } }
-
         [Framework.Output]
         public string BootstrapperKeyFile { get { throw null; } set { } }
         public string ComponentsLocation { get { throw null; } set { } }
@@ -640,7 +562,6 @@ namespace Microsoft.Build.Tasks
         public int UpdateInterval { get { throw null; } set { } }
         public string UpdateMode { get { throw null; } set { } }
         public string UpdateUnit { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
         protected override System.Type GetObjectType() { throw null; }
         protected override bool OnManifestLoaded(Deployment.ManifestUtilities.Manifest manifest) { throw null; }
@@ -654,12 +575,10 @@ namespace Microsoft.Build.Tasks
         public string AssemblyName { get { throw null; } set { } }
         public Framework.ITaskItem EntryPoint { get { throw null; } set { } }
         public string LauncherPath { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputEntryPoint { get { throw null; } set { } }
         public string OutputPath { get { throw null; } set { } }
         public string VisualStudioVersion { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -672,14 +591,12 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem InputManifest { get { throw null; } set { } }
         public bool LauncherBasedDeployment { get { throw null; } set { } }
         public int MaxTargetPath { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputManifest { get { throw null; } set { } }
         public string Platform { get { throw null; } set { } }
         public string TargetCulture { get { throw null; } set { } }
         public string TargetFrameworkMoniker { get { throw null; } set { } }
         public string TargetFrameworkVersion { get { throw null; } set { } }
-
         protected internal Deployment.ManifestUtilities.AssemblyReference AddAssemblyFromItem(Framework.ITaskItem item) { throw null; }
         protected internal Deployment.ManifestUtilities.AssemblyReference AddAssemblyNameFromItem(Framework.ITaskItem item, Deployment.ManifestUtilities.AssemblyReferenceType referenceType) { throw null; }
         protected internal Deployment.ManifestUtilities.AssemblyReference AddEntryPointFromItem(Framework.ITaskItem item, Deployment.ManifestUtilities.AssemblyReferenceType referenceType) { throw null; }
@@ -703,27 +620,22 @@ namespace Microsoft.Build.Tasks
         public bool ExecuteAsTool { get { throw null; } set { } }
         public bool ExtractResWFiles { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] FilesWritten { get { throw null; } }
         public bool MinimalRebuildFromTracking { get { throw null; } set { } }
         public bool NeverLockTypeAssemblies { get { throw null; } set { } }
         public string OutputDirectory { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] OutputResources { get { throw null; } set { } }
         public bool PublicClass { get { throw null; } set { } }
         public Framework.ITaskItem[] References { get { throw null; } set { } }
         public string SdkToolsPath { get { throw null; } set { } }
-
         [Framework.Required]
         [Framework.Output]
         public Framework.ITaskItem[] Sources { get { throw null; } set { } }
         public Framework.ITaskItem StateFile { get { throw null; } set { } }
-
         [Framework.Output]
         public string StronglyTypedClassName { get { throw null; } set { } }
-
         [Framework.Output]
         public string StronglyTypedFileName { get { throw null; } set { } }
         public string StronglyTypedLanguage { get { throw null; } set { } }
@@ -739,7 +651,6 @@ namespace Microsoft.Build.Tasks
         public bool UsePreserializedResources { get { throw null; } set { } }
         public bool UseSourcePath { get { throw null; } set { } }
         public bool WarnOnBinaryFormatterUse { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -751,7 +662,6 @@ namespace Microsoft.Build.Tasks
         public string ExcludedPermissions { get { throw null; } set { } }
         public string TargetFrameworkMoniker { get { throw null; } set { } }
         public string TargetZone { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem TrustInfoFile { get { throw null; } set { } }
     }
@@ -761,10 +671,8 @@ namespace Microsoft.Build.Tasks
         public GetAssemblyIdentity() { }
         [Framework.Output]
         public Framework.ITaskItem[] Assemblies { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] AssemblyFiles { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -773,14 +681,11 @@ namespace Microsoft.Build.Tasks
         public GetCompatiblePlatform() { }
         [Framework.Required]
         public Framework.ITaskItem[] AnnotatedProjects { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[]? AssignedProjectsWithPlatform { get { throw null; } set { } }
-
         [Framework.Required]
         public string CurrentProjectPlatform { get { throw null; } set { } }
         public string PlatformLookupTable { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -788,18 +693,14 @@ namespace Microsoft.Build.Tasks
     {
         public GetFileHash() { }
         public string Algorithm { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
-
         [Framework.Output]
         public string Hash { get { throw null; } set { } }
         public string HashEncoding { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] Items { get { throw null; } set { } }
         public string MetadataName { get { throw null; } set { } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -809,52 +710,36 @@ namespace Microsoft.Build.Tasks
         public GetFrameworkPath() { }
         [Framework.Output]
         public string FrameworkVersion11Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion20Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion30Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion35Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion40Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion451Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion452Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion45Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion461Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion462Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion46Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion471Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion472Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion47Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkVersion48Path { get { throw null; } }
-
         [Framework.Output]
         public string Path { get { throw null; } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -863,25 +748,18 @@ namespace Microsoft.Build.Tasks
         public GetFrameworkSdkPath() { }
         [Framework.Output]
         public string FrameworkSdkVersion20Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkSdkVersion35Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkSdkVersion40Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkSdkVersion451Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkSdkVersion45Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkSdkVersion461Path { get { throw null; } }
-
         [Framework.Output]
         public string FrameworkSdkVersion46Path { get { throw null; } }
-
         [Framework.Output]
         public string Path { get { throw null; } set { } }
     }
@@ -894,14 +772,11 @@ namespace Microsoft.Build.Tasks
         public string[] SDKDirectoryRoots { get { throw null; } set { } }
         public string[] SDKExtensionDirectoryRoots { get { throw null; } set { } }
         public string SDKRegistryRoot { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPlatformIdentifier { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPlatformVersion { get { throw null; } set { } }
         public bool WarnWhenNoSDKsFound { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -909,20 +784,16 @@ namespace Microsoft.Build.Tasks
     {
         public GetReferenceAssemblyPaths() { }
         public bool BypassFrameworkInstallChecks { get { throw null; } set { } }
-
         [Framework.Output]
         public string[] FullFrameworkReferenceAssemblyPaths { get { throw null; } }
-
         [Framework.Output]
         public string[] ReferenceAssemblyPaths { get { throw null; } }
         public string RootPath { get { throw null; } set { } }
         public bool SuppressNotFoundError { get { throw null; } set { } }
         public string TargetFrameworkFallbackSearchPaths { get { throw null; } set { } }
         public string TargetFrameworkMoniker { get { throw null; } set { } }
-
         [Framework.Output]
         public string TargetFrameworkMonikerDisplayName { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -930,7 +801,6 @@ namespace Microsoft.Build.Tasks
     {
         public GetSDKReferenceFiles() { }
         public string CacheFileFolderPath { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] CopyLocalFiles { get { throw null; } }
         public bool LogCacheFileExceptions { get { throw null; } set { } }
@@ -940,11 +810,9 @@ namespace Microsoft.Build.Tasks
         public bool LogReferenceConflictBetweenSDKsAsWarning { get { throw null; } set { } }
         public bool LogReferenceConflictWithinSDKAsWarning { get { throw null; } set { } }
         public bool LogReferencesList { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] RedistFiles { get { throw null; } }
         public string[] ReferenceExtensions { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] References { get { throw null; } }
         public Framework.ITaskItem[] ResolvedSDKReferences { get { throw null; } set { } }
@@ -952,7 +820,6 @@ namespace Microsoft.Build.Tasks
         public string TargetPlatformVersion { get { throw null; } set { } }
         public string TargetSDKIdentifier { get { throw null; } set { } }
         public string TargetSDKVersion { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -962,10 +829,8 @@ namespace Microsoft.Build.Tasks
         [Framework.Output]
         public string HashResult { get { throw null; } set { } }
         public bool IgnoreCase { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] ItemsToHash { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -995,9 +860,7 @@ namespace Microsoft.Build.Tasks
     public partial interface IUnregisterAssemblyTaskContract
     {
         Framework.ITaskItem[] Assemblies { get; set; }
-
         Framework.ITaskItem AssemblyListFile { get; set; }
-
         Framework.ITaskItem[] TypeLibFiles { get; set; }
     }
 
@@ -1008,19 +871,15 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem LicenseTarget { get { throw null; } set { } }
         public bool NoLogo { get { throw null; } set { } }
         public string OutputDirectory { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputLicense { get { throw null; } set { } }
         public Framework.ITaskItem[] ReferencedAssemblies { get { throw null; } set { } }
         public string SdkToolsPath { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Sources { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetFrameworkVersion { get { throw null; } set { } }
         protected override string ToolName { get { throw null; } }
-
         protected internal override void AddCommandLineCommands(CommandLineBuilderExtension commandLine) { }
         protected internal override void AddResponseFileCommands(CommandLineBuilderExtension commandLine) { }
         public override bool Execute() { throw null; }
@@ -1033,11 +892,9 @@ namespace Microsoft.Build.Tasks
         public MakeDir() { }
         [Framework.Required]
         public Framework.ITaskItem[] Directories { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] DirectoriesCreated { get { throw null; } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1050,7 +907,6 @@ namespace Microsoft.Build.Tasks
         public string Importance { get { throw null; } set { } }
         public bool IsCritical { get { throw null; } set { } }
         public string Text { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1061,14 +917,11 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem[] DestinationFiles { get { throw null; } set { } }
         public Framework.ITaskItem DestinationFolder { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] MovedFiles { get { throw null; } }
         public bool OverwriteReadOnlyFiles { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] SourceFiles { get { throw null; } set { } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -1078,7 +931,6 @@ namespace Microsoft.Build.Tasks
     {
         public MSBuild() { }
         public bool BuildInParallel { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Projects { get { throw null; } set { } }
         public string[] Properties { get { throw null; } set { } }
@@ -1088,14 +940,12 @@ namespace Microsoft.Build.Tasks
         public string SkipNonexistentProjects { get { throw null; } set { } }
         public bool StopOnFirstFailure { get { throw null; } set { } }
         public string[] TargetAndPropertyListSeparators { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] TargetOutputs { get { throw null; } }
         public string[] Targets { get { throw null; } set { } }
         public string ToolsVersion { get { throw null; } set { } }
         public bool UnloadProjectsOnCompletion { get { throw null; } set { } }
         public bool UseResultsCache { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1104,13 +954,10 @@ namespace Microsoft.Build.Tasks
         public MSBuildInternalMessage() { }
         public string[] FormatArguments { get { throw null; } set { } }
         public string MessageImportance { get { throw null; } set { } }
-
         [Framework.Required]
         public string ResourceName { get { throw null; } set { } }
-
         [Framework.Required]
         public string Severity { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1119,10 +966,8 @@ namespace Microsoft.Build.Tasks
         public ReadLinesFromFile() { }
         [Framework.Required]
         public Framework.ITaskItem File { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] Lines { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1132,7 +977,6 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem[] Assemblies { get { throw null; } set { } }
         public Framework.ITaskItem AssemblyListFile { get { throw null; } set { } }
         public bool CreateCodeBase { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] TypeLibFiles { get { throw null; } set { } }
     }
@@ -1143,10 +987,8 @@ namespace Microsoft.Build.Tasks
         [Framework.Required]
         public Framework.ITaskItem[] Directories { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] RemovedDirectories { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1155,11 +997,9 @@ namespace Microsoft.Build.Tasks
         public RemoveDuplicates() { }
         [Framework.Output]
         public Framework.ITaskItem[] Filtered { get { throw null; } set { } }
-
         [Framework.Output]
         public bool HadAnyDuplicates { get { throw null; } set { } }
         public Framework.ITaskItem[] Inputs { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1173,13 +1013,11 @@ namespace Microsoft.Build.Tasks
         public string ErrorReportUrl { get { throw null; } set { } }
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
         public Framework.ITaskItem[] ReferencedAssemblies { get { throw null; } set { } }
-
         [Framework.Output]
         public bool RequiresMinimumFramework35SP1 { get { throw null; } set { } }
         public bool SigningManifests { get { throw null; } set { } }
         public string SuiteName { get { throw null; } set { } }
         public string TargetFrameworkVersion { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1196,18 +1034,14 @@ namespace Microsoft.Build.Tasks
         public bool AutoUnify { get { throw null; } set { } }
         public string[] CandidateAssemblyFiles { get { throw null; } set { } }
         public bool CopyLocalDependenciesWhenParentReferenceInGac { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] CopyLocalFiles { get { throw null; } }
-
         [Framework.Output]
         public string DependsOnNETStandard { get { throw null; } }
-
         [Framework.Output]
         public string DependsOnSystemRuntime { get { throw null; } }
         public bool DoNotCopyLocalIfInGac { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] FilesWritten { get { throw null; } set { } }
         public bool FindDependencies { get { throw null; } set { } }
@@ -1227,31 +1061,23 @@ namespace Microsoft.Build.Tasks
         public string[] LatestTargetFrameworkDirectories { get { throw null; } set { } }
         public bool OutputUnresolvedAssemblyConflicts { get { throw null; } set { } }
         public string ProfileName { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] RelatedFiles { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResolvedDependencyFiles { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResolvedFiles { get { throw null; } }
         public Framework.ITaskItem[] ResolvedSDKReferences { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] SatelliteFiles { get { throw null; } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ScatterFiles { get { throw null; } }
-
         [Framework.Required]
         public string[] SearchPaths { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] SerializationAssemblyFiles { get { throw null; } }
         public bool Silent { get { throw null; } set { } }
         public string StateFile { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] SuggestedRedirects { get { throw null; } }
         public bool SupportsBindingRedirectGeneration { get { throw null; } set { } }
@@ -1262,12 +1088,10 @@ namespace Microsoft.Build.Tasks
         public string[] TargetFrameworkSubsets { get { throw null; } set { } }
         public string TargetFrameworkVersion { get { throw null; } set { } }
         public string TargetProcessorArchitecture { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] UnresolvedAssemblyConflicts { get { throw null; } }
         public bool UnresolveFrameworkAssembliesFromHigherFrameworks { get { throw null; } set { } }
         public string WarnOrErrorOnTargetArchitectureMismatch { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1277,10 +1101,8 @@ namespace Microsoft.Build.Tasks
         public string CodeAnalysisRuleSet { get { throw null; } set { } }
         public string[] CodeAnalysisRuleSetDirectories { get { throw null; } set { } }
         public string MSBuildProjectDirectory { get { throw null; } set { } }
-
         [Framework.Output]
         public string ResolvedCodeAnalysisRuleSet { get { throw null; } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1295,10 +1117,8 @@ namespace Microsoft.Build.Tasks
         public string KeyFile { get { throw null; } set { } }
         public bool NoClassMembers { get { throw null; } set { } }
         public Framework.ITaskItem[] ResolvedAssemblyReferences { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResolvedFiles { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResolvedModules { get { throw null; } set { } }
         public string SdkToolsPath { get { throw null; } set { } }
@@ -1319,18 +1139,14 @@ namespace Microsoft.Build.Tasks
         public string CertificateFile { get { throw null; } set { } }
         public string CertificateThumbprint { get { throw null; } set { } }
         public string KeyFile { get { throw null; } set { } }
-
         [Framework.Output]
         public string ResolvedKeyContainer { get { throw null; } set { } }
-
         [Framework.Output]
         public string ResolvedKeyFile { get { throw null; } set { } }
-
         [Framework.Output]
         public string ResolvedThumbprint { get { throw null; } set { } }
         public bool ShowImportDialogDespitePreviousFailures { get { throw null; } set { } }
         public bool SuppressAutoClosePasswordPrompt { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1347,16 +1163,12 @@ namespace Microsoft.Build.Tasks
         public bool LauncherBasedDeployment { get { throw null; } set { } }
         public Framework.ITaskItem[] ManagedAssemblies { get { throw null; } set { } }
         public Framework.ITaskItem[] NativeAssemblies { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] OutputAssemblies { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputDeploymentManifestEntryPoint { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputEntryPoint { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] OutputFiles { get { throw null; } set { } }
         public Framework.ITaskItem[] PublishFiles { get { throw null; } set { } }
@@ -1366,7 +1178,6 @@ namespace Microsoft.Build.Tasks
         public string TargetCulture { get { throw null; } set { } }
         public string TargetFrameworkIdentifier { get { throw null; } set { } }
         public string TargetFrameworkVersion { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1374,22 +1185,16 @@ namespace Microsoft.Build.Tasks
     {
         public ResolveNativeReference() { }
         public string[] AdditionalSearchPaths { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ContainedComComponents { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ContainedLooseEtcFiles { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ContainedLooseTlbFiles { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ContainedPrerequisiteAssemblies { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ContainedTypeLibraries { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ContainingReferenceFiles { get { throw null; } set { } }
         public Framework.ITaskItem[] NativeReferences { get { throw null; } set { } }
@@ -1398,13 +1203,10 @@ namespace Microsoft.Build.Tasks
     public partial class ResolveNonMSBuildProjectOutput : ResolveProjectBase
     {
         public string PreresolvedProjectOutputs { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResolvedOutputPaths { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] UnresolvedProjectReferences { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1413,7 +1215,6 @@ namespace Microsoft.Build.Tasks
         protected ResolveProjectBase() { }
         [Framework.Required]
         public Framework.ITaskItem[] ProjectReferences { get { throw null; } set { } }
-
         protected void AddSyntheticProjectReferences(string currentProjectAbsolutePath) { }
         protected System.Xml.XmlElement GetProjectElement(Framework.ITaskItem projectRef) { throw null; }
         protected string GetProjectItem(Framework.ITaskItem projectRef) { throw null; }
@@ -1423,32 +1224,25 @@ namespace Microsoft.Build.Tasks
     {
         public ResolveSDKReference() { }
         public Framework.ITaskItem[] DisallowedSDKDependencies { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] InstalledSDKs { get { throw null; } set { } }
         public bool LogResolutionErrorsAsWarnings { get { throw null; } set { } }
         public bool Prefer32Bit { get { throw null; } set { } }
-
         [Framework.Required]
         public string ProjectName { get { throw null; } set { } }
         public Framework.ITaskItem[] References { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] ResolvedSDKReferences { get { throw null; } }
         public Framework.ITaskItem[] RuntimeReferenceOnlySDKDependencies { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] SDKReferences { get { throw null; } set { } }
         public string TargetedSDKArchitecture { get { throw null; } set { } }
         public string TargetedSDKConfiguration { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPlatformIdentifier { get { throw null; } set { } }
-
         [Framework.Required]
         public string TargetPlatformVersion { get { throw null; } set { } }
         public bool WarnOnMissingPlatformVersion { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1456,7 +1250,6 @@ namespace Microsoft.Build.Tasks
     {
         public string FactoryName { get { throw null; } }
         public System.Type TaskType { get { throw null; } }
-
         public void CleanupTask(Framework.ITask task) { }
         public Framework.ITask CreateTask(Framework.IBuildEngine taskFactoryLoggingHost) { throw null; }
         public Framework.TaskPropertyInfo[] GetTaskParameters() { throw null; }
@@ -1467,10 +1260,8 @@ namespace Microsoft.Build.Tasks
     {
         public SetRidAgnosticValueForProjects() { }
         public Framework.ITaskItem[] Projects { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] UpdatedProjects { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1479,7 +1270,6 @@ namespace Microsoft.Build.Tasks
         public SGen() { }
         [Framework.Required]
         public string BuildAssemblyName { get { throw null; } set { } }
-
         [Framework.Required]
         public string BuildAssemblyPath { get { throw null; } set { } }
         public bool DelaySign { get { throw null; } set { } }
@@ -1488,20 +1278,16 @@ namespace Microsoft.Build.Tasks
         public string Platform { get { throw null; } set { } }
         public string[] References { get { throw null; } set { } }
         public string SdkToolsPath { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] SerializationAssembly { get { throw null; } set { } }
         public string SerializationAssemblyName { get { throw null; } }
-
         [Framework.Required]
         public bool ShouldGenerateSerializer { get { throw null; } set { } }
         protected override string ToolName { get { throw null; } }
         public string[] Types { get { throw null; } set { } }
         public bool UseKeep { get { throw null; } set { } }
-
         [Framework.Required]
         public bool UseProxyTypes { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
         protected override string GenerateFullPathToTool() { throw null; }
     }
@@ -1511,13 +1297,11 @@ namespace Microsoft.Build.Tasks
         [Framework.Required]
         public string CertificateThumbprint { get { throw null; } set { } }
         public bool DisallowMansignTimestampFallback { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem SigningTarget { get { throw null; } set { } }
         public string TargetFrameworkIdentifier { get { throw null; } set { } }
         public string TargetFrameworkVersion { get { throw null; } set { } }
         public string TimestampUrl { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1531,7 +1315,6 @@ namespace Microsoft.Build.Tasks
     {
         public TaskLoggingHelperExtension(Framework.ITask taskInstance, System.Resources.ResourceManager primaryResources, System.Resources.ResourceManager sharedResources, string helpKeywordPrefix) : base(default!) { }
         public System.Resources.ResourceManager TaskSharedResources { get { throw null; } set { } }
-
         public override string FormatResourceString(string resourceName, params object[] args) { throw null; }
     }
 
@@ -1545,10 +1328,8 @@ namespace Microsoft.Build.Tasks
     {
         public Telemetry() { }
         public string EventData { get { throw null; } set { } }
-
         [Framework.Required]
         public string EventName { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1559,7 +1340,6 @@ namespace Microsoft.Build.Tasks
         protected override bool HasLoggedErrors { get { throw null; } }
         public Utilities.TaskLoggingHelper Log { get { throw null; } }
         protected virtual bool UseNewLineSeparatorInResponseFile { get { throw null; } }
-
         protected internal virtual void AddCommandLineCommands(CommandLineBuilderExtension commandLine) { }
         protected internal virtual void AddResponseFileCommands(CommandLineBuilderExtension commandLine) { }
         protected override string GenerateCommandLineCommands() { throw null; }
@@ -1573,16 +1353,13 @@ namespace Microsoft.Build.Tasks
         public Touch() { }
         public bool AlwaysCreate { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] Files { get { throw null; } set { } }
         public bool ForceTouch { get { throw null; } set { } }
         public string Importance { get { throw null; } set { } }
         public string Time { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] TouchedFiles { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1604,10 +1381,8 @@ namespace Microsoft.Build.Tasks
         public string Include { get { throw null; } set { } }
         public bool OverwriteReadOnlyFiles { get { throw null; } set { } }
         public bool SkipUnchangedFiles { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem[] SourceFiles { get { throw null; } set { } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -1618,7 +1393,6 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem ApplicationManifest { get { throw null; } set { } }
         public string ApplicationPath { get { throw null; } set { } }
         public Framework.ITaskItem InputManifest { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputManifest { get { throw null; } set { } }
         public string TargetFrameworkVersion { get { throw null; } set { } }
@@ -1628,14 +1402,11 @@ namespace Microsoft.Build.Tasks
     {
         public VerifyFileHash() { }
         public string Algorithm { get { throw null; } set { } }
-
         [Framework.Required]
         public string File { get { throw null; } set { } }
-
         [Framework.Required]
         public string Hash { get { throw null; } set { } }
         public string HashEncoding { get { throw null; } set { } }
-
         public void Cancel() { }
         public override bool Execute() { throw null; }
     }
@@ -1648,7 +1419,6 @@ namespace Microsoft.Build.Tasks
         public string HelpKeyword { get { throw null; } set { } }
         public string HelpLink { get { throw null; } set { } }
         public string Text { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1661,7 +1431,6 @@ namespace Microsoft.Build.Tasks
         public string InputPDBFile { get { throw null; } set { } }
         public string OutputDocumentationFile { get { throw null; } set { } }
         public string OutputPDBFile { get { throw null; } set { } }
-
         [Framework.Output]
         public string OutputWindowsMetadataFile { get { throw null; } set { } }
         public Framework.ITaskItem[] References { get { throw null; } set { } }
@@ -1675,14 +1444,11 @@ namespace Microsoft.Build.Tasks
     {
         public WriteCodeFragment() { }
         public Framework.ITaskItem[] AssemblyAttributes { get { throw null; } set { } }
-
         [Framework.Required]
         public string Language { get { throw null; } set { } }
         public Framework.ITaskItem OutputDirectory { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem OutputFile { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1693,13 +1459,11 @@ namespace Microsoft.Build.Tasks
         public bool CanBeIncremental { get { throw null; } }
         public string Encoding { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem File { get { throw null; } set { } }
         public Framework.ITaskItem[] Lines { get { throw null; } set { } }
         public bool Overwrite { get { throw null; } set { } }
         public bool WriteOnlyWhenDifferent { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1708,7 +1472,6 @@ namespace Microsoft.Build.Tasks
     {
         public string FactoryName { get { throw null; } }
         public System.Type TaskType { get { throw null; } }
-
         public void CleanupTask(Framework.ITask task) { }
         public Framework.ITask CreateTask(Framework.IBuildEngine taskFactoryLoggingHost) { throw null; }
         public Framework.TaskPropertyInfo[] GetTaskParameters() { throw null; }
@@ -1720,15 +1483,12 @@ namespace Microsoft.Build.Tasks
         public XmlPeek() { }
         public string Namespaces { get { throw null; } set { } }
         public bool ProhibitDtd { get { throw null; } set { } }
-
         [Framework.Required]
         public string Query { get { throw null; } set { } }
-
         [Framework.Output]
         public Framework.ITaskItem[] Result { get { throw null; } }
         public string XmlContent { get { throw null; } set { } }
         public Framework.ITaskItem XmlInputPath { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1736,14 +1496,11 @@ namespace Microsoft.Build.Tasks
     {
         public XmlPoke() { }
         public string Namespaces { get { throw null; } set { } }
-
         [Framework.Required]
         public string Query { get { throw null; } set { } }
         public Framework.ITaskItem Value { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem XmlInputPath { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1760,7 +1517,6 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem XslCompiledDllPath { get { throw null; } set { } }
         public string XslContent { get { throw null; } set { } }
         public Framework.ITaskItem XslInputPath { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 
@@ -1771,10 +1527,8 @@ namespace Microsoft.Build.Tasks
         public Framework.ITaskItem DestinationFile { get { throw null; } set { } }
         public bool FailIfNotIncremental { get { throw null; } set { } }
         public bool Overwrite { get { throw null; } set { } }
-
         [Framework.Required]
         public Framework.ITaskItem SourceDirectory { get { throw null; } set { } }
-
         public override bool Execute() { throw null; }
     }
 }
@@ -1787,7 +1541,6 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
         public BootstrapperBuilder(string visualStudioVersion) { }
         public string Path { get { throw null; } set { } }
         public ProductCollection Products { get { throw null; } }
-
         public BuildResults Build(BuildSettings settings) { throw null; }
         public string[] GetOutputFolders(string[] productCodes, string culture, string fallbackCulture, ComponentsLocation componentsLocation) { throw null; }
         public static string XmlToConfigurationFile(System.Xml.XmlNode input) { throw null; }
@@ -1846,10 +1599,8 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         [System.Runtime.InteropServices.DispId(1)]
         string Path { get; set; }
-
         [System.Runtime.InteropServices.DispId(4)]
         ProductCollection Products { get; }
-
         [System.Runtime.InteropServices.DispId(5)]
         BuildResults Build(BuildSettings settings);
     }
@@ -1858,13 +1609,10 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         [System.Runtime.InteropServices.DispId(4)]
         int HelpId { get; }
-
         [System.Runtime.InteropServices.DispId(3)]
         string HelpKeyword { get; }
-
         [System.Runtime.InteropServices.DispId(2)]
         string Message { get; }
-
         [System.Runtime.InteropServices.DispId(1)]
         BuildMessageSeverity Severity { get; }
     }
@@ -1873,13 +1621,10 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         [System.Runtime.InteropServices.DispId(3)]
         string[] ComponentFiles { get; }
-
         [System.Runtime.InteropServices.DispId(2)]
         string KeyFile { get; }
-
         [System.Runtime.InteropServices.DispId(4)]
         BuildMessage[] Messages { get; }
-
         [System.Runtime.InteropServices.DispId(1)]
         bool Succeeded { get; }
     }
@@ -1888,40 +1633,28 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         [System.Runtime.InteropServices.DispId(2)]
         string ApplicationFile { get; set; }
-
         [System.Runtime.InteropServices.DispId(1)]
         string ApplicationName { get; set; }
-
         [System.Runtime.InteropServices.DispId(13)]
         bool ApplicationRequiresElevation { get; set; }
-
         [System.Runtime.InteropServices.DispId(3)]
         string ApplicationUrl { get; set; }
-
         [System.Runtime.InteropServices.DispId(11)]
         ComponentsLocation ComponentsLocation { get; set; }
-
         [System.Runtime.InteropServices.DispId(4)]
         string ComponentsUrl { get; set; }
-
         [System.Runtime.InteropServices.DispId(5)]
         bool CopyComponents { get; set; }
-
         [System.Runtime.InteropServices.DispId(7)]
         int FallbackLCID { get; set; }
-
         [System.Runtime.InteropServices.DispId(6)]
         int LCID { get; set; }
-
         [System.Runtime.InteropServices.DispId(8)]
         string OutputPath { get; set; }
-
         [System.Runtime.InteropServices.DispId(9)]
         ProductBuilderCollection ProductBuilders { get; }
-
         [System.Runtime.InteropServices.DispId(12)]
         string SupportUrl { get; set; }
-
         [System.Runtime.InteropServices.DispId(10)]
         bool Validate { get; set; }
     }
@@ -1930,13 +1663,10 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         [System.Runtime.InteropServices.DispId(4)]
         ProductCollection Includes { get; }
-
         [System.Runtime.InteropServices.DispId(2)]
         string Name { get; }
-
         [System.Runtime.InteropServices.DispId(1)]
         ProductBuilder ProductBuilder { get; }
-
         [System.Runtime.InteropServices.DispId(3)]
         string ProductCode { get; }
     }
@@ -1957,7 +1687,6 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         [System.Runtime.InteropServices.DispId(1)]
         int Count { get; }
-
         [System.Runtime.InteropServices.DispId(2)]
         Product Item(int index);
         [System.Runtime.InteropServices.DispId(3)]
@@ -1989,7 +1718,6 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper
     {
         internal ProductCollection() { }
         public int Count { get { throw null; } }
-
         public System.Collections.IEnumerator GetEnumerator() { throw null; }
         public Product Item(int index) { throw null; }
         public Product Product(string productCode) { throw null; }
@@ -2004,6 +1732,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public ApplicationIdentity(string url, string deployManifestPath, string applicationManifestPath) { }
         public override string ToString() { throw null; }
     }
+
     public sealed partial class ApplicationManifest : AssemblyManifest
     {
         public ApplicationManifest() { }
@@ -2026,69 +1755,48 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public string TargetFrameworkVersion { get { throw null; } set { } }
         public TrustInfo TrustInfo { get { throw null; } set { } }
         public bool UseApplicationTrust { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlConfigFile { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlElement("EntryPointIdentity")]
         public AssemblyIdentity XmlEntryPointIdentity { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlEntryPointParameters { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlEntryPointPath { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlErrorReportUrl { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("FileAssociations")]
         public FileAssociation[] XmlFileAssociations { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlHostInBrowser { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlIconFile { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlIsClickOnceManifest { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlOSBuild { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlOSDescription { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlOSMajor { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlOSMinor { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlOSRevision { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlOSSupportUrl { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlProduct { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlPublisher { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSuiteName { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSupportUrl { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlUseApplicationTrust { get { throw null; } set { } }
-
         public override void Validate() { }
     }
 
@@ -2110,25 +1818,18 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public string PublicKeyToken { get { throw null; } set { } }
         public string Type { get { throw null; } set { } }
         public string Version { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlCulture { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlName { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlProcessorArchitecture { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlPublicKeyToken { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlType { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlVersion { get { throw null; } set { } }
-
         public static AssemblyIdentity FromAssemblyName(string assemblyName) { throw null; }
         public static AssemblyIdentity FromFile(string path) { throw null; }
         public static AssemblyIdentity FromManagedAssembly(string path) { throw null; }
@@ -2146,10 +1847,10 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
             All = 3
         }
     }
+
     public partial class AssemblyManifest : Manifest
     {
         public ProxyStub[] ExternalProxyStubs { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("ExternalProxyStubs")]
         public ProxyStub[] XmlExternalProxyStubs { get { throw null; } set { } }
@@ -2163,17 +1864,13 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public bool IsPrerequisite { get { throw null; } set { } }
         public AssemblyReferenceType ReferenceType { get { throw null; } set { } }
         protected internal override string SortName { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlElement("AssemblyIdentity")]
         public AssemblyIdentity XmlAssemblyIdentity { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlIsNative { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlIsPrerequisite { get { throw null; } set { } }
-
         public override string ToString() { throw null; }
     }
 
@@ -2181,9 +1878,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
     {
         internal AssemblyReferenceCollection() { }
         public int Count { get { throw null; } }
-
         public AssemblyReference this[int index] { get { throw null; } }
-
         public AssemblyReference Add(AssemblyReference assembly) { throw null; }
         public AssemblyReference Add(string path) { throw null; }
         public void Clear() { }
@@ -2214,27 +1909,21 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         protected internal abstract string SortName { get; }
         public string SourcePath { get { throw null; } set { } }
         public string TargetPath { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlGroup { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlHash { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlHashAlgorithm { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlIsOptional { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlPath { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSize { get { throw null; } set { } }
-
         public override string ToString() { throw null; }
     }
+
     public partial class ComClass
     {
         public string ClsId { get { throw null; } }
@@ -2242,44 +1931,36 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public string ProgId { get { throw null; } }
         public string ThreadingModel { get { throw null; } }
         public string TlbId { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlClsId { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlDescription { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlProgId { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlThreadingModel { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlTlbId { get { throw null; } set { } }
     }
+
     public sealed partial class CompatibleFramework
     {
         public string Profile { get { throw null; } set { } }
         public string SupportedRuntime { get { throw null; } set { } }
         public string Version { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlProfile { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSupportedRuntime { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlVersion { get { throw null; } set { } }
     }
+
     public sealed partial class CompatibleFrameworkCollection : System.Collections.IEnumerable
     {
         internal CompatibleFrameworkCollection() { }
         public int Count { get { throw null; } }
-
         public CompatibleFramework this[int index] { get { throw null; } }
-
         public void Add(CompatibleFramework compatibleFramework) { }
         public void Clear() { }
         public System.Collections.IEnumerator GetEnumerator() { throw null; }
@@ -2308,59 +1989,41 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public int UpdateInterval { get { throw null; } set { } }
         public UpdateMode UpdateMode { get { throw null; } set { } }
         public UpdateUnit UpdateUnit { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("CompatibleFrameworks")]
         public CompatibleFramework[] XmlCompatibleFrameworks { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlCreateDesktopShortcut { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlDeploymentUrl { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlDisallowUrlActivation { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlErrorReportUrl { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlInstall { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlMapFileExtensions { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlMinimumRequiredVersion { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlProduct { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlPublisher { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSuiteName { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSupportUrl { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlTrustUrlParameters { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlUpdateEnabled { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlUpdateInterval { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlUpdateMode { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlUpdateUnit { get { throw null; } set { } }
-
         public override void Validate() { }
     }
 
@@ -2370,26 +2033,21 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public string Description { get { throw null; } set { } }
         public string Extension { get { throw null; } set { } }
         public string ProgId { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlDefaultIcon { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlDescription { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlExtension { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlProgId { get { throw null; } set { } }
     }
+
     public sealed partial class FileAssociationCollection : System.Collections.IEnumerable
     {
         internal FileAssociationCollection() { }
         public int Count { get { throw null; } }
-
         public FileAssociation this[int index] { get { throw null; } }
-
         public void Add(FileAssociation fileAssociation) { }
         public void Clear() { }
         public System.Collections.IEnumerator GetEnumerator() { throw null; }
@@ -2404,19 +2062,15 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public ProxyStub[] ProxyStubs { get { throw null; } }
         protected internal override string SortName { get { throw null; } }
         public TypeLib[] TypeLibs { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("ComClasses")]
         public ComClass[] XmlComClasses { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("ProxyStubs")]
         public ProxyStub[] XmlProxyStubs { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("TypeLibs")]
         public TypeLib[] XmlTypeLibs { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlWriteableType { get { throw null; } set { } }
     }
@@ -2425,9 +2079,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
     {
         internal FileReferenceCollection() { }
         public int Count { get { throw null; } }
-
         public FileReference this[int index] { get { throw null; } }
-
         public FileReference Add(FileReference file) { throw null; }
         public FileReference Add(string path) { throw null; }
         public void Clear() { }
@@ -2440,9 +2092,9 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
     {
         public LauncherBuilder(string launcherPath) { }
         public string LauncherPath { get { throw null; } set { } }
-
         public Bootstrapper.BuildResults Build(string filename, string outputPath) { throw null; }
     }
+
     public abstract partial class Manifest
     {
         protected internal Manifest() { }
@@ -2457,25 +2109,19 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public OutputMessageCollection OutputMessages { get { throw null; } }
         public bool ReadOnly { get { throw null; } set { } }
         public string SourcePath { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlElement("AssemblyIdentity")]
         public AssemblyIdentity XmlAssemblyIdentity { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("AssemblyReferences")]
         public AssemblyReference[] XmlAssemblyReferences { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlDescription { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         [System.Xml.Serialization.XmlArray("FileReferences")]
         public FileReference[] XmlFileReferences { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlSchema { get { throw null; } set { } }
-
         public void ResolveFiles() { }
         public void ResolveFiles(string[] searchPaths) { }
         public override string ToString() { throw null; }
@@ -2484,6 +2130,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public virtual void Validate() { }
         protected void ValidatePlatform() { }
     }
+
     public static partial class ManifestReader
     {
         public static Manifest ReadManifest(System.IO.Stream input, bool preserveStream) { throw null; }
@@ -2491,6 +2138,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public static Manifest ReadManifest(string manifestType, System.IO.Stream input, bool preserveStream) { throw null; }
         public static Manifest ReadManifest(string manifestType, string path, bool preserveStream) { throw null; }
     }
+
     public static partial class ManifestWriter
     {
         public static void WriteManifest(Manifest manifest, System.IO.Stream output) { }
@@ -2498,24 +2146,22 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public static void WriteManifest(Manifest manifest, string path) { }
         public static void WriteManifest(Manifest manifest) { }
     }
+
     public sealed partial class OutputMessage
     {
         internal OutputMessage() { }
         public string Name { get { throw null; } }
         public string Text { get { throw null; } }
         public OutputMessageType Type { get { throw null; } }
-
         public string[] GetArguments() { throw null; }
     }
+
     public sealed partial class OutputMessageCollection : System.Collections.IEnumerable
     {
         internal OutputMessageCollection() { }
         public int ErrorCount { get { throw null; } }
-
         public OutputMessage this[int index] { get { throw null; } }
-
         public int WarningCount { get { throw null; } }
-
         public void Clear() { }
         public System.Collections.IEnumerator GetEnumerator() { throw null; }
     }
@@ -2534,22 +2180,18 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public string Name { get { throw null; } }
         public string NumMethods { get { throw null; } }
         public string TlbId { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlBaseInterface { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlIID { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlName { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlNumMethods { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlTlbId { get { throw null; } set { } }
     }
+
     public static partial class SecurityUtilities
     {
         public static void SignFile(System.Security.Cryptography.X509Certificates.X509Certificate2 cert, System.Uri timestampUrl, string path) { }
@@ -2559,13 +2201,13 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public static void SignFile(string certThumbprint, System.Uri timestampUrl, string path, string targetFrameworkVersion) { }
         public static void SignFile(string certThumbprint, System.Uri timestampUrl, string path) { }
     }
+
     public sealed partial class TrustInfo
     {
         public bool HasUnmanagedCodePermission { get { throw null; } }
         public bool IsFullTrust { get { throw null; } }
         public bool PreserveFullTrustPermissionSet { get { throw null; } set { } }
         public string SameSiteAccess { get { throw null; } set { } }
-
         public void Clear() { }
         public void Read(System.IO.Stream input) { }
         public void Read(string path) { }
@@ -2578,6 +2220,7 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public void WriteManifest(System.IO.Stream output) { }
         public void WriteManifest(string path) { }
     }
+
     public partial class TypeLib
     {
         public string Flags { get { throw null; } }
@@ -2585,22 +2228,18 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public string ResourceId { get { throw null; } }
         public string TlbId { get { throw null; } }
         public string Version { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlFlags { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlHelpDirectory { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlResourceId { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlTlbId { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlVersion { get { throw null; } set { } }
     }
+
     public enum UpdateMode
     {
         Background = 0,
@@ -2620,10 +2259,8 @@ namespace Microsoft.Build.Tasks.Deployment.ManifestUtilities
         public WindowClass(string name, bool versioned) { }
         public string Name { get { throw null; } }
         public bool Versioned { get { throw null; } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlName { get { throw null; } set { } }
-
         [System.ComponentModel.Browsable(false)]
         public string XmlVersioned { get { throw null; } set { } }
     }

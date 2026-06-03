@@ -135,7 +135,8 @@
   <!--
     Create macOS pkg installer.
   -->
-  <UsingTask TaskName="GenerateMacOSDistributionFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="GenerateMacOSDistributionFile" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" Runtime="NET" Architecture="*" />
   <Target Name="CreatePkgBundle"
           DependsOnTargets="
             _GetInstallerProperties;

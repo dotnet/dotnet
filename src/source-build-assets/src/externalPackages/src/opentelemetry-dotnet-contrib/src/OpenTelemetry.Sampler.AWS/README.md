@@ -3,7 +3,7 @@
 | Status | |
 | ------ | --- |
 | Stability | [Alpha](../../README.md#alpha) |
-| Code Owners | [@srprash](https://github.com/srprash), [@normj](https://github.com/normj), [@lukeina2z](https://github.com/lukeina2z) |
+| Code Owners | [@srprash](https://github.com/srprash), [@normj](https://github.com/normj) |
 
 [![NuGet version badge](https://img.shields.io/nuget/v/OpenTelemetry.Sampler.AWS)](https://www.nuget.org/packages/OpenTelemetry.Sampler.AWS)
 [![NuGet download count badge](https://img.shields.io/nuget/dt/OpenTelemetry.Sampler.AWS)](https://www.nuget.org/packages/OpenTelemetry.Sampler.AWS)

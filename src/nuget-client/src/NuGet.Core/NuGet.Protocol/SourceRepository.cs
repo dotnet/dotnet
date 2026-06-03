@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +17,8 @@ namespace NuGet.Protocol.Core.Types
     public class SourceRepository
     {
         internal const int ProviderCacheTypes = 25;
-        private readonly Dictionary<Type, IReadOnlyList<INuGetResourceProvider>> _providerCache;
-        private readonly PackageSource _source;
+        private readonly Dictionary<Type, IReadOnlyList<INuGetResourceProvider>> _providerCache = new(ProviderCacheTypes);
+        private readonly PackageSource _source = null!; // Protected constructor is for subclasses that provide their own package source.
 
         /// <summary>
         /// Pre-determined feed type.
@@ -101,7 +99,8 @@ namespace NuGet.Protocol.Core.Types
         {
             if (FeedTypeOverride == FeedType.Undefined)
             {
-                var resource = await GetResourceAsync<FeedTypeResource>(token);
+                FeedTypeResource resource = await GetResourceAsync<FeedTypeResource>(token)
+                    ?? throw new InvalidOperationException($"The source '{PackageSource.Source}' does not provide {nameof(FeedTypeResource)}.");
                 return resource.FeedType;
             }
             else
@@ -115,7 +114,7 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <typeparam name="T">Expected resource type</typeparam>
         /// <returns>Null if the resource does not exist</returns>
-        public virtual T GetResource<T>() where T : class, INuGetResource
+        public virtual T? GetResource<T>() where T : class, INuGetResource
         {
             return GetResource<T>(CancellationToken.None);
         }
@@ -125,9 +124,9 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <typeparam name="T">Expected resource type</typeparam>
         /// <returns>Null if the resource does not exist</returns>
-        public virtual T GetResource<T>(CancellationToken token) where T : class, INuGetResource
+        public virtual T? GetResource<T>(CancellationToken token) where T : class, INuGetResource
         {
-            var task = GetResourceAsync<T>(token);
+            Task<T?> task = GetResourceAsync<T>(token);
             task.Wait(token);
 
             return task.Result;
@@ -138,7 +137,7 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <typeparam name="T">Expected resource type</typeparam>
         /// <returns>Null if the resource does not exist</returns>
-        public virtual async Task<T> GetResourceAsync<T>() where T : class, INuGetResource
+        public virtual async Task<T?> GetResourceAsync<T>() where T : class, INuGetResource
         {
             return await GetResourceAsync<T>(CancellationToken.None);
         }
@@ -148,12 +147,11 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <typeparam name="T">Expected resource type</typeparam>
         /// <returns>Null if the resource does not exist</returns>
-        public virtual async Task<T> GetResourceAsync<T>(CancellationToken token) where T : class, INuGetResource
+        public virtual async Task<T?> GetResourceAsync<T>(CancellationToken token) where T : class, INuGetResource
         {
             var resourceType = typeof(T);
-            IReadOnlyList<INuGetResourceProvider> possible;
-
-            if (_providerCache.TryGetValue(resourceType, out possible))
+            if (_providerCache.TryGetValue(resourceType, out IReadOnlyList<INuGetResourceProvider>? possible)
+                && possible != null)
             {
                 for (int i = 0; i < possible.Count; i++)
                 {
@@ -161,7 +159,7 @@ namespace NuGet.Protocol.Core.Types
                     var result = await provider.TryCreate(this, token);
                     if (result.Item1)
                     {
-                        return (T)result.Item2;
+                        return (T?)result.Item2;
                     }
                 }
             }

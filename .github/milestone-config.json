@@ -1,0 +1,16 @@
+{
+  "optedOutRepos": [
+    "dotnet/cecil",
+    "dotnet/command-line-api",
+    "dotnet/deployment-tools",
+    "dotnet/diagnostics",
+    "dotnet/fsharp",
+    "dotnet/msbuild",
+    "dotnet/razor",
+    "dotnet/roslyn",
+    "dotnet/symreader",
+    "dotnet/xdt",
+    "microsoft/vstest",
+    "nuget/nuget.client"
+  ]
+}

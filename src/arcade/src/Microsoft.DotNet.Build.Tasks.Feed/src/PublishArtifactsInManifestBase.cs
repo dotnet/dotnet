@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
+using Azure.Core;
 using Azure.Identity;
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
@@ -636,7 +637,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             );
             TaskTracer tracer = new(Log, verbose: true);
 
-            _ = await SymbolPromotionHelper.CheckRequestRegistration(tracer, creds, env, SymbolRequestProject, requestName);
+            _ = dryRun
+                ? null
+                : await SymbolPromotionHelper.CheckRequestRegistration(tracer, creds, env, SymbolRequestProject, requestName);
 
             // The general flow is:
             // 1. Create a request in the symbol servers that we are targeting.
@@ -718,12 +721,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             Task<SymbolUploadHelper> CreatePublishSymbolHelper(string symbolPublishingExclusionsFile, bool publishSpecialClrFiles, bool dryRun)
             {
                 FrozenSet<string> exclusions = LoadExclusions(symbolPublishingExclusionsFile);
-                PATCredential creds = new(TempSymbolsAzureDevOpsOrgToken);
                 TaskTracer tracer = new(Log, verbose: true);
+                TokenCredential symbolUploadCredential = GetTemporarySymbolCredential();
 
                 SymbolPublisherOptions options = new(
                     TempSymbolsAzureDevOpsOrg,
-                    creds,
+                    symbolUploadCredential,
                     packageFileExcludeList: exclusions,
                     convertPortablePdbs: false,
                     treatPdbConversionIssuesAsInfo: false,
@@ -771,6 +774,21 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     return excludeFiles;
                 }
             }
+        }
+
+        private TokenCredential GetTemporarySymbolCredential()
+        {
+            if (string.IsNullOrEmpty(TempSymbolsAzureDevOpsOrgToken))
+            {
+                Log.LogMessage(MessageImportance.High, "Using DefaultIdentityTokenCredential for temporary symbol publishing because no TempSymbolsAzureDevOpsOrgToken was provided.");
+                return new DefaultIdentityTokenCredential(
+                    new DefaultIdentityTokenCredentialOptions
+                    {
+                        ManagedIdentityClientId = ManagedIdentityClientId
+                    });
+            }
+
+            return new PATCredential(TempSymbolsAzureDevOpsOrgToken);
         }
 
         /// <summary>
@@ -939,11 +957,64 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             var client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "Basic",
-                Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "",
-                    tokenOverride ?? AzdoApiToken))));
+
+            string effectiveToken = tokenOverride ?? AzdoApiToken;
+            if (!string.IsNullOrEmpty(effectiveToken))
+            {
+                // Legacy PAT-based authentication
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                    "Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", effectiveToken))));
+            }
+            else
+            {
+                // Entra-based authentication using DefaultIdentityTokenCredential
+                // This supports AzurePipelinesCredential (from AzureCLI@2), ManagedIdentity, WorkloadIdentity, and AzureCLI
+                var credential = new DefaultIdentityTokenCredential(
+                    new DefaultIdentityTokenCredentialOptions
+                    {
+                        ManagedIdentityClientId = ManagedIdentityClientId
+                    });
+                var tokenRequestContext = new global::Azure.Core.TokenRequestContext(new[] { "499b84ac-1321-427f-aa17-267ca6975798/.default" });
+                var accessToken = credential.GetToken(tokenRequestContext, CancellationToken.None);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
+            }
+
             return client;
+        }
+
+        /// <summary>
+        /// Checks whether Entra-based credentials are available in the current environment.
+        /// Returns true if running inside an AzureCLI@2 task (AzurePipelinesCredential),
+        /// or if a ManagedIdentityClientId is configured.
+        /// </summary>
+        private bool HasEntraCredentialsAvailable()
+        {
+            // AzurePipelinesCredential environment (set by AzureCLI@2 task with addSpnToEnvironment: true)
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_CLIENT_ID")) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_TENANT_ID")) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN")) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SYSTEM_OIDCREQUESTURI")))
+            {
+                return true;
+            }
+
+            // WorkloadIdentityCredential environment
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("servicePrincipalId")) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("idToken")) &&
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("tenantId")))
+            {
+                return true;
+            }
+
+            // Managed Identity is configured
+            if (!string.IsNullOrEmpty(ManagedIdentityClientId))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private SemaphoreSlim _createArtifactSemaphore = new SemaphoreSlim(1,1);
@@ -1924,9 +1995,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 Log.LogError($"The property {nameof(MaestroApiEndpoint)} is required but doesn't have a value set.");
             }
 
-            if (UseStreamingPublishing && string.IsNullOrEmpty(AzdoApiToken))
+            if (UseStreamingPublishing && string.IsNullOrEmpty(AzdoApiToken) && !HasEntraCredentialsAvailable())
             {
-                Log.LogError($"The property {nameof(AzdoApiToken)} is required when using streaming publishing, but doesn't have a value set.");
+                Log.LogError($"The property {nameof(AzdoApiToken)} is required when using streaming publishing (unless Entra credentials are available via AzureCLI@2 or Managed Identity), but doesn't have a value set.");
             }
 
             if (UseStreamingPublishing && string.IsNullOrEmpty(ArtifactsBasePath))

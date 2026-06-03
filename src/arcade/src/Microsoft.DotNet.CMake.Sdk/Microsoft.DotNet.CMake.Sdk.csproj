@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <IsPackable>true</IsPackable>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Common toolset for calling into CMake from MSBuild and easily reference native assets from managed projects.</Description>

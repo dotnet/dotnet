@@ -128,35 +128,33 @@ internal sealed class OperatingSystemDetector : IResourceDetector
             return;
         }
 
-        attributes.Add(new KeyValuePair<string, object>(key, value!));
+        attributes.Add(new KeyValuePair<string, object>(key, value));
     }
 
-    private static string? GetOSType()
-    {
+    private static string? GetOSType() =>
 #if NETFRAMEWORK
-        return OperatingSystemsValues.Windows;
+        OperatingSystemsValues.Windows;
 #else
-        return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? OperatingSystemsValues.Windows :
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? OperatingSystemsValues.Windows :
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? OperatingSystemsValues.Linux :
             RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? OperatingSystemsValues.Darwin : null;
 #endif
-    }
 
-    private static string GetOSDescription()
-    {
+    private static string GetOSDescription() =>
 #if NET
-        return RuntimeInformation.OSDescription;
+        RuntimeInformation.OSDescription;
 #else
-        return Environment.OSVersion.ToString();
+        Environment.OSVersion.ToString();
 #endif
-    }
 
 #pragma warning disable CA1416
     private void AddWindowsAttributes(List<KeyValuePair<string, object>> attributes)
     {
         try
         {
+#pragma warning disable IDE0370 // Suppression is unnecessary
             using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(this.registryKey!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
             if (key != null)
             {
                 AddAttributeIfNotNullOrEmpty(attributes, AttributeOperatingSystemBuildId, key.GetValue("CurrentBuildNumber")?.ToString());

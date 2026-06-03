@@ -22,12 +22,12 @@ internal sealed class ProcessRuntimeDetector : IResourceDetector
         var frameworkDescription = RuntimeInformation.FrameworkDescription;
         string? netRuntimeVersion = null;
         string? netRuntimeName = null;
-        bool frameworkSet = false;
+        var frameworkSet = false;
 
 #if NETSTANDARD || NETFRAMEWORK
         if (Environment.Version.Major == 4)
         {
-            string? netFrameworkVersion = GetNetFrameworkVersionFromRegistry();
+            var netFrameworkVersion = GetNetFrameworkVersionFromRegistry();
             netRuntimeName = ".NET Framework";
             if (netFrameworkVersion == null)
             {
@@ -66,7 +66,9 @@ internal sealed class ProcessRuntimeDetector : IResourceDetector
             using var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
             using var ndpKey = baseKey.OpenSubKey(subKey);
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
             return ndpKey?.GetValue("Release") != null ? CheckFor45PlusVersion((int)ndpKey.GetValue("Release")!) : null;
+#pragma warning restore IDE0370 // Suppression is unnecessary
         }
         catch
         {

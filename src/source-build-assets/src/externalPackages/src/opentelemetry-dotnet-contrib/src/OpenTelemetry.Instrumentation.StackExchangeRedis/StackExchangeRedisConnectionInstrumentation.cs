@@ -19,7 +19,9 @@ internal sealed class StackExchangeRedisConnectionInstrumentation : IDisposable
 {
     internal const string RedisDatabaseIndexKeyName = "db.redis.database_index";
     internal static readonly Assembly Assembly = typeof(StackExchangeRedisConnectionInstrumentation).Assembly;
+#pragma warning disable IDE0370 // Suppression is unnecessary
     internal static readonly string ActivitySourceName = Assembly.GetName().Name!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
     internal static readonly string ActivityName = ActivitySourceName + ".Execute";
     internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Assembly.GetPackageVersion());
     internal static readonly IEnumerable<KeyValuePair<string, object?>> OldCreationTags =
@@ -70,34 +72,31 @@ internal sealed class StackExchangeRedisConnectionInstrumentation : IDisposable
     /// Returns session for the Redis calls recording.
     /// </summary>
     /// <returns>Session associated with the current span context to record Redis calls.</returns>
-    public Func<ProfilingSession?> GetProfilerSessionsFactory()
+    public Func<ProfilingSession?> GetProfilerSessionsFactory() => () =>
     {
-        return () =>
+        if (this.stopHandle.WaitOne(0))
         {
-            if (this.stopHandle.WaitOne(0))
-            {
-                return null;
-            }
+            return null;
+        }
 
-            var parent = Activity.Current;
+        var parent = Activity.Current;
 
-            // If no parent use the default session.
-            if (parent == null || parent.IdFormat != ActivityIdFormat.W3C)
-            {
-                return this.defaultSession;
-            }
+        // If no parent use the default session.
+        if (parent == null || parent.IdFormat != ActivityIdFormat.W3C)
+        {
+            return this.defaultSession;
+        }
 
-            // Try to reuse a session for all activities created under the same TraceId+SpanId.
-            var cacheKey = (parent.TraceId, parent.SpanId);
-            if (!this.Cache.TryGetValue(cacheKey, out var session))
-            {
-                session = (parent, new ProfilingSession());
-                this.Cache.TryAdd(cacheKey, session);
-            }
+        // Try to reuse a session for all activities created under the same TraceId+SpanId.
+        var cacheKey = (parent.TraceId, parent.SpanId);
+        if (!this.Cache.TryGetValue(cacheKey, out var session))
+        {
+            session = (parent, new ProfilingSession());
+            this.Cache.TryAdd(cacheKey, session);
+        }
 
-            return session.Session;
-        };
-    }
+        return session.Session;
+    };
 
     /// <inheritdoc/>
     public void Dispose()

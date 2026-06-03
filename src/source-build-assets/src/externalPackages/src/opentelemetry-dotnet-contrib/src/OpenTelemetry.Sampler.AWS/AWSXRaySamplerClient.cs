@@ -24,7 +24,7 @@ internal class AWSXRaySamplerClient : IDisposable
         this.httpClient = new HttpClient();
     }
 
-    public async Task<List<SamplingRule>> GetSamplingRules()
+    public async Task<List<SamplingRule>> GetSamplingRules(CancellationToken cancellationToken = default)
     {
         List<SamplingRule> samplingRules = [];
 
@@ -33,7 +33,7 @@ internal class AWSXRaySamplerClient : IDisposable
             Content = new StringContent(string.Empty, Encoding.UTF8, this.jsonContentType),
         })
         {
-            var responseJson = await this.DoRequestAsync(this.getSamplingRulesEndpoint, request).ConfigureAwait(false);
+            var responseJson = await this.DoRequestAsync(this.getSamplingRulesEndpoint, request, cancellationToken).ConfigureAwait(false);
 
             try
             {
@@ -69,7 +69,9 @@ internal class AWSXRaySamplerClient : IDisposable
         return samplingRules;
     }
 
-    public async Task<GetSamplingTargetsResponse?> GetSamplingTargets(GetSamplingTargetsRequest getSamplingTargetsRequest)
+    public async Task<GetSamplingTargetsResponse?> GetSamplingTargets(
+        GetSamplingTargetsRequest getSamplingTargetsRequest,
+        CancellationToken cancellationToken = default)
     {
         var json = JsonSerializer
 #if NET
@@ -85,7 +87,7 @@ internal class AWSXRaySamplerClient : IDisposable
             Content = content,
         };
 
-        var responseJson = await this.DoRequestAsync(this.getSamplingTargetsEndpoint, request).ConfigureAwait(false);
+        var responseJson = await this.DoRequestAsync(this.getSamplingTargetsEndpoint, request, cancellationToken).ConfigureAwait(false);
 
         try
         {
@@ -122,19 +124,25 @@ internal class AWSXRaySamplerClient : IDisposable
         }
     }
 
-    private async Task<string> DoRequestAsync(string endpoint, HttpRequestMessage request)
+    private async Task<string> DoRequestAsync(string endpoint, HttpRequestMessage request, CancellationToken cancellationToken)
     {
+        // 1 MB is well above any legitimate X-Ray sampling rules/targets
+        // response while still protecting against unbounded reads.
+        const int MaxResponseSizeInBytes = 1024 * 1024;
+
         try
         {
-            var response = await this.httpClient.SendAsync(request).ConfigureAwait(false);
+            // Use ResponseHeadersRead so the response body is streamed rather
+            // than buffered entirely in memory. The body is then read with
+            // HttpClientHelpers, which enforces the response size cap.
+            using var response = await this.httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
                 AWSSamplerEventSource.Log.FailedToGetSuccessResponse(endpoint, response.StatusCode.ToString());
                 return string.Empty;
             }
 
-            var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return responseString;
+            return HttpClientHelpers.GetResponseBodyAsString(response, MaxResponseSizeInBytes, cancellationToken) ?? string.Empty;
         }
         catch (Exception ex)
         {

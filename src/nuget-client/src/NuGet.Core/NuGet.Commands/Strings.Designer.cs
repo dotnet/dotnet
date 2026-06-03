@@ -817,6 +817,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to read project information for &apos;{0}&apos;: {1}.
+        /// </summary>
+        internal static string Error_ReadingProjectInformation {
+            get {
+                return ResourceManager.GetString("Error_ReadingProjectInformation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The packages lock file is inconsistent with the project dependencies so restore can&apos;t be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file..
         /// </summary>
         internal static string Error_RestoreInLockedMode {
@@ -826,7 +835,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary..
+        ///   Looks up a localized string similar to PackageReference {0} will not be pruned. This package is unused and should be removed from your dependencies..
         /// </summary>
         internal static string Error_RestorePruningDirectPackageReference {
             get {
@@ -2626,6 +2635,15 @@ namespace NuGet.Commands {
         internal static string Warning_MinVersionNonInclusive {
             get {
                 return ResourceManager.GetString("Warning_MinVersionNonInclusive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; {1} uses the deprecated MonoAndroid framework instead of &apos;net6.0-android&apos; or later. Consider upgrading to a newer version of this package or contacting the package author..
+        /// </summary>
+        internal static string Warning_MonoAndroidFrameworkDeprecated {
+            get {
+                return ResourceManager.GetString("Warning_MonoAndroidFrameworkDeprecated", resourceCulture);
             }
         }
         
