@@ -108,7 +108,7 @@ steps:
     & "$(Build.SourcesDirectory)/eng/common/dotnet.$dotnetExt" build `
       "$(Build.SourcesDirectory)/eng/signing-validation.proj" `
       /p:ArtifactDownloadDirectory="${{ parameters.signCheckFilesDirectory }}" `
-      /p:SourceBranch="$(Build.SourceBranch)" `
+      /p:SignDacEnabled="${{ variables.signDacEnabled }}" `
       /p:OutputLogsDirectory="${{ parameters.outputDirectory }}" `
       /p:RestoreAdditionalProjectSources="${{ parameters.signCheckNuGetPackagesDirectory }}/packages/Release/NonShipping/arcade" `
       /p:MicrosoftDotNetSignCheckTaskVersion="$version" `

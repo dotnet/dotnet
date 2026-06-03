@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
-    <IsDacSigningBranch Condition="'$(SourceBranch)' != '' and $([System.Text.RegularExpressions.Regex]::IsMatch('$(SourceBranch)', '^refs/heads/(internal/)?release/\d+\.0\.1\d*$'))">true</IsDacSigningBranch>
+
+    <SignDacEnabled Condition="'$(SignDacEnabled)' == ''">false</SignDacEnabled>
 
     <SignCheckExclusionsFile>$(RepositoryEngineeringDir)SignCheckExclusionsFile.txt</SignCheckExclusionsFile>
     <SignCheckTimeout>7200</SignCheckTimeout> <!-- 2 hours -->
@@ -121,13 +122,15 @@
   </Target>
 
   <!--
-    DAC signing is performed only on 1xx feature-band release branches. On every other branch
-    the DAC files (mscordaccore.dll, mscordbi.dll) are intentionally not signed, so SignCheck
-    must be told to ignore them. We generate an intermediate exclusions file with the additional
-    DAC entries appended on non-DAC-signing branches; on DAC-signing branches we use the base
-    exclusions file as-is so that any DAC signing regression is actually caught.
+    DAC signing is performed only on official builds that targeted a 1xx feature-band release
+    branch with real signing enabled and were not source-only (see signDacEnabled in
+    eng/pipelines/templates/variables/vmr-build.yml). On every other build the DAC files
+    (mscordaccore.dll, mscordbi.dll) are intentionally not signed, so SignCheck must be told
+    to ignore them. We generate an intermediate exclusions file with the additional DAC entries
+    appended when DAC signing was disabled; when it was enabled we use the base exclusions file
+    as-is so that any DAC signing regression is actually caught.
   -->
-  <Target Name="GenerateIntermediateSignCheckExclusionsFile" Condition="'$(IsDacSigningBranch)' != 'true'">
+  <Target Name="GenerateIntermediateSignCheckExclusionsFile" Condition="'$(SignDacEnabled)' != 'true'">
     <PropertyGroup>
       <!--
         Write the augmented exclusions file under OutputLogsDirectory rather than the obj/
