@@ -44,16 +44,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             using WixDocument productDoc = CreateProduct();
 
             // Add the default installation directory based on the workload pack kind.
-            string directoryReference = "InstallDir";
-            var directory = productDoc.GetDirectory("DOTNETHOME")
-                .AddDirectory("InstallDir", GetInstallDir(_package.Kind));
+            string directoryReference = MsiDirectories.InstallDir;
+            var directory = productDoc.GetDirectory(MsiDirectories.DOTNETHOME)
+                .AddDirectory(MsiDirectories.InstallDir, GetInstallDir(_package.Kind));
 
             if (_package.Kind != WorkloadPackKind.Library && _package.Kind != WorkloadPackKind.Template)
             {
-                directory.AddDirectory("PackageDir", Metadata.Id)
-                    .AddDirectory("VersionDir", Metadata.PackageVersion.ToString());
+                directory.AddDirectory(MsiDirectories.PackageDir, Metadata.Id)
+                    .AddDirectory(MsiDirectories.VersionDir, Metadata.PackageVersion.ToString());
                 // Override the directory reference for harvesting.
-                directoryReference = "VersionDir";
+                directoryReference = MsiDirectories.VersionDir;
             }
 
             productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
@@ -63,66 +63,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 .AddComponentGroupRef(HarvestDirectory(_package.DestinationDirectory, directoryReference));
 
             return "";
-        }
-
-        public ITaskItem Build2(string outputPath, ITaskItem[]? iceSuppressions = null)
-        {
-            //Create();
-            //Directory.CreateDirectory(SourcePath);
-            //// Harvest the package contents before adding it to the source files we need to compile.
-            //string packageContentWxs = Path.Combine(SourcePath, "PackageContent.wxs");
-            //string directoryReference = _package.Kind == WorkloadPackKind.Library || _package.Kind == WorkloadPackKind.Template ?
-            //    "InstallDir" : "VersionDir";
-
-            //HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
-            //{
-            //    DirectoryReference = directoryReference,
-            //    OutputFile = packageContentWxs,
-            //    Platform = this.Platform,
-            //    SourceDirectory = _package.DestinationDirectory
-            //};
-
-            //if (!heat.Execute())
-            //{
-            //    throw new Exception(Strings.HeatFailedToHarvest);
-            //}
-
-            //CompilerToolTask candle = CreateDefaultCompiler();
-
-            //candle.AddSourceFiles(packageContentWxs,
-            //    AddFile("DependencyProvider.wxs"),
-            //    AddFile("Directories.wxs"),
-            //    AddFile("dotnethome_x64.wxs"),
-            //    AddFile("Product.wxs"),
-            //    AddFile("Registry.wxs"));
-
-            //// Only extract the include file as it's not compilable, but imported by various source files.
-            //AddFile("Variables.wxi");
-
-            //// Workload packs are not upgradable so the upgrade code is generated using the package identity as that
-            //// includes the package version.
-            //Guid upgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{_package.Identity};{Platform}");
-            //string providerKeyName = $"{_package.Id},{_package.PackageVersion},{Platform}";
-
-            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.InstallDir, $"{GetInstallDir(_package.Kind)}");
-            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.UpgradeCode, $"{upgradeCode:B}");
-            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.DependencyProviderKeyName, $"{providerKeyName}");
-            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.PackKind, $"{_package.Kind}");
-            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.SourceDir, $"{_package.DestinationDirectory}");
-            //candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.InstallationRecordKey, $"InstalledPacks");
-
-            //if (!candle.Execute())
-            //{
-            //    throw new Exception(Strings.FailedToCompileMsi);
-            //}
-
-            //ITaskItem msi = Link(candle.OutputPath, Path.Combine(outputPath, OutputName), iceSuppressions);
-
-            //AddDefaultPackageFiles(msi);
-
-            //return msi;
-
-            return new TaskItem();
         }
 
         /// <summary>

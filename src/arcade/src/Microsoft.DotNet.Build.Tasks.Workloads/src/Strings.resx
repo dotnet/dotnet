@@ -120,6 +120,9 @@
   <data name="BuildExtractingPackage" xml:space="preserve">
     <value>Extracting package: {0}.</value>
   </data>
+  <data name="InvalidChildElement" xml:space="preserve">
+    <value>{0} is not a valid child element of {1}.</value>
+  </data>
   <data name="CannotExtractManifestIdFromPackageId" xml:space="preserve">
     <value>Unable to extract the manifest ID from the package ID: {0}.</value>
   </data>

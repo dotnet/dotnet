@@ -38,15 +38,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
 
-            var directory = productDoc.GetDirectory("DOTNETHOME")
-                .AddDirectory("SdkManifestDir", "sdk-manifests")
-                .AddDirectory("SdkFeatureBandVersionDir", $"{_package.SdkFeatureBand}")
-                .AddDirectory("WorkloadSetsDir", $"workloadsets")
-                .AddDirectory("WorkloadSetVersionDir", $"{_package.WorkloadSetVersion}");
+            var directory = productDoc.GetDirectory(MsiDirectories.DOTNETHOME)
+                .AddDirectory(MsiDirectories.SdkManifestDir, "sdk-manifests")
+                .AddDirectory(MsiDirectories.SdkFeatureBandVersionDir, $"{_package.SdkFeatureBand}")
+                .AddDirectory(MsiDirectories.WorkloadSetsDir, $"workloadsets")
+                .AddDirectory(MsiDirectories.WorkloadSetVersionDir, $"{_package.WorkloadSetVersion}");
 
             string packageDataDirectory = Path.Combine(_package.DestinationDirectory, "data");
             productDoc.GetFeature("F_PackageContents")
-                .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDirectory));
+                .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDir));
 
             return "";
         }

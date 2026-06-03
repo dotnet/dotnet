@@ -2,9 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
@@ -13,14 +11,26 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     {
         private static readonly XNamespace s_wixNamespace = "http://wixtoolset.org/schemas/v4/wxs";
 
+        /// <summary>
+        /// Allowed parent elements for a Directory element.
+        /// </summary>
         private static readonly string[] _directoryParentElements =
             ["Package", "Module", "Fragment", "Directory", "DirectoryRef", "StandardDirectory"];
 
+        /// <summary>
+        /// Allowed parent elements for a ComponentGroupRef element.
+        /// </summary>
         private static readonly string[] _componentGroupRefParentElements =
             ["Package", "Module", "ComponentGroup", "Feature", "FeatureGroup", "FeatureRef"];
 
+        /// <summary>
+        /// Allowed parent elements for a RegistryKey element.
+        /// </summary>
         private static readonly string[] _registryKeyParentElements = ["Component", "RegistryKey"];
 
+        /// <summary>
+        /// Allowed parent elements for a RegistryValue element.
+        /// </summary>
         private static readonly string[] _registryValueParentElements = ["Component", "RegistryKey"];
 
         /// <summary>
@@ -51,7 +61,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 element.Add(registryValue);
                 return element;
             }
-            throw new InvalidOperationException($"Cannot add a RegistryValue element to {element}");
+            throw new InvalidOperationException(string.Format(Strings.InvalidChildElement, "RegistryValue", element.Name.LocalName));
         }
 
         /// <summary>
@@ -84,7 +94,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 element.Add(registryKey);
                 return registryKey;
             }
-            throw new InvalidOperationException($"Cannot add a RegistryKey element to {element.Name}");
+            throw new InvalidOperationException(string.Format(Strings.InvalidChildElement, "RegistryKey", element.Name.LocalName));
         }
 
         /// <summary>
@@ -105,7 +115,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 element.Add(componentGroupRef);
                 return componentGroupRef;
             }
-            throw new InvalidOperationException($"Cannot add a ComponentGroupRef element to {element.Name}");
+            throw new InvalidOperationException(string.Format(Strings.InvalidChildElement, "ComponentGroupRef", element.Name.LocalName));
         }
 
         /// <summary>
@@ -129,7 +139,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 return directory;
             }
 
-            throw new InvalidOperationException($"Cannot add a Directory element to {element.Name}");
+            throw new InvalidOperationException(string.Format(Strings.InvalidChildElement, "Directory", element.Name.LocalName));
         }
 
         public static XElement AddDirectory(this XElement element, XElement directory)
@@ -141,7 +151,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
                 return directory;
             }
 
-            throw new InvalidOperationException($"Cannot add a Directory element to {element}");
+            throw new InvalidOperationException(string.Format(Strings.InvalidChildElement, "Directory", element.Name.LocalName));
         }
     }
 }

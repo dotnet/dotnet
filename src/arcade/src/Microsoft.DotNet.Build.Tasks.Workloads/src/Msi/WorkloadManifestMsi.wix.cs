@@ -73,16 +73,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             //     </Directory>
             //   </Directory>
             // </Directory>
-            var directory = productDoc.GetDirectory("DOTNETHOME")
-                .AddDirectory("SdkManifestDir", "sdk-manifests")
-                .AddDirectory("SdkFeatureBandVersionDir", $"{Package.SdkFeatureBand}")
-                .AddDirectory(MsiDirectories.ManifestIdDirectory, $"{Package.ManifestId.ToLowerInvariant()}");
+            var directory = productDoc.GetDirectory(MsiDirectories.DOTNETHOME)
+                .AddDirectory(MsiDirectories.SdkManifestDir, "sdk-manifests")
+                .AddDirectory(MsiDirectories.SdkFeatureBandVersionDir, $"{Package.SdkFeatureBand}")
+                .AddDirectory(MsiDirectories.ManifestIdDir, $"{Package.ManifestId.ToLowerInvariant()}");
 
             // For SxS installs, different manifests for the same feature band need to be installed
             // in versioned directories.
             if (IsSxS)
             {
-                directory.AddDirectory(MsiDirectories.ManifestVersionDirectory, Package.GetManifest().Version);
+                directory.AddDirectory(MsiDirectories.ManifestVersionDir, Package.GetManifest().Version);
             }
 
             productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
@@ -91,8 +91,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             // existing feature.
             string packageDataDirectory = Path.Combine(Package.DestinationDirectory, "data");
             string filesDirectoryId = IsSxS ?
-                MsiDirectories.ManifestVersionDirectory :
-                MsiDirectories.ManifestIdDirectory;
+                MsiDirectories.ManifestVersionDir :
+                MsiDirectories.ManifestIdDir;
             productDoc.GetFeature("F_PackageContents")
                 .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, filesDirectoryId));
 

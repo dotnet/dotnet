@@ -160,6 +160,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is not a valid child element of {1}..
+        /// </summary>
+        internal static string InvalidChildElement {
+            get {
+                return ResourceManager.GetString("InvalidChildElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid workload set package: {0}. The package does not contain a &quot;data&quot; directory..
         /// </summary>
         internal static string InvalidWorkloadSetPackageMissingDataDir {
