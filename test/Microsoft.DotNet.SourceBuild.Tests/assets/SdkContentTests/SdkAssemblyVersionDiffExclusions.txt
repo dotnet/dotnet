@@ -15,3 +15,6 @@
 
 # Product version diff: https://github.com/dotnet/source-build/issues/5512
 ./sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll
+
+# OTel version/API mismatch: https://github.com/dotnet/source-build/issues/5577
+./sdk/x.y.z/OpenTelemetry*.dll
