@@ -28,6 +28,7 @@
 
     <Error Text="No artifact directories found in '$(ArtifactDownloadDirectory)'." Condition="'@(_ArtifactDirectory)' == ''" />
 
+    <MakeDir Directories="$(OutputLogsDirectory)" />
     <RemoveDir Directories="$(SignCheckInputDir)" />
     <MakeDir Directories="$(SignCheckInputDir)" />
   </Target>
