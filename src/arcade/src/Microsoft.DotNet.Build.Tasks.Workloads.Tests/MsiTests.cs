@@ -46,7 +46,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildSideBySideManifestMsis()
         {
-            using var fixture = new TestFixture();
+            using var fixture = new MsiTestFixture();
 
             // Build 6.0.200 manifest for version 6.0.3
             ITaskItem msi603 = BuildManifestMsi(fixture.OutputPath, Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"));
@@ -73,11 +73,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 d.Directory == "ManifestVersionDir" &&
                 d.DirectoryParent == "ManifestIdDir" &&
                 d.DefaultDir.EndsWith("|6.0.4"));
-
-            // Generated MSI should return the path where the .wixobj files are located so
-            // WiX packs can be created for post-build signing.
-            Assert.NotNull(msi603.GetMetadata(Metadata.WixObj));
-            Assert.NotNull(msi604.GetMetadata(Metadata.WixObj));
         }
 
         [WindowsOnlyTheory]
@@ -88,10 +83,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         public void ItCanBuildAManifestMsi(bool allowSideBySideInstalls, string expectedUpgradeCode,
             string expectedProviderKeyName, string platform = "x64")
         {
-            string outputDirectory = GetTestCaseDirectory();
-            string wixpackOutputDirectory = Path.Combine(outputDirectory, "wixpack");
+            using var fixture = new MsiTestFixture(true);
 
-            ITaskItem msi = BuildManifestMsi(outputDirectory,
+            ITaskItem msi = BuildManifestMsi(fixture.OutputPath,
                 Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"),
                 platform: platform,
                 allowSideBySideInstalls: allowSideBySideInstalls);
@@ -160,12 +154,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildWorkloadSdkPackMsi()
         {
-            string outputDirectory = GetTestCaseDirectory();
-            string packageContentsDirectory = Path.Combine(outputDirectory, "pkg");
-            string msiOutputDirectory = Path.Combine(outputDirectory, "msi");
+            using var fixture = new MsiTestFixture(true);
 
             TaskItem packageItem = new(Path.Combine(TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"));
-            WorkloadManifestPackage manifestPackage = new(packageItem, packageContentsDirectory, new Version("1.2.3"));
+            WorkloadManifestPackage manifestPackage = new(packageItem, fixture.PackagePath, new Version("1.2.3"));
             // Parse the manifest to extract information related to workload packs so we can extract a specific pack.
             WorkloadManifest manifest = manifestPackage.GetManifest();
             WorkloadPackId packId = new("Microsoft.NET.Runtime.Emscripten.Python");
@@ -173,14 +165,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             var sourcePackages = WorkloadPackPackage.GetSourcePackages(TestAssetsPath, pack);
             var sourcePackageInfo = sourcePackages.FirstOrDefault();
-            var workloadPackPackage = WorkloadPackPackage.Create(pack, sourcePackageInfo.sourcePackage, sourcePackageInfo.platforms, packageContentsDirectory, null, null);
+            var workloadPackPackage = WorkloadPackPackage.Create(pack, sourcePackageInfo.sourcePackage, sourcePackageInfo.platforms, fixture.PackagePath, null, null);
             workloadPackPackage.Extract();
 
             var workloadPackMsi = new WorkloadPackMsi(workloadPackPackage, "x64", new MockBuildEngine(),
-                WixToolsetConfig, outputDirectory);
+                WixToolsetConfig, fixture.OutputPath);
 
             // Build the MSI and verify its contents
-            var msiItem = workloadPackMsi.Build(msiOutputDirectory);
+            var msiItem = workloadPackMsi.Build(fixture.MsiPath);
             string msiPath = msiItem.GetMetadata(Metadata.FullPath);
 
             // Process the summary information stream's template to extract the MSIs target platform.
@@ -211,22 +203,20 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildATemplatePackMsi()
         {
-            string outputDirectory = GetTestCaseDirectory();
-            string pkgDirectory = Path.Combine(outputDirectory, "pkg");
-            string msiDirectory = Path.Combine(outputDirectory, "msi");
+            using var fixture = new MsiTestFixture(true);
 
             string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
 
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
-            TemplatePackPackage pkg = new(p, packagePath, [ "x64" ], pkgDirectory);
+            TemplatePackPackage pkg = new(p, packagePath, ["x64"], fixture.PackagePath);
             pkg.Extract();
             var buildEngine = new MockBuildEngine();
-            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetConfig, outputDirectory, createWixPack: true);
-            ITaskItem msiItem = msi.Build(msiDirectory);
+            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetConfig, fixture.OutputPath, createWixPack: true);
+            ITaskItem msiItem = msi.Build(fixture.MsiPath);
 
             msiItem.GetMetadata(Metadata.PackageType).Should().Be("pack", "because we're building a template pack MSI");
 
-            // Just do basic sanity checks. Validating the contents is outside the scope of this test.
+            // Just do basic sanity checks. Validating the contents of the wixpack is outside the scope of this test.
             string wixPack = msiItem.GetMetadata(Metadata.WixPack);
             wixPack.Should().NotBeEmpty("because we're generating a wixpack for signing");
             File.Exists(wixPack).Should().BeTrue("because the wixpack path should point to an existing file");
@@ -256,10 +246,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 c.ComponentId == "{98827ECA-69A2-5300-A75E-F1A251EB17F9}" &&
                 c.Component == fileRow.Component_);
 
-            // Generated MSI should return the path where the .wixobj files are located so
-            // WiX packs can be created for post-build signing.
-            Assert.NotNull(msiItem.GetMetadata(Metadata.WixObj));
-
             // Verify the installation record and dependency provider registry entries
             var registryKeys = MsiUtils.GetAllRegistryKeys(msiPath);
             string expectedProductCode = MsiUtils.GetProperty(msiPath, MsiProperty.ProductCode);
@@ -274,13 +260,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildAWorkPackGroupMsi()
         {
-            string outputDirectory = GetTestCaseDirectory();
-            string packageContentsDirectory = Path.Combine(outputDirectory, "pkg");
-            string msiOutputDirectory = Path.Combine(outputDirectory, "msi");
+            using var fixture = new MsiTestFixture(true);
+
             string packageSource = Path.Combine(TestAssetsPath, "wasm");
 
-            TaskItem packageItem = new(Path.Combine(TestAssetsPath, "wasm", "microsoft.net.workload.mono.toolchain.current.manifest-10.0.100.10.0.100.nupkg"));
-            WorkloadManifestPackage manifestPackage = new(packageItem, packageContentsDirectory, new Version("1.2.3"));
+            TaskItem packageItem = new(Path.Combine(packageSource, "microsoft.net.workload.mono.toolchain.current.manifest-10.0.100.10.0.100.nupkg"));
+            WorkloadManifestPackage manifestPackage = new(packageItem, fixture.PackagePath, new Version("1.2.3"));
             // Parse the manifest to extract information related to workload packs so we can extract a specific
             // workload.
             WorkloadManifest manifest = manifestPackage.GetManifest();
@@ -314,7 +299,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 if (!string.IsNullOrWhiteSpace(sourcePackage))
                 {
                     workloadPackPackages.Add(WorkloadPackPackage.Create(pack, sourcePackage, ["x64"],
-                        packageContentsDirectory, null, null));
+                        fixture.PackagePath, null, null));
                 }
             }
 
@@ -326,9 +311,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             workloadPackPackages.ForEach(p => p.Extract());
 
-            WorkloadPackGroupMsi msi = new(groupPackage, "x64", buildEngine, WixToolsetConfig, outputDirectory);
+            WorkloadPackGroupMsi msi = new(groupPackage, "x64", buildEngine, WixToolsetConfig, fixture.OutputPath);
 
-            ITaskItem msiItem = msi.Build(msiOutputDirectory);
+            ITaskItem msiItem = msi.Build(fixture.MsiPath);
 
             msiItem.GetMetadata(Metadata.PackageType).Should().Be("pack-group", "because we're building a workload pack group MSI");
 
