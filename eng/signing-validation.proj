@@ -101,7 +101,14 @@
     <Move SourceFiles="@(_FilesToMove->'%(SourcePath)')" DestinationFiles="@(_FilesToMove->'%(DestinationPath)')" />
   </Target>
 
-  <Target Name="GenerateIntermediateSignCheckExclusionsFile" Condition="'$(IsDacSigningBranch)' == 'true'">
+  <!--
+    DAC signing is performed only on 1xx feature-band release branches. On every other branch
+    the DAC files (mscordaccore.dll, mscordbi.dll) are intentionally not signed, so SignCheck
+    must be told to ignore them. We generate an intermediate exclusions file with the additional
+    DAC entries appended on non-DAC-signing branches; on DAC-signing branches we use the base
+    exclusions file as-is so that any DAC signing regression is actually caught.
+  -->
+  <Target Name="GenerateIntermediateSignCheckExclusionsFile" Condition="'$(IsDacSigningBranch)' != 'true'">
     <PropertyGroup>
       <IntermediateSignCheckExclusionsFile>$(BaseIntermediateOutputPath)SignCheckExclusionsFile.txt</IntermediateSignCheckExclusionsFile>
     </PropertyGroup>
