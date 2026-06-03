@@ -40,6 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
         [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("TOptions's dependent types may have their members trimmed. Ensure all required members are preserved.")]
         public static Options.OptionsBuilder<TOptions> BindConfiguration<TOptions>(this Options.OptionsBuilder<TOptions> optionsBuilder, string configSectionPath, System.Action<Configuration.BinderOptions>? configureBinder = null) where TOptions : class { throw null; }
     }
+
     public static partial class OptionsConfigurationServiceCollectionExtensions
     {
         [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Binding strongly typed objects to configuration values may require generating dynamic code at runtime.")]
@@ -64,7 +65,6 @@ namespace Microsoft.Extensions.Options
         public ConfigurationChangeTokenSource(Configuration.IConfiguration config) { }
         public ConfigurationChangeTokenSource(string? name, Configuration.IConfiguration config) { }
         public string Name { get { throw null; } }
-
         public Primitives.IChangeToken GetChangeToken() { throw null; }
     }
 

@@ -131,7 +131,6 @@ namespace System.Security.AccessControl
         public override Type AccessRightType { get { throw null; } }
         public override Type AccessRuleType { get { throw null; } }
         public override Type AuditRuleType { get { throw null; } }
-
         public sealed override AccessRule AccessRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type) { throw null; }
         public void AddAccessRule(FileSystemAccessRule rule) { }
         public void AddAuditRule(FileSystemAuditRule rule) { }

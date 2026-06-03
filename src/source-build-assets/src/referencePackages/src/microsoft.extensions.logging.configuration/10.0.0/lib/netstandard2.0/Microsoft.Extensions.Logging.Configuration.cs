@@ -51,6 +51,7 @@ namespace Microsoft.Extensions.Logging.Configuration
     {
         public static void RegisterProviderOptions<TOptions, TProvider>(DependencyInjection.IServiceCollection services) where TOptions : class { }
     }
+
     public partial class LoggerProviderOptionsChangeTokenSource<TOptions, TProvider> : Options.ConfigurationChangeTokenSource<TOptions>
     {
         public LoggerProviderOptionsChangeTokenSource(ILoggerProviderConfiguration<TProvider> providerConfiguration) : base(default!) { }
