@@ -25,6 +25,7 @@ namespace NuGet.Protocol.Plugins
         /// Gets the handshake responder's plugin protocol version if the handshake was successful;
         /// otherwise, <see langword="null" />.
         /// </summary>
+        [System.Text.Json.Serialization.JsonConverter(typeof(StjSemanticVersionConverter))]
         public SemanticVersion ProtocolVersion { get; }
 
         /// <summary>

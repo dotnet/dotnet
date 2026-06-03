@@ -128,7 +128,7 @@ namespace NuGet.Protocol.Plugins
 
             if (serviceIndex == null)
             {
-                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndex: (string)null);
+                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndexJson: (string)null);
             }
             else
             {
