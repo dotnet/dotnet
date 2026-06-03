@@ -32,9 +32,23 @@
     <MakeDir Directories="$(SignCheckInputDir)" />
   </Target>
 
-  <Target Name="CollectArtifactFiles" DependsOnTargets="PrepareFilesInitialize" Outputs="%(_ArtifactDirectory.Identity)">
+  <!--
+    Iterate over each downloaded artifact directory by self-invoking the project. Using the
+    MSBuild task instead of a batched Outputs="%(...)" target gives every iteration a fresh
+    item-state, matching the per-directory foreach loop semantics of the original C# task.
+    Without this isolation, items collected from earlier directories would leak into later
+    iterations (the unscoped metadata transform would rewrite their paths, the duplicate-
+    destination detection would delete files just moved by an earlier iteration, etc.).
+  -->
+  <Target Name="CollectArtifactFiles" DependsOnTargets="PrepareFilesInitialize">
+    <MSBuild
+      Projects="$(MSBuildProjectFile)"
+      Targets="CollectArtifactFilesForDirectory"
+      Properties="CurrentArtifactDirectory=%(_ArtifactDirectory.Identity);SignCheckInputDir=$(SignCheckInputDir)" />
+  </Target>
+
+  <Target Name="CollectArtifactFilesForDirectory">
     <PropertyGroup>
-      <CurrentArtifactDirectory>%(_ArtifactDirectory.Identity)</CurrentArtifactDirectory>
       <_CurrentManifestsDirectory>$(CurrentArtifactDirectory)/manifests</_CurrentManifestsDirectory>
     </PropertyGroup>
 
