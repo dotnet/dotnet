@@ -21,6 +21,7 @@
     <!-- Prevent restoring packages from frameworks that should not be built. -->
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
     <!-- Prevent including the build output in the package. -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- Hook up a target to include the placeholder file in the package. -->
