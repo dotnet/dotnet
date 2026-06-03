@@ -42,7 +42,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 BaseIntermediateOutputPath = baseIntermediateOutputPath,
                 BuildEngine = buildEngine,
                 WorkloadSetPackageFiles = workloadSetPackages,
-                WixToolsetConfig = WixToolsetConfig
+                WixExe = WixToolsetInfo.WixExePath,
+                HeatExe = WixToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
             };
 
             Assert.True(createWorkloadSetTask.Execute(), buildEngine.BuildErrorEvents.Count > 0 ?

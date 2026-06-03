@@ -49,7 +49,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ManifestMsiVersion = null,
                 PackageSource = packageSource,
                 ShortNames = Array.Empty<ITaskItem>(),
-                WixToolsetConfig = WixToolsetConfig,
+                WixExe = WixToolsetInfo.WixExePath,
+                HeatExe = WixToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
                 WorkloadManifestPackageFiles = manifestsPackages
             };
 
@@ -123,7 +125,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ManifestMsiVersion = null,
                 PackageSource = TestAssetsPath,
                 ShortNames = shortNames,
-                WixToolsetConfig = WixToolsetConfig,
+                WixExe = WixToolsetInfo.WixExePath,
+                HeatExe = WixToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
                 WorkloadManifestPackageFiles = manifestsPackages,
                 IsOutOfSupportInVisualStudio = true
             };
@@ -256,7 +260,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 ManifestMsiVersion = null,
                 PackageSource = TestAssetsPath,
                 ShortNames = shortNames,
-                WixToolsetConfig = WixToolsetConfig,
+                WixExe = WixToolsetInfo.WixExePath,
+                HeatExe = WixToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
                 WorkloadManifestPackageFiles = manifestsPackages,
             };
 

@@ -4,10 +4,7 @@
 #nullable enable
 
 using System;
-using System.IO;
-using System.IO.Packaging;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
 

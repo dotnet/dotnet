@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AwesomeAssertions;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 using WixToolset.Dtf.WindowsInstaller;
@@ -18,17 +20,26 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         public static readonly string BaseIntermediateOutputPath = Path.Combine(AppContext.BaseDirectory, "obj", Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
         public static readonly string BaseOutputPath = Path.Combine(AppContext.BaseDirectory, "bin", Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
 
-        public static readonly string MsiOutputPath = Path.Combine(BaseOutputPath, "msi");
         public static readonly string TestAssetsPath = Path.Combine(AppContext.BaseDirectory, "testassets");
 
         public static readonly string TestOutputRoot = Path.Combine(AppContext.BaseDirectory, "TEST_OUTPUT");
 
         /// <summary>
-        /// Wix Toolset to use for tests. 
+        /// Wix Toolset to use for tests.. 
         /// </summary>
         public static WixToolsetConfiguration WixToolsetConfig = WixToolsetConfiguration.Create(
             WixToolsetInfo.WixExePath, WixToolsetInfo.HeatExePath,
             WixToolsetInfo.DependencyExt, WixToolsetInfo.UtilExt, WixToolsetInfo.UIExt);
+
+        /// <summary>
+        /// Item group containing WiX extensions. This is required by the public tasks and is similar
+        /// to how users would pass information about the extensions.
+        /// </summary>
+        public static ITaskItem[] WixExtensions = [
+            new TaskItem(WixToolsetInfo.DependencyExt),
+            new TaskItem(WixToolsetInfo.UtilExt),
+            new TaskItem(WixToolsetInfo.UIExt)
+        ];
 
         /// <summary>
         /// Returns a new, random directory for a test case.
