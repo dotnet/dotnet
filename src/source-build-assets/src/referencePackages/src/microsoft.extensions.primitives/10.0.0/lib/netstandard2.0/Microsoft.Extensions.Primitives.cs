@@ -34,7 +34,6 @@ namespace Microsoft.Extensions.Primitives
         public CancellationChangeToken(System.Threading.CancellationToken cancellationToken) { }
         public bool ActiveChangeCallbacks { get { throw null; } }
         public bool HasChanged { get { throw null; } }
-
         public System.IDisposable RegisterChangeCallback(System.Action<object?> callback, object? state) { throw null; }
     }
 
@@ -43,13 +42,13 @@ namespace Microsoft.Extensions.Primitives
         public static System.IDisposable OnChange(System.Func<IChangeToken?> changeTokenProducer, System.Action changeTokenConsumer) { throw null; }
         public static System.IDisposable OnChange<TState>(System.Func<IChangeToken?> changeTokenProducer, System.Action<TState> changeTokenConsumer, TState state) { throw null; }
     }
+
     public partial class CompositeChangeToken : IChangeToken
     {
         public CompositeChangeToken(System.Collections.Generic.IReadOnlyList<IChangeToken> changeTokens) { }
         public bool ActiveChangeCallbacks { get { throw null; } }
         public System.Collections.Generic.IReadOnlyList<IChangeToken> ChangeTokens { get { throw null; } }
         public bool HasChanged { get { throw null; } }
-
         public System.IDisposable RegisterChangeCallback(System.Action<object?> callback, object? state) { throw null; }
     }
 
@@ -57,12 +56,11 @@ namespace Microsoft.Extensions.Primitives
     {
         public static System.Text.StringBuilder Append(this System.Text.StringBuilder builder, StringSegment segment) { throw null; }
     }
+
     public partial interface IChangeToken
     {
         bool ActiveChangeCallbacks { get; }
-
         bool HasChanged { get; }
-
         System.IDisposable RegisterChangeCallback(System.Action<object?> callback, object? state);
     }
 
@@ -73,7 +71,6 @@ namespace Microsoft.Extensions.Primitives
         private int _dummyPrimitive;
         public InplaceStringBuilder(int capacity) { }
         public int Capacity { get { throw null; } set { } }
-
         public void Append(StringSegment segment) { }
         public void Append(char c) { }
         public void Append(string? value, int offset, int count) { }
@@ -90,13 +87,10 @@ namespace Microsoft.Extensions.Primitives
         public StringSegment(string? buffer) { }
         public string? Buffer { get { throw null; } }
         public bool HasValue { get { throw null; } }
-
         public char this[int index] { get { throw null; } }
-
         public int Length { get { throw null; } }
         public int Offset { get { throw null; } }
         public string? Value { get { throw null; } }
-
         public readonly System.ReadOnlyMemory<char> AsMemory() { throw null; }
         public readonly System.ReadOnlySpan<char> AsSpan() { throw null; }
         public readonly System.ReadOnlySpan<char> AsSpan(int start, int length) { throw null; }
@@ -140,7 +134,6 @@ namespace Microsoft.Extensions.Primitives
         internal StringSegmentComparer() { }
         public static StringSegmentComparer Ordinal { get { throw null; } }
         public static StringSegmentComparer OrdinalIgnoreCase { get { throw null; } }
-
         public int Compare(StringSegment x, StringSegment y) { throw null; }
         public bool Equals(StringSegment x, StringSegment y) { throw null; }
         public int GetHashCode(StringSegment obj) { throw null; }
@@ -161,9 +154,7 @@ namespace Microsoft.Extensions.Primitives
             private int _dummyPrimitive;
             public Enumerator(ref StringTokenizer tokenizer) { }
             public StringSegment Current { get { throw null; } }
-
             object System.Collections.IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -178,13 +169,9 @@ namespace Microsoft.Extensions.Primitives
         public StringValues(string? value) { }
         public StringValues(string?[]? values) { }
         public int Count { get { throw null; } }
-
         public string? this[int index] { get { throw null; } }
-
         bool System.Collections.Generic.ICollection<string>.IsReadOnly { get { throw null; } }
-
         string? System.Collections.Generic.IList<string>.this[int index] { get { throw null; } set { } }
-
         public static StringValues Concat(StringValues values1, StringValues values2) { throw null; }
         public static StringValues Concat(in StringValues values, string? value) { throw null; }
         public static StringValues Concat(string? value, in StringValues values) { throw null; }
@@ -236,9 +223,7 @@ namespace Microsoft.Extensions.Primitives
             private int _dummyPrimitive;
             public Enumerator(ref StringValues values) { }
             public string? Current { get { throw null; } }
-
             object? System.Collections.IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             void System.Collections.IEnumerator.Reset() { }

@@ -5,7 +5,6 @@
 
 # https://github.com/dotnet/fsharp/issues/19732
 sdk/*/FSharp/FSharp.Compiler.Service.dll
-sdk/*/FSharp/FSharp.Core.dll
 
 # https://github.com/NuGet/NuGet.Client/pull/7020
 # https://github.com/dotnet/arcade/pull/16787
@@ -29,51 +28,3 @@ sdk/*/Sdks/Microsoft.SourceLink.Bitbucket.Git/tools/net/Microsoft.SourceLink.Bit
 sdk/*/Sdks/Microsoft.SourceLink.GitHub/tools/net/Microsoft.SourceLink.GitHub.deps.json
 sdk/*/Sdks/Microsoft.SourceLink.GitLab/tools/net/Microsoft.SourceLink.GitLab.deps.json
 sdk/*/vstest.console.deps.json
-
-# https://github.com/dotnet/source-build-assets/issues/1662
-**/Microsoft.Css.Parser.dll
-packs/Microsoft.AspNetCore.App.Ref/*/analyzers/dotnet/cs/*.dll
-packs/Microsoft.NETCore.App.Ref/*/analyzers/dotnet/cs/*.dll
-sdk/*/Containers/tasks/net11.0/Microsoft.NET.Build.Containers.dll
-sdk/*/dotnet.dll
-sdk/*/DotnetTools/dotnet-format/dotnet-format.dll
-sdk/*/DotnetTools/dotnet-format/Microsoft.Bcl.AsyncInterfaces.dll
-sdk/*/DotnetTools/dotnet-user-jwts/*/tools/net11.0/any/dotnet-user-jwts.dll
-sdk/*/DotnetTools/dotnet-user-jwts/*/tools/net11.0/any/Microsoft.IdentityModel.*.dll
-sdk/*/DotnetTools/dotnet-user-jwts/*/tools/net11.0/any/System.IdentityModel.Tokens.Jwt.dll
-sdk/*/DotnetTools/dotnet-user-secrets/*/tools/net11.0/any/dotnet-user-secrets.dll
-sdk/*/DotnetTools/dotnet-watch/*/tools/net11.0/any/dotnet-watch.dll
-sdk/*/DotnetTools/dotnet-watch/*/tools/net11.0/any/DotNetWatchTasks.dll
-sdk/*/DotnetTools/dotnet-watch/*/tools/net11.0/any/hotreload/net6.0/*.dll
-sdk/*/Extensions/Microsoft.Diagnostics.NETCore.Client.dll
-sdk/*/Extensions/Microsoft.TestPlatform.Extensions.BlameDataCollector.dll
-sdk/*/Microsoft.Build.NuGetSdkResolver.dll
-sdk/*/Microsoft.Deployment.DotNet.Releases.dll
-sdk/*/Microsoft.DotNet.Cli.Definitions.dll
-sdk/*/Microsoft.DotNet.Cli.Utils.dll
-sdk/*/Microsoft.DotNet.Configurer.dll
-sdk/*/Microsoft.DotNet.NativeWrapper.dll
-sdk/*/Microsoft.DotNet.SdkResolver.dll
-sdk/*/Microsoft.DotNet.TemplateLocator.dll
-sdk/*/Microsoft/Microsoft.NET.Build.Extensions/*/lib/*.dll
-sdk/*/Microsoft.NET.Sdk.WorkloadManifestReader.dll
-sdk/*/Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll
-sdk/*/Microsoft.TemplateEngine.Cli.dll
-sdk/*/Microsoft.TemplateEngine.Edge.dll
-sdk/*/Newtonsoft.Json.dll
-sdk/*/NuGet*.dll
-sdk/*/*/NuGet*.dll
-sdk/*/ref/mscorlib.dll
-sdk/*/ref/netstandard.dll
-sdk/*/runtimes/win/lib/net11.0/System.Diagnostics.EventLog.Messages.dll
-sdk/*/Sdks/Microsoft.NET.Sdk.Razor/source-generators/*.dll
-sdk/*/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.dll
-sdk/*/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tasks/net11.0/Microsoft.NET.Sdk.StaticWebAssets.Tasks.dll
-sdk/*/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/*.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/analyzers/*.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/codestyle/cs/*.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/codestyle/vb/Microsoft.CodeAnalysis.VisualBasic.CodeStyle.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/codestyle/vb/Microsoft.CodeAnalysis.VisualBasic.CodeStyle.Fixes.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/tools/net11.0/Microsoft.DotNet.ApiCompat.Task.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/tools/net11.0/Microsoft.DotNet.PackageValidation.dll
-sdk/*/Sdks/Microsoft.NET.Sdk/tools/net11.0/Microsoft.NET.Build.Tasks.dll

@@ -2,37 +2,28 @@
   Imported per-target-framework when a TargetFramework is only present in a multi-targeting
   reference package as a placeholder (i.e. the original NuGet package shipped an empty
   dependency group for that TFM, plus a `lib/<tfm>/_._` placeholder file).
-
-  Vendored from
-  https://github.com/dotnet/maintenance-packages/blob/main/eng/placeholderpackaging.targets
-
-  The override of CoreCompile to a no-op only works because this targets file is imported
-  from src/referencePackages/Directory.Build.targets (which is auto-imported after
-  Sdk.targets). For transitive ProjectReference consumers that target a placeholder TFM,
-  src/referencePackages/Directory.Build.targets carries a SetTargetFramework redirect for
-  the 7 packages that have placeholder TFMs so that consumers see the non-placeholder
-  build instead of looking for a (non-existent) placeholder DLL.
 -->
-<Project>
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- Prevent copying the build DLL into the bin. -->
-    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
-    <!-- Prevent restoring packages from frameworks that should not be built. -->
+    <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
-    <!-- Prevent including the build output in the package. -->
+    <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateMSBuildEditorConfigFile>false</GenerateMSBuildEditorConfigFile>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
+    <NoCompilerStandardLib>false</NoCompilerStandardLib>
+    <NoStdLib>true</NoStdLib>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+
+    <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
     <!-- Hook up a target to include the placeholder file in the package. -->
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddPlaceholderFileToPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="@(Compile)" />
-  </ItemGroup>
-
-  <!-- Override to prevent building. -->
-  <Target Name="CoreCompile" />
 
   <!-- Inserts a placeholder file in the package. -->
   <Target Name="_AddPlaceholderFileToPackage">
