@@ -4,6 +4,8 @@
 #nullable disable
 
 using System;
+using NuGet.Common;
+using NuGet.Shared;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -18,6 +20,7 @@ namespace NuGet.Protocol.Plugins
     {
         private bool _hasConnected;
         private readonly IPluginProcess _process;
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="StandardOutputReceiver" /> class.
@@ -25,6 +28,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="process">A plugin process.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="process" /> is <see langword="null" />.</exception>
         public StandardOutputReceiver(IPluginProcess process)
+            : this(process, environmentVariableReader: null)
+        {
+        }
+
+        internal StandardOutputReceiver(IPluginProcess process, IEnvironmentVariableReader environmentVariableReader)
         {
             if (process == null)
             {
@@ -32,6 +40,7 @@ namespace NuGet.Protocol.Plugins
             }
 
             _process = process;
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <summary>
@@ -100,7 +109,15 @@ namespace NuGet.Protocol.Plugins
             {
                 if (!IsClosed && !string.IsNullOrEmpty(e.Line))
                 {
-                    message = JsonSerializationUtilities.Deserialize<Message>(e.Line);
+                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
+                        || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                    {
+                        message = System.Text.Json.JsonSerializer.Deserialize(e.Line, PluginJsonContext.Default.Message);
+                    }
+                    else
+                    {
+                        message = JsonSerializationUtilities.Deserialize<Message>(e.Line);
+                    }
 
                     if (message != null)
                     {

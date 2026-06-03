@@ -13,6 +13,7 @@ namespace NuGet.Protocol.Plugins
     /// <summary>
     /// Represents a message between a NuGet client and a plugin.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(MessageConverter))]
     public sealed class Message
     {
         /// <summary>
