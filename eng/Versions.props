@@ -62,7 +62,7 @@
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.7</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftExtensionsLoggingVersion>10.0.7</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.7</MicrosoftExtensionsHostingVersion>
-    <SystemSecurityCryptographyXmlVersion>10.0.8</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.6</SystemSecurityCryptographyXmlVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
   </PropertyGroup>
