@@ -7,6 +7,19 @@
 
   <PropertyGroup>
     <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <CopyBuildOutputToPublishDirectory>false</CopyBuildOutputToPublishDirectory>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateMSBuildEditorConfigFile>false</GenerateMSBuildEditorConfigFile>
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
+    <NoCompilerStandardLib>false</NoCompilerStandardLib>
+    <NoStdLib>true</NoStdLib>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+
     <DisableTransitiveFrameworkReferenceDownloads>true</DisableTransitiveFrameworkReferenceDownloads>
     <!-- Hook up a target to include the placeholder file in the package. -->
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddPlaceholderFileToPackage</TargetsForTfmSpecificContentInPackage>
