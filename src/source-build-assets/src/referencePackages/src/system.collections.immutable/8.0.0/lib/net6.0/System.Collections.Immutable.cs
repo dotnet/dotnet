@@ -156,6 +156,7 @@ namespace System.Collections.Immutable
         bool TryGetKey(TKey equalKey, out TKey actualKey);
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableList), "Create")]
     public partial interface IImmutableList<T> : Generic.IReadOnlyList<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyCollection<T>
     {
         IImmutableList<T> Add(T value);
@@ -174,6 +175,7 @@ namespace System.Collections.Immutable
         IImmutableList<T> SetItem(int index, T value);
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableQueue), "Create")]
     public partial interface IImmutableQueue<T> : Generic.IEnumerable<T>, IEnumerable
     {
         bool IsEmpty { get; }
@@ -183,6 +185,7 @@ namespace System.Collections.Immutable
         T Peek();
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableHashSet), "Create")]
     public partial interface IImmutableSet<T> : Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable
     {
         IImmutableSet<T> Add(T value);
@@ -202,6 +205,7 @@ namespace System.Collections.Immutable
         IImmutableSet<T> Union(Generic.IEnumerable<T> other);
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableStack), "Create")]
     public partial interface IImmutableStack<T> : Generic.IEnumerable<T>, IEnumerable
     {
         bool IsEmpty { get; }
@@ -240,6 +244,7 @@ namespace System.Collections.Immutable
         public static ImmutableArray<T> ToImmutableArray<T>(this Span<T> items) { throw null; }
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableArray), "Create")]
     public readonly partial struct ImmutableArray<T> : Generic.IReadOnlyList<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyCollection<T>, Generic.IList<T>, Generic.ICollection<T>, IEquatable<ImmutableArray<T>>, IList, ICollection, IStructuralComparable, IStructuralEquatable, IImmutableList<T>
     {
         private readonly object _dummy;
@@ -588,6 +593,7 @@ namespace System.Collections.Immutable
         public static ImmutableHashSet<TSource> ToImmutableHashSet<TSource>(this ImmutableHashSet<TSource>.Builder builder) { throw null; }
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableHashSet), "Create")]
     public sealed partial class ImmutableHashSet<T> : IImmutableSet<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.ICollection<T>, Generic.ISet<T>, ICollection, Generic.IReadOnlySet<T>
     {
         internal ImmutableHashSet() { }
@@ -722,6 +728,7 @@ namespace System.Collections.Immutable
         public static ImmutableList<TSource> ToImmutableList<TSource>(this ImmutableList<TSource>.Builder builder) { throw null; }
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableList), "Create")]
     public sealed partial class ImmutableList<T> : IImmutableList<T>, Generic.IReadOnlyList<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyCollection<T>, Generic.IList<T>, Generic.ICollection<T>, IList, ICollection
     {
         internal ImmutableList() { }
@@ -907,6 +914,7 @@ namespace System.Collections.Immutable
         public static IImmutableQueue<T> Dequeue<T>(this IImmutableQueue<T> queue, out T value) { throw null; }
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableQueue), "Create")]
     public sealed partial class ImmutableQueue<T> : IImmutableQueue<T>, Generic.IEnumerable<T>, IEnumerable
     {
         internal ImmutableQueue() { }
@@ -1093,6 +1101,7 @@ namespace System.Collections.Immutable
         public static ImmutableSortedSet<TSource> ToImmutableSortedSet<TSource>(this ImmutableSortedSet<TSource>.Builder builder) { throw null; }
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableSortedSet), "Create")]
     public sealed partial class ImmutableSortedSet<T> : IImmutableSet<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlySet<T>, Generic.IReadOnlyList<T>, Generic.IList<T>, Generic.ICollection<T>, Generic.ISet<T>, IList, ICollection
     {
         internal ImmutableSortedSet() { }
@@ -1219,6 +1228,7 @@ namespace System.Collections.Immutable
         public static IImmutableStack<T> Pop<T>(this IImmutableStack<T> stack, out T value) { throw null; }
     }
 
+    [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableStack), "Create")]
     public sealed partial class ImmutableStack<T> : IImmutableStack<T>, Generic.IEnumerable<T>, IEnumerable
     {
         internal ImmutableStack() { }
@@ -1288,6 +1298,17 @@ namespace System.Linq
         public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TKey, TElement, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Func<T, TElement> elementSelector, Collections.Generic.IEqualityComparer<TKey>? comparer) where TKey : notnull { throw null; }
         public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TKey, TElement, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Func<T, TElement> elementSelector) where TKey : notnull { throw null; }
         public static Collections.Generic.IEnumerable<T> Where<T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, bool> predicate) { throw null; }
+    }
+}
+
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, Inherited = false)]
+    internal sealed partial class CollectionBuilderAttribute : Attribute
+    {
+        public CollectionBuilderAttribute(Type builderType, string methodName) { }
+        public Type BuilderType { get { throw null; } }
+        public string MethodName { get { throw null; } }
     }
 }
 
