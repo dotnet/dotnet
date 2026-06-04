@@ -4711,6 +4711,128 @@ namespace NuGet.Commands.FuncTest
             }
         }
 
+        // When a managed project (B) references a C++/CLI project (A) that has a package
+        // with build/native/ targets, restoring B first causes A to miss the build/native/ targets
+        // due to a LockFileBuilderCache collision. When both projects use AssetTargetFallback with
+        // the same imports, NuGetFrameworkFullComparer treats DualCompatibilityFramework(net6.0, native)
+        // as equal to plain net6.0, causing the criteria cache to return wrong selection criteria.
+        [Fact]
+        public async Task RestoreCommand_CppCliWithNativeBuildTargets_SharedCache_RestoreOrderDoesNotAffectBuildAssets()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Package structure:
+            // MyPackage: build/native/MyPackage.targets (only matched by native framework criteria)
+            // MyPackage depends on MyPackage-binaries
+            // MyPackage-binaries: buildTransitive/MyPackage-binaries.targets
+            var binariesPackage = new SimpleTestPackageContext("MyPackage-binaries", "1.0.0");
+            binariesPackage.AddFile("buildTransitive/MyPackage-binaries.targets");
+
+            var myPackage = new SimpleTestPackageContext("MyPackage", "1.0.0");
+            myPackage.AddFile("build/native/MyPackage.targets");
+            myPackage.Dependencies.Add(binariesPackage);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                myPackage,
+                binariesPackage);
+
+            // Project A: C++/CLI (net6.0-windows7.0 + secondaryFramework=native + ATF)
+            // Direct PackageReference to MyPackage
+            var projectAJson = @"
+                {
+                    ""frameworks"": {
+                        ""net6.0-windows7.0"": {
+                            ""targetAlias"" : ""net6.0-windows7.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net472""
+                            ],
+                            ""secondaryFramework"" : ""native"",
+                            ""dependencies"": {
+                                ""MyPackage"": ""1.0.0""
+                            }
+                        }
+                    }
+                }";
+
+            // Project B: managed net6.0-windows7.0 with same ATF imports, references Project A
+            var projectBJson = @"
+                {
+                    ""frameworks"": {
+                        ""net6.0-windows7.0"": {
+                            ""targetAlias"" : ""net6.0-windows7.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net472""
+                            ],
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            var logger = new TestLogger();
+
+            var projectA = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "ProjectA", pathContext.SolutionRoot, projectAJson);
+            var projectB = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "ProjectB", pathContext.SolutionRoot, projectBJson);
+
+            // B references A (default PrivateAssets = contentfiles;analyzers;build)
+            projectB = projectB.WithTestProjectReference(projectA);
+            CreateFakeProjectFile(projectA);
+
+            // Use DependencyGraphSpecRequestProvider which naturally shares a LockFileBuilderCache
+            // across all projects in the solution restore
+            var dgSpec = ProjectTestHelpers.GetDGSpecForAllProjects(projectB, projectA);
+
+            var restoreContext = new RestoreArgs()
+            {
+                CacheContext = new SourceCacheContext(),
+                Log = logger,
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                Sources = new List<string>() { pathContext.PackageSource },
+            };
+
+            var dgProvider = new DependencyGraphSpecRequestProvider(
+                new RestoreCommandProvidersCache(),
+                dgSpec);
+
+            IReadOnlyList<RestoreSummaryRequest> requests = await dgProvider.CreateRequests(restoreContext);
+
+            // Restore B first, then A (the problematic order)
+            var requestB = requests.Single(r => r.Request.Project.Name.Equals("ProjectB", StringComparison.OrdinalIgnoreCase));
+            var requestA = requests.Single(r => r.Request.Project.Name.Equals("ProjectA", StringComparison.OrdinalIgnoreCase));
+
+            var resultB = await new RestoreCommand(requestB.Request).ExecuteAsync();
+            resultB.Success.Should().BeTrue();
+
+            var resultA = await new RestoreCommand(requestA.Request).ExecuteAsync();
+            resultA.Success.Should().BeTrue();
+
+            // Assert: A's lock file should include build/native/MyPackage.targets
+            resultA.LockFile.Targets.Should().HaveCount(1);
+            var targetA = resultA.LockFile.Targets[0];
+
+            var myPackageLib = targetA.Libraries.First(l => l.Name.Equals("MyPackage", StringComparison.OrdinalIgnoreCase));
+            myPackageLib.Build.Should().ContainSingle()
+                .Which.Path.Should().Be("build/native/MyPackage.targets");
+
+            var binariesLib = targetA.Libraries.First(l => l.Name.Equals("MyPackage-binaries", StringComparison.OrdinalIgnoreCase));
+            binariesLib.Build.Should().ContainSingle()
+                .Which.Path.Should().Be("buildTransitive/MyPackage-binaries.targets");
+
+            // Assert: B should not get build assets (transitive through P2P with PrivateAssets=build)
+            resultB.LockFile.Targets.Should().HaveCount(1);
+            var targetB = resultB.LockFile.Targets[0];
+            var myPackageLibB = targetB.Libraries.First(l => l.Name.Equals("MyPackage", StringComparison.OrdinalIgnoreCase));
+            myPackageLibB.Build.Should().BeEmpty();
+        }
+
         private static JObject BasicConfigWithNet46
         {
             get

@@ -703,6 +703,7 @@ namespace NuGet.Protocol.Plugins
             TimeSpan? timeout,
             bool isKeepAlive,
             CancellationToken cancellationToken)
+            where TIncoming : class
         {
             return new OutboundRequestContext<TIncoming>(
                 _connection,

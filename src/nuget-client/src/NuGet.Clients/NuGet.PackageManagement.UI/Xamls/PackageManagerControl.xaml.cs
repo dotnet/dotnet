@@ -64,6 +64,9 @@ namespace NuGet.PackageManagement.UI
         // This tells the operation execution part that it needs to trigger a refresh when done.
         private bool _isRefreshRequired;
         private bool _isExecutingAction; // Signifies where an action is being executed. Should be updated in a coordinated fashion with IsEnabled
+        // Set when a relevant change occurs while the control is not visible, so that the
+        // pending refresh can be applied when the control becomes visible again.
+        private bool _refreshOnVisibleChange;
         private RestartRequestBar _restartBar;
         private bool _missingPackageStatus;
         private bool _loadedAndInitialized = false;
@@ -192,6 +195,7 @@ namespace NuGet.PackageManagement.UI
             _packageList.ViewModel.IsSolution = Model.IsSolution;
 
             Loaded += PackageManagerLoaded;
+            IsVisibleChanged += OnIsVisibleChanged;
 
             // register with the UI controller
             var controller = model.UIController as NuGetUI;
@@ -334,7 +338,7 @@ namespace NuGet.PackageManagement.UI
         {
             var timeSpan = GetTimeSinceLastRefreshAndRestart();
 
-            // Do not refresh if the UI is not visible. It will be refreshed later when the loaded event is called.
+            // Do not refresh if the UI is not visible. A pending refresh is recorded and applied when the control becomes visible again.
             if (IsVisible && Model.IsSolution)
             {
                 var solutionModel = _detailModel as PackageSolutionDetailControlModel;
@@ -354,6 +358,11 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
+                if (Model.IsSolution)
+                {
+                    _refreshOnVisibleChange = true;
+                }
+
                 EmitRefreshEvent(timeSpan, RefreshOperationSource.ProjectsChanged, RefreshOperationStatus.NoOp, isUIFiltering: false, duration: 0);
             }
         }
@@ -361,7 +370,7 @@ namespace NuGet.PackageManagement.UI
         private void OnProjectActionsExecuted(object sender, IReadOnlyCollection<string> projectIds)
         {
             var timeSpan = GetTimeSinceLastRefreshAndRestart();
-            // Do not refresh if the UI is not visible. It will be refreshed later when the loaded event is called.
+            // Do not refresh if the UI is not visible. A pending refresh is recorded and applied when the control becomes visible again.
             if (IsVisible)
             {
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async () =>
@@ -378,6 +387,11 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
+                if (Model.IsSolution || projectIds.Contains(Model.Context.Projects.First().ProjectId, StringComparer.OrdinalIgnoreCase))
+                {
+                    _refreshOnVisibleChange = true;
+                }
+
                 EmitRefreshEvent(timeSpan, RefreshOperationSource.ActionsExecuted, RefreshOperationStatus.NoOp);
             }
         }
@@ -422,7 +436,7 @@ namespace NuGet.PackageManagement.UI
         private void OnNuGetCacheUpdated(object sender, string e)
         {
             var timeSpan = GetTimeSinceLastRefreshAndRestart();
-            // Do not refresh if the UI is not visible. It will be refreshed later when the loaded event is called.
+            // Do not refresh if the UI is not visible. A pending refresh is recorded and applied when the control becomes visible again.
             if (IsVisible)
             {
                 NuGetUIThreadHelper.JoinableTaskFactory
@@ -431,7 +445,23 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
+                _refreshOnVisibleChange = true;
                 EmitRefreshEvent(timeSpan, RefreshOperationSource.CacheUpdated, RefreshOperationStatus.NoOp);
+            }
+        }
+
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // When the control is hidden (e.g. another document is opened on top of it), refreshes
+            // triggered by external changes are skipped and recorded via _refreshOnVisibleChange.
+            // Apply the pending refresh now that the control is visible again.
+            if (e.NewValue is true && _loadedAndInitialized && _refreshOnVisibleChange)
+            {
+                _refreshOnVisibleChange = false;
+                var timeSpan = GetTimeSinceLastRefreshAndRestart();
+                NuGetUIThreadHelper.JoinableTaskFactory
+                    .RunAsync(async () => await RefreshWhenNotExecutingActionAsync(RefreshOperationSource.WindowActivated, timeSpan))
+                    .PostOnFailure(nameof(PackageManagerControl), nameof(OnIsVisibleChanged));
             }
         }
 
@@ -551,6 +581,7 @@ namespace NuGet.PackageManagement.UI
                 await RunAndEmitRefreshAsync(async () =>
                 {
                     _loadedAndInitialized = true;
+                    _refreshOnVisibleChange = false;
                     await SearchPackagesAndRefreshUpdateCountAsync(useCacheForUpdates: false);
                 },
                 RefreshOperationSource.PackageManagerLoaded, timeSpan, sw);
@@ -1616,6 +1647,7 @@ namespace NuGet.PackageManagement.UI
             solutionManager.ProjectUpdated -= OnProjectUpdated;
             solutionManager.ProjectRenamed -= OnProjectRenamed;
             solutionManager.AfterNuGetCacheUpdated -= OnNuGetCacheUpdated;
+            IsVisibleChanged -= OnIsVisibleChanged;
 
             Model.Context.ProjectActionsExecuted -= OnProjectActionsExecuted;
 
@@ -1917,3 +1949,4 @@ namespace NuGet.PackageManagement.UI
         }
     }
 }
+
