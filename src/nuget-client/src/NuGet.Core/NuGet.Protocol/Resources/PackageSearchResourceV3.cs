@@ -12,8 +12,11 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NuGet.Common;
+using NuGet.Protocol.Converters;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Model;
+using NuGet.Shared;
 
 namespace NuGet.Protocol
 {
@@ -21,6 +24,7 @@ namespace NuGet.Protocol
     {
         private readonly HttpSource _client;
         private readonly Uri[] _searchEndpoints;
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
 
 #pragma warning disable CS0618 // Type or member is obsolete
         private readonly RawSearchResourceV3 _rawSearchResource;
@@ -34,10 +38,16 @@ namespace NuGet.Protocol
         }
 
         internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints)
+            : this(client, searchEndpoints, environmentVariableReader: null)
+        {
+        }
+
+        internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints, IEnvironmentVariableReader environmentVariableReader)
             : base()
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _searchEndpoints = searchEndpoints?.ToArray() ?? throw new ArgumentNullException(nameof(searchEndpoints));
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <summary>
@@ -255,6 +265,36 @@ namespace NuGet.Protocol
                 return null;
             }
 
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
+                || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            {
+                return await ProcessHttpStreamWithStjAsync(httpInitialResponse, take, token);
+            }
+            else
+            {
+                return await ProcessHttpStreamWithNsjAsync(httpInitialResponse, take, token);
+            }
+        }
+
+        private static async Task<V3SearchResults> ProcessHttpStreamWithStjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        {
+#if NETCOREAPP2_0_OR_GREATER
+            using var stream = await httpInitialResponse.Content.ReadAsStreamAsync(token);
+#else
+            using var stream = await httpInitialResponse.Content.ReadAsStreamAsync();
+#endif
+            var results = await System.Text.Json.JsonSerializer.DeserializeAsync(stream, PackageSearchJsonContext.Default.V3SearchResults, token);
+
+            if (results?.Data?.Count > take)
+            {
+                results.Data = results.Data.Take((int)take).ToList();
+            }
+
+            return results;
+        }
+
+        private static async Task<V3SearchResults> ProcessHttpStreamWithNsjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        {
             var _newtonsoftConvertersSerializer = JsonSerializer.Create(JsonExtensions.ObjectSerializationSettings);
             _newtonsoftConvertersSerializer.Converters.Add(new Converters.V3SearchResultsConverter(take));
 
