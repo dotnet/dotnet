@@ -281,6 +281,7 @@ namespace Microsoft.CodeAnalysis
             private object _dummy;
             private int _dummyPrimitive;
             public SyntaxNodeOrToken Current { get { throw null; } }
+            [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "_node")]
             public bool MoveNext() { throw null; }
             public void Reset() { }
         }
@@ -300,6 +301,7 @@ namespace Microsoft.CodeAnalysis
                 private object _dummy;
                 private int _dummyPrimitive;
                 public SyntaxNodeOrToken Current { get { throw null; } }
+                [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "_node")]
                 public bool MoveNext() { throw null; }
                 public void Reset() { }
             }
@@ -1094,6 +1096,7 @@ namespace Microsoft.CodeAnalysis
         IFieldSymbol? CorrespondingTupleField { get; }
         System.Collections.Immutable.ImmutableArray<CustomModifier> CustomModifiers { get; }
         int FixedSize { get; }
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "ConstantValue")]
         bool HasConstantValue { get; }
         bool IsConst { get; }
         bool IsExplicitlyNamedTupleElement { get; }
@@ -1657,6 +1660,7 @@ namespace Microsoft.CodeAnalysis
     {
         internal Location() { }
         public bool IsInMetadata { get { throw null; } }
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "SourceTree")]
         public bool IsInSource { get { throw null; } }
         public abstract LocationKind Kind { get; }
         public IModuleSymbol? MetadataModule { get { throw null; } }
@@ -2208,6 +2212,7 @@ namespace Microsoft.CodeAnalysis
         public Compilation Compilation { get { throw null; } }
         protected abstract Compilation CompilationCore { get; }
         public virtual bool IgnoresAccessibility { get { throw null; } }
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "ParentModel")]
         public abstract bool IsSpeculativeSemanticModel { get; }
         public abstract string Language { get; }
         public abstract bool NullableAnalysisIsDisabled { get; }
@@ -2274,6 +2279,7 @@ namespace Microsoft.CodeAnalysis
         public static SeparatedSyntaxList<TNode> Create<TNode>(System.ReadOnlySpan<TNode> nodes) where TNode : SyntaxNode { throw null; }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SeparatedSyntaxList), "Create")]
     public readonly partial struct SeparatedSyntaxList<TNode> : System.IEquatable<SeparatedSyntaxList<TNode>>, System.Collections.Generic.IReadOnlyList<TNode>, System.Collections.Generic.IEnumerable<TNode>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<TNode> where TNode : SyntaxNode
     {
         private readonly object _dummy;
@@ -2827,6 +2833,7 @@ namespace Microsoft.CodeAnalysis
         public static SyntaxList<TNode> Create<TNode>(System.ReadOnlySpan<TNode> nodes) where TNode : SyntaxNode { throw null; }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxList), "Create")]
     public readonly partial struct SyntaxList<TNode> : System.Collections.Generic.IReadOnlyList<TNode>, System.Collections.Generic.IEnumerable<TNode>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<TNode>, System.IEquatable<SyntaxList<TNode>> where TNode : SyntaxNode
     {
         private readonly object _dummy;
@@ -3080,6 +3087,7 @@ namespace Microsoft.CodeAnalysis
         public readonly void WriteTo(System.IO.TextWriter writer) { }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxNodeOrTokenList), "Create")]
     public readonly partial struct SyntaxNodeOrTokenList : System.IEquatable<SyntaxNodeOrTokenList>, System.Collections.Generic.IReadOnlyCollection<SyntaxNodeOrToken>, System.Collections.Generic.IEnumerable<SyntaxNodeOrToken>, System.Collections.IEnumerable
     {
         private readonly object _dummy;
@@ -3212,6 +3220,7 @@ namespace Microsoft.CodeAnalysis
         public readonly void WriteTo(System.IO.TextWriter writer) { }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxTokenList), "Create")]
     public readonly partial struct SyntaxTokenList : System.IEquatable<SyntaxTokenList>, System.Collections.Generic.IReadOnlyList<SyntaxToken>, System.Collections.Generic.IEnumerable<SyntaxToken>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<SyntaxToken>
     {
         private readonly object _dummy;
@@ -3371,6 +3380,7 @@ namespace Microsoft.CodeAnalysis
         public readonly void WriteTo(System.IO.TextWriter writer) { }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxTriviaList), "Create")]
     public readonly partial struct SyntaxTriviaList : System.IEquatable<SyntaxTriviaList>, System.Collections.Generic.IReadOnlyList<SyntaxTrivia>, System.Collections.Generic.IEnumerable<SyntaxTrivia>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<SyntaxTrivia>
     {
         private readonly object _dummy;
@@ -4361,6 +4371,7 @@ namespace Microsoft.CodeAnalysis.Emit
         public SemanticEditKind Kind { get { throw null; } }
         public ISymbol? NewSymbol { get { throw null; } }
         public ISymbol? OldSymbol { get { throw null; } }
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "SyntaxMap")]
         public bool PreserveLocalVariables { get { throw null; } }
         public System.Func<SyntaxNode, RuntimeRudeEdit?>? RuntimeRudeEdit { get { throw null; } }
         public System.Func<SyntaxNode, SyntaxNode?>? SyntaxMap { get { throw null; } }
@@ -4601,6 +4612,7 @@ namespace Microsoft.CodeAnalysis.Operations
         public bool IsNullable { get { throw null; } }
         public bool IsNumeric { get { throw null; } }
         public bool IsReference { get { throw null; } }
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "MethodSymbol")]
         public bool IsUserDefined { get { throw null; } }
         public IMethodSymbol? MethodSymbol { get { throw null; } }
     }
@@ -5942,5 +5954,125 @@ namespace Microsoft.CodeAnalysis.Text
         public readonly TextSpan? Overlap(TextSpan span) { throw null; }
         public readonly bool OverlapsWith(TextSpan span) { throw null; }
         public override readonly string ToString() { throw null; }
+    }
+}
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = false, Inherited = false)]
+    internal sealed partial class SetsRequiredMembersAttribute : Attribute
+    {
+    }
+}
+
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
+    internal sealed partial class CollectionBuilderAttribute : Attribute
+    {
+        public CollectionBuilderAttribute(Type builderType, string methodName) { }
+        public Type BuilderType { get { throw null; } }
+        public string MethodName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class CompilerFeatureRequiredAttribute : Attribute
+    {
+        public const string RefStructs = "RefStructs";
+        public const string RequiredMembers = "RequiredMembers";
+        public CompilerFeatureRequiredAttribute(string featureName) { }
+        public string FeatureName { get { throw null; } }
+        public bool IsOptional { get { throw null; } init { } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
+    internal sealed partial class InterpolatedStringHandlerArgumentAttribute : Attribute
+    {
+        public InterpolatedStringHandlerArgumentAttribute(string argument) { }
+        public InterpolatedStringHandlerArgumentAttribute(params string[] arguments) { }
+        public string[] Arguments { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+    internal sealed partial class InterpolatedStringHandlerAttribute : Attribute
+    {
+    }
+
+    internal static partial class IsExternalInit
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+    internal sealed partial class RequiredMemberAttribute : Attribute
+    {
     }
 }
