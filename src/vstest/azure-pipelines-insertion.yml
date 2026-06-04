@@ -1,6 +1,6 @@
 parameters:
   - name: 'ComponentBranchName'
-    default: 'main'
+    default: 'rel/18.7'
   - name: 'CreateDraftPR'
     default: 'false'
   - name: 'OptionalTitlePrefix'
@@ -44,7 +44,7 @@ schedules:
     displayName: Daily midnight insertion to VS
     branches:
       include:
-      - main
+      - rel/18.7
     always: true
 
 resources:
