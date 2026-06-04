@@ -962,12 +962,6 @@
           DependsOnTargets="RepoTest;CleanupRepo" />
   <Target Name="VSTest" DependsOnTargets="Test" />
 
-  <Target Name="SetAzureDevOpsVariableForTestResults"
-          Condition="'$(ContinuousIntegrationBuild)' == 'true'"
-          BeforeTargets="RepoTest">
-    <Message Importance="High" Text="##vso[task.setvariable variable=hasTestResults]true" />
-  </Target>
-
   <!-- Outputs a dependency graph of the repos, in YAML form, to the console. -->
   <Target Name="ShowDependencyGraph">
     <MSBuild Projects="$(MSBuildProjectFullPath)"
