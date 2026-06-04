@@ -176,7 +176,6 @@
                           $(RepoRoot)src\Framework\App.Runtime\bundle\aspnetcore-runtime-bundle.bundleproj;
                           $(RepoRoot)eng\tools\HelixTestRunner\HelixTestRunner.csproj;
                           $(RepoRoot)src\BuildAfterTargetingPack\*.csproj;
-                          $(RepoRoot)src\Tools\NativeAot\aspnetcoretools\aspnetcoretools.csproj;
                           "
                         Exclude="
                           @(ProjectToBuild);
@@ -185,6 +184,9 @@
                           $(RepoRoot)**\bin\**\*;
                           $(RepoRoot)**\obj\**\*;"
                         Condition=" '$(BuildMainlyReferenceProviders)' != 'true' " />
+        <DotNetProjects Include="$(RepoRoot)src\Tools\NativeAot\aspnetcoretools\aspnetcoretools.csproj"
+                        Exclude="@(ProjectToBuild);@(ProjectToExclude);$(RepoRoot)**\bin\**\*;$(RepoRoot)**\obj\**\*"
+                        Condition=" '$(BuildMainlyReferenceProviders)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true' " />
         <!-- Only build the composite R2R runtime pack when we will actually ship it -->
         <DotNetProjects Include="$(RepoRoot)src\Framework\App.Runtime\src\aspnetcore-runtime-composite.proj"
                         Condition=" '$(BuildMainlyReferenceProviders)' != 'true' and '$(TargetOsName)' != 'win' " />

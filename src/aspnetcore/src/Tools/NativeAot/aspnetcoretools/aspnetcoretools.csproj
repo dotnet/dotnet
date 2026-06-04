@@ -6,11 +6,12 @@
     <PackageId>aspnetcoretools</PackageId>
     <PackAsTool>true</PackAsTool>
     <IsShippingPackage>false</IsShippingPackage>
-    <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
-    <PublishAot>true</PublishAot>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <PublishAot Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</PublishAot>
     <NativeLib>Shared</NativeLib>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
-    <RuntimeIdentifiers>$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="'$(DotNetBuild)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(TargetRuntimeIdentifier)</RuntimeIdentifiers>
     <NoWarn>$(NoWarn);CS2008</NoWarn>
   </PropertyGroup>
 
