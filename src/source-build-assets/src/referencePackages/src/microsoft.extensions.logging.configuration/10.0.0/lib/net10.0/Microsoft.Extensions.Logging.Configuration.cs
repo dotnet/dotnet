@@ -53,6 +53,7 @@ namespace Microsoft.Extensions.Logging.Configuration
         [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("TOptions's dependent types may have their members trimmed. Ensure all required members are preserved.")]
         public static void RegisterProviderOptions<TOptions, TProvider>(DependencyInjection.IServiceCollection services) where TOptions : class { }
     }
+
     public partial class LoggerProviderOptionsChangeTokenSource<TOptions, TProvider> : Options.ConfigurationChangeTokenSource<TOptions>
     {
         public LoggerProviderOptionsChangeTokenSource(ILoggerProviderConfiguration<TProvider> providerConfiguration) : base(default!) { }

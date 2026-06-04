@@ -31,7 +31,6 @@ namespace Microsoft.Win32.SafeHandles
         public SafeAccessTokenHandle(System.IntPtr handle) : base(default, default) { }
         public static SafeAccessTokenHandle InvalidHandle { get { throw null; } }
         public override bool IsInvalid { get { throw null; } }
-
         protected override bool ReleaseHandle() { throw null; }
     }
 }
@@ -44,7 +43,6 @@ namespace System.Security.Principal
         public IdentityNotMappedException(string? message, Exception? inner) { }
         public IdentityNotMappedException(string? message) { }
         public IdentityReferenceCollection UnmappedIdentities { get { throw null; } }
-
         public override void GetObjectData(Runtime.Serialization.SerializationInfo serializationInfo, Runtime.Serialization.StreamingContext streamingContext) { }
     }
 
@@ -52,7 +50,6 @@ namespace System.Security.Principal
     {
         internal IdentityReference() { }
         public abstract string Value { get; }
-
         public abstract override bool Equals(object? o);
         public abstract override int GetHashCode();
         public abstract bool IsValidTargetType(Type targetType);
@@ -61,16 +58,14 @@ namespace System.Security.Principal
         public abstract override string ToString();
         public abstract IdentityReference Translate(Type targetType);
     }
+
     public partial class IdentityReferenceCollection : Collections.Generic.ICollection<IdentityReference>, Collections.Generic.IEnumerable<IdentityReference>, Collections.IEnumerable
     {
         public IdentityReferenceCollection() { }
         public IdentityReferenceCollection(int capacity) { }
         public int Count { get { throw null; } }
-
         public IdentityReference this[int index] { get { throw null; } set { } }
-
         bool Collections.Generic.ICollection<IdentityReference>.IsReadOnly { get { throw null; } }
-
         public void Add(IdentityReference identity) { }
         public void Clear() { }
         public bool Contains(IdentityReference identity) { throw null; }
@@ -87,7 +82,6 @@ namespace System.Security.Principal
         public NTAccount(string domainName, string accountName) { }
         public NTAccount(string name) { }
         public override string Value { get { throw null; } }
-
         public override bool Equals(object? o) { throw null; }
         public override int GetHashCode() { throw null; }
         public override bool IsValidTargetType(Type targetType) { throw null; }
@@ -108,7 +102,6 @@ namespace System.Security.Principal
         public SecurityIdentifier? AccountDomainSid { get { throw null; } }
         public int BinaryLength { get { throw null; } }
         public override string Value { get { throw null; } }
-
         public int CompareTo(SecurityIdentifier? sid) { throw null; }
         public override bool Equals(object? o) { throw null; }
         public bool Equals(SecurityIdentifier sid) { throw null; }
@@ -288,7 +281,6 @@ namespace System.Security.Principal
         public virtual IntPtr Token { get { throw null; } }
         public SecurityIdentifier? User { get { throw null; } }
         public virtual Collections.Generic.IEnumerable<Claims.Claim> UserClaims { get { throw null; } }
-
         public override Claims.ClaimsIdentity Clone() { throw null; }
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
@@ -310,7 +302,6 @@ namespace System.Security.Principal
         public virtual Collections.Generic.IEnumerable<Claims.Claim> DeviceClaims { get { throw null; } }
         public override IIdentity Identity { get { throw null; } }
         public virtual Collections.Generic.IEnumerable<Claims.Claim> UserClaims { get { throw null; } }
-
         public virtual bool IsInRole(int rid) { throw null; }
         public virtual bool IsInRole(SecurityIdentifier sid) { throw null; }
         public virtual bool IsInRole(WindowsBuiltInRole role) { throw null; }

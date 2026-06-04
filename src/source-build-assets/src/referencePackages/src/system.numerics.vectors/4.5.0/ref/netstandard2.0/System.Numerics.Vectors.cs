@@ -37,7 +37,6 @@ namespace System.Numerics
         public static Matrix3x2 Identity { get { throw null; } }
         public bool IsIdentity { get { throw null; } }
         public Vector2 Translation { get { throw null; } set { } }
-
         public static Matrix3x2 Add(Matrix3x2 value1, Matrix3x2 value2) { throw null; }
         public static Matrix3x2 CreateRotation(float radians, Vector2 centerPoint) { throw null; }
         public static Matrix3x2 CreateRotation(float radians) { throw null; }
@@ -94,7 +93,6 @@ namespace System.Numerics
         public static Matrix4x4 Identity { get { throw null; } }
         public bool IsIdentity { get { throw null; } }
         public Vector3 Translation { get { throw null; } set { } }
-
         public static Matrix4x4 Add(Matrix4x4 value1, Matrix4x4 value2) { throw null; }
         public static Matrix4x4 CreateBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector) { throw null; }
         public static Matrix4x4 CreateConstrainedBillboard(Vector3 objectPosition, Vector3 cameraPosition, Vector3 rotateAxis, Vector3 cameraForwardVector, Vector3 objectForwardVector) { throw null; }
@@ -179,7 +177,6 @@ namespace System.Numerics
         public Quaternion(float x, float y, float z, float w) { }
         public static Quaternion Identity { get { throw null; } }
         public bool IsIdentity { get { throw null; } }
-
         public static Quaternion Add(Quaternion value1, Quaternion value2) { throw null; }
         public static Quaternion Concatenate(Quaternion value1, Quaternion value2) { throw null; }
         public static Quaternion Conjugate(Quaternion value) { throw null; }
@@ -215,7 +212,6 @@ namespace System.Numerics
     public static partial class Vector
     {
         public static bool IsHardwareAccelerated { get { throw null; } }
-
         public static Vector<T> Abs<T>(Vector<T> value) where T : struct { throw null; }
         public static Vector<T> Add<T>(Vector<T> left, Vector<T> right) where T : struct { throw null; }
         public static Vector<T> AndNot<T>(Vector<T> left, Vector<T> right) where T : struct { throw null; }
@@ -320,6 +316,7 @@ namespace System.Numerics
         public static void Widen(Vector<uint> source, out Vector<ulong> dest1, out Vector<ulong> dest2) { throw null; }
         public static Vector<T> Xor<T>(Vector<T> left, Vector<T> right) where T : struct { throw null; }
     }
+
     public partial struct Vector2 : IEquatable<Vector2>, IFormattable
     {
         public float X;
@@ -330,7 +327,6 @@ namespace System.Numerics
         public static Vector2 UnitX { get { throw null; } }
         public static Vector2 UnitY { get { throw null; } }
         public static Vector2 Zero { get { throw null; } }
-
         public static Vector2 Abs(Vector2 value) { throw null; }
         public static Vector2 Add(Vector2 left, Vector2 right) { throw null; }
         public static Vector2 Clamp(Vector2 value1, Vector2 min, Vector2 max) { throw null; }
@@ -390,7 +386,6 @@ namespace System.Numerics
         public static Vector3 UnitY { get { throw null; } }
         public static Vector3 UnitZ { get { throw null; } }
         public static Vector3 Zero { get { throw null; } }
-
         public static Vector3 Abs(Vector3 value) { throw null; }
         public static Vector3 Add(Vector3 left, Vector3 right) { throw null; }
         public static Vector3 Clamp(Vector3 value1, Vector3 min, Vector3 max) { throw null; }
@@ -452,7 +447,6 @@ namespace System.Numerics
         public static Vector4 UnitY { get { throw null; } }
         public static Vector4 UnitZ { get { throw null; } }
         public static Vector4 Zero { get { throw null; } }
-
         public static Vector4 Abs(Vector4 value) { throw null; }
         public static Vector4 Add(Vector4 left, Vector4 right) { throw null; }
         public static Vector4 Clamp(Vector4 value1, Vector4 min, Vector4 max) { throw null; }
@@ -505,12 +499,9 @@ namespace System.Numerics
         public Vector(T[] values, int index) { }
         public Vector(T[] values) { }
         public static int Count { get { throw null; } }
-
         public T this[int index] { get { throw null; } }
-
         public static Vector<T> One { get { throw null; } }
         public static Vector<T> Zero { get { throw null; } }
-
         public void CopyTo(T[] destination, int startIndex) { }
         public void CopyTo(T[] destination) { }
         public bool Equals(Vector<T> other) { throw null; }

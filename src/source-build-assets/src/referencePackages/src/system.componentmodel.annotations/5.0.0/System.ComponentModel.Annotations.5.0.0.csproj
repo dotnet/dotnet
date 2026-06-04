@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>System.ComponentModel.Annotations</PackageId>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
     <PackageVersion>5.0.0</PackageVersion>
     <AssemblyName>System.ComponentModel.Annotations</AssemblyName>
     <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
@@ -26,6 +26,7 @@ When using NuGet 3.x this package requires at least version 3.4.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
     <MinClientVersion>2.12</MinClientVersion>
+    <PlaceholderTargetFrameworks>net45</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
 </Project>

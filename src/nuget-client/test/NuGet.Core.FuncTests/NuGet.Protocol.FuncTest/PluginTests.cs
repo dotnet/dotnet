@@ -191,7 +191,7 @@ namespace NuGet.Protocol.FuncTest
                     MessageMethod.GetOperationClaims,
                     new GetOperationClaimsResponse(new OperationClaim[] { OperationClaim.DownloadPackage }));
 
-                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: "{}");
+                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndexJson: "{}");
 
                 var response = await test.Plugin.Connection.SendRequestAndReceiveResponseAsync<GetOperationClaimsRequest, GetOperationClaimsResponse>(
                     MessageMethod.GetOperationClaims,
@@ -211,7 +211,7 @@ namespace NuGet.Protocol.FuncTest
             {
                 Assert.Equal(PluginProtocolConstants.CurrentVersion, test.Plugin.Connection.ProtocolVersion);
 
-                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: "{}");
+                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndexJson: "{}");
 
                 var stopwatch = Stopwatch.StartNew();
 
@@ -251,7 +251,7 @@ namespace NuGet.Protocol.FuncTest
                     MessageMethod.Initialize,
                     new InitializeResponse(MessageResponseCode.Success));
 
-                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndex: "{}");
+                var payload = new GetOperationClaimsRequest(packageSourceRepository: "a", serviceIndexJson: "{}");
 
                 string consoleOutput;
 
