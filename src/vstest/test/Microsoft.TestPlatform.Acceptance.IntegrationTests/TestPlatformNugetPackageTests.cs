@@ -58,12 +58,10 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
         string assemblyPaths,
         out string trxFilePath)
     {
-        string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
-
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty,
             FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
 
-        arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /EnableCodeCoverage");
+        arguments = string.Concat(arguments, $" /EnableCodeCoverage");
 
         trxFilePath = Path.Combine(TempDirectory.Path, Guid.NewGuid() + ".trx");
         arguments = string.Concat(arguments, " /logger:trx;logfilename=" + trxFilePath);
