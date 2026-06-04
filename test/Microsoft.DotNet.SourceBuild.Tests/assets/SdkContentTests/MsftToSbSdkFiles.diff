@@ -42,6 +42,50 @@ index ------------
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/nethost.h
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/singlefilehost
  ./packs/Microsoft.NETCore.App.Ref/
- foo
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
+@@ ------------ @@
+ ./sdk/x.y.z/.version
+ ./sdk/x.y.z/AppHostTemplate/
+ ./sdk/x.y.z/AppHostTemplate/apphost
+-./sdk/x.y.z/Azure.Core.dll
+-./sdk/x.y.z/Azure.Monitor.OpenTelemetry.Exporter.dll
+ ./sdk/x.y.z/Containers/
+ ./sdk/x.y.z/Containers/build/
+ ./sdk/x.y.z/Containers/build/Microsoft.NET.Build.Containers.props
+@@ ------------ @@
+ ./sdk/x.y.z/ko/System.CommandLine.StaticCompletions.resources.dll
+ ./sdk/x.y.z/ko/vstest.console.resources.dll
+ ./sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll
+-./sdk/x.y.z/Microsoft.Bcl.AsyncInterfaces.dll
+ ./sdk/x.y.z/Microsoft.Build.dll
+ ./sdk/x.y.z/Microsoft.Build.Framework.dll
+ ./sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll
+@@ ------------ @@
+ ./sdk/x.y.z/OpenTelemetry.dll
+ ./sdk/x.y.z/OpenTelemetry.Exporter.InMemory.dll
+ ./sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll
+-./sdk/x.y.z/OpenTelemetry.Extensions.Hosting.dll
+ ./sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll
+ ./sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll
+-./sdk/x.y.z/OpenTelemetry.PersistentStorage.Abstractions.dll
+-./sdk/x.y.z/OpenTelemetry.PersistentStorage.FileSystem.dll
+ ./sdk/x.y.z/pl/
+ ./sdk/x.y.z/pl/dotnet.resources.dll
+ ./sdk/x.y.z/pl/Microsoft.Build.Framework.resources.dll
+@@ ------------ @@
+ ./sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/zh-Hant/
+ ./sdk/x.y.z/Sdks/Microsoft.SourceLink.GitLab/tools/net/zh-Hant/Microsoft.SourceLink.GitLab.resources.dll
+ ./sdk/x.y.z/Spectre.Console.dll
+-./sdk/x.y.z/System.ClientModel.dll
+ ./sdk/x.y.z/System.CodeDom.dll
+ ./sdk/x.y.z/System.CommandLine.dll
+ ./sdk/x.y.z/System.CommandLine.StaticCompletions.dll
+@@ ------------ @@
+ ./sdk/x.y.z/System.Diagnostics.EventLog.dll
+ ./sdk/x.y.z/System.Formats.Nrbf.dll
+ ./sdk/x.y.z/System.IO.Hashing.dll
+-./sdk/x.y.z/System.Memory.Data.dll
+ ./sdk/x.y.z/System.Reflection.MetadataLoadContext.dll
+ ./sdk/x.y.z/System.Resources.Extensions.dll
+ ./sdk/x.y.z/System.Security.Cryptography.Pkcs.dll

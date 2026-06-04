@@ -1,0 +1,25 @@
+diff --git a/msft_assemblyversions.txt b/sb_assemblyversions.txt
+index ------------
+--- a/msft_assemblyversions.txt
++++ b/sb_assemblyversions.txt
+@@ ------------ @@ sdk/x.y.z/NuGet.Packaging.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.30303
+ sdk/x.y.z/NuGet.ProjectModel.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.30303, FileVersionNumber:7.9.0.30303, ProductVersion:7.9.0-rc.30303+e0aa94285c859b6ab5061903e91dafffeee8094c.e0aa94285c859b6ab5061903e91dafffeee8094c, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/NuGet.Protocol.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.30303, FileVersionNumber:7.9.0.30303, ProductVersion:7.9.0-rc.30303+e0aa94285c859b6ab5061903e91dafffeee8094c.e0aa94285c859b6ab5061903e91dafffeee8094c, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/NuGet.Versioning.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.30303, FileVersionNumber:7.9.0.30303, ProductVersion:7.9.0-rc.30303+e0aa94285c859b6ab5061903e91dafffeee8094c.e0aa94285c859b6ab5061903e91dafffeee8094c, ProductVersionNumber:0.0.0.0
+-sdk/x.y.z/OpenTelemetry.Api.dll - AssemblyVersion:1.0.0.0, FileVersion:1.15.3.2017, FileVersionNumber:1.15.3.2017, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
+-sdk/x.y.z/OpenTelemetry.Api.ProviderBuilderExtensions.dll - AssemblyVersion:1.0.0.0, FileVersion:1.15.3.2017, FileVersionNumber:1.15.3.2017, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
+-sdk/x.y.z/OpenTelemetry.dll - AssemblyVersion:1.0.0.0, FileVersion:1.15.3.2017, FileVersionNumber:1.15.3.2017, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
+-sdk/x.y.z/OpenTelemetry.Exporter.InMemory.dll - AssemblyVersion:1.0.0.0, FileVersion:1.15.3.2017, FileVersionNumber:1.15.3.2017, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
+-sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll - AssemblyVersion:1.0.0.0, FileVersion:1.15.3.2017, FileVersionNumber:1.15.3.2017, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
+-sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll - AssemblyVersion:1.15.1.1025, FileVersion:1.15.1.1025, FileVersionNumber:1.15.1.1025, ProductVersion:1.15.1+8401783fd26f7e53390b79c510424a0774378f07, ProductVersionNumber:1.15.1.0
+-sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll - AssemblyVersion:1.15.1.1029, FileVersion:1.15.1.1029, FileVersionNumber:1.15.1.1029, ProductVersion:1.15.1+b89c765905dbc6db1421ff0a098127d44665c71f, ProductVersionNumber:1.15.1.0
++sdk/x.y.z/OpenTelemetry.Api.dll - AssemblyVersion:1.15.3.0, FileVersion:1.15.3.0, FileVersionNumber:1.15.3.0, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
++sdk/x.y.z/OpenTelemetry.Api.ProviderBuilderExtensions.dll - AssemblyVersion:1.15.3.0, FileVersion:1.15.3.0, FileVersionNumber:1.15.3.0, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
++sdk/x.y.z/OpenTelemetry.dll - AssemblyVersion:1.15.3.0, FileVersion:1.15.3.0, FileVersionNumber:1.15.3.0, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
++sdk/x.y.z/OpenTelemetry.Exporter.InMemory.dll - AssemblyVersion:1.15.3.0, FileVersion:1.15.3.0, FileVersionNumber:1.15.3.0, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
++sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll - AssemblyVersion:1.15.3.0, FileVersion:1.15.3.0, FileVersionNumber:1.15.3.0, ProductVersion:1.15.3+d622e6c7c899527638b53a6b06919859f5752add, ProductVersionNumber:1.15.3.0
++sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll - AssemblyVersion:1.15.1.0, FileVersion:1.15.1.0, FileVersionNumber:1.15.1.0, ProductVersion:1.15.1+b89c765905dbc6db1421ff0a098127d44665c71f, ProductVersionNumber:1.15.1.0
++sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll - AssemblyVersion:1.15.1.0, FileVersion:1.15.1.0, FileVersionNumber:1.15.1.0, ProductVersion:1.15.1+b89c765905dbc6db1421ff0a098127d44665c71f, ProductVersionNumber:1.15.1.0
+ sdk/x.y.z/pl/dotnet.resources.dll - AssemblyVersion:11.0.100.0, FileVersion:11.1.26.30303, FileVersionNumber:11.1.26.30303, ProductVersion:11.0.100-preview.6.26302.103+e0aa94285c859b6ab5061903e91dafffeee8094c, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/pl/Microsoft.Build.Framework.resources.dll - AssemblyVersion:15.1.0.0, FileVersion:18.9.0.30303, FileVersionNumber:18.9.0.30303, ProductVersion:18.9.0-preview-26302-103+e0aa94285c859b6ab5061903e91dafffeee8094c, ProductVersionNumber:18.9.0.0
+ sdk/x.y.z/pl/Microsoft.Build.resources.dll - AssemblyVersion:15.1.0.0, FileVersion:18.9.0.30303, FileVersionNumber:18.9.0.30303, ProductVersion:18.9.0-preview-26302-103+e0aa94285c859b6ab5061903e91dafffeee8094c, ProductVersionNumber:18.9.0.0
