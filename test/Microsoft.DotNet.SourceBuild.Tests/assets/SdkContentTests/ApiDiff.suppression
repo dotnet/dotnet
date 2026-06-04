@@ -3,6 +3,12 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
