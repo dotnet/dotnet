@@ -407,15 +407,13 @@ public partial class PRCreator
     {
         if (await _gitClient.Repo.DoesBranchExistAsync(_gitClient.RepoUri, headBranch))
         {
-            // Orphan branch from a previously-closed PR. Delete and recreate so we start fresh.
-            try
-            {
-                await _gitClient.Repo.DeleteBranchAsync(_gitClient.RepoUri, headBranch);
-            }
-            catch (Exception ex)
-            {
-                Log.LogWarning($"Failed to delete orphan head branch '{headBranch}': {ex.Message}");
-            }
+            // Orphan branch from a previously-closed PR. Delete it so the upcoming
+            // CreateBranchAsync starts fresh from targetBranch. If deletion fails we MUST
+            // surface the error: silently swallowing it would let the no-op CreateBranchAsync
+            // (both GitHub's POST git/refs and DarcLib's AzDO client treat an existing ref
+            // as success) pass the post-create DoesBranchExistAsync probe, and the next
+            // CommitFilesWithNoCloningAsync would commit on top of stale content.
+            await _gitClient.Repo.DeleteBranchAsync(_gitClient.RepoUri, headBranch);
         }
 
         Log.LogInformation($"Creating branch '{headBranch}' from '{targetBranch}'.");
