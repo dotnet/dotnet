@@ -17,6 +17,8 @@
     <RuntimeIdentifiers>$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
   </PropertyGroup>
 
+  <Import Project="..\..\NativeAot\AspNetCoreTools.NativeAot.props" />
+
   <ItemGroup>
     <Compile Include="$(SharedSourceRoot)CommandLineUtils\**\*.cs" />
     <Compile Include="$(SharedSourceRoot)CertificateGeneration\**\*.cs" />

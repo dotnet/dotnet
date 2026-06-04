@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <OutputType>Library</OutputType>
+    <PackageId>aspnetcoretools</PackageId>
+    <PackAsTool>true</PackAsTool>
+    <IsShippingPackage>false</IsShippingPackage>
+    <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
+    <PublishAot>true</PublishAot>
+    <NativeLib>Shared</NativeLib>
+    <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    <RuntimeIdentifiers>$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
+    <NoWarn>$(NoWarn);CS2008</NoWarn>
+  </PropertyGroup>
+
+  <Import Project="..\AspNetCoreTools.NativeAot.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dotnet-dev-certs\src\dotnet-dev-certs.csproj" IncludeInAggregateExecutable="true" />
+    <ProjectReference Include="..\..\dotnet-user-jwts\src\dotnet-user-jwts.csproj" IncludeInAggregateExecutable="true" />
+    <ProjectReference Include="..\..\dotnet-user-secrets\src\dotnet-user-secrets.csproj" IncludeInAggregateExecutable="true" />
+  </ItemGroup>
+
+  <Target Name="SetAspNetCoreToolsPackEntryPoint" BeforeTargets="SetPackToolProperties">
+    <PropertyGroup>
+      <ToolCommandName>dotnet-dev-certs</ToolCommandName>
+      <ToolEntryPoint>dotnet-dev-certs$(_NativeExecutableExtension)</ToolEntryPoint>
+    </PropertyGroup>
+  </Target>
+
+</Project>
