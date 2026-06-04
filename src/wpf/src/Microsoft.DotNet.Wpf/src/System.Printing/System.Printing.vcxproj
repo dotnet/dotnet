@@ -161,7 +161,8 @@
   <ItemGroup>
     <AdditionalPackageReference Include="$(SystemIOPackagingPackage)" Version="$(SystemIOPackagingVersion)" />
   </ItemGroup>
-  <!-- ijwhost.dll packaging is handled centrally in eng/WpfArcadeSdk/tools/Packaging.targets -->
+  <!-- ijwhost.dll is required for mixed-mode C++/CLI assemblies but is excluded from the
+       transport package here. It is redistributed via the WindowsDesktop runtime pack instead. -->
   <Target Name="AddDefineReferences" BeforeTargets="ClCompile" AfterTargets="ResolveReferences" Returns="@(CLCompile)">
     <PropertyGroup>
       <_defineReferences>@(_defineReference->'%(Define)=&lt;%(Identity)&gt;')</_defineReferences>
