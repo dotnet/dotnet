@@ -31,4 +31,13 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="RemoveAspNetCoreToolsPackMetadataFiles" AfterTargets="PackTool">
+    <ItemGroup>
+      <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)"
+                              Condition="'%(TfmSpecificPackageFile.FileName)%(TfmSpecificPackageFile.Extension)' == 'DotnetToolSettings.xml'" />
+      <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)"
+                              Condition="'%(TfmSpecificPackageFile.Extension)' == '.json' and $([System.String]::Copy('%(TfmSpecificPackageFile.FileName)').EndsWith('.runtimeconfig'))" />
+    </ItemGroup>
+  </Target>
+
 </Project>
