@@ -24,13 +24,6 @@
     <ProjectReference Include="..\..\dotnet-user-secrets\src\dotnet-user-secrets.csproj" IncludeInAggregateExecutable="true" />
   </ItemGroup>
 
-  <Target Name="SetAspNetCoreToolsPackEntryPoint" BeforeTargets="SetPackToolProperties">
-    <PropertyGroup>
-      <ToolCommandName>dotnet-dev-certs</ToolCommandName>
-      <ToolEntryPoint>dotnet-dev-certs$(_NativeExecutableExtension)</ToolEntryPoint>
-    </PropertyGroup>
-  </Target>
-
   <Target Name="RemoveAspNetCoreToolsPackMetadataFiles" AfterTargets="PackTool">
     <ItemGroup>
       <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)"
