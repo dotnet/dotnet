@@ -72,7 +72,7 @@ public partial class PRCreator
         string prefix = desiredPath.Replace('\\', '/').TrimEnd('/') + "/";
         return [.. files.Select(f =>
         {
-            string relativePath = f.FilePath.StartsWith(prefix) ? f.FilePath[prefix.Length..] : f.FilePath;
+            string relativePath = f.FilePath.StartsWith(prefix, StringComparison.Ordinal) ? f.FilePath[prefix.Length..] : f.FilePath;
             // Decode base64 blobs (DarcLib's GitHub client returns text files with
             // ContentEncoding.Base64) so the in-memory tree is uniformly plain UTF-8 text.
             string content = f.ContentEncoding == ContentEncoding.Base64
