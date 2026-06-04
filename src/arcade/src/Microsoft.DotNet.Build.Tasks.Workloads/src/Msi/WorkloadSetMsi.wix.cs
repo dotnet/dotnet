@@ -50,11 +50,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             return "";
         }
-
-        public ITaskItem Build2(string outputPath, ITaskItem[]? iceSuppressions)
-        {
-            return new TaskItem();
-        }
     }
 }
 

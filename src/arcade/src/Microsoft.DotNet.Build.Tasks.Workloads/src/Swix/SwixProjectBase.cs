@@ -47,12 +47,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         }
 
         /// <summary>
-        /// 
+        /// Creates a new <see cref="SwixProjectBase"/> instance that can be used to generate a SWIX project for a Visual Studio setup package.
         /// </summary>
         /// <param name="id">The SWIX package ID.</param>
         /// <param name="version">The package version.</param>
         public SwixProjectBase(string id, Version version, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
-            base(baseIntermediateOutputPath, baseOutputPath)
+            base(baseIntermediateOutputPath)
         {
             Id = id;
             Version = version;

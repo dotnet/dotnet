@@ -333,7 +333,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 }
             }
 
-            // Depulicate packages and extract them. Building and extrating in parallel can cause issues as the same
+            // Deduplicate packages and extract them. Building and extracting in parallel can cause issues as the same
             // source package can be shared across multiple workloads and platforms.
             Parallel.ForEach(buildData.Values.Select(d => d.Package).Distinct(), package =>
             {

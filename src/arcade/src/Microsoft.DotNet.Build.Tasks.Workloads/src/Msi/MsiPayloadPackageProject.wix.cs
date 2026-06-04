@@ -24,7 +24,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public Dictionary<string, string> PackageContents { get; set; } = new();
 
         public MsiPayloadPackageProject(IWorkloadPackageMetadata packageMetadata, ITaskItem msi, string baseIntermediateOutputPath, string baseOutputPath, Dictionary<string, string> packageContents) :
-            base(baseIntermediateOutputPath, baseOutputPath)
+            base(baseIntermediateOutputPath)
         {
             string platform = msi.GetMetadata(Metadata.Platform);
             SourcePath = Path.Combine(SourcePath, "msiPackage", platform, packageMetadata.Id);

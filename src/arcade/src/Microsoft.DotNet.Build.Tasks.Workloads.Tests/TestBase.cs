@@ -155,10 +155,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             // Dependency provider entries reference the ProductVersion and ProductName properties. These
             // properties are set at install time.
-            registryKeys.Should().Contain(r =>
+            keys.Should().Contain(r =>
                     r.Name == "Version" &&
                     r.Value == "[ProductVersion]");
-            registryKeys.Should().Contain(r =>
+            keys.Should().Contain(r =>
                 r.Name == "DisplayName" &&
                 r.Value == "[ProductName]");
         }

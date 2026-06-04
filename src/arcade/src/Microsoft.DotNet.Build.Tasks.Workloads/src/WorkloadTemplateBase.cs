@@ -72,13 +72,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// Creates a new <see cref="WorkloadTemplateBase"/> instance.
         /// </summary>
         /// <param name="outputPath">The file system path where the template will be generated. </param>
-        /// <param name="baseOutputPath"></param>
-        public WorkloadTemplateBase(string outputPath, string baseOutputPath)
+        public WorkloadTemplateBase(string outputPath)
         {
             OutputPath = outputPath;
             SourcePath = Path.Combine(OutputPath, "src");
             IntermediateOutputPath = Path.Combine(OutputPath, "obj");
-            _ = baseOutputPath;
         }
 
         /// <summary>

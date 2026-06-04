@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable enable
+
 using System;
 using System.Linq;
 using System.Xml.Linq;
@@ -44,7 +46,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <param name="keyPath">Determines whether the registry value is the keypath of the parent component.</param>
         /// <returns>The parent element.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public static XElement AddRegistryValue(this XElement element, string name, string value, string type = "string", bool keyPath = false)
+        public static XElement AddRegistryValue(this XElement element, string? name, string value, string type = "string", bool keyPath = false)
         {
             if (_registryValueParentElements.Any(e => string.Equals(e, element.Name.LocalName)))
             {
@@ -78,7 +80,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <returns>The newly created <c>XElement</c> representing the <c>RegistryKey</c> child element.</returns>
         /// <exception cref="InvalidOperationException">Thrown if the specified <paramref name="element"/> does not support adding a <c>RegistryKey</c> child
         /// element.</exception>
-        public static XElement AddRegistryKey(this XElement element, string key, string root = "HKLM")
+        public static XElement AddRegistryKey(this XElement element, string key, string? root = "HKLM")
         {
             if (_registryKeyParentElements.Any(e => string.Equals(e, element.Name.LocalName)))
             {

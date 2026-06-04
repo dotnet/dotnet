@@ -118,7 +118,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// The provider key name used to manage MSI dependents.
         /// </summary>
-        protected string? ProviderKeyName
+        protected string ProviderKeyName
         {
             get;
             init;
@@ -171,7 +171,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
         public MsiBase(IWorkloadPackageMetadata metadata, IBuildEngine buildEngine, WixToolsetConfiguration wixToolsetConfig,
-            string platform, string baseIntermediateOutputPath, bool createWixPack = true) : base(baseIntermediateOutputPath, "")
+            string platform, string baseIntermediateOutputPath, bool createWixPack = true) : base(baseIntermediateOutputPath)
         {
             BuildEngine = buildEngine;
             Metadata = metadata;
@@ -181,6 +181,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             InstallationRecordKey = InstallRecordBaseKey;
             Platform = platform;
             BaseIntermediateOutputPath = baseIntermediateOutputPath;
+            ProviderKeyName = "";
 
             ProductCode = Guid.NewGuid();
             ReplacementTokens[MsiTokens.__MANUFACTURER__] = Manufacturer;
