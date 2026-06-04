@@ -2844,3 +2844,10 @@ namespace Microsoft.Build.ObjectModelRemoting
         public string Value { get { throw null; } }
     }
 }
+
+namespace System.Runtime.CompilerServices
+{
+    internal static partial class IsExternalInit
+    {
+    }
+}

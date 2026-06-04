@@ -118,8 +118,7 @@ If `./build.sh -sb` produces API compatibility errors (CP0001, CP0002, CP0008, C
 ### Common Compilation Errors and Shared Workaround Files
 
 The `src/referencePackages/common/` directory contains shared
-   source files that fix known GenAPI limitations (e.g. `IsExternalInit.cs`,
-   `RequiredModifierAttributes.cs`). Including these via `Customizations.props` is
+   source files that fix known GenAPI limitations. Including these via `Customizations.props` is
    preferred over hand-editing generated code. See the
    [Known Generator Issues](../docs/known_generator_issues.md#common-source-files) documentation
    for the full list and usage instructions.

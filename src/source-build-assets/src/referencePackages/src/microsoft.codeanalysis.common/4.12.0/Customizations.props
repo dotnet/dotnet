@@ -1,7 +1,4 @@
 <Project>
-  <ItemGroup>
-    <Compile Include="$(CommonSrc)IsExternalInit.cs" />
-  </ItemGroup>
 
   <ItemGroup>
       <!-- Analyzers are excluded from SBRPs -->
