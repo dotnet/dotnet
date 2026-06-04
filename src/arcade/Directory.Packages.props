@@ -71,9 +71,9 @@
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
     <PackageVersion Include="Handlebars.Net" Version="2.1.6" />
     <PackageVersion Include="LZMA-SDK" Version="22.1.1" />
-    <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.1" />
-    <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
-    <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.4" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.2" />
+    <PackageVersion Include="Microsoft.Data.OData" Version="5.8.5" />
+    <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.84.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.29" />
