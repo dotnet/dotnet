@@ -12,6 +12,7 @@
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <RuntimeIdentifiers Condition="'$(DotNetBuild)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(TargetRuntimeIdentifier)</RuntimeIdentifiers>
+    <RuntimeIdentifier Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true' and '$(RuntimeIdentifier)' == ''">$(TargetRuntimeIdentifier)</RuntimeIdentifier>
     <NoWarn>$(NoWarn);CS2008</NoWarn>
   </PropertyGroup>
 
