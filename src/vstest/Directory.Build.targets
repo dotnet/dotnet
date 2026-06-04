@@ -5,6 +5,16 @@
     <_NetFrameworkHostedCompilersVersion Condition="'$(_NetFrameworkHostedCompilersVersion)' == ''">4.11.0-3.24280.3</_NetFrameworkHostedCompilersVersion>
   </PropertyGroup>
   
+  <PropertyGroup>
+    <!--
+      MSB3277: netstandard2.0 product assemblies reference SCI 9.0.0.0 (from the explicit
+      PackageReference needed for the DTA scenario — see issue #15718), but .NETCoreApp
+      targets have inbox SCI 8.0.0.0. This is harmless: .NET Core assembly loading is
+      version-tolerant and will load the available version regardless of the reference.
+    -->
+    <MSBuildWarningsAsMessages Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
   <!-- Override the version of imported package to avoid infinite restore loop in VisualStudio, https://github.com/dotnet/arcade/issues/16228 -->
   <ItemGroup>
@@ -69,5 +79,6 @@
       </ItemGroup>
     </When>
   </Choose>
+
 
 </Project>

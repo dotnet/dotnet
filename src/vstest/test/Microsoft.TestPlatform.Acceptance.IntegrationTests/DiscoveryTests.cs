@@ -93,6 +93,7 @@ public class DiscoveryTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [Ignore("SCI 10.0.0.0 cannot be loaded in .NET 9 test host — covered by DtaLikeHost acceptance test instead")]
     public void TypesToLoadAttributeTests()
     {
         var extensionsDirectory = IntegrationTestEnvironment.ExtensionsDirectory;
