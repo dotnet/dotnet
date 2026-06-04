@@ -27,7 +27,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
 
         // TestCase must come first to construct the TestResult
         var testCaseElement = data.GetProperty("TestCase");
-        var testCase = StjSafe.Deserialize<TestCase>(testCaseElement, options)!;
+        var testCase = JsonSerializer.Deserialize<TestCase>(testCaseElement, options)!;
         var testResult = new TestResult(testCase);
 
         // Attachments
@@ -37,7 +37,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
             {
                 if (attachment.ValueKind != JsonValueKind.Null)
                 {
-                    testResult.Attachments.Add(StjSafe.Deserialize<AttachmentSet>(attachment, options)!);
+                    testResult.Attachments.Add(JsonSerializer.Deserialize<AttachmentSet>(attachment, options)!);
                 }
             }
         }
@@ -49,7 +49,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
             {
                 if (message.ValueKind != JsonValueKind.Null)
                 {
-                    testResult.Messages.Add(StjSafe.Deserialize<TestResultMessage>(message, options)!);
+                    testResult.Messages.Add(JsonSerializer.Deserialize<TestResultMessage>(message, options)!);
                 }
             }
         }
@@ -80,7 +80,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
                 if (!prop.TryGetProperty("Key", out var keyElement))
                     continue;
 
-                var testProperty = StjSafe.Deserialize<TestProperty>(keyElement, options)!;
+                var testProperty = JsonSerializer.Deserialize<TestProperty>(keyElement, options)!;
 
                 if (!prop.TryGetProperty("Value", out var valueElement))
                     continue;
@@ -108,11 +108,11 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
 
         // TestCase
         writer.WritePropertyName("TestCase");
-        StjSafe.Serialize(writer, value.TestCase, options);
+        JsonSerializer.Serialize(writer, value.TestCase, options);
 
         // Attachments
         writer.WritePropertyName("Attachments");
-        StjSafe.Serialize(writer, value.Attachments, options);
+        JsonSerializer.Serialize(writer, value.Attachments, options);
 
         // Flat properties
         writer.WriteNumber("Outcome", (int)value.Outcome);
@@ -122,7 +122,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
 
         // Messages
         writer.WritePropertyName("Messages");
-        StjSafe.Serialize(writer, value.Messages, options);
+        JsonSerializer.Serialize(writer, value.Messages, options);
 
         writer.WriteString("ComputerName", value.ComputerName);
         writer.WriteString("Duration", value.Duration.ToString());
@@ -136,7 +136,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
         {
             writer.WriteStartObject();
             writer.WritePropertyName("Key");
-            StjSafe.Serialize(writer, property.Key, options);
+            JsonSerializer.Serialize(writer, property.Key, options);
             writer.WritePropertyName("Value");
             if (property.Value is null)
             {
@@ -144,9 +144,7 @@ internal class TestResultConverterV2 : JsonConverter<TestResult>
             }
             else
             {
-                // Avoid JsonSerializer.Serialize(writer, value, value.GetType(), options) which
-                // requires reflection metadata that NativeAOT trims.
-                TestObjectBaseConverter.WritePropertyValue(writer, property.Value, options);
+                JsonSerializer.Serialize(writer, property.Value, property.Value.GetType(), options);
             }
             writer.WriteEndObject();
         }

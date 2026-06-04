@@ -37,7 +37,7 @@
   <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true' and $(IsPosixShell)">
     <HelixPostCommands>
       $(HelixPostCommands);
-      find . -maxdepth 5 '(' -iname '*.trx' -o -iname 'testResults.xml' -o -iname 'test-results.xml' -o -iname 'test_results.xml' -o -iname 'junit-results.xml' -o -iname 'junitresults.xml' ')' -print0 | while IFS= read -r -d '' file%3B do mkdir -p "$HELIX_WORKITEM_UPLOAD_ROOT/%24(dirname "$file")" &amp;&amp; cp -f "$file" "$HELIX_WORKITEM_UPLOAD_ROOT/$file"%3B done || true
+      find . -maxdepth 5 '(' -iname '*.trx' -o -iname 'testResults.xml' -o -iname 'test-results.xml' -o -iname 'test_results.xml' -o -iname 'junit-results.xml' -o -iname 'junitresults.xml' ')' -print0 | xargs -0 -I {} sh -c 'mkdir -p "$HELIX_WORKITEM_UPLOAD_ROOT/$$(dirname "{}")" &amp;&amp; cp -f "{}" "$HELIX_WORKITEM_UPLOAD_ROOT/{}"' || true
     </HelixPostCommands>
   </PropertyGroup>
   <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true' and !$(IsPosixShell)">
