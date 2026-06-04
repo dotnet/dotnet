@@ -1,15 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" original="../Resources.resx" target-language="pt-BR">
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
         <target state="translated">A execução de teste não pôde ser realizada porque o estado inicial era inválido.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvidedDependenciesWarning">
-        <source>The test platform provided the following assemblies to resolve dependencies of test extensions that did not ship their own copy: {0}. Test extensions should ship all their dependencies.</source>
-        <target state="translated">A plataforma de teste forneceu os seguintes assemblies para resolver as dependências das extensões de teste que não enviaram suas próprias cópias: {0}. As extensões de teste devem incluir todas as suas dependências.</target>
         <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">
