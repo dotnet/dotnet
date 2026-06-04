@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AwesomeAssertions;
 using Microsoft.DotNet.Helix.Client.Models;
 using Microsoft.DotNet.Helix.JobMonitor;
 using Microsoft.DotNet.Helix.JobMonitor.Models;
@@ -54,10 +55,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(3, azdo.TimelineCallCount);
-            Assert.Empty(azdo.CreatedTestRuns);
-            Assert.Empty(azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            azdo.TimelineCallCount.Should().Be(3);
+            azdo.CreatedTestRuns.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -104,10 +105,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Equal(4, azdo.TimelineCallCount);
-            Assert.Empty(azdo.CreatedTestRuns);
-            Assert.Empty(azdo.UploadedJobNames);
+            exitCode.Should().Be(1);
+            azdo.TimelineCallCount.Should().Be(4);
+            azdo.CreatedTestRuns.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -146,10 +147,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Equal(3, azdo.TimelineCallCount);
-            Assert.Empty(azdo.CreatedTestRuns);
-            Assert.Empty(azdo.UploadedJobNames);
+            exitCode.Should().Be(1);
+            azdo.TimelineCallCount.Should().Be(3);
+            azdo.CreatedTestRuns.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -188,10 +189,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(3, azdo.TimelineCallCount);
-            Assert.Empty(azdo.CreatedTestRuns);
-            Assert.Empty(azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            azdo.TimelineCallCount.Should().Be(3);
+            azdo.CreatedTestRuns.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -243,8 +244,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner1 = CreateRunner(azdo1, helix1);
             int exitCode1 = await runner1.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode1);
-            Assert.Equal(4, azdo1.TimelineCallCount);
+            exitCode1.Should().Be(1);
+            azdo1.TimelineCallCount.Should().Be(4);
 
             // --- Retry (attempt 2): monitor and Build Windows re-run ---
             // AzDO replaces the retried jobs' records with attempt=2.
@@ -280,10 +281,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo2, helix2);
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode2);
-            Assert.Equal(3, azdo2.TimelineCallCount);
-            Assert.Empty(azdo2.CreatedTestRuns);
-            Assert.Empty(azdo2.UploadedJobNames);
+            exitCode2.Should().Be(0);
+            azdo2.TimelineCallCount.Should().Be(3);
+            azdo2.CreatedTestRuns.Should().BeEmpty();
+            azdo2.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -353,17 +354,17 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
             // Monitor should exit successfully
-            Assert.Equal(0, exitCode);
+            exitCode.Should().Be(0);
 
             // 6 poll iterations (5 delays before exit on 6th)
-            Assert.Equal(6, azdo.TimelineCallCount);
+            azdo.TimelineCallCount.Should().Be(6);
 
             // One test run created and completed for the Helix job
-            Assert.Single(azdo.CreatedTestRuns);
-            Assert.Single(azdo.CompletedTestRunIds);
+            azdo.CreatedTestRuns.Should().ContainSingle();
+            azdo.CompletedTestRunIds.Should().ContainSingle();
 
             // Test results uploaded for the Helix job
-            Assert.Equal(["helix-linux-tests"], azdo.UploadedJobNames);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux-tests"]);
         }
 
         [Fact]
@@ -396,19 +397,19 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 async (_, _) =>
                 {
                     Task completed = await Task.WhenAny(azdo.UploadStarted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
-                    Assert.Same(azdo.UploadStarted.Task, completed);
+                    completed.Should().BeSameAs(azdo.UploadStarted.Task);
                     delayedBeforeUploadCompleted = !azdo.UploadCompleted.Task.IsCompleted;
                     uploadRelease.SetResult();
                 });
 
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.True(delayedBeforeUploadCompleted);
-            Assert.Equal(2, azdo.TimelineCallCount);
-            Assert.Equal(["helix-linux"], azdo.UploadedJobNames);
-            Assert.Single(azdo.CompletedTestRunIds);
-            Assert.Contains(logger.Messages, message =>
+            exitCode.Should().Be(0);
+            delayedBeforeUploadCompleted.Should().BeTrue();
+            azdo.TimelineCallCount.Should().Be(2);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
+            azdo.CompletedTestRunIds.Should().ContainSingle();
+            logger.Messages.Should().Contain(message =>
                 message.Contains("2 test results for job 'helix-linux' processed.", StringComparison.Ordinal));
         }
 
@@ -447,12 +448,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 });
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(2, azdo.UploadTestResultsCallCount);
-            Assert.Equal(1, delayCount);
-            Assert.Single(azdo.CreatedTestRuns);
-            Assert.Single(azdo.CompletedTestRunIds);
-            Assert.Equal(["helix-linux"], azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            azdo.UploadTestResultsCallCount.Should().Be(2);
+            delayCount.Should().Be(1);
+            azdo.CreatedTestRuns.Should().ContainSingle();
+            azdo.CompletedTestRunIds.Should().ContainSingle();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         }
 
         /// <summary>
@@ -490,11 +491,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(4, azdo.TimelineCallCount);
-            Assert.Single(azdo.CreatedTestRuns);
-            Assert.Single(azdo.CompletedTestRunIds);
-            Assert.Equal(["helix-linux"], azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            azdo.TimelineCallCount.Should().Be(4);
+            azdo.CreatedTestRuns.Should().ContainSingle();
+            azdo.CompletedTestRunIds.Should().ContainSingle();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         }
 
         /// <summary>
@@ -562,13 +563,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
             // Exit 1 because helix-linux had a failed work item
-            Assert.Equal(1, exitCode);
-            Assert.Equal(5, azdo.TimelineCallCount);
+            exitCode.Should().Be(1);
+            azdo.TimelineCallCount.Should().Be(5);
             // Both Helix jobs had results uploaded
-            Assert.Equal(2, azdo.CreatedTestRuns.Count);
-            Assert.Equal(2, azdo.CompletedTestRunIds.Count);
-            Assert.Contains("helix-linux", azdo.UploadedJobNames);
-            Assert.Contains("helix-windows", azdo.UploadedJobNames);
+            azdo.CreatedTestRuns.Should().HaveCount(2);
+            azdo.CompletedTestRunIds.Should().HaveCount(2);
+            azdo.UploadedJobNames.Should().Contain("helix-linux");
+            azdo.UploadedJobNames.Should().Contain("helix-windows");
         }
 
         /// <summary>
@@ -607,7 +608,48 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             // The Linux work-item failure must not be overwritten by the same-named work item
             // that passed on Windows. Final summary must report 1 failed work item and the
             // monitor must exit non-zero.
-            Assert.Equal(1, exitCode);
+            exitCode.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Regression: a single AzDO matrix leg (one <c>System.JobName</c>) fans out to
+        /// multiple Helix queues — each queue produces its own Helix job sharing the same
+        /// <c>SubmitterJobName</c>. A work item with the same name (e.g.
+        /// <c>Microsoft.DotNet.Helix.Sdk.Tests.dll</c>) runs in every queue; it fails on one
+        /// queue and passes on another. The earlier queue's failure must NOT be overwritten
+        /// by the later queue's pass on the same submitter, and the monitor must exit
+        /// non-zero. This mirrors the production scenario where eight Helix jobs (two
+        /// configurations × three queues + extras) reported "0 failed" in the final summary
+        /// even though one work item failed.
+        /// </summary>
+        [Fact]
+        public async Task OneSubmitter_FansOutToMultipleQueues_SameWorkItemName_FailureNotOverwrittenByPass()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Linux_Build_Debug", "completed", "succeeded"));
+
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-ubuntu", "finished", submitterJobName: "Linux_Build_Debug", queueId: "ubuntu.2204.amd64.open"),
+                    HelixJob("helix-osx", "finished", submitterJobName: "Linux_Build_Debug", queueId: "osx.15.amd64.open"),
+                    HelixJob("helix-windows", "finished", submitterJobName: "Linux_Build_Debug", queueId: "windows.11.amd64.client.open"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-ubuntu"] = PassFail(failed: ["Microsoft.DotNet.Helix.Sdk.Tests.dll"]),
+                    ["helix-osx"] = PassFail(passed: ["Microsoft.DotNet.Helix.Sdk.Tests.dll"]),
+                    ["helix-windows"] = PassFail(passed: ["Microsoft.DotNet.Helix.Sdk.Tests.dll"]),
+                });
+
+            var runner = CreateRunner(azdo, helix);
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(1);
         }
 
         [Fact]
@@ -663,11 +705,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo, helix2, stageName: "Test");
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode1);
-            Assert.Equal(0, exitCode2);
-            Assert.Equal(
-                new[] { "old-helix-linux", "old-helix-windows", "new-helix-linux", "new-helix-windows" }.Order(),
-                azdo.UploadedJobNames.Order());
+            exitCode1.Should().Be(0);
+            exitCode2.Should().Be(0);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(
+                ["old-helix-linux", "old-helix-windows", "new-helix-linux", "new-helix-windows"]);
 
             var uploadedWorkItems = azdo.UploadedResultsByRunId
                 .Values
@@ -675,13 +716,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 .Select(result => $"{result.JobName}/{result.WorkItemName}")
                 .ToList();
 
-            Assert.Equal(uploadedWorkItems.Count, uploadedWorkItems.Distinct(StringComparer.OrdinalIgnoreCase).Count());
-            Assert.Contains("old-helix-linux/common-work-item", uploadedWorkItems);
-            Assert.Contains("old-helix-windows/common-work-item", uploadedWorkItems);
-            Assert.Contains("new-helix-linux/common-work-item", uploadedWorkItems);
-            Assert.Contains("new-helix-linux/linux-only-work-item", uploadedWorkItems);
-            Assert.Contains("new-helix-windows/common-work-item", uploadedWorkItems);
-            Assert.Contains("new-helix-windows/windows-only-work-item", uploadedWorkItems);
+            uploadedWorkItems.Should().OnlyHaveUniqueItems();
+            uploadedWorkItems.Should().Contain("old-helix-linux/common-work-item");
+            uploadedWorkItems.Should().Contain("old-helix-windows/common-work-item");
+            uploadedWorkItems.Should().Contain("new-helix-linux/common-work-item");
+            uploadedWorkItems.Should().Contain("new-helix-linux/linux-only-work-item");
+            uploadedWorkItems.Should().Contain("new-helix-windows/common-work-item");
+            uploadedWorkItems.Should().Contain("new-helix-windows/windows-only-work-item");
         }
 
         /// <summary>
@@ -719,9 +760,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             // Monitor only watches Test stage — Test Linux passed, no Helix → exit 0
             // Build Windows being in progress doesn't block the monitor.
-            Assert.Equal(0, exitCode);
-            Assert.Equal(2, azdo.TimelineCallCount);
-            Assert.Empty(azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            azdo.TimelineCallCount.Should().Be(2);
+            azdo.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -751,10 +792,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
             // Test stage is done, no Helix jobs in Test stage → exit 0
-            Assert.Equal(0, exitCode);
-            Assert.Equal(1, azdo.TimelineCallCount);
-            Assert.Empty(azdo.UploadedJobNames);
-            Assert.Empty(azdo.CreatedTestRuns);
+            exitCode.Should().Be(0);
+            azdo.TimelineCallCount.Should().Be(1);
+            azdo.UploadedJobNames.Should().BeEmpty();
+            azdo.CreatedTestRuns.Should().BeEmpty();
         }
 
         /// <summary>
@@ -785,10 +826,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix, stageName: "Test");
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Empty(helix.Resubmissions);
-            Assert.Empty(azdo.UploadedJobNames);
-            Assert.Empty(azdo.CreatedTestRuns);
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEmpty();
+            azdo.CreatedTestRuns.Should().BeEmpty();
         }
 
         /// <summary>
@@ -815,16 +856,16 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int testExitCode = await testRunner.RunAsync(CancellationToken.None);
             int buildExitCode = await buildRunner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, testExitCode);
-            Assert.Equal(0, buildExitCode);
+            testExitCode.Should().Be(0);
+            buildExitCode.Should().Be(0);
 
             // Test stage finishes in frame 2 while Build stage and its Helix job are still running.
-            Assert.Equal(2, testAzdo.TimelineCallCount);
-            Assert.Equal(["helix-test-linux"], testAzdo.UploadedJobNames);
+            testAzdo.TimelineCallCount.Should().Be(2);
+            testAzdo.UploadedJobNames.Should().BeEquivalentTo(["helix-test-linux"]);
 
             // Build stage pipeline work finishes in frame 3, but its Helix job finishes in frame 4.
-            Assert.Equal(4, buildAzdo.TimelineCallCount);
-            Assert.Equal(["helix-build-windows"], buildAzdo.UploadedJobNames);
+            buildAzdo.TimelineCallCount.Should().Be(4);
+            buildAzdo.UploadedJobNames.Should().BeEquivalentTo(["helix-build-windows"]);
 
             static void AddStageTimelineFrames(FakeAzureDevOpsService azdo)
             {
@@ -941,9 +982,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner1 = CreateRunner(azdo1, helix1, stageName: "Test");
             int exitCode1 = await runner1.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode1);
-            Assert.Empty(helix1.Resubmissions);
-            Assert.Equal(["helix-test-linux"], azdo1.UploadedJobNames);
+            exitCode1.Should().Be(1);
+            helix1.Resubmissions.Should().BeEmpty();
+            azdo1.UploadedJobNames.Should().BeEquivalentTo(["helix-test-linux"]);
 
             var azdo2 = new FakeAzureDevOpsService();
             azdo2.WithPreviouslyProcessedJob("helix-test-linux");
@@ -982,12 +1023,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo2, helix2, stageName: "Test");
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode2);
-            Assert.Single(helix2.Resubmissions);
-            Assert.Equal("helix-test-linux", helix2.Resubmissions[0].OriginalJob);
-            Assert.Equal(["test-fail"], helix2.Resubmissions[0].FailedItems);
-            Assert.DoesNotContain(helix2.Resubmissions, r => r.OriginalJob == "helix-build-windows");
-            Assert.Equal(["helix-test-linux-resub"], azdo2.UploadedJobNames);
+            exitCode2.Should().Be(0);
+            helix2.Resubmissions.Should().ContainSingle();
+            helix2.Resubmissions[0].OriginalJob.Should().Be("helix-test-linux");
+            helix2.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["test-fail"]);
+            helix2.Resubmissions.Should().NotContain(r => r.OriginalJob == "helix-build-windows");
+            azdo2.UploadedJobNames.Should().BeEquivalentTo(["helix-test-linux-resub"]);
 
             static void AddSingleMonitorStageTimeline(FakeAzureDevOpsService azdo, int attempt)
             {
@@ -1053,12 +1094,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Equal(1, delayCount);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-linux", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(["linux-fail"], helix.Resubmissions[0].FailedItems);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(1);
+            delayCount.Should().Be(1);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["linux-fail"]);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
 
             static void AddRetriedStageTimeline(FakeAzureDevOpsService azdo)
             {
@@ -1126,26 +1167,28 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     ["helix-linux"] = PassFail(passed: ["linux-wi-1"]),
                 });
 
-            // Simulate timeout via cancellation after 2 polls
+            // Simulate timeout via cancellation after 2 polls. Wait for helix-linux's upload
+            // to finish before cancelling so the in-flight upload isn't aborted by the
+            // cancellation token.
             int pollCount1 = 0;
             using var cts = new CancellationTokenSource();
             var runner1 = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo1, helix1,
-                (_, ct) =>
+                async (_, _) =>
                 {
                     pollCount1++;
                     if (pollCount1 >= 2)
                     {
+                        Task completed = await Task.WhenAny(azdo1.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                        Assert.Same(azdo1.UploadCompleted.Task, completed);
                         cts.Cancel();
                     }
-
-                    return Task.CompletedTask;
                 });
 
             int exitCode1 = await runner1.RunAsync(cts.Token);
 
             // Timed out → exit 1. helix-linux was uploaded, helix-windows was not.
-            Assert.Equal(1, exitCode1);
-            Assert.Equal(["helix-linux"], azdo1.UploadedJobNames);
+            exitCode1.Should().Be(1);
+            azdo1.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
 
             // --- Second run: monitor relaunched, helix-linux already processed ---
             var azdo2 = new FakeAzureDevOpsService();
@@ -1170,9 +1213,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
             // helix-linux skipped (already processed), helix-windows uploaded → exit 0
-            Assert.Equal(0, exitCode2);
-            Assert.Equal(["helix-windows"], azdo2.UploadedJobNames);
-            Assert.Single(azdo2.CreatedTestRuns);
+            exitCode2.Should().Be(0);
+            azdo2.UploadedJobNames.Should().BeEquivalentTo(["helix-windows"]);
+            azdo2.CreatedTestRuns.Should().ContainSingle();
         }
 
         [Fact]
@@ -1180,6 +1223,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
 
             azdo.AddTimelineResponse(
                 MonitorJob(),
@@ -1200,21 +1244,28 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 });
 
             using var cts = new CancellationTokenSource();
-            var runner = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo, helix,
+            var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix,
                 async (_, _) =>
                 {
                     Task completed = await Task.WhenAny(azdo.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
-                    Assert.Same(azdo.UploadCompleted.Task, completed);
+                    completed.Should().BeSameAs(azdo.UploadCompleted.Task);
                     cts.Cancel();
                 });
 
             int exitCode = await runner.RunAsync(cts.Token);
 
-            Assert.Equal(1, exitCode);
-            Assert.Equal(["helix-finished"], azdo.UploadedJobNames);
-            Assert.Equal(
-                ["helix-new-attempt", "helix-running", "helix-waiting"],
-                helix.CanceledJobs.OrderBy(jobName => jobName, StringComparer.OrdinalIgnoreCase).ToArray());
+            exitCode.Should().Be(1);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-finished"]);
+            helix.CanceledJobs.Should().BeEquivalentTo(["helix-new-attempt", "helix-running", "helix-waiting"]);
+            logger.Messages.Should().Contain(message =>
+                message.Contains("Helix job(s) were unfinished or unprocessed", StringComparison.Ordinal)
+                && message.Contains("helix-new-attempt", StringComparison.Ordinal)
+                && message.Contains("status=running", StringComparison.Ordinal)
+                && message.Contains("helix-waiting", StringComparison.Ordinal)
+                && message.Contains("status=waiting", StringComparison.Ordinal));
+            logger.Messages.Should().Contain(message =>
+                message.Contains("non-monitor Azure DevOps pipeline job(s) were still in progress or queued", StringComparison.Ordinal)
+                && message.Contains("Test Linux [state=inProgress, result=none]", StringComparison.Ordinal));
         }
 
         /// <summary>
@@ -1265,24 +1316,25 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                         // cancelling, so the monitor has had a chance to record its terminal
                         // state.
                         Task completed = await Task.WhenAny(azdo.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
-                        Assert.Same(azdo.UploadCompleted.Task, completed);
+                        completed.Should().BeSameAs(azdo.UploadCompleted.Task);
                         cts.Cancel();
                     }
                 });
 
             int exitCode = await runner.RunAsync(cts.Token);
 
-            Assert.Equal(1, exitCode);
+            exitCode.Should().Be(1);
 
             // helix-good must not appear in the timeout's "had not finished" list because its
             // cached snapshot was overwritten with the latest (finished) state.
-            string timeoutMessage = Assert.Single(logger.Messages, m =>
-                m.Contains("Helix Job Monitor timed out", StringComparison.Ordinal));
-            Assert.Contains("helix-stuck", timeoutMessage, StringComparison.Ordinal);
-            Assert.DoesNotContain("helix-good", timeoutMessage, StringComparison.Ordinal);
+            string timeoutMessage = logger.Messages.Should().ContainSingle(m =>
+                m.Contains("Helix Job Monitor timed out", StringComparison.Ordinal)).Subject;
+            timeoutMessage.Should().StartWith("##vso[task.logissue type=error]");
+            timeoutMessage.Should().Contain("helix-stuck");
+            timeoutMessage.Should().NotContain("helix-good");
 
             // And the best-effort cancel pass must only target the still-in-flight job.
-            Assert.Equal(["helix-stuck"], helix.CanceledJobs.OrderBy(j => j, StringComparer.OrdinalIgnoreCase).ToArray());
+            helix.CanceledJobs.Should().BeEquivalentTo(["helix-stuck"]);
         }
 
         /// <summary>
@@ -1327,20 +1379,20 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int pollCount1 = 0;
             using var cts = new CancellationTokenSource();
             var runner1 = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo1, helix1,
-                (_, ct) =>
+                async (_, _) =>
                 {
                     pollCount1++;
                     if (pollCount1 >= 2)
                     {
+                        Task completed = await Task.WhenAny(azdo1.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                        Assert.Same(azdo1.UploadCompleted.Task, completed);
                         cts.Cancel();
                     }
-
-                    return Task.CompletedTask;
                 });
 
             int exitCode1 = await runner1.RunAsync(cts.Token);
-            Assert.Equal(1, exitCode1);
-            Assert.Equal(["helix-linux"], azdo1.UploadedJobNames);
+            exitCode1.Should().Be(1);
+            azdo1.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
 
             // --- Second run: monitor relaunched ---
             // Test Windows has now completed and submitted helix-windows.
@@ -1379,11 +1431,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo2, helix2);
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode2);
-            Assert.Equal(2, azdo2.TimelineCallCount);
+            exitCode2.Should().Be(0);
+            azdo2.TimelineCallCount.Should().Be(2);
             // Only helix-windows uploaded (helix-linux was already processed)
-            Assert.Equal(["helix-windows"], azdo2.UploadedJobNames);
-            Assert.Single(azdo2.CreatedTestRuns);
+            azdo2.UploadedJobNames.Should().BeEquivalentTo(["helix-windows"]);
+            azdo2.CreatedTestRuns.Should().ContainSingle();
         }
 
         // -----------------------------------------------------------------------
@@ -1447,18 +1499,18 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
             // Resubmission healed the failures → exit 0
-            Assert.Equal(0, exitCode);
+            exitCode.Should().Be(0);
 
             // Test result upload is independent from retry: original results upload before the resubmission.
-            Assert.Equal(new[] {"helix-linux", "helix-linux-resub"}.Order(), azdo.UploadedJobNames.Order());
-            Assert.Equal(2, azdo.CreatedTestRuns.Count);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
+            azdo.CreatedTestRuns.Should().HaveCount(2);
 
             // Only the 2 failed items were resubmitted (not the passing one)
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-linux", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(2, helix.Resubmissions[0].FailedItems.Count);
-            Assert.Contains("wi-fail-1", helix.Resubmissions[0].FailedItems);
-            Assert.Contains("wi-fail-2", helix.Resubmissions[0].FailedItems);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
+            helix.Resubmissions[0].FailedItems.Should().HaveCount(2);
+            helix.Resubmissions[0].FailedItems.Should().Contain("wi-fail-1");
+            helix.Resubmissions[0].FailedItems.Should().Contain("wi-fail-2");
         }
 
         /// <summary>
@@ -1500,8 +1552,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
             // Resubmission also failed → exit 1
-            Assert.Equal(1, exitCode);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(1);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
         }
 
         /// <summary>
@@ -1573,24 +1625,23 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
+            exitCode.Should().Be(0);
 
             // Test result upload is independent from retry: originals upload before resubmissions.
-            Assert.Equal(4, azdo.CreatedTestRuns.Count);
-            Assert.Equal(
-                new[] { "helix-linux", "helix-windows", "helix-linux-resub", "helix-windows-resub" }.Order(),
-                azdo.UploadedJobNames.Order());
+            azdo.CreatedTestRuns.Should().HaveCount(4);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(
+                ["helix-linux", "helix-windows", "helix-linux-resub", "helix-windows-resub"]);
 
             // Each original job only had its failed items resubmitted
-            Assert.Equal(2, helix.Resubmissions.Count);
+            helix.Resubmissions.Should().HaveCount(2);
             var linuxResub = helix.Resubmissions.Single(r => r.OriginalJob == "helix-linux");
-            Assert.Single(linuxResub.FailedItems); // only "linux-fail"
-            Assert.Contains("linux-fail", linuxResub.FailedItems);
+            linuxResub.FailedItems.Should().ContainSingle(); // only "linux-fail"
+            linuxResub.FailedItems.Should().Contain("linux-fail");
 
             var windowsResub = helix.Resubmissions.Single(r => r.OriginalJob == "helix-windows");
-            Assert.Equal(2, windowsResub.FailedItems.Count);
-            Assert.Contains("win-fail-1", windowsResub.FailedItems);
-            Assert.Contains("win-fail-2", windowsResub.FailedItems);
+            windowsResub.FailedItems.Should().HaveCount(2);
+            windowsResub.FailedItems.Should().Contain("win-fail-1");
+            windowsResub.FailedItems.Should().Contain("win-fail-2");
         }
 
         /// <summary>
@@ -1618,9 +1669,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner1 = CreateRunner(azdo1, helix1);
             int exitCode1 = await runner1.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode1);
-            Assert.Empty(helix1.Resubmissions);
-            Assert.Equal(["helix-linux"], azdo1.UploadedJobNames);
+            exitCode1.Should().Be(1);
+            helix1.Resubmissions.Should().BeEmpty();
+            azdo1.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
 
             var azdo2 = new FakeAzureDevOpsService();
             azdo2.WithPreviouslyProcessedJob("helix-linux");
@@ -1646,11 +1697,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo2, helix2);
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode2);
-            Assert.Single(helix2.Resubmissions);
-            Assert.Equal("helix-linux", helix2.Resubmissions[0].OriginalJob);
-            Assert.Equal(["wi-fail"], helix2.Resubmissions[0].FailedItems);
-            Assert.Equal(["helix-linux-resub"], azdo2.UploadedJobNames);
+            exitCode2.Should().Be(0);
+            helix2.Resubmissions.Should().ContainSingle();
+            helix2.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
+            helix2.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["wi-fail"]);
+            azdo2.UploadedJobNames.Should().BeEquivalentTo(["helix-linux-resub"]);
         }
 
         /// <summary>
@@ -1682,9 +1733,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Empty(helix.Resubmissions);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
         }
 
         /// <summary>
@@ -1726,9 +1777,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Empty(helix.Resubmissions);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
         }
 
         /// <summary>
@@ -1773,13 +1824,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-linux-resub", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(["wi-2"], helix.Resubmissions[0].FailedItems);
-            Assert.Equal(
-                new[] { "helix-linux", "helix-linux-resub", "helix-linux-resub-2" }.Order(),
-                azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux-resub");
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["wi-2"]);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(
+                ["helix-linux", "helix-linux-resub", "helix-linux-resub-2"]);
         }
 
         /// <summary>
@@ -1809,8 +1859,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
         }
 
         /// <summary>
@@ -1889,9 +1939,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner1 = CreateRunner(azdo1, helix1);
             int exitCode1 = await runner1.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode1);
-            Assert.Equal(["helix-a", "helix-b"], azdo1.UploadedJobNames);
-            Assert.Empty(helix1.Resubmissions);
+            exitCode1.Should().Be(1);
+            azdo1.UploadedJobNames.Should().BeEquivalentTo(["helix-a", "helix-b"]);
+            helix1.Resubmissions.Should().BeEmpty();
 
             var azdo2 = new FakeAzureDevOpsService();
             azdo2.WithPreviouslyProcessedJob("helix-a");
@@ -1934,13 +1984,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo2, helix2);
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode2);
-            Assert.Equal(2, azdo2.TimelineCallCount);
-            Assert.Equal(new[] { "helix-b", "helix-a-resub", "helix-b-resub" }.Order(), azdo2.UploadedJobNames.Order());
+            exitCode2.Should().Be(1);
+            azdo2.TimelineCallCount.Should().Be(2);
+            azdo2.UploadedJobNames.Should().BeEquivalentTo(["helix-b", "helix-a-resub", "helix-b-resub"]);
 
-            Assert.Equal(2, helix2.Resubmissions.Count);
-            Assert.Equal(["a-fail"], helix2.Resubmissions.Single(r => r.OriginalJob == "helix-a").FailedItems);
-            Assert.Equal(["b-fail"], helix2.Resubmissions.Single(r => r.OriginalJob == "helix-b").FailedItems);
+            helix2.Resubmissions.Should().HaveCount(2);
+            helix2.Resubmissions.Single(r => r.OriginalJob == "helix-a").FailedItems.Should().BeEquivalentTo(["a-fail"]);
+            helix2.Resubmissions.Single(r => r.OriginalJob == "helix-b").FailedItems.Should().BeEquivalentTo(["b-fail"]);
 
             var azdo3 = new FakeAzureDevOpsService();
             azdo3.WithPreviouslyProcessedJob("helix-a");
@@ -1991,11 +2041,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner3 = CreateRunner(azdo3, helix3);
             int exitCode3 = await runner3.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode3);
-            Assert.Single(helix3.Resubmissions);
-            Assert.Equal("helix-b-resub", helix3.Resubmissions[0].OriginalJob);
-            Assert.Equal(["b-fail"], helix3.Resubmissions[0].FailedItems);
-            Assert.Equal(["helix-b-resub-2"], azdo3.UploadedJobNames);
+            exitCode3.Should().Be(0);
+            helix3.Resubmissions.Should().ContainSingle();
+            helix3.Resubmissions[0].OriginalJob.Should().Be("helix-b-resub");
+            helix3.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["b-fail"]);
+            azdo3.UploadedJobNames.Should().BeEquivalentTo(["helix-b-resub-2"]);
         }
 
         /// <summary>
@@ -2038,19 +2088,23 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             using var cts1 = new CancellationTokenSource();
             var runner1 = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo1, helix1,
-                (_, _) =>
+                async (_, _) =>
                 {
+                    // Wait for helix-a's test-result upload to finish before cancelling so the
+                    // assertion below is deterministic. Otherwise the background upload task
+                    // (bound to the runner's cancellation token) races against cts1.Cancel().
+                    Task completed = await Task.WhenAny(azdo1.UploadCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                    completed.Should().BeSameAs(azdo1.UploadCompleted.Task);
                     cts1.Cancel();
-                    return Task.CompletedTask;
                 });
 
             int exitCode1 = await runner1.RunAsync(cts1.Token);
 
-            Assert.Equal(1, exitCode1);
-            Assert.Single(helix1.Resubmissions);
-            Assert.Equal("helix-a", helix1.Resubmissions[0].OriginalJob);
-            Assert.Equal(["a-fail"], helix1.Resubmissions[0].FailedItems);
-            Assert.Equal(["helix-a"], azdo1.UploadedJobNames);
+            exitCode1.Should().Be(1);
+            helix1.Resubmissions.Should().ContainSingle();
+            helix1.Resubmissions[0].OriginalJob.Should().Be("helix-a");
+            helix1.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["a-fail"]);
+            azdo1.UploadedJobNames.Should().BeEquivalentTo(["helix-a"]);
 
             var azdo2 = new FakeAzureDevOpsService();
             azdo2.WithPreviouslyProcessedJob("helix-a");
@@ -2088,9 +2142,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             int exitCode2 = await runner2.RunAsync(cts2.Token);
 
-            Assert.Equal(1, exitCode2);
-            Assert.Empty(helix2.Resubmissions);
-            Assert.Empty(azdo2.UploadedJobNames);
+            exitCode2.Should().Be(1);
+            helix2.Resubmissions.Should().BeEmpty();
+            azdo2.UploadedJobNames.Should().BeEmpty();
 
             var azdo3 = new FakeAzureDevOpsService();
             azdo3.WithPreviouslyProcessedJob("helix-a");
@@ -2147,11 +2201,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner3 = CreateRunner(azdo3, helix3);
             int exitCode3 = await runner3.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode3);
-            Assert.Single(helix3.Resubmissions);
-            Assert.Equal("helix-b", helix3.Resubmissions[0].OriginalJob);
-            Assert.Equal(["b-fail"], helix3.Resubmissions[0].FailedItems);
-            Assert.Equal(new[] { "helix-b", "helix-a-resub", "helix-b-resub" }.Order(), azdo3.UploadedJobNames.Order());
+            exitCode3.Should().Be(0);
+            helix3.Resubmissions.Should().ContainSingle();
+            helix3.Resubmissions[0].OriginalJob.Should().Be("helix-b");
+            helix3.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["b-fail"]);
+            azdo3.UploadedJobNames.Should().BeEquivalentTo(["helix-b", "helix-a-resub", "helix-b-resub"]);
         }
 
         /// <summary>
@@ -2178,11 +2232,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-linux", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(["wi-fail"], helix.Resubmissions[0].FailedItems);
-            Assert.Single(azdo.UploadedJobNames); // only original
+            exitCode.Should().Be(1);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["wi-fail"]);
+            azdo.UploadedJobNames.Should().ContainSingle(); // only original
         }
 
         /// <summary>
@@ -2211,11 +2265,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-a", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(["a-fail"], helix.Resubmissions[0].FailedItems);
-            Assert.Equal(["helix-a"], azdo.UploadedJobNames);
+            exitCode.Should().Be(1);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-a");
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["a-fail"]);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-a"]);
         }
 
         /// <summary>
@@ -2243,11 +2297,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-a", helix.Resubmissions[0].OriginalJob);
-            Assert.Null(helix.Resubmissions[0].NewJob);
-            Assert.Equal(["helix-a"], azdo.UploadedJobNames);
+            exitCode.Should().Be(1);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-a");
+            helix.Resubmissions[0].NewJob.Should().BeNull();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-a"]);
         }
 
         /// <summary>
@@ -2295,9 +2349,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Empty(helix.Resubmissions);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-r1", "helix-linux-r2" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-r1", "helix-linux-r2"]);
         }
 
         /// <summary>
@@ -2317,8 +2371,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.Empty(azdo.UploadedJobNames);
+            exitCode.Should().Be(1);
+            azdo.UploadedJobNames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -2350,10 +2404,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(["helix-linux"], azdo.UploadedJobNames);
-            Assert.Single(azdo.CreatedTestRuns);
-            Assert.Single(azdo.CompletedTestRunIds);
+            exitCode.Should().Be(0);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
+            azdo.CreatedTestRuns.Should().ContainSingle();
+            azdo.CompletedTestRunIds.Should().ContainSingle();
         }
 
         /// <summary>
@@ -2391,10 +2445,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-linux", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(["helix-linux-resub"], azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux-resub"]);
         }
 
         /// <summary>
@@ -2427,9 +2481,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Empty(helix.Resubmissions);
-            Assert.Equal(new[] { "helix-linux-r1", "helix-linux-r2" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux-r1", "helix-linux-r2"]);
         }
 
         /// <summary>
@@ -2482,10 +2536,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix, stageName: "Test");
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal("helix-test", helix.Resubmissions[0].OriginalJob);
-            Assert.Equal(new[] { "helix-test", "helix-test-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-test");
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-test", "helix-test-resub"]);
         }
 
         /// <summary>
@@ -2510,8 +2564,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Equal(["helix-linux"], azdo.UploadedJobNames);
+            exitCode.Should().Be(0);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         }
 
         /// <summary>
@@ -2546,10 +2600,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(0, exitCode);
-            Assert.Single(helix.Resubmissions);
-            Assert.Equal(["wi-timeout"], helix.Resubmissions[0].FailedItems);
-            Assert.Equal(new[] { "helix-linux", "helix-linux-resub" }.Order(), azdo.UploadedJobNames.Order());
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["wi-timeout"]);
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
         }
 
         [Fact]
@@ -2579,18 +2633,22 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix, logger: logger);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            Assert.Equal(1, exitCode);
-            Assert.DoesNotContain(logger.Messages, message =>
+            exitCode.Should().Be(1);
+            logger.Messages.Should().NotContain(message =>
                 message.Contains("wi-pass", StringComparison.Ordinal)
                 && message.Contains("https://helix.example/wi-pass/console", StringComparison.Ordinal));
-            Assert.Contains(logger.Messages, message =>
+            logger.Messages.Should().Contain(message =>
                 message.Contains($"Work item 'wi-fail' in job 'helix-linux' failed (Finished, exit code 1).{Environment.NewLine}Console: https://helix.example/wi-fail/console", StringComparison.Ordinal));
-            Assert.Contains(logger.Messages, message =>
+            logger.Messages.Should().Contain(message =>
+                message.Contains("##vso[task.logissue type=warning]Work item 'wi-fail' in job 'helix-linux' failed", StringComparison.Ordinal));
+            logger.Messages.Should().Contain(message =>
                 message.Contains("Failed work item console logs:", StringComparison.Ordinal)
                 && message.Contains("Test results: https://dev.azure.com/dnceng/public/_build/results?buildId=123&view=ms.vss-test-web.build-test-results-tab", StringComparison.Ordinal)
                 && message.Contains("└─ wi-fail (Job: helix-linux) (Finished, exit code 1)", StringComparison.Ordinal)
                 && message.Contains("└─ Console: https://helix.example/wi-fail/console", StringComparison.Ordinal));
-            Assert.DoesNotContain(logger.Messages, message =>
+            logger.Messages.Should().Contain(message =>
+                message.Contains("##vso[task.logissue type=error]Failed work item console logs:", StringComparison.Ordinal));
+            logger.Messages.Should().NotContain(message =>
                 message.Contains("Helix job: helix-linux", StringComparison.Ordinal));
         }
 
@@ -2629,14 +2687,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             int exitCode = await runner.RunAsync(cts.Token);
 
-            Assert.Equal(1, exitCode);
-            Assert.Contains(logger.Messages, message =>
+            exitCode.Should().Be(1);
+            logger.Messages.Should().Contain(message =>
                 message.Contains("0 processed / 0 completed / 1 running / 0 waiting jobs", StringComparison.Ordinal));
-            Assert.Contains(logger.Messages, message =>
+            logger.Messages.Should().Contain(message =>
                 message.Contains("0 processed / 0 completed / 3 running / 0 waiting work items", StringComparison.Ordinal));
-            Assert.DoesNotContain(logger.Messages, message =>
+            logger.Messages.Should().NotContain(message =>
                 message.Contains("Helix job details:", StringComparison.Ordinal));
-            Assert.Contains(logger.Messages, message =>
+            logger.Messages.Should().Contain(message =>
                 message.Contains($"Work item 'wi-2' in job 'helix-linux' failed (Finished, exit code 1).{Environment.NewLine}Console: https://helix.example/wi-2/console", StringComparison.Ordinal));
         }
 
@@ -2672,8 +2730,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             int exitCode = await runner.RunAsync(cts.Token);
 
-            Assert.Equal(1, exitCode);
-            Assert.Contains(logger.Messages, message =>
+            exitCode.Should().Be(1);
+            logger.Messages.Should().Contain(message =>
                 message.Contains("Helix job details:", StringComparison.Ordinal)
                 && message.Contains("└─ 🧪 Helix job helix-linux [Running]", StringComparison.Ordinal)
                 && message.Contains("   ├─ wi-01 (Running)", StringComparison.Ordinal)
