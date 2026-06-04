@@ -18,6 +18,7 @@ namespace NuGet.Protocol.Utility
     [JsonSerializable(typeof(CaseInsensitiveDictionary<IReadOnlyList<PackageVulnerabilityInfo>>), TypeInfoPropertyName = "VulnerabilityPage")]
     [JsonSerializable(typeof(AutoCompleteModel))]
     [JsonSerializable(typeof(ServiceIndexModel))]
+    [JsonSerializable(typeof(string[]))]
     internal partial class JsonContext : JsonSerializerContext
     {
     }
