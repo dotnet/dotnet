@@ -229,12 +229,11 @@ internal class MSBuildLogger : ITestLoggerWithParameters
     }
 
     /// <summary>
-    /// Writes message to standard output, with the name of the message followed by
-    /// parameters. Each parameter is delimited by '||||', and special characters are
-    /// escaped with '%' (see <see cref="Escape"/>).
+    /// Writes message to standard output, with the name of the message followed by the number of
+    /// parameters. With each parameter delimited by '||||', and newlines replaced with ~~~~ and !!!!.
     /// Such as:
-    ///  ||||run-start||||s:\t\mstest97\bin\Debug\net8.0\mstest97.dll
-    ///  ||||test-failed||||TestMethod5||||Assert.IsTrue failed. ||||   at mstest97.UnitTest1.TestMethod5() in s:\t\mstest97\UnitTest1.cs:line 27%r%n   at Syste...
+    ///  ||||run-start1||||s:\t\mstest97\bin\Debug\net8.0\mstest97.dll
+    ///  ||||test-failed6||||TestMethod5||||Assert.IsTrue failed. ||||   at mstest97.UnitTest1.TestMethod5() in s:\t\mstest97\UnitTest1.cs:line 27~~~~!!!!   at Syste...
     /// </summary>
     /// <param name="name"></param>
     /// <param name="data"></param>
@@ -247,7 +246,7 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         Output.Information(appendPrefix: false, message);
     }
 
-    internal static string FormatMessage(string name, params string?[] data)
+    private static string FormatMessage(string name, params string?[] data)
     {
         return $"||||{name}||||{string.Join("||||", data.Select(Escape))}";
     }
@@ -259,49 +258,11 @@ internal class MSBuildLogger : ITestLoggerWithParameters
             return null;
         }
 
-        // '%'-based escaping: escape the escape char first, then special chars.
-        // This is lossless (unlike the old ||||→____ replacement) and stays readable
-        // in MSBuild binary logs (unlike \x02/\x03 control chars).
         return input
-            .Replace("%", "%%")
-            .Replace("|", "%p")
-            .Replace("\r", "%r")
-            .Replace("\n", "%n");
-    }
-
-    /// <summary>
-    /// Reverses <see cref="Escape"/>. Must be a single-pass scanner — chained Replace
-    /// would incorrectly decode <c>%%n</c> as <c>%\n</c> instead of <c>%n</c>.
-    /// </summary>
-    internal static string? Unescape(string? input)
-    {
-        if (input == null)
-        {
-            return null;
-        }
-
-        var sb = new StringBuilder(input.Length);
-        for (int i = 0; i < input.Length; i++)
-        {
-            if (input[i] == '%' && i + 1 < input.Length)
-            {
-                char next = input[++i];
-                switch (next)
-                {
-                    case '%': sb.Append('%'); break;
-                    case 'p': sb.Append('|'); break;
-                    case 'r': sb.Append('\r'); break;
-                    case 'n': sb.Append('\n'); break;
-                    default: sb.Append('%'); sb.Append(next); break;
-                }
-            }
-            else
-            {
-                sb.Append(input[i]);
-            }
-        }
-
-        return sb.ToString();
+            // Cleanup characters that we are using ourselves to delimit the message
+            .Replace("||||", "____").Replace("~~~~", "____").Replace("!!!!", "____")
+            // Replace new line characters that would change how the message is consumed.
+            .Replace("\r", "~~~~").Replace("\n", "!!!!");
     }
 
     /// <summary>

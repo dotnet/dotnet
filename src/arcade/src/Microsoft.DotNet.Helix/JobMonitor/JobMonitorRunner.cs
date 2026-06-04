@@ -16,6 +16,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
     {
+        private const string AzdoWarningPrefix = "##vso[task.logissue type=warning]";
+        private const string AzdoErrorPrefix = "##vso[task.logissue type=error]";
+
         private readonly JobMonitorOptions _options;
         private readonly ILogger _logger;
         private readonly IAzureDevOpsService _azdo;
@@ -119,6 +122,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             // (typically Status="running", Finished=null), which would cause ReportTimeout and
             // CancelInFlightHelixJobsAsync to treat already-completed jobs as still in flight.
             Dictionary<string, HelixJobInfo> associatedJobs = new(StringComparer.OrdinalIgnoreCase);
+            var latestTimelineRecords = new List<AzureDevOpsTimelineRecord>();
 
             try
             {
@@ -127,6 +131,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 return await RunLoopAsync(
                     processedHelixJobs,
                     associatedJobs,
+                    latestTimelineRecords,
                     jobResubmission,
                     cancellationToken);
             }
@@ -138,7 +143,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 // lost (and tests that observe UploadedJobNames immediately after a cancelled
                 // run see a partial set).
                 await WaitForPendingTestResultUploadsAsync(CancellationToken.None);
-                ReportTimeout(associatedJobs.Values, processedHelixJobs);
+                ReportTimeout(associatedJobs.Values, processedHelixJobs, latestTimelineRecords);
 
                 // On cancellation (typically the overall timeout), proactively cancel any
                 // Helix jobs we know about that haven't finished yet so they don't keep
@@ -171,7 +176,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 return;
             }
 
-            _logger.LogWarning("Cancellation requested. Attempting to cancel {Count} in-flight Helix job(s).", inFlightJobs.Count);
+            LogWarning($"Cancellation requested. Attempting to cancel {inFlightJobs.Count} in-flight Helix job(s).");
 
             Task[] cancelTasks =
             [
@@ -189,7 +194,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning(ex, "Failed to cancel Helix job {JobName}.", job.DisplayName);
+                        LogWarning(ex, $"Failed to cancel Helix job {job.DisplayName}.");
                     }
                 })
             ];
@@ -200,6 +205,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private async Task<int> RunLoopAsync(
             HashSet<string> processedHelixJobs,
             Dictionary<string, HelixJobInfo> associatedJobs,
+            List<AzureDevOpsTimelineRecord> latestTimelineRecords,
             JobResubmissionResult jobResubmission,
             CancellationToken cancellationToken)
         {
@@ -229,6 +235,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                         string.IsNullOrEmpty(j.StageName)
                         || string.Equals(j.StageName, _options.StageName, StringComparison.OrdinalIgnoreCase))
                 ];
+                latestTimelineRecords.Clear();
+                latestTimelineRecords.AddRange(timelineRecords);
 
                 // Overwrite per poll so the cached entry reflects the latest Helix-side state
                 // (in particular, the Finished timestamp transitioning from null to a value).
@@ -310,7 +318,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
                     if (anyNonMonitorJobFailures)
                     {
-                        _logger.LogError("One or more non-monitor pipeline jobs failed.");
+                        LogError("One or more non-monitor pipeline jobs failed.");
                         return 1;
                     }
 
@@ -697,12 +705,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     continue;
                 }
 
-                _logger.LogInformation("❌ Work item '{WorkItemName}' in job '{JobName}' failed ({State}).{nl}Console: {ConsoleOutputUri}",
-                    workItem.Name,
-                    helixJob.DisplayName,
-                    FormatWorkItemState(workItem),
-                    Environment.NewLine,
-                    GetConsoleOutputText(workItem.ConsoleOutputUri));
+                LogWarning($"Work item '{workItem.Name}' in job '{helixJob.DisplayName}' failed ({FormatWorkItemState(workItem)}).{Environment.NewLine}Console: {GetConsoleOutputText(workItem.ConsoleOutputUri)}");
             }
         }
 
@@ -748,18 +751,20 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// <summary>
         /// Produces a key that rolls up work-item outcomes within a logical AzDO submitter
         /// chain. When the job carries an AzDO <c>System.JobName</c>, the chain key is based
-        /// on that name (so resubmissions of the same AzDO job share the same key while two
-        /// independent AzDO jobs running identically-named work items stay distinct). When
-        /// there is no submitter name (test scenarios, manual Helix submissions), the chain
-        /// is followed back through <c>PreviousHelixJobName</c> links to the root and the
-        /// root Helix job name is used instead, so that retries still overwrite prior
-        /// failures correctly.
+        /// on that name combined with the Helix <c>QueueId</c> (so resubmissions of the same
+        /// AzDO job to the same queue share the same key while a single AzDO matrix leg that
+        /// fans out to multiple Helix queues — each producing its own Helix job under the
+        /// same <c>System.JobName</c> — stays distinct and cannot overwrite a sibling queue's
+        /// failure with a pass). When there is no submitter name (test scenarios, manual Helix
+        /// submissions), the chain is followed back through <c>PreviousHelixJobName</c> links
+        /// to the root and the root Helix job name is used instead, so that retries still
+        /// overwrite prior failures correctly.
         /// </summary>
         private string GetSubmitterChainKey(HelixJobInfo job)
         {
             if (!string.IsNullOrEmpty(job.SubmitterJobName))
             {
-                return $"submitter:{job.SubmitterJobName}";
+                return FormatSubmitterChainKey(job.SubmitterJobName, job.QueueId);
             }
 
             HelixJobInfo current = job;
@@ -775,7 +780,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
                 if (!string.IsNullOrEmpty(previous.SubmitterJobName))
                 {
-                    return $"submitter:{previous.SubmitterJobName}";
+                    return FormatSubmitterChainKey(previous.SubmitterJobName, previous.QueueId);
                 }
 
                 current = previous;
@@ -783,6 +788,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             return $"helix:{(current?.JobName ?? job.JobName)}";
         }
+
+        private static string FormatSubmitterChainKey(string submitterJobName, string queueId)
+            => string.IsNullOrEmpty(queueId)
+                ? $"submitter:{submitterJobName}"
+                : $"submitter:{submitterJobName}|queue:{queueId}";
 
         private void LogFinalFailedWorkItemConsoleInfo()
         {
@@ -806,11 +816,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 lines.Add($"{(i == failures.Count - 1 ? "   " : "│  ")}└─ Console: {failure.ConsoleOutput}");
             }
 
-            _logger.LogError("❌ Failed work item console logs:{nl}Test results: {TestResultsUri}{nl}{FailedWorkItemConsoleLogs}",
-                Environment.NewLine,
-                GetTestResultsUri(),
-                Environment.NewLine,
-                string.Join(Environment.NewLine, lines));
+            LogError($"Failed work item console logs:{Environment.NewLine}Test results: {GetTestResultsUri()}{Environment.NewLine}{string.Join(Environment.NewLine, lines)}");
         }
 
         private string GetTestResultsUri()
@@ -931,24 +937,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string State,
             string ConsoleOutput);
 
-        private static string FormatChainKeyForDisplay(string chainKey)
-        {
-            const string submitterPrefix = "submitter:";
-            const string helixPrefix = "helix:";
-            if (chainKey is null) return string.Empty;
-            if (chainKey.StartsWith(submitterPrefix, StringComparison.Ordinal))
-            {
-                return chainKey.Substring(submitterPrefix.Length);
-            }
-
-            if (chainKey.StartsWith(helixPrefix, StringComparison.Ordinal))
-            {
-                return chainKey.Substring(helixPrefix.Length);
-            }
-
-            return chainKey;
-        }
-
         private sealed class WorkItemOutcomeKeyComparer : IEqualityComparer<(string ChainKey, string WorkItemName)>
         {
             public static readonly WorkItemOutcomeKeyComparer Instance = new();
@@ -965,29 +953,75 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         private void ReportTimeout(
             IEnumerable<HelixJobInfo> latestAssociatedJobs,
-            HashSet<string> processedHelixJobs)
+            HashSet<string> processedHelixJobs,
+            IReadOnlyList<AzureDevOpsTimelineRecord> latestTimelineRecords)
         {
             var timeout = TimeSpan.FromMinutes(_options.MaximumWaitMinutes);
-            var unfinishedJobs = latestAssociatedJobs
+            var unfinishedHelixJobs = GetLatestHelixJobAttempts(latestAssociatedJobs)
                 .Where(j => !j.IsCompleted || !processedHelixJobs.Contains(j.JobName))
                 .OrderBy(j => j.JobName, StringComparer.OrdinalIgnoreCase)
                 .ToList();
+            var inProgressPipelineJobs = GetInProgressNonMonitorPipelineJobs(latestTimelineRecords, _options.JobMonitorName)
+                .OrderBy(r => r.Name ?? r.ReferenceName ?? r.Identifier ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-            if (unfinishedJobs.Count == 0)
+            if (unfinishedHelixJobs.Count == 0 && inProgressPipelineJobs.Count == 0)
             {
-                _logger.LogCritical("Helix Job Monitor timed out after {TimeoutMinutes} minute(s) ({Timeout}). No unfinished Helix jobs were tracked at the time of timeout.",
+                _logger.LogCritical("Helix Job Monitor timed out after {TimeoutMinutes} minute(s) ({Timeout}). No unfinished Helix or Azure DevOps jobs were tracked at the time of timeout.",
                     timeout.TotalMinutes,
                     timeout);
                 return;
             }
 
-            _logger.LogError(
-                $"Helix Job Monitor timed out after {{TimeoutMinutes}} minute(s) ({{Timeout}}). {{UnfinishedCount}} Helix job(s) had not finished:{Environment.NewLine}- {{UnfinishedJobs}}{Environment.NewLine}",
-                timeout.TotalMinutes,
-                timeout,
-                unfinishedJobs.Count,
-                string.Join(Environment.NewLine + "- ", unfinishedJobs.Select(j => $"{j.DetailsUri} ({j.QueueId})")));
+            if (unfinishedHelixJobs.Count > 0)
+            {
+                LogError(
+                    $"Helix Job Monitor timed out after {timeout.TotalMinutes} minute(s) ({timeout}). {unfinishedHelixJobs.Count} Helix job(s) were unfinished or unprocessed:{Environment.NewLine}- {string.Join(Environment.NewLine + "- ", unfinishedHelixJobs.Select(FormatUnfinishedHelixJobForTimeoutLog))}{Environment.NewLine}");
+            }
+
+            if (inProgressPipelineJobs.Count > 0)
+            {
+                LogError(
+                    $"At timeout, {inProgressPipelineJobs.Count} non-monitor Azure DevOps pipeline job(s) were still in progress or queued:{Environment.NewLine}- {string.Join(Environment.NewLine + "- ", inProgressPipelineJobs.Select(FormatInProgressPipelineJobForTimeoutLog))}{Environment.NewLine}");
+            }
         }
+
+        private static IEnumerable<AzureDevOpsTimelineRecord> GetInProgressNonMonitorPipelineJobs(
+            IReadOnlyList<AzureDevOpsTimelineRecord> timelineRecords,
+            string jobMonitorName)
+            => HelixJobMonitorUtilities.GetRelevantNonMonitorJobRecords(timelineRecords, jobMonitorName)
+                .Where(r => !string.Equals(r.State, "completed", StringComparison.OrdinalIgnoreCase));
+
+        private static string FormatUnfinishedHelixJobForTimeoutLog(HelixJobInfo helixJob)
+        {
+            string workItemCountText = helixJob.InitialWorkItemCount?.ToString() ?? "unknown";
+            return $"{helixJob.DisplayName} [status={helixJob.Status}, initialWorkItems={workItemCountText}]{Environment.NewLine}  {helixJob.DetailsUri}";
+        }
+
+        private static string FormatInProgressPipelineJobForTimeoutLog(AzureDevOpsTimelineRecord timelineRecord)
+        {
+            string state = string.IsNullOrEmpty(timelineRecord.State) ? "unknown" : timelineRecord.State;
+            string result = string.IsNullOrEmpty(timelineRecord.Result) ? "none" : timelineRecord.Result;
+            string name = string.IsNullOrEmpty(timelineRecord.Name) ? timelineRecord.ReferenceName : timelineRecord.Name;
+            if (string.IsNullOrEmpty(name))
+            {
+                name = timelineRecord.Identifier;
+            }
+
+            return $"{name} [state={state}, result={result}]";
+        }
+
+        private void LogWarning(string message)
+            => _logger.LogWarning("{Prefix}{Message}", AzdoWarningPrefix, message);
+
+        private void LogWarning(Exception exception, string message)
+            => _logger.LogWarning(exception, "{Prefix}{Message}", AzdoWarningPrefix, message);
+
+        private void LogError(string message)
+            => _logger.LogError("{Prefix}{Message}", AzdoErrorPrefix, message);
+
+        private void LogError(Exception exception, string message)
+            => _logger.LogError(exception, "{Prefix}{Message}", AzdoErrorPrefix, message);
 
         public void Dispose()
         {
