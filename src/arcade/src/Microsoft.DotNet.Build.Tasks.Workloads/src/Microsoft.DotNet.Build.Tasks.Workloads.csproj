@@ -27,13 +27,13 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Microsoft.Deployment.DotNet.Releases" />
     <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
-    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
-    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IncludeWiX)' == 'true'">
     <PackageReference Include="Microsoft.Signed.Wix" />
+    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
+    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
   </ItemGroup>
 
   <ItemGroup>
