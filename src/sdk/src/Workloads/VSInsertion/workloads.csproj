@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <WixToolsetPath>$(PkgMicrosoft_Signed_Wix)\tools</WixToolsetPath>
     <SwixPluginPath>$(PkgMicroBuild_Plugins_SwixBuild_Dotnet)</SwixPluginPath>
     <SwixBuildTargets>$(SwixPluginPath)\build\MicroBuild.Plugins.SwixBuild.targets</SwixBuildTargets>
 
