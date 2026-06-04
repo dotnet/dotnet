@@ -1,6 +1,6 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-SET BAZEL_EXE=%KOKORO_GFILE_DIR%\bazel-8.2.1-windows-x86_64.exe
+SET BAZEL_EXE=%KOKORO_GFILE_DIR%\bazel-9.0.0-windows-x86_64.exe
 
 SET PATH=C:\Python34;%PATH%
 SET BAZEL_PYTHON=C:\python34\python.exe
@@ -65,6 +65,7 @@ IF EXIST "%KOKORO_GFILE_DIR%\distdir\googletest_vendor.tar.gz" (
   --copt=/WX ^
   --enable_bzlmod=true ^
   --keep_going ^
+  --per_file_copt=external/.*@/w ^
   --test_output=errors ^
   --test_tag_filters=-no_test_msvc2017 ^
   %VENDOR_FLAG%
@@ -79,6 +80,7 @@ IF %errorlevel% neq 0 EXIT /B 1
   --copt=/WX ^
   --enable_bzlmod=true ^
   --keep_going ^
+  --per_file_copt=external/.*@/w ^
   --test_output=errors ^
   --test_tag_filters=-no_test_msvc2017 ^
   %VENDOR_FLAG%

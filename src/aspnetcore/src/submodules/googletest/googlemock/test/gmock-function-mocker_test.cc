@@ -35,6 +35,13 @@
 // Silence C4503 (decorated name length exceeded) for MSVC.
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4503)
 
+#ifdef __clang__
+#pragma clang diagnostic push
+// This file intentionally tests many ways of writing Mock classes, including
+// with and without the override keyword.
+#pragma clang diagnostic ignored "-Winconsistent-missing-override"
+#endif
+
 #ifdef GTEST_OS_WINDOWS
 // MSDN says the header file to be included for STDMETHOD is BaseTyps.h but
 // we are getting compiler errors if we use basetyps.h, hence including
@@ -450,6 +457,87 @@ TYPED_TEST(FunctionMockerTest, MocksReturnTypeWithCommaAndCallType) {
 }
 
 #endif  // GTEST_OS_WINDOWS
+
+// Compilability test, to ensure macros expand to all the arguments they're
+// supposed to.
+class MockManyArgs {
+  using T = int;
+
+ public:
+  MockManyArgs() = default;
+
+  MOCK_METHOD(void, F, (), ());
+  MOCK_METHOD(void, F, (T), ());
+  MOCK_METHOD(void, F, (T, T), ());
+  MOCK_METHOD(void, F, (T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F, (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T), ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T, T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T, T, T, T, T, T),
+              ());
+  MOCK_METHOD(void, F,
+              (T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T,
+               T, T, T, T, T, T, T, T, T),
+              ());
+
+ private:
+  MockManyArgs(const MockManyArgs&) = delete;
+  MockManyArgs& operator=(const MockManyArgs&) = delete;
+};
 
 TEST(FunctionMockerTest, RefQualified) {
   MockFoo mock_foo;
