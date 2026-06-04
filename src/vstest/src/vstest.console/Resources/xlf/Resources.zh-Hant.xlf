@@ -805,7 +805,7 @@
       </trans-unit>
       <trans-unit id="MalformedRunSettingsKey">
         <source>One or more runsettings provided contain invalid token</source>
-        <target state="translated">提供的一或多個 runsettings 包含無效的語彙基元</target>
+        <target state="translated">已提供的一或多個 runsettings 中含有無效的 Token</target>
         <note />
       </trans-unit>
       <trans-unit id="ResultsDirectoryArgumentHelp">

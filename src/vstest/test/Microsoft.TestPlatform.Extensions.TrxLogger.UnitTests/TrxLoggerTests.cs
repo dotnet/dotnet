@@ -770,6 +770,37 @@ public class TrxLoggerTests
         Assert.AreEqual(Path.Combine(DefaultTestRunDirectory, DefaultLogFileNameParameterValue), _testableTrxLogger.TrxFile, "Wrong Trx file name");
     }
 
+    [TestMethod]
+    public void CustomTrxFileNameWithSubdirectoryShouldPlaceTrxAndAttachmentsUnderSameDirectory()
+    {
+        // Arrange: LogFileName contains a subdirectory component
+        var logger = new TestableTrxLogger();
+        var subDir = "subdir";
+        var fileName = "results.trx";
+        var parameters = new Dictionary<string, string?>
+        {
+            [DefaultLoggerParameterNames.TestRunDirectory] = DefaultTestRunDirectory,
+            [TrxLoggerConstants.LogFileNameKey] = Path.Combine(subDir, fileName),
+        };
+        logger.Initialize(_events.Object, parameters);
+
+        MakeTestRunComplete(logger);
+
+        try
+        {
+            // The TRX file must be at <TestRunDirectory>/<subDir>/<fileName>
+            var expectedTrxPath = Path.Combine(DefaultTestRunDirectory, subDir, fileName);
+            Assert.AreEqual(expectedTrxPath, logger.TrxFile, "TRX file should be in the specified subdirectory.");
+        }
+        finally
+        {
+            if (!string.IsNullOrEmpty(logger.TrxFile) && File.Exists(logger.TrxFile))
+            {
+                File.Delete(logger.TrxFile);
+            }
+        }
+    }
+
     /// <summary>
     /// Unit test for reading TestCategories from the TestCase which is part of test result.
     /// </summary>

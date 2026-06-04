@@ -10,12 +10,12 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">テスト ソース '{0}' の testhost が見つかりませんでした。
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+次のことを確認してください:
+  - テスト プロジェクトが 'Microsoft.NET.Test.Sdk' NuGet パッケージを参照している。
+  - プロジェクトがビルドされており、出力が '{1}' にある。
+  - プロジェクトのターゲット フレームワークが、インストールされている .NET ランタイムと一致している。
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>

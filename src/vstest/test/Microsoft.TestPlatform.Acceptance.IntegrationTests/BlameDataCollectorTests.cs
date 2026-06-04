@@ -133,7 +133,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
         arguments = string.Concat(arguments, $" /ResultsDirectory:{TempDirectory.Path}");
         // Don't reduce this, 10s is about the safe minimum to not have flakiness.
-        arguments = string.Concat(arguments, $@" /Blame:""CollectHangDump;HangDumpType=mini;TestTimeout=10s"" /Diag:{TempDirectory.Path}/log.txt");
+        arguments = string.Concat(arguments, $@" /Blame:""CollectHangDump;HangDumpType=mini;TestTimeout=10s""");
 
         var env = new Dictionary<string, string?>
         {

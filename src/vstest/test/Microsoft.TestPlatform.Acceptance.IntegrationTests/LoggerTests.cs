@@ -254,4 +254,33 @@ public class LoggerTests : AcceptanceTestBase
 
         return null;
     }
+
+    [TestMethod]
+    [NetFullTargetFrameworkDataSource]
+    [NetCoreTargetFrameworkDataSource]
+    public void TrxLoggerShouldPlaceTrxFileInSubdirectoryWhenLogFileNameContainsPath(RunnerInfo runnerInfo)
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/15271
+        // When LogFileName contains a subdirectory (e.g. "subdir/results.trx"),
+        // the TRX file and its attachments should be placed under that subdirectory.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var assemblyPaths = GetAssetFullPath("SimpleTestProject2.dll");
+        var subDir = "custom-subdir";
+        var trxFileName = "results.trx";
+        var logFileName = Path.Combine(subDir, trxFileName);
+        var arguments = PrepareArguments(assemblyPaths, null, string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, $" /logger:\"trx;LogFileName={logFileName}\"");
+
+        InvokeVsTest(arguments);
+
+        ValidateSummaryStatus(1, 1, 1);
+
+        // Verify the TRX file is in the expected subdirectory
+        var expectedTrxPath = Path.Combine(TempDirectory.Path, subDir, trxFileName);
+        Assert.IsTrue(File.Exists(expectedTrxPath),
+            $"Expected TRX file at '{expectedTrxPath}' but it was not found. " +
+            $"Files in results dir: {string.Join(", ", Directory.GetFiles(TempDirectory.Path, "*.trx", SearchOption.AllDirectories))}");
+        Assert.IsTrue(IsValidXml(expectedTrxPath), "TRX file content should be valid XML.");
+    }
 }
