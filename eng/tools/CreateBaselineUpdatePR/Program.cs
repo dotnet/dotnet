@@ -110,7 +110,7 @@ public class Program
             {
                 string repoUri = result.GetValue(Repo)!;
                 string? token = result.GetValue(Token);
-                if (string.IsNullOrEmpty(token))
+                if (string.IsNullOrWhiteSpace(token))
                 {
                     throw new ArgumentException(
                         "A token is required. Pass --token or set the GIT_TOKEN environment variable.");
