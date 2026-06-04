@@ -130,6 +130,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
                 }
             }
 
+            // Suppress HEAT deprecation warnings. Alternative <Files /> element is not usable for current signing process.
+            CommandLineBuilder.AppendSwitch("-sw5149");
             CommandLineBuilder.AppendSwitchIfNotNull("-dr ", DirectoryReference);
             CommandLineBuilder.AppendSwitchIfNotNull("-o ", OutputFile);
 
