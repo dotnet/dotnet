@@ -147,7 +147,7 @@ public partial class PRCreator
 
             // Find the key in the tree
             var originalTreeItem = tree
-                .Where(item => item.RelativePath.Contains(fileNameKey))
+                .Where(item => item.RelativePath.Contains(fileNameKey, StringComparison.Ordinal))
                 .FirstOrDefault();
 
             if (originalTreeItem != null)
