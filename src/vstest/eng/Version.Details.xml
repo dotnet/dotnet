@@ -11,7 +11,6 @@
       <Sha>d70206844a95b337601237466bfc6cbb7d52d6d4</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
@@ -19,10 +18,6 @@
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="2.0.0">
       <Uri>https://github.com/dotnet/core-setup</Uri>
-      <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
-    </Dependency>
-    <Dependency Name="System.Collections.Immutable" Version="9.0.11">
-      <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
   </ProductDependencies>

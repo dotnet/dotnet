@@ -1,14 +1,14 @@
 {
   "sdk": {
     "version": "11.0.100-preview.3.26170.106",
-    "rollForward": "minor",
-    "allowPrerelease": false,
-    "architecture": "x64",
     "paths": [
       ".dotnet",
       "$host$"
     ],
-    "errorMessage": "The .NET SDK could not be found, please run ./build.cmd on Windows or ./build.sh on Linux and macOS."
+    "errorMessage": "The .NET SDK could not be found, please run ./build.cmd on Windows or ./build.sh on Linux and macOS.",
+    "rollForward": "minor",
+    "allowPrerelease": false,
+    "architecture": "x64"
   },
   "tools": {
     "runtimes": {

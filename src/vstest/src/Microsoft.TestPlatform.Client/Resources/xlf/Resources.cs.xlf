@@ -1,15 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" original="../Resources.resx" target-language="cs">
     <body>
       <trans-unit id="InvalidStateForExecution">
         <source>The test run could not be executed because the initial state was invalid.</source>
         <target state="translated">Testovací běh nešlo spustit, protože byl neplatný počáteční stav.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvidedDependenciesWarning">
-        <source>The test platform provided the following assemblies to resolve dependencies of test extensions that did not ship their own copy: {0}. Test extensions should ship all their dependencies.</source>
-        <target state="translated">Testovací platforma poskytla následující sestavení pro řešení závislostí rozšíření testů, která nedodávala vlastní kopii: {0}. Testovací rozšíření by měla dodávat všechny své závislosti.</target>
         <note />
       </trans-unit>
       <trans-unit id="WaitForCompletionOperationIsNotAllowedWhenNoTestRunIsActive">

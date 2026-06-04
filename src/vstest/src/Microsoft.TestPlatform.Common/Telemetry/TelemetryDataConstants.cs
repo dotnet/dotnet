@@ -11,13 +11,6 @@ internal static class TelemetryDataConstants
     // ******************** General ***********************
     public static readonly string DiscoveredExtensions = "VS.TestPlatform.DiscoveredExtensions";
 
-    // Tracks assemblies that vstest provided from its search directories to resolve
-    // extension dependencies. Separated by requester type for privacy.
-    public static readonly string ProvidedDependenciesForUser = "VS.TestPlatform.ProvidedDeps.User";
-    public static readonly string ProvidedDependenciesForUserCount = "VS.TestPlatform.ProvidedDeps.User.Count";
-    public static readonly string ProvidedDependenciesForMicrosoft = "VS.TestPlatform.ProvidedDeps.Microsoft";
-    public static readonly string ProvidedDependenciesForMicrosoftCount = "VS.TestPlatform.ProvidedDeps.Microsoft.Count";
-
     // ******************** Execution ***********************
     public static readonly string ParallelEnabledDuringExecution = "VS.TestRun.ParallelEnabled";
 
