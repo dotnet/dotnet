@@ -51,7 +51,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
         public WixToolTask(IBuildEngine engine, WixToolsetConfiguration wixToolsetConfig) :
             base(engine, wixToolsetConfig.CliPath)
         {
-            _wixToolsetConfig = wixToolsetConfig;            
+            _wixToolsetConfig = wixToolsetConfig;
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
 
             return CommandLineBuilder.ToString();
         }
-        
-        public string GetWixCommandLine() => Path.Combine(ToolPath, ToolExe) + " " + 
+
+        public string GetWixCommandLine() => Path.Combine(ToolPath, ToolExe) + " " +
             CommandLineBuilder.ToString();
 
         /// <summary>

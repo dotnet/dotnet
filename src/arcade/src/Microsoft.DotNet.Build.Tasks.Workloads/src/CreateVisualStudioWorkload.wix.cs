@@ -356,7 +356,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                     _ = Parallel.ForEach(data.FeatureBands.Keys, platform =>
                     {
                         WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
-                        ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
+                        ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
                         // Generate a .csproj to package the MSI and its manifest for CLI installs.
                         MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
@@ -400,7 +400,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                     foreach (var platform in packGroup.ManifestsPerPlatform.Keys)
                     {
                         WorkloadPackGroupMsi msi = new(packGroup, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
-                        ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
+                        ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
                         // Generate a .csproj to package the MSI and its manifest for CLI installs.
                         MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
@@ -440,7 +440,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             // Visual Studio.
             _ = Parallel.ForEach(manifestMsisToBuild, msi =>
             {
-                ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
+                ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
                 // Don't generate a SWIX package if the MSI targets arm64 and VS doesn't support machineArch
                 if (_supportsMachineArch[msi.Package.SdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))

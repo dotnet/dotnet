@@ -67,7 +67,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
 
                 _ = Parallel.ForEach(workloadSetMsisToBuild, msi =>
                 {
-                    ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
+                    ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
                     // Generate a .csproj to package the MSI and its manifest for CLI installs.
                     MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);

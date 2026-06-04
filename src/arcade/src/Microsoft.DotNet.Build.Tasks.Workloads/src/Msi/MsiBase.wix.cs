@@ -189,7 +189,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             ReplacementTokens[MsiTokens.__PACKAGE_VERSION__] = metadata.PackageVersion.ToString();
             ReplacementTokens[MsiTokens.__PRODUCTCODE__] = ProductCode.ToString("B");
             ReplacementTokens[MsiTokens.__VERSION__] = metadata.MsiVersion.ToString();
-            
+
             SourcePath = Path.Combine(SourcePath, "wix", metadata.Id, $"{metadata.PackageVersion}", platform);
 
             _wixToolTask = new WixToolTask(buildEngine, wixToolsetConfig);
@@ -236,9 +236,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// Produces an MSI and returns a task item with metadata about the MSI.
         /// </summary>
         /// <param name="outputPath">The directory where the MSI will be generated.</param>
-        /// <param name="iceSuppressions">A set of internal consistency evaluators to suppress or <see langword="null"/>.</param>
         /// <returns>An item representing the built MSI.</returns>
-        public ITaskItem Build(string outputPath, ITaskItem[]? iceSuppressions = null)
+        public ITaskItem Build(string outputPath)
         {
             // Ensure that all the sources are generated before building the MSI.
             Create();
