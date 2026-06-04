@@ -197,7 +197,7 @@ public partial class PRCreator
     private static List<TreeFile> UpdateFile(List<TreeFile> tree, string? content, string searchFileName, string updatedPath)
     {
         var originalTreeItem = tree
-            .Where(item => item.RelativePath.Contains(searchFileName))
+            .Where(item => item.RelativePath.Contains(searchFileName, StringComparison.Ordinal))
             .FirstOrDefault();
 
         if (content == null)
