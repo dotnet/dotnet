@@ -223,7 +223,6 @@
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <EnvironmentVariables Include="NuGetAudit=false" />
-    <EnvironmentVariables Include="NoWarn=NU1905" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableExtraDebugging)' == 'true'">
