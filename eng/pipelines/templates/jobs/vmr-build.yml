@@ -823,6 +823,11 @@ jobs:
             customBuildArgs="$customBuildArgs --online"
           else
             customPreBuildArgs="$customPreBuildArgs sudo -E unshare -n"
+            # Disable NuGet audit for offline builds since the audit source (nuget.org)
+            # is unreachable without network access. Environment variable is used because
+            # some projects (e.g. arcade toolset) have their own Directory.Build.props and
+            # don't import the VMR root where NuGetAudit is conditionally disabled.
+            export NuGetAudit=false
           fi
 
           if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
