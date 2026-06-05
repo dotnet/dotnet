@@ -155,8 +155,8 @@ namespace MSBuild.Bootstrap.Utils.Tasks
             string scriptExtension = IsWindows ? "ps1" : "sh";
             string scriptPath = Path.Combine(DotNetInstallScriptRootPath, $"{ScriptName}.{scriptExtension}");
             string scriptArgs = IsWindows
-                ? $"-NoProfile -ExecutionPolicy Bypass -File {scriptPath} -Version {Version} -InstallDir {InstallDir}"
-                : $"{scriptPath} --version {Version} --install-dir {InstallDir}";
+                ? $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\" -Version {Version} -InstallDir \"{InstallDir}\""
+                : $"\"{scriptPath}\" --version {Version} --install-dir \"{InstallDir}\"";
 
             return new ScriptExecutionSettings($"{ScriptName}.{scriptExtension}", scriptPath, scriptArgs);
         }
