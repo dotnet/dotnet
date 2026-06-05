@@ -87,11 +87,13 @@ namespace Microsoft.DotNet.Tests
 
     public class GivenADotnetToolsCommandResolverAggregateTools
     {
-        [Fact]
-        public void ItReturnsAnExecutableCommandSpecFromAggregateToolPackage()
+        [Theory]
+        [InlineData("dotnet-dev-certs")]
+        [InlineData("dotnet-user-jwts")]
+        [InlineData("dotnet-user-secrets")]
+        public void ItReturnsAnExecutableCommandSpecFromAggregateToolPackage(string commandName)
         {
             var dotnetToolPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            var commandName = "dotnet-user-secrets";
             var toolDirectory = Path.Combine(dotnetToolPath, "aspnetcoretools", "1.0.0", "tools", "any", "win-x64");
             Directory.CreateDirectory(toolDirectory);
             var executableName = OperatingSystem.IsWindows() ? $"{commandName}.exe" : commandName;
