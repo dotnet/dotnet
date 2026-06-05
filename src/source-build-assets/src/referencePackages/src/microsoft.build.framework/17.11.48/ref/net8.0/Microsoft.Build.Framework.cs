@@ -1033,3 +1033,10 @@ namespace Microsoft.Build.Framework.Profiler
         public override int GetHashCode() { throw null; }
     }
 }
+
+namespace System.Runtime.CompilerServices
+{
+    internal static partial class IsExternalInit
+    {
+    }
+}

@@ -13,9 +13,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">17.12.50</MicrosoftBuildVersion>
     <!-- Read docs/updating-packages.md before updating MSBuild's version -->
-    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">17.11.48</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">18.0.2</MicrosoftBuildVersion>
   </PropertyGroup>
 
     <!-- Overridden by source build to ensure the same version is used across products, do not remove these properties -->
@@ -28,7 +27,7 @@
     <SystemMemoryPackageVersion Condition="'$(SystemMemoryPackageVersion)' == ''">4.6.3</SystemMemoryPackageVersion>
     <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">8.0.1</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">8.0.0</SystemSecurityCryptographyProtectedDataVersion>
-    <SystemSecurityCryptographyXmlPackageVersion Condition="'$(SystemSecurityCryptographyXmlPackageVersion)' == ''">8.0.3</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion Condition="'$(SystemSecurityCryptographyXmlPackageVersion)' == ''">9.0.16</SystemSecurityCryptographyXmlPackageVersion>
     <MicrosoftDotNetXliffTasksVersion Condition="'$(MicrosoftDotNetXliffTasksVersion)' == ''">10.0.0-beta.25260.104</MicrosoftDotNetXliffTasksVersion>
   </PropertyGroup>
 
@@ -57,7 +56,6 @@
     <PackageVersion Include="Microsoft.Extensions.CommandLineUtils.Sources" Version="3.0.0-preview6.19253.5" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="17.10.40173" />
-    <PackageVersion Include="Microsoft.NET.StringTools" Version="$(MicrosoftBuildVersion)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
     <!-- Microsoft.TeamFoundationServer.ExtendedClient has vulnerable dependencies Microsoft.IdentityModel.JsonWebTokens and System.IdentityModel.Tokens.Jwt . When it's upgraded, try removing the pinned packages -->
@@ -99,11 +97,6 @@
     <!-- S.S.C.Xml is a dependency of MSBuild. Once MSBuild no longer has a transitive dependency on a vulnerable version, this can be removed -->
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlPackageVersion)" />
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
-    <!--
-      The Microsoft.VisualStudio.SDK metapackage brings in System.Threading.Tasks.Dataflow 4.11.1 (assembly version 4.9.5.0).
-      However, our MSBuild integration tests use Microsoft.Build 16.8.0, which requires System.Threading.Tasks.Dataflow 4.9.0 (assembly version 4.9.3.0).
-      To resolve runtime assembly binding failures, we'll downgrade the package from 4.11.1 to 4.9.0.
-    -->
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
     <PackageVersion Include="VsWebSite.Interop" Version="17.10.40173" />
     <PackageVersion Include="xunit" Version="2.9.0" />

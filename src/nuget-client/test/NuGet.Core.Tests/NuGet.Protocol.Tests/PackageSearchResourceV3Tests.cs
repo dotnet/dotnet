@@ -9,9 +9,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
+using NuGet.Shared;
 using Test.Utility;
 using Xunit;
 
@@ -20,21 +22,34 @@ namespace NuGet.Protocol.Tests
     [Collection(nameof(NotThreadSafeResourceCollection))]
     public class PackageSearchResourceV3Tests
     {
+        private static PackageSearchResourceV3 CreateSearchResource(HttpSource httpSource, Uri[] searchEndpoints, string useStj)
+        {
+            var envReader = new Mock<IEnvironmentVariableReader>();
+            envReader.Setup(e => e.GetEnvironmentVariable(NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar)).Returns(useStj);
+            return new PackageSearchResourceV3(httpSource, searchEndpoints, envReader.Object);
+        }
+
         [Theory]
-        [InlineData("EntityFrameworkSearch.json", true, true)]
-        [InlineData("EntityFrameworkSearchWithStringTypes.json", true, false)]
-        [InlineData("EntityFrameworkSearchWithoutOwner.json", false, false)]
-        public async Task PackageSearchResourceV3_GetMetadataAsync(string jsonFileName, bool hasOwners, bool hasOwnersArray)
+        [InlineData("true", "EntityFrameworkSearch.json", true, true)]   // STJ path
+        [InlineData("false", "EntityFrameworkSearch.json", true, true)]  // NSJ path
+        [InlineData("true", "EntityFrameworkSearchWithStringTypes.json", true, false)]
+        [InlineData("false", "EntityFrameworkSearchWithStringTypes.json", true, false)]
+        [InlineData("true", "EntityFrameworkSearchWithoutOwner.json", false, false)]
+        [InlineData("false", "EntityFrameworkSearchWithoutOwner.json", false, false)]
+        public async Task PackageSearchResourceV3_GetMetadataAsync(string useStj, string jsonFileName, bool hasOwners, bool hasOwnersArray)
         {
             // Arrange
-            var responses = new Dictionary<string, string>();
-            responses.Add("https://api-v3search-0.nuget.org/query?q=entityframework&skip=0&take=1&prerelease=false&semVerLevel=2.0.0",
-                ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources." + jsonFileName, GetType()));
-            responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
+            var searchUrl = serviceAddress + "?q=entityframework&skip=0&take=1&prerelease=false&semVerLevel=2.0.0";
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var responses = new Dictionary<string, string>
+            {
+                { searchUrl, ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources." + jsonFileName, GetType()) },
+                { serviceAddress, string.Empty }
+            };
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
+            var resource = CreateSearchResource(httpSource, new[] { new Uri(serviceAddress) }, useStj);
 
             // Act
             var packages = await resource.SearchAsync(
@@ -42,8 +57,8 @@ namespace NuGet.Protocol.Tests
                 new SearchFilter(false),
                 skip: 0,
                 take: 1,
-                log: NullLogger.Instance,
-                cancellationToken: CancellationToken.None);
+                NullLogger.Instance,
+                CancellationToken.None);
 
             var package = packages.SingleOrDefault();
 
@@ -142,18 +157,23 @@ namespace NuGet.Protocol.Tests
             MetadataReferenceCacheTestUtility.AssertPackagesHaveSameReferences(first, second);
         }
 
-        [Fact]
-        public async Task PackageSearchResourceV3_GetMetadataAsync_NotFound()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task PackageSearchResourceV3_GetMetadataAsync_NotFound(string useStj)
         {
             // Arrange
-            var responses = new Dictionary<string, string>();
-            responses.Add("https://api-v3search-0.nuget.org/query?q=yabbadabbadoo&skip=0&take=1&prerelease=false&semVerLevel=2.0.0",
-                ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.EmptySearchResponse.json", GetType()));
-            responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
+            var searchUrl = serviceAddress + "?q=yabbadabbadoo&skip=0&take=1&prerelease=false&semVerLevel=2.0.0";
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var responses = new Dictionary<string, string>
+            {
+                { searchUrl, ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.EmptySearchResponse.json", GetType()) },
+                { serviceAddress, string.Empty }
+            };
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
+            var resource = CreateSearchResource(httpSource, new[] { new Uri(serviceAddress) }, useStj);
 
             // Act
             var packages = await resource.SearchAsync(
@@ -161,26 +181,31 @@ namespace NuGet.Protocol.Tests
                 new SearchFilter(false),
                 skip: 0,
                 take: 1,
-                log: NullLogger.Instance,
-                cancellationToken: CancellationToken.None);
+                NullLogger.Instance,
+                CancellationToken.None);
 
             // Assert
             Assert.Empty(packages);
         }
 
-        [Fact]
-        public async Task PackageSearchResourceV3_GetMetadataAsync_VersionsDownloadCount()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task PackageSearchResourceV3_GetMetadataAsync_VersionsDownloadCount(string useStj)
         {
             // Arrange
             long largerThanIntMax = (long)int.MaxValue + 10;
-            var responses = new Dictionary<string, string>();
-            responses.Add("https://api-v3search-0.nuget.org/query?q=entityframework&skip=0&take=1&prerelease=false&semVerLevel=2.0.0",
-                ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.EntityFrameworkSearch.json", GetType()));
-            responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
+            var searchUrl = serviceAddress + "?q=entityframework&skip=0&take=1&prerelease=false&semVerLevel=2.0.0";
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var responses = new Dictionary<string, string>
+            {
+                { searchUrl, ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.EntityFrameworkSearch.json", GetType()) },
+                { serviceAddress, string.Empty }
+            };
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
+            var resource = CreateSearchResource(httpSource, new[] { new Uri(serviceAddress) }, useStj);
 
             // Act
             var packages = await resource.SearchAsync(
@@ -188,8 +213,8 @@ namespace NuGet.Protocol.Tests
                 new SearchFilter(false),
                 skip: 0,
                 take: 1,
-                log: NullLogger.Instance,
-                cancellationToken: CancellationToken.None);
+                NullLogger.Instance,
+                CancellationToken.None);
 
             var package = packages.SingleOrDefault();
 
@@ -204,22 +229,26 @@ namespace NuGet.Protocol.Tests
             Assert.Equal(largerThanIntMax, versions[1].DownloadCount);
         }
 
-        [Fact]
-        public async Task PackageSearchResourceV3_SearchEncoding()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task PackageSearchResourceV3_SearchEncoding(string useStj)
         {
             // Arrange
             var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
 
-            var responses = new Dictionary<string, string>();
-            responses.Add(
-                serviceAddress + "?q=azure%20b&skip=0&take=1&prerelease=false" +
-                "&supportedFramework=.NETFramework,Version=v4.5&semVerLevel=2.0.0",
-                ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.V3Search.json", GetType()));
-            responses.Add(serviceAddress, string.Empty);
+            var responses = new Dictionary<string, string>
+            {
+                {
+                    serviceAddress + "?q=azure%20b&skip=0&take=1&prerelease=false" +
+                    "&supportedFramework=.NETFramework,Version=v4.5&semVerLevel=2.0.0",
+                    ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.V3Search.json", GetType())
+                },
+                { serviceAddress, string.Empty }
+            };
 
             var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
-
-            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, new Uri[] { new Uri(serviceAddress) });
+            var resource = CreateSearchResource(httpSource, new[] { new Uri(serviceAddress) }, useStj);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
@@ -230,7 +259,7 @@ namespace NuGet.Protocol.Tests
             var take = 1;
 
             // Act
-            var packages = await packageSearchResourceV3.Search(
+            var packages = await resource.SearchAsync(
                         "azure b",
                         searchFilter,
                         skip,
@@ -245,8 +274,10 @@ namespace NuGet.Protocol.Tests
             Assert.True(packagesArray.Length > 0);
         }
 
-        [Fact]
-        public async Task Search_HttpResource_ThrowsAnException()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task Search_HttpResource_ThrowsAnException(string useStj)
         {
             // Arrange
             var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
@@ -265,7 +296,7 @@ namespace NuGet.Protocol.Tests
 
             var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
 
-            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, [new Uri(httpresource)]);
+            var packageSearchResourceV3 = CreateSearchResource(httpSource, [new Uri(httpresource)], useStj);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
@@ -276,7 +307,7 @@ namespace NuGet.Protocol.Tests
             var take = 1;
 
             // Act
-            var ex = await Assert.ThrowsAsync<HttpSourceException>(() => packageSearchResourceV3.Search(
+            var ex = await Assert.ThrowsAsync<HttpSourceException>(() => packageSearchResourceV3.SearchAsync(
                         "azure b",
                         searchFilter,
                         skip,
@@ -289,8 +320,10 @@ namespace NuGet.Protocol.Tests
             ex.Message.Should().Contain(string.Format(Protocol.Strings.Error_Insecure_HTTP, serviceAddress, requestUrl));
         }
 
-        [Fact]
-        public async Task Search_HttpResourceAndAllowInsecureConnections_Succeeds()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task Search_HttpResourceAndAllowInsecureConnections_Succeeds(string useStj)
         {
             // Arrange
             var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
@@ -316,7 +349,7 @@ namespace NuGet.Protocol.Tests
                 },
                 responses);
 
-            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, [new Uri(httpresource)]);
+            var packageSearchResourceV3 = CreateSearchResource(httpSource, [new Uri(httpresource)], useStj);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
@@ -327,7 +360,7 @@ namespace NuGet.Protocol.Tests
             var take = 1;
 
             // Act
-            var packages = await packageSearchResourceV3.Search(
+            var packages = await packageSearchResourceV3.SearchAsync(
                         "azure b",
                         searchFilter,
                         skip,
@@ -341,8 +374,10 @@ namespace NuGet.Protocol.Tests
             Assert.True(packagesArray.Length > 0);
         }
 
-        [Fact]
-        public async Task PackageSearchResourceV3_VerifyReadSyncIsNotUsed()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task PackageSearchResourceV3_VerifyReadSyncIsNotUsed(string useStj)
         {
             // Arrange
             var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
@@ -359,7 +394,7 @@ namespace NuGet.Protocol.Tests
             // throw if sync .Read is used
             httpSource.StreamWrapper = (stream) => new NoSyncReadStream(stream);
 
-            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, new Uri[] { new Uri(serviceAddress) });
+            var resource = CreateSearchResource(httpSource, new Uri[] { new Uri(serviceAddress) }, useStj);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
@@ -369,7 +404,7 @@ namespace NuGet.Protocol.Tests
             var take = 1;
 
             // Act
-            var packages = await packageSearchResourceV3.Search(
+            var packages = await resource.SearchAsync(
                         "azure b",
                         searchFilter,
                         skip,
@@ -384,8 +419,10 @@ namespace NuGet.Protocol.Tests
             Assert.True(packagesArray.Length > 0);
         }
 
-        [Fact]
-        public async Task PackageSearchResourceV3_CancelledToken_ThrowsOperationCancelledException()
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task PackageSearchResourceV3_CancelledToken_ThrowsOperationCancelledException(string useStj)
         {
             // Arrange
             var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
@@ -401,7 +438,7 @@ namespace NuGet.Protocol.Tests
 
             httpSource.StreamWrapper = (stream) => new NoSyncReadStream(stream);
 
-            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, new Uri[] { new Uri(serviceAddress) });
+            var packageSearchResourceV3 = CreateSearchResource(httpSource, new Uri[] { new Uri(serviceAddress) }, useStj);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
@@ -415,7 +452,7 @@ namespace NuGet.Protocol.Tests
 
             // Act/Assert
             await Assert.ThrowsAsync<TaskCanceledException>(() =>
-               packageSearchResourceV3.Search(
+               packageSearchResourceV3.SearchAsync(
                         "Sentry",
                         searchFilter,
                         skip,
@@ -423,6 +460,86 @@ namespace NuGet.Protocol.Tests
                         NullLogger.Instance,
                         tokenSource.Token));
 
+        }
+
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task PackageSearchResourceV3_SearchAsync_AllMetadata(string useStj)
+        {
+            // Arrange
+            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
+            var searchUrl = serviceAddress + "?q=contoso.logging&skip=0&take=1&prerelease=false&semVerLevel=2.0.0";
+
+            var responses = new Dictionary<string, string>
+            {
+                { searchUrl, ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.SearchWithAllMetadata.json", GetType()) },
+                { serviceAddress, string.Empty }
+            };
+
+            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), responses);
+            var resource = CreateSearchResource(httpSource, new[] { new Uri(serviceAddress) }, useStj);
+
+            // Act
+            var packages = await resource.SearchAsync(
+                "contoso.logging",
+                new SearchFilter(false),
+                skip: 0,
+                take: 1,
+                NullLogger.Instance,
+                CancellationToken.None);
+
+            var package = packages.SingleOrDefault();
+
+            // Assert - basic metadata
+            package.Should().NotBeNull();
+            package.Identity.Id.Should().Be("Contoso.Logging");
+            package.Identity.Version.OriginalVersion.Should().Be("2.0.0");
+
+            // Assert - dependency groups
+            var depSets = package.DependencySets.ToList();
+            depSets.Should().HaveCount(2);
+
+            var netStandard = depSets[0];
+            netStandard.TargetFramework.GetShortFolderName().Should().Be("netstandard2.0");
+            var netStandardDeps = netStandard.Packages.ToList();
+            netStandardDeps.Should().HaveCount(2);
+            netStandardDeps[0].Id.Should().Be("Contoso.Serialization");
+            netStandardDeps[0].VersionRange.MinVersion.ToNormalizedString().Should().Be("13.0.1");
+            netStandardDeps[1].Id.Should().Be("Contoso.Buffers");
+            netStandardDeps[1].VersionRange.MinVersion.ToNormalizedString().Should().Be("4.5.4");
+
+            var net6 = depSets[1];
+            net6.TargetFramework.GetShortFolderName().Should().Be("net6.0");
+            var net6Deps = net6.Packages.ToList();
+            net6Deps.Should().HaveCount(1);
+            net6Deps[0].Id.Should().Be("Contoso.Json");
+            net6Deps[0].VersionRange.MinVersion.ToNormalizedString().Should().Be("6.0.0");
+
+            // Assert - deprecation
+            var deprecation = await package.GetDeprecationMetadataAsync();
+            deprecation.Should().NotBeNull();
+            deprecation.Message.Should().Be("This package is deprecated. Use Contoso.Logging.Modern instead.");
+            deprecation.Reasons.Should().ContainInOrder("Legacy", "Other");
+            deprecation.AlternatePackage.Should().NotBeNull();
+            deprecation.AlternatePackage.PackageId.Should().Be("Contoso.Logging.Modern");
+            deprecation.AlternatePackage.Range.MinVersion.ToNormalizedString().Should().Be("1.0.0");
+
+            // Assert - vulnerabilities
+            var vulns = package.Vulnerabilities.ToList();
+            vulns.Should().HaveCount(2);
+            vulns[0].AdvisoryUrl.AbsoluteUri.Should().Be("https://contoso.test/advisories/CTSO-2024-1234");
+            vulns[0].Severity.Should().Be(2);
+            vulns[1].AdvisoryUrl.AbsoluteUri.Should().Be("https://contoso.test/advisories/CTSO-2024-5678");
+            vulns[1].Severity.Should().Be(3);
+
+            // Assert - versions
+            var versions = (await package.GetVersionsAsync()).ToList();
+            versions.Should().HaveCount(2);
+            versions[0].Version.ToNormalizedString().Should().Be("1.0.0");
+            versions[0].DownloadCount.Should().Be(50000);
+            versions[1].Version.ToNormalizedString().Should().Be("2.0.0");
+            versions[1].DownloadCount.Should().Be(50000);
         }
     }
 }

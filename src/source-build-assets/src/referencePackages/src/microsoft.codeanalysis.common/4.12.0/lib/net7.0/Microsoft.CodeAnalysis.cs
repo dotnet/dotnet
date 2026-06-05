@@ -2286,6 +2286,7 @@ namespace Microsoft.CodeAnalysis
         public static SeparatedSyntaxList<TNode> Create<TNode>(System.ReadOnlySpan<TNode> nodes) where TNode : SyntaxNode { throw null; }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SeparatedSyntaxList), "Create")]
     public readonly partial struct SeparatedSyntaxList<TNode> : System.IEquatable<SeparatedSyntaxList<TNode>>, System.Collections.Generic.IReadOnlyList<TNode>, System.Collections.Generic.IEnumerable<TNode>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<TNode> where TNode : SyntaxNode
     {
         private readonly object _dummy;
@@ -2839,6 +2840,7 @@ namespace Microsoft.CodeAnalysis
         public static SyntaxList<TNode> Create<TNode>(System.ReadOnlySpan<TNode> nodes) where TNode : SyntaxNode { throw null; }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxList), "Create")]
     public readonly partial struct SyntaxList<TNode> : System.Collections.Generic.IReadOnlyList<TNode>, System.Collections.Generic.IEnumerable<TNode>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<TNode>, System.IEquatable<SyntaxList<TNode>> where TNode : SyntaxNode
     {
         private readonly object _dummy;
@@ -3092,6 +3094,7 @@ namespace Microsoft.CodeAnalysis
         public readonly void WriteTo(System.IO.TextWriter writer) { }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxNodeOrTokenList), "Create")]
     public readonly partial struct SyntaxNodeOrTokenList : System.IEquatable<SyntaxNodeOrTokenList>, System.Collections.Generic.IReadOnlyCollection<SyntaxNodeOrToken>, System.Collections.Generic.IEnumerable<SyntaxNodeOrToken>, System.Collections.IEnumerable
     {
         private readonly object _dummy;
@@ -3224,6 +3227,7 @@ namespace Microsoft.CodeAnalysis
         public readonly void WriteTo(System.IO.TextWriter writer) { }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxTokenList), "Create")]
     public readonly partial struct SyntaxTokenList : System.IEquatable<SyntaxTokenList>, System.Collections.Generic.IReadOnlyList<SyntaxToken>, System.Collections.Generic.IEnumerable<SyntaxToken>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<SyntaxToken>
     {
         private readonly object _dummy;
@@ -3383,6 +3387,7 @@ namespace Microsoft.CodeAnalysis
         public readonly void WriteTo(System.IO.TextWriter writer) { }
     }
 
+    [System.Runtime.CompilerServices.CollectionBuilder(typeof(SyntaxTriviaList), "Create")]
     public readonly partial struct SyntaxTriviaList : System.IEquatable<SyntaxTriviaList>, System.Collections.Generic.IReadOnlyList<SyntaxTrivia>, System.Collections.Generic.IEnumerable<SyntaxTrivia>, System.Collections.IEnumerable, System.Collections.Generic.IReadOnlyCollection<SyntaxTrivia>
     {
         private readonly object _dummy;
@@ -5956,5 +5961,15 @@ namespace Microsoft.CodeAnalysis.Text
         public readonly TextSpan? Overlap(TextSpan span) { throw null; }
         public readonly bool OverlapsWith(TextSpan span) { throw null; }
         public override readonly string ToString() { throw null; }
+    }
+}
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
+    internal sealed partial class CollectionBuilderAttribute : Attribute
+    {
+        public CollectionBuilderAttribute(Type builderType, string methodName) { }
+        public Type BuilderType { get { throw null; } }
+        public string MethodName { get { throw null; } }
     }
 }
