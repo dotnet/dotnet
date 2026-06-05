@@ -20,6 +20,12 @@ namespace Microsoft.DotNet.Helix.Client.Models
         [JsonProperty("DetailsUrl")]
         public string DetailsUrl { get; set; }
 
+        [JsonProperty("ExitCode")]
+        public int? ExitCode { get; set; }
+
+        [JsonProperty("ConsoleOutputUri")]
+        public string ConsoleOutputUri { get; set; }
+
         [JsonProperty("Job")]
         public string Job { get; set; }
 
