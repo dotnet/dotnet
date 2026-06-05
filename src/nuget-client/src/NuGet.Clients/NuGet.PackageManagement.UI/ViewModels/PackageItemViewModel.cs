@@ -728,7 +728,7 @@ namespace NuGet.PackageManagement.UI
 
                 if (_packageModel is IVulnerableCapable vulnerableCapable)
                 {
-                    UpdateVulnerabilityInfo(vulnerableCapable);
+                    UpdateVulnerabilityInfo(vulnerableCapable, Version);
                 }
             },
             cancellationToken);
@@ -768,7 +768,7 @@ namespace NuGet.PackageManagement.UI
                 await vulnerabilityDatabaseCapability.PopulateDataAsync(VsShellUtilities.ShutdownToken);
                 cancellationToken.ThrowIfCancellationRequested();
 
-                UpdateVulnerabilityInfo(vulnerabilityDatabaseCapability);
+                UpdateVulnerabilityInfo(vulnerabilityDatabaseCapability, packageIdentity.Version);
             },
             cancellationToken);
         }
@@ -800,14 +800,14 @@ namespace NuGet.PackageManagement.UI
             OnPropertyChanged(nameof(AlternatePackage));
         }
 
-        private void UpdateVulnerabilityInfo(IVulnerableCapable vulnerableCapable)
+        private void UpdateVulnerabilityInfo(IVulnerableCapable vulnerableCapable, NuGetVersion version)
         {
             if (vulnerableCapable == null)
             {
                 return;
             }
 
-            SetVulnerabilityMaxSeverity(Version, (int)vulnerableCapable.VulnerabilityMaxSeverity);
+            SetVulnerabilityMaxSeverity(version, (int)vulnerableCapable.VulnerabilityMaxSeverity);
             OnPropertyChanged(nameof(IsPackageVulnerable));
             OnPropertyChanged(nameof(IsPackageWithWarnings));
             OnPropertyChanged(nameof(Vulnerabilities));
