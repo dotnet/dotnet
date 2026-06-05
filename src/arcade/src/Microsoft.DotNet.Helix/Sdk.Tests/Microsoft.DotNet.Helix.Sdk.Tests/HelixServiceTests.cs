@@ -242,6 +242,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             Assert.False(string.IsNullOrEmpty(capturedIdempotencyKey));
             Assert.Equal("helix-type", capturedRequest.Type);
             Assert.Equal("queue-id", capturedRequest.QueueId);
+            Assert.Null(capturedRequest.DockerTag);
+            Assert.Null(capturedRequest.QueueAlias);
             Assert.Equal("https://account.blob.core.windows.net/container/job-list.json?read", capturedRequest.ListUri);
             Assert.Equal("source", capturedRequest.Source);
             Assert.Equal("creator", capturedRequest.Creator);
@@ -255,6 +257,108 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 It.Is<ContainerCreationRequest>(r => r.ExpirationInDays == 30 && r.DesiredName == "joblists" && r.TargetQueue == "queue-id"),
                 It.IsAny<CancellationToken>()),
                 Times.Once);
+        }
+
+        [Fact]
+        public async Task ResubmitWorkItemsAsync_PreservesDockerTagAndQueueAliasFromOperatingSystemProperty()
+        {
+            JobCreationRequest request = await ResubmitAndCaptureRequestAsync(
+                "(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64");
+
+            Assert.Equal("Ubuntu.2204.Amd64.Open", request.QueueId);
+            Assert.Equal("AlmaLinux.9.Amd64.Open", request.QueueAlias);
+            Assert.Equal("mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64", request.DockerTag);
+        }
+
+        [Fact]
+        public async Task ResubmitWorkItemsAsync_DockerQueueWithoutAliasPreservesDockerTag()
+        {
+            JobCreationRequest request = await ResubmitAndCaptureRequestAsync(
+                "ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64");
+
+            Assert.Equal("ubuntu.2204.amd64.open", request.QueueId);
+            Assert.Equal("ubuntu.2204.amd64.open", request.QueueAlias);
+            Assert.Equal("mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64", request.DockerTag);
+        }
+
+        [Fact]
+        public async Task ResubmitWorkItemsAsync_NonDockerOperatingSystemSetsQueueAliasAndEmptyDockerTag()
+        {
+            JobCreationRequest request = await ResubmitAndCaptureRequestAsync("Ubuntu.2204.Amd64.Open");
+
+            Assert.Equal("Ubuntu.2204.Amd64.Open", request.QueueId);
+            Assert.Equal("Ubuntu.2204.Amd64.Open", request.QueueAlias);
+            Assert.Equal(string.Empty, request.DockerTag);
+        }
+
+        [Fact]
+        public async Task ResubmitWorkItemsAsync_FallsBackToResolvedQueueWhenOperatingSystemUnparseable()
+        {
+            JobCreationRequest request = await ResubmitAndCaptureRequestAsync("@mcr.microsoft.com/only-a-docker-tag");
+
+            Assert.Equal("queue-id", request.QueueId);
+            Assert.Null(request.DockerTag);
+            Assert.Null(request.QueueAlias);
+        }
+
+        private static async Task<JobCreationRequest> ResubmitAndCaptureRequestAsync(string operatingSystem)
+        {
+            var api = CreateApi();
+            var properties = new JObject
+            {
+                ["BuildId"] = "123",
+                ["TestRunName"] = "custom run",
+                ["System.StageName"] = "test stage",
+            };
+            if (operatingSystem != null)
+            {
+                properties["operatingSystem"] = operatingSystem;
+            }
+
+            api.Job
+                .Setup(j => j.DetailsAsync("original-job", It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new JobDetails("https://storage/job-list.json", null, "original-job", "wait", "source", "helix-type", "build")
+                {
+                    Creator = "creator",
+                    QueueId = "queue-id",
+                    Properties = properties,
+                });
+            api.Storage
+                .Setup(s => s.NewAsync(It.IsAny<ContainerCreationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ContainerInformation(
+                    DateTimeOffset.Parse("2026-04-30T00:00:00Z"),
+                    DateTimeOffset.Parse("2026-05-30T00:00:00Z"),
+                    "creator",
+                    "container",
+                    "account",
+                    Guid.Empty,
+                    "region")
+                {
+                    ReadToken = "?read",
+                    WriteToken = "?write",
+                });
+
+            JobCreationRequest capturedRequest = null;
+            api.Job
+                .Setup(j => j.NewAsync(It.IsAny<JobCreationRequest>(), It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
+                .Callback<JobCreationRequest, string, bool?, CancellationToken>((request, _, _, _) => capturedRequest = request)
+                .ReturnsAsync(new JobCreationResult("new-job", "summary", "results", null));
+
+            var blobClientFactory = new FakeBlobClientFactory
+            {
+                DownloadedText = """
+                [
+                  { "WorkItemId": "work-a", "Command": "run a", "PayloadUri": "payload-a" }
+                ]
+                """,
+                UploadedBlobUri = new Uri("https://account.blob.core.windows.net/container/job-list.json"),
+            };
+
+            await CreateService(api.Api.Object, blobClientFactory)
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], CancellationToken.None);
+
+            Assert.NotNull(capturedRequest);
+            return capturedRequest;
         }
 
         private static HelixService CreateService(IHelixApi api, IBlobClientFactory blobClientFactory = null, IFileSystem fileSystem = null)
