@@ -186,20 +186,20 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         public void HelpOption_ShowsHelp()
         {
             // Arrange
-            Command rootCommand = new("nuget");
+            RootCommand rootCommand = new();
+            Command nugetCommand = new("nuget");
+            rootCommand.Subcommands.Add(nugetCommand);
             var console = new Lazy<IAnsiConsole>(() => new TestConsole());
 
-            WhyCommand.Register(rootCommand, console, whyCommandArgs =>
+            WhyCommand.Register(nugetCommand, console, whyCommandArgs =>
             {
-                // Assert
-                whyCommandArgs.Path.Should().Be("my.proj");
-                whyCommandArgs.Package.Should().Be("packageid");
-                whyCommandArgs.Frameworks.Should().Equal(["net8.0", "net481"]);
-                return Task.FromResult(0);
+                throw new InvalidOperationException("Command action should not be invoked when help is requested.");
             });
 
             // Act
             var result = rootCommand.Parse($"nuget why -h");
+
+            // Assert
             result.Errors.Should().BeEmpty();
             result.Action.Should().BeOfType<System.CommandLine.Help.HelpAction>();
         }

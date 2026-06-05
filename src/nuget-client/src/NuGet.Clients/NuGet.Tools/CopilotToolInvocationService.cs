@@ -28,7 +28,8 @@ namespace NuGetVSExtension
         public async Task<CopilotToolSessionResult> TryCreateToolSessionAsync(
             CopilotClientId clientId,
             CopilotCorrelationId correlationId,
-            string requiredToolName,
+            string mcpToolName,
+            IReadOnlyCollection<string> acceptableMcpServerNames,
             CancellationToken cancellationToken)
         {
             // 1. Check if the user is signed-in to GitHub Copilot
@@ -45,7 +46,7 @@ namespace NuGetVSExtension
                 return CopilotToolSessionResult.Failure(CopilotToolSessionError.ServiceBrokerNotAvailable);
             }
 
-            // 3. Acquire Copilot service â€” ownership transfers to CopilotToolSession on success
+            // 3. Acquire Copilot service, ownership transfers to CopilotToolSession on success
 #pragma warning disable ISB001 // Dispose objects before losing scope - ownership is transferred to CopilotToolSession on success
             ICopilotService? copilotService = await ServiceBroker.GetProxyAsync<ICopilotService>(CopilotDescriptors.CopilotService, cancellationToken);
 #pragma warning restore ISB001
@@ -67,9 +68,11 @@ namespace NuGetVSExtension
                         return CopilotToolSessionResult.Failure(CopilotToolSessionError.McpToolServiceNotAvailable);
                     }
 
-                    // 5. Verify the required tool is available
-                    IReadOnlyList<CopilotFunctionDescriptor> functions = await cfp.GetFunctionsAsync(correlationId, cancellationToken);
-                    if (functions is null || !functions.Any(f => string.Equals(f.Name, requiredToolName, StringComparison.OrdinalIgnoreCase)))
+                    // 5. Verify the required tool is available. We match on ServerNameOfFunction + Group
+                    //    (the same logical NuGet MCP tool can be exposed under different Group values
+                    //    depending on how it was installed â€” in-VS vs. Anthropic/GitHub MCP registry).
+                    IReadOnlyList<CopilotFunctionDescriptor>? functions = await cfp.GetFunctionsAsync(correlationId, cancellationToken);
+                    if (!IsToolAvailable(functions, mcpToolName, acceptableMcpServerNames))
                     {
                         return CopilotToolSessionResult.Failure(CopilotToolSessionError.ToolNotAvailable);
                     }
@@ -93,6 +96,18 @@ namespace NuGetVSExtension
                     (copilotService as IDisposable)?.Dispose();
                 }
             }
+        }
+
+        internal static bool IsToolAvailable(
+            IReadOnlyList<CopilotFunctionDescriptor>? functions,
+            string mcpToolName,
+            IReadOnlyCollection<string> acceptableMcpServerNames)
+        {
+            return functions?
+                .OfType<CopilotMcpFunctionDescriptor>()
+                .Any(f => string.Equals(f.ServerNameOfFunction, mcpToolName, StringComparison.OrdinalIgnoreCase)
+                       && f.Group is not null
+                       && acceptableMcpServerNames.Contains(f.Group, StringComparer.OrdinalIgnoreCase)) ?? false;
         }
     }
 }
