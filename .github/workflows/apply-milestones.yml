@@ -28,7 +28,7 @@ permissions:
 # exists", which would leave those PRs un-milestoned. Per-PR grouping ensures
 # every PR's run executes and is never auto-cancelled by an unrelated PR.
 concurrency:
-  group: milestone-${{ github.event.pull_request.number || inputs.pr-number }}
+  group: milestone-${{ github.event.pull_request.number || github.event.inputs['pr-number'] }}
   cancel-in-progress: false
 
 jobs:
