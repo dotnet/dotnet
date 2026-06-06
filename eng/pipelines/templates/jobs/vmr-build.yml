@@ -663,7 +663,6 @@ jobs:
           -excludeCIBinarylog
           /bl:artifacts/log/Release/Test.binlog
         displayName: Run Tests
-        name: RunTests
         workingDirectory: ${{ variables.sourcesPath }}
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
@@ -944,7 +943,6 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
-        name: RunTests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ if eq(parameters.sign, 'True') }}:
@@ -1008,7 +1006,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -1034,7 +1032,7 @@ jobs:
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
       continueOnError: true
       inputs:
         testRunner: VSTest
