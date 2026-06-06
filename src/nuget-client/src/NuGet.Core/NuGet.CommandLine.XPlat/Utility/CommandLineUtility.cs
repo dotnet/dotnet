@@ -47,7 +47,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="optionName">Name of the command line argument</param>
         /// <param name="spec">Signing specification to validate parsed hash algorithm</param>
         /// <returns>Supported hash algorithm</returns>
-        internal static HashAlgorithmName ParseAndValidateHashAlgorithm(string optionValue, string optionName, SigningSpecifications spec)
+        internal static HashAlgorithmName ParseAndValidateHashAlgorithm(string? optionValue, string optionName, SigningSpecifications spec)
         {
             HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
 

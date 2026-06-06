@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace NuGet.Protocol.Model
@@ -14,9 +15,11 @@ namespace NuGet.Protocol.Model
     internal class RegistrationLeafItem
     {
         [JsonProperty("catalogEntry")]
+        [JsonPropertyName("catalogEntry")]
         public PackageSearchMetadataRegistration CatalogEntry { get; set; }
 
         [JsonProperty(PropertyName = JsonProperties.PackageContent)]
+        [JsonPropertyName(JsonProperties.PackageContent)]
         public Uri PackageContent { get; set; }
     }
 }

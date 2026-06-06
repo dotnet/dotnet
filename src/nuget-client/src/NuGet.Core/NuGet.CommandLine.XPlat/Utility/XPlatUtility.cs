@@ -14,14 +14,12 @@ namespace NuGet.CommandLine.XPlat
 {
     internal static class XPlatUtility
     {
-        public const string HelpOption = "-h|--help";
-
         /// <summary>
         /// Note that the .NET CLI itself has parameter parsing which limits the values that will be passed here by the
         /// user. In other words, the default case should only be hit with <c>m</c> or <c>minimal</c> but we use <see cref="Common.LogLevel.Minimal"/>
         /// as the default case to avoid errors.
         /// </summary>
-        public static LogLevel MSBuildVerbosityToNuGetLogLevel(string verbosity)
+        public static LogLevel MSBuildVerbosityToNuGetLogLevel(string? verbosity)
         {
             switch (verbosity?.ToUpperInvariant())
             {
@@ -63,7 +61,7 @@ namespace NuGet.CommandLine.XPlat
             UserAgent.SetUserAgentString(new UserAgentStringBuilder("NuGet xplat"));
         }
 
-        internal static ISettings ProcessConfigFile(string configFile)
+        internal static ISettings ProcessConfigFile(string? configFile)
         {
             if (string.IsNullOrEmpty(configFile))
             {
