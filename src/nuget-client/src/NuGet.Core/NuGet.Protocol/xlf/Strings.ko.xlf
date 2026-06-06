@@ -96,12 +96,12 @@
       </trans-unit>
       <trans-unit id="Error_UnexpectedPayloadTokenType">
         <source>Expected payload to be a JSON object but was `{0}`.</source>
-        <target state="new">Expected payload to be a JSON object but was `{0}`.</target>
+        <target state="translated">JSON 개체가 필요하지만 `{0}`이었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedPayloadType">
         <source>Unsupported payload type `{0}`.</source>
-        <target state="new">Unsupported payload type `{0}`.</target>
+        <target state="translated">지원되지 않는 페이로드 형식 `{0}`.</target>
         <note />
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
