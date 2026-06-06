@@ -6,6 +6,7 @@
 # Well known non-checked in infrastructure
 artifacts/
 .dotnet/
+**/.dotnet/
 .git/
 .packages/
 prereqs/packages/
