@@ -5956,7 +5956,6 @@ namespace Microsoft.CodeAnalysis.Text
         public override readonly string ToString() { throw null; }
     }
 }
-
 namespace System.Diagnostics.CodeAnalysis
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]

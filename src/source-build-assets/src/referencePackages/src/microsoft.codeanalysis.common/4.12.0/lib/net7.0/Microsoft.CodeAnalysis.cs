@@ -5963,7 +5963,6 @@ namespace Microsoft.CodeAnalysis.Text
         public override readonly string ToString() { throw null; }
     }
 }
-
 namespace System.Runtime.CompilerServices
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
