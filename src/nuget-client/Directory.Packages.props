@@ -53,7 +53,7 @@
     <PackageVersion Include="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.24415.2" />
     <PackageVersion Include="Microsoft.DotNet.XliffTasks" Version="$(MicrosoftDotNetXliffTasksVersion)" />
     <PackageVersion Include="Microsoft.DotNet.SignTool" Version="10.0.0-beta.25367.5" />
-    <PackageVersion Include="Microsoft.Extensions.CommandLineUtils.Sources" Version="3.0.0-preview6.19253.5" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)" />
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)" />
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="17.10.40173" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
@@ -174,7 +174,7 @@
       <_allowBuildFromSourcePackage Include="Microsoft.CSharp" />
       <_allowBuildFromSourcePackage Include="Microsoft.DotNet.Build.Tasks.Feed" />
       <_allowBuildFromSourcePackage Include="Microsoft.DotNet.XliffTasks" />
-      <_allowBuildFromSourcePackage Include="Microsoft.Extensions.CommandLineUtils.Sources" />
+      <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileProviders.Abstractions" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileSystemGlobbing" />
       <_allowBuildFromSourcePackage Include="Microsoft.Web.Xdt" />
       <_allowBuildFromSourcePackage Include="Newtonsoft.Json" />

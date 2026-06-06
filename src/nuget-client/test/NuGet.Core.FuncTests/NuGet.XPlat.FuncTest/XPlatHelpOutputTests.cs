@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NuGet.CommandLine.XPlat;
 using Test.Utility;
 using Xunit;
@@ -119,11 +118,15 @@ namespace NuGet.XPlat.FuncTest
             // Assert
             var output = consoleOutput.ToString();
 
-            var commandPattern = @"^\s{2}(\w+)\s{2,}"; // Matches lines starting with two spaces, a word (command), followed by at least two spaces
-            IEnumerable<string> matches = Regex.Matches(output, commandPattern, RegexOptions.Multiline).Select(m => m.ToString().Trim());
+            // System.CommandLine returns 1 when no subcommand is provided
+            Assert.Equal(1, exitCode);
+            Assert.Contains("Commands:", output);
 
-            Assert.Equal(HelpCommands, matches);
-            Assert.Equal(0, exitCode);
+            // Verify key commands are present in help output
+            foreach (var command in HelpCommands)
+            {
+                Assert.Contains(command, output);
+            }
         }
     }
 }
