@@ -84,6 +84,7 @@
                   BaseUri="$(HelixBaseUri)"
                   AccessToken="$(HelixAccessToken)"
                   MaxRetryCount="$(MaxRetryCount)"
+                  EnableShowHelixQueueStats="$(EnableShowHelixQueueStats)"
                   PreCommands="$(HelixPreCommands)"
                   PostCommands="$(HelixPostCommands)"
                   CorrelationPayloads="@(HelixCorrelationPayload)"
