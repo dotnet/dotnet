@@ -96,12 +96,12 @@
       </trans-unit>
       <trans-unit id="Error_UnexpectedPayloadTokenType">
         <source>Expected payload to be a JSON object but was `{0}`.</source>
-        <target state="new">Expected payload to be a JSON object but was `{0}`.</target>
+        <target state="translated">有效负载应为 JSON 对象，但为 `{0}`。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedPayloadType">
         <source>Unsupported payload type `{0}`.</source>
-        <target state="new">Unsupported payload type `{0}`.</target>
+        <target state="translated">不支持的有效负载类型 `{0}`。</target>
         <note />
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">

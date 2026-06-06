@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Help;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,11 +86,6 @@ namespace NuGet.CommandLine.XPlat
                 Arity = ArgumentArity.ExactlyOne
             };
 
-            var help = new HelpOption()
-            {
-                Arity = ArgumentArity.Zero
-            };
-
             searchCommand.Arguments.Add(searchTerm);
             searchCommand.Options.Add(sources);
             searchCommand.Options.Add(exactMatch);
@@ -102,7 +96,6 @@ namespace NuGet.CommandLine.XPlat
             searchCommand.Options.Add(format);
             searchCommand.Options.Add(verbosity);
             searchCommand.Options.Add(configFile);
-            searchCommand.Options.Add(help);
 
             searchCommand.SetAction(async (parserResult, cancelationToken) =>
             {

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace NuGet.Protocol.Model
@@ -14,6 +15,7 @@ namespace NuGet.Protocol.Model
     internal class RegistrationIndex
     {
         [JsonProperty("items")]
+        [JsonPropertyName("items")]
         public List<RegistrationPage> Items { get; set; }
     }
 }

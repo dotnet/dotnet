@@ -18,6 +18,8 @@ namespace NuGet.Protocol
         /// The <see cref="Uri"/> of this package in the catalog.
         /// </summary>
         [JsonProperty(PropertyName = JsonProperties.SubjectId)]
-        public Uri CatalogUri { get; private set; }
+        [System.Text.Json.Serialization.JsonPropertyName("@id")]
+        [System.Text.Json.Serialization.JsonInclude]
+        public Uri CatalogUri { get; internal set; }
     }
 }

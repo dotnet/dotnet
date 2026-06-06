@@ -15,6 +15,8 @@ namespace NuGet.Protocol.Converters
 #pragma warning restore CS3016
     [JsonSerializable(typeof(V3SearchResults))]
     [JsonSerializable(typeof(PackageDependency))]
+    [JsonSerializable(typeof(RegistrationIndex))]
+    [JsonSerializable(typeof(RegistrationPage))]
     internal partial class PackageSearchJsonContext : JsonSerializerContext
     {
     }
