@@ -37,12 +37,10 @@ stages:
         strategy:
           matrix:
             x64:
-              assetManifestOS: osx
-              assetManifestPlatform: x64
+              targetOS: osx
               targetArchitecture: x64
             arm64:
-              assetManifestOS: osx
-              assetManifestPlatform: arm64
+              targetOS: osx
               targetArchitecture: arm64
         steps:
         - bash: ./build.sh
@@ -51,9 +49,9 @@ stages:
             --configuration $(_BuildConfig)
             --pack
             --publish
+            /p:TargetOS=$(targetOS)
             /p:TargetArchitecture=$(targetArchitecture)
-            /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
-            /p:AssetManifestOS=$(assetManifestOS)
+            /p:TargetRid=$(targetOS)-$(targetArchitecture)
             $(_InternalBuildArgs)
           displayName: Build
         - bash: |
@@ -72,20 +70,16 @@ stages:
         strategy:
           matrix:
             x64:
-              assetManifestOS: linux
-              assetManifestPlatform: x64
+              targetOS: linux
               targetArchitecture: x64
             arm64:
-              assetManifestOS: linux
-              assetManifestPlatform: arm64
+              targetOS: linux
               targetArchitecture: arm64
             x64_musl:
-              assetManifestOS: linux-musl
-              assetManifestPlatform: x64
+              targetOS: linux-musl
               targetArchitecture: x64
             arm64_musl:
-              assetManifestOS: linux-musl
-              assetManifestPlatform: arm64
+              targetOS: linux-musl
               targetArchitecture: arm64
         steps:
         - bash: ./build.sh
@@ -94,9 +88,9 @@ stages:
             --configuration $(_BuildConfig)
             --pack
             --publish
+            /p:TargetOS=$(targetOS)
             /p:TargetArchitecture=$(targetArchitecture)
-            /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
-            /p:AssetManifestOS=$(assetManifestOS)
+            /p:TargetRid=$(targetOS)-$(targetArchitecture)
             $(_InternalBuildArgs)
           displayName: Build and Publish
         - bash: |
@@ -115,12 +109,10 @@ stages:
         strategy:
           matrix:
             x64:
-              assetManifestOS: win
-              assetManifestPlatform: x64
+              targetOS: win
               targetArchitecture: x64
             arm64:
-              assetManifestOS: win
-              assetManifestPlatform: arm64
+              targetOS: win
               targetArchitecture: arm64
         steps:
         - script: build.cmd
@@ -130,9 +122,9 @@ stages:
             -pack
             -publish
             -sign
+            /p:TargetOS=$(targetOS)
             /p:TargetArchitecture=$(targetArchitecture)
-            /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
-            /p:AssetManifestOS=$(assetManifestOS)
+            /p:TargetRid=$(targetOS)-$(targetArchitecture)
             $(_InternalBuildArgs)
           displayName: Build and Publish
         - script: |

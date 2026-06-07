@@ -40,7 +40,7 @@
     <PackageHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</PackageHostOS>
     <PackageHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</PackageHostOS>
     <PackageHostOS Condition="'$(OS)' == 'Windows_NT'">win</PackageHostOS>
-    <PackageTargetOS Condition="'$(AssetManifestOS)' != ''">$(AssetManifestOS)</PackageTargetOS>
+    <PackageTargetOS Condition="'$(TargetOS)' != ''">$(TargetOS)</PackageTargetOS>
     <PackageTargetOS Condition="'$(PackageTargetOS)' == ''">$(PackageHostOS)</PackageTargetOS>
   </PropertyGroup>
 
