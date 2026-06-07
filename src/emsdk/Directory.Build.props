@@ -19,8 +19,8 @@
     <BuildOS Condition="'$(BuildOS)' == '' and '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</BuildOS>
     <BuildOS Condition="'$(BuildOS)' == '' and '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">windows</BuildOS>
 
-    <BuildRid Condition="'$(BuildRid)' == ''">$(BuildOS)-$(BuildArchitecture)</BuildRid>
     <BuildRid Condition="'$(BuildRid)' == '' and '$(BuildOS)' == 'windows'">win-$(BuildArchitecture)</BuildRid>
+    <BuildRid Condition="'$(BuildRid)' == ''">$(BuildOS)-$(BuildArchitecture)</BuildRid>
 
     <!-- Initialize target architecture and OS -->
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">$(BuildArchitecture)</TargetArchitecture>
