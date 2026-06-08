@@ -15,7 +15,6 @@ using Microsoft.Deployment.DotNet.Releases;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
-using NuGet.Packaging.Licenses;
 using NuGet.Versioning;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
