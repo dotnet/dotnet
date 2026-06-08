@@ -22,13 +22,25 @@
     <Reference Include="Microsoft.AspNetCore.InternalTesting" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeAotToolUnderTest Include="dotnet-dev-certs">
+      <ProjectPath>..\..\dotnet-dev-certs\src\dotnet-dev-certs.csproj</ProjectPath>
+    </NativeAotToolUnderTest>
+    <NativeAotToolUnderTest Include="dotnet-user-jwts">
+      <ProjectPath>..\..\dotnet-user-jwts\src\dotnet-user-jwts.csproj</ProjectPath>
+    </NativeAotToolUnderTest>
+    <NativeAotToolUnderTest Include="dotnet-user-secrets">
+      <ProjectPath>..\..\dotnet-user-secrets\src\dotnet-user-secrets.csproj</ProjectPath>
+    </NativeAotToolUnderTest>
+  </ItemGroup>
+
   <Target Name="PublishNativeAotToolsForTests"
     BeforeTargets="Build"
     Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <MSBuild
-      Projects="..\aspnetcoretools\aspnetcoretools.csproj"
+      Projects="%(NativeAotToolUnderTest.ProjectPath)"
       Targets="Publish"
-      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(NativeAotToolPublishRuntimeIdentifier);SelfContained=true;PublishAot=true;PublishDir=$(NativeAotToolPublishRoot)" />
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(NativeAotToolPublishRuntimeIdentifier);SelfContained=true;PublishAot=true;PublishDir=$([MSBuild]::NormalizeDirectory('$(NativeAotToolPublishRoot)', '%(NativeAotToolUnderTest.Identity)'))" />
   </Target>
 
   <ItemGroup>

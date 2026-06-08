@@ -14,12 +14,8 @@
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <PublishAot>true</PublishAot>
-    <RuntimeIdentifiers Condition="'$(DotNetBuild)' != 'true'">$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="'$(DotNetBuild)' == 'true'">$(TargetRuntimeIdentifier)</RuntimeIdentifiers>
-    <RuntimeIdentifier Condition="'$(DotNetBuild)' == 'true' and '$(RuntimeIdentifier)' == ''">$(TargetRuntimeIdentifier)</RuntimeIdentifier>
+    <RuntimeIdentifiers>$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
   </PropertyGroup>
-
-  <Import Project="..\..\NativeAot\AspNetCoreTools.NativeAot.props" />
 
   <ItemGroup>
     <Compile Include="$(SharedSourceRoot)CommandLineUtils\**\*.cs" />
