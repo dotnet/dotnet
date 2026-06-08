@@ -123,7 +123,7 @@ public static class NativeAotToolRunner
     private static string GetPublishedToolPath(string toolName)
     {
         var executableName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"{toolName}.exe" : toolName;
-        var toolPath = Path.Combine(AppContext.BaseDirectory, "nativeaot-tools", executableName);
+        var toolPath = Path.Combine(AppContext.BaseDirectory, "nativeaot-tools", toolName, executableName);
 
         if (!File.Exists(toolPath))
         {
