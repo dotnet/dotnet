@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -104,6 +102,6 @@ namespace NuGet.Protocol.Plugins
         /// Sets the connection to be used for dispatching messages.
         /// </summary>
         /// <param name="connection">A connection instance.  Can be <see langword="null" />.</param>
-        void SetConnection(IConnection connection);
+        void SetConnection(IConnection? connection);
     }
 }

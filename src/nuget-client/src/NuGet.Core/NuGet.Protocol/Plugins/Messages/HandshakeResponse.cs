@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -26,7 +24,7 @@ namespace NuGet.Protocol.Plugins
         /// otherwise, <see langword="null" />.
         /// </summary>
         [System.Text.Json.Serialization.JsonConverter(typeof(StjSemanticVersionConverter))]
-        public SemanticVersion ProtocolVersion { get; }
+        public SemanticVersion? ProtocolVersion { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HandshakeResponse" /> class.
@@ -43,7 +41,7 @@ namespace NuGet.Protocol.Plugins
         /// is not <see cref="MessageResponseCode.Success" /> and <paramref name="protocolVersion" />
         /// is not <see langword="null" />.</exception>
         [JsonConstructor]
-        public HandshakeResponse(MessageResponseCode responseCode, SemanticVersion protocolVersion)
+        public HandshakeResponse(MessageResponseCode responseCode, SemanticVersion? protocolVersion)
         {
             if (!Enum.IsDefined(typeof(MessageResponseCode), responseCode))
             {

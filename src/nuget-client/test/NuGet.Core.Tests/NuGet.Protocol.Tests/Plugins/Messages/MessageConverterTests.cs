@@ -909,7 +909,7 @@ namespace NuGet.Protocol.Plugins.Tests
             useStj ? DeserializeWithStj(json) : DeserializeWithNsj(json);
 
         private static T GetPayload<T>(Message message) where T : class =>
-            MessageUtilities.DeserializePayload<T>(message);
+            MessageUtilities.DeserializePayload<T>(message)!;
 
         private static T RoundtripPayload<T>(Message message, bool useStj) where T : class
         {
