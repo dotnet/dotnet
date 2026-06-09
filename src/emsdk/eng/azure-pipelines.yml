@@ -246,7 +246,7 @@ extends:
                 -configuration $(_BuildConfig)
                 -pack
                 -publish
-                /p:TargetOS=win
+                /p:TargetOS=windows
                 /p:TargetArchitecture=x64
                 /p:TargetRid=win-x64
                 $(_InternalBuildArgs)
@@ -275,7 +275,7 @@ extends:
                 -configuration $(_BuildConfig)
                 -pack
                 -publish
-                /p:TargetOS=win
+                /p:TargetOS=windows
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=win-arm64
                 $(_InternalBuildArgs)

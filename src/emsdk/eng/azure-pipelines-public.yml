@@ -37,10 +37,8 @@ stages:
         strategy:
           matrix:
             x64:
-              targetOS: osx
               targetArchitecture: x64
             arm64:
-              targetOS: osx
               targetArchitecture: arm64
         steps:
         - bash: ./build.sh
@@ -49,9 +47,9 @@ stages:
             --configuration $(_BuildConfig)
             --pack
             --publish
-            /p:TargetOS=$(targetOS)
+            /p:TargetOS=osx
             /p:TargetArchitecture=$(targetArchitecture)
-            /p:TargetRid=$(targetOS)-$(targetArchitecture)
+            /p:TargetRid=osx-$(targetArchitecture)
             $(_InternalBuildArgs)
           displayName: Build
         - bash: |
@@ -109,10 +107,8 @@ stages:
         strategy:
           matrix:
             x64:
-              targetOS: win
               targetArchitecture: x64
             arm64:
-              targetOS: win
               targetArchitecture: arm64
         steps:
         - script: build.cmd
@@ -122,9 +118,9 @@ stages:
             -pack
             -publish
             -sign
-            /p:TargetOS=$(targetOS)
+            /p:TargetOS=windows
             /p:TargetArchitecture=$(targetArchitecture)
-            /p:TargetRid=$(targetOS)-$(targetArchitecture)
+            /p:TargetRid=win-$(targetArchitecture)
             $(_InternalBuildArgs)
           displayName: Build and Publish
         - script: |
