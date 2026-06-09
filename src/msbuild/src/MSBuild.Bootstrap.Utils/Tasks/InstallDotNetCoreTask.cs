@@ -118,7 +118,7 @@ namespace MSBuild.Bootstrap.Utils.Tasks
         {
             if (!IsWindows)
             {
-                int exitCode = ExecuteTool("/bin/chmod", string.Empty, $"+x {scriptPath}");
+                int exitCode = ExecuteTool("/bin/chmod", string.Empty, $"+x \"{scriptPath}\"");
                 if (exitCode != 0)
                 {
                     Log.LogError($"Install-scripts can not be made executable due to the errors reported above.");
@@ -154,9 +154,10 @@ namespace MSBuild.Bootstrap.Utils.Tasks
         {
             string scriptExtension = IsWindows ? "ps1" : "sh";
             string scriptPath = Path.Combine(DotNetInstallScriptRootPath, $"{ScriptName}.{scriptExtension}");
+            string installDir = InstallDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             string scriptArgs = IsWindows
-                ? $"-NoProfile -ExecutionPolicy Bypass -File {scriptPath} -Version {Version} -InstallDir {InstallDir}"
-                : $"{scriptPath} --version {Version} --install-dir {InstallDir}";
+                ? $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\" -Version {Version} -InstallDir \"{installDir}\""
+                : $"\"{scriptPath}\" --version {Version} --install-dir \"{installDir}\"";
 
             return new ScriptExecutionSettings($"{ScriptName}.{scriptExtension}", scriptPath, scriptArgs);
         }

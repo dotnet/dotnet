@@ -22,8 +22,13 @@ permissions:
   contents: read
   pull-requests: read
 
+# Scope concurrency to the individual PR being processed so that runs for
+# different PRs never share a group. A shared (e.g. per-branch) group causes
+# GitHub to cancel older pending runs with "a higher priority waiting request
+# exists", which would leave those PRs un-milestoned. Per-PR grouping ensures
+# every PR's run executes and is never auto-cancelled by an unrelated PR.
 concurrency:
-  group: milestone-${{ github.event.pull_request.base.ref || github.ref_name }}
+  group: milestone-${{ github.event.pull_request.number || github.event.inputs['pr-number'] }}
   cancel-in-progress: false
 
 jobs:

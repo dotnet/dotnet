@@ -50,4 +50,10 @@
           Condition="@(DownloadedNupkg->Count()) > 0" />
   </Target>
 
+  <Target Name="SetAzureDevOpsVariableForTestResults"
+          Condition="'$(ContinuousIntegrationBuild)' == 'true'"
+          BeforeTargets="Test">
+    <Message Importance="High" Text="##vso[task.setvariable variable=hasTestResults]true" />
+  </Target>
+
 </Project>

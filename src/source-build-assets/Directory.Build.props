@@ -47,17 +47,22 @@
 
   <!-- Target frameworks that source-build doesn't support/include.
        Consumed by the package source generator (TFM filtering) and package validation (baseline framework ignore list).
-       MSBuild::Escape() prevents wildcard glob expansion when used in ItemGroup Include attributes. -->
+       MSBuild::Escape() prevents wildcard glob expansion when used in ItemGroup Include attributes.
+       KeepPlaceholder="true" instructs the package source generator to retain placeholder files (_._)
+       for the excluded target framework even though its assets are otherwise filtered out. This prevents
+       consumers from incorrectly falling back to another TFM's assembly when the package intentionally
+       ships no asset for that TFM (e.g. System.Runtime.CompilerServices.Unsafe, where the implementation
+       was moved inbox). It is only applied to the modern .NET TFM families where such fallbacks matter. -->
   <ItemGroup>
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('monoandroid*'))" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('monotouch*'))" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('net20'))" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('net35'))" />
-    <ExcludedTargetFramework Include="$([MSBuild]::Escape('net4*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('net4*'))" KeepPlaceholder="true" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('net5.0'))" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('netcore50'))" />
-    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netcoreapp*'))" />
-    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netstandard1*'))" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netcoreapp*'))" KeepPlaceholder="true" />
+    <ExcludedTargetFramework Include="$([MSBuild]::Escape('netstandard1*'))" KeepPlaceholder="true" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('portable*'))" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('uap*'))" />
     <ExcludedTargetFramework Include="$([MSBuild]::Escape('win8'))" />

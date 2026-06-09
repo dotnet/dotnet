@@ -52,7 +52,7 @@ internal class AfterTestRunEndResultConverter : JsonConverter<AfterTestRunEndRes
     {
         if (element.TryGetProperty(name, out var prop) && prop.ValueKind != JsonValueKind.Null)
         {
-            return StjSafe.Deserialize<T>(prop.GetRawText(), options);
+            return JsonSerializer.Deserialize<T>(prop.GetRawText(), options);
         }
 
         return default;
@@ -61,7 +61,7 @@ internal class AfterTestRunEndResultConverter : JsonConverter<AfterTestRunEndRes
     private static void WriteProperty<T>(Utf8JsonWriter writer, string name, T value, JsonSerializerOptions options)
     {
         writer.WritePropertyName(name);
-        StjSafe.Serialize(writer, value, options);
+        JsonSerializer.Serialize(writer, value, options);
     }
 }
 

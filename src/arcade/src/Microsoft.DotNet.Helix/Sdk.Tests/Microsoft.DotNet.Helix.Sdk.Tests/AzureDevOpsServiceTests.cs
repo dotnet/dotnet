@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AwesomeAssertions;
 using Microsoft.DotNet.Helix.JobMonitor;
 using Microsoft.DotNet.Helix.Sdk.Tests.Fakes;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -30,20 +31,20 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             int testRunId = await service.CreateTestRunAsync("Test Run", "helix-job-1", CancellationToken.None);
 
-            Assert.Equal(123, testRunId);
-            HttpRequestMessage request = Assert.Single(handler.Requests);
-            Assert.Equal(HttpMethod.Post, request.Method);
-            Assert.Equal("https://dev.azure.com/dnceng-public/public/_apis/test/runs?api-version=7.1", request.RequestUri.ToString());
+            testRunId.Should().Be(123);
+            HttpRequestMessage request = handler.Requests.Should().ContainSingle().Subject;
+            request.Method.Should().Be(HttpMethod.Post);
+            request.RequestUri.ToString().Should().Be("https://dev.azure.com/dnceng-public/public/_apis/test/runs?api-version=7.1");
 
-            JObject body = JObject.Parse(Assert.Single(handler.Bodies));
-            Assert.Equal("Test Run [HelixJob:helix-job-1]", body.Value<string>("name"));
-            Assert.Equal("InProgress", body.Value<string>("state"));
-            Assert.Equal("1403994", body["build"]?.Value<string>("id"));
-            Assert.Null(body.Value<string>("comment"));
+            JObject body = JObject.Parse(handler.Bodies.Should().ContainSingle().Subject);
+            body.Value<string>("name").Should().Be("Test Run [HelixJob:helix-job-1]");
+            body.Value<string>("state").Should().Be("InProgress");
+            body["build"]?.Value<string>("id").Should().Be("1403994");
+            body.Value<string>("comment").Should().BeNull();
             // We deliberately do not send tags: Azure DevOps silently drops them on
             // POST /test/runs (verified empirically), so the helix job name is round-tripped
             // via the run name marker.
-            Assert.Null(body["tags"]);
+            body["tags"].Should().BeNull();
         }
 
         [Fact]
@@ -66,11 +67,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             IReadOnlySet<string> processed = await service.GetProcessedHelixJobNamesAsync(CancellationToken.None);
 
-            Assert.Equal(["helix-linux", "helix-windows"], processed.OrderBy(static name => name));
+            processed.Should().BeEquivalentTo(["helix-linux", "helix-windows"]);
             // Single list call, no per-run detail fetches: the marker is in the run "name"
             // which is always part of the list response.
-            HttpRequestMessage request = Assert.Single(handler.Requests);
-            Assert.EndsWith("/_apis/test/runs?buildUri=vstfs%3A%2F%2F%2FBuild%2FBuild%2F1403994&$top=1000&api-version=7.1", request.RequestUri.ToString());
+            HttpRequestMessage request = handler.Requests.Should().ContainSingle().Subject;
+            request.RequestUri.ToString().Should().EndWith("/_apis/test/runs?buildUri=vstfs%3A%2F%2F%2FBuild%2FBuild%2F1403994&$top=1000&api-version=7.1");
         }
 
         [Fact]
@@ -85,12 +86,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             await service.CompleteTestRunAsync(123, CancellationToken.None);
 
-            HttpRequestMessage request = Assert.Single(handler.Requests);
-            Assert.Equal(new HttpMethod("PATCH"), request.Method);
-            Assert.Equal("https://dev.azure.com/dnceng-public/public/_apis/test/runs/123?api-version=7.1", request.RequestUri.ToString());
+            HttpRequestMessage request = handler.Requests.Should().ContainSingle().Subject;
+            request.Method.Should().Be(new HttpMethod("PATCH"));
+            request.RequestUri.ToString().Should().Be("https://dev.azure.com/dnceng-public/public/_apis/test/runs/123?api-version=7.1");
 
-            JObject body = JObject.Parse(Assert.Single(handler.Bodies));
-            Assert.Equal("Completed", body.Value<string>("state"));
+            JObject body = JObject.Parse(handler.Bodies.Should().ContainSingle().Subject);
+            body.Value<string>("state").Should().Be("Completed");
         }
 
         [Fact]
@@ -110,9 +111,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             IReadOnlySet<string> processed = await service.GetProcessedHelixJobNamesAsync(CancellationToken.None);
 
             // Helix job name round-trips via the run "name" suffix, NOT via tags.
-            Assert.Contains("helix-job-1", processed);
-            Assert.Equal("Test Run [HelixJob:helix-job-1]", handler.Runs[runId].Name);
-            Assert.Equal("Completed", handler.Runs[runId].State);
+            processed.Should().Contain("helix-job-1");
+            handler.Runs[runId].Name.Should().Be("Test Run [HelixJob:helix-job-1]");
+            handler.Runs[runId].State.Should().Be("Completed");
         }
 
         private static JobMonitorOptions CreateOptions()

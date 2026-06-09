@@ -37,7 +37,6 @@ namespace System.Reflection.Emit
         public override string Location { get { throw null; } }
         public override Module ManifestModule { get { throw null; } }
         public override bool ReflectionOnly { get { throw null; } }
-
         public static AssemblyBuilder DefineDynamicAssembly(AssemblyName name, AssemblyBuilderAccess access, Collections.Generic.IEnumerable<CustomAttributeBuilder>? assemblyAttributes) { throw null; }
         public static AssemblyBuilder DefineDynamicAssembly(AssemblyName name, AssemblyBuilderAccess access) { throw null; }
         public ModuleBuilder DefineDynamicModule(string name) { throw null; }
@@ -85,7 +84,6 @@ namespace System.Reflection.Emit
         public override Module Module { get { throw null; } }
         public override string Name { get { throw null; } }
         public override Type? ReflectedType { get { throw null; } }
-
         public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string? strParamName) { throw null; }
         public override object[] GetCustomAttributes(bool inherit) { throw null; }
         public override object[] GetCustomAttributes(Type attributeType, bool inherit) { throw null; }
@@ -119,7 +117,6 @@ namespace System.Reflection.Emit
         public override RuntimeTypeHandle TypeHandle { get { throw null; } }
         public FieldBuilder UnderlyingField { get { throw null; } }
         public override Type UnderlyingSystemType { get { throw null; } }
-
         public TypeInfo? CreateTypeInfo() { throw null; }
         public FieldBuilder DefineLiteral(string literalName, object? literalValue) { throw null; }
         protected override TypeAttributes GetAttributeFlagsImpl() { throw null; }
@@ -172,6 +169,7 @@ namespace System.Reflection.Emit
         public void SetRaiseMethod(MethodBuilder mdBuilder) { }
         public void SetRemoveOnMethod(MethodBuilder mdBuilder) { }
     }
+
     public sealed partial class FieldBuilder : FieldInfo
     {
         internal FieldBuilder() { }
@@ -182,7 +180,6 @@ namespace System.Reflection.Emit
         public override Module Module { get { throw null; } }
         public override string Name { get { throw null; } }
         public override Type? ReflectedType { get { throw null; } }
-
         public override object[] GetCustomAttributes(bool inherit) { throw null; }
         public override object[] GetCustomAttributes(Type attributeType, bool inherit) { throw null; }
         public override object? GetValue(object? obj) { throw null; }
@@ -217,7 +214,6 @@ namespace System.Reflection.Emit
         public override Type? ReflectedType { get { throw null; } }
         public override RuntimeTypeHandle TypeHandle { get { throw null; } }
         public override Type UnderlyingSystemType { get { throw null; } }
-
         public override bool Equals(object? o) { throw null; }
         protected override TypeAttributes GetAttributeFlagsImpl() { throw null; }
         protected override ConstructorInfo GetConstructorImpl(BindingFlags bindingAttr, Binder? binder, CallingConventions callConvention, Type[] types, ParameterModifier[]? modifiers) { throw null; }
@@ -288,7 +284,6 @@ namespace System.Reflection.Emit
         public override ParameterInfo ReturnParameter { get { throw null; } }
         public override Type ReturnType { get { throw null; } }
         public override ICustomAttributeProvider ReturnTypeCustomAttributes { get { throw null; } }
-
         public GenericTypeParameterBuilder[] DefineGenericParameters(params string[] names) { throw null; }
         public ParameterBuilder DefineParameter(int position, ParameterAttributes attributes, string? strParamName) { throw null; }
         public override bool Equals(object? obj) { throw null; }
@@ -324,7 +319,6 @@ namespace System.Reflection.Emit
         public override Guid ModuleVersionId { get { throw null; } }
         public override string Name { get { throw null; } }
         public override string ScopeName { get { throw null; } }
-
         public void CreateGlobalFunctions() { }
         public EnumBuilder DefineEnum(string name, TypeAttributes visibility, Type underlyingType) { throw null; }
         public MethodBuilder DefineGlobalMethod(string name, MethodAttributes attributes, CallingConventions callingConvention, Type? returnType, Type[]? requiredReturnTypeCustomModifiers, Type[]? optionalReturnTypeCustomModifiers, Type[]? parameterTypes, Type[][]? requiredParameterTypeCustomModifiers, Type[][]? optionalParameterTypeCustomModifiers) { throw null; }
@@ -376,7 +370,6 @@ namespace System.Reflection.Emit
         public override string Name { get { throw null; } }
         public override Type PropertyType { get { throw null; } }
         public override Type? ReflectedType { get { throw null; } }
-
         public void AddOtherMethod(MethodBuilder mdBuilder) { }
         public override MethodInfo[] GetAccessors(bool nonPublic) { throw null; }
         public override object[] GetCustomAttributes(bool inherit) { throw null; }
@@ -424,7 +417,6 @@ namespace System.Reflection.Emit
         public int Size { get { throw null; } }
         public override RuntimeTypeHandle TypeHandle { get { throw null; } }
         public override Type UnderlyingSystemType { get { throw null; } }
-
         public void AddInterfaceImplementation(Type interfaceType) { }
         public TypeInfo? CreateTypeInfo() { throw null; }
         public ConstructorBuilder DefineConstructor(MethodAttributes attributes, CallingConventions callingConvention, Type[]? parameterTypes, Type[][]? requiredCustomModifiers, Type[][]? optionalCustomModifiers) { throw null; }

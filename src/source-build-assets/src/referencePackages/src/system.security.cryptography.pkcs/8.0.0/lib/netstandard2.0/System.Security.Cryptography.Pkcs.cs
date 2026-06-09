@@ -26,6 +26,79 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Security.Cryptography
 {
     public sealed partial class CryptographicAttributeObject
@@ -35,17 +108,15 @@ namespace System.Security.Cryptography
         public Oid Oid { get { throw null; } }
         public AsnEncodedDataCollection Values { get { throw null; } }
     }
+
     public sealed partial class CryptographicAttributeObjectCollection : Collections.ICollection, Collections.IEnumerable
     {
         public CryptographicAttributeObjectCollection() { }
         public CryptographicAttributeObjectCollection(CryptographicAttributeObject attribute) { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public CryptographicAttributeObject this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public int Add(AsnEncodedData asnEncodedData) { throw null; }
         public int Add(CryptographicAttributeObject attribute) { throw null; }
         public void CopyTo(CryptographicAttributeObject[] array, int index) { }
@@ -59,9 +130,7 @@ namespace System.Security.Cryptography
     {
         internal CryptographicAttributeObjectEnumerator() { }
         public CryptographicAttributeObject Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -78,6 +147,7 @@ namespace System.Security.Cryptography.Pkcs
         public Oid Oid { get { throw null; } set { } }
         public byte[] Parameters { get { throw null; } set { } }
     }
+
     public sealed partial class CmsRecipient
     {
         public CmsRecipient(SubjectIdentifierType recipientIdentifierType, X509Certificates.X509Certificate2 certificate) { }
@@ -85,6 +155,7 @@ namespace System.Security.Cryptography.Pkcs
         public X509Certificates.X509Certificate2 Certificate { get { throw null; } }
         public SubjectIdentifierType RecipientIdentifierType { get { throw null; } }
     }
+
     public sealed partial class CmsRecipientCollection : Collections.ICollection, Collections.IEnumerable
     {
         public CmsRecipientCollection() { }
@@ -92,11 +163,8 @@ namespace System.Security.Cryptography.Pkcs
         public CmsRecipientCollection(SubjectIdentifierType recipientIdentifierType, X509Certificates.X509Certificate2Collection certificates) { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public CmsRecipient this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public int Add(CmsRecipient recipient) { throw null; }
         public void CopyTo(Array array, int index) { }
         public void CopyTo(CmsRecipient[] array, int index) { }
@@ -109,9 +177,7 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal CmsRecipientEnumerator() { }
         public CmsRecipient Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -135,16 +201,17 @@ namespace System.Security.Cryptography.Pkcs
         public SubjectIdentifierType SignerIdentifierType { get { throw null; } set { } }
         public CryptographicAttributeObjectCollection UnsignedAttributes { get { throw null; } }
     }
+
     public sealed partial class ContentInfo
     {
         public ContentInfo(byte[] content) { }
         public ContentInfo(Oid contentType, byte[] content) { }
         public byte[] Content { get { throw null; } }
         public Oid ContentType { get { throw null; } }
-
         public static Oid GetContentType(byte[] encodedMessage) { throw null; }
         public static Oid GetContentType(ReadOnlySpan<byte> encodedMessage) { throw null; }
     }
+
     public sealed partial class EnvelopedCms
     {
         public EnvelopedCms() { }
@@ -156,7 +223,6 @@ namespace System.Security.Cryptography.Pkcs
         public RecipientInfoCollection RecipientInfos { get { throw null; } }
         public CryptographicAttributeObjectCollection UnprotectedAttributes { get { throw null; } }
         public int Version { get { throw null; } }
-
         public void Decode(byte[] encodedMessage) { }
         public void Decode(ReadOnlySpan<byte> encodedMessage) { }
         public void Decrypt() { }
@@ -168,6 +234,7 @@ namespace System.Security.Cryptography.Pkcs
         public void Encrypt(CmsRecipient recipient) { }
         public void Encrypt(CmsRecipientCollection recipients) { }
     }
+
     public sealed partial class KeyAgreeRecipientInfo : RecipientInfo
     {
         internal KeyAgreeRecipientInfo() { }
@@ -196,14 +263,12 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9AttributeObject(Oid oid, byte[] encodedData) { }
         public Pkcs9AttributeObject(string oid, byte[] encodedData) { }
         public new Oid? Oid { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
     public sealed partial class Pkcs9ContentType : Pkcs9AttributeObject
     {
         public Oid ContentType { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -213,7 +278,6 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9DocumentDescription(byte[] encodedDocumentDescription) { }
         public Pkcs9DocumentDescription(string documentDescription) { }
         public string DocumentDescription { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -223,14 +287,12 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9DocumentName(byte[] encodedDocumentName) { }
         public Pkcs9DocumentName(string documentName) { }
         public string DocumentName { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
     public sealed partial class Pkcs9MessageDigest : Pkcs9AttributeObject
     {
         public byte[] MessageDigest { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -240,7 +302,6 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9SigningTime(byte[] encodedSigningTime) { }
         public Pkcs9SigningTime(DateTime signingTime) { }
         public DateTime SigningTime { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -250,6 +311,7 @@ namespace System.Security.Cryptography.Pkcs
         public AlgorithmIdentifier Algorithm { get { throw null; } }
         public byte[] KeyValue { get { throw null; } }
     }
+
     public abstract partial class RecipientInfo
     {
         internal RecipientInfo() { }
@@ -259,16 +321,14 @@ namespace System.Security.Cryptography.Pkcs
         public RecipientInfoType Type { get { throw null; } }
         public abstract int Version { get; }
     }
+
     public sealed partial class RecipientInfoCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal RecipientInfoCollection() { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public RecipientInfo this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public void CopyTo(Array array, int index) { }
         public void CopyTo(RecipientInfo[] array, int index) { }
         public RecipientInfoEnumerator GetEnumerator() { throw null; }
@@ -279,9 +339,7 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal RecipientInfoEnumerator() { }
         public RecipientInfo Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -306,7 +364,6 @@ namespace System.Security.Cryptography.Pkcs
         public bool Detached { get { throw null; } }
         public SignerInfoCollection SignerInfos { get { throw null; } }
         public int Version { get { throw null; } }
-
         public void AddCertificate(X509Certificates.X509Certificate2 certificate) { }
         public void CheckHash() { }
         public void CheckSignature(bool verifySignatureOnly) { }
@@ -321,6 +378,7 @@ namespace System.Security.Cryptography.Pkcs
         public void RemoveSignature(int index) { }
         public void RemoveSignature(SignerInfo signerInfo) { }
     }
+
     public sealed partial class SignerInfo
     {
         internal SignerInfo() { }
@@ -332,7 +390,6 @@ namespace System.Security.Cryptography.Pkcs
         public SubjectIdentifier SignerIdentifier { get { throw null; } }
         public CryptographicAttributeObjectCollection UnsignedAttributes { get { throw null; } }
         public int Version { get { throw null; } }
-
         public void AddUnsignedAttribute(AsnEncodedData unsignedAttribute) { }
         public void CheckHash() { }
         public void CheckSignature(bool verifySignatureOnly) { }
@@ -344,16 +401,14 @@ namespace System.Security.Cryptography.Pkcs
         public void RemoveCounterSignature(SignerInfo counterSignerInfo) { }
         public void RemoveUnsignedAttribute(AsnEncodedData unsignedAttribute) { }
     }
+
     public sealed partial class SignerInfoCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal SignerInfoCollection() { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public SignerInfo this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public void CopyTo(Array array, int index) { }
         public void CopyTo(SignerInfo[] array, int index) { }
         public SignerInfoEnumerator GetEnumerator() { throw null; }
@@ -364,9 +419,7 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal SignerInfoEnumerator() { }
         public SignerInfo Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -376,15 +429,16 @@ namespace System.Security.Cryptography.Pkcs
         internal SubjectIdentifier() { }
         public SubjectIdentifierType Type { get { throw null; } }
         public object? Value { get { throw null; } }
-
         public bool MatchesCertificate(X509Certificates.X509Certificate2 certificate) { throw null; }
     }
+
     public sealed partial class SubjectIdentifierOrKey
     {
         internal SubjectIdentifierOrKey() { }
         public SubjectIdentifierOrKeyType Type { get { throw null; } }
         public object Value { get { throw null; } }
     }
+
     public enum SubjectIdentifierOrKeyType
     {
         Unknown = 0,
