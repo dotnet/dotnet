@@ -11,15 +11,51 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      # Managed by the .NET product construction process
-      - dependency-name: "Microsoft.DotNet.Arcade.Sdk"
-      - dependency-name: "Microsoft.DotNet.Helix.Sdk"
-      - dependency-name: "Microsoft.DncEng.SecretManager"
       # Manually updated dependencies
       - dependency-name: "Microsoft.Build.NoTargets"
       # Moq 4.20.x introduced the SponsorLink telemetry component, which raised
       # privacy/compliance concerns across the .NET ecosystem. Stay pinned on
       # 4.18.x until a vetted replacement (or a SponsorLink-free Moq) is adopted.
       - dependency-name: "Moq"
-    exclude-paths:
-      - "eng/Version.Details.props"
+      # Keep this list in sync with dependencies defined in Version.Details.xml
+      # Dependabot doesn't allow ignoring individual files and attempts to update the
+      # properties in Version.Details.props, maintained by Maestro.
+      - dependency-name: "Microsoft.Build"
+      - dependency-name: "Microsoft.Build.Framework"
+      - dependency-name: "Microsoft.Build.Tasks.Core"
+      - dependency-name: "Microsoft.Build.Utilities.Core"
+      - dependency-name: "Microsoft.CodeAnalysis.CSharp"
+      - dependency-name: "Microsoft.Deployment.DotNet.Releases"
+      - dependency-name: "Microsoft.DiaSymReader.Converter"
+      - dependency-name: "Microsoft.DiaSymReader.Pdb2Pdb"
+      - dependency-name: "Microsoft.DncEng.SecretManager"
+      - dependency-name: "Microsoft.DotNet.Arcade.Sdk"
+      - dependency-name: "Microsoft.DotNet.DarcLib"
+      - dependency-name: "Microsoft.DotNet.Helix.Sdk"
+      - dependency-name: "Microsoft.DotNet.ProductConstructionService.Client"
+      - dependency-name: "Microsoft.DotNet.XHarness.CLI"
+      - dependency-name: "Microsoft.Extensions.DependencyInjection"
+      - dependency-name: "Microsoft.Extensions.DependencyInjection.Abstractions"
+      - dependency-name: "Microsoft.Extensions.DependencyModel"
+      - dependency-name: "Microsoft.Extensions.FileProviders.Abstractions"
+      - dependency-name: "Microsoft.Extensions.FileSystemGlobbing"
+      - dependency-name: "Microsoft.Extensions.Http"
+      - dependency-name: "Microsoft.Extensions.Logging.Abstractions"
+      - dependency-name: "Microsoft.Extensions.Logging.Console"
+      - dependency-name: "Microsoft.Net.Compilers.Toolset"
+      - dependency-name: "Microsoft.NET.Sdk.WorkloadManifestReader"
+      - dependency-name: "Microsoft.SymbolManifestGenerator"
+      - dependency-name: "Microsoft.SymbolUploader.Build.Task"
+      - dependency-name: "Microsoft.TemplateEngine.Authoring.Tasks"
+      - dependency-name: "NuGet.Commands"
+      - dependency-name: "NuGet.Common"
+      - dependency-name: "NuGet.Configuration"
+      - dependency-name: "NuGet.Frameworks"
+      - dependency-name: "NuGet.Packaging"
+      - dependency-name: "NuGet.ProjectModel"
+      - dependency-name: "NuGet.Versioning"
+      - dependency-name: "System.CommandLine"
+      - dependency-name: "System.Composition"
+      - dependency-name: "System.IO.Packaging"
+      - dependency-name: "System.Security.Cryptography.Pkcs"
+      - dependency-name: "System.Security.Cryptography.Xml"
