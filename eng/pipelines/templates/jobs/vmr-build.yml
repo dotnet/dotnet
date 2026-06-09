@@ -572,9 +572,10 @@ jobs:
         script: |
           # Always use the VMR root's SetupNugetSources.ps1 rather than each inner repo's copy.
           # The inner repo scripts dot-source that repo's eng/common/tools.ps1, which in turn imports
-          # the repo's configure-toolset.ps1. For src/sdk that triggers an unintended dotnetup bootstrap
-          # SDK install (see https://github.com/dotnet/dotnet/issues/7112). The root script only operates
+          # the repo's configure-toolset.ps1. The root script only operates
           # on the NuGet.config path passed to it, so it works for every repo.
+          # It's also convenient to use that so that changes don't need to be replicated on every
+          # inner repo's eng/common/ layout.
           $setupScript = Join-Path "$(sourcesPath)" "eng/common/SetupNugetSources.ps1"
 
           function Setup-NuGetFeeds($repoDir, $description) {
