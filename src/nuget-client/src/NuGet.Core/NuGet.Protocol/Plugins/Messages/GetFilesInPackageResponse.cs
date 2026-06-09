@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,7 +17,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the paths of files in the package.
         /// </summary>
-        public IEnumerable<string> Files { get; }
+        public IEnumerable<string>? Files { get; }
 
         /// <summary>
         /// Gets the response code.
@@ -38,7 +36,7 @@ namespace NuGet.Protocol.Plugins
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="files" />
         /// is either <see langword="null" /> or empty.</exception>
         [JsonConstructor]
-        public GetFilesInPackageResponse(MessageResponseCode responseCode, IEnumerable<string> files)
+        public GetFilesInPackageResponse(MessageResponseCode responseCode, IEnumerable<string>? files)
         {
             if (!Enum.IsDefined(typeof(MessageResponseCode), responseCode))
             {
