@@ -7,10 +7,10 @@
       "commitSha": "b31c3cf8a2a203c42410451844f778d5b951c3b3"
     },
     {
-      "barId": 317609,
+      "barId": 317811,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "7f0d5e98459ff1e14bf1859e4409abe7ccd9d5a6"
+      "commitSha": "672741d356129e47e125da7c198ff066c657d333"
     },
     {
       "barId": 312703,
