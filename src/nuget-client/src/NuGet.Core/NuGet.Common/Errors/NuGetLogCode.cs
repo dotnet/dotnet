@@ -337,6 +337,11 @@ namespace NuGet.Common
         NU1511 = 1511,
 
         /// <summary>
+        /// RestoreLockedMode and RestoreForceEvaluate are both set to true; RestoreForceEvaluate takes precedence and locked mode is ignored.
+        /// </summary>
+        NU1512 = 1512,
+
+        /// <summary>
         /// Dependency bumped up
         /// </summary>
         NU1601 = 1601,
