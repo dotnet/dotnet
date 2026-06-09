@@ -7,4 +7,4 @@ NuGet.Protocol.Plugins.GetOperationClaimsRequest.GetOperationClaimsRequest(strin
 NuGet.Protocol.Plugins.GetOperationClaimsRequest.ServiceIndexJson.get -> string?
 NuGet.Protocol.Plugins.GetServiceIndexResponse.GetServiceIndexResponse(NuGet.Protocol.Plugins.MessageResponseCode responseCode, string? serviceIndexJson) -> void
 NuGet.Protocol.Plugins.GetServiceIndexResponse.ServiceIndexJson.get -> string?
-~static NuGet.Protocol.Plugins.MessageUtilities.SerializePayload(NuGet.Protocol.Plugins.Message message) -> string
+static NuGet.Protocol.Plugins.MessageUtilities.SerializePayload(NuGet.Protocol.Plugins.Message! message) -> string?

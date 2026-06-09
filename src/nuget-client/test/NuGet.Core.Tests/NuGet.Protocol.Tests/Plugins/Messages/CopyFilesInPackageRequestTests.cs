@@ -65,7 +65,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     packageSourceRepository: "a",
                     packageId: "b",
                     packageVersion: "c",
-                    filesInPackage: null,
+                    filesInPackage: null!,
                     destinationFolderPath: "d"));
 
             Assert.Equal("filesInPackage", exception.ParamName);

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using Newtonsoft.Json.Linq;
 
@@ -32,7 +30,7 @@ namespace NuGet.Protocol.Plugins
                 throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(requestId));
             }
 
-            return new Message(requestId, type, method, (object)null);
+            return new Message(requestId, type, method, (object?)null);
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="message">The message.</param>
         /// <returns>A JSON string, or <see langword="null" /> if no payload exists.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
-        public static string SerializePayload(Message message)
+        public static string? SerializePayload(Message message)
         {
             if (message == null)
             {
@@ -107,7 +105,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>The deserialized message payload of type <typeparamref name="TPayload" />
         /// or <see langword="null" /> if no payload exists.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
-        public static TPayload DeserializePayload<TPayload>(Message message)
+        public static TPayload? DeserializePayload<TPayload>(Message message)
         {
             if (message == null)
             {
@@ -116,7 +114,7 @@ namespace NuGet.Protocol.Plugins
 
             if (message.PayloadObject == null)
             {
-                return default(TPayload);
+                return default;
             }
 
             if (message.PayloadObject is Newtonsoft.Json.Linq.JObject jobj)
