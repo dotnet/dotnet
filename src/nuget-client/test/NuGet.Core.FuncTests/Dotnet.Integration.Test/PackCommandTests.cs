@@ -5010,6 +5010,105 @@ namespace ClassLibrary
             }
         }
 
+        [Fact]
+        public void PackCommand_Deterministic_MultiplePackInvocationsAgainstNuspecWithGlobs_CreateIdenticalPackages()
+        {
+            var deterministicTimestamp = new DateTimeOffset(year: 2020, month: 1, day: 1,
+                                                            hour: 0, minute: 0, second: 0,
+                                                            offset: TimeSpan.Zero);
+
+            using (var testDirectory = _dotnetFixture.CreateTestDirectory())
+            {
+                var projectName = "ClassLibrary1";
+                var workingDirectory = Path.Combine(testDirectory, projectName);
+                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+                var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    var xml = XDocument.Load(stream);
+                    ProjectFileUtils.AddProperty(xml, "Deterministic", "true");
+                    ProjectFileUtils.AddProperty(xml, "DeterministicTimestamp", deterministicTimestamp.ToString("o"));
+                    ProjectFileUtils.WriteXmlToFile(xml, stream);
+                }
+
+                var nuspecXml = @"
+<package xmlns=""http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"">
+    <metadata>
+        <id>ClassLibrary1</id>
+        <version>1.0.0</version>
+        <description>Foo Bar</description>
+        <authors>Foo Bar Baz</authors>
+    </metadata>
+    <files>
+      <file src=""content/**/file1"" target=""content/"" />
+      <file src=""content/**/file2"" target=""content/"" />
+      <file src=""content/**/file3"" target=""content/"" />
+    </files>
+</package>";
+                var nuspecFile = Path.Combine(workingDirectory, $"{projectName}.nuspec");
+                File.WriteAllText(nuspecFile, nuspecXml);
+
+                var contentDirectory = Path.Combine(workingDirectory, "content");
+                Directory.CreateDirectory(contentDirectory);
+                foreach (var directory in new[] { "dir1", "dir2", "dir3" })
+                {
+                    var subcontentDirectory = Path.Combine(contentDirectory, directory);
+                    Directory.CreateDirectory(subcontentDirectory);
+                    foreach (var file in new[] { "file1", "file2", "file3" })
+                    {
+                        // Write deterministic contents
+                        File.WriteAllText(Path.Combine(subcontentDirectory, $"{file}"), $"{directory},{file}");
+                    }
+                }
+
+                _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+
+                var iterations = 5;
+                byte[][] packageBytes = new byte[iterations][];
+
+                for (var i = 0; i < iterations; i++)
+                {
+                    var packageOutputPath = Path.Combine(workingDirectory, i.ToString());
+                    var nupkgPath = Path.Combine(packageOutputPath, $"{projectName}.1.0.0.nupkg");
+
+                    // Every iteration, recreate everything in a random order
+
+                    Directory.Delete(contentDirectory, recursive: true);
+                    Directory.CreateDirectory(contentDirectory);
+
+                    foreach (var directory in new[] { "dir1", "dir2", "dir3" }.OrderBy(_ => Random.Shared.Next()))
+                    {
+                        var subcontentDirectory = Path.Combine(contentDirectory, directory);
+                        Directory.CreateDirectory(subcontentDirectory);
+                        foreach (var file in new[] { "file1", "file2", "file3" }.OrderBy(_ => Random.Shared.Next()))
+                        {
+                            // Write deterministic contents
+                            File.WriteAllText(Path.Combine(subcontentDirectory, $"{file}"), $"{directory},{file}");
+                        }
+                    }
+
+                    // Act
+                    _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-p:NuspecFile={nuspecFile} -p:NuspecBasePath={workingDirectory} -o {packageOutputPath}", testOutputHelper: _testOutputHelper);
+
+                    Assert.True(File.Exists(nupkgPath), "The output .nupkg is not in the expected place");
+
+                    using (var reader = new FileStream(nupkgPath, FileMode.Open))
+                    using (var ms = new MemoryStream())
+                    {
+                        reader.CopyTo(ms);
+                        packageBytes[i] = ms.ToArray();
+                    }
+                }
+
+                // Assert
+                for (var i = 1; i < iterations; i++)
+                {
+                    Assert.Equal(packageBytes[0], packageBytes[i]);
+                }
+            }
+        }
+
         [PlatformFact(Platform.Windows)]
         public void PackCommand_PackageIcon_HappyPath_Warns_Succeeds()
         {
