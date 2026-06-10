@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
 {
@@ -62,6 +61,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             // Values common to all SWIX packages.
             ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
             ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
+            ReplacementTokens[SwixTokens.__MICROSOFT_BUILD_NOTARGETS_PACKAGE_VERSION__] = "3.7.0";
         }
 
         internal SwixProjectBase(SwixPackageBase package, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :

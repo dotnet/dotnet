@@ -5,11 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.Deployment.DotNet.Releases;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+using Microsoft.DotNet.Build.Tasks.Workloads.Swix;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
 using WixToolset.Dtf.WindowsInstaller;
 using Xunit;
@@ -255,6 +258,32 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             ValidateInstallationRecord(registryKeys, installationRecordKey,
                 "Microsoft.iOS.Templates,15.2.302-preview.14.122,x64", expectedProductCode, upgradeCode, "15.2.302.0");
             ValidateDependencyProviderKey(registryKeys, dependencyProviderKey);
+
+            // Generate a SWIX project and build it.
+            MsiSwixProject swixProject = new(msiItem, fixture.OutputPath, fixture.OutputPath,
+                ReleaseVersion.Parse("10.0.100"), chip: null, machineArch: msiItem.GetMetadata(Metadata.Platform));
+
+            string swixProj = swixProject.Create();
+            // Output path for the SWIX JSON manifest
+            string swixManifestOutputPath = Path.Combine(fixture.OutputPath, "swix");
+            string swixManifestPath = Path.Combine(swixManifestOutputPath, Path.GetFileNameWithoutExtension(swixProj) + ".json");
+
+            BuildSwixProject(swixProj, swixManifestOutputPath);
+
+            Assert.True(File.Exists(swixManifestPath));
+
+            using var doc = JsonDocument.Parse(swixManifestPath);
+            var package = doc.RootElement
+                .GetProperty("packages")
+                .EnumerateArray()
+                .First();
+
+            // WiX 4 introduced a breaking change where the provider key table was renamed. Older versions of
+            // SWIX would fail to read the provider key from the MSI and the property would be missing. 
+            package.TryGetProperty("providerKey", out JsonElement providerKey)
+                .Should().BeTrue("the package should contain a 'providerKey' property");
+            providerKey.GetString()
+                .Should().Be("Microsoft.iOS.Templates,15.2.302-preview.14.122,x64");
         }
 
         [WindowsOnlyFact]

@@ -47,7 +47,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Misc\*.*" />
     <EmbeddedResource Include="MsiTemplate\*.wxs" />
-    <EmbeddedResource Include="MsiTemplate\*.wxi" />
     <EmbeddedResource Include="SwixTemplate\*.swr" />
     <EmbeddedResource Include="SwixTemplate\*.swixproj" />
     <EmbeddedResource Include="..\..\Common\wix5\dotnethome_x64.wxs" Link="MsiTemplate\dotnethome_x64.wxs" />

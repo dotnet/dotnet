@@ -42,8 +42,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 BaseIntermediateOutputPath = baseIntermediateOutputPath,
                 BuildEngine = buildEngine,
                 WorkloadSetPackageFiles = workloadSetPackages,
-                WixExe = WixToolsetInfo.WixExePath,
-                HeatExe = WixToolsetInfo.HeatExePath,
+                WixExe = ToolsetInfo.WixExePath,
+                HeatExe = ToolsetInfo.HeatExePath,
                 WixExtensions = WixExtensions,
             };
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using AwesomeAssertions;
@@ -28,18 +29,20 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         /// Wix Toolset to use for tests.. 
         /// </summary>
         public static WixToolsetConfiguration WixToolsetConfig = WixToolsetConfiguration.Create(
-            WixToolsetInfo.WixExePath, WixToolsetInfo.HeatExePath,
-            WixToolsetInfo.DependencyExt, WixToolsetInfo.UtilExt, WixToolsetInfo.UIExt);
+            ToolsetInfo.WixExePath, ToolsetInfo.HeatExePath,
+            ToolsetInfo.DependencyExt, ToolsetInfo.UtilExt, ToolsetInfo.UIExt);
 
         /// <summary>
         /// Item group containing WiX extensions. This is required by the public tasks and is similar
         /// to how users would pass information about the extensions.
         /// </summary>
         public static ITaskItem[] WixExtensions = [
-            new TaskItem(WixToolsetInfo.DependencyExt),
-            new TaskItem(WixToolsetInfo.UtilExt),
-            new TaskItem(WixToolsetInfo.UIExt)
+            new TaskItem(ToolsetInfo.DependencyExt),
+            new TaskItem(ToolsetInfo.UtilExt),
+            new TaskItem(ToolsetInfo.UIExt)
         ];
+
+        public static string MSBuildExePath;
 
         /// <summary>
         /// Returns a new, random directory for a test case.
@@ -70,9 +73,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         protected static void ValidateDotNetHomeCustomActions(IEnumerable<CustomActionRow> customActions, string platform)
         {
             if (platform == "x64")
-            { 
+            {
                 customActions.Should().Contain(c => c.Action == "Set_NON_NATIVE_ARCHITECTURE" &&
-                    c.Source=="NON_NATIVE_ARCHITECTURE");
+                    c.Source == "NON_NATIVE_ARCHITECTURE");
                 customActions.Should().Contain(c => c.Action == "Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" &&
                     c.Source == "DOTNETHOME");
             }
@@ -185,6 +188,53 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                     break;
                 default: throw new Exception($"Invalid platform: {platform}");
             }
+        }
+
+        /// <summary>
+        /// Compiles a SWIX project.
+        /// </summary>
+        /// <param name="projectPath">The path of the SWIX project to build.</param>
+        /// <param name="manifestOutputPath">The file system path of the directory where the SWIX manifest will be generated</param>
+        /// <exception cref="Exception"></exception>
+        protected static void BuildSwixProject(string projectPath, string manifestOutputPath)
+        {
+            string[] args = [$@"""{projectPath}""",
+                $@"/p:ManifestOutputPath={manifestOutputPath}",
+                $@"/p:SwixBuildTargets={ToolsetInfo.SwixTargetsPath}"
+            ];
+
+            var msbuildStartInfo = new ProcessStartInfo(MSBuildExePath, string.Join(" ", args))
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            };
+
+            var proc = Process.Start(msbuildStartInfo)!;
+            proc.WaitForExit();
+        }
+
+        static TestBase()
+        {
+            var vswhere = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                @"Microsoft Visual Studio\Installer\vswhere.exe");
+
+            if (!File.Exists(vswhere))
+            {
+                vswhere = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                @"Microsoft Visual Studio\Installer\vswhere.exe");
+            }
+
+            if (!File.Exists(vswhere))
+            {
+                throw new Exception("vswhere.exe not found. Visual Studio is required to build the test project.");
+            }
+
+            var vsPath = Process.Start(new ProcessStartInfo(vswhere,
+                "-latest -requires Microsoft.Component.MSBuild -property installationPath")
+            { RedirectStandardOutput = true })!.StandardOutput.ReadToEnd().Trim();
+
+            MSBuildExePath = Path.Combine(vsPath, @"MSBuild\Current\Bin\MSBuild.exe");
         }
     }
 }

@@ -21,5 +21,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         public static readonly string __VS_PAYLOAD_SIZE__ = nameof(__VS_PAYLOAD_SIZE__);
         public static readonly string __VS_PAYLOAD_SOURCE__ = nameof(__VS_PAYLOAD_SOURCE__);
         public static readonly string __VS_PACKAGE_VERSION__ = nameof(__VS_PACKAGE_VERSION__);
+
+        /// <summary>
+        /// Package version for global.json SDK.
+        /// </summary>
+        public static readonly string __MICROSOFT_BUILD_NOTARGETS_PACKAGE_VERSION__ = nameof(__MICROSOFT_BUILD_NOTARGETS_PACKAGE_VERSION__);
     }
 }

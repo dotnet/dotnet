@@ -12,9 +12,9 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Microsoft.Deployment.DotNet.Releases" />
     <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
-    <PackageReference Include="Microsoft.Signed.Wix" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" />
     <PackageReference Include="AwesomeAssertions" />
 
     <!-- WiX toolset CLI is a tool package so we need to set ExcludeAssets. -->
@@ -31,8 +31,7 @@
   </ItemGroup>
 
   <!-- Sample packages -->
-  <ItemGroup>
-    <PackageDownload Include="Microsoft.Signed.Wix" Version="[$(MicrosoftSignedWixVersion)]" />
+  <ItemGroup>    
     <PackageDownload Include="Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.200" Version="[$(MicrosoftNETWorkloadMonoToolChainManifest_60200Version)];[$(MicrosoftNETWorkloadMonoToolChainManifest_60200Version_604)]" />
     <PackageDownload Include="Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.300" Version="[$(MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6021)];[$(MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022)]" />
     <PackageDownload Include="Microsoft.iOS.Templates" Version="[$(MicrosoftiOSTemplatesVersion)];[$(MicrosoftiOSTemplatesVersion160527)]" />
@@ -145,13 +144,9 @@
     <None Remove="testassets\mauiWorkloadManifest.json" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="WixToolsetInfo.cs.pp" />
-  </ItemGroup>
-
   <Target Name="GenerateToolsetInfo" BeforeTargets="CoreCompile">
     <PropertyGroup>
-      <ToolsetInfoText>$([System.IO.File]::ReadAllText(WixToolsetInfo.cs.pp))</ToolsetInfoText>
+      <ToolsetInfoText>$([System.IO.File]::ReadAllText(ToolsetInfo.cs.pp))</ToolsetInfoText>
       <ToolsetInfoText>$(ToolsetInfoText.Replace('{WixExePath}', $(PkgMicrosoft_Wix)\tools\net6.0\any\wix.exe))</ToolsetInfoText>
       <!-- Use the .NET Framework copy. The .NET 6.0 copy needs to be invoked using dotnet.exe. -->
       <ToolsetInfoText>$(ToolsetInfoText.Replace('{HeatExePath}', $(PkgMicrosoft_WixToolset_Heat)\tools\net472\x64\heat.exe))</ToolsetInfoText>
@@ -159,11 +154,12 @@
       <ToolsetInfoText>$(ToolsetInfoText.Replace('{DependencyExt}', $(PkgMicrosoft_WixToolset_Dependency_wixext)\wixext6\WixToolset.Dependency.wixext.dll))</ToolsetInfoText>
       <ToolsetInfoText>$(ToolsetInfoText.Replace('{UIExt}', $(PkgMicrosoft_WixToolset_UI_wixext)\wixext6\WixToolset.UI.wixext.dll))</ToolsetInfoText>
       <ToolsetInfoText>$(ToolsetInfoText.Replace('{UtilExt}', $(PkgMicrosoft_WixToolset_Util_wixext)\wixext6\WixToolset.Util.wixext.dll))</ToolsetInfoText>
+      <ToolsetInfoText>$(ToolsetInfoText.Replace('{SwixTargetsPath}', $(PkgMicrosoft_VisualStudioEng_MicroBuild_Plugins_SwixBuild)\build\Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild.targets))</ToolsetInfoText>
     </PropertyGroup>
 
-    <WriteLinesToFile File="$(IntermediateOutputPath)WixToolsetInfo.cs" Overwrite="true" Lines="$(ToolsetInfoText)" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)ToolsetInfo.cs" Overwrite="true" Lines="$(ToolsetInfoText)" />
     <ItemGroup>
-      <Compile Include="$(IntermediateOutputPath)WixToolsetInfo.cs" />
+      <Compile Include="$(IntermediateOutputPath)ToolsetInfo.cs" />
     </ItemGroup>
   </Target>
 </Project>

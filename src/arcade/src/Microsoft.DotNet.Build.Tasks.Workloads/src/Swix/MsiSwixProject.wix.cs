@@ -64,7 +64,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             MachineArch = machineArch;
             ProductArch = productArch;
             Platform = msi.GetMetadata(Metadata.Platform);
-            SourcePath = Path.Combine(SourcePath, $"{sdkFeatureBand}", Id, Platform);
+            SourcePath = Path.Combine(SourcePath, Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
 
             // At least one of Chip or MachineArch should have a value, otherwise we cannot generate valid SWIX.
             if (string.IsNullOrWhiteSpace(Chip) && string.IsNullOrWhiteSpace(MachineArch))
@@ -98,6 +98,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
 
         public override string Create()
         {
+            base.Create();
             string swixProj = AddFile("msi.swixproj", ProjectFile);
             FileInfo fileInfo = new(_msi.ItemSpec);
 
