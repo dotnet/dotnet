@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.33711.374
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11819.183 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmark", "benchmark", "{2F79F3C4-F4E3-46DD-8B34-8EF403A6F7F5}"
 EndProject
@@ -85,6 +85,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4655DBB4-70C6-475D-8971-FE6619B85F70}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Validators", "src\Microsoft.IdentityModel.Validators\Microsoft.IdentityModel.Validators.csproj", "{DA585910-0E6C-45A5-AABD-30917130FD63}"
@@ -104,6 +105,17 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.AotCompatibility.Tests", "test\Microsoft.IdentityModel.AotCompatibility.Tests\Microsoft.IdentityModel.AotCompatibility.Tests.csproj", "{CD0EEF56-7221-4420-8181-48EE82E91306}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Benchmarks", "benchmark\Microsoft.IdentityModel.Benchmarks\Microsoft.IdentityModel.Benchmarks.csproj", "{F1BB31E4-8865-4425-8BD4-94F1815C16E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{BC99A01F-1C6E-4994-8991-4919A9B096E1}"
+	ProjectSection(SolutionItems) = preProject
+		build\common.props = build\common.props
+		build\commonTest.props = build\commonTest.props
+		build\dependencies.props = build\dependencies.props
+		build\dependenciesTest.props = build\dependenciesTest.props
+		build\targets.props = build\targets.props
+		build\targetsTest.props = build\targetsTest.props
+		build\version.props = build\version.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

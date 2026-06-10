@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Security.Claims;
 using System.Xml;
+using Microsoft.IdentityModel.Tokens.Saml;
 using Microsoft.IdentityModel.Xml;
 using static Microsoft.IdentityModel.Logging.LogHelper;
 
@@ -15,6 +16,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
     /// </summary>
     public class Saml2Serializer
     {
+        private const int MaxDepth = 8;
+        [ThreadStatic]
+        private static int t_currentDepth;
         private DSigSerializer _dsigSerializer = DSigSerializer.Default;
         private string _prefix = Saml2Constants.Prefix;
 
@@ -185,8 +189,15 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
             var envelopeReader = new EnvelopedSignatureReader(reader) { Serializer = DSigSerializer };
             var assertion = new Saml2Assertion(new Saml2NameIdentifier("__TemporaryIssuer__"));
+            t_currentDepth++;
             try
             {
+                if (t_currentDepth >= MaxDepth)
+                    throw LogReadException(
+                        LogMessages.IDX13111,
+                        t_currentDepth,
+                        MaxDepth);
+
                 // @xsi:type
                 XmlUtil.ValidateXsiType(envelopeReader, Saml2Constants.Types.AssertionType, Saml2Constants.Namespace);
 
@@ -281,6 +292,10 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                     throw;
 
                 throw LogReadException(LogMessages.IDX13102, ex, Saml2Constants.Elements.Assertion, ex);
+            }
+            finally
+            {
+                t_currentDepth--;
             }
         }
 
@@ -956,6 +971,8 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                         evidence.Assertions.Add(ReadAssertion(reader));
                     else if (reader.IsStartElement(Saml2Constants.Elements.EncryptedAssertion, Saml2Constants.Namespace))
                         evidence.Assertions.Add(ReadAssertion(reader));
+                    else
+                        break;
                 }
 
                 if (0 == evidence.AssertionIdReferences.Count

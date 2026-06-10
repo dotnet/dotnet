@@ -15,13 +15,13 @@
 	url = https://github.com/microsoft/MSBuildLocator
 [submodule "src/azure-activedirectory-identitymodel-extensions-for-dotnet"]
 	path = src/azure-activedirectory-identitymodel-extensions-for-dotnet
-	url = https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git
+	url = https://dnceng@dev.azure.com/dnceng/internal/_git/azure-identitymodel
+[submodule "src/docker-creds-provider"]
+	path = src/docker-creds-provider
+	url = https://github.com/mthalman/docker-creds-provider
 [submodule "xunit"]
 	path = src/xunit
 	url = https://github.com/xunit/xunit
 [submodule "abstractions-xunit"]
 	path = src/abstractions-xunit
 	url = https://github.com/xunit/abstractions.xunit
-[submodule "src/docker-creds-provider"]
-	path = src/docker-creds-provider
-	url = https://github.com/mthalman/docker-creds-provider

@@ -257,7 +257,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
         }
 
-        // Tests checks to make sure that the token string created by the JwtSecurityTokenHandler is consistent with the 
+        // Tests checks to make sure that the token string created by the JwtSecurityTokenHandler is consistent with the
         // token string created by the JsonWebTokenHandler.
         [Theory, MemberData(nameof(CreateJWEUsingSecurityTokenDescriptorTheoryData))]
         public void CreateJWEUsingSecurityTokenDescriptor(CreateTokenTheoryData theoryData)
@@ -1962,7 +1962,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 {
                     new JwtTheoryData
                     {
-                        ExpectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException(substringExpected: "IDX10503:"),
+                        ExpectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException(substringExpected: "IDX10517:"),
                         TestId = "Security Key Identifier not found",
                         Token = JwtTestUtilities.GetJwtParts(EncodedJwts.Asymmetric_2048, "ALLParts"),
                         ValidationParameters = ValidateSignatureValidationParameters(KeyingMaterial.X509SecurityKey_LocalSts, null)
@@ -2083,7 +2083,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     },
                     new JwtTheoryData
                     {
-                        ExpectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException(substringExpected: "IDX10503:"),
+                        ExpectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException(substringExpected: "IDX10517:"),
                         TestId = "BinaryKey 56Bits",
                         Token = JwtTestUtilities.GetJwtParts(EncodedJwts.Symmetric_256, "ALLParts"),
                         ValidationParameters = ValidateSignatureValidationParameters(KeyingMaterial.DefaultSymmetricSecurityKey_56, null),
@@ -2218,8 +2218,38 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             try
             {
+                // clear up static state.
+                AadIssuerValidator.s_issuerValidators[Default.AadV1Authority] = new AadIssuerValidator(null, Default.AadV1Authority);
+
+                // previous instance is captured in a closure during theorydata set setup.
+                if (theoryData.ValidationParameters.IssuerValidator != null)
+                    theoryData.ValidationParameters.IssuerValidator = AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).Validate;
+
+                var handler = new JwtSecurityTokenHandler();
+
+                if (theoryData.SetupIssuerLkg)
+                {
+                    // make a valid pass to initiate issuer LKG.
+                    var issuerValidator = AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority);
+                    issuerValidator.ConfigurationManagerV1 = theoryData.SetupIssuerLkgConfigurationManager;
+
+                    var previousValidateWithLKG = theoryData.ValidationParameters.ValidateWithLKG;
+                    theoryData.ValidationParameters.ValidateWithLKG = false;
+
+                    var setupValidationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
+
+                    theoryData.ValidationParameters.ValidateWithLKG = previousValidateWithLKG;
+
+                    if (setupValidationResult.Exception != null)
+                    {
+                        if (setupValidationResult.IsValid)
+                            context.AddDiff("setupValidationResult.IsValid, setupValidationResult.Exception != null");
+                        throw setupValidationResult.Exception;
+                    }
+                }
+
                 AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).ConfigurationManagerV1 = theoryData.ValidationParameters.ConfigurationManager;
-                new JwtSecurityTokenHandler().ValidateToken(theoryData.Token, theoryData.ValidationParameters, out _);
+                handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters, out _);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -2239,8 +2269,38 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             try
             {
+                // clear up static state.
+                AadIssuerValidator.s_issuerValidators[Default.AadV1Authority] = new AadIssuerValidator(null, Default.AadV1Authority);
+
+                // previous instance is captured in a closure during theorydata set setup.
+                if (theoryData.ValidationParameters.IssuerValidator != null)
+                    theoryData.ValidationParameters.IssuerValidator = AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).Validate;
+
+                var handler = new JwtSecurityTokenHandler();
+
+                if (theoryData.SetupIssuerLkg)
+                {
+                    // make a valid pass to initiate issuer LKG.
+                    var issuerValidator = AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority);
+                    issuerValidator.ConfigurationManagerV1 = theoryData.SetupIssuerLkgConfigurationManager;
+
+                    var previousValidateWithLKG = theoryData.ValidationParameters.ValidateWithLKG;
+                    theoryData.ValidationParameters.ValidateWithLKG = false;
+
+                    var setupValidationResult = handler.ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters).Result;
+
+                    theoryData.ValidationParameters.ValidateWithLKG = previousValidateWithLKG;
+
+                    if (setupValidationResult.Exception != null)
+                    {
+                        if (setupValidationResult.IsValid)
+                            context.AddDiff("setupValidationResult.IsValid, setupValidationResult.Exception != null");
+                        throw setupValidationResult.Exception;
+                    }
+                }
+
                 AadIssuerValidator.GetAadIssuerValidator(Default.AadV1Authority).ConfigurationManagerV1 = theoryData.ValidationParameters.ConfigurationManager;
-                new JwtSecurityTokenHandler().ValidateToken(theoryData.Token, theoryData.ValidationParameters, out _);
+                handler.ValidateToken(theoryData.Token, theoryData.ValidationParameters, out _);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -2799,9 +2859,35 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
                 var encryptionKeysFromJwtHandlerWithNoKid = theoryData.JwtSecurityTokenHandler.GetContentEncryptionKeys(jwtTokenFromJwtHandlerWithNoKid, theoryData.ValidationParameters);
 
-                IdentityComparer.AreEqual(encryptionKeysFromJwtHandlerWithKid, theoryData.ExpectedDecryptionKeys);
-                IdentityComparer.AreEqual(encryptionKeysFromJwtHandlerWithNoKid, theoryData.ExpectedDecryptionKeys);
-                IdentityComparer.AreEqual(encryptionKeysFromJwtHandlerWithKid, encryptionKeysFromJwtHandlerWithNoKid, context);
+                var actualKeysWithKid = encryptionKeysFromJwtHandlerWithKid.ToList();
+                var actualKeysWithNoKid = encryptionKeysFromJwtHandlerWithNoKid.ToList();
+
+                foreach (var expectedKey in theoryData.ExpectedDecryptionKeys)
+                {
+                    if (theoryData.Algorithm != null
+                        && (theoryData.Algorithm.Equals(JwtConstants.DirectKeyUseAlg, StringComparison.Ordinal)
+                            || theoryData.Algorithm.Equals(SecurityAlgorithms.EcdhEs, StringComparison.Ordinal)))
+                    {
+                        Assert.Contains(expectedKey, actualKeysWithKid);
+                        Assert.Contains(expectedKey, actualKeysWithNoKid);
+                    }
+                    else
+                    {
+                        if (expectedKey.CryptoProviderFactory.IsSupportedAlgorithm(jwtTokenFromJwtHandlerWithKid.Header.Alg, expectedKey))
+                        {
+                            var kwp = expectedKey.CryptoProviderFactory.CreateKeyWrapProviderForUnwrap(expectedKey, jwtTokenFromJwtHandlerWithKid.Header.Alg);
+                            var expectedCekBytes = kwp.UnwrapKey(Base64UrlEncoder.DecodeBytes(jwtTokenFromJwtHandlerWithKid.RawEncryptedKey));
+                            Assert.Single(actualKeysWithKid.Where(k => k is SymmetricSecurityKey sk && sk.Key.SequenceEqual(expectedCekBytes)));
+
+                            var kwp2 = expectedKey.CryptoProviderFactory.CreateKeyWrapProviderForUnwrap(expectedKey, jwtTokenFromJwtHandlerWithNoKid.Header.Alg);
+                            var expectedCekBytes2 = kwp2.UnwrapKey(Base64UrlEncoder.DecodeBytes(jwtTokenFromJwtHandlerWithNoKid.RawEncryptedKey));
+                            Assert.Single(actualKeysWithNoKid.Where(k => k is SymmetricSecurityKey sk && sk.Key.SequenceEqual(expectedCekBytes2)));
+                        }
+                    }
+                }
+                
+                if (theoryData.ExpectedDecryptionKeys.Count() > 0)
+                    IdentityComparer.AreEqual(encryptionKeysFromJwtHandlerWithKid, encryptionKeysFromJwtHandlerWithNoKid, context);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -2850,7 +2936,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     {
                         TestId = "AlgorithmMisMatch",
                         Payload = Default.PayloadString,
-                        ExpectedException = ExpectedException.KeyWrapException("IDX10618:"),
+                        ExpectedDecryptionKeys = new List<SecurityKey>(),
                         TokenDescriptor =  new SecurityTokenDescriptor
                         {
                             SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,

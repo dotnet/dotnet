@@ -44,7 +44,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 
         internal List<Claim> CreateClaims(string issuer)
         {
-            var claims = new List<Claim>();
+            var claims = new List<Claim>(_jsonClaims.Count);
             foreach (KeyValuePair<string, object> kvp in _jsonClaims)
                 CreateClaimFromObject(claims, kvp.Key, kvp.Value, issuer);
 
@@ -55,7 +55,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         {
             // Json.net recognized DateTime by default.
             if (value is string str)
-                claims.Add(new Claim(claimType, str, JwtTokenUtilities.GetStringClaimValueType(str), issuer, issuer));
+                claims.Add(new Claim(claimType, str, JwtTokenUtilities.GetStringClaimValueType(str, claimType), issuer, issuer));
             else if (value is int i)
                 claims.Add(new Claim(claimType, i.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer32, issuer, issuer));
             else if (value is long l)
@@ -107,7 +107,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (jsonElement.ValueKind == JsonValueKind.String)
             {
                 string claimValue = jsonElement.ToString();
-                return new Claim(claimType, claimValue, JwtTokenUtilities.GetStringClaimValueType(claimValue), issuer, issuer);
+                return new Claim(claimType, claimValue, JwtTokenUtilities.GetStringClaimValueType(claimValue, claimType), issuer, issuer);
             }
             else if (jsonElement.ValueKind == JsonValueKind.Null)
                 return new Claim(claimType, string.Empty, JsonClaimValueTypes.JsonNull, issuer, issuer);

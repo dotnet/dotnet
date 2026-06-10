@@ -32,8 +32,11 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
-    <PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWeb)" />
     <PackageReference Include="System.Text.Json" Version="$(SystemTextJson)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+  	<PackageReference Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWeb)" />
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Xml;
 using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
@@ -41,44 +44,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 }
             }
 
-            return null;
-        }
-
-        /// <summary>
-        /// Returns all <see cref="SecurityKey"/> to use when validating the signature of a token.
-        /// </summary>
-        /// <param name="token">The <see cref="string"/> representation of the token that is being validated.</param>
-        /// <param name="samlToken">The <see cref="SecurityToken"/> that is being validated.</param>
-        /// <param name="tokenKeyInfo">The <see cref="KeyInfo"/> field of the token being validated</param>
-        /// <param name="validationParameters">A <see cref="TokenValidationParameters"/> required for validation.</param>
-        /// <param name="keyMatched">A <see cref="bool"/> to represent if a a issuer signing key matched with token kid or x5t</param>
-        /// <returns>Returns all <see cref="SecurityKey"/> to use for signature validation.</returns>
-        internal static IEnumerable<SecurityKey> GetKeysForTokenSignatureValidation(string token, SecurityToken samlToken, KeyInfo tokenKeyInfo, TokenValidationParameters validationParameters, out bool keyMatched)
-        {
-            keyMatched = false;
-
-            if (validationParameters.IssuerSigningKeyResolver != null)
-            {
-                return validationParameters.IssuerSigningKeyResolver(token, samlToken, tokenKeyInfo?.Id, validationParameters);
-            }
-            else
-            {
-                SecurityKey key = ResolveTokenSigningKey(tokenKeyInfo, validationParameters);
-
-                if (key != null)
-                {
-                    keyMatched = true;
-                    return new List<SecurityKey> { key };
-                }
-                else
-                {
-                    keyMatched = false;
-                    if (validationParameters.TryAllIssuerSigningKeys)
-                    {
-                        return TokenUtilities.GetAllSigningKeys(validationParameters: validationParameters);
-                    }
-                }
-            }
             return null;
         }
 
@@ -164,6 +129,30 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Fetches current configuration from the ConfigurationManager of <paramref name="validationParameters"/>
+        /// and populates ValidIssuers and IssuerSigningKeys.
+        /// </summary>
+        /// <param name="validationParameters"> the token validation parameters to update.</param>
+        /// <returns> New TokenValidationParameters with ValidIssuers and IssuerSigningKeys updated.</returns>
+        internal static async Task<TokenValidationParameters> PopulateValidationParametersWithCurrentConfigurationAsync(
+            TokenValidationParameters validationParameters)
+        {
+            if (validationParameters.ConfigurationManager == null)
+            {
+                return validationParameters;
+            }
+
+            var currentConfiguration = await validationParameters.ConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false);
+            var validationParametersCloned = validationParameters.Clone();
+            var issuers = new[] { currentConfiguration.Issuer };
+
+            validationParametersCloned.ValidIssuers = (validationParametersCloned.ValidIssuers == null ? issuers : validationParametersCloned.ValidIssuers.Concat(issuers));
+            validationParametersCloned.IssuerSigningKeys = (validationParametersCloned.IssuerSigningKeys == null ? currentConfiguration.SigningKeys : validationParametersCloned.IssuerSigningKeys.Concat(currentConfiguration.SigningKeys));
+            return validationParametersCloned;
+
         }
     }
 }

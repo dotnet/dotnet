@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Xml;
@@ -465,9 +466,43 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
                         ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenReadException), "IDX13122"),
                         Saml2Serializer = new Saml2SerializerPublic(),
                         TestId = "Saml2EvidenceEmpty"
+                    },
+                    new Saml2TheoryData
+                    {
+                        Xml = "<Evidence xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\"><x:Other xmlns:x=\"urn:test:other\"/></Evidence>",
+                        ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenReadException), "IDX13122"),
+                        Saml2Serializer = new Saml2SerializerPublic(),
+                        TestId = "Saml2EvidenceUnexpectedChildForeignNamespace"
+                    },
+                    new Saml2TheoryData
+                    {
+                        Xml = "<Evidence xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\"><AssertionIDRef>_abc</AssertionIDRef><x:Other xmlns:x=\"urn:test:other\"/></Evidence>",
+                        ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenReadException), "IDX13102", ignoreInnerException: true),
+                        Saml2Serializer = new Saml2SerializerPublic(),
+                        TestId = "Saml2EvidenceValidContentThenUnexpectedChild"
                     }
                 };
             }
+        }
+
+        [Fact]
+        public async Task ReadEvidenceCompletesOnUnexpectedChildElements()
+        {
+            const string xml =
+                "<Evidence xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\">" +
+                "<x:Other xmlns:x=\"urn:test:other\"/>" +
+                "</Evidence>";
+
+            var serializer = new Saml2SerializerPublic();
+            var task = Task.Run(() =>
+            {
+                var reader = XmlUtilities.CreateDictionaryReader(xml);
+                Assert.Throws<Saml2SecurityTokenReadException>(() => serializer.ReadEvidencePublic(reader));
+            });
+
+            var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(1)));
+            Assert.Same(task, completed);
+            await task;
         }
         #endregion
 

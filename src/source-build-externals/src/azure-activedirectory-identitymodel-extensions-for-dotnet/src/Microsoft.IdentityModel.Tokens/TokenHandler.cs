@@ -31,8 +31,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentOutOfRangeException">'value' less than 1.</exception>
         public virtual int MaximumTokenSizeInBytes
         {
-            get => _maximumTokenSizeInBytes; 
-            set => _maximumTokenSizeInBytes =  (value < 1) ? throw LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), FormatInvariant(LogMessages.IDX10101, LogHelper.MarkAsNonPII(value)))) : value;
+            get => _maximumTokenSizeInBytes;
+            set => _maximumTokenSizeInBytes = (value < 1) ? throw LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), FormatInvariant(LogMessages.IDX10101, MarkAsNonPII(value)))) : value;
         }
 
         /// <summary>
@@ -54,7 +54,6 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         #region methods
-
         /// <summary>
         /// Validates a token.
         /// On a validation failure, no exception will be thrown; instead, the exception will be set in the returned TokenValidationResult.Exception property.
