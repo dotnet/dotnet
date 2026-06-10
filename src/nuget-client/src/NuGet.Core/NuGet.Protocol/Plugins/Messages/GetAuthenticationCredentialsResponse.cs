@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-#nullable disable
 
 using System;
 using System.Collections.Generic;
@@ -18,23 +17,23 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Username
         /// </summary>
-        public string Username { get; }
+        public string? Username { get; }
 
         /// <summary>
         /// password token
         /// </summary>
-        public string Password { get; }
+        public string? Password { get; }
 
         /// <summary>
         /// message - optional, can be used as a way to communicate to NuGet why the authentication failed.
         /// </summary>
-        public string Message { get; }
+        public string? Message { get; }
 
         /// <summary>
         /// Gets or sets the list of authentication types this credential is applicable to. Useful values include
         /// <c>basic</c>, <c>digest</c>, <c>negotiate</c>, and <c>ntlm</c>
         /// </summary>
-        public IList<string> AuthenticationTypes { get; }
+        public IList<string>? AuthenticationTypes { get; }
 
         /// <summary>
         /// ResponseCode - status of the credentials
@@ -52,7 +51,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="responseCode"></param>
         /// <exception cref="ArgumentException">If MessageResponseCode is not defined on this runtime</exception>
         [JsonConstructor]
-        public GetAuthenticationCredentialsResponse(string username, string password, string message, IList<string> authenticationTypes, MessageResponseCode responseCode)
+        public GetAuthenticationCredentialsResponse(string? username, string? password, string? message, IList<string>? authenticationTypes, MessageResponseCode responseCode)
         {
 
             if (!Enum.IsDefined(typeof(MessageResponseCode), responseCode))

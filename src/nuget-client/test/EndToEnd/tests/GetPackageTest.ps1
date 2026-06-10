@@ -68,73 +68,6 @@ function GetPackageAcceptsAllAsSourceName {
     Assert-True (1 -le $p.Count)
 }
 
-function Test-GetPackageAcceptsAbsolutePathSource {
-    param(
-        $context
-    )
-
-	$source = Split-Path $context.TestRoot
-
-    # Act
-    $p = @(Get-Package -ListAvailable -Source $source)
-
-    # Assert
-    Assert-True (1 -le $p.Count)
-}
-
-function Test-GetPackageAcceptsRelativePathSource {
-    param(
-        $context
-    )
-
-    pushd
-
-    # Act
-	cd $context.TestRoot
-    $p = @(Get-Package -ListAvailable -Source '..\')
-
-    # Assert
-    Assert-True (1 -le $p.Count)
-
-    popd
-}
-
-function Test-GetPackageAcceptsRelativePathSource2 {
-    param(
-        $context
-    )
-
-    pushd
-
-    # Arrange
-    $repositoryRoot = $context.RepositoryRoot
-    $parentOfRoot = Split-Path $repositoryRoot
-    $relativePath = Split-Path $repositoryRoot -Leaf
-
-    # Act
-    cd $parentOfRoot
-    $p = @(Get-Package -ListAvailable -Source $relativePath)
-
-    # Assert
-    Assert-True (1 -le $p.Count)
-
-    popd
-}
-
-function Test-ZipPackageLoadsReleaseNotesAttribute {
-    param(
-        $context
-    )
-
-    # Act
-    $p = Get-Package -ListAvailable -Source $context.RepositoryRoot -Filter ReleaseNotesPackage
-
-    # Assert
-	# Starting NuGet 3.0, IPackage interface has been deprecated.
-	# We are now returning PowerShellPackage which does not contain a ReleaseNotes property. Hence updated the test.
-    Assert-AreEqual "ReleaseNotesPackage" $p.Id
-}
-
 function Test-GetPackagesWithNoUpdatesReturnPackagesWithIsUpdateNotSet {
     # Arrange & Act
     $package = Get-Package -ListAvailable -First 1
@@ -142,124 +75,6 @@ function Test-GetPackagesWithNoUpdatesReturnPackagesWithIsUpdateNotSet {
     # Assert
     Assert-NotNull $package
     Assert-False $package.IsUpdate
-}
-
-function Test-GetPackagesDoesNotShowPrereleasePackagesWhenSwitchIsNotSpecified {
-    param(
-        $context
-    )
-
-    # Act
-    $packages = @(Get-Package -Source $context.RepositoryRoot -ListAvailable -Filter PreReleaseTestPackage)
-
-    # Assert
-    Assert-AreEqual 3 $packages.Count
-    Assert-AreEqual "PackageWithDependencyOnPrereleaseTestPackage" $packages[0].Id
-    Assert-AreEqual "1.0.0" $packages[0].Version
-    Assert-AreEqual "PreReleaseTestPackage" $packages[1].Id
-    Assert-AreEqual "1.0.0" $packages[1].Version
-    Assert-AreEqual "PreReleaseTestPackage.A" $packages[2].Id
-    Assert-AreEqual "1.0.0" $packages[2].Version
-
-}
-
-function Test-GetPackagesAllVersionsDoesNotShowPrereleasePackagesWhenSwitchIsNotSpecified {
-    param(
-        $context
-    )
-
-    # Act
-    $packages = @(Get-Package -ListAvailable -Source $context.RepositoryRoot -AllVersions -Filter PreReleaseTestPackage)
-
-    # Assert
-    Assert-AreEqual 3 $packages.Count
-    Assert-AreEqual "PackageWithDependencyOnPrereleaseTestPackage" $packages[0].Id
-    Assert-AreEqual "1.0.0" $packages[0].Version
-    Assert-AreEqual "PreReleaseTestPackage" $packages[1].Id
-    Assert-AreEqual "1.0.0" $packages[1].Version
-    Assert-AreEqual "PreReleaseTestPackage.A" $packages[2].Id
-    Assert-AreEqual "1.0.0" $packages[2].Version
-}
-
-function Test-GetPackagesWithPrereleaseSwitchShowsPrereleasePackages {
-    param(
-        $context
-    )
-
-    # Act
-    $packages = @(Get-Package -ListAvailable -Source $context.RepositoryRoot -Prerelease -Filter PreReleaseTestPackage)
-
-    # Assert
-    Assert-AreEqual 3 $packages.Count
-    Assert-AreEqual "PackageWithDependencyOnPrereleaseTestPackage" $packages[0].Id
-    Assert-AreEqual "1.0.0" $packages[0].Version
-    Assert-AreEqual "PreReleaseTestPackage" $packages[1].Id
-    Assert-AreEqual "1.0.1-a" $packages[1].Version
-    Assert-AreEqual "PreReleaseTestPackage.A" $packages[2].Id
-    Assert-AreEqual "1.0.0" $packages[2].Version
-}
-
-# Starting NuGet 3.0, Get-Package is returning Versions property which contains a list of Versions.
-function Test-GetPackagesWithAllAndPrereleaseSwitchShowsAllPackages {
-    param(
-        $context
-    )
-
-    # Act
-    $packages = @(Get-Package -ListAvailable -Source $context.RepositoryRoot -Prerelease -AllVersions -Filter PreReleaseTestPackage)
-
-    # Assert
-    Assert-AreEqual 3 $packages.Count
-    Assert-AreEqual "PackageWithDependencyOnPrereleaseTestPackage" $packages[0].Id
-	Assert-AreEqual "1.0.0" $packages[0].Version
-
-    Assert-AreEqual "PreReleaseTestPackage" $packages[1].Id
-    Assert-AreEqual "1.0.1-a 1.0.0 1.0.0-b 1.0.0-a" $packages[1].Versions
-	Assert-AreEqual "1.0.1-a" $packages[1].Version
-
-    Assert-AreEqual "PreReleaseTestPackage.A" $packages[2].Id
-	Assert-AreEqual "1.0.0 1.0.0-a" $packages[2].Versions
-    Assert-AreEqual "1.0.0" $packages[2].Version
-}
-
-function Test-GetPackageUpdatesDoNotReturnPrereleasePackagesIfFlagIsNotSpecified {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    $p | Install-Package PrereleaseTestPackage -Version 1.0.0.0-b -Source $context.RepositoryRoot -Prerelease
-    Assert-Package $p 'PrereleaseTestPackage' '1.0.0.0-b'
-
-    # Act
-    $updates = @(Get-Package -Updates -Source $context.RepositoryRoot)
-
-    # Assert
-    Assert-AreEqual 1 $updates.Count
-    Assert-AreEqual PrereleaseTestPackage $updates[0].Id
-    #Assert-AreEqual '1.0.0.0' $updates[0].Version
-}
-
-function Test-GetPackageUpdatesReturnPrereleasePackagesIfFlagIsSpecified {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    $p | Install-Package PrereleaseTestPackage -Version 1.0.0.0-a -Source $context.RepositoryRoot -Prerelease
-    Assert-Package $p 'PrereleaseTestPackage' '1.0.0.0-a'
-
-    # Act
-    $updates = @(Get-Package -Updates -Prerelease -Source $context.RepositoryRoot)
-
-    # Assert
-    Assert-AreEqual 1 $updates.Count
-    Assert-AreEqual 'PrereleaseTestPackage' $updates[0].Id
-    Assert-AreEqual '1.0.1-a' $updates[0].Version.ToString()
 }
 
 function Test-GetPackageDoesNotThrowIfSolutionIsTemporary {
@@ -271,52 +86,6 @@ function Test-GetPackageDoesNotThrowIfSolutionIsTemporary {
     # Act and Assert
     Assert-Throws { Get-Package } "Solution is not saved. Please save your solution before managing NuGet packages."
 }
-
-function Test-GetPackageUpdatesReturnAllVersionsIfFlagIsSpecified
-{
-    param
-    (
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    $p | Install-Package PrereleaseTestPackage -Version '1.0.0-a' -Source $context.RepositoryRoot -Prerelease
-    Assert-Package $p 'PrereleaseTestPackage' '1.0.0-a'
-
-    # Act
-    $updates = @(Get-Package -Updates -AllVersions -Source $context.RepositoryRoot)
-
-    # Assert
-    Assert-AreEqual 1 $updates.Count
-    Assert-AreEqual 'PrereleaseTestPackage' $updates[0].Id
-    Assert-AreEqual '1.0.0' $updates[0].Version.ToString()
-}
-
-function Test-GetPackageUpdatesReturnAllVersionsAndPrereleaseVersionsIfTwoFlagsAreSpecified
-{
-    param
-    (
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    $p | Install-Package PrereleaseTestPackage -Version '1.0.0-b' -Source $context.RepositoryRoot -Prerelease
-    Assert-Package $p 'PrereleaseTestPackage' '1.0.0-b'
-
-    # Act
-    $updates = @(Get-Package -Updates -AllVersions -Prerelease -Source $context.RepositoryRoot)
-
-    # Assert
-    Assert-AreEqual 1 $updates.Count
-
-    Assert-AreEqual 'PrereleaseTestPackage' $updates[0].Id
-    Assert-AreEqual '1.0.1-a 1.0.0' $updates[0].Versions
-}
-
 
 function Test-GetPackageUpdatesAfterSwitchToSourceThatDoesNotContainInstalledPackageId
 {
@@ -337,5 +106,4 @@ function Test-GetPackageUpdatesAfterSwitchToSourceThatDoesNotContainInstalledPac
     # Assert
     Assert-AreEqual 0 $packages.Count
 }
-
 

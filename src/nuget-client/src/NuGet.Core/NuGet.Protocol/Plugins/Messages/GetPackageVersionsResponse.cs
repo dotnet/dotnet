@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,7 +23,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the package versions.
         /// </summary>
-        public IEnumerable<string> Versions { get; }
+        public IEnumerable<string>? Versions { get; }
 
         /// <summary>
         /// Initializes a new <see cref="GetPackageVersionsResponse" /> class.
@@ -38,7 +36,7 @@ namespace NuGet.Protocol.Plugins
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="versions" />
         /// is either <see langword="null" /> or empty.</exception>
         [JsonConstructor]
-        public GetPackageVersionsResponse(MessageResponseCode responseCode, IEnumerable<string> versions)
+        public GetPackageVersionsResponse(MessageResponseCode responseCode, IEnumerable<string>? versions)
         {
             if (!Enum.IsDefined(typeof(MessageResponseCode), responseCode))
             {

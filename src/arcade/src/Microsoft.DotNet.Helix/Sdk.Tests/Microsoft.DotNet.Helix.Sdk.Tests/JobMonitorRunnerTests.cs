@@ -2740,6 +2740,48 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 && message.Contains("   └─ wi-12 (Running)", StringComparison.Ordinal));
         }
 
+        /// <summary>
+        /// When Helix work items are in the "Waiting" state, the summary should keep them in
+        /// the "waiting" work item bucket while still reporting the parent job as "Running"
+        /// because work items have already been assigned.
+        /// </summary>
+        [Fact]
+        public async Task LoopStatus_WaitingWorkItems_CountedAsWaitingWhileJobIsRunning()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+            using var cts = new CancellationTokenSource();
+
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "inProgress"));
+            helix.AddResponse(jobs: [HelixJob("helix-linux", "running")]);
+            helix.WithWorkItems(
+                "helix-linux",
+                [
+                    new WorkItemSummary("details/wi-1", "helix-linux", "wi-1", "Waiting"),
+                    new WorkItemSummary("details/wi-2", "helix-linux", "wi-2", "Waiting"),
+                ]);
+
+            JobMonitorOptions options = DefaultOptions();
+            options.Verbose = true;
+            var runner = new JobMonitorRunner(options, logger, azdo, helix,
+                (_, _) =>
+                {
+                    cts.Cancel();
+                    return Task.CompletedTask;
+                });
+
+            int exitCode = await runner.RunAsync(cts.Token);
+
+            exitCode.Should().Be(1);
+            logger.Messages.Should().Contain(message =>
+                message.Contains("0 processed / 0 completed / 1 running / 0 waiting jobs", StringComparison.Ordinal));
+            logger.Messages.Should().Contain(message =>
+                message.Contains("0 processed / 0 completed / 0 running / 2 waiting work items", StringComparison.Ordinal));
+            logger.Messages.Should().Contain(message =>
+                message.Contains("└─ 🧪 Helix job helix-linux [Running]", StringComparison.Ordinal));
+        }
+
         // -----------------------------------------------------------------------
         // Helpers
         // -----------------------------------------------------------------------
