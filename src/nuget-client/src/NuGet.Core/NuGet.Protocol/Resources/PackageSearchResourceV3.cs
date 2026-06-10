@@ -24,29 +24,21 @@ namespace NuGet.Protocol
     {
         private readonly HttpSource _client;
         private readonly Uri[] _searchEndpoints;
+        private readonly HashSet<Uri> _packageTypeCapableEndpoints;
         private readonly IEnvironmentVariableReader _environmentVariableReader;
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        private readonly RawSearchResourceV3 _rawSearchResource;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        [Obsolete("Use PackageSearchResource instead (via SourceRepository.GetResourceAsync<PackageSearchResource>")]
-        public PackageSearchResourceV3(RawSearchResourceV3 searchResource)
-            : base()
-        {
-            _rawSearchResource = searchResource;
-        }
-
-        internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints)
-            : this(client, searchEndpoints, environmentVariableReader: null)
-        {
-        }
-
-        internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints, IEnvironmentVariableReader environmentVariableReader)
+        internal PackageSearchResourceV3(
+            HttpSource client,
+            IEnumerable<Uri> searchEndpoints,
+            IEnumerable<Uri> packageTypeCapableEndpoints = null,
+            IEnvironmentVariableReader environmentVariableReader = null)
             : base()
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _searchEndpoints = searchEndpoints?.ToArray() ?? throw new ArgumentNullException(nameof(searchEndpoints));
+            _packageTypeCapableEndpoints = packageTypeCapableEndpoints == null
+                ? null
+                : new HashSet<Uri>(packageTypeCapableEndpoints);
             _environmentVariableReader = environmentVariableReader;
         }
 
@@ -63,27 +55,15 @@ namespace NuGet.Protocol
         /// <returns>List of package meta data.</returns>
         public override async Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filter, int skip, int take, Common.ILogger log, CancellationToken cancellationToken)
         {
-            IEnumerable<PackageSearchMetadata> searchResultMetadata;
             var metadataCache = new MetadataReferenceCache();
 
-            if (_client != null && _searchEndpoints != null)
-            {
-                searchResultMetadata = await Search(
-                    searchTerm,
-                    filter,
-                    skip,
-                    take,
-                    log,
-                    cancellationToken);
-            }
-            else
-            {
-#pragma warning disable CS0618
-                var searchResultJsonObjects = await _rawSearchResource.Search(searchTerm, filter, skip, take, Common.NullLogger.Instance, cancellationToken);
-#pragma warning restore CS0618
-                searchResultMetadata = searchResultJsonObjects
-                    .Select(s => s.FromJToken<PackageSearchMetadata>());
-            }
+            var searchResultMetadata = await Search(
+                searchTerm,
+                filter,
+                skip,
+                take,
+                log,
+                cancellationToken);
 
             var searchResults = searchResultMetadata
                 .Select(m => m.WithVersions(() => GetVersions(m, filter)))
@@ -120,11 +100,32 @@ namespace NuGet.Protocol
                     Common.ILogger log,
                     CancellationToken cancellationToken)
         {
-            log.LogVerbose($"Found {_searchEndpoints.Length} search endpoints.");
+            var packageTypeFilterRequested = filters.PackageTypes != null && filters.PackageTypes.Any();
 
-            for (var i = 0; i < _searchEndpoints.Length; i++)
+            if (packageTypeFilterRequested)
             {
-                var endpoint = _searchEndpoints[i];
+                if (filters.PackageTypes.Count() > 1)
+                {
+                    throw new ArgumentException(Strings.Protocol_PackageTypeFilterMultipleNotSupported, nameof(filters));
+                }
+
+                if (_packageTypeCapableEndpoints == null || _packageTypeCapableEndpoints.Count == 0)
+                {
+                    throw new NotSupportedException(Strings.Protocol_PackageTypeFilterNotSupported);
+                }
+            }
+
+            // When package type filtering is requested, only iterate endpoints that advertise
+            // SearchQueryService/3.5.0. Otherwise, use the full set of search endpoints.
+            var endpoints = packageTypeFilterRequested
+                ? _packageTypeCapableEndpoints.ToArray()
+                : _searchEndpoints;
+
+            log.LogVerbose($"Found {endpoints.Length} search endpoints.");
+
+            for (var i = 0; i < endpoints.Length; i++)
+            {
+                var endpoint = endpoints[i];
 
                 // The search term comes in already encoded from VS
                 var queryUrl = new UriBuilder(endpoint.AbsoluteUri);
@@ -149,13 +150,11 @@ namespace NuGet.Protocol
                     queryString += "&" + frameworks;
                 }
 
-                if (filters.PackageTypes != null
-                    && filters.PackageTypes.Any())
+                if (packageTypeFilterRequested)
                 {
-                    var types = string.Join("&",
-                        filters.PackageTypes.Select(
-                            s => "packageTypeFilter=" + s));
-                    queryString += "&" + types;
+                    // SearchQueryService/3.5.0 specifies a single 'packageType' parameter.
+                    // Multi-value inputs are rejected above; here the collection has exactly one entry.
+                    queryString += "&packageType=" + filters.PackageTypes.First();
                 }
 
                 queryString += "&semVerLevel=2.0.0";
@@ -173,7 +172,7 @@ namespace NuGet.Protocol
                 {
                     throw;
                 }
-                catch when (i < _searchEndpoints.Length - 1)
+                catch when (i < endpoints.Length - 1)
                 {
                     // Ignore all failures until the last endpoint
                 }

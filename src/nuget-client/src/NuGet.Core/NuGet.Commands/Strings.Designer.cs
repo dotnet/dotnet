@@ -511,6 +511,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored..
+        /// </summary>
+        internal static string Warning_RestoreLockedModeAndForceEvaluate {
+            get {
+                return ResourceManager.GetString("Warning_RestoreLockedModeAndForceEvaluate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid NuGetAuditLevel value &apos;{0}&apos;. Valid values: {1}.
         /// </summary>
         internal static string Error_InvalidNuGetAuditLevelValue {

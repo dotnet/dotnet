@@ -96,12 +96,12 @@
       </trans-unit>
       <trans-unit id="Error_UnexpectedPayloadTokenType">
         <source>Expected payload to be a JSON object but was `{0}`.</source>
-        <target state="new">Expected payload to be a JSON object but was `{0}`.</target>
+        <target state="translated">La charge utile attendue devait être un objet JSON, mais a été `{0}`.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedPayloadType">
         <source>Unsupported payload type `{0}`.</source>
-        <target state="new">Unsupported payload type `{0}`.</target>
+        <target state="translated">Version de charge utile non prise en charge `{0}`.</target>
         <note />
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -503,6 +503,16 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       <trans-unit id="Protocol_PackageMetadataError">
         <source>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</source>
         <target state="translated">Une erreur s'est produite pendant la récupération des métadonnées de package pour '{0}' à partir de la source '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterMultipleNotSupported">
+        <source>The source supports filtering by only one package type at a time.</source>
+        <target state="new">The source supports filtering by only one package type at a time.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterNotSupported">
+        <source>The source does not support filtering search results by package type.</source>
+        <target state="new">The source does not support filtering search results by package type.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_Search_LocalSourceNotFound">

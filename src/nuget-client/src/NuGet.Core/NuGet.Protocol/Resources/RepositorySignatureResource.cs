@@ -31,7 +31,9 @@ namespace NuGet.Protocol
                 throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToParseRepoSignInfor, JsonProperties.SigningCertificates, source.PackageSource.Source));
 
             AllRepositorySigned = allRepositorySigned;
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
             RepositoryCertificateInfos = data.OfType<JObject>().Select(p => p.FromJToken<RepositoryCertificateInfo>());
+#pragma warning restore IL2026, IL3050
 
             foreach (var repositoryCertificateInfo in RepositoryCertificateInfos)
             {
