@@ -317,9 +317,9 @@ internal partial class DotNetSdkHelper
         string? sanitizedConfigPath = SanitizedRestoreConfigPathLazy.Value;
         if (!string.IsNullOrEmpty(sanitizedConfigPath))
         {
-            binlogArgs += $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
-                + $" /p:CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}"
-                + $" /p:EmbedFileInBinlogPath={sanitizedConfigPath}";
+            binlogArgs += $" /p:\"CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}\""
+                + $" /p:\"CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}\""
+                + $" /p:\"EmbedFileInBinlogPath={sanitizedConfigPath}\"";
         }
 
         return binlogArgs;

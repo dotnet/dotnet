@@ -240,9 +240,9 @@ internal partial class DotNetHelper
 
         // Embed a sanitized copy of the test's NuGet.Config in the binlog
         return $"/bl:{Path.Combine(Config.LogsDirectory, $"{fileName}.binlog")}"
-            + $" /p:CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}"
-            + $" /p:CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}"
-            + $" /p:EmbedFileInBinlogPath={SanitizedNuGetConfigPathLazy.Value}";
+            + $" /p:\"CustomAfterMicrosoftCommonTargets={EmbedFileInBinlogTargetsPath}\""
+            + $" /p:\"CustomAfterMicrosoftCommonCrossTargetingTargets={EmbedFileInBinlogTargetsPath}\""
+            + $" /p:\"EmbedFileInBinlogPath={SanitizedNuGetConfigPathLazy.Value}\"";
     }
 
     /// <summary>
