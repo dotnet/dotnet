@@ -12,8 +12,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <_hostArch>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant)</_hostArch>
-    <BuildArchitecture>$(_hostArch)</BuildArchitecture>
+    <!-- Initialize build architecture and OS -->
+    <BuildArchitecture Condition="'$(BuildArchitecture)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant)</BuildArchitecture>
+
+    <BuildOS Condition="'$(BuildOS)' == '' and '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</BuildOS>
+    <BuildOS Condition="'$(BuildOS)' == '' and '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</BuildOS>
+    <BuildOS Condition="'$(BuildOS)' == '' and '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">windows</BuildOS>
+
+    <BuildRid Condition="'$(BuildRid)' == '' and '$(BuildOS)' == 'windows'">win-$(BuildArchitecture)</BuildRid>
+    <BuildRid Condition="'$(BuildRid)' == ''">$(BuildOS)-$(BuildArchitecture)</BuildRid>
+
+    <!-- Initialize target architecture and OS -->
+    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">$(BuildArchitecture)</TargetArchitecture>
+    <TargetOS Condition="'$(TargetOS)' == ''">$(BuildOS)</TargetOS>
+    <TargetRid Condition="'$(TargetRid)' == ''">$(BuildRid)</TargetRid>
   </PropertyGroup>
 
     <!-- Common properties -->
@@ -37,26 +49,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">linux</PackageHostOS>
-    <PackageHostOS Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">osx</PackageHostOS>
-    <PackageHostOS Condition="'$(OS)' == 'Windows_NT'">win</PackageHostOS>
-    <PackageTargetOS Condition="'$(AssetManifestOS)' != ''">$(AssetManifestOS)</PackageTargetOS>
-    <PackageTargetOS Condition="'$(PackageTargetOS)' == ''">$(PackageHostOS)</PackageTargetOS>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <BinaryenDir>$(ProjectDir)\binaryen\dotnet</BinaryenDir>
-    <HostBinaryenDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(BinaryenDir)</HostBinaryenDir>
-    <HostBinaryenDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\binaryen\$(BuildArchitecture)</HostBinaryenDir>
+    <BuildBinaryenDir Condition="'$(TargetRid)' == '$(BuildRid)'">$(BinaryenDir)</BuildBinaryenDir>
+    <BuildBinaryenDir Condition="'$(TargetRid)' != '$(BuildRid)'">$(BaseIntermediateOutputPath)\build\binaryen\$(BuildRid)</BuildBinaryenDir>
     <NodeDir>$(ProjectDir)\node\dotnet</NodeDir>
-    <HostNodeDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(NodeDir)</HostNodeDir>
-    <HostNodeDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\node\$(BuildArchitecture)</HostNodeDir>
+    <BuildNodeDir Condition="'$(TargetRid)' == '$(BuildRid)'">$(NodeDir)</BuildNodeDir>
+    <BuildNodeDir Condition="'$(TargetRid)' != '$(BuildRid)'">$(BaseIntermediateOutputPath)\build\node\$(BuildRid)</BuildNodeDir>
     <PythonDir>$(ProjectDir)\python\dotnet</PythonDir>
-    <HostPythonDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(PythonDir)</HostPythonDir>
-    <HostPythonDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\python\$(BuildArchitecture)</HostPythonDir>
+    <BuildPythonDir Condition="'$(TargetRid)' == '$(BuildRid)'">$(PythonDir)</BuildPythonDir>
+    <BuildPythonDir Condition="'$(TargetRid)' != '$(BuildRid)'">$(BaseIntermediateOutputPath)\build\python\$(BuildRid)</BuildPythonDir>
     <LLVMDir>$(ProjectDir)\llvm\dotnet</LLVMDir>
-    <HostLLVMDir Condition="'$(BuildArchitecture)' == '$(TargetArchitecture)'">$(LLVMDir)</HostLLVMDir>
-    <HostLLVMDir Condition="'$(BuildArchitecture)' != '$(TargetArchitecture)' or '$(PackageTargetOS)' != '$(PackageHostOS)'">$(BaseIntermediateOutputPath)\host\llvm\$(BuildArchitecture)</HostLLVMDir>
+    <BuildLLVMDir Condition="'$(TargetRid)' == '$(BuildRid)'">$(LLVMDir)</BuildLLVMDir>
+    <BuildLLVMDir Condition="'$(TargetRid)' != '$(BuildRid)'">$(BaseIntermediateOutputPath)\build\llvm\$(BuildRid)</BuildLLVMDir>
     <EmscriptenDir>$(ProjectDir)\emscripten\dotnet</EmscriptenDir>
   </PropertyGroup>
 </Project>

@@ -69,7 +69,7 @@
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
     <LangVersion>latest</LangVersion>
-    <!-- Don't run NuGetAudit on offline builds. -->
+    <!-- Don't run NuGetAudit on offline builds -->
     <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
     <!-- Disable NuGet audit in official builds. MSBuild does not correctly handle
          WarningsNotAsErrors for NuGet warnings (https://github.com/dotnet/msbuild/issues/10801),
