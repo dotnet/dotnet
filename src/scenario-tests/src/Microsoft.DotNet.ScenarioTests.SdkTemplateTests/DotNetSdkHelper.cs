@@ -19,7 +19,7 @@ internal partial class DotNetSdkHelper
     private const string PackageSourceCredentialsElementName = "packageSourceCredentials";
 
     [GeneratedRegex(
-        $@"<{PackageSourceCredentialsElementName}\b[^>]*>.*?</{PackageSourceCredentialsElementName}>",
+        $@"<{PackageSourceCredentialsElementName}\b[^>]*>.*?(</{PackageSourceCredentialsElementName}>|$)",
         RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex PackageSourceCredentialsRegex { get; }
 
