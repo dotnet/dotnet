@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -35,7 +36,7 @@ namespace System.IdentityModel.Tokens.Jwt
         private Dictionary<string, string> _outboundAlgorithmMap = null;
         private static string _shortClaimType = _namespace + "/ShortTypeName";
         private bool _mapInboundClaims = DefaultMapInboundClaims;
-
+       
         /// <summary>
         /// Default claim type mapping for inbound claims.
         /// </summary>
@@ -924,7 +925,7 @@ namespace System.IdentityModel.Tokens.Jwt
                         validationParameters.ConfigurationManager.RequestRefresh();
                         validationParameters.RefreshBeforeValidation = true;
                         var lastConfig = currentConfiguration;
-                        currentConfiguration = validationParameters.ConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).GetAwaiter().GetResult();
+                        currentConfiguration = validationParameters.ConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
 
                         // Only try to re-validate using the newly obtained config if it doesn't reference equal the previously used configuration.
                         if (lastConfig != currentConfiguration)
@@ -1333,7 +1334,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 keys = validationParameters.IssuerSigningKeyResolverUsingConfiguration(token, jwtToken, jwtToken.Header.Kid, validationParameters, configuration);
             }
-            if (validationParameters.IssuerSigningKeyResolver != null)
+            else if (validationParameters.IssuerSigningKeyResolver != null)
             {
                 keys = validationParameters.IssuerSigningKeyResolver(token, jwtToken, jwtToken.Header.Kid, validationParameters);
             }
@@ -1344,7 +1345,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 if (key != null)
                 {
                     kidMatched = true;
-                    keys = new List<SecurityKey> { key };
+                    keys = [key];
                 }
             }
 
@@ -1358,8 +1359,8 @@ namespace System.IdentityModel.Tokens.Jwt
             }
 
             // keep track of exceptions thrown, keys that were tried
-            var exceptionStrings = new StringBuilder();
-            var keysAttempted = new StringBuilder();
+            StringBuilder exceptionStrings = null;
+            StringBuilder keysAttempted = null;
             bool kidExists = !string.IsNullOrEmpty(jwtToken.Header.Kid);
             byte[] signatureBytes;
 
@@ -1389,12 +1390,12 @@ namespace System.IdentityModel.Tokens.Jwt
                     }
                     catch (Exception ex)
                     {
-                        exceptionStrings.AppendLine(ex.ToString());
+                        (exceptionStrings ??= new StringBuilder()).AppendLine(ex.ToString());
                     }
 
                     if (key != null)
                     {
-                        keysAttempted.Append(key.ToString()).Append(" , KeyId: ").AppendLine(key.KeyId);
+                        (keysAttempted ??= new StringBuilder()).Append(key.ToString()).Append(" , KeyId: ").AppendLine(key.KeyId);
                         if (kidExists && !kidMatched && key.KeyId != null)
                             kidMatched = jwtToken.Header.Kid.Equals(key.KeyId, key is X509SecurityKey ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
                     }
@@ -1412,15 +1413,16 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (kidMatched)
                 {
-                    var isKidInTVP = keysInTokenValidationParameters.Any(x => x.KeyId.Equals(jwtToken.Header.Kid));
+                    JwtSecurityToken localJwtToken = jwtToken; // avoid closure on non-exceptional path
+                    var isKidInTVP = keysInTokenValidationParameters.Any(x => x.KeyId.Equals(localJwtToken.Header.Kid));
                     var keyLocation = isKidInTVP ? "TokenValidationParameters" : "Configuration";
                     throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidSignatureException(LogHelper.FormatInvariant(TokenLogMessages.IDX10511,
-                        keysAttempted,
+                        LogHelper.MarkAsNonPII((object)keysAttempted ?? ""),
                         LogHelper.MarkAsNonPII(numKeysInTokenValidationParameters),
                         LogHelper.MarkAsNonPII(numKeysInConfiguration),
                         LogHelper.MarkAsNonPII(keyLocation),
                         LogHelper.MarkAsNonPII(jwtToken.Header.Kid),
-                        exceptionStrings,
+                        (object)exceptionStrings ?? "",
                         jwtToken)));
                 }
 
@@ -1439,13 +1441,28 @@ namespace System.IdentityModel.Tokens.Jwt
                 }
             }
 
-            if (keysAttempted.Length > 0)
-                throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(LogHelper.FormatInvariant(TokenLogMessages.IDX10503,
-                    keysAttempted,
-                    LogHelper.MarkAsNonPII(numKeysInTokenValidationParameters),
-                    LogHelper.MarkAsNonPII(numKeysInConfiguration),
-                    exceptionStrings,
-                    jwtToken)));
+            if (keysAttempted is not null)
+            {
+                if (kidExists)
+                {
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(LogHelper.FormatInvariant(TokenLogMessages.IDX10503,
+                        LogHelper.MarkAsNonPII(jwtToken.Header.Kid),
+                        LogHelper.MarkAsNonPII((object)keysAttempted ?? ""),
+                        LogHelper.MarkAsNonPII(numKeysInTokenValidationParameters),
+                        LogHelper.MarkAsNonPII(numKeysInConfiguration),
+                        (object)exceptionStrings ?? "",
+                        jwtToken)));
+                }
+                else
+                {
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(LogHelper.FormatInvariant(TokenLogMessages.IDX10517,
+                        LogHelper.MarkAsNonPII((object)keysAttempted ?? ""),
+                        LogHelper.MarkAsNonPII(numKeysInTokenValidationParameters),
+                        LogHelper.MarkAsNonPII(numKeysInConfiguration),
+                        (object)exceptionStrings ?? "",
+                        jwtToken)));
+                }
+            }         
 
             throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(TokenLogMessages.IDX10500));
         }
@@ -1796,7 +1813,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 var key = ResolveTokenDecryptionKey(jwtToken.RawData, jwtToken, validationParameters);
                 if (key != null)
-                    keys = new List<SecurityKey> { key };
+                    keys = [key];
             }
 
             // control gets here if:
@@ -1810,9 +1827,15 @@ namespace System.IdentityModel.Tokens.Jwt
                 return keys;
 
             var unwrappedKeys = new List<SecurityKey>();
-            // keep track of exceptions thrown, keys that were tried
-            var exceptionStrings = new StringBuilder();
-            var keysAttempted = new StringBuilder();
+
+            // Pre-generate a placeholder key used as a fallback when an unwrap call
+            // does not yield a usable key, so that downstream processing follows a
+            // single uniform path regardless of which key was tried.
+            int expectedCekSizeInBytes = GetExpectedCekSizeInBytes(jwtToken.Header.Enc);
+            byte[] fallbackCek = new byte[expectedCekSizeInBytes];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+                rng.GetBytes(fallbackCek);
+
             foreach (var key in keys)
             {
                 try
@@ -1844,15 +1867,39 @@ namespace System.IdentityModel.Tokens.Jwt
                 }
                 catch (Exception ex)
                 {
-                    exceptionStrings.AppendLine(ex.ToString());
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        LogHelper.LogWarning(ex.ToString());
+
+                    // Use the placeholder key so the downstream code path is the
+                    // same regardless of whether unwrap succeeded.
+                    unwrappedKeys.Add(new SymmetricSecurityKey(fallbackCek));
                 }
-                keysAttempted.AppendLine(key.ToString());
             }
 
-            if (unwrappedKeys.Count > 0 || exceptionStrings.Length == 0)
-                return unwrappedKeys;
-            else
-                throw LogHelper.LogExceptionMessage(new SecurityTokenKeyWrapException(LogHelper.FormatInvariant(TokenLogMessages.IDX10618, keysAttempted, exceptionStrings, jwtToken)));
+            return unwrappedKeys;
+        }
+
+        /// <summary>
+        /// Returns the expected Content Encryption Key (CEK) size in bytes for
+        /// the given content encryption algorithm (JWE "enc" header value).
+        /// </summary>
+        private static int GetExpectedCekSizeInBytes(string encAlgorithm)
+        {
+            if (SecurityAlgorithms.Aes128CbcHmacSha256.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 32;
+            if (SecurityAlgorithms.Aes192CbcHmacSha384.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 48;
+            if (SecurityAlgorithms.Aes256CbcHmacSha512.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 64;
+
+            if (SecurityAlgorithms.Aes128Gcm.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 16;
+            if (SecurityAlgorithms.Aes192Gcm.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 24;
+            if (SecurityAlgorithms.Aes256Gcm.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 32;
+
+            return 32;
         }
 
         private static byte[] GetSymmetricSecurityKey(SecurityKey key)

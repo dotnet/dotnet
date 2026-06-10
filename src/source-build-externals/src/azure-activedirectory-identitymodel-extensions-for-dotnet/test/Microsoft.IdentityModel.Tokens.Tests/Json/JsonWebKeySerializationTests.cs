@@ -71,35 +71,35 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_ArrayString")
             {
                 Json = $@"{{""{jsonPropertyName}"":[""string1"", ""string2""]}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
 
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_Array")
             {
                 Json = $@"{{""{jsonPropertyName}"":[""value"", 1]}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
 
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_true")
             {
                 Json = $@"{{""{jsonPropertyName}"": true}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
 
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_false")
             {
                 Json = $@"{{""{jsonPropertyName}"": false}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
 
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_Object")
             {
                 Json = $@"{{""{jsonPropertyName}"":{{""property"": ""false""}}}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
 
@@ -111,7 +111,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_Number")
             {
                 Json = $@"{{""d"":""string"",""d"":""string"",""{jsonPropertyName}"":1}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
         }
@@ -139,7 +139,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             theoryData.Add(new JsonSerializerTheoryData($"{instancePropertyName}_Array")
             {
                 Json = $@"{{""{jsonPropertyName}"":[""value"", 1]}}",
-                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
+                JsonReaderExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022: "),
                 JsonSerializerExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted", typeof(InvalidOperationException))
             });
 
@@ -282,12 +282,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     Json = DataSets.JsonWebKeyString
                 });
 
-                theoryData.Add(new JsonWebKeyTheoryData("JsonWebKeyMixedCase")
-                {
-                    JsonWebKey = DataSets.JsonWebKey1,
-                    Json = DataSets.JsonWebKeyMixedCaseString
-                });
-
                 theoryData.Add(new JsonWebKeyTheoryData("JsonWebKeyES256")
                 {
                     JsonWebKey = DataSets.JsonWebKeyES256,
@@ -380,7 +374,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
                 // ensure what our utf8reader and newtonsoft are the same
                 // RELNOTE:
-                // Object for Newtonsoft will be 'Newtonsoft.Json.Linq.JObject', System.Text.Json 'System.Text.Json.JsonElement'
+                // WriteObject for Newtonsoft will be 'Newtonsoft.Json.Linq.JObject', System.Text.Json 'System.Text.Json.JsonElement'
                 // Array  for Newtonsoft will be 'Newtonsoft.Json.Linq.JArray', System.Text.Json 'System.Text.Json.JsonElement'
                 // int for Newtonsoft will be 'System.Int64', System.Text.Json 'System.Int32'
                 context.AddDictionaryKeysToIgnoreWhenComparing("Object", "Array", "int");

@@ -18,7 +18,8 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         [Theory, MemberData(nameof(SerializeDataSet))]
         public void Serialize(JsonWebKeySetTheoryData theoryData)
         {
-            var context = new CompareContext(theoryData);
+            var context = TestUtilities.WriteHeader($"{this}.Serialize", theoryData);
+
             try
             {
                 string json6x = JsonConvert.SerializeObject(theoryData.JsonWebKeySet6x);
@@ -88,5 +89,57 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             }
         }
 
+        [Theory, MemberData(nameof(JsonWebKeySetTheoryData))]
+        public void Deserialize(JsonWebKeySetTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.Deserialize", theoryData);
+
+            try
+            {
+                JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(theoryData.Json);
+                JsonWebKeySet jsonWebKeySetUpperCase = new JsonWebKeySet(JsonUtilities.SetPropertiesToUpperCase(theoryData.Json));
+                theoryData.ExpectedException.ProcessNoException(context);
+
+                IdentityComparer.AreEqual(jsonWebKeySet, theoryData.JsonWebKeySet, context);
+                IdentityComparer.AreEqual(jsonWebKeySetUpperCase, theoryData.JsonWebKeySet, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<JsonWebKeySetTheoryData> JsonWebKeySetTheoryData
+        {
+            get
+            {
+                var theoryData = new TheoryData<JsonWebKeySetTheoryData>();
+
+                theoryData.Add(new JsonWebKeySetTheoryData("AADCommonV1")
+                {
+                    Json = DataSets.AADCommonV1KeySetJson,
+                    JsonWebKeySet = DataSets.AADCommonV1KeySet
+                });
+
+                // the reason to replace "issuer" with "ISSUER" is because the test deserializes uppercase and lowercase.
+                // since "issuer" is not a property of JsonWebKeySet the value ends up in the AdditionalData dictionary, which is case sensitive.
+                // we wanted to leave the data sets as they were obtained from metadata so they can be used in other tests.
+                theoryData.Add(new JsonWebKeySetTheoryData("AADCommonV2")
+                {
+                    Json = JsonUtilities.SetAdditionalDataKeysToUpperCase(DataSets.AADCommonV2KeySetJson, DataSets.AADCommonV2KeySet),
+                    JsonWebKeySet = JsonUtilities.SetAdditionalDataKeysToUpperCase(DataSets.AADCommonV2KeySet)
+                });
+
+                theoryData.Add(new JsonWebKeySetTheoryData("AccountsGoogleCom")
+                {
+                    Json = DataSets.AccountsGoogleJson,
+                    JsonWebKeySet = DataSets.AccountsGoogleKeySet
+                });
+
+                return theoryData;
+            }
+        }
     }
 }

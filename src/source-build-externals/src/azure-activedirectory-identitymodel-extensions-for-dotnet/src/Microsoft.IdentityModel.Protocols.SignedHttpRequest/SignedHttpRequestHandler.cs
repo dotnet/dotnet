@@ -1309,7 +1309,9 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                 return false;
 
             var uri = new Uri(jkuSetUrl, UriKind.RelativeOrAbsolute);
-            return signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.AllowedDomainsForJkuRetrieval.Any(domain => uri.Host.EndsWith(domain, StringComparison.OrdinalIgnoreCase));
+            return signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.AllowedDomainsForJkuRetrieval.Any(domain =>
+                uri.Host.Equals(domain, StringComparison.OrdinalIgnoreCase) ||
+                uri.Host.EndsWith("." + domain, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

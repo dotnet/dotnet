@@ -39,6 +39,8 @@ namespace Microsoft.IdentityModel.Logging
             "ID_NET6_0";
 #elif NET8_0
             "ID_NET8_0";
+#elif NET9_0
+            "ID_NET9_0";
 #endif
 
         /// <summary>

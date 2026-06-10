@@ -10,9 +10,6 @@
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <Company>Microsoft Corporation.</Company>
     <DelaySign>true</DelaySign>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <OutputTypeEx>library</OutputTypeEx>
     <Product>Microsoft IdentityModel</Product>
     <RepositoryType>git</RepositoryType>
@@ -31,7 +28,7 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(SrcTargets)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(SrcStandardTargets)</TargetFrameworks>
     <NetStandardImplicitPackageVersion>$(NetStandardVersion)</NetStandardImplicitPackageVersion>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -39,16 +36,23 @@
     <PackageValidationBaselineVersion>7.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
+  <!-- Suppress NETSDK1138, NETSDK1202 ("target framework is out of support") -->
+  <PropertyGroup>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);SYSLIB0050</NoWarn>
-    <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
+    <NoWarn>$(NoWarn);SYSLIB0050;SYSLIB0051;NETSDK1138</NoWarn>
   </PropertyGroup>
-  
-  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
+
+  <ItemGroup>
+     <!-- Protects against sync-over-async: https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md. -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.9.28" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
   </ItemGroup>
 

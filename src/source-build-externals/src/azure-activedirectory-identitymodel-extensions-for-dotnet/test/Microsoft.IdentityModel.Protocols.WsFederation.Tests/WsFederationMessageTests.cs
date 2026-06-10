@@ -474,7 +474,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation.Tests
                         TestId = nameof(ReferenceXml.WresultWsTrust14WithoutNamespaceUnusualSpacing)
                     },
                     // these tests show that one shouldn't rely on parsing the Wresult alone as
-                    // the following Wresult's should error. The correct pattern is to call GetToken() or GetTokenUsingXmlReader() to ensure 
+                    // the following Wresult's should error. The correct pattern is to call GetToken() or GetTokenUsingXmlReader() to ensure
                     // the Wresult is well formed.
                     new WsFederationMessageTheoryData
                     {

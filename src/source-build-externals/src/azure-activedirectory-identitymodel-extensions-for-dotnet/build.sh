@@ -21,7 +21,7 @@ build() {
   echo -e "Build ...... "
   echo -e "===========================================================\n"
 
-  dotnet build WilsonUnix.sln
+  dotnet build --no-restore WilsonUnix.sln
   echo -e "\n"
 }
 
@@ -30,7 +30,7 @@ pack() {
   echo -e "Pack ...... "
   echo -e "===========================================================\n"
 
-  dotnet pack WilsonUnix.sln
+  dotnet pack --no-build WilsonUnix.sln
   
   echo -e "\n"
   echo -e "==========================================================="

@@ -293,6 +293,9 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
 #elif NET8_0
             if (!message.SkuTelemetryValue.Equals("ID_NET8_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET8_0");
+#elif NET9_0
+            if (!message.SkuTelemetryValue.Equals("ID_NET9_0"))
+                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET9_0");
 #elif NET_CORE
             if (!message.SkuTelemetryValue.Equals("ID_NETSTANDARD2_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NETSTANDARD2_0");
@@ -565,6 +568,9 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
 #elif NET8_0
             if (!message.SkuTelemetryValue.Equals("ID_NET8_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET8_0");
+#elif NET9_0
+            if (!message.SkuTelemetryValue.Equals("ID_NET9_0"))
+                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET9_0");
 #elif NET_CORE
             if (!message.SkuTelemetryValue.Equals("ID_NETSTANDARD2_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NETSTANDARD2_0");
