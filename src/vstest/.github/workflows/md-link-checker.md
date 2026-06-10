@@ -24,9 +24,8 @@ steps:
       
       # Find all markdown files in docs directory and README
       echo "Finding all markdown files..."
-      MARKDOWN_FILES=$(find docs README.md -type f -name "*.md" 2>/dev/null || echo "")
 
-      if [ -z "$MARKDOWN_FILES" ]; then
+      if ! find docs README.md -type f -name "*.md" -print0 2>/dev/null | grep -qz .; then
         echo "No markdown files found"
         echo "no_files=true" >> $GITHUB_OUTPUT
         exit 0
@@ -38,7 +37,7 @@ steps:
 
       # Use grep to find markdown links
       # Format for relative links: "source_file|url" to allow path resolution
-      for file in $MARKDOWN_FILES; do
+      find docs README.md -type f -name "*.md" -print0 2>/dev/null | while IFS= read -r -d '' file; do
         echo "Checking $file..."
         # Extract markdown links [text](url)
         grep -oP '\[([^\]]+)\]\(([^\)]+)\)' "$file" | grep -oP '\(([^\)]+)\)' | tr -d '()' | while IFS= read -r link; do
@@ -71,7 +70,7 @@ steps:
         done < <(grep -oiP "<a\\b[^>]*\\b(?:name|id)\\s*=\\s*['\"]\\K[^'\"]+(?=['\"])" "$file" 2>/dev/null)
 
         while IFS= read -r heading; do
-          generated=$(printf '%s' "$heading" | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^a-z0-9_-]//g')
+          generated=$(printf '%s' "$heading" | sed -E 's/<[^>]*>//g' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^a-z0-9_-]//g')
           if [[ "$generated" == "$anchor" ]]; then
             return 0
           fi
