@@ -11,5 +11,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
+    <PackageReference Include="Microsoft.VisualStudio.Copilot" />
   </ItemGroup>
 </Project>

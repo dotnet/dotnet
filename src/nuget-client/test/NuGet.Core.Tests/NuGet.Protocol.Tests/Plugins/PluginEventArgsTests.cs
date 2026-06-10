@@ -12,7 +12,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_ThrowsForNullPlugin()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new PluginEventArgs(plugin: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => new PluginEventArgs(plugin: null!));
 
             Assert.Equal("plugin", exception.ParamName);
         }

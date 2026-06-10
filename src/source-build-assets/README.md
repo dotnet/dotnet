@@ -250,16 +250,9 @@ generated packages show changes when being regenerated.
    You can search the code base to see example usages.
    The benefit of using these files is that they will be preserved when the packages are regenerated.
 
-   1. Common source files - The `src/referencePackages/common/` directory contains shared
-   source files that fix known GenAPI limitations (e.g. `IsExternalInit.cs`,
-   `RequiredModifierAttributes.cs`). Including these via `Customizations.props` is
-   preferred over hand-editing generated code. See the
-   [Known Generator Issues](docs/known_generator_issues.md#common-source-files) documentation
-   for the full list and usage instructions.
+   You can also search for [known GenAPI issues](https://github.com/dotnet/sdk/issues?q=is%3Aissue+label%3AArea-GenAPI).
 
 1. Add comments calling out any modifications to the generated code that were necessary.
-
-You can search for known issues in the [Known Generator Issues Markdown file](docs/known_generator_issues.md).
 
 > **Note:** When porting new packages between branches, you must regenerate the packages when crossing the 10.0/9.0 boundary.
 This is because in 10.0 the generated projects switched from using PackageReference to ProjectReference.

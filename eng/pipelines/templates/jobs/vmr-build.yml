@@ -570,8 +570,15 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
+          # Always use the VMR root's SetupNugetSources.ps1 rather than each inner repo's copy.
+          # The inner repo scripts dot-source that repo's eng/common/tools.ps1, which in turn imports
+          # the repo's configure-toolset.ps1. The root script only operates
+          # on the NuGet.config path passed to it, so it works for every repo.
+          # It's also convenient to use that so that changes don't need to be replicated on every
+          # inner repo's eng/common/ layout.
+          $setupScript = Join-Path "$(sourcesPath)" "eng/common/SetupNugetSources.ps1"
+
           function Setup-NuGetFeeds($repoDir, $description) {
-            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
             # Search for nuget.config using "Filter" to allow for case-insensitive matching.
             $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
@@ -663,7 +670,6 @@ jobs:
           -excludeCIBinarylog
           /bl:artifacts/log/Release/Test.binlog
         displayName: Run Tests
-        name: RunTests
         workingDirectory: ${{ variables.sourcesPath }}
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
@@ -944,7 +950,6 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
-        name: RunTests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ if eq(parameters.sign, 'True') }}:
@@ -1008,7 +1013,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -1034,7 +1039,7 @@ jobs:
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
       continueOnError: true
       inputs:
         testRunner: VSTest

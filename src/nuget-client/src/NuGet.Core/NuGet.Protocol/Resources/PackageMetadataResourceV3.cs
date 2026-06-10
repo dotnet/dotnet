@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Extensions;
 using NuGet.Protocol.Model;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.Protocol
@@ -26,6 +28,7 @@ namespace NuGet.Protocol
         private readonly ReadmeUriTemplateResource _readmeUriTemplateResource;
         private readonly PackageDetailsUriResourceV3 _packageDetailsUriResource;
         private readonly HttpSource _client;
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
 
         public PackageMetadataResourceV3(
             HttpSource client,
@@ -47,6 +50,17 @@ namespace NuGet.Protocol
             ReadmeUriTemplateResource readmeResource) : this(client, regResource, reportAbuseResource, packageDetailsUriResource)
         {
             _readmeUriTemplateResource = readmeResource;
+        }
+
+        internal PackageMetadataResourceV3(
+            HttpSource client,
+            RegistrationResourceV3 regResource,
+            ReportAbuseResourceV3 reportAbuseResource,
+            PackageDetailsUriResourceV3 packageDetailsUriResource,
+            ReadmeUriTemplateResource readmeResource,
+            IEnvironmentVariableReader environmentVariableReader) : this(client, regResource, reportAbuseResource, packageDetailsUriResource, readmeResource)
+        {
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <param name="packageId">PackageId for package we're looking.</param>
@@ -167,13 +181,29 @@ namespace NuGet.Protocol
                 return default(T);
             }
 
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
+                || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            {
+                return await DeserializeStreamDataWithStjAsync<T>(stream, token);
+            }
+            else
+            {
+                return DeserializeStreamDataWithNsj<T>(stream);
+            }
+        }
+
+        private static async Task<T> DeserializeStreamDataWithStjAsync<T>(Stream stream, CancellationToken token)
+        {
+            var typeInfo = (JsonTypeInfo<T>)Converters.PackageSearchJsonContext.Default.GetTypeInfo(typeof(T));
+            return await System.Text.Json.JsonSerializer.DeserializeAsync(stream, typeInfo, token);
+        }
+
+        private static T DeserializeStreamDataWithNsj<T>(Stream stream)
+        {
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
             {
-                var registrationIndex = JsonExtensions.JsonObjectSerializer
-                    .Deserialize<T>(jsonReader);
-
-                return await Task.FromResult(registrationIndex);
+                return JsonExtensions.JsonObjectSerializer.Deserialize<T>(jsonReader);
             }
         }
 
