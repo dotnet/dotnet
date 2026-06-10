@@ -1525,6 +1525,11 @@ Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawd�
         <target state="translated">Zależność projektu „{0}” nie określa wersji. Dołącz wersję zależności, aby zapewnić spójne wyniki przywracania.</target>
         <note>0 - package id</note>
       </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
+      </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
         <target state="translated">Wykryta wersja pakietu jest poza ograniczeniami zależności: element {0} wymaga wersji {1}, ale rozpoznano wersję {2}.</target>
