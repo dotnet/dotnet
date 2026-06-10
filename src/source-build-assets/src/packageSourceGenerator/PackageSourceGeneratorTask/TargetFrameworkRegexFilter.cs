@@ -5,13 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
     internal class TargetFrameworkRegexFilter
     {
+        private const string KeepPlaceholderMetadataName = "KeepPlaceholder";
         private readonly Regex? _includeTargetFrameworks;
         private readonly Regex? _excludeTargetFrameworks;
+        private readonly Regex? _keepPlaceholderTargetFrameworks;
         private readonly HashSet<string> _foundExcludedTargetFrameworks = new();
 
         /// <summary>
@@ -20,10 +23,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         public IReadOnlySet<string> FoundExcludedTargetFrameworks => _foundExcludedTargetFrameworks;
 
         public TargetFrameworkRegexFilter(IEnumerable<string>? includeTargetFrameworks,
-            IEnumerable<string>? excludeTargetFrameworks)
+            IEnumerable<ITaskItem>? excludeTargetFrameworks)
         {
             _includeTargetFrameworks = TransformPatternsToRegexList(includeTargetFrameworks);
-            _excludeTargetFrameworks = TransformPatternsToRegexList(excludeTargetFrameworks);
+            _excludeTargetFrameworks = TransformPatternsToRegexList(excludeTargetFrameworks?.Select(item => item.ItemSpec));
+            _keepPlaceholderTargetFrameworks = TransformPatternsToRegexList(excludeTargetFrameworks?
+                .Where(item => string.Equals(item.GetMetadata(KeepPlaceholderMetadataName), "true", StringComparison.OrdinalIgnoreCase))
+                .Select(item => item.ItemSpec));
         }
 
         /// <summary>
@@ -48,6 +54,19 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Determines whether placeholder files (_._) should be retained for the given target framework.
+        /// Returns true only when the target framework matches an excluded pattern that opted in via the
+        /// KeepPlaceholder="true" metadata.
+        /// </summary>
+        public bool ShouldKeepPlaceholder(string? targetFramework)
+        {
+            if (string.IsNullOrWhiteSpace(targetFramework))
+                return false;
+
+            return _keepPlaceholderTargetFrameworks is not null && _keepPlaceholderTargetFrameworks.IsMatch(targetFramework);
         }
 
         private static Regex? TransformPatternsToRegexList(IEnumerable<string>? patterns)

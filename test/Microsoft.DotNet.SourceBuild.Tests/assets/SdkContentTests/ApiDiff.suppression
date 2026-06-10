@@ -3,6 +3,12 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
@@ -21,6 +27,54 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Logs.Logger</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Logs.LogRecordAttributeList</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Logs.LogRecordData</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Logs.LogRecordSeverity</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Logs.LogRecordSeverityExtensions</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Metrics.ExemplarMeasurement`1</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Metrics.ExemplarReservoir</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:OpenTelemetry.Metrics.FixedSizeExemplarReservoir</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
     <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
     <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
@@ -30,6 +84,96 @@
     <Target>T:System.Runtime.CompilerServices.RequiresLocationAttribute</Target>
     <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
     <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LoggerProvider.GetLogger</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LoggerProvider.GetLogger(System.String,System.String)</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LoggerProvider.GetLogger(System.String)</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LoggerProvider.TryCreateLogger(System.String,OpenTelemetry.Logs.Logger@)</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Microsoft.Extensions.Logging.OpenTelemetryLoggingExtensions.UseOpenTelemetry(Microsoft.Extensions.Logging.ILoggingBuilder,System.Action{OpenTelemetry.Logs.LoggerProviderBuilder},System.Action{OpenTelemetry.Logs.OpenTelemetryLoggerOptions})</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Microsoft.Extensions.Logging.OpenTelemetryLoggingExtensions.UseOpenTelemetry(Microsoft.Extensions.Logging.ILoggingBuilder,System.Action{OpenTelemetry.Logs.LoggerProviderBuilder})</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Microsoft.Extensions.Logging.OpenTelemetryLoggingExtensions.UseOpenTelemetry(Microsoft.Extensions.Logging.ILoggingBuilder)</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LogRecord.get_Logger</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LogRecord.get_Severity</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LogRecord.get_SeverityText</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LogRecord.set_Severity(System.Nullable{OpenTelemetry.Logs.LogRecordSeverity})</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Logs.LogRecord.set_SeverityText(System.String)</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Metrics.MetricStreamConfiguration.get_ExemplarReservoirFactory</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Metrics.MetricStreamConfiguration.set_ExemplarReservoirFactory(System.Func{OpenTelemetry.Metrics.ExemplarReservoir})</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:OpenTelemetry.Sdk.CreateLoggerProviderBuilder</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
@@ -45,9 +189,45 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.VisualStudio.SolutionPersistence, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
+    <Target>OpenTelemetry.Api, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>OpenTelemetry.Api.ProviderBuilderExtensions, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Api.ProviderBuilderExtensions.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Api.ProviderBuilderExtensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>OpenTelemetry, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>OpenTelemetry.Exporter.InMemory, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Exporter.InMemory.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Exporter.InMemory.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>OpenTelemetry.Exporter.OpenTelemetryProtocol, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>OpenTelemetry.Instrumentation.Http, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>OpenTelemetry.Instrumentation.Runtime, Version=x.y.z, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c</Target>
+    <Left>/msft/sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll</Left>
+    <Right>/sb/sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>

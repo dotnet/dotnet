@@ -37,7 +37,6 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
     public partial interface IMetricsListener
     {
         string Name { get; }
-
         MeasurementHandlers GetMeasurementHandlers();
         void Initialize(IObservableInstrumentsSource source);
         bool InstrumentPublished(System.Diagnostics.Metrics.Instrument instrument, out object? userState);
@@ -53,6 +52,7 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
         public string? MeterName { get { throw null; } }
         public MeterScope Scopes { get { throw null; } }
     }
+
     public partial interface IObservableInstrumentsSource
     {
         void RecordObservableInstruments();
@@ -68,6 +68,7 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
         public System.Diagnostics.Metrics.MeasurementCallback<long>? LongHandler { get { throw null; } set { } }
         public System.Diagnostics.Metrics.MeasurementCallback<short>? ShortHandler { get { throw null; } set { } }
     }
+
     [System.Flags]
     public enum MeterScope
     {
@@ -90,6 +91,7 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
         public static MetricsOptions EnableMetrics(this MetricsOptions options, string? meterName, string? instrumentName = null, string? listenerName = null, MeterScope scopes = MeterScope.Global | MeterScope.Local) { throw null; }
         public static MetricsOptions EnableMetrics(this MetricsOptions options, string? meterName) { throw null; }
     }
+
     public partial class MetricsOptions
     {
         public System.Collections.Generic.IList<InstrumentRule> Rules { get { throw null; } }

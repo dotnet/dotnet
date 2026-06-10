@@ -74,6 +74,7 @@ namespace Microsoft.Extensions.Logging
         public static LoggerFilterOptions AddFilter<T>(this LoggerFilterOptions builder, string? category, LogLevel level) where T : ILoggerProvider { throw null; }
         public static LoggerFilterOptions AddFilter<T>(this LoggerFilterOptions builder, string? category, System.Func<LogLevel, bool> levelFilter) where T : ILoggerProvider { throw null; }
     }
+
     public partial class LoggerFactory : ILoggerFactory, System.IDisposable
     {
         public LoggerFactory() { }
@@ -93,12 +94,14 @@ namespace Microsoft.Extensions.Logging
     {
         public ActivityTrackingOptions ActivityTrackingOptions { get { throw null; } set { } }
     }
+
     public partial class LoggerFilterOptions
     {
         public bool CaptureScopes { get { throw null; } set { } }
         public LogLevel MinLevel { get { throw null; } set { } }
         public System.Collections.Generic.IList<LoggerFilterRule> Rules { get { throw null; } }
     }
+
     public partial class LoggerFilterRule
     {
         public LoggerFilterRule(string? providerName, string? categoryName, LogLevel? logLevel, System.Func<string?, string?, LogLevel, bool>? filter) { }
@@ -106,14 +109,87 @@ namespace Microsoft.Extensions.Logging
         public System.Func<string?, string?, LogLevel, bool>? Filter { get { throw null; } }
         public LogLevel? LogLevel { get { throw null; } }
         public string? ProviderName { get { throw null; } }
-
         public override string ToString() { throw null; }
     }
+
     public static partial class LoggingBuilderExtensions
     {
         public static ILoggingBuilder AddProvider(this ILoggingBuilder builder, ILoggerProvider provider) { throw null; }
         public static ILoggingBuilder ClearProviders(this ILoggingBuilder builder) { throw null; }
         public static ILoggingBuilder Configure(this ILoggingBuilder builder, System.Action<LoggerFactoryOptions> action) { throw null; }
         public static ILoggingBuilder SetMinimumLevel(this ILoggingBuilder builder, LogLevel level) { throw null; }
+    }
+}
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
     }
 }

@@ -10,8 +10,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.DotNet.SwaggerGenerator.Modeler;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 
 namespace Microsoft.DotNet.SwaggerGenerator.CmdLine
 {
@@ -127,9 +127,9 @@ namespace Microsoft.DotNet.SwaggerGenerator.CmdLine
             {
                 using (Stream docStream = await client.GetStreamAsync(input))
                 {
-                    var doc = ServiceClientModelFactory.ReadDocument(docStream, out OpenApiDiagnostic diagnostic);
+                    ReadResult result = await ServiceClientModelFactory.ReadDocumentAsync(docStream);
 
-                    return (diagnostic, doc);
+                    return (result.Diagnostic, result.Document);
                 }
             }
         }

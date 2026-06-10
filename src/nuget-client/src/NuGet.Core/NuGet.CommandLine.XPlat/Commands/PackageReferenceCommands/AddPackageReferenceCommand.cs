@@ -4,116 +4,141 @@
 #nullable enable
 
 using System;
+using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using Microsoft.Extensions.CommandLineUtils;
-using NuGet.Common;
 using NuGet.Packaging.Signing;
 
 namespace NuGet.CommandLine.XPlat
 {
     internal static class AddPackageReferenceCommand
     {
-        public static void Register(CommandLineApplication app, Func<ILogger> getLogger,
+        internal static void Register(Command parent, Func<ILoggerWithColor> getLogger,
             Func<IPackageReferenceCommandRunner> getCommandRunner,
             Func<IVirtualProjectBuilder?>? getVirtualProjectBuilder = null)
         {
-            app.Command("add", addpkg =>
+            var addCommand = new Command("add", Strings.AddPkg_Description);
+
+            var id = new Option<string>("--package")
             {
-                addpkg.Description = Strings.AddPkg_Description;
-                addpkg.HelpOption(XPlatUtility.HelpOption);
+                Description = Strings.AddPkg_PackageIdDescription,
+                Arity = ArgumentArity.ExactlyOne
+            };
 
-                addpkg.Option(
-                    CommandConstants.ForceEnglishOutputOption,
-                    Strings.ForceEnglishOutput_Description,
-                    CommandOptionType.NoValue);
+            var version = new Option<string>("--version")
+            {
+                Description = Strings.AddPkg_PackageVersionDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var id = addpkg.Option(
-                    "--package",
-                    Strings.AddPkg_PackageIdDescription,
-                    CommandOptionType.SingleValue);
+            var dgFilePath = new Option<string>("--dg-file", "-d")
+            {
+                Description = Strings.AddPkg_DgFileDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var version = addpkg.Option(
-                    "--version",
-                    Strings.AddPkg_PackageVersionDescription,
-                    CommandOptionType.SingleValue);
+            var projectPath = new Option<string>("--project", "-p")
+            {
+                Description = Strings.AddPkg_ProjectPathDescription,
+                Arity = ArgumentArity.ExactlyOne
+            };
 
-                var dgFilePath = addpkg.Option(
-                    "-d|--dg-file",
-                    Strings.AddPkg_DgFileDescription,
-                    CommandOptionType.SingleValue);
+            var frameworks = new Option<string[]>("--framework", "-f")
+            {
+                Description = Strings.AddPkg_FrameworksDescription,
+                Arity = ArgumentArity.OneOrMore
+            };
 
-                var projectPath = addpkg.Option(
-                    "-p|--project",
-                    Strings.AddPkg_ProjectPathDescription,
-                    CommandOptionType.SingleValue);
+            var noRestore = new Option<bool>("--no-restore", "-n")
+            {
+                Description = Strings.AddPkg_NoRestoreDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var frameworks = addpkg.Option(
-                    "-f|--framework",
-                    Strings.AddPkg_FrameworksDescription,
-                    CommandOptionType.MultipleValue);
+            var sources = new Option<string[]>("--source", "-s")
+            {
+                Description = Strings.AddPkg_SourcesDescription,
+                Arity = ArgumentArity.OneOrMore
+            };
 
-                var noRestore = addpkg.Option(
-                    "-n|--no-restore",
-                    Strings.AddPkg_NoRestoreDescription,
-                    CommandOptionType.NoValue);
+            var packageDirectory = new Option<string>("--package-directory")
+            {
+                Description = Strings.AddPkg_PackageDirectoryDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var sources = addpkg.Option(
-                    "-s|--source",
-                    Strings.AddPkg_SourcesDescription,
-                    CommandOptionType.MultipleValue);
+            var interactive = new Option<bool>("--interactive")
+            {
+                Description = Strings.AddPkg_InteractiveDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var packageDirectory = addpkg.Option(
-                    "--package-directory",
-                    Strings.AddPkg_PackageDirectoryDescription,
-                    CommandOptionType.SingleValue);
+            var prerelease = new Option<bool>("--prerelease")
+            {
+                Description = Strings.Prerelease_Description,
+                Arity = ArgumentArity.Zero
+            };
 
-                var interactive = addpkg.Option(
-                    "--interactive",
-                    Strings.AddPkg_InteractiveDescription,
-                    CommandOptionType.NoValue);
+            addCommand.Options.Add(id);
+            addCommand.Options.Add(version);
+            addCommand.Options.Add(dgFilePath);
+            addCommand.Options.Add(projectPath);
+            addCommand.Options.Add(frameworks);
+            addCommand.Options.Add(noRestore);
+            addCommand.Options.Add(sources);
+            addCommand.Options.Add(packageDirectory);
+            addCommand.Options.Add(interactive);
+            addCommand.Options.Add(prerelease);
 
-                var prerelease = addpkg.Option(
-                    "--prerelease",
-                    Strings.Prerelease_Description,
-                    CommandOptionType.NoValue);
+            addCommand.SetAction(async (parseResult, cancellationToken) =>
+            {
+                var virtualProjectBuilder = getVirtualProjectBuilder?.Invoke();
 
-                addpkg.OnExecute(() =>
+                var idValue = parseResult.GetValue(id);
+                var projectPathValue = parseResult.GetValue(projectPath);
+                var dgFilePathValue = parseResult.GetValue(dgFilePath);
+                var noRestoreValue = parseResult.GetValue(noRestore);
+                var prereleaseValue = parseResult.GetValue(prerelease);
+                var versionValue = parseResult.GetValue(version);
+
+                ValidateArgument(idValue, "--package", "add");
+                ValidateArgument(projectPathValue, "--project", "add");
+                ValidateProjectPath(projectPathValue, "add", virtualProjectBuilder);
+                if (!noRestoreValue)
                 {
-                    var virtualProjectBuilder = getVirtualProjectBuilder?.Invoke();
+                    ValidateArgument(dgFilePathValue, "--dg-file", "add");
+                }
+                var logger = getLogger();
+                var noVersion = string.IsNullOrEmpty(versionValue);
+                var packageVersion = !string.IsNullOrEmpty(versionValue) ? versionValue : null;
+                ValidatePrerelease(prereleaseValue, noVersion, "add");
 
-                    ValidateArgument(id, addpkg.Name);
-                    ValidateArgument(projectPath, addpkg.Name);
-                    ValidateProjectPath(projectPath, addpkg.Name, virtualProjectBuilder);
-                    if (!noRestore.HasValue())
-                    {
-                        ValidateArgument(dgFilePath, addpkg.Name);
-                    }
-                    var logger = getLogger();
-                    var noVersion = !version.HasValue();
-                    var packageVersion = version.HasValue() ? version.Value() : null;
-                    ValidatePrerelease(prerelease.HasValue(), noVersion, addpkg.Name);
-                    var packageRefArgs = new PackageReferenceArgs(projectPath.Value(), logger)
-                    {
-                        Frameworks = CommandLineUtility.SplitAndJoinAcrossMultipleValues(frameworks.Values),
-                        Sources = CommandLineUtility.SplitAndJoinAcrossMultipleValues(sources.Values),
-                        PackageDirectory = packageDirectory.Value(),
-                        NoRestore = noRestore.HasValue(),
-                        NoVersion = noVersion,
-                        DgFilePath = dgFilePath.Value(),
-                        Interactive = interactive.HasValue(),
-                        Prerelease = prerelease.HasValue(),
-                        PackageVersion = packageVersion,
-                        PackageId = id.Values[0]
-                    };
-                    var msBuild = new MSBuildAPIUtility(logger, virtualProjectBuilder);
+                var frameworkValues = parseResult.GetValue(frameworks) ?? Array.Empty<string>();
+                var sourceValues = parseResult.GetValue(sources) ?? Array.Empty<string>();
 
-                    X509TrustStore.InitializeForDotNetSdk(logger);
+                var packageRefArgs = new PackageReferenceArgs(projectPathValue, logger)
+                {
+                    Frameworks = CommandLineUtility.SplitAndJoinAcrossMultipleValues(frameworkValues),
+                    Sources = CommandLineUtility.SplitAndJoinAcrossMultipleValues(sourceValues),
+                    PackageDirectory = parseResult.GetValue(packageDirectory),
+                    NoRestore = noRestoreValue,
+                    NoVersion = noVersion,
+                    DgFilePath = dgFilePathValue,
+                    Interactive = parseResult.GetValue(interactive),
+                    Prerelease = prereleaseValue,
+                    PackageVersion = packageVersion!,
+                    PackageId = idValue
+                };
+                var msBuild = new MSBuildAPIUtility(logger, virtualProjectBuilder!);
 
-                    var addPackageRefCommandRunner = getCommandRunner();
-                    return addPackageRefCommandRunner.ExecuteCommand(packageRefArgs, msBuild);
-                });
+                X509TrustStore.InitializeForDotNetSdk(logger);
+
+                var addPackageRefCommandRunner = getCommandRunner();
+                return await addPackageRefCommandRunner.ExecuteCommand(packageRefArgs, msBuild);
             });
+
+            parent.Subcommands.Add(addCommand);
         }
 
         private static void ValidatePrerelease(bool prerelease, bool noVersion, string commandName)
@@ -125,26 +150,26 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        private static void ValidateArgument(CommandOption arg, string commandName)
+        private static void ValidateArgument([NotNull] string? value, string optionName, string commandName)
         {
-            if (arg.Values.Count < 1)
+            if (string.IsNullOrEmpty(value))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PkgMissingArgument,
                     commandName,
-                    arg.Template));
+                    optionName));
             }
         }
 
-        private static void ValidateProjectPath(CommandOption projectPath, string commandName, IVirtualProjectBuilder? virtualProjectBuilder)
+        private static void ValidateProjectPath(string projectPath, string commandName, IVirtualProjectBuilder? virtualProjectBuilder)
         {
-            if (!File.Exists(projectPath.Value())
-                || (!projectPath.Value().EndsWith("proj", StringComparison.OrdinalIgnoreCase)
-                    && virtualProjectBuilder?.IsValidEntryPointPath(projectPath.Value()) != true))
+            if (!File.Exists(projectPath)
+                || (!projectPath.EndsWith("proj", StringComparison.OrdinalIgnoreCase)
+                    && virtualProjectBuilder?.IsValidEntryPointPath(projectPath) != true))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Strings.Error_PkgMissingOrInvalidProjectFile,
                     commandName,
-                    projectPath.Value()));
+                    projectPath));
             }
         }
     }

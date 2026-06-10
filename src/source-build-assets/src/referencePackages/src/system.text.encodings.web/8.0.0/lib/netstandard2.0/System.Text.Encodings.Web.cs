@@ -26,12 +26,84 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Text.Encodings.Web
 {
     public abstract partial class HtmlEncoder : TextEncoder
     {
         public static HtmlEncoder Default { get { throw null; } }
-
         public static HtmlEncoder Create(TextEncoderSettings settings) { throw null; }
         public static HtmlEncoder Create(params Unicode.UnicodeRange[] allowedRanges) { throw null; }
     }
@@ -40,7 +112,6 @@ namespace System.Text.Encodings.Web
     {
         public static JavaScriptEncoder Default { get { throw null; } }
         public static JavaScriptEncoder UnsafeRelaxedJsonEscaping { get { throw null; } }
-
         public static JavaScriptEncoder Create(TextEncoderSettings settings) { throw null; }
         public static JavaScriptEncoder Create(params Unicode.UnicodeRange[] allowedRanges) { throw null; }
     }
@@ -48,7 +119,6 @@ namespace System.Text.Encodings.Web
     public abstract partial class TextEncoder
     {
         public abstract int MaxOutputCharactersPerInputCharacter { get; }
-
         public virtual void Encode(IO.TextWriter output, char[] value, int startIndex, int characterCount) { }
         public virtual void Encode(IO.TextWriter output, string value, int startIndex, int characterCount) { }
         public void Encode(IO.TextWriter output, string value) { }
@@ -62,6 +132,7 @@ namespace System.Text.Encodings.Web
         public abstract unsafe bool TryEncodeUnicodeScalar(int unicodeScalar, char* buffer, int bufferLength, out int numberOfCharactersWritten);
         public abstract bool WillEncode(int unicodeScalar);
     }
+
     public partial class TextEncoderSettings
     {
         public TextEncoderSettings() { }
@@ -79,10 +150,10 @@ namespace System.Text.Encodings.Web
         public virtual void ForbidRanges(params Unicode.UnicodeRange[] ranges) { }
         public virtual Collections.Generic.IEnumerable<int> GetAllowedCodePoints() { throw null; }
     }
+
     public abstract partial class UrlEncoder : TextEncoder
     {
         public static UrlEncoder Default { get { throw null; } }
-
         public static UrlEncoder Create(TextEncoderSettings settings) { throw null; }
         public static UrlEncoder Create(params Unicode.UnicodeRange[] allowedRanges) { throw null; }
     }
@@ -95,9 +166,9 @@ namespace System.Text.Unicode
         public UnicodeRange(int firstCodePoint, int length) { }
         public int FirstCodePoint { get { throw null; } }
         public int Length { get { throw null; } }
-
         public static UnicodeRange Create(char firstCharacter, char lastCharacter) { throw null; }
     }
+
     public static partial class UnicodeRanges
     {
         public static UnicodeRange All { get { throw null; } }

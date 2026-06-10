@@ -12,8 +12,11 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NuGet.Common;
+using NuGet.Protocol.Converters;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Model;
+using NuGet.Shared;
 
 namespace NuGet.Protocol
 {
@@ -21,23 +24,19 @@ namespace NuGet.Protocol
     {
         private readonly HttpSource _client;
         private readonly Uri[] _searchEndpoints;
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        private readonly RawSearchResourceV3 _rawSearchResource;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        [Obsolete("Use PackageSearchResource instead (via SourceRepository.GetResourceAsync<PackageSearchResource>")]
-        public PackageSearchResourceV3(RawSearchResourceV3 searchResource)
-            : base()
-        {
-            _rawSearchResource = searchResource;
-        }
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
 
         internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints)
+            : this(client, searchEndpoints, environmentVariableReader: null)
+        {
+        }
+
+        internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints, IEnvironmentVariableReader environmentVariableReader)
             : base()
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _searchEndpoints = searchEndpoints?.ToArray() ?? throw new ArgumentNullException(nameof(searchEndpoints));
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <summary>
@@ -53,27 +52,15 @@ namespace NuGet.Protocol
         /// <returns>List of package meta data.</returns>
         public override async Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filter, int skip, int take, Common.ILogger log, CancellationToken cancellationToken)
         {
-            IEnumerable<PackageSearchMetadata> searchResultMetadata;
             var metadataCache = new MetadataReferenceCache();
 
-            if (_client != null && _searchEndpoints != null)
-            {
-                searchResultMetadata = await Search(
-                    searchTerm,
-                    filter,
-                    skip,
-                    take,
-                    log,
-                    cancellationToken);
-            }
-            else
-            {
-#pragma warning disable CS0618
-                var searchResultJsonObjects = await _rawSearchResource.Search(searchTerm, filter, skip, take, Common.NullLogger.Instance, cancellationToken);
-#pragma warning restore CS0618
-                searchResultMetadata = searchResultJsonObjects
-                    .Select(s => s.FromJToken<PackageSearchMetadata>());
-            }
+            var searchResultMetadata = await Search(
+                searchTerm,
+                filter,
+                skip,
+                take,
+                log,
+                cancellationToken);
 
             var searchResults = searchResultMetadata
                 .Select(m => m.WithVersions(() => GetVersions(m, filter)))
@@ -255,6 +242,36 @@ namespace NuGet.Protocol
                 return null;
             }
 
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
+                || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            {
+                return await ProcessHttpStreamWithStjAsync(httpInitialResponse, take, token);
+            }
+            else
+            {
+                return await ProcessHttpStreamWithNsjAsync(httpInitialResponse, take, token);
+            }
+        }
+
+        private static async Task<V3SearchResults> ProcessHttpStreamWithStjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        {
+#if NETCOREAPP2_0_OR_GREATER
+            using var stream = await httpInitialResponse.Content.ReadAsStreamAsync(token);
+#else
+            using var stream = await httpInitialResponse.Content.ReadAsStreamAsync();
+#endif
+            var results = await System.Text.Json.JsonSerializer.DeserializeAsync(stream, PackageSearchJsonContext.Default.V3SearchResults, token);
+
+            if (results?.Data?.Count > take)
+            {
+                results.Data = results.Data.Take((int)take).ToList();
+            }
+
+            return results;
+        }
+
+        private static async Task<V3SearchResults> ProcessHttpStreamWithNsjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        {
             var _newtonsoftConvertersSerializer = JsonSerializer.Create(JsonExtensions.ObjectSerializationSettings);
             _newtonsoftConvertersSerializer.Converters.Add(new Converters.V3SearchResultsConverter(take));
 

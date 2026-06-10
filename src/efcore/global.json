@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "11.0.100-preview.5.26227.104",
+    "version": "11.0.100-preview.5.26279.113",
     "allowPrerelease": true,
     "rollForward": "latestMajor",
     "paths": [
@@ -10,7 +10,7 @@
     "errorMessage": "The required .NET SDK wasn't found. Please run ./restore.sh or .\\restore.cmd to install it."
   },
   "tools": {
-    "dotnet": "11.0.100-preview.5.26227.104",
+    "dotnet": "11.0.100-preview.5.26279.113",
     "runtimes": {
       "dotnet": [
         "$(MicrosoftNETCorePlatformsVersion)"

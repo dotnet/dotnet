@@ -7,30 +7,31 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json.Nodes;
 using System.Threading;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Interfaces;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
+using System.Threading.Tasks;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
+using Microsoft.OpenApi.YamlReader;
 
 namespace Microsoft.DotNet.SwaggerGenerator.Modeler
 {
     public class ServiceClientModelFactory
     {
-        public static OpenApiDocument ReadDocument(Stream docStream, out OpenApiDiagnostic diagnostic)
+        public static async Task<ReadResult> ReadDocumentAsync(Stream docStream, CancellationToken cancellationToken = default)
         {
-            var reader = new OpenApiStreamReader(
-                new OpenApiReaderSettings
+            var settings = new OpenApiReaderSettings
+            {
+                ExtensionParsers =
                 {
-                    ReferenceResolution = ReferenceResolutionSetting.ResolveLocalReferences,
-                    ExtensionParsers =
-                    {
-                        ["x-ms-enum"] = EnumOpenApiExtension.Parse,
-                        ["x-ms-paginated"] = PaginatedOpenApiExtension.Parse,
-                    },
-                });
+                    ["x-ms-enum"] = EnumOpenApiExtension.Parse,
+                    ["x-ms-paginated"] = PaginatedOpenApiExtension.Parse,
+                },
+            };
+            settings.AddJsonReader();
+            settings.AddYamlReader();
 
-            return reader.Read(docStream, out diagnostic);
+            return await OpenApiModelFactory.LoadAsync(docStream, format: null, settings, cancellationToken);
         }
 
         private readonly Dictionary<string, EnumTypeModel> _enumTypeModels = new Dictionary<string, EnumTypeModel>();
@@ -43,7 +44,6 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
         private readonly AsyncLocal<Stack<string>> _methodNameStack = new AsyncLocal<Stack<string>>();
 
         private readonly Dictionary<string, TypeModel> _types = new Dictionary<string, TypeModel>();
-        private OpenApiDocument _rootDocument = null;
 
         public ServiceClientModelFactory(GeneratorOptions options)
         {
@@ -119,7 +119,6 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
 
         public ServiceClientModel Create(OpenApiDocument document)
         {
-            _rootDocument = document;
             GeneratorOptions options = _generatorOptions;
             ImmutableList<MethodGroupModel> methodGroups = document.Paths
                 .SelectMany(p => p.Value.Operations.Select(o => (path: p.Key, type: o.Key, operation: o.Value)))
@@ -136,10 +135,10 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
 
         private MethodGroupModel CreateMethodGroupModel(
             string name,
-            IEnumerable<(string path, OperationType type, OpenApiOperation operation)> operations)
+            IEnumerable<(string path, HttpMethod type, OpenApiOperation operation)> operations)
         {
             var methods = new List<MethodModel>();
-            foreach ((string path, OperationType type, OpenApiOperation operation) in operations)
+            foreach ((string path, HttpMethod type, OpenApiOperation operation) in operations)
             {
                 methods.Add(CreateMethodModel(path, type, operation));
             }
@@ -147,7 +146,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             return new MethodGroupModel(name, _generatorOptions.Namespace, methods);
         }
 
-        private MethodModel CreateMethodModel(string path, OperationType type, OpenApiOperation operation)
+        private MethodModel CreateMethodModel(string path, HttpMethod type, OpenApiOperation operation)
         {
 
             string name = operation.OperationId;
@@ -160,7 +159,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             name = name.TrimStart('_');
             using (WithMethodName(name))
             {
-                IList<ParameterModel> parameters = (operation.Parameters ?? Array.Empty<OpenApiParameter>())
+                IList<ParameterModel> parameters = (operation.Parameters ?? Array.Empty<IOpenApiParameter>())
                     .Select(CreateParameterModel)
                     .ToList();
                 if (operation.RequestBody != null)
@@ -170,7 +169,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
 
                 TypeReference errorType = null;
 
-                if (operation.Responses.TryGetValue("default", out OpenApiResponse errorResponse))
+                if (operation.Responses.TryGetValue("default", out IOpenApiResponse errorResponse))
                 {
                     errorType = ResolveTypeForResponse(errorResponse, name);
                 }
@@ -191,17 +190,17 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                 PaginatedOpenApiExtension paginated = null;
 
                 if (responseType is TypeReference.ArrayTypeReference &&
-                    type == OperationType.Get &&
+                    type == HttpMethod.Get &&
                     operation.Extensions.ContainsKey("x-ms-paginated"))
                 {
                     paginated = operation.Extensions["x-ms-paginated"] as PaginatedOpenApiExtension;
                 }
 
-                return new MethodModel(name, path, GetHttpMethod(type), responseType, errorType, parameters, paginated);
+                return new MethodModel(name, path, type, responseType, errorType, parameters, paginated);
             }
         }
 
-        private TypeReference ResolveTypeForResponse(OpenApiResponse response, string name)
+        private TypeReference ResolveTypeForResponse(IOpenApiResponse response, string name)
         {
             var schema = response.Content.Values.Select(t => t.Schema).FirstOrDefault(s => s != null);
 
@@ -213,30 +212,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             return null;
         }
 
-        private HttpMethod GetHttpMethod(OperationType type)
-        {
-            switch (type)
-            {
-                case OperationType.Get:
-                    return HttpMethod.Get;
-                case OperationType.Put:
-                    return HttpMethod.Put;
-                case OperationType.Post:
-                    return HttpMethod.Post;
-                case OperationType.Delete:
-                    return HttpMethod.Delete;
-                case OperationType.Options:
-                    return HttpMethod.Options;
-                case OperationType.Head:
-                    return HttpMethod.Head;
-                case OperationType.Patch:
-                    return new HttpMethod("PATCH");
-                default:
-                    throw new NotSupportedException(type.ToString());
-            }
-        }
-
-        private ParameterModel CreateParameterModel(OpenApiRequestBody body)
+        private ParameterModel CreateParameterModel(IOpenApiRequestBody body)
         {
             const string parameterName = "body"; // TODO: Get parameter name from the request body object once https://github.com/Microsoft/OpenAPI.NET/issues/378 is fixed
             using (WithParameterName(parameterName))
@@ -247,7 +223,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             }
         }
 
-        private ParameterModel CreateParameterModel(OpenApiParameter parameter)
+        private ParameterModel CreateParameterModel(IOpenApiParameter parameter)
         {
             using (WithParameterName(parameter.Name))
             {
@@ -256,29 +232,33 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             }
         }
 
-        private TypeReference ResolveType(OpenApiSchema schema)
+        private TypeReference ResolveType(IOpenApiSchema schema)
         {
             if (schema == null)
             {
                 return TypeReference.Void;
             }
 
-            if (schema.UnresolvedReference)
+            JsonSchemaType? schemaType = schema.Type;
+            if (schemaType.HasValue)
             {
-                schema = (OpenApiSchema) _rootDocument.ResolveReference(schema.Reference);
+                schemaType &= ~JsonSchemaType.Null;
             }
 
-            string type = schema.Type;
             string format = schema.Format;
-            OpenApiSchema items = schema.Items;
-            IList<string> enumeration = schema.Enum.OfType<OpenApiString>().Select(s => s.Value).ToList();
+            IOpenApiSchema items = schema.Items;
+            IList<string> enumeration = schema.Enum?
+                .OfType<JsonValue>()
+                .Where(v => v.TryGetValue<string>(out _))
+                .Select(v => v.GetValue<string>())
+                .ToList() ?? new List<string>();
             IDictionary<string, IOpenApiExtension> extensions = schema.Extensions;
 
-            switch (type)
+            switch (schemaType)
             {
-                case "boolean":
+                case JsonSchemaType.Boolean:
                     return TypeReference.Boolean;
-                case "integer":
+                case JsonSchemaType.Integer:
                     switch (format)
                     {
                         case "int32":
@@ -287,7 +267,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                         default:
                             return TypeReference.Int64;
                     }
-                case "number":
+                case JsonSchemaType.Number:
                     switch (format)
                     {
                         case "float":
@@ -296,7 +276,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                         default:
                             return TypeReference.Double;
                     }
-                case "string":
+                case JsonSchemaType.String:
                     if (enumeration.Any())
                     {
                         if (enumeration.Count == 1)
@@ -304,7 +284,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                             return TypeReference.Constant(enumeration[0]);
                         }
 
-                        string enumName = schema.Reference?.Id;
+                        string enumName = GetReferenceId(schema);
                         if (extensions.TryGetValue("x-ms-enum", out IOpenApiExtension ext) && ext is EnumOpenApiExtension enumExtension)
                         {
                             enumName = enumExtension.Name;
@@ -339,12 +319,14 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                             return TypeReference.DateTime;
                         case "uuid":
                             return TypeReference.Uuid;
+                        case "binary":
+                            return TypeReference.File;
                         default:
                             return TypeReference.String;
                     }
-                case "array":
+                case JsonSchemaType.Array:
                     return TypeReference.Array(ResolveType(items));
-                case "object":
+                case JsonSchemaType.Object:
                     bool hasProperties = schema.Properties?.Count > 0;
                     bool hasAdditionalProperties = schema.AdditionalProperties != null;
                     if (!hasProperties && hasAdditionalProperties)
@@ -358,14 +340,16 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                     }
 
                     return TypeReference.Object(ResolveTypeModel(schema));
-                case "file":
-                    return TypeReference.File;
                 case null:
                     return TypeReference.Any;
-                case "null":
                 default:
-                    throw new NotSupportedException(type);
+                    throw new NotSupportedException(schemaType.ToString());
             }
+        }
+
+        private static string GetReferenceId(IOpenApiSchema schema)
+        {
+            return (schema as OpenApiSchemaReference)?.Reference?.Id;
         }
 
         private TypeModel ResolveEnumTypeModel(IList<string> enumeration, string enumName)
@@ -381,7 +365,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             return value;
         }
 
-        private TypeReference ResolveType(OpenApiSchema schema, string operationId)
+        private TypeReference ResolveType(IOpenApiSchema schema, string operationId)
         {
             using (WithTypeName(operationId))
             using (WithPropertyName("Response"))
@@ -390,14 +374,20 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             }
         }
 
-        private TypeModel ResolveTypeModel(OpenApiSchema schema)
+        private TypeModel ResolveTypeModel(IOpenApiSchema schema)
         {
-            if (schema.Type != "object")
+            JsonSchemaType? schemaType = schema.Type;
+            if (schemaType.HasValue)
+            {
+                schemaType &= ~JsonSchemaType.Null;
+            }
+
+            if (schemaType != JsonSchemaType.Object)
             {
                 throw new ArgumentException("Schema must be object", nameof(schema));
             }
 
-            string id = schema.Reference?.Id;
+            string id = GetReferenceId(schema);
             if (id == null)
             {
                 id = Helpers.PascalCase((CurrentTypeName + "-" + CurrentPropertyName).AsSpan());
@@ -411,7 +401,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             return _types[id] = CreateTypeModel(id, schema);
         }
 
-        private TypeModel CreateTypeModel(string name, OpenApiSchema schema)
+        private TypeModel CreateTypeModel(string name, IOpenApiSchema schema)
         {
             using (WithTypeName(name))
             {
@@ -441,7 +431,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
             }
         }
 
-        private PropertyModel CreatePropertyModel(string name, OpenApiSchema type, bool required)
+        private PropertyModel CreatePropertyModel(string name, IOpenApiSchema type, bool required)
         {
             var propertyType = ResolveType(type);
             return new PropertyModel(name, required, type.ReadOnly, propertyType);

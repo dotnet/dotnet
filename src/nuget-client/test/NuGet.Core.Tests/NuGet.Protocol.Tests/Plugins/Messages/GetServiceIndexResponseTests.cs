@@ -22,9 +22,9 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullServiceIndexWhenResponseCodeIsSuccess()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndex: (string?)null!));
+                () => new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndexJson: (string?)null!));
 
-            Assert.Equal("serviceIndex", exception.ParamName);
+            Assert.Equal("serviceIndexJson", exception.ParamName);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             if (exception is ArgumentNullException)
             {
-                Assert.Equal("serviceIndex", ((ArgumentNullException)exception).ParamName);
+                Assert.Equal("serviceIndexJson", ((ArgumentNullException)exception).ParamName);
             }
         }
     }

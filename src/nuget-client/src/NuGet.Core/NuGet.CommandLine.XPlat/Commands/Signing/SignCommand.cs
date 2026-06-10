@@ -4,11 +4,13 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
+using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Packaging.Signing;
@@ -19,177 +21,212 @@ namespace NuGet.CommandLine.XPlat
     {
         private const string CommandName = "sign";
 
-        internal static void Register(CommandLineApplication app,
-            Func<ILogger> getLogger,
+        internal static void Register(Command parent,
+            Func<ILoggerWithColor> getLogger,
             Action<LogLevel> setLogLevel,
             Func<ISignCommandRunner> getCommandRunner)
         {
-            app.Command(CommandName, signCmd =>
+            var signCmd = new Command(CommandName, Strings.SignCommandDescription);
+
+            var packagePaths = new Argument<string[]>("package-paths")
             {
-                CommandArgument packagePaths = signCmd.Argument(
-                    "<package-paths>",
-                    Strings.SignCommandPackagePathDescription,
-                    multipleValues: true);
+                Description = Strings.SignCommandPackagePathDescription,
+                Arity = ArgumentArity.OneOrMore
+            };
 
-                CommandOption outputDirectory = signCmd.Option(
-                    "-o|--output",
-                    Strings.SignCommandOutputDirectoryDescription,
-                    CommandOptionType.SingleValue);
+            var outputDirectory = new Option<string>("--output", "-o")
+            {
+                Description = Strings.SignCommandOutputDirectoryDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption path = signCmd.Option(
-                    "--certificate-path",
-                    Strings.SignCommandCertificatePathDescription,
-                    CommandOptionType.SingleValue);
+            var path = new Option<string>("--certificate-path")
+            {
+                Description = Strings.SignCommandCertificatePathDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption store = signCmd.Option(
-                    "--certificate-store-name",
-                    Strings.SignCommandCertificateStoreNameDescription,
-                    CommandOptionType.SingleValue);
+            var store = new Option<string>("--certificate-store-name")
+            {
+                Description = Strings.SignCommandCertificateStoreNameDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption location = signCmd.Option(
-                    "--certificate-store-location",
-                    Strings.SignCommandCertificateStoreLocationDescription,
-                    CommandOptionType.SingleValue);
+            var location = new Option<string>("--certificate-store-location")
+            {
+                Description = Strings.SignCommandCertificateStoreLocationDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption subject = signCmd.Option(
-                    "--certificate-subject-name",
-                    Strings.SignCommandCertificateSubjectNameDescription,
-                    CommandOptionType.SingleValue);
+            var subject = new Option<string>("--certificate-subject-name")
+            {
+                Description = Strings.SignCommandCertificateSubjectNameDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption fingerprint = signCmd.Option(
-                    "--certificate-fingerprint",
-                    Strings.SignCommandCertificateFingerprintDescription,
-                    CommandOptionType.SingleValue);
+            var fingerprint = new Option<string>("--certificate-fingerprint")
+            {
+                Description = Strings.SignCommandCertificateFingerprintDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption password = signCmd.Option(
-                    "--certificate-password",
-                    Strings.SignCommandCertificatePasswordDescription,
-                    CommandOptionType.SingleValue);
+            var password = new Option<string>("--certificate-password")
+            {
+                Description = Strings.SignCommandCertificatePasswordDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption algorithm = signCmd.Option(
-                    "--hash-algorithm",
-                    Strings.SignCommandHashAlgorithmDescription,
-                    CommandOptionType.SingleValue);
+            var algorithm = new Option<string>("--hash-algorithm")
+            {
+                Description = Strings.SignCommandHashAlgorithmDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption timestamper = signCmd.Option(
-                    "--timestamper",
-                    Strings.SignCommandTimestamperDescription,
-                    CommandOptionType.SingleValue);
+            var timestamper = new Option<string>("--timestamper")
+            {
+                Description = Strings.SignCommandTimestamperDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption timestamperAlgorithm = signCmd.Option(
-                    "--timestamp-hash-algorithm",
-                    Strings.SignCommandTimestampHashAlgorithmDescription,
-                    CommandOptionType.SingleValue);
+            var timestamperAlgorithm = new Option<string>("--timestamp-hash-algorithm")
+            {
+                Description = Strings.SignCommandTimestampHashAlgorithmDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                CommandOption overwrite = signCmd.Option(
-                    "--overwrite",
-                    Strings.SignCommandOverwriteDescription,
-                    CommandOptionType.NoValue);
+            var overwrite = new Option<bool>("--overwrite")
+            {
+                Description = Strings.SignCommandOverwriteDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                CommandOption allowUntrustedRoot = signCmd.Option(
-                    "--allow-untrusted-root",
-                    Strings.SignCommandAllowUntrustedRootDescription,
-                    CommandOptionType.NoValue);
+            var allowUntrustedRoot = new Option<bool>("--allow-untrusted-root")
+            {
+                Description = Strings.SignCommandAllowUntrustedRootDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                CommandOption verbosity = signCmd.Option(
-                    "-v|--verbosity",
-                    Strings.Verbosity_Description,
-                    CommandOptionType.SingleValue);
+            var verbosity = new Option<string>("--verbosity", "-v")
+            {
+                Description = Strings.Verbosity_Description,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                signCmd.HelpOption(XPlatUtility.HelpOption);
+            signCmd.Arguments.Add(packagePaths);
+            signCmd.Options.Add(outputDirectory);
+            signCmd.Options.Add(path);
+            signCmd.Options.Add(store);
+            signCmd.Options.Add(location);
+            signCmd.Options.Add(subject);
+            signCmd.Options.Add(fingerprint);
+            signCmd.Options.Add(password);
+            signCmd.Options.Add(algorithm);
+            signCmd.Options.Add(timestamper);
+            signCmd.Options.Add(timestamperAlgorithm);
+            signCmd.Options.Add(overwrite);
+            signCmd.Options.Add(allowUntrustedRoot);
+            signCmd.Options.Add(verbosity);
 
-                signCmd.Description = Strings.SignCommandDescription;
+            signCmd.SetAction(async (parseResult, cancellationToken) =>
+            {
+                ILogger logger = getLogger();
 
-                signCmd.OnExecute(async () =>
+                string[]? packagePathValues = parseResult.GetValue(packagePaths);
+                string? pathValue = parseResult.GetValue(path);
+                string? fingerprintValue = parseResult.GetValue(fingerprint);
+                string? subjectValue = parseResult.GetValue(subject);
+                string? storeValue = parseResult.GetValue(store);
+                string? locationValue = parseResult.GetValue(location);
+                string? outputDirectoryValue = parseResult.GetValue(outputDirectory);
+                string? timestamperValue = parseResult.GetValue(timestamper);
+                string? algorithmValue = parseResult.GetValue(algorithm);
+                string? timestamperAlgorithmValue = parseResult.GetValue(timestamperAlgorithm);
+
+                ValidatePackagePaths(packagePathValues, "package-paths");
+                WarnIfNoTimestamper(logger, timestamperValue);
+                ValidateCertificateInputs(pathValue, fingerprintValue, subjectValue, storeValue, locationValue, logger);
+                ValidateAndCreateOutputDirectory(outputDirectoryValue);
+
+                SigningSpecificationsV1 signingSpec = SigningSpecifications.V1;
+                StoreLocation storeLocation = ValidateAndParseStoreLocation(locationValue);
+                StoreName storeName = ValidateAndParseStoreName(storeValue);
+                HashAlgorithmName hashAlgorithm = CommandLineUtility.ParseAndValidateHashAlgorithm(algorithmValue, "--hash-algorithm", signingSpec);
+                HashAlgorithmName timestampHashAlgorithm = CommandLineUtility.ParseAndValidateHashAlgorithm(timestamperAlgorithmValue, "--timestamp-hash-algorithm", signingSpec);
+
+                var args = new SignArgs()
                 {
-                    ILogger logger = getLogger();
+                    PackagePaths = new List<string>(packagePathValues),
+                    OutputDirectory = outputDirectoryValue,
+                    CertificatePath = pathValue,
+                    CertificateStoreName = storeName,
+                    CertificateStoreLocation = storeLocation,
+                    CertificateSubjectName = subjectValue,
+                    CertificateFingerprint = fingerprintValue,
+                    CertificatePassword = parseResult.GetValue(password),
+                    SignatureHashAlgorithm = hashAlgorithm,
+                    Logger = logger,
+                    Overwrite = parseResult.GetValue(overwrite),
+                    AllowUntrustedRoot = parseResult.GetValue(allowUntrustedRoot),
+                    //The interactive option is not enabled at first, so the NonInteractive is always set to true. This is tracked by https://github.com/NuGet/Home/issues/10620
+                    NonInteractive = true,
+                    Timestamper = timestamperValue,
+                    TimestampHashAlgorithm = timestampHashAlgorithm
+                };
 
-                    ValidatePackagePaths(packagePaths);
-                    WarnIfNoTimestamper(logger, timestamper);
-                    ValidateCertificateInputs(path, fingerprint, subject, store, location, logger);
-                    ValidateAndCreateOutputDirectory(outputDirectory);
+                setLogLevel(XPlatUtility.MSBuildVerbosityToNuGetLogLevel(parseResult.GetValue(verbosity)));
 
-                    SigningSpecificationsV1 signingSpec = SigningSpecifications.V1;
-                    StoreLocation storeLocation = ValidateAndParseStoreLocation(location);
-                    StoreName storeName = ValidateAndParseStoreName(store);
-                    HashAlgorithmName hashAlgorithm = CommandLineUtility.ParseAndValidateHashAlgorithm(algorithm.Value(), algorithm.LongName, signingSpec);
-                    HashAlgorithmName timestampHashAlgorithm = CommandLineUtility.ParseAndValidateHashAlgorithm(timestamperAlgorithm.Value(), timestamperAlgorithm.LongName, signingSpec);
+                X509TrustStore.InitializeForDotNetSdk(args.Logger);
 
-                    var args = new SignArgs()
-                    {
-                        PackagePaths = packagePaths.Values,
-                        OutputDirectory = outputDirectory.Value(),
-                        CertificatePath = path.Value(),
-                        CertificateStoreName = storeName,
-                        CertificateStoreLocation = storeLocation,
-                        CertificateSubjectName = subject.Value(),
-                        CertificateFingerprint = fingerprint.Value(),
-                        CertificatePassword = password.Value(),
-                        SignatureHashAlgorithm = hashAlgorithm,
-                        Logger = logger,
-                        Overwrite = overwrite.HasValue(),
-                        AllowUntrustedRoot = allowUntrustedRoot.HasValue(),
-                        //The interactive option is not enabled at first, so the NonInteractive is always set to true. This is tracked by https://github.com/NuGet/Home/issues/10620
-                        NonInteractive = true,
-                        Timestamper = timestamper.Value(),
-                        TimestampHashAlgorithm = timestampHashAlgorithm
-                    };
-
-                    setLogLevel(XPlatUtility.MSBuildVerbosityToNuGetLogLevel(verbosity.Value()));
-
-                    X509TrustStore.InitializeForDotNetSdk(args.Logger);
-
-                    ISignCommandRunner runner = getCommandRunner();
-                    int result = await runner.ExecuteCommandAsync(args);
-                    return result;
-                });
+                ISignCommandRunner runner = getCommandRunner();
+                int result = await runner.ExecuteCommandAsync(args);
+                return result;
             });
+
+            parent.Subcommands.Add(signCmd);
         }
 
-        private static void ValidatePackagePaths(CommandArgument argument)
+        private static void ValidatePackagePaths([NotNull] string[]? packagePaths, string argumentName)
         {
-            if (argument.Values.Count == 0 ||
-                argument.Values.Any<string>(packagePath => string.IsNullOrEmpty(packagePath)))
+            if (packagePaths == null ||
+                packagePaths.Length == 0 ||
+                packagePaths.Any(packagePath => string.IsNullOrEmpty(packagePath)))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PkgMissingArgument,
                     CommandName,
-                    argument.Name));
+                    argumentName));
             }
         }
 
-        private static void WarnIfNoTimestamper(ILogger logger, CommandOption timeStamper)
+        private static void WarnIfNoTimestamper(ILogger logger, string? timestamper)
         {
-            if (!timeStamper.HasValue())
+            if (string.IsNullOrEmpty(timestamper))
             {
                 logger.Log(LogMessage.CreateWarning(NuGetLogCode.NU3002, Strings.SignCommandNoTimestamperWarning));
             }
         }
 
-        private static void ValidateAndCreateOutputDirectory(CommandOption output)
+        private static void ValidateAndCreateOutputDirectory(string? outputDirectory)
         {
-            if (output.HasValue())
+            if (!string.IsNullOrEmpty(outputDirectory))
             {
-                string outputDir = output.Value();
-
-                if (!Directory.Exists(outputDir))
+                if (!Directory.Exists(outputDirectory))
                 {
-                    Directory.CreateDirectory(outputDir);
+                    Directory.CreateDirectory(outputDirectory);
                 }
             }
         }
 
-        private static StoreLocation ValidateAndParseStoreLocation(CommandOption location)
+        private static StoreLocation ValidateAndParseStoreLocation(string? locationValue)
         {
             StoreLocation storeLocation = StoreLocation.CurrentUser;
 
-            if (location.HasValue())
+            if (!string.IsNullOrEmpty(locationValue))
             {
-                if (!string.IsNullOrEmpty(location.Value()) &&
-                    !Enum.TryParse(location.Value(), ignoreCase: true, result: out storeLocation))
+                if (!Enum.TryParse(locationValue, ignoreCase: true, result: out storeLocation))
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Strings.Err_InvalidValue,
-                        location.LongName,
+                        "--certificate-store-location",
                         string.Join(",", Enum.GetValues<StoreLocation>().ToList())));
                 }
             }
@@ -197,18 +234,17 @@ namespace NuGet.CommandLine.XPlat
             return storeLocation;
         }
 
-        private static StoreName ValidateAndParseStoreName(CommandOption store)
+        private static StoreName ValidateAndParseStoreName(string? storeValue)
         {
             StoreName storeName = StoreName.My;
 
-            if (store.HasValue())
+            if (!string.IsNullOrEmpty(storeValue))
             {
-                if (!string.IsNullOrEmpty(store.Value()) &&
-                    !Enum.TryParse(store.Value(), ignoreCase: true, result: out storeName))
+                if (!Enum.TryParse(storeValue, ignoreCase: true, result: out storeName))
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Strings.Err_InvalidValue,
-                        store.LongName,
+                        "--certificate-store-name",
                         string.Join(",", Enum.GetValues<StoreName>().ToList())));
                 }
             }
@@ -216,33 +252,33 @@ namespace NuGet.CommandLine.XPlat
             return storeName;
         }
 
-        private static void ValidateCertificateInputs(CommandOption path, CommandOption fingerprint,
-                                                      CommandOption subject, CommandOption store, CommandOption location, ILogger logger)
+        private static void ValidateCertificateInputs(string? path, string? fingerprint,
+                                                      string? subject, string? store, string? location, ILogger logger)
         {
-            if (string.IsNullOrEmpty(path.Value()) &&
-                string.IsNullOrEmpty(fingerprint.Value()) &&
-                string.IsNullOrEmpty(subject.Value()))
+            if (string.IsNullOrEmpty(path) &&
+                string.IsNullOrEmpty(fingerprint) &&
+                string.IsNullOrEmpty(subject))
             {
                 // Throw if user gave no certificate input
                 throw new ArgumentException(Strings.SignCommandNoCertificateException);
             }
-            else if (!string.IsNullOrEmpty(path.Value()) &&
-                (!string.IsNullOrEmpty(fingerprint.Value()) ||
-                 !string.IsNullOrEmpty(subject.Value()) ||
-                 !string.IsNullOrEmpty(location.Value()) ||
-                 !string.IsNullOrEmpty(store.Value())))
+            else if (!string.IsNullOrEmpty(path) &&
+                (!string.IsNullOrEmpty(fingerprint) ||
+                 !string.IsNullOrEmpty(subject) ||
+                 !string.IsNullOrEmpty(location) ||
+                 !string.IsNullOrEmpty(store)))
             {
                 // Throw if the user provided a path and any one of the other options
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
             }
-            else if (!string.IsNullOrEmpty(fingerprint.Value()) && !string.IsNullOrEmpty(subject.Value()))
+            else if (!string.IsNullOrEmpty(fingerprint) && !string.IsNullOrEmpty(subject))
             {
                 // Throw if the user provided a fingerprint and a subject
                 throw new ArgumentException(Strings.SignCommandMultipleCertificateException);
             }
-            else if (fingerprint.Value() != null)
+            else if (fingerprint != null)
             {
-                bool isValidFingerprint = CertificateUtility.TryDeduceHashAlgorithm(fingerprint.Value(), out HashAlgorithmName hashAlgorithmName);
+                bool isValidFingerprint = CertificateUtility.TryDeduceHashAlgorithm(fingerprint, out HashAlgorithmName hashAlgorithmName);
                 bool isSHA1 = hashAlgorithmName == HashAlgorithmName.SHA1;
                 string message = string.Format(CultureInfo.CurrentCulture, Strings.SignCommandInvalidCertificateFingerprint, NuGetLogCode.NU3043);
 
