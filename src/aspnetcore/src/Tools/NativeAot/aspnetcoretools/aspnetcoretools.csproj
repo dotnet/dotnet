@@ -24,6 +24,15 @@
     <ProjectReference Include="..\..\dotnet-user-secrets\src\dotnet-user-secrets.csproj" IncludeInAggregateExecutable="true" />
   </ItemGroup>
 
+  <Target Name="PublishAspNetCoreToolsOnBuild"
+          AfterTargets="Build"
+          Condition="'$(PublishAot)' == 'true' and '$(_IsPublishing)' != 'true'">
+    <!-- The NativeAOT tests consume this project's publish output. Publish as part of build so the tests can reference the product output instead of running a second publish. -->
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="Publish"
+             Properties="_IsPublishing=true" />
+  </Target>
+
   <Target Name="RemoveAspNetCoreToolsPackMetadataFiles" AfterTargets="PackTool">
     <ItemGroup>
       <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)"
