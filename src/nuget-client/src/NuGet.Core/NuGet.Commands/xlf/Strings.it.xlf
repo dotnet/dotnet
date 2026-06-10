@@ -1525,6 +1525,11 @@ NuGet richiede origini HTTPS. Vedi https://aka.ms/nuget-https-everywhere per alt
         <target state="translated">La dipendenza del progetto '{0}' non specifica una versione. Includere una versione per la dipendenza per garantire risultati di ripristino coerenti.</target>
         <note>0 - package id</note>
       </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
+      </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
         <target state="translated">È stata rilevata una versione del pacchetto all'esterno del vincolo di dipendenza: {0} richiede {1} ma è stata risolta la versione {2}.</target>
