@@ -67,7 +67,10 @@ namespace NuGet.Protocol.Converters
                 }
                 else
                 {
-                    reader.Skip();
+                    if (!reader.TrySkip())
+                    {
+                        throw new JsonException(string.Format(CultureInfo.CurrentCulture, Strings.Error_UnexpectedJsonToken, reader.TokenType));
+                    }
                 }
             }
 
