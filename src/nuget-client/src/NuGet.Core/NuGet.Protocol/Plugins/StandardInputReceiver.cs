@@ -134,7 +134,9 @@ namespace NuGet.Protocol.Plugins
                     }
                     else
                     {
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
                         message = JsonSerializationUtilities.Deserialize<Message>(line);
+#pragma warning restore IL2026, IL3050
                     }
 
                     if (message != null)
