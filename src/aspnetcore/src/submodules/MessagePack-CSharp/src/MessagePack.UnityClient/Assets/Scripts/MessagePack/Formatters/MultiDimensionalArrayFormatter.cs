@@ -2,21 +2,20 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
+#pragma warning disable SA1402 // File may only contain a single type
 #pragma warning disable SA1649 // File name should match first type name
 
 namespace MessagePack.Formatters
 {
     /* multi dimensional array serialize to [i, j, [seq]] */
 
-    public sealed class TwoDimensionalArrayFormatter<T> : IMessagePackFormatter<T[,]>
+    public sealed class TwoDimensionalArrayFormatter<T> : IMessagePackFormatter<T[,]?>
     {
         private const int ArrayLength = 3;
 
-        public void Serialize(ref MessagePackWriter writer, T[,] value, MessagePackSerializerOptions options)
+        public void Serialize(ref MessagePackWriter writer, T[,]? value, MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -42,7 +41,7 @@ namespace MessagePack.Formatters
             }
         }
 
-        public T[,] Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        public T[,]? Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -61,6 +60,7 @@ namespace MessagePack.Formatters
                 var iLength = reader.ReadInt32();
                 var jLength = reader.ReadInt32();
                 var maxLen = reader.ReadArrayHeader();
+                MultiDimensionalArrayFormatterHelper.ThrowIfLengthsDontMatch("T[,]", maxLen, iLength, jLength);
 
                 var array = new T[iLength, jLength];
 
@@ -95,11 +95,11 @@ namespace MessagePack.Formatters
         }
     }
 
-    public sealed class ThreeDimensionalArrayFormatter<T> : IMessagePackFormatter<T[,,]>
+    public sealed class ThreeDimensionalArrayFormatter<T> : IMessagePackFormatter<T[,,]?>
     {
         private const int ArrayLength = 4;
 
-        public void Serialize(ref MessagePackWriter writer, T[,,] value, MessagePackSerializerOptions options)
+        public void Serialize(ref MessagePackWriter writer, T[,,]? value, MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -127,7 +127,7 @@ namespace MessagePack.Formatters
             }
         }
 
-        public T[,,] Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        public T[,,]? Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -147,6 +147,7 @@ namespace MessagePack.Formatters
                 var jLength = reader.ReadInt32();
                 var kLength = reader.ReadInt32();
                 var maxLen = reader.ReadArrayHeader();
+                MultiDimensionalArrayFormatterHelper.ThrowIfLengthsDontMatch("T[,,]", maxLen, iLength, jLength, kLength);
 
                 var array = new T[iLength, jLength, kLength];
 
@@ -188,11 +189,11 @@ namespace MessagePack.Formatters
         }
     }
 
-    public sealed class FourDimensionalArrayFormatter<T> : IMessagePackFormatter<T[,,,]>
+    public sealed class FourDimensionalArrayFormatter<T> : IMessagePackFormatter<T[,,,]?>
     {
         private const int ArrayLength = 5;
 
-        public void Serialize(ref MessagePackWriter writer, T[,,,] value, MessagePackSerializerOptions options)
+        public void Serialize(ref MessagePackWriter writer, T[,,,]? value, MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -222,7 +223,7 @@ namespace MessagePack.Formatters
             }
         }
 
-        public T[,,,] Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
+        public T[,,,]? Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -243,6 +244,8 @@ namespace MessagePack.Formatters
                 var kLength = reader.ReadInt32();
                 var lLength = reader.ReadInt32();
                 var maxLen = reader.ReadArrayHeader();
+                MultiDimensionalArrayFormatterHelper.ThrowIfLengthsDontMatch("T[,,,]", maxLen, iLength, jLength, kLength, lLength);
+
                 var array = new T[iLength, jLength, kLength, lLength];
 
                 var i = 0;
@@ -289,5 +292,35 @@ namespace MessagePack.Formatters
                 return array;
             }
         }
+    }
+
+    internal static class MultiDimensionalArrayFormatterHelper
+    {
+        internal static void ThrowIfLengthsDontMatch(string format, int actualLength, int firstLength, int secondLength, int thirdLength = 1, int fourthLength = 1)
+        {
+            if (firstLength < 0 || secondLength < 0 || thirdLength < 0 || fourthLength < 0)
+            {
+                ThrowInvalidFormat(format);
+            }
+
+            int expectedLength;
+            try
+            {
+                expectedLength = checked(firstLength * secondLength * thirdLength * fourthLength);
+            }
+            catch (OverflowException)
+            {
+                ThrowInvalidFormat(format);
+                return;
+            }
+
+            if (expectedLength != actualLength)
+            {
+                ThrowInvalidFormat(format);
+            }
+        }
+
+        [DoesNotReturn]
+        private static void ThrowInvalidFormat(string format) => throw new MessagePackSerializationException($"Invalid {format} format");
     }
 }
