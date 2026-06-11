@@ -39,7 +39,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
         }
 
         [Fact]
-        public void Publics( )
+        public void Publics()
         {
             var signature = new Signature();
             var properties = new List<string>()
@@ -48,7 +48,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
                 "SignedInfo",
             };
 
-            var context = new GetSetContext( );
+            var context = new GetSetContext();
             foreach (string property in properties)
             {
                 TestUtilities.SetGet(signature, property, null, ExpectedException.ArgumentNullException(substringExpected: "value"), context);
@@ -57,7 +57,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             TestUtilities.AssertFailIfErrors($"{this}.Publics", context.Errors);
         }
 
-        [Theory, MemberData(nameof(ConstructorTheoryData))]
+        [Theory, MemberData(nameof(ConstructorTheoryData), DisableDiscoveryEnumeration = true)]
         public void Constructor(SignatureTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.Constructor", theoryData);
@@ -97,8 +97,8 @@ namespace Microsoft.IdentityModel.Xml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(VerifyTheoryData))]
-        public void Verify( SignatureTheoryData theoryData )
+        [Theory, MemberData(nameof(VerifyTheoryData), DisableDiscoveryEnumeration = true)]
+        public void Verify(SignatureTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Verify", theoryData);
             try

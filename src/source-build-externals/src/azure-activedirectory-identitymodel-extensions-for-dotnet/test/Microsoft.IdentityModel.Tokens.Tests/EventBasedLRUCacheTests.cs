@@ -49,15 +49,15 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             var context = new CompareContext($"{this}.DoNotRemoveExpiredValues");
             var cache = new EventBasedLRUCache<int, string>(11, removeExpiredValuesIntervalInSeconds: 5, removeExpiredValues: false);
             for (int i = 0; i <= 10; i++)
-                    cache.SetValue(i, i.ToString(), DateTime.UtcNow + TimeSpan.FromSeconds(5));
+                cache.SetValue(i, i.ToString(), DateTime.UtcNow + TimeSpan.FromSeconds(5));
 
             Thread.Sleep(5000);
 
             // expired items are not removed by default, so all added items should still be in the cache
             for (int i = 0; i <= 10; i++)
             {
-                    if (!cache.Contains(i))
-                        context.AddDiff("The key value pair {" + i + ", '" + i.ToString() + "'} should remain in the cache, but the Contains() method returned false.");                   
+                if (!cache.Contains(i))
+                    context.AddDiff("The key value pair {" + i + ", '" + i.ToString() + "'} should remain in the cache, but the Contains() method returned false.");
             }
 
             TestUtilities.AssertFailIfErrors(context);
@@ -346,7 +346,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             var prev = data.First;
             var curr = data.First.Next;
-            while(curr != null)
+            while (curr != null)
             {
                 if (prev.Value.Key < curr.Value.Key)
                 {
@@ -359,8 +359,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             return true;
         }
 
-        [Fact(Skip = "Large test meant to be run manually.")]
-        public void CacheOverflowTestMultithreaded()
+        [Fact]
+        public async Task CacheOverflowTestMultithreaded()
         {
             TestUtilities.WriteHeader($"{this}.CacheOverflowTestMultithreaded");
             var context = new CompareContext($"{this}.CacheOverflowTestMultithreaded");
@@ -376,7 +376,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 }));
             }
 
-            Task.WaitAll(taskList.ToArray());
+            await Task.WhenAll(taskList.ToArray());
             cache.WaitForProcessing();
 
             // Cache size should be less than the capacity (somewhere between 800 - 1000 items).
@@ -386,7 +386,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Fact(Skip = "Large test meant to be run manually.")]
+        [Fact]
         public void CacheOverflowTestSequential()
         {
             TestUtilities.WriteHeader($"{this}.CacheOverflowTestSequential");

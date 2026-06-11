@@ -15,11 +15,13 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         // SecurityTokenHandler messages
         internal const string IDX11400 = "IDX11400: The '{0}', can only process SecurityTokens of type: '{1}'. The SecurityToken received is of type: '{2}'.";
         internal const string IDX11401 = "IDX11401: Unable to validate token. TokenValidationParameters.RequireAudience is true but no AudienceRestrictions were found in the inbound token.";
+        internal const string IDX11402 = "IDX11402: Unable to read SamlSecurityToken. Exception thrown: '{0}'.";
 
         // signature creation / validation
         internal const string IDX11312 = "IDX11312: Unable to validate token. A SamlSamlAttributeStatement can only have one SamlAttribute of type 'Actor'. This special SamlAttribute is used in delegation scenarios.";
         internal const string IDX11313 = "IDX11313: Unable to process Saml attribute. A SamlSubject must contain either or both of Name and ConfirmationMethod.";
         internal const string IDX11314 = "IDX11314: The AttributeValueXsiType of a SAML Attribute must be a string of the form 'prefix#suffix', where prefix and suffix are non-empty strings. Found: '{0}'";
+        internal const string IDX11315 = "IDX11315: Unable to validate token. SamlSecurityToken.Assertion is null or empty.";
 
         // SamlSerializer reading
         internal const string IDX11100 = "IDX11100: Saml Only one element of type '{0}' is supported.";
@@ -54,6 +56,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         internal const string IDX11135 = "IDX11135: Unable to read SamlSecurityToken. Saml element '{0}' must have value.";
         internal const string IDX11136 = "IDX11136: 'AuthorizationDecisionStatement' cannot be empty.";
         internal const string IDX11137 = "IDX11137: 'SamlAction' must have a value.";
+        internal const string IDX11138 = "IDX11138: SAML assertion nesting bound exceeded (depth: '{0}', bound: '{1}').";
 
         // Saml writting
         internal const string IDX11501 = "IDX11501: SamlAssertion Id cannot be null or empty.";

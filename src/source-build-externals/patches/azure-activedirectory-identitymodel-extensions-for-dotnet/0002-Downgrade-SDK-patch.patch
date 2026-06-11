@@ -1,0 +1,24 @@
+From fe49a2b15fb4a7cc3a02dede9f8f7c2b1dc4849b Mon Sep 17 00:00:00 2001
+From: wigodbe <wigodbe@microsoft.com>
+Date: Mon, 8 Jun 2026 12:43:26 -0700
+Subject: [PATCH] Downgrade SDK patch
+
+---
+ global.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/global.json b/global.json
+index aefdc460..1cd29bc2 100644
+--- a/global.json
++++ b/global.json
+@@ -1,6 +1,6 @@
+ {
+     "sdk": {
+-        "version": "10.0.100",
++        "version": "9.0.116",
+         "allowPrerelease": false,
+         "rollForward": "latestFeature"
+     },
+-- 
+2.50.1 (Apple Git-155)
+

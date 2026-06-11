@@ -2,201 +2,204 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Xunit;
+using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens.Experimental;
 
 namespace Microsoft.IdentityModel.Tokens.Validation.Tests
 {
-    public class TokenTypeValidationResultTests
+    public class TokenTypeTests
     {
-        [Theory, MemberData(nameof(TokenTypeValidationTestCases), DisableDiscoveryEnumeration = true)]
-        public void ValidateTokenType(TokenTypeTheoryData theoryData)
+        [Theory, MemberData(nameof(InvalidTestCases), DisableDiscoveryEnumeration = true)]
+        public void InvalidTokenTypes(TokenTypeTheoryData theoryData)
         {
-            CompareContext context = TestUtilities.WriteHeader($"{this}.TokenTypeValidationResultTests", theoryData);
+            CompareContext context = TestUtilities.WriteHeader($"{this}.InvalidTokenTypes", theoryData);
 
-            TokenTypeValidationResult tokenTypeValidationResult = Validators.ValidateTokenType(
-                theoryData.Type,
-                theoryData.SecurityToken,
-                theoryData.ValidationParameters,
-                new CallContext());
+            if (theoryData.TokenTypesToAdd != null)
+            {
+                foreach (string tokenType in theoryData.TokenTypesToAdd)
+                    theoryData.ValidationParameters.ValidTypes.Add(tokenType);
+            }
 
-            if (tokenTypeValidationResult.Exception != null)
-                theoryData.ExpectedException.ProcessException(tokenTypeValidationResult.Exception);
-            else
-                theoryData.ExpectedException.ProcessNoException();
+            try
+            {
+                ValidationResult<ValidatedTokenType, ValidationError> validationResult =
+                    Validators.ValidateTokenType(
+                        theoryData.Type,
+                        theoryData.SecurityToken,
+                        theoryData.ValidationParameters,
+                        theoryData.CallContext);
 
-            IdentityComparer.AreTokenTypeValidationResultsEqual(
-                tokenTypeValidationResult,
-                theoryData.TokenTypeValidationResult,
-                context);
+                if (validationResult.Succeeded)
+                {
+                    context.AddDiff($"Expected validation to fail, but it succeeded with result: {validationResult.Result}.");
+                }
+                else
+                {
+                    ValidationError validationError = validationResult.Error;
+                    IdentityComparer.AreStringsEqual(
+                        validationError.FailureType.Name,
+                        theoryData.ValidationResult.Error.FailureType.Name,
+                        context);
+
+                    Exception exception = validationError.GetException();
+                    theoryData.ExpectedException.ProcessException(exception, context);
+                }
+            }
+            catch (Exception ex)
+            {
+                context.AddDiff($"Did not expect an exception: {ex}");
+            }
 
             TestUtilities.AssertFailIfErrors(context);
 
         }
 
-        public static TheoryData<TokenTypeTheoryData> TokenTypeValidationTestCases
+        public static TheoryData<TokenTypeTheoryData> InvalidTestCases
         {
             get
             {
-                String[] validTypesNoJwt = { "ID Token", "Refresh Token", "Access Token" };
-                String[] validTypesWithJwt = { "ID Token", "Refresh Token", "Access Token", "JWT" }; 
+                string[] validTypesNoJwt = { "ID Token", "Refresh Token", "Access Token" };
 
                 return new TheoryData<TokenTypeTheoryData>
                 {
-                    new TokenTypeTheoryData
+                    new TokenTypeTheoryData("SecurityTokenIsNull")
                     {
-                        TestId = "Valid_DefaultTokenTypeValidation",
-                        Type = "JWT",
-                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            ValidTypes = validTypesWithJwt
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult("JWT")
-                    },
-                    new TokenTypeTheoryData
-                    {
-                        TestId = "Invalid_SecurityTokenIsNull",
                         ExpectedException = ExpectedException.ArgumentNullException("IDX10000:"),
                         Type = "JWT",
                         SecurityToken = null,
                         ValidationParameters = null,
-                        TokenTypeValidationResult = new TokenTypeValidationResult(
-                            "JWT",
+                        ValidationResult = new TokenTypeValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10000,
+                                LogHelper.MarkAsNonPII("securityToken")),
                             ValidationFailureType.NullArgument,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10000,
-                                    LogHelper.MarkAsNonPII("securityToken")),
-                                typeof(ArgumentNullException),
-                                new StackFrame(true)))
+                            null,
+                            "JWT")
                     },
-                    new TokenTypeTheoryData
+                    new TokenTypeTheoryData("ValidationParametersAreNull")
                     {
-                        TestId = "Invalid_ValidationParametersAreNull",
                         ExpectedException = ExpectedException.ArgumentNullException("IDX10000:"),
                         Type = "JWT",
                         SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
                         ValidationParameters = null,
-                        TokenTypeValidationResult = new TokenTypeValidationResult(
-                            "JWT",
+                        ValidationResult = new TokenTypeValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10000,
+                                LogHelper.MarkAsNonPII("validationParameters")),
                             ValidationFailureType.NullArgument,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10000,
-                                    LogHelper.MarkAsNonPII("validationParameters")),
-                                typeof(ArgumentNullException),
-                                new StackFrame(true)))
+                            null,
+                            "JWT")
                     },
-                    new TokenTypeTheoryData
+                    new TokenTypeTheoryData("TokenTypeIsEmpty")
                     {
-                        TestId = "Valid_ValidateTokenTypeUsingDelegate",
-                        Type = "JWT",
-                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            TypeValidator = (Type, SecurityToken, TokenValidationParameters) => "JWT"
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult("JWT")
-                    },
-                    new TokenTypeTheoryData
-                    {
-                        TestId = "Invalid_ValidateTokenTypeUsingDelegate",
-                        ExpectedException = ExpectedException.SecurityTokenInvalidTypeException(substringExpected: "IDX10259:", innerTypeExpected: typeof(SecurityTokenInvalidTypeException)),
-                        Type = "JWT",
-                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            TypeValidator = (Type, SecurityToken, TokenValidationParameters) => throw new SecurityTokenInvalidTypeException()
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult(
-                            "JWT",
-                            ValidationFailureType.TokenTypeValidationFailed,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10259,
-                                    LogHelper.MarkAsNonPII("TypeValidator"),
-                                    LogHelper.MarkAsNonPII("Delegate message")),
-                                typeof(SecurityTokenInvalidTypeException),
-                                new StackFrame(true),
-                                new SecurityTokenInvalidTypeException()))
-                    },
-                    new TokenTypeTheoryData
-                    {
-                        TestId = "Valid_TokenValidationParametersTypeValidatorAndValidTypesAreNull",
-                        Type = "JWT",
-                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            TypeValidator = null,
-                            ValidTypes = null
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult("JWT")
-                    },
-                    new TokenTypeTheoryData
-                    {
-                        TestId = "Invalid_TokenTypeIsEmpty",
                         ExpectedException = ExpectedException.SecurityTokenInvalidTypeException("IDX10256:"),
-                        Type = String.Empty,
-                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, String.Empty),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            ValidTypes = validTypesNoJwt
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult(
-                            string.Empty,
-                            ValidationFailureType.TokenTypeValidationFailed,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10256,
-                                    LogHelper.MarkAsNonPII("type")),
-                                typeof(SecurityTokenInvalidTypeException),
-                                new StackFrame(true)))
+                        Type = string.Empty,
+                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, string.Empty),
+                        ValidationParameters = new ValidationParameters(),
+                        TokenTypesToAdd = validTypesNoJwt,
+                        ValidationResult = new TokenTypeValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10256,
+                                LogHelper.MarkAsNonPII("type")),
+                            TokenTypeValidationFailure.ValidationFailed,
+                            null,
+                            "")
                     },
-                    new TokenTypeTheoryData
+                    new TokenTypeTheoryData("TokenTypeIsNull")
                     {
-                        TestId = "Invalid_TokenTypeIsNull",
                         ExpectedException = ExpectedException.SecurityTokenInvalidTypeException("IDX10256:"),
                         Type = null,
                         SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, null),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            ValidTypes = validTypesNoJwt
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult(
+                        ValidationParameters = new ValidationParameters(),
+                        TokenTypesToAdd = validTypesNoJwt,
+                        ValidationResult = new TokenTypeValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10256,
+                                LogHelper.MarkAsNonPII("type")),
+                            TokenTypeValidationFailure.ValidationFailed,
                             null,
-                            ValidationFailureType.TokenTypeValidationFailed,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10256,
-                                    LogHelper.MarkAsNonPII("type")),
-                                typeof(SecurityTokenInvalidTypeException),
-                                new StackFrame(true)))
+                            null)
                     },
-                    new TokenTypeTheoryData
+                    new TokenTypeTheoryData("ValidationParametersValidTypesDoesNotSupportType")
                     {
-                        TestId = "Invalid_TokenValidationParametersValidTypesDoesNotSupportType",
                         ExpectedException = ExpectedException.SecurityTokenInvalidTypeException("IDX10257:"),
                         Type = "JWT",
                         SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
-                        ValidationParameters = new TokenValidationParameters
-                        {
-                            ValidTypes = validTypesNoJwt
-                        },
-                        TokenTypeValidationResult = new TokenTypeValidationResult(
-                            "JWT",
-                            ValidationFailureType.TokenTypeValidationFailed,
-                            new ExceptionDetail(
-                                 new MessageDetail(
-                                     LogMessages.IDX10257,
-                                     LogHelper.MarkAsNonPII("type"),
-                                     LogHelper.MarkAsNonPII(Utility.SerializeAsSingleCommaDelimitedString(validTypesNoJwt))),
-                                 typeof(SecurityTokenInvalidTypeException),
-                                 new StackFrame(true)))
+                        ValidationParameters = new ValidationParameters(),
+                        TokenTypesToAdd = validTypesNoJwt,
+                        ValidationResult = new TokenTypeValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10257,
+                                LogHelper.MarkAsNonPII("type"),
+                                LogHelper.MarkAsNonPII(Utility.SerializeAsSingleCommaDelimitedString(validTypesNoJwt))),
+                            TokenTypeValidationFailure.ValidationFailed,
+                            null,
+                            "JWT")
+                    }
+                };
+            }
+        }
+
+        [Theory, MemberData(nameof(ValidTestCases), DisableDiscoveryEnumeration = true)]
+        public void ValidTokenTypes(TokenTypeTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.ValidTokenTypes", theoryData);
+
+            if (theoryData.TokenTypesToAdd != null)
+            {
+                foreach (string tokenType in theoryData.TokenTypesToAdd)
+                    theoryData.ValidationParameters.ValidTypes.Add(tokenType);
+            }
+
+            try
+            {
+                ValidationResult<ValidatedTokenType, ValidationError> validationResult =
+                    Validators.ValidateTokenType(
+                        theoryData.Type,
+                        theoryData.SecurityToken,
+                        theoryData.ValidationParameters,
+                        theoryData.CallContext);
+
+                if (validationResult.Succeeded)
+                {
+                    IdentityComparer.AreValidatedTokenTypesEqual(
+                        validationResult.Result,
+                        theoryData.ValidationResult.Result,
+                        context);
+                }
+                else
+                {
+                    context.AddDiff($"Expected validation to succeed, but it failed with error: {validationResult.Error}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                context.AddDiff($"Did not expect an exception: {ex}");
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<TokenTypeTheoryData> ValidTestCases
+        {
+            get
+            {
+                string[] tokenTypes = { "ID Token", "Refresh Token", "Access Token", "JWT" };
+
+                return new TheoryData<TokenTypeTheoryData>
+                {
+                    new TokenTypeTheoryData("DefaultTokenTypeValidation")
+                    {
+                        Type = "JWT",
+                        SecurityToken = JsonUtilities.CreateUnsignedJsonWebToken(JwtRegisteredClaimNames.Typ, "JWT"),
+                        ValidationParameters = new ValidationParameters(),
+                        TokenTypesToAdd = tokenTypes,
+                        ValidationResult = new ValidatedTokenType("JWT", 4)
                     }
                 };
             }
@@ -204,13 +207,12 @@ namespace Microsoft.IdentityModel.Tokens.Validation.Tests
 
         public class TokenTypeTheoryData : TheoryDataBase
         {
+            public TokenTypeTheoryData(string testId) : base(testId) { }
             public string Type { get; set; }
-
             public SecurityToken SecurityToken { get; set; }
-
-            public TokenValidationParameters ValidationParameters { get; set; }
-
-            internal TokenTypeValidationResult TokenTypeValidationResult { get; set; }
+            public IList<string> TokenTypesToAdd { get; internal set; }
+            internal ValidationParameters ValidationParameters { get; set; }
+            internal ValidationResult<ValidatedTokenType, TokenTypeValidationError> ValidationResult { get; set; }
         }
     }
 }

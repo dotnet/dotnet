@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 {
     public class SamlSecurityTokenReadTest
     {
-        [Theory, MemberData(nameof(SamlReadFromTheoryData))]
+        [Theory, MemberData(nameof(SamlReadFromTheoryData), DisableDiscoveryEnumeration = true)]
         public void SamlSecurityTokenReadFrom(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.SamlSecurityTokenReadFrom", theoryData);

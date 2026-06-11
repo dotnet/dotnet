@@ -1,0 +1,51 @@
+From ebd10c33206e6a534b2ce83ec0e74eaa641fa010 Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Tue, 9 Jun 2026 08:58:21 -0500
+Subject: [PATCH] Remove dependency on analyzers
+
+---
+ build/common.props | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
+
+diff --git a/build/common.props b/build/common.props
+index 73d6abdf..1f50ec87 100644
+--- a/build/common.props
++++ b/build/common.props
+@@ -45,34 +45,6 @@
+     <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-     <!-- Protects against sync-over-async: https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md. -->
+-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" PrivateAssets="all" />
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(BannedApiAnalyzersVersion)">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\BannedSymbols.txt" />
+-  </ItemGroup>
+-
+-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+     <IsAotCompatible>true</IsAotCompatible>
+   </PropertyGroup>
+-- 
+2.50.1.windows.1
+

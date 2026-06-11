@@ -1,0 +1,18 @@
+<!-- Directory.Build.targets is imported after NuGet package .targets files,
+     so target overrides here take effect over package-defined InitialTargets. -->
+<Project>
+
+  <!-- Microsoft.Bcl.Cryptography 10.0.2 and its transitive dependency System.Formats.Asn1
+       emit TFM support warnings on net6.0. ML-DSA functionality is validated on net6.0
+       via the compatibility package and covered by the cross-TFM test suite.
+       These overrides suppress only these specific package warnings — any new package
+       that introduces TFM warnings will still surface normally.
+       Note: Condition="false" applies unconditionally, but the package .targets files
+       only fire on unsupported TFMs (net6.0), so this has no effect on net8.0+.
+       Remove when net6.0 is dropped from SrcTargets. -->
+  <Target Name="NETStandardCompatError_Microsoft_Bcl_Cryptography_net8_0"
+          Condition="false" />
+  <Target Name="NETStandardCompatError_System_Formats_Asn1_net8_0"
+          Condition="false" />
+
+</Project>

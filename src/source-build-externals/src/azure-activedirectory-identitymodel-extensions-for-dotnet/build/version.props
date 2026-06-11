@@ -1,17 +1,17 @@
 <!-- This file may be overwritten by automation. Only values allowed here are VersionPrefix and VersionSuffix.  -->
 <Project>
-    <PropertyGroup>
-        <VersionPrefix>0.0.1</VersionPrefix>
-        <VersionSuffix>preview</VersionSuffix>
-    </PropertyGroup>
+<!-- MicrosoftIdentityModelVersion  -->
+  <PropertyGroup>
+    <MicrosoftIdentityModelCurrentVersion>8.18.1</MicrosoftIdentityModelCurrentVersion>
 
-    <!--Enables to create preview NuGet packages.-->
-    <PropertyGroup Condition=" '$(VersionSuffix)' == '' ">
-      <Version>$(VersionPrefix)</Version>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(VersionSuffix)' != '' ">
-      <Version>$(VersionPrefix)-$(VersionSuffix)</Version>
-    </PropertyGroup>
-
+    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHHmmss"))</PreviewVersionSuffix>
+    <!--VS re-evaluates the variables, so having seconds or minutes creates an infinite loop of package updates-->
+    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHH"))</PreviewVersionSuffix>
+    <IsCustomPreview>$(MicrosoftIdentityModelVersion.Contains("-"))</IsCustomPreview>
+    <Version Condition="'$(MicrosoftIdentityModelVersion)' != ''">$(MicrosoftIdentityModelVersion)</Version>
+    <VersionSuffix Condition="'$(MicrosoftIdentityModelVersion)' == ''">$(PreviewVersionSuffix)</VersionSuffix>
+    <VersionPrefix Condition="'$(MicrosoftIdentityModelVersion)' == ''">$(MicrosoftIdentityModelCurrentVersion)</VersionPrefix>
+    <FileVersion Condition="'$(MicrosoftIdentityModelVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(MicrosoftIdentityModelVersion).$([System.DateTime]::Now.ToString("yy"))$([System.DateTime]::Now.DayOfYear.ToString("000"))</FileVersion>
+    <FileVersion Condition="'$(MicrosoftIdentityModelVersion)' == ''">$(MicrosoftIdentityModelCurrentVersion).$([System.DateTime]::Now.ToString("yy"))$([System.DateTime]::Now.DayOfYear.ToString("000"))</FileVersion>
+  </PropertyGroup>
 </Project>

@@ -1,0 +1,60 @@
+From 1151708a5348a7dbf33a55a673d558e958962371 Mon Sep 17 00:00:00 2001
+From: wigodbe <wigodbe@microsoft.com>
+Date: Mon, 8 Jun 2026 12:20:41 -0700
+Subject: [PATCH] Patch for IdentityModel SB
+
+---
+ build/dependencies.props | 4 ++--
+ build/targets.props      | 2 +-
+ buildConfiguration.xml   | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/build/dependencies.props b/build/dependencies.props
+index ea8ba36e..eb13f86a 100644
+--- a/build/dependencies.props
++++ b/build/dependencies.props
+@@ -5,13 +5,13 @@
+     <BannedApiAnalyzersVersion>4.14.0</BannedApiAnalyzersVersion>
+     <MicrosoftBclCryptographyVersion>10.0.2</MicrosoftBclCryptographyVersion>
+     <MicrosoftBclTimeProviderVersion>8.0.1</MicrosoftBclTimeProviderVersion>
+-    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>
++    <MicrosoftCSharpVersion>4.7.0</MicrosoftCSharpVersion>
+     <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+     <NetStandardVersion>2.0.3</NetStandardVersion>
+     <NewtonsoftVersion>13.0.3</NewtonsoftVersion>
+     <SystemDiagnosticSourceVersion>6.0.2</SystemDiagnosticSourceVersion>
+     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
+-    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
++    <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
+     <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
+   </PropertyGroup>
+ 
+diff --git a/build/targets.props b/build/targets.props
+index df624017..df8accec 100644
+--- a/build/targets.props
++++ b/build/targets.props
+@@ -5,7 +5,7 @@
+   </PropertyGroup> -->
+ 
+   <PropertyGroup>
+-    <SrcTargets Condition="'$(LocalBuild)' != 'True'">net462;net472;netstandard2.0;net6.0;net8.0;net9.0;net10.0</SrcTargets>
++    <SrcTargets Condition="'$(LocalBuild)' != 'True'">netstandard2.0;net6.0;net8.0</SrcTargets>
+     <SrcTargets Condition="'$(LocalBuild)' == 'True'">netstandard2.0;net8.0;net9.0;net10.0</SrcTargets>
+     <SrcTargets Condition="'$(TargetNetNext)'== 'True'">$(SrcTargets)</SrcTargets>
+   </PropertyGroup>
+diff --git a/buildConfiguration.xml b/buildConfiguration.xml
+index 75915816..eb46e137 100644
+--- a/buildConfiguration.xml
++++ b/buildConfiguration.xml
+@@ -1,7 +1,7 @@
+ <root>
+   <dotnetArchitecture>x64</dotnetArchitecture>
+   <nugetVersion>3.5.0-rc-1285</nugetVersion>
+-  <runtimes>net461,netstandard2.0</runtimes>
++  <runtimes>netstandard2.0</runtimes>
+   <projects>
+     <src>
+       <project name="Microsoft.IdentityModel.Logging" />
+-- 
+2.50.1 (Apple Git-155)
+

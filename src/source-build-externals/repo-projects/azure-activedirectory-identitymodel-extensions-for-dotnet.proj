@@ -7,6 +7,10 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
+  <ItemGroup>
+    <EnvironmentVariables Include="CustomBeforeMicrosoftCommonTargets=$(MSBuildThisFileDirectory)..\eng\azure-activedirectory-identitymodel-extensions-for-dotnet.injected.targets" />
+  </ItemGroup>
+
   <Target Name="RepoBuild">
     <PropertyGroup>
       <SystemIdentityModelTokensJwtProject>$(ProjectDirectory)src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj</SystemIdentityModelTokensJwtProject>
@@ -19,6 +23,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false /p:IsTrimmable=false</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>

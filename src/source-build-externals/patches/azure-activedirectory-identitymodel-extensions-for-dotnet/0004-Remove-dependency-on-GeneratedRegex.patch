@@ -1,0 +1,32 @@
+From a2b006a77a67440785f38df0c3728d5fb242f97e Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Tue, 9 Jun 2026 08:32:28 -0500
+Subject: [PATCH] Remove dependency on GeneratedRegex
+
+GeneratedRegex requires Roslyn source generator but we're pinned to an
+SBRP version of the 8.0 Microsoft.NETCore.App.Ref targeting pack which
+excludes analyzers/source generators.
+---
+ .../JwtTokenUtilities.cs                                   | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs b/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs
+index ff7d7a01..05ca6a12 100644
+--- a/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs
++++ b/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs
+@@ -36,15 +36,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens
+         /// </summary>
+         public static Regex RegexJwe = CreateJweRegex();
+ 
+-#if NET7_0_OR_GREATER
+-        [GeneratedRegex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.CultureInvariant, _regexMatchTimeoutMilliseconds)]
+-        private static partial Regex CreateJwsRegex();
+-        [GeneratedRegex(JwtConstants.JweCompactSerializationRegex, RegexOptions.CultureInvariant, _regexMatchTimeoutMilliseconds)]
+-        private static partial Regex CreateJweRegex();
+-#else
+         private static Regex CreateJwsRegex() => new Regex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
+         private static Regex CreateJweRegex() => new Regex(JwtConstants.JweCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
+-#endif
+ 
+         internal static List<string> DefaultHeaderParameters = new List<string>()
+        {

@@ -48,17 +48,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@623d5a2](https://github.com/dotnet/scenario-tests/tree/623d5a21e18d6d1f370b5b9d1ebaf8d687464c0b)*
 - `src/sdk`  
-*[dotnet/sdk@3b77f7a](https://github.com/dotnet/sdk/tree/3b77f7afb5278cb46839d4d57b636a013786482c)*
+*[dotnet/sdk@b04d1f8](https://github.com/dotnet/sdk/tree/b04d1f8cd6b9abc0aa8b0d00f818c11c19dd3016)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@a6ab61f](https://github.com/dotnet/source-build-assets/tree/a6ab61fb8be05488dcd26c94dd4ecf3e71d560e2)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@16c380d](https://github.com/dotnet/source-build-externals/tree/16c380d1ce5fa0b24e232251c31cb013bbf3365f)*
+*[_git/dotnet-source-build-externals@9c6c10c](https://dev.azure.com/dnceng/internal/_git/dotnet-source-build-externals/?version=GC9c6c10cce644179b2f41cbb8064f07efee903c55)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
     *[microsoft/ApplicationInsights-dotnet@43825e0](https://github.com/microsoft/ApplicationInsights-dotnet/tree/43825e06a22cdfb702fc199a7ba99a7d541d48c6)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@e67b25b](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/e67b25be77532af9ba405670b34b4d263d505fde)*
+    *[_git/azure-identitymodel@25d90ed](https://dnceng@dev.azure.com/dnceng/internal/_git/azure-identitymodel/?version=GC25d90ed3f48854036d444541a049089ccd198707)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/tree/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  

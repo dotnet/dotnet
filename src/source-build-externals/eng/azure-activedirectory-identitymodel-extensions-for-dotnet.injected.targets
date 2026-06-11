@@ -1,0 +1,15 @@
+<Project>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <FrameworkReference Update="Microsoft.NETCore.App"
+                        TargetingPackVersion="6.0.0"
+                        RuntimeFrameworkVersion="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <FrameworkReference Update="Microsoft.NETCore.App"
+                        TargetingPackVersion="8.0.0"
+                        RuntimeFrameworkVersion="8.0.0" />
+  </ItemGroup>
+
+</Project>
