@@ -7,7 +7,11 @@ namespace Test.Utility;
 
 public static class TestConstants
 {
-#if NET10_0 || NETFRAMEWORK
+#if SDK_NEXT
+    // Specifies a target framework for projects used during testing.  This should match the framework that the SDK being tested has.
+    public const string ProjectTargetFramework = "net11.0";
+    public static readonly NuGetFramework DefaultTargetFramework = NuGetFramework.Parse(ProjectTargetFramework);
+#elif NET10_0
     // Specifies a target framework for projects used during testing.  This should match the framework that the SDK being tested has.
     public const string ProjectTargetFramework = "net10.0";
     public static readonly NuGetFramework DefaultTargetFramework = NuGetFramework.Parse(ProjectTargetFramework);

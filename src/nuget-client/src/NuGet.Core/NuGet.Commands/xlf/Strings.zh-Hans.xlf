@@ -1525,6 +1525,11 @@ NuGet 需要 HTTPS 源。有关详细信息，请参阅 https://aka.ms/nuget-htt
         <target state="translated">项目依赖项 "{0}" 未指定版本。请包含依赖项的版本，以确保还原结果一致。</target>
         <note>0 - package id</note>
       </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
+      </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
         <target state="translated">检测到的包版本在依赖项约束之外: {0} 需要 {1}，但版本 {2} 已解决。</target>

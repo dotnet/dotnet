@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +32,7 @@ namespace NuGet.Protocol.Plugins
         private string RootFolder { get; }
         private string NewCacheFileName { get; }
 
-        public IReadOnlyList<OperationClaim> OperationClaims { get; set; }
+        public IReadOnlyList<OperationClaim>? OperationClaims { get; set; }
 
         /// <summary>
         /// Loads and processes the contet from the generated file if it exists.
@@ -42,7 +40,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         public void LoadFromFile()
         {
-            Stream content = null;
+            Stream? content = null;
             try
             {
                 content = CachingUtility.ReadCacheFile(MaxAge, CacheFileName);

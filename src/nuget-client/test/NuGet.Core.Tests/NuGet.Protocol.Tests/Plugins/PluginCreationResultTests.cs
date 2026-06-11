@@ -15,7 +15,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new PluginCreationResult(
-                    plugin: null,
+                    plugin: null!,
                     utilities: Mock.Of<IPluginMulticlientUtilities>(),
                     claims: new List<OperationClaim>()));
 
@@ -28,7 +28,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new PluginCreationResult(
                     Mock.Of<IPlugin>(),
-                    utilities: null,
+                    utilities: null!,
                     claims: new List<OperationClaim>()));
 
             Assert.Equal("utilities", exception.ParamName);
@@ -41,7 +41,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 () => new PluginCreationResult(
                     Mock.Of<IPlugin>(),
                     Mock.Of<IPluginMulticlientUtilities>(),
-                    claims: null));
+                    claims: null!));
 
             Assert.Equal("claims", exception.ParamName);
         }
@@ -72,7 +72,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_Message_Exception_ThrowsForNullException()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new PluginCreationResult("a", exception: null));
+                () => new PluginCreationResult("a", exception: null!));
 
             Assert.Equal("exception", exception.ParamName);
         }
