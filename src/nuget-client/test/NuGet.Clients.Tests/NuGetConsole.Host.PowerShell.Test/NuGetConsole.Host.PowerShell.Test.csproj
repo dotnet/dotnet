@@ -8,4 +8,12 @@
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj" />
     <ProjectReference Include="..\..\TestUtilities\VisualStudio.Test.Utility\VisualStudio.Test.Utility.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
