@@ -57,9 +57,10 @@ find src/referencePackages/src/package.name/version -name "Customizations.*"
 ### When Build Fails
 
 1. Try building individual package: `./build.sh -sb --projects /full/path/to/package.csproj`
-2. Check for compilation errors that need `Customizations.props` (NoWarn entries)
-3. Look for API issues that need `Customizations.cs` (partial class additions)
-4. Always add explanatory comments for manual fixes needed in the generated source files outside of Customizations files
+2. Search for [known GenAPI issues](https://github.com/dotnet/sdk/issues?q=is%3Aissue+label%3AArea-GenAPI) and how to workaround them
+3. Check for compilation errors that need `Customizations.props` (NoWarn entries)
+4. Look for API issues that need `Customizations.cs` (partial class additions)
+5. Always add explanatory comments for manual fixes needed in the generated source files outside of Customizations files
 
 ## Decision Support
 
@@ -107,21 +108,11 @@ If `./build.sh -sb` produces API compatibility errors (CP0001, CP0002, CP0008, C
 
 4. **Commit the suppression file** — it is a required part of the package source.
 
-### Known Generator Limitations (common suppressions)
+### Known Limitations (common suppressions)
 
 | Diagnostic | Description | Tracking |
 |-----------|-------------|----------|
-| CP0021 | Missing `notnull` generic constraint | No issue filed yet |
-| CP0008 | Missing `[Serializable]` attribute | No issue filed yet |
-| CP0002 | Missing event accessors (add_/remove_) | No issue filed yet |
-
-### Common Compilation Errors and Shared Workaround Files
-
-The `src/referencePackages/common/` directory contains shared
-   source files that fix known GenAPI limitations. Including these via `Customizations.props` is
-   preferred over hand-editing generated code. See the
-   [Known Generator Issues](../docs/known_generator_issues.md#common-source-files) documentation
-   for the full list and usage instructions.
+| CP0008 | Missing internal interfaces from friend assemblies | https://github.com/dotnet/sdk/issues/54451 |
 
 ## Validation Checklist
 
@@ -137,4 +128,3 @@ After any package changes:
 ## 🔗 References
 
 - All build commands and detailed processes are in the [README.md](../README.md)
-- Generator issues: [docs/known_generator_issues.md](../docs/known_generator_issues.md)
