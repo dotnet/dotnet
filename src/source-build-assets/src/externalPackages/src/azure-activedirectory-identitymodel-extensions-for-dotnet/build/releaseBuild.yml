@@ -13,7 +13,7 @@ schedules:
 
     # The following variables are set in the release build UI:
     # BuildConfiguration: 'debug|release'
-    # WilsonVersion: ''. Full version number
+    # MicrosoftIdentityModelVersion: ''. Full version number
     # BuildPlatform: 'any cpu'
 
 jobs:

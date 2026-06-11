@@ -21,7 +21,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
     public class SignedHttpRequestValidationTests
     {
         [Fact]
-        public async void SignedHttpRequestReplayValidation()
+        public async Task SignedHttpRequestReplayValidation()
         {
             HashSet<string> nonceCache = new HashSet<string>();
 
@@ -32,7 +32,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
 
             var signedHttpRequestValidationParameters = new SignedHttpRequestValidationParameters()
             {
-                ReplayValidatorAsync = (SecurityToken signedHttpRequest, SignedHttpRequestValidationContext validationContext, CancellationToken cancellationToken)  => 
+                ReplayValidatorAsync = (SecurityToken signedHttpRequest, SignedHttpRequestValidationContext validationContext, CancellationToken cancellationToken) =>
                 {
                     var jwtSignedHttpRequest = signedHttpRequest as JsonWebToken;
 
@@ -53,15 +53,15 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             };
 
             var signedHttpRequestValidationContext1 = new SignedHttpRequestValidationContext(signedHttpRequest1, new HttpRequestData(), SignedHttpRequestTestUtils.DefaultTokenValidationParameters, signedHttpRequestValidationParameters);
-            var result1 = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext1, CancellationToken.None).ConfigureAwait(false);
+            var result1 = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext1, CancellationToken.None);
             Assert.True(result1.IsValid);
 
             var signedHttpRequestValidationContext2 = new SignedHttpRequestValidationContext(signedHttpRequest2, new HttpRequestData(), SignedHttpRequestTestUtils.DefaultTokenValidationParameters, signedHttpRequestValidationParameters);
-            var result2 = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext2, CancellationToken.None).ConfigureAwait(false);
+            var result2 = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext2, CancellationToken.None);
             Assert.True(result2.IsValid);
 
             var signedHttpRequestValidationContext3 = new SignedHttpRequestValidationContext(signedHttpRequest3, new HttpRequestData(), SignedHttpRequestTestUtils.DefaultTokenValidationParameters, signedHttpRequestValidationParameters);
-            var result3 = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext3, CancellationToken.None).ConfigureAwait(false);
+            var result3 = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext3, CancellationToken.None);
             Assert.False(result3.IsValid);
             Assert.IsType<InvalidOperationException>(result3.Exception);
             Assert.Equal("Replay detected", result3.Exception.Message);
@@ -84,7 +84,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             return handler.CreateSignedHttpRequest(descriptor);
         }
 
-        [Theory, MemberData(nameof(ValidateTsClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidateTsClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateTsClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateTsClaim", theoryData);
@@ -142,7 +142,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateMClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidateMClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateMClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateMClaim", theoryData);
@@ -224,7 +224,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateUClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidateUClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateUClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateUClaim", theoryData);
@@ -318,7 +318,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidatePClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidatePClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidatePClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidatePClaim", theoryData);
@@ -429,7 +429,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateHClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidateHClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateHClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateHClaim", theoryData);
@@ -680,7 +680,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateQClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidateQClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateQClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateQClaim", theoryData);
@@ -855,7 +855,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateBClaimTheoryData))]
+        [Theory, MemberData(nameof(ValidateBClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateBClaim(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateBClaim", theoryData);
@@ -913,7 +913,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateSignedHttpRequestCallsTheoryData))]
+        [Theory, MemberData(nameof(ValidateSignedHttpRequestCallsTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task ValidateSignedHttpRequestCalls(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var containsClaim = new Func<SignedHttpRequestValidationParameters, string, bool>((validationParams, claim) =>
@@ -925,7 +925,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
 
             var handler = new SignedHttpRequestHandlerPublic();
-            var signedHttpRequest = await handler.ValidateSignedHttpRequestPayloadAsync(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
+            var signedHttpRequest = await handler.ValidateSignedHttpRequestPayloadAsync(theoryData.SignedHttpRequestToken, signedHttpRequestValidationContext, CancellationToken.None);
 
             var methodCalledStatus = (bool)signedHttpRequestValidationContext.CallContext.PropertyBag["onlyTrack_ValidateTsClaimCall"];
             if (methodCalledStatus != signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.ValidateTs &&
@@ -1259,7 +1259,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateSignedHttpRequestSignatureTheoryData))]
+        [Theory, MemberData(nameof(ValidateSignedHttpRequestSignatureTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task ValidateSignedHttpRequestSignature(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateSignedHttpRequestSignature", theoryData);
@@ -1267,7 +1267,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             {
                 var handler = new SignedHttpRequestHandler();
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
-                var signingKey = await handler.ValidateSignatureAsync(theoryData.SignedHttpRequestToken, theoryData.PopKey, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
+                var signingKey = await handler.ValidateSignatureAsync(theoryData.SignedHttpRequestToken, theoryData.PopKey, signedHttpRequestValidationContext, CancellationToken.None);
                 IdentityComparer.AreSecurityKeysEqual(signingKey, theoryData.ExpectedPopKey, context);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
@@ -1363,7 +1363,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateSignedHttpRequestTheoryData))]
+        [Theory, MemberData(nameof(ValidateSignedHttpRequestTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task ValidateSignedHttpRequest(ValidateSignedHttpRequestTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateSignedHttpRequest", theoryData);
@@ -1375,7 +1375,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 if (signedHttpRequestValidationContext.CallContext.PropertyBag != null && signedHttpRequestValidationContext.CallContext.PropertyBag.ContainsKey("makeSignedHttpRequestValidationContextNull"))
                     signedHttpRequestValidationContext = null;
 
-                var result = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
+                var result = await handler.ValidateSignedHttpRequestAsync(signedHttpRequestValidationContext, CancellationToken.None);
 
                 if (result.Exception != null)
                 {
@@ -1472,7 +1472,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                     },
                     new ValidateSignedHttpRequestTheoryData
                     {
-                        SignedHttpRequestToken = signedHttpRequestWithEncryptedAt, 
+                        SignedHttpRequestToken = signedHttpRequestWithEncryptedAt,
                         SignedHttpRequestValidationParameters = new SignedHttpRequestValidationParameters()
                         {
                             ValidateB = false,

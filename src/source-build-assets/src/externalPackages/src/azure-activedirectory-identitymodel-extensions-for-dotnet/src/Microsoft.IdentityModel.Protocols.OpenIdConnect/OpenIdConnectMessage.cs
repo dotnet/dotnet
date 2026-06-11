@@ -122,7 +122,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                         LogHelper.MarkAsNonPII(reader.CurrentDepth),
                         LogHelper.MarkAsNonPII(reader.BytesConsumed))));
 
-            while(true)
+            while (true)
             {
                 // propertyValue is set to match 6.x
                 if (reader.TokenType == JsonTokenType.PropertyName)
@@ -219,7 +219,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Gets or sets 'acr_values'.
         /// </summary>
-        public string AcrValues 
+        public string AcrValues
         {
             get { return GetParameter(OpenIdConnectParameterNames.AcrValues); }
             set { SetParameter(OpenIdConnectParameterNames.AcrValues, value); }
@@ -393,7 +393,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Gets or sets 'login_hint'.
         /// </summary>
-        [property: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]  
+        [property: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
         public string LoginHint
         {
             get { return GetParameter(OpenIdConnectParameterNames.LoginHint); }
@@ -508,7 +508,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             get { return GetParameter(OpenIdConnectParameterNames.Resource); }
             set { SetParameter(OpenIdConnectParameterNames.Resource, value); }
         }
-        
+
         /// <summary>
         /// Gets or sets 'scope'.
         /// </summary>
@@ -590,7 +590,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             get { return GetParameter(OpenIdConnectParameterNames.UserId); }
             set { SetParameter(OpenIdConnectParameterNames.UserId, value); }
         }
-        
+
         /// <summary>
         /// Gets or sets 'username'.
         /// </summary>

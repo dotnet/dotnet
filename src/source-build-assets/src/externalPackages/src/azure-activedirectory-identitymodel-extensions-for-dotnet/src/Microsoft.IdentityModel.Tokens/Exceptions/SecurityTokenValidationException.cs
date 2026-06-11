@@ -3,6 +3,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.IdentityModel.Tokens.Experimental;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -49,5 +50,30 @@ namespace Microsoft.IdentityModel.Tokens
             : base(info, context)
         {
         }
+
+        #region Experimental
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityTokenValidationException"/> class with a specified error message
+        /// and a reference to the inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="validationError">The <see cref="ValidationError"/> that is associated with the exception.</param>
+        internal SecurityTokenValidationException(string message, ValidationError validationError)
+            : base(message, validationError)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityTokenValidationException"/> class with a specified error message
+        /// and a reference to the inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="validationError">The <see cref="ValidationError"/> that is associated with the exception.</param>
+        /// <param name="innerException">The <see cref="Exception"/> that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        internal SecurityTokenValidationException(string message, ValidationError validationError, Exception innerException)
+            : base(message, validationError, innerException)
+        {
+        }
+        #endregion
     }
 }

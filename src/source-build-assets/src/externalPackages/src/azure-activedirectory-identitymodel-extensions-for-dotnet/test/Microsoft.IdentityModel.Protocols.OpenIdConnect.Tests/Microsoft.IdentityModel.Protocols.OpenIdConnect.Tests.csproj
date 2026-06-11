@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\build\commonTest.props" />
 
@@ -12,20 +12,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="JsonWebKeySet.json;JsonWebKeySetBadBase64Data.json;JsonWebKeySetBadX509Data.json;JsonWebKeySetEnd2End.json;JsonWebKeySetSingleX509Data.json;OpenIdConnectMetadata.json;OpenIdConnectMetadata2.json;JsonWebKeySetUnrecognizedKty.json;JsonWebKeySetBadRsaDataMissingComponent.json;OpenIdConnectMetadataBadBase64Data.json;OpenIdConnectMetadataBadX509Data.json;OpenIdConnectMetadataEnd2End.json;OpenIdConnectMetadataJsonWebKeySetBadUri.json;PingLabsJWKS.json;PingLabs-openid-configuration.json;;JsonWebKeySetEnd2EndEC.json;OpenIdConnectMetadataEnd2EndEC.json;OpenIdConnectMetadataUnrecognizedKty.json;OpenIdConnectMetadataBadRsaDataMissingComponent.json">
+    <None Update="JsonWebKeySet.json;JsonWebKeySetBadBase64Data.json;JsonWebKeySetBadX509Data.json;JsonWebKeySetEnd2End.json;JsonWebKeySetSingleX509Data.json;OpenIdConnectMetadata.json;OpenIdConnectMetadata2.json;JsonWebKeySetUnrecognizedKty.json;JsonWebKeySetBadRsaDataMissingComponent.json;OpenIdConnectMetadataBadBase64Data.json;OpenIdConnectMetadataBadX509Data.json;OpenIdConnectMetadataEnd2End.json;OpenIdConnectMetadataJsonWebKeySetBadUri.json;PingLabsJWKS.json;PingLabs-openid-configuration.json;;JsonWebKeySetEnd2EndEC.json;OpenIdConnectMetadataEnd2EndEC.json;OpenIdConnectMetadataUnrecognizedKty.json;OpenIdConnectMetadataBadRsaDataMissingComponent.json;OpenIdConnectMetadataEnd2EndAcrValuesLast.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Protocols.OpenIdConnect\Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj" />
+    <ProjectReference Include="..\Microsoft.IdentityModel.Logging.Tests\Microsoft.IdentityModel.Logging.Tests.csproj" />
     <ProjectReference Include="..\Microsoft.IdentityModel.Protocols.Tests\Microsoft.IdentityModel.Protocols.Tests.csproj" />
     <ProjectReference Include="..\Microsoft.IdentityModel.TestUtils\Microsoft.IdentityModel.TestUtils.csproj" />
     <ProjectReference Include="..\Microsoft.IdentityModel.Tokens.Tests\Microsoft.IdentityModel.Tokens.Tests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttp)" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressions)" />
   </ItemGroup>
 
   <ItemGroup>
