@@ -26,17 +26,6 @@ namespace NuGet.Protocol
         private readonly Uri[] _searchEndpoints;
         private readonly IEnvironmentVariableReader _environmentVariableReader;
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        private readonly RawSearchResourceV3 _rawSearchResource;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        [Obsolete("Use PackageSearchResource instead (via SourceRepository.GetResourceAsync<PackageSearchResource>")]
-        public PackageSearchResourceV3(RawSearchResourceV3 searchResource)
-            : base()
-        {
-            _rawSearchResource = searchResource;
-        }
-
         internal PackageSearchResourceV3(HttpSource client, IEnumerable<Uri> searchEndpoints)
             : this(client, searchEndpoints, environmentVariableReader: null)
         {
@@ -63,27 +52,15 @@ namespace NuGet.Protocol
         /// <returns>List of package meta data.</returns>
         public override async Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filter, int skip, int take, Common.ILogger log, CancellationToken cancellationToken)
         {
-            IEnumerable<PackageSearchMetadata> searchResultMetadata;
             var metadataCache = new MetadataReferenceCache();
 
-            if (_client != null && _searchEndpoints != null)
-            {
-                searchResultMetadata = await Search(
-                    searchTerm,
-                    filter,
-                    skip,
-                    take,
-                    log,
-                    cancellationToken);
-            }
-            else
-            {
-#pragma warning disable CS0618
-                var searchResultJsonObjects = await _rawSearchResource.Search(searchTerm, filter, skip, take, Common.NullLogger.Instance, cancellationToken);
-#pragma warning restore CS0618
-                searchResultMetadata = searchResultJsonObjects
-                    .Select(s => s.FromJToken<PackageSearchMetadata>());
-            }
+            var searchResultMetadata = await Search(
+                searchTerm,
+                filter,
+                skip,
+                take,
+                log,
+                cancellationToken);
 
             var searchResults = searchResultMetadata
                 .Select(m => m.WithVersions(() => GetVersions(m, filter)))
