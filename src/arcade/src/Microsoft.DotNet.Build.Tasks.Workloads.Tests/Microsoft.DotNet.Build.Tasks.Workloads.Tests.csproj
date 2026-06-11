@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
-    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" />
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" GeneratePathProperty="true" />
     <PackageReference Include="AwesomeAssertions" />
 
     <!-- WiX toolset CLI is a tool package so we need to set ExcludeAssets. -->

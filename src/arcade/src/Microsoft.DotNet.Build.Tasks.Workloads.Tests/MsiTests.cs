@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
@@ -270,11 +271,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             BuildSwixProject(swixProj, swixManifestOutputPath);
 
-            Assert.True(File.Exists(swixManifestPath));
+            var options = new JsonSerializerOptions
+            {
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
+            };
 
-            using var doc = JsonDocument.Parse(swixManifestPath);
-            var package = doc.RootElement
-                .GetProperty("packages")
+            var json = File.ReadAllText(swixManifestPath);
+            var doc = JsonSerializer.Deserialize<JsonElement>(json, options);
+
+            var package = doc.GetProperty("packages")
                 .EnumerateArray()
                 .First();
 

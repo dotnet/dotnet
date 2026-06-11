@@ -25,10 +25,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildWorkloads)' == 'true'">
+    <PackageReference Include="vswhere" Version="$(VSWhereVersion)" IsImplicitlyDefined="true" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Workloads" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.Signed.WiX" GeneratePathProperty="true" />
-    <PackageReference Include="MicroBuild.Plugins.SwixBuild.Dotnet" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild" GeneratePathProperty="true"/>
 
     <!-- Acquire the WiX CLI -->
     <!-- WiX toolset CLI is a tool package so we need to set ExcludeAssets. -->
@@ -40,8 +40,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <SwixPluginPath>$(PkgMicroBuild_Plugins_SwixBuild_Dotnet)</SwixPluginPath>
-    <SwixBuildTargets>$(SwixPluginPath)\build\MicroBuild.Plugins.SwixBuild.targets</SwixBuildTargets>
+    <SwixBuildTargets>$(PkgMicrosoft_VisualStudioEng_MicroBuild_Plugins_SwixBuild)\build\Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild.targets)</SwixBuildTargets>
 
     <WixExe>$(PkgMicrosoft_Wix)\tools\net6.0\any\wix.exe</WixExe>
     <HeatExe>$(PkgMicrosoft_WixToolset_Heat)\tools\net472\x64\heat.exe</HeatExe>
@@ -202,6 +201,7 @@
             _GenerateMsiVersionString;
             _CollectDownloadedWorkloadPacks;
             _CollectDownloadedWorkloadMsis;
+            _FindMSBuild;
             BuildWorkloadMsis"
           Condition="'$(BuildWorkloads)' == 'true'">
   </Target>
@@ -219,6 +219,20 @@
     <Copy SourceFiles="@(DownloadedWorkloadMsis)"
           DestinationFolder="$(ArtifactsShippingPackagesDir)"
           UseHardlinksIfPossible="true" />
+  </Target>
+
+  <Target Name="_FindMSBuild">
+    <PropertyGroup>
+      <VSWherePath>$([MSBuild]::NormalizePath('$(Pkgvswhere)','tools','vswhere.exe'))</VSWherePath>
+    </PropertyGroup>
+
+    <Exec Command="&quot;$(VSWherePath)&quot; -latest -prerelease -property installationPath -requires Microsoft.Component.MSBuild" ConsoleToMsBuild="true" StandardErrorImportance="high">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_VSInstallDir" />
+    </Exec>
+
+    <PropertyGroup>
+      <_DesktopMSBuildPath>$(_VSInstallDir)\MSBuild\Current\Bin\msbuild.exe</_DesktopMSBuildPath>
+    </PropertyGroup>
   </Target>
 
   <Target Name="BuildWorkloadMsis"
@@ -531,8 +545,9 @@
       <PartitionedSwixProjects Include="@(SwixWorkloadPackProjects);@(SwixComponentsAndManifests);@(SwixPreviewComponentsAndManifests)" />
     </ItemGroup>
 
-    <!-- Can't build in parallel to the same output folder because of a shared file from the SWIX compiler. -->
-    <MSBuild Projects="@(PartitionedSwixProjects)" Properties="SwixBuildTargets=$(SwixBuildTargets);ManifestOutputPath=%(ManifestOutputPath)"/>
+    <!-- Can't build in parallel to the same output folder because of a shared file from the SWIX compiler. For now, this needs to build with .NET Framework copy
+         of MSBuild until VS releases an update SWIX toolset that uses a compatible task host factory. -->
+    <Exec Command="&quot;$(_DesktopMSBuildPath)&quot; %(PartitionedSwixProjects.Identity) /p:SwixBuildTargets=$(SwixBuildTargets);ManifestOutputPath=%(ManifestOutputPath)"/>
 
     <!-- Create the zip files used for VSDROP creation. -->
     <ItemGroup>
