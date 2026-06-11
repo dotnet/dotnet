@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <None Include="build\**\*" Pack="true" PackagePath="%(Identity)" />
+    <None Include="workloads.md" Pack="true" PackagePath="docs\" />
   </ItemGroup>
 
   <ItemGroup>
