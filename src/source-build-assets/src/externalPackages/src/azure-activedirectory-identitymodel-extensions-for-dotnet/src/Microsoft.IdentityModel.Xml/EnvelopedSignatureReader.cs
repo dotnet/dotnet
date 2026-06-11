@@ -17,7 +17,7 @@ namespace Microsoft.IdentityModel.Xml
         private DSigSerializer _dsigSerializer = DSigSerializer.Default;
         private int _elementCount;
         private XmlTokenStreamReader _tokenStreamReader;
-        private IXmlElementReader _xmlElementReader = null;
+        private IXmlElementReader _xmlElementReader;
 
         /// <summary>
         /// Initializes an instance of <see cref="EnvelopedSignatureReader"/>
@@ -31,7 +31,7 @@ namespace Microsoft.IdentityModel.Xml
                 throw LogArgumentNullException(nameof(reader));
 
             _tokenStreamReader = new XmlTokenStreamReader(CreateDictionaryReader(reader));
-            InnerReader  = _tokenStreamReader;
+            InnerReader = _tokenStreamReader;
         }
 
         /// <summary>

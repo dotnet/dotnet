@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation.Tests
 {
     public static class WsFederationTestUtilities
     {
-        public static string BuildWaSignInMessage(SecurityToken securityToken, SecurityTokenHandler tokenHandler, string tokenType )
+        public static string BuildWaSignInMessage(SecurityToken securityToken, SecurityTokenHandler tokenHandler, string tokenType)
         {
             using (var memoryStream = new MemoryStream())
             {
@@ -21,7 +21,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation.Tests
                 {
                     // <RequestSecurityTokenResponse>
                     writer.WriteStartElement(WsTrustConstants_1_3.PreferredPrefix, WsTrustConstants.Elements.RequestSecurityTokenResponse, WsTrustConstants_1_3.Namespace);
-                   
+
                     // <Lifetime>
                     writer.WriteStartElement(WsTrustConstants_1_3.PreferredPrefix, WsTrustConstants.Elements.Lifetime, WsTrustConstants.Namespaces.WsTrust1_3);
 
@@ -66,7 +66,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation.Tests
                     writer.Flush();
                     var rstr = Encoding.UTF8.GetString(memoryStream.ToArray());
 
-                    return "wa=wsignin1.0&wresult="+Uri.EscapeDataString(rstr);
+                    return "wa=wsignin1.0&wresult=" + Uri.EscapeDataString(rstr);
                 }
             }
         }

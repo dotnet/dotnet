@@ -42,7 +42,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             Assert.True(inCollection);
         }
 
-        [Theory, MemberData(nameof(IssuerSerialComparisonData))]
+        [Theory, MemberData(nameof(IssuerSerialComparisonData), DisableDiscoveryEnumeration = true)]
         public void RsaKeyValue_HashCodeTests(RsaKeyValueComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(RsaKeyValue_HashCodeTests)}", theoryData);
@@ -61,7 +61,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(IssuerSerialComparisonData))]
+        [Theory, MemberData(nameof(IssuerSerialComparisonData), DisableDiscoveryEnumeration = true)]
         public void RsaKeyValue_EqualsTests(RsaKeyValueComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(RsaKeyValue_EqualsTests)}", theoryData);

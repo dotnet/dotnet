@@ -1,0 +1,66 @@
+const System.IdentityModel.Tokens.Jwt.JwtConstants.JweSegmentCount = 5 -> int
+const System.IdentityModel.Tokens.Jwt.JwtConstants.JwsSegmentCount = 3 -> int
+const System.IdentityModel.Tokens.Jwt.JwtConstants.MaxJwtSegmentCount = 5 -> int
+const System.IdentityModel.Tokens.Jwt.JwtPayload.ClassName = "System.IdentityModel.Tokens.Jwt.JwtPayload" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12401 = "IDX12401: Expires: '{0}' must be after NotBefore: '{1}'." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12706 = "IDX12706: '{0}' can only write SecurityTokens of type: '{1}', 'token' type is: '{2}'." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12709 = "IDX12709: CanReadToken() returned false. JWT is not well formed.\nThe token needs to be in JWS or JWE Compact Serialization Format. (JWS): 'EncodedHeader.EncodedPayload.EncodedSignature'. (JWE): 'EncodedProtectedHeader.EncodedEncryptedKey.EncodedInitializationVector.EncodedCiphertext.EncodedAuthenticationTag'." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12710 = "IDX12710: Only a single 'Actor' is supported. Found second claim of type: '{0}', value: '{1}'" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12711 = "IDX12711: actor.BootstrapContext is not a string AND actor.BootstrapContext is not a JWT" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12712 = "IDX12712: actor.BootstrapContext is null. Creating the token using actor.Claims." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12713 = "IDX12713: Creating actor value using actor.BootstrapContext(as string)" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12714 = "IDX12714: Creating actor value using actor.BootstrapContext.rawData" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12715 = "IDX12715: Creating actor value by writing the JwtSecurityToken created from actor.BootstrapContext" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12720 = "IDX12720: Token string does not match the token formats: JWE (header.encryptedKey.iv.ciphertext.tag) or JWS (header.payload.signature)" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12721 = "IDX12721: Creating JwtSecurityToken: Issuer: '{0}', Audience: '{1}'" -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12722 = "IDX12722: Creating security token from the header: '{0}', payload: '{1}'." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12723 = "IDX12723: Unable to decode the payload '{0}' as Base64Url encoded string." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12729 = "IDX12729: Unable to decode the header '{0}' as Base64Url encoded string." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12730 = "IDX12730: Failed to create the token encryption provider." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12735 = "IDX12735: If JwtSecurityToken.InnerToken != null, then JwtSecurityToken.Header.EncryptingCredentials must be set." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12736 = "IDX12736: JwtSecurityToken.SigningCredentials is not supported when JwtSecurityToken.InnerToken is set." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12737 = "IDX12737: EncryptingCredentials set on JwtSecurityToken.InnerToken is not supported." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12738 = "IDX12738: Header.Cty != null, assuming JWS. Cty: '{0}'." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12739 = "IDX12739: JWT has three segments but is not in proper JWS format." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12740 = "IDX12740: JWT has five segments but is not in proper JWE format." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12741 = "IDX12741: JWT must have three segments (JWS) or five segments (JWE)." -> string
+const System.IdentityModel.Tokens.Jwt.LogMessages.IDX12742 = "IDX12742: ''{0}' cannot contain the following claims: '{1}'. These values are added by default (if necessary) during security token creation." -> string
+static System.IdentityModel.Tokens.Jwt.JwtHeader.DefaultHeaderParameters -> System.Collections.Generic.IList<string>
+static System.IdentityModel.Tokens.Jwt.JwtPayload.AddClaimsFromJsonElement(string claimType, string issuer, System.Text.Json.JsonElement jsonElement, System.Collections.Generic.List<System.Security.Claims.Claim> claims) -> void
+static System.IdentityModel.Tokens.Jwt.JwtPayload.CreatePayload(byte[] bytes, int length) -> System.IdentityModel.Tokens.Jwt.JwtPayload
+System.IdentityModel.Tokens.Jwt.JwtHeader.AddAdditionalClaims(System.Collections.Generic.IDictionary<string, object> additionalHeaderClaims, bool setDefaultCtyClaim) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.ClassName -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.GetStandardClaim(string claimType) -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap, string tokenType, System.Collections.Generic.IDictionary<string, object> additionalHeaderClaims, bool includeKeyIdInHeader) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap, string tokenType, System.Collections.Generic.IDictionary<string, object> additionalInnerHeaderClaims, bool includeKeyIdInHeader) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(string json) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload._audiences -> System.Collections.Generic.List<string>
+System.IdentityModel.Tokens.Jwt.JwtPayload._azp -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload._exp -> long?
+System.IdentityModel.Tokens.Jwt.JwtPayload._expDateTime -> System.DateTime?
+System.IdentityModel.Tokens.Jwt.JwtPayload._iat -> long?
+System.IdentityModel.Tokens.Jwt.JwtPayload._iatDateTime -> System.DateTime?
+System.IdentityModel.Tokens.Jwt.JwtPayload._id -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload._iss -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload._jti -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload._nbf -> long?
+System.IdentityModel.Tokens.Jwt.JwtPayload._nbfDateTime -> System.DateTime?
+System.IdentityModel.Tokens.Jwt.JwtPayload._sub -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload._tid -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.AddDictionaryClaims(System.Collections.Generic.IDictionary<string, object> claimsCollection) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.AddFirstPriorityClaims(string issuer, string audience, System.Collections.Generic.IList<string> audiences, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.AddFirstPriorityClaims(string issuer, string audience, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.GetIntClaim(string claimType) -> int?
+System.IdentityModel.Tokens.Jwt.JwtPayload.GetListOfClaims(string claimType) -> System.Collections.Generic.List<string>
+System.IdentityModel.Tokens.Jwt.JwtPayload.GetLongClaim(string claimType) -> long?
+System.IdentityModel.Tokens.Jwt.JwtPayload.GetStandardClaim(string claimType) -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Decode(string[] tokenParts, string rawData) -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Header.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.InnerToken.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Payload.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawHeader.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawPayload.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawSignature.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.GetContentEncryptionKeys(System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.SecurityKey>
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.TelemetryClient -> Microsoft.IdentityModel.Telemetry.ITelemetryClient
+System.IdentityModel.Tokens.Jwt.LogMessages

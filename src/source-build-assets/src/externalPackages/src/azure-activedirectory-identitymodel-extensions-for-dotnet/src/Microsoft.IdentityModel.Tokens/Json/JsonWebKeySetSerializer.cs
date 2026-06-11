@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -73,7 +72,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                         if (propertyName.Equals(JsonWebKeyParameterNames.Keys, StringComparison.OrdinalIgnoreCase))
                             ReadKeys(ref reader, jsonWebKeySet);
                         else
-                            jsonWebKeySet.AdditionalData[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader,JsonWebKeyParameterNames.Keys, JsonWebKeySet.ClassName);
+                            jsonWebKeySet.AdditionalData[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, JsonWebKeyParameterNames.Keys, JsonWebKeySet.ClassName);
                     }
                 }
                 // We read a JsonTokenType.StartObject above, exiting and positioning reader at next token.

@@ -46,7 +46,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             // assert
             // compare KDFs are the same and they're matching with expected
-            if (!Utility.AreEqual(((SymmetricSecurityKey)aliceCek).Key, ((SymmetricSecurityKey)bobCek).Key)) 
+            if (!Utility.AreEqual(((SymmetricSecurityKey)aliceCek).Key, ((SymmetricSecurityKey)bobCek).Key))
                 context.AddDiff($"!Utility.AreEqual(aliceCek, bobCek)");
             if (!Utility.AreEqual(((SymmetricSecurityKey)aliceCek).Key, ECDH_ES.DerivedKeyBytes))
                 context.AddDiff($"!Utility.AreEqual(aliceCek, ECDH_ES.DerivedKeyBytes)");
@@ -58,6 +58,17 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         [Fact]
         public void AesGcmReferenceTest()
         {
+#if NET10_0_OR_GREATER
+            // AES-GCM is now supported on all platforms in .NET 10+
+            var context = new CompareContext();
+            var providerForDecryption = CryptoProviderFactory.Default.CreateAuthenticatedEncryptionProvider(new SymmetricSecurityKey(RSAES_OAEP_KeyWrap.CEK), AES_256_GCM.Algorithm);
+            var plaintext = providerForDecryption.Decrypt(AES_256_GCM.E, AES_256_GCM.A, AES_256_GCM.IV, AES_256_GCM.T);
+
+            if (!Utility.AreEqual(plaintext, AES_256_GCM.P))
+                context.AddDiff($"!Utility.AreEqual(plaintext, testParams.Plaintext)");
+
+            TestUtilities.AssertFailIfErrors(context);
+#else
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
@@ -73,9 +84,10 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
                 TestUtilities.AssertFailIfErrors(context);
             }
+#endif
         }
 
-        [Theory, MemberData(nameof(AuthenticatedEncryptionTheoryData))]
+        [Theory, MemberData(nameof(AuthenticatedEncryptionTheoryData), DisableDiscoveryEnumeration = true)]
         public void AuthenticatedEncryptionReferenceTest(AuthenticationEncryptionTestParams testParams)
         {
             var context = TestUtilities.WriteHeader("AuthenticatedEncryptionReferenceTest", testParams);
@@ -167,7 +179,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(KeyWrapTheoryData))]
+        [Theory, MemberData(nameof(KeyWrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void KeyWrapReferenceTest(KeyWrapTestParams testParams)
         {
             if (testParams.Algorithm.Equals(SecurityAlgorithms.Aes128KW, StringComparison.OrdinalIgnoreCase)

@@ -8,7 +8,7 @@ namespace Microsoft.IdentityModel.Xml
     /// </summary>
     public static class WsTrustConstants_1_3
     {
-        #pragma warning disable 1591
+#pragma warning disable 1591
 
         public const string Namespace = "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
         public const string PreferredPrefix = "t";
@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Xml
             public const string Issue = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+

@@ -67,12 +67,25 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         [Fact]
         public void AesGcmEncryptionOnWindows()
         {
+#if NET10_0_OR_GREATER
+            // AES-GCM is now supported on all platforms in .NET 10+
+            var context = new CompareContext();
+            try
+            {
+                var provider = new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm);
+            }
+            catch (Exception ex)
+            {
+                context.AddDiff($"AuthenticatedEncryptionProvider is not supposed to throw an exception, Exception:{ex.ToString()}");
+            }
+            TestUtilities.AssertFailIfErrors(context);
+#else
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
             }
             else
-            { 
+            {
                 var context = new CompareContext();
                 try
                 {
@@ -84,14 +97,18 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 }
                 TestUtilities.AssertFailIfErrors(context);
             }
+#endif
         }
 
-#if NET_CORE
+#if NET
         [Fact]
         public void AesGcm_Dispose()
         {
+#if !NET10_0_OR_GREATER
+            // In .NET 9 and below, AES-GCM is only supported on Windows
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
+#endif
 
             AuthenticatedEncryptionProvider encryptionProvider = new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm);
             encryptionProvider.Dispose();
@@ -108,8 +125,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         }
 #endif
 
-        [Theory, MemberData(nameof(AEPConstructorTheoryData))]
-        public void Constructors(string testId, SymmetricSecurityKey key, string algorithm, ExpectedException ee)
+        [Theory, MemberData(nameof(AEPConstructorTheoryData), DisableDiscoveryEnumeration = true)]
+        public void Constructors(string testId, SecurityKey key, string algorithm, ExpectedException ee)
         {
             TestUtilities.WriteHeader("Constructors - " + testId, true);
             try
@@ -161,7 +178,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             return theoryData;
         }
 
-        [Theory, MemberData(nameof(DecryptTheoryData))]
+        [Theory, MemberData(nameof(DecryptTheoryData), DisableDiscoveryEnumeration = true)]
         public void Decrypt(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Decrypt", theoryData);
@@ -284,7 +301,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             });
         }
 
-        [Theory, MemberData(nameof(DecryptMismatchTheoryData))]
+        [Theory, MemberData(nameof(DecryptMismatchTheoryData), DisableDiscoveryEnumeration = true)]
         public void DecryptMismatch(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.DecryptMismatch", theoryData);
@@ -309,7 +326,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             var keys128_256 = new List<SymmetricSecurityKey> { Default.SymmetricEncryptionKey512, Default.SymmetricEncryptionKey768, Default.SymmetricEncryptionKey1024, Default.SymmetricEncryptionKey256, Default.SymmetricEncryptionKey384 };
 
             for (int i = 0; i < keys128.Count - 1; i++)
-                for(int j = i + 1; j < keys128.Count; j++)
+                for (int j = i + 1; j < keys128.Count; j++)
                     AddDecryptMismatchTheoryData(
                         "Test1-" + i.ToString() + "-" + j.ToString(),
                         keys128[i],
@@ -391,7 +408,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             });
         }
 
-        [Theory, MemberData(nameof(DisposeTheoryData))]
+        [Theory, MemberData(nameof(DisposeTheoryData), DisableDiscoveryEnumeration = true)]
         public void Dispose(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Dispose", theoryData);
@@ -414,7 +431,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-#region DisposeTests
+        #region DisposeTests
         public static TheoryData<AuthenticatedEncryptionTheoryData> DisposeTheoryData()
         {
             var theoryData = new TheoryData<AuthenticatedEncryptionTheoryData>();
@@ -637,9 +654,9 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             return theoryData;
         }
-#endregion
+        #endregion
 
-        [Theory, MemberData(nameof(EncryptDecryptTheoryData))]
+        [Theory, MemberData(nameof(EncryptDecryptTheoryData), DisableDiscoveryEnumeration = true)]
         public void EncryptDecrypt(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.EncryptDecrypt", theoryData);
@@ -679,9 +696,9 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             AddEncryptDecryptTheoryData("Test8", SecurityAlgorithms.Aes256CbcHmacSha512, Default.SymmetricEncryptionKey1024, theoryData);
 
             // Encrypt parameter checking
-            AddEncryptParameterCheckTheoryData("Test9",  null,        new byte[1], theoryData);
+            AddEncryptParameterCheckTheoryData("Test9", null, new byte[1], theoryData);
             AddEncryptParameterCheckTheoryData("Test10", new byte[0], new byte[1], theoryData);
-            AddEncryptParameterCheckTheoryData("Test11", new byte[1], null,        theoryData);
+            AddEncryptParameterCheckTheoryData("Test11", new byte[1], null, theoryData);
             AddEncryptParameterCheckTheoryData("Test12", new byte[1], new byte[0], theoryData);
 
             return theoryData;

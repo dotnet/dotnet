@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens
     /// <summary>
     /// Defines properties shared across all security token handlers.
     /// </summary>
-    public abstract class TokenHandler
+    public abstract partial class TokenHandler
     {
         private int _defaultTokenLifetimeInMinutes = DefaultTokenLifetimeInMinutes;
         private int _maximumTokenSizeInBytes = TokenValidationParameters.DefaultMaximumTokenSizeInBytes;

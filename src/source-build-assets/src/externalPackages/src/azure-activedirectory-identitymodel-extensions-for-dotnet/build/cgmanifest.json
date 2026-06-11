@@ -1,5 +1,5 @@
 {
-  "Registrations": [
+  "registrations": [
     {
       "component": {
         "type": "git",
@@ -10,6 +10,6 @@
       }
     }
   ],
-  "Version": 1,
+  "version": 1,
   "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }

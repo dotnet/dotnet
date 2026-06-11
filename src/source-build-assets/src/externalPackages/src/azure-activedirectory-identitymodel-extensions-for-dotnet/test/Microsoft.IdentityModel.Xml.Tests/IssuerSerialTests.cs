@@ -43,7 +43,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             Assert.True(Enumerable.SequenceEqual(list, secondList));
         }
 
-        [Theory, MemberData(nameof(IssuerSerialComparisonData))]
+        [Theory, MemberData(nameof(IssuerSerialComparisonData), DisableDiscoveryEnumeration = true)]
         public void IssuerSerial_HashCodeTests(IssuerSerialComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(IssuerSerial_HashCodeTests)}", theoryData);
@@ -62,7 +62,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(IssuerSerialComparisonData))]
+        [Theory, MemberData(nameof(IssuerSerialComparisonData), DisableDiscoveryEnumeration = true)]
         public void IssuerSerial_EqualsTests(IssuerSerialComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(IssuerSerial_EqualsTests)}", theoryData);
