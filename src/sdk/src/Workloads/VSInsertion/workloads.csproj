@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <SwixBuildTargets>$(PkgMicrosoft_VisualStudioEng_MicroBuild_Plugins_SwixBuild)\build\Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild.targets)</SwixBuildTargets>
+    <SwixBuildTargets>$(PkgMicrosoft_VisualStudioEng_MicroBuild_Plugins_SwixBuild)\build\Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild.targets</SwixBuildTargets>
 
     <WixExe>$(PkgMicrosoft_Wix)\tools\net6.0\any\wix.exe</WixExe>
     <HeatExe>$(PkgMicrosoft_WixToolset_Heat)\tools\net472\x64\heat.exe</HeatExe>
