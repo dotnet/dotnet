@@ -92,7 +92,9 @@ namespace NuGet.Protocol.Plugins
             using (var stringWriter = new System.IO.StringWriter())
             using (var jsonWriter = new Newtonsoft.Json.JsonTextWriter(stringWriter))
             {
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
                 JsonSerializationUtilities.Serialize(jsonWriter, message.PayloadObject);
+#pragma warning restore IL2026, IL3050
                 return stringWriter.ToString();
             }
         }
@@ -119,7 +121,9 @@ namespace NuGet.Protocol.Plugins
 
             if (message.PayloadObject is Newtonsoft.Json.Linq.JObject jobj)
             {
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
                 return JsonSerializationUtilities.ToObject<TPayload>(jobj);
+#pragma warning restore IL2026, IL3050
             }
 
             return (TPayload)message.PayloadObject;

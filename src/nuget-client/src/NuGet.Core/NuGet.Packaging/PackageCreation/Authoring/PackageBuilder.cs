@@ -369,13 +369,13 @@ namespace NuGet.Packaging
             }
         }
 
-        private string CalcPsmdcpName()
+        internal string CalcPsmdcpName()
         {
             if (_deterministic)
             {
                 using (var hashFunc = new Sha512HashFunction())
                 {
-                    foreach (var file in Files)
+                    foreach (var file in Files.OrderBy(f => f, new NormalizedPathComparer()))
                     {
                         var data = ReadAllBytes(file.GetStream());
                         hashFunc.Update(data, 0, data.Length);

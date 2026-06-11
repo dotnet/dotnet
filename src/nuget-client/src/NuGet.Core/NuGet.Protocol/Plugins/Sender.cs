@@ -149,7 +149,9 @@ namespace NuGet.Protocol.Plugins
                     else
                     {
                         using var jsonWriter = new Newtonsoft.Json.JsonTextWriter(_textWriter) { CloseOutput = false };
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
                         JsonSerializationUtilities.Serialize(jsonWriter, message);
+#pragma warning restore IL2026, IL3050
 
                         // We need to terminate JSON objects with a delimiter (i.e.:  a single
                         // newline sequence) to signal to the receiver when to stop reading.
