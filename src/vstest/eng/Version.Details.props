@@ -18,7 +18,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
     <!-- vs-code-coverage dependencies -->
-    <MicrosoftInternalCodeCoveragePackageVersion>18.8.0-preview.26256.1</MicrosoftInternalCodeCoveragePackageVersion>
+    <MicrosoftInternalCodeCoveragePackageVersion>18.9.0-preview.26304.2</MicrosoftInternalCodeCoveragePackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
