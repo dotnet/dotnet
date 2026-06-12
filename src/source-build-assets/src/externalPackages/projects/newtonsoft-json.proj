@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- Per-component overrides (FileVersionRevision, AssemblyVersionOverride, etc.) and the
+       <FileVersionValidationPackage> item shared with the update-external-metadata tool
+       and ExternalPackageTests live in this sibling file. SourceRevisionId stays in the
+       .proj below — it's per-.proj source provenance, orthogonal to validation overrides. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
+
   <PropertyGroup>
     <GlobalJsonFile>$(ProjectDirectory)Src/global.json</GlobalJsonFile>
 
@@ -14,11 +20,6 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:PublicSign=true</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:AdditionalConstants=SIGNED</DotNetToolArgs>
-    <!-- The upstream build computes a date-based FileVersion revision via PowerShell (GetVersion in build.ps1).
-         Set it here to match the official NuGet package. See https://github.com/dotnet/source-build/issues/5511 -->
-    <FileVersionRevision>30916</FileVersionRevision>
-    <!-- Used by the update-external-metadata script to determine the package to download. -->
-    <FileVersionValidationPackage>Newtonsoft.Json</FileVersionValidationPackage>
     <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(NewtonsoftJsonReleaseVersion).$(FileVersionRevision)</DotNetToolArgs>
 
     <BuildCommand>$(DotNetTool) pack $(NewtonsoftJsonProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
