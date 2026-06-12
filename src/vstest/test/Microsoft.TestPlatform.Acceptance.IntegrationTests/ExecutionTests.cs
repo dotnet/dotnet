@@ -188,7 +188,7 @@ public class ExecutionTests : AcceptanceTestBase
         var errorMessage = "Process is terminated due to StackOverflowException.";
         if (runnerInfo.IsNetTarget)
         {
-            errorMessage = "Test host process crashed : Stack overflow.";
+            errorMessage = "Stack overflow.";
         }
 
         ExitCodeEquals(1);

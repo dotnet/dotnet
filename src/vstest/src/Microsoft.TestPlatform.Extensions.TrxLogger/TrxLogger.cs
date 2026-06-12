@@ -313,7 +313,8 @@ public class TrxLogger : ITestLoggerWithParameters
         UpdateTestLinks(testElement, parentTestElement);
 
         // Convert the rocksteady result to trx test result
-        var testResult = CreateTestResult(executionId, parentExecutionId, testType, testElement, parentTestElement, parentTestResult, e.Result);
+        var testResult = CreateTestResult(executionId, parentExecutionId, testType, testElement, parentTestElement, parentTestResult, e.Result,
+            out bool isFirstDataDrivenInnerResult);
 
         // Update test entries
         UpdateTestEntries(executionId, parentExecutionId, testElement, parentTestElement);
@@ -328,6 +329,24 @@ public class TrxLogger : ITestLoggerWithParameters
         else if (testResult.Outcome == TrxLoggerObjectModel.TestOutcome.Passed)
         {
             Interlocked.Increment(ref _passedTestCount);
+        }
+
+        // When the first inner DataDriven result is encountered, the parent is promoted to a
+        // DataDrivenTest container. Undo the count that was previously recorded for the parent,
+        // since the parent is only a container and should not be counted as a separate test result.
+        // isFirstDataDrivenInnerResult is set atomically via Interlocked.Increment, so this is
+        // race-safe even when multiple data-row results are processed concurrently.
+        if (isFirstDataDrivenInnerResult)
+        {
+            Interlocked.Decrement(ref _totalTestCount);
+            if (parentTestResult!.Outcome == TrxLoggerObjectModel.TestOutcome.Failed)
+            {
+                Interlocked.Decrement(ref _failedTestCount);
+            }
+            else if (parentTestResult.Outcome == TrxLoggerObjectModel.TestOutcome.Passed)
+            {
+                Interlocked.Decrement(ref _passedTestCount);
+            }
         }
     }
 
@@ -695,11 +714,14 @@ public class TrxLogger : ITestLoggerWithParameters
     /// <param name="parentTestElement"></param>
     /// <param name="parentTestResult"></param>
     /// <param name="rocksteadyTestResult"></param>
+    /// <param name="isFirstDataDrivenInnerResult">Set to true when this is the first inner DataDriven result for the parent, indicating the parent count should be undone.</param>
     /// <returns>Trx test result</returns>
     private ITestResult CreateTestResult(Guid executionId, Guid parentExecutionId, TestType testType,
-        ITestElement testElement, ITestElement? parentTestElement, ITestResult? parentTestResult, ObjectModel.TestResult rocksteadyTestResult)
+        ITestElement testElement, ITestElement? parentTestElement, ITestResult? parentTestResult, ObjectModel.TestResult rocksteadyTestResult,
+        out bool isFirstDataDrivenInnerResult)
     {
         TPDebug.Assert(IsInitialized, "Logger is not initialized");
+        isFirstDataDrivenInnerResult = false;
         // Create test result
         TrxLoggerObjectModel.TestOutcome testOutcome = Converter.ToOutcome(rocksteadyTestResult.Outcome);
         TPDebug.Assert(LoggerTestRun != null, "LoggerTestRun is null");
@@ -727,10 +749,11 @@ public class TrxLogger : ITestLoggerWithParameters
         {
             TPDebug.Assert(parentTestResult is TestResultAggregation, "parentTestResult is not of type TestResultAggregation");
             var testResultAggregation = (TestResultAggregation)parentTestResult;
-            testResultAggregation.InnerResults.Add(testResult);
-            testResult.DataRowInfo = testResultAggregation.InnerResults.Count;
+            var innerCount = testResultAggregation.AddInnerResult(testResult);
+            testResult.DataRowInfo = (int)innerCount;
             testResult.ResultType = TrxLoggerConstants.InnerDataDrivenResultType;
             parentTestResult.ResultType = TrxLoggerConstants.ParentDataDrivenResultType;
+            isFirstDataDrivenInnerResult = innerCount == 1;
             return testResult;
         }
 

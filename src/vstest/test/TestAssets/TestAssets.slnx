@@ -67,6 +67,7 @@
   <Project Path="SimpleDataCollector/SimpleDataCollector.csproj" />
   <Project Path="SimpleTestAdapter/SimpleTestAdapter.csproj" />
   <Project Path="SimpleTestProject/SimpleTestProject.csproj" />
+  <Project Path="DataDrivenTestProject/DataDrivenTestProject.csproj" />
   <Project Path="SimpleTestProject2/SimpleTestProject2.csproj" />
   <Project Path="SimpleTestProject3/SimpleTestProject3.csproj" />
   <Project Path="SimpleTestProject4/SimpleTestProject4.csproj" />

@@ -258,6 +258,38 @@ public class LoggerTests : AcceptanceTestBase
     [TestMethod]
     [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
+    public void TrxLoggerShouldNotDoubleCountDataDrivenTestResults(RunnerInfo runnerInfo)
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/15643
+        // DataDriven (DataRow) test results were double-counted in TRX ResultSummary:
+        // both the parent container and each inner data row result were counted.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var assemblyPaths = GetAssetFullPath("DataDrivenTestProject.dll");
+        var trxFilePath = Path.Combine(TempDirectory.Path, "DataDriven.trx");
+        var arguments = PrepareArguments(assemblyPaths, null, string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, $" /logger:\"trx;LogFileName={trxFilePath}\"");
+
+        InvokeVsTest(arguments);
+
+        ValidateSummaryStatus(4, 0, 0);
+
+        // Parse the TRX file and verify Counters reflect actual test executions (4),
+        // not inflated by parent container results.
+        var totalAttr = GetElementAttributeValueFromTrx(trxFilePath, "Counters", "total");
+        var passedAttr = GetElementAttributeValueFromTrx(trxFilePath, "Counters", "passed");
+
+        Assert.IsNotNull(totalAttr, "TRX Counters element should have a 'total' attribute.");
+        Assert.IsNotNull(passedAttr, "TRX Counters element should have a 'passed' attribute.");
+        // DataDrivenTestProject has: 3 DataRow rows + 1 SimpleTest = 4 test executions.
+        // Before the fix, total would be 5 (parent container counted as extra).
+        Assert.AreEqual("4", totalAttr, "TRX total count should reflect actual test executions, not include parent containers.");
+        Assert.AreEqual("4", passedAttr, "TRX passed count should reflect actual passed tests.");
+    }
+
+    [TestMethod]
+    [NetFullTargetFrameworkDataSource]
+    [NetCoreTargetFrameworkDataSource]
     public void TrxLoggerShouldPlaceTrxFileInSubdirectoryWhenLogFileNameContainsPath(RunnerInfo runnerInfo)
     {
         // Regression test for https://github.com/microsoft/vstest/issues/15271
