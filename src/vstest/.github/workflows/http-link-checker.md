@@ -43,8 +43,8 @@ steps:
         echo "Checking $file..."
         # Extract markdown links [text](url)
         grep -oP '\[([^\]]+)\]\(([^\)]+)\)' "$file" | grep -oP '\(([^\)]+)\)' | tr -d '()' >> /tmp/gh-aw/agent/all-links.txt 2>/dev/null || true
-        # Extract plain HTTP(S) URLs
-        grep -oP 'https?://[^\s<>"]+' "$file" >> /tmp/gh-aw/agent/all-links.txt 2>/dev/null || true
+        # Extract plain HTTP(S) URLs from non-markdown-link text to avoid duplicates/trailing ')'
+        sed -E 's/\[[^]]+\]\(([^)]+)\)/ /g' "$file" | grep -oP 'https?://[^\s<>"]+' | awk '{ if (index($0,"(") == 0) sub(/\)$/, "", $0); print }' >> /tmp/gh-aw/agent/all-links.txt 2>/dev/null || true
       done
 
       # Remove duplicates and sort
