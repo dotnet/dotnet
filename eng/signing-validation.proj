@@ -12,6 +12,12 @@
     <SignCheckErrorLog Condition="'$(SignCheckErrorLog)' == ''">$(OutputLogsDirectory)\signcheck.error.log</SignCheckErrorLog>
     <SignCheckResultsXmlFile Condition="'$(SignCheckResultsXmlFile)' == ''">$(OutputLogsDirectory)\signcheck.xml</SignCheckResultsXmlFile>
     <SignCheckInputDir Condition="'$(SignCheckInputDir)' == ''">$(BaseIntermediateDirectory)SignCheckFiles</SignCheckInputDir>
+    <!--
+      SignCheckTask treats unrooted InputFiles values as filename patterns to glob inside
+      ArtifactFolder rather than as directories to scan, so the input directory must be
+      absolute or the task fails with "Unable to find file 'X' in folder 'X'".
+    -->
+    <SignCheckInputDir>$([System.IO.Path]::GetFullPath('$(SignCheckInputDir)'))</SignCheckInputDir>
   </PropertyGroup>
 
   <ItemGroup>
