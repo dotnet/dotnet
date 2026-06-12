@@ -118,7 +118,14 @@
       -->
       <_NativeVersionFileContents>
 <![CDATA[
-static char sccsid[] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+#if defined(__GNUC__) && !defined(__clang__) && defined(TARGET_SUNOS)
+#define RETAIN __attribute__((used))
+__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");
+#else
+#define RETAIN __attribute__((used, retain))
+#endif
+
+static char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
  ]]>
       </_NativeVersionFileContents>
     </PropertyGroup>

@@ -857,7 +857,15 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   endif()
 else()
   if(NOT EXISTS "${VERSION_FILE_PATH}")
-    file(WRITE "${VERSION_FILE_PATH}" "static char sccsid[] __attribute__((used,retain)) = \"@(#)Version 42.42.42.42424 @Commit: AAA\";\n")
+    file(WRITE "${VERSION_FILE_PATH}"
+      "#if defined(__GNUC__) && !defined(__clang__) && defined(TARGET_SUNOS)\n"
+      "#define RETAIN __attribute__((used))\n"
+      "__asm__(\".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection\");\n"
+      "#else\n"
+      "#define RETAIN __attribute__((used, retain))\n"
+      "#endif\n"
+      "\n"
+      "static char sccsid[] RETAIN = \"@(#)Version 42.42.42.42424 @Commit: AAA\";\n")
   endif()
 endif()
 if (NOT EXISTS "${RUNTIME_VERSION_HEADER_PATH}")
