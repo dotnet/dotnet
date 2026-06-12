@@ -20,6 +20,11 @@ namespace MessagePack.Internal
         // don't expose ModuleBuilder
         //// public ModuleBuilder ModuleBuilder { get { return moduleBuilder; } }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicAssembly"/> class.
+        /// Please use <see cref="DynamicAssemblyFactory"/> instead in order to work across different AssemblyLoadContext that may have duplicate modules.
+        /// </summary>
+        /// <param name="moduleName">Name of the module to be generated.</param>
         public DynamicAssembly(string moduleName)
         {
 #if NETFRAMEWORK // We don't ship a net472 target, but we might add one for debugging purposes
@@ -36,13 +41,13 @@ namespace MessagePack.Internal
 
         public TypeBuilder DefineType(string name, TypeAttributes attr) => this.moduleBuilder.DefineType(name, attr);
 
-        public TypeBuilder DefineType(string name, TypeAttributes attr, Type parent) => this.moduleBuilder.DefineType(name, attr, parent);
+        public TypeBuilder DefineType(string name, TypeAttributes attr, Type? parent) => this.moduleBuilder.DefineType(name, attr, parent);
 
-        public TypeBuilder DefineType(string name, TypeAttributes attr, Type parent, Type[] interfaces) => this.moduleBuilder.DefineType(name, attr, parent, interfaces);
+        public TypeBuilder DefineType(string name, TypeAttributes attr, Type? parent, Type[]? interfaces) => this.moduleBuilder.DefineType(name, attr, parent, interfaces);
 
 #if NETFRAMEWORK
 
-        public AssemblyBuilder Save()
+        internal AssemblyBuilder Save()
         {
             this.assemblyBuilder.Save(this.moduleName + ".dll");
             return this.assemblyBuilder;
