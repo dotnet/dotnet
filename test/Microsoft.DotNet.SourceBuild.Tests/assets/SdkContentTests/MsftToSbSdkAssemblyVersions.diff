@@ -2,14 +2,14 @@ diff --git a/msft_assemblyversions.txt b/sb_assemblyversions.txt
 index ------------
 --- a/msft_assemblyversions.txt
 +++ b/sb_assemblyversions.txt
-@@ ------------ @@ sdk/x.y.z/NuGet.Packaging.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31110
- sdk/x.y.z/NuGet.ProjectModel.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31110, FileVersionNumber:7.9.0.31110, ProductVersion:7.9.0-rc.31110+e2ba83ef751c8cbf89ca7607f4536236718a9ecb.e2ba83ef751c8cbf89ca7607f4536236718a9ecb, ProductVersionNumber:0.0.0.0
- sdk/x.y.z/NuGet.Protocol.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31110, FileVersionNumber:7.9.0.31110, ProductVersion:7.9.0-rc.31110+e2ba83ef751c8cbf89ca7607f4536236718a9ecb.e2ba83ef751c8cbf89ca7607f4536236718a9ecb, ProductVersionNumber:0.0.0.0
- sdk/x.y.z/NuGet.Versioning.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31110, FileVersionNumber:7.9.0.31110, ProductVersion:7.9.0-rc.31110+e2ba83ef751c8cbf89ca7607f4536236718a9ecb.e2ba83ef751c8cbf89ca7607f4536236718a9ecb, ProductVersionNumber:0.0.0.0
+@@ ------------ @@ sdk/x.y.z/NuGet.Packaging.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31213
+ sdk/x.y.z/NuGet.ProjectModel.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31213, FileVersionNumber:7.9.0.31213, ProductVersion:7.9.0-rc.31213+50e862b8da0c82ddbf3952cfe61a8681ab93f5bc.50e862b8da0c82ddbf3952cfe61a8681ab93f5bc, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/NuGet.Protocol.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31213, FileVersionNumber:7.9.0.31213, ProductVersion:7.9.0-rc.31213+50e862b8da0c82ddbf3952cfe61a8681ab93f5bc.50e862b8da0c82ddbf3952cfe61a8681ab93f5bc, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/NuGet.Versioning.dll - AssemblyVersion:7.9.0.0, FileVersion:7.9.0.31213, FileVersionNumber:7.9.0.31213, ProductVersion:7.9.0-rc.31213+50e862b8da0c82ddbf3952cfe61a8681ab93f5bc.50e862b8da0c82ddbf3952cfe61a8681ab93f5bc, ProductVersionNumber:0.0.0.0
 -sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll - AssemblyVersion:1.15.1.1025, FileVersion:1.15.1.1025, FileVersionNumber:1.15.1.1025, ProductVersion:1.15.1+8401783fd26f7e53390b79c510424a0774378f07, ProductVersionNumber:1.15.1.0
 -sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll - AssemblyVersion:1.15.1.1029, FileVersion:1.15.1.1029, FileVersionNumber:1.15.1.1029, ProductVersion:1.15.1+b89c765905dbc6db1421ff0a098127d44665c71f, ProductVersionNumber:1.15.1.0
 +sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll - AssemblyVersion:1.15.1.0, FileVersion:1.15.1.0, FileVersionNumber:1.15.1.0, ProductVersion:1.15.1+b89c765905dbc6db1421ff0a098127d44665c71f, ProductVersionNumber:1.15.1.0
 +sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll - AssemblyVersion:1.15.1.0, FileVersion:1.15.1.0, FileVersionNumber:1.15.1.0, ProductVersion:1.15.1+b89c765905dbc6db1421ff0a098127d44665c71f, ProductVersionNumber:1.15.1.0
- sdk/x.y.z/pl/dotnet.resources.dll - AssemblyVersion:11.0.100.0, FileVersion:11.1.26.31110, FileVersionNumber:11.1.26.31110, ProductVersion:11.0.100-preview.6.26310.110+e2ba83ef751c8cbf89ca7607f4536236718a9ecb, ProductVersionNumber:0.0.0.0
- sdk/x.y.z/pl/Microsoft.Build.Framework.resources.dll - AssemblyVersion:15.1.0.0, FileVersion:18.9.0.31110, FileVersionNumber:18.9.0.31110, ProductVersion:18.9.0-preview-26310-110+e2ba83ef751c8cbf89ca7607f4536236718a9ecb, ProductVersionNumber:18.9.0.0
- sdk/x.y.z/pl/Microsoft.Build.resources.dll - AssemblyVersion:15.1.0.0, FileVersion:18.9.0.31110, FileVersionNumber:18.9.0.31110, ProductVersion:18.9.0-preview-26310-110+e2ba83ef751c8cbf89ca7607f4536236718a9ecb, ProductVersionNumber:18.9.0.0
+ sdk/x.y.z/pl/dotnet.resources.dll - AssemblyVersion:11.0.100.0, FileVersion:11.1.26.31213, FileVersionNumber:11.1.26.31213, ProductVersion:11.0.100-preview.6.26311.113+50e862b8da0c82ddbf3952cfe61a8681ab93f5bc, ProductVersionNumber:0.0.0.0
+ sdk/x.y.z/pl/Microsoft.Build.Framework.resources.dll - AssemblyVersion:15.1.0.0, FileVersion:18.9.0.31213, FileVersionNumber:18.9.0.31213, ProductVersion:18.9.0-preview-26311-113+50e862b8da0c82ddbf3952cfe61a8681ab93f5bc, ProductVersionNumber:18.9.0.0
+ sdk/x.y.z/pl/Microsoft.Build.resources.dll - AssemblyVersion:15.1.0.0, FileVersion:18.9.0.31213, FileVersionNumber:18.9.0.31213, ProductVersion:18.9.0-preview-26311-113+50e862b8da0c82ddbf3952cfe61a8681ab93f5bc, ProductVersionNumber:18.9.0.0
