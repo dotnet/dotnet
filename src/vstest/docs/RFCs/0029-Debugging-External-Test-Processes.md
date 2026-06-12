@@ -4,7 +4,7 @@
 Introduce APIs to improve debugging support in Visual Studio for tests that run in an external process other than `testhost*.exe`.
 
 # Motivation
-Some test frameworks (examples include [TAEF](https://docs.microsoft.com/en-us/windows-hardware/drivers/taef/) and [Python](https://docs.microsoft.com/en-us/visualstudio/python/unit-testing-python-in-visual-studio)) need to execute tests in a external process other than `testhost*.exe`. When it comes to debugging such tests in Visual Studio today, there are a couple of problems. 
+Some test frameworks (examples include [TAEF](https://learn.microsoft.com/en-us/windows-hardware/drivers/taef/) and [Python](https://learn.microsoft.com/en-us/visualstudio/python/unit-testing-python-in-visual-studio)) need to execute tests in a external process other than `testhost*.exe`. When it comes to debugging such tests in Visual Studio today, there are a couple of problems. 
 
 1. A test adapter can request to launch a child process with debugger attached by calling  [`IFrameworkHandle.LaunchProcessWithDebuggerAttached()`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IFrameworkHandle.cs#L29) within adapter's implementation of [`ITestExecutor.RunTests()`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L23) (after checking that [`IRunContext.IsBeingDebugged`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IRunContext.cs#L32) is `true`). However, there is no supported way for a test adapter to request that debugger should be attached to an **already running process**.
 

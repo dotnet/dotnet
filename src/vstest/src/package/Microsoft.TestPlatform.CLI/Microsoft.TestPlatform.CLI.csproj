@@ -4,7 +4,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
+    <!-- On Windows use the full nuspec; on non-Windows (Linux/macOS) use the cross-platform sourcebuild nuspec
+         because the full nuspec references Windows-only executables (net48 .exe, DumpMinitool, etc.) -->
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' != 'Windows_NT'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
     <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
     <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
@@ -47,7 +50,7 @@
     <!-- EventLogCollector only works on Windows and .NET Framework. -->
     <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj"
                       SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)"
-                      Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+                      Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
@@ -68,7 +71,7 @@
     <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'">
     <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
     This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
     prevents us from having to lookup the correct .NET runtime. -->

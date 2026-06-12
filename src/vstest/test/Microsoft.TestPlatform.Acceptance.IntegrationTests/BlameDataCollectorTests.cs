@@ -239,6 +239,46 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [DoNotParallelize] // Modifies the test asset's runtimeconfig.json on disk.
+    [NetCoreTargetFrameworkDataSource]
+    public void HangDumpShouldNotHangWhenTestHostFailsToStart(RunnerInfo runnerInfo)
+    {
+        // When testhost can't start (e.g. wrong runtime version), the inactivity timer
+        // must not try to dump PID 0. It should exit cleanly because the timer only starts
+        // after TestHostLaunched, which never fires here.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+        const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core11TargetFramework);
+
+        // Make testhost fail immediately by targeting a non-existent runtime.
+        var runtimeConfigJson = Path.Combine(Path.GetDirectoryName(assemblyPath)!, testAssetProjectName + ".runtimeconfig.json");
+        var originalContent = File.ReadAllText(runtimeConfigJson);
+        try
+        {
+            var updatedContent = Regex.Replace(originalContent, @"""version""\s*:\s*""[^""]+""", @"""version"": ""9999.0.0""");
+            File.WriteAllText(runtimeConfigJson, updatedContent);
+
+            var arguments = PrepareArguments(assemblyPath, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
+            arguments = string.Concat(arguments, $" /ResultsDirectory:{TempDirectory.Path}");
+            arguments = string.Concat(arguments, $@" /Blame:""CollectHangDump;HangDumpType=mini;TestTimeout=30s""");
+            InvokeVsTest(arguments);
+
+            // vstest should exit with failure (testhost didn't start), but not hang and not crash.
+            ExitCodeEquals(1);
+            // Verify the failure was specifically because the runtime wasn't found, not some other error.
+            // The .NET runtime error can appear in stderr or stdout depending on the platform/host.
+            Assert.IsTrue(
+                Regex.IsMatch(StdErr, "9999\\.0\\.0") || Regex.IsMatch(StdOut, "9999\\.0\\.0"),
+                $"Expected '9999.0.0' in output.\nStdErr: {StdErr}\nStdOut: {StdOut}");
+            Assert.DoesNotContain(".dmp", StdOut, "no dump should be collected when testhost never launched");
+        }
+        finally
+        {
+            File.WriteAllText(runtimeConfigJson, originalContent);
+        }
+    }
+
+    [TestMethod]
     [TestCategory("Windows-Review")]
     [DoNotParallelize] // Installs/uninstalls procdump as machine-wide postmortem debugger via HKLM registry.
     [NetFullTargetFrameworkDataSource]

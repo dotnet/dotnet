@@ -16,8 +16,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Don't produce this package when building the .NET product as it relies on a VS license. -->
-    <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
+    <!-- Don't produce this package when building the .NET product as it relies on a VS license.
+         Also don't produce on non-Windows as the package contains Windows-only executables (net48 .exe, DumpMinitool, etc.). -->
+    <IsPackable Condition="'$(DotNetBuild)' != 'true' and '$(OS)' == 'Windows_NT'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.Portable.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.Portable</PackageId>
