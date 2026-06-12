@@ -92,8 +92,7 @@
   <ItemGroup>
     <AdditionalPackageReference Include="$(SystemIOPackagingPackage)" Version="$(SystemIOPackagingVersion)" />
   </ItemGroup>
-  <!-- ijwhost.dll is required for mixed-mode C++/CLI assemblies but is excluded from the
-       transport package here. It is redistributed via the WindowsDesktop runtime pack instead. -->
+  <!-- ijwhost.dll packaging is handled centrally in eng/WpfArcadeSdk/tools/Packaging.targets -->
   <Target Name="AddWindowsBaseDefine" AfterTargets="ResolveProjectReferences">
     <Error Text="Unexpected result from _WindowsBaseReference '@(_WindowsBaseReference->Count())'" Condition="'@(_WindowsBaseReference->Count())' != '1'" />
     <PropertyGroup>

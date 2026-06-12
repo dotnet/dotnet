@@ -9,20 +9,6 @@
     <RollForward>LatestPatch</RollForward>
   </PropertyGroup>
 
-  <!--
-    ijwhost.dll is the .NET IJW host bootstrap shim required by mixed-mode C++/CLI assemblies
-    (DirectWriteForwarder.dll, System.Printing.dll). It is built by the runtime repo and distributed
-    in the Microsoft.NETCore.App.Host pack. We include it here so self-contained WPF apps have it
-    available at runtime.
-  -->
-  <ItemGroup>
-    <PackageDownload Include="Microsoft.NETCore.App.Host.$(RuntimeIdentifier)" Version="[$(MicrosoftNETCoreAppRefVersion)]" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeRuntimeAsset Include="$(NuGetPackageRoot)microsoft.netcore.app.host.$(RuntimeIdentifier)\$(MicrosoftNETCoreAppRefVersion)\runtimes\$(RuntimeIdentifier)\native\ijwhost.dll" />
-  </ItemGroup>
-
   <!-- Profile is intentionally undefined so that the reference will only be included when no profile is specified i.e. both WPF and WindowsForms are in use https://github.com/dotnet/wpf/blob/bbfc24fd13804a191e20064acd599b0a359092df/packaging/Microsoft.NET.Sdk.WindowsDesktop/targets/Microsoft.NET.Sdk.WindowsDesktop.props#L45-L46 -->
   <ItemGroup>
     <FrameworkListFileClass Include="WindowsFormsIntegration.resources.dll" />
