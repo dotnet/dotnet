@@ -23,8 +23,14 @@
     <Message Importance="High" Text="Preparing files to sign check..." />
     <Error Text="ArtifactDownloadDirectory must be set." Condition="'$(ArtifactDownloadDirectory)' == ''" />
 
+    <Error Text="ArtifactDownloadDirectory '$(ArtifactDownloadDirectory)' does not exist." Condition="!Exists('$(ArtifactDownloadDirectory)')" />
+
     <ItemGroup>
-      <_ArtifactDirectory Include="$(ArtifactDownloadDirectory)/*/" />
+      <!--
+        MSBuild item globs only match files; a trailing-slash glob like '$(ArtifactDownloadDirectory)/*/'
+        never matches anything. Use Directory.GetDirectories so artifact subdirectories are enumerated.
+      -->
+      <_ArtifactDirectory Include="$([System.IO.Directory]::GetDirectories('$(ArtifactDownloadDirectory)'))" />
     </ItemGroup>
 
     <Error Text="No artifact directories found in '$(ArtifactDownloadDirectory)'." Condition="'@(_ArtifactDirectory)' == ''" />
@@ -182,8 +188,16 @@
   </Target>
 
   <Target Name="ProcessSignCheckResults">
-    <Error Text="SignCheck failed. Check $(SignCheckErrorLog) for details."
-      Condition="Exists('$(SignCheckErrorLog)') and '$([System.IO.File]::ReadAllText('$(SignCheckErrorLog)').Trim())' != ''" />
+    <PropertyGroup>
+      <_SignCheckErrorLogExists>$([System.IO.File]::Exists('$(SignCheckErrorLog)'))</_SignCheckErrorLogExists>
+      <_SignCheckErrorLogContent Condition="'$(_SignCheckErrorLogExists)' == 'true'">$([System.IO.File]::ReadAllText('$(SignCheckErrorLog)').Trim())</_SignCheckErrorLogContent>
+    </PropertyGroup>
+
+    <Error Text="SignCheck error log not found at '$(SignCheckErrorLog)'. SignCheck likely failed to start or crashed before producing output."
+      Condition="'$(_SignCheckErrorLogExists)' != 'true'" />
+
+    <Error Text="SignCheck reported errors. See '$(SignCheckErrorLog)' for details:%0A$(_SignCheckErrorLogContent)"
+      Condition="'$(_SignCheckErrorLogContent)' != ''" />
 
     <Error Text="SignCheck did not process any files."
       Condition="Exists('$(SignCheckLog)') and $([System.IO.File]::ReadAllText('$(SignCheckLog)').Contains('No files were processed'))" />
