@@ -12,8 +12,14 @@
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <RuntimeIdentifiers Condition="'$(DotNetBuild)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(BundledToolTargetRuntimeIdentifiers)</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(TargetRuntimeIdentifier)</RuntimeIdentifiers>
-    <RuntimeIdentifier Condition="'$(DotNetBuild)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true' and '$(RuntimeIdentifier)' == ''">$(TargetRuntimeIdentifier)</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(PublishAot)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true' and '$(RuntimeIdentifier)' == '' and '$(TargetRuntimeIdentifier)' != ''">$(TargetRuntimeIdentifier)</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(PublishAot)' == 'true' and '$(DotNetBuildSourceOnly)' != 'true' and '$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
     <NoWarn>$(NoWarn);CS2008</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PublishAot)' == 'true'">
+    <_PublishWasInvokedDirectly Condition="'$(_IsPublishing)' == 'true'">true</_PublishWasInvokedDirectly>
+    <_IsPublishing>true</_IsPublishing>
   </PropertyGroup>
 
   <Import Project="..\AspNetCoreTools.NativeAot.props" />
@@ -26,11 +32,9 @@
 
   <Target Name="PublishAspNetCoreToolsOnBuild"
           AfterTargets="Build"
-          Condition="'$(PublishAot)' == 'true' and '$(_IsPublishing)' != 'true'">
+          DependsOnTargets="Publish"
+          Condition="'$(PublishAot)' == 'true' and '$(_PublishWasInvokedDirectly)' != 'true'">
     <!-- The NativeAOT tests consume this project's publish output. Publish as part of build so the tests can reference the product output instead of running a second publish. -->
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="Publish"
-             Properties="_IsPublishing=true" />
   </Target>
 
   <Target Name="RemoveAspNetCoreToolsPackMetadataFiles" AfterTargets="PackTool">
