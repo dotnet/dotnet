@@ -6,7 +6,6 @@
     <SignDacEnabled Condition="'$(SignDacEnabled)' == ''">false</SignDacEnabled>
 
     <SignCheckExclusionsFile>$(RepositoryEngineeringDir)SignCheckExclusionsFile.txt</SignCheckExclusionsFile>
-    <SignCheckTimeout>7200</SignCheckTimeout> <!-- 2 hours -->
 
     <OutputLogsDirectory Condition="'$(OutputLogsDirectory)' == ''">$(ArtifactsLogDir)</OutputLogsDirectory>
     <SignCheckLog Condition="'$(SignCheckLog)' == ''">$(OutputLogsDirectory)\signcheck.log</SignCheckLog>
@@ -181,8 +180,7 @@
       LogFile="$(SignCheckLog)"
       ErrorLogFile="$(SignCheckErrorLog)"
       ResultsXmlFile="$(SignCheckResultsXmlFile)"
-      ArtifactFolder="$(SignCheckInputDir)"
-      Timeout="$([MSBuild]::Multiply('$(SignCheckTimeout)', 1000))" />
+      ArtifactFolder="$(SignCheckInputDir)" />
 
     <OnError ExecuteTargets="ProcessSignCheckResults" />
   </Target>
