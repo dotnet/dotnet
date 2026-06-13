@@ -127,14 +127,17 @@ namespace NuGet.Protocol.Plugins
 
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
-                        || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+                    {
+                        message = System.Text.Json.JsonSerializer.Deserialize(line, PluginJsonContext.Default.Message);
+                    }
+                    else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
                     {
                         message = System.Text.Json.JsonSerializer.Deserialize(line, PluginJsonContext.Default.Message);
                     }
                     else
                     {
-#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
                         message = JsonSerializationUtilities.Deserialize<Message>(line);
 #pragma warning restore IL2026, IL3050
                     }

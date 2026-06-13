@@ -2,6 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using Newtonsoft.Json.Linq;
 
 namespace NuGet.Protocol.Plugins
@@ -72,6 +75,10 @@ namespace NuGet.Protocol.Plugins
         /// <param name="message">The message.</param>
         /// <returns>A JSON string, or <see langword="null" /> if no payload exists.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based serialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based serialization.")]
+#endif
         public static string? SerializePayload(Message message)
         {
             if (message == null)
@@ -92,9 +99,7 @@ namespace NuGet.Protocol.Plugins
             using (var stringWriter = new System.IO.StringWriter())
             using (var jsonWriter = new Newtonsoft.Json.JsonTextWriter(stringWriter))
             {
-#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
                 JsonSerializationUtilities.Serialize(jsonWriter, message.PayloadObject);
-#pragma warning restore IL2026, IL3050
                 return stringWriter.ToString();
             }
         }
@@ -107,6 +112,10 @@ namespace NuGet.Protocol.Plugins
         /// <returns>The deserialized message payload of type <typeparamref name="TPayload" />
         /// or <see langword="null" /> if no payload exists.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         public static TPayload? DeserializePayload<TPayload>(Message message)
         {
             if (message == null)
@@ -121,9 +130,7 @@ namespace NuGet.Protocol.Plugins
 
             if (message.PayloadObject is Newtonsoft.Json.Linq.JObject jobj)
             {
-#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
                 return JsonSerializationUtilities.ToObject<TPayload>(jobj);
-#pragma warning restore IL2026, IL3050
             }
 
             return (TPayload)message.PayloadObject;
