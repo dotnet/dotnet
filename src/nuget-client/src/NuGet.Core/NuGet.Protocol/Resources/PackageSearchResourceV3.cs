@@ -264,8 +264,11 @@ namespace NuGet.Protocol
                 return null;
             }
 
-            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
-                || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await ProcessHttpStreamWithStjAsync(httpInitialResponse, take, token);
+            }
+            else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
             {
                 return await ProcessHttpStreamWithStjAsync(httpInitialResponse, take, token);
             }
@@ -294,8 +297,10 @@ namespace NuGet.Protocol
 
         private static async Task<V3SearchResults> ProcessHttpStreamWithNsjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
         {
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
             var _newtonsoftConvertersSerializer = JsonSerializer.Create(JsonExtensions.ObjectSerializationSettings);
             _newtonsoftConvertersSerializer.Converters.Add(new Converters.V3SearchResultsConverter(take));
+#pragma warning restore IL2026, IL3050
 
 #if NETCOREAPP2_0_OR_GREATER
             using (var stream = await httpInitialResponse.Content.ReadAsStreamAsync(token))

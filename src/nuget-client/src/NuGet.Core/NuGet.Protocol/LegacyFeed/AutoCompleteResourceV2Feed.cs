@@ -87,26 +87,42 @@ namespace NuGet.Protocol
             Common.ILogger logger,
             CancellationToken token)
         {
-            return await _httpSource.ProcessStreamAsync(
-                new HttpSourceRequest(apiEndpointUri, logger),
-                async stream =>
-                {
-                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
-                        || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await _httpSource.ProcessStreamAsync(
+                    new HttpSourceRequest(apiEndpointUri, logger),
+                    async stream =>
                     {
                         var seekableStream = await stream.AsSeekableStreamAsync(token);
                         return await System.Text.Json.JsonSerializer.DeserializeAsync(seekableStream, JsonContext.Default.StringArray, token);
-                    }
-                    else
+                    },
+                    logger,
+                    token);
+            }
+            else
+            {
+                return await _httpSource.ProcessStreamAsync(
+                    new HttpSourceRequest(apiEndpointUri, logger),
+                    async stream =>
                     {
-                        using var reader = new StreamReader(await stream.AsSeekableStreamAsync(token));
-                        using var jsonReader = new JsonTextReader(reader);
-                        var serializer = Newtonsoft.Json.JsonSerializer.Create();
-                        return serializer.Deserialize<string[]>(jsonReader);
-                    }
-                },
-                logger,
-                token);
+                        if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                        {
+                            var seekableStream = await stream.AsSeekableStreamAsync(token);
+                            return await System.Text.Json.JsonSerializer.DeserializeAsync(seekableStream, JsonContext.Default.StringArray, token);
+                        }
+                        else
+                        {
+                            using var reader = new StreamReader(await stream.AsSeekableStreamAsync(token));
+                            using var jsonReader = new JsonTextReader(reader);
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
+                            var serializer = Newtonsoft.Json.JsonSerializer.Create();
+                            return serializer.Deserialize<string[]>(jsonReader);
+#pragma warning restore IL2026, IL3050
+                        }
+                    },
+                    logger,
+                    token);
+            }
         }
     }
 }

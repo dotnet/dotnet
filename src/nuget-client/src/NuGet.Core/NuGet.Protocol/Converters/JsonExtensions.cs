@@ -15,6 +15,10 @@ using NuGet.Protocol.Converters;
 
 namespace NuGet.Protocol
 {
+#if NET5_0_OR_GREATER
+    [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Legacy Newtonsoft.Json infrastructure; not used in AOT code paths.")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Legacy Newtonsoft.Json infrastructure; not used in AOT code paths.")]
+#endif
     public static class JsonExtensions
     {
         public const int JsonSerializationMaxDepth = 512;

@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Concurrent;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -598,6 +601,10 @@ namespace NuGet.Protocol.Plugins
             }
         }
 
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         private void HandleInboundFault(Message fault)
         {
             if (fault == null)

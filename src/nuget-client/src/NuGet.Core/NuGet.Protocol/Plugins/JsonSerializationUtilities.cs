@@ -17,6 +17,10 @@ namespace NuGet.Protocol.Plugins
     /// <summary>
     /// JSON serialization/deserialization utilities.
     /// </summary>
+#if NET5_0_OR_GREATER
+    [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Legacy Newtonsoft.Json infrastructure; methods on this class are already annotated with [RUC]/[RDC].")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Legacy Newtonsoft.Json infrastructure; methods on this class are already annotated with [RUC]/[RDC].")]
+#endif
     public static class JsonSerializationUtilities
     {
         /// <summary>

@@ -139,8 +139,13 @@ namespace NuGet.Protocol.Plugins
             {
                 lock (_sendLock)
                 {
-                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
-                        || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+                    {
+                        string json = System.Text.Json.JsonSerializer.Serialize(message, PluginJsonContext.Default.Message);
+                        _textWriter.WriteLine(json);
+                        _textWriter.Flush();
+                    }
+                    else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
                     {
                         string json = System.Text.Json.JsonSerializer.Serialize(message, PluginJsonContext.Default.Message);
                         _textWriter.WriteLine(json);
@@ -149,7 +154,7 @@ namespace NuGet.Protocol.Plugins
                     else
                     {
                         using var jsonWriter = new Newtonsoft.Json.JsonTextWriter(_textWriter) { CloseOutput = false };
-#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
                         JsonSerializationUtilities.Serialize(jsonWriter, message);
 #pragma warning restore IL2026, IL3050
 
