@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- Per-component overrides (FileVersionRevision, AssemblyVersionOverride, etc.) and the
+       <FileVersionValidationPackage> item shared with the update-external-metadata tool
+       and ExternalPackageTests live in this sibling file. SourceRevisionId stays in the
+       .proj below — it's per-.proj source provenance, orthogonal to validation overrides. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
+
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
@@ -21,6 +27,13 @@
       <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetReleaseVersion)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:AssemblyVersion=$(AssemblyVersionOverride)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:FileVersion=$(OpenTelemetryDotNetReleaseVersion).$(FileVersionRevision)</CommonBuildArgs>
+      <!-- Microsoft-shipped stable releases of OpenTelemetry have ExposeExperimentalFeatures=false (the
+           upstream MinVer-driven target flips it off for non-prerelease versions). With MinVer disabled
+           here, the upstream default of true would apply, exposing more public API than the official
+           NuGet packages. Match the shipped surface explicitly. -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:ExposeExperimentalFeatures=false</CommonBuildArgs>
       <!-- Source-build behavioral overrides (keeps patches minimal) -->
       <CommonBuildArgs>$(CommonBuildArgs) /p:DotNetBuildSourceOnly=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:UseArtifactsOutput=false</CommonBuildArgs>
