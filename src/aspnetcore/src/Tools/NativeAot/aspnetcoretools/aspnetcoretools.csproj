@@ -32,7 +32,7 @@
 
   <Target Name="PublishAspNetCoreToolsOnBuild"
           AfterTargets="Build"
-          DependsOnTargets="Publish"
+          DependsOnTargets="$(_CorePublishTargets)"
           Condition="'$(PublishAot)' == 'true' and '$(_PublishWasInvokedDirectly)' != 'true'">
     <!-- The NativeAOT tests consume this project's publish output. Publish as part of build so the tests can reference the product output instead of running a second publish. -->
   </Target>
