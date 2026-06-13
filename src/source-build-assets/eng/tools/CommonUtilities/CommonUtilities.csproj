@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="NuGet.Protocol" Version="$(NuGetPackagingVersion)" />
   </ItemGroup>
 
