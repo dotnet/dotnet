@@ -1,0 +1,7 @@
+{
+  "tools": {
+    "microsoft.dotnet.helix.jobmonitor": {
+      "version": "11.0.0-beta.26311.113"
+    }
+  }
+}
