@@ -20,51 +20,51 @@ This file should be imported by eng/Versions.props
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>11.0.0-alpha.1.26308.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>11.0.0-alpha.1.26308.2</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26309.107</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildTasksPackagingPackageVersion>11.0.0-beta.26309.107</MicrosoftDotNetBuildTasksPackagingPackageVersion>
-    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>11.0.0-beta.26309.107</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26309.107</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.26309.107</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26311.113</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksPackagingPackageVersion>11.0.0-beta.26311.113</MicrosoftDotNetBuildTasksPackagingPackageVersion>
+    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>11.0.0-beta.26311.113</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26311.113</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.26311.113</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-emscripten dependencies -->
-    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>11.0.0-alpha.1.26310.1</MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>
+    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>11.0.0-alpha.1.26314.1</MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>
     <!-- dotnet-llvm-project dependencies -->
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimewinarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimewinx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26261.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26261.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26261.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26261.2</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxarm64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimewinarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimewinx64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>23.1.0-alpha.1.26314.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>23.1.0-alpha.1.26314.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMSdkPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>23.1.0-alpha.1.26314.2</runtimewinx64MicrosoftNETCoreRuntimeMonoLLVMToolsPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>23.1.0-alpha.1.26314.2</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportPackageVersion>
     <!-- dotnet-node dependencies -->
     <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26309.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
     <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>11.0.0-alpha.1.26309.1</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion>
