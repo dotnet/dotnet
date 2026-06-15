@@ -1,1 +1,2 @@
 #nullable enable
+static NuGet.CommandLine.XPlat.NuGetCommands.Add(System.CommandLine.Command! command, System.CommandLine.Option<bool>! interactiveOption, NuGet.CommandLine.XPlat.IVirtualProjectBuilder? virtualProjectBuilder) -> void
