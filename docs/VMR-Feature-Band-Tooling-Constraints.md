@@ -67,7 +67,7 @@ In short: **a band always builds with a previously-released SDK, never with its 
 Independently of the build SDK, non-1xx bands consume **shared component artifacts** (runtime, aspnetcore, etc.) produced by a 1xx build. The shared components that are pinned to a band can be older than the live 1xx tip:
 
 - A **preview band** is locked to the latest *released* shared components while it is in preview (see [Managing SDK Bands → Band phases](./VMR-Managing-SDK-Bands.md#band-phases)), so don't assume the band can consume a runtime API that has only landed on the 1xx tip but not yet released.
-- A **servicing band** revs together with the 1xx shared-component channel, so a runtime API present in the 1xx servicing release is available to the servicing band.
+- A **servicing band** revs together with the 1xx shared-component channel, so a runtime API present in the 1xx servicing release is available to the servicing band. In practice this is rare — runtime/aspnetcore servicing releases seldom introduce new public APIs — but it is supported when it does happen.
 
 The distro source-build flow ([Feature Band Source Building → Build Requirements by Feature Band](https://github.com/dotnet/source-build/blob/main/Documentation/feature-band-source-building.md#build-requirements-by-feature-band)) expresses both constraints as separate `build.sh` inputs (`--with-sdk` / `--with-packages` for the toolset, `--with-shared-components` for the shared components). The Microsoft official pipeline supplies the equivalent inputs through Maestro dependency flow rather than command-line arguments, but the underlying constraints are the same.
 
