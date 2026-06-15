@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Concurrent;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.Net;
 using System.Threading;
@@ -109,6 +112,10 @@ namespace NuGet.Protocol.Plugins
         /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public async Task HandleResponseAsync(
             IConnection connection,
             Message request,
