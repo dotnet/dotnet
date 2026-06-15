@@ -10,6 +10,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>bf38c69d5d4087d1098b5f31283ad147feadf787</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="11.0.0-beta.26227.104">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>bf38c69d5d4087d1098b5f31283ad147feadf787</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.26309.4">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>be60b0c438ad82b44ba8fe6bf497db1073496dcf</Sha>

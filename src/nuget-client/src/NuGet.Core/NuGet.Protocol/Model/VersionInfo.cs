@@ -35,6 +35,7 @@ namespace NuGet.Protocol.Core.Types
         public NuGetVersion Version { get; private set; }
 
         [JsonPropertyName("downloads")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public long? DownloadCount { get; private set; }
 
         /// <summary>
