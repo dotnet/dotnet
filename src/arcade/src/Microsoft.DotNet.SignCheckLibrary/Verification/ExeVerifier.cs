@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.SignCheck.Logging;
-using Microsoft.Tools.WindowsInstallerXml;
+using Microsoft.SignCheck.Verification.BurnBundle;
 
 namespace Microsoft.SignCheck.Verification
 {
@@ -28,16 +28,12 @@ namespace Microsoft.SignCheck.Verification
                 {
                     Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagSectionHeader, ".wixburn");
                     Log.WriteMessage(LogVerbosity.Detailed, SignCheckResources.WixBundle, svr.FullPath);
-                    Unbinder unbinder = null;
 
                     try
                     {
                         Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, svr.TempPath);
-                        unbinder = new Unbinder();
-                        unbinder.Message += UnbinderEventHandler;
-                        Output o = unbinder.Unbind(svr.FullPath, OutputType.Bundle, svr.TempPath);
 
-                        if (Directory.Exists(svr.TempPath))
+                        if (BurnReader.ExtractContainers(svr.FullPath, PEHeader, svr.TempPath))
                         {
                             foreach (string file in Directory.EnumerateFiles(svr.TempPath, "*.*", SearchOption.AllDirectories))
                             {
@@ -46,12 +42,13 @@ namespace Microsoft.SignCheck.Verification
                                 svr.NestedResults.Add(bundleEntryResult);
                             }
                         }
-
-                        Directory.Delete(svr.TempPath, recursive: true);
                     }
                     finally
                     {
-                        unbinder.DeleteTempFiles();
+                        if (Directory.Exists(svr.TempPath))
+                        {
+                            try { Directory.Delete(svr.TempPath, recursive: true); } catch { }
+                        }
                     }
                 }
             }
@@ -59,14 +56,6 @@ namespace Microsoft.SignCheck.Verification
             // TODO: Check for SFXCAB, IronMan, etc.
 
             return svr;
-        }
-
-        /// <summary>
-        /// Event handler for WiX Burn to extract a bundle.
-        /// </summary>
-        private void UnbinderEventHandler(object sender, MessageEventArgs e)
-        {
-            Log.WriteMessage(LogVerbosity.Detailed, String.Format("{0}|{1}|{2}|{3}", e.Id, e.Level, e.ResourceName, e.SourceLineNumbers));
         }
     }
 }

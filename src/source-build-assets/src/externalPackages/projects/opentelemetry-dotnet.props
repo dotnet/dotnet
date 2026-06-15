@@ -1,0 +1,27 @@
+<!--
+  Validation metadata for the opentelemetry-dotnet component. Imported by the sibling .proj
+  at build time and loaded standalone by UpdateExternalMetadata and ExternalPackageTests.
+
+  This file deliberately declares no SDK and has no upward import chain so it can be loaded
+  with plain `new Project(filePath, …)` in any host — including inside `dotnet test`, where
+  MSBuildLocator cannot register because the test platform pre-loads Microsoft.Build.
+-->
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)validation.props" />
+
+  <PropertyGroup>
+    <!-- The upstream build uses MinVer to compute FileVersion/AssemblyVersion/ExposeExperimentalFeatures
+         from git tags, but MinVer is disabled here via /p:IntegrationBuild=true (see CommonBuildArgs).
+         Set them explicitly so the source-built packages match the Microsoft-shipped NuGet packages.
+         These must be updated when the submodule is updated. See https://github.com/dotnet/source-build/issues/5577 -->
+    <FileVersionRevision>2017</FileVersionRevision>
+    <!-- Microsoft-shipped OpenTelemetry packages use MinVer's default AssemblyVersion of Major.0.0.0. -->
+    <AssemblyVersionOverride>1.0.0.0</AssemblyVersionOverride>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FileVersionValidationPackage Include="OpenTelemetry" />
+  </ItemGroup>
+
+</Project>

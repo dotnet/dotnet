@@ -2,6 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -9,6 +12,10 @@ using Newtonsoft.Json.Linq;
 
 namespace NuGet.Protocol.Plugins
 {
+#if NET5_0_OR_GREATER
+    [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Legacy Newtonsoft.Json infrastructure; plugin logging is not used in AOT code paths.")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Legacy Newtonsoft.Json infrastructure; plugin logging is not used in AOT code paths.")]
+#endif
     internal abstract class PluginLogMessage : IPluginLogMessage
     {
         private static readonly StringEnumConverter _enumConverter = new StringEnumConverter();
