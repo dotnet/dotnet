@@ -221,6 +221,15 @@
     <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
   </ItemGroup>
 
+  <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
+       Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
+       Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
+       By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
+       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
+  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
+    <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
+  </ItemGroup>
+
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <EnvironmentVariables Include="NuGetAudit=false" />
   </ItemGroup>
