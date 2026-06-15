@@ -57,7 +57,6 @@ The SDK and toolset that build a feature band branch are not arbitrary — they 
 
 #### Invariant (what tooling code can assume)
 
-- The **1xx band's first release** of a new major is built with the previous major's SDK; subsequent 1xx servicing releases build on themselves.
 - The **initial release** of a new band is built using the **previous band's already-released SDK/toolset**. It **cannot** use language features or SDK APIs that only exist in its own band's SDK, because that SDK does not yet exist when the initial release builds.
 - **Servicing releases within a band** (`N.0.Bxx` after the initial) are built using the **previous release of the same band's SDK**. Once a feature ships in a `N.0.Bxx` release, subsequent `N.0.Bxx` servicing releases can use it.
 
