@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -23,6 +26,10 @@ namespace NuGet.Protocol
 
         public IEnumerable<IRepositoryCertificateInfo> RepositoryCertificateInfos { get; }
 
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         public RepositorySignatureResource(JObject repoSignInformationContent, SourceRepository source)
         {
             var allRepositorySigned = repoSignInformationContent.GetBoolean(JsonProperties.AllRepositorySigned) ??
