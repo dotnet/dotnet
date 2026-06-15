@@ -742,7 +742,8 @@ function MSBuild() {
       ExitWithExitCode 1
     }
 
-    if ($nodeReuse) {
+    # Node reuse must be disabled in CI builds unless explicitly opted in via MSBUILD_NODEREUSE_ENABLED.
+    if ($nodeReuse -and $env:MSBUILD_NODEREUSE_ENABLED -ne "1") {
       Write-PipelineTelemetryError -Category 'Build' -Message 'Node reuse must be disabled in CI build.'
       ExitWithExitCode 1
     }

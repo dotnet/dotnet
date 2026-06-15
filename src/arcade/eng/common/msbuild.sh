@@ -51,7 +51,10 @@ done
 . "$scriptroot/tools.sh"
 
 if [[ "$ci" == true ]]; then
-  node_reuse=false
+  # Disable node reuse on CI unless explicitly opted in via MSBUILD_NODEREUSE_ENABLED.
+  if [[ "${MSBUILD_NODEREUSE_ENABLED:-}" != "1" ]]; then
+    node_reuse=false
+  fi
 fi
 
 MSBuild $extra_args

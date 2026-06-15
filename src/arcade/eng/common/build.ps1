@@ -173,7 +173,10 @@ try {
     if (-not $excludeCIBinarylog) {
       $binaryLog = $true
     }
-    $nodeReuse = $false
+    # Disable node reuse on CI unless explicitly opted in via MSBUILD_NODEREUSE_ENABLED.
+    if ($env:MSBUILD_NODEREUSE_ENABLED -ne "1") {
+      $nodeReuse = $false
+    }
   }
 
   if (-not [string]::IsNullOrEmpty($binaryLogName)) {
