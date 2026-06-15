@@ -16,8 +16,6 @@ namespace NuGet.Tests.Apex.Daily
     [TestClass]
     public class NuGetConsoleTestCase : SharedVisualStudioHostTestClass
     {
-        private const string AndroidFeedName = "AndroidFeed";
-        private const string AndroidFeedUrl = "https://pkgs.dev.azure.com/dnceng/public/_packaging/darc-pub-dotnet-android-a8cd27e4/nuget/v3/index.json";
 
         [DataTestMethod]
         [DataRow(ProjectTemplate.NetCoreConsoleApp)]
@@ -96,124 +94,6 @@ namespace NuGet.Tests.Apex.Daily
                         CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName2, packageVersion4, Logger);
                     }
                     VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                    Assert.IsTrue(VisualStudio.HasNoErrorsInOutputWindows());
-                }
-            }
-        }
-
-        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
-        [DataTestMethod]
-        [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
-        [Timeout(DefaultTimeout)]
-        public async Task InstallPackageForPRInPMC(ProjectTemplate projectTemplate)
-        {
-            using (var simpleTestPathContext = new SimpleTestPathContext())
-            {
-                // Arrange
-                var packageName = "TestPackage";
-                var v100 = "1.0.0";
-                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v100);
-                simpleTestPathContext.Settings.AddSource(NuGetConstants.NuGetHostName, NuGetConstants.V3FeedUrl);
-                simpleTestPathContext.Settings.AddSource(AndroidFeedName, AndroidFeedUrl);
-
-                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
-                {
-                    VisualStudio.AssertNoErrors();
-                    testContext.SolutionService.Build();
-
-                    // Act
-                    var nugetConsole = GetConsole(testContext.Project);
-
-                    nugetConsole.InstallPackageFromPMC(packageName, v100);
-                    testContext.SolutionService.Build();
-                    testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                    // Assert
-                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                    CommonUtility.AssertPackageInAssetsFile(VisualStudio, testContext.Project, packageName, v100, Logger);
-                    Assert.IsTrue(VisualStudio.HasNoErrorsInOutputWindows());
-                }
-            }
-        }
-
-        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
-        [DataTestMethod]
-        [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
-        [Timeout(DefaultTimeout)]
-        public async Task UpdatePackageForPRInPMC(ProjectTemplate projectTemplate)
-        {
-            using (var simpleTestPathContext = new SimpleTestPathContext())
-            {
-                // Arrange
-                var packageName = "TestPackage";
-                var v100 = "1.0.0";
-                var v200 = "2.0.0";
-
-                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v100);
-                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v200);
-                simpleTestPathContext.Settings.AddSource(NuGetConstants.NuGetHostName, NuGetConstants.V3FeedUrl);
-                simpleTestPathContext.Settings.AddSource(AndroidFeedName, AndroidFeedUrl);
-
-                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
-                {
-                    VisualStudio.AssertNoErrors();
-                    testContext.SolutionService.Build();
-
-                    // Act
-                    var nugetConsole = GetConsole(testContext.Project);
-
-                    nugetConsole.InstallPackageFromPMC(packageName, v100);
-                    testContext.SolutionService.Build();
-                    testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                    nugetConsole.UpdatePackageFromPMC(packageName, v200);
-                    testContext.SolutionService.Build();
-                    testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                    // Assert
-                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                    CommonUtility.AssertPackageInAssetsFile(VisualStudio, testContext.Project, packageName, v200, Logger);
-                    Assert.IsTrue(VisualStudio.HasNoErrorsInOutputWindows());
-                }
-            }
-        }
-
-        [Ignore("MAUI projects cause UAC prompt for the remainder of the test run, blocking all tests video recordings")]
-        [DataTestMethod]
-        [DynamicData(nameof(GetMauiTemplates), DynamicDataSourceType.Method)]
-        [Timeout(DefaultTimeout)]
-        public async Task UninstallPackageForPRInPMC(ProjectTemplate projectTemplate)
-        {
-            using (var simpleTestPathContext = new SimpleTestPathContext())
-            {
-                // Arrange
-                var PackageName = "TestPackage";
-                var v100 = "1.0.0";
-
-                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, PackageName, v100);
-                simpleTestPathContext.Settings.AddSource(NuGetConstants.NuGetHostName, NuGetConstants.V3FeedUrl);
-                simpleTestPathContext.Settings.AddSource(AndroidFeedName, AndroidFeedUrl);
-
-                using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
-                {
-                    VisualStudio.AssertNoErrors();
-                    testContext.SolutionService.Build();
-                    testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                    // Act
-                    var nugetConsole = GetConsole(testContext.Project);
-
-                    nugetConsole.InstallPackageFromPMC(PackageName, v100);
-                    testContext.SolutionService.Build();
-                    testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                    nugetConsole.UninstallPackageFromPMC(PackageName);
-                    testContext.SolutionService.Build();
-                    testContext.NuGetApexTestService.WaitForAutoRestore();
-
-                    // Assert
-                    VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
-                    CommonUtility.AssertPackageNotInAssetsFile(VisualStudio, testContext.Project, PackageName, v100, Logger);
                     Assert.IsTrue(VisualStudio.HasNoErrorsInOutputWindows());
                 }
             }

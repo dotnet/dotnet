@@ -11,11 +11,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading;
 using FluentAssertions;
-using Microsoft.Build.Locator;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
 using NuGet.Common;
@@ -26,6 +23,8 @@ namespace Dotnet.Integration.Test
 {
     public class DotnetIntegrationTestFixture : IDisposable
     {
+        private const string PreferredSdkMajorVersionMetadataKey = "PreferredSdkMajorVersion";
+
         /// <summary>
         /// A value indicating if the test is running on a hosted agent with diagnostics enabled.
         /// </summary>
@@ -46,8 +45,8 @@ namespace Dotnet.Integration.Test
 
         public DotnetIntegrationTestFixture()
         {
-            string testAssemblyPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
-            _cliDirectory = TestDotnetCLiUtility.CopyAndPatchLatestDotnetCli(testAssemblyPath);
+            int preferredMajorVersion = GetPreferredSdkMajorVersion();
+            _cliDirectory = TestDotnetCLiUtility.CopyAndPatchLatestDotnetCli(preferredMajorVersion);
             var dotnetExecutableName = RuntimeEnvironmentHelper.IsWindows ? "dotnet.exe" : "dotnet";
             TestDotnetCli = Path.Combine(_cliDirectory, dotnetExecutableName);
 
@@ -56,9 +55,6 @@ namespace Dotnet.Integration.Test
 
             SdkDirectory = new DirectoryInfo(sdkPath);
             MsBuildSdksPath = Path.Combine(sdkPath, "Sdks");
-
-            // https://github.com/NuGet/Home/issues/14823: This can be removed when we migrate to `dotnet.exe`-only integration tests for file-based apps.
-            MSBuildLocator.RegisterMSBuildPath(sdkPath);
 
             _templateDirectory = new SimpleTestPathContext();
             TestDotnetCLiUtility.WriteGlobalJson(_templateDirectory.WorkingDirectory);
@@ -72,6 +68,23 @@ namespace Dotnet.Integration.Test
 
             // This is for pre-release packages.
             AddPackageSource("dotnet", Constants.DotNetPackageSource.AbsoluteUri);
+        }
+
+        private static int GetPreferredSdkMajorVersion()
+        {
+            string preferredSdkMajorVersion = Assembly.GetExecutingAssembly()
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .Where(attribute => StringComparer.Ordinal.Equals(attribute.Key, PreferredSdkMajorVersionMetadataKey))
+                .Select(attribute => attribute.Value)
+                .SingleOrDefault();
+
+            if (!int.TryParse(preferredSdkMajorVersion, out int preferredMajorVersion))
+            {
+                throw new InvalidOperationException(
+                    $"Could not determine {PreferredSdkMajorVersionMetadataKey} from assembly metadata.");
+            }
+
+            return preferredMajorVersion;
         }
 
         private void AddPackageSource(string name, string source)
@@ -139,20 +152,20 @@ namespace Dotnet.Integration.Test
         internal CommandRunnerResult RestoreToolProjectExpectSuccess(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)
             => RunDotnetExpectSuccess(workingDirectory, $"restore {projectName}.csproj {args}", testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreProjectExpectFailure(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: false, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreProjectExpectFailure(string workingDirectory, string projectName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: false, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreProjectExpectSuccess(string workingDirectory, string projectName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: true, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreProjectExpectSuccess(string workingDirectory, string projectName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{projectName}.csproj", args, expectSuccess: true, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreSolutionExpectFailure(string workingDirectory, string solutionName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: false, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        internal CommandRunnerResult RestoreSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", ITestOutputHelper testOutputHelper = null)
-            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, testOutputHelper: testOutputHelper);
+        internal CommandRunnerResult RestoreSolutionExpectSuccess(string workingDirectory, string solutionName, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RestoreProjectOrSolution(workingDirectory, $"{solutionName}.slnx", args, expectSuccess: true, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
-        private CommandRunnerResult RestoreProjectOrSolution(string workingDirectory, string fileName, string args, bool expectSuccess, ITestOutputHelper testOutputHelper = null)
-            => RunDotnet(workingDirectory, $"restore {fileName} {args ?? string.Empty} -nodereuse:false", expectSuccess, testOutputHelper: testOutputHelper);
+        private CommandRunnerResult RestoreProjectOrSolution(string workingDirectory, string fileName, string args, bool expectSuccess, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+            => RunDotnet(workingDirectory, $"restore {fileName} {args ?? string.Empty} -nodereuse:false", expectSuccess, environmentVariables: environmentVariables, testOutputHelper: testOutputHelper);
 
         /// <summary>
         /// Runs dotnet with the specified arguments and expects the command to succeed. If dotnet returns a non-zero exit code, an assertion is thrown with diagnostic information.
@@ -358,18 +371,6 @@ namespace Dotnet.Integration.Test
             }
 
             return RunDotnet(workingDirectory, $"msbuild {file} {args}", expectSuccess, testOutputHelper: testOutputHelper);
-        }
-
-        internal (string Content, string ProjectPath, string FilePath) GetFileBasedAppVirtualProject(string entryPointFileFullPath, ITestOutputHelper testOutputHelper)
-        {
-            var runApi = RunDotnetExpectSuccess(Path.GetDirectoryName(entryPointFileFullPath), "run-api", testOutputHelper: testOutputHelper, inputAction: writer =>
-            {
-                writer.Write($$"""{ "$type": "GetProject", "EntryPointFileFullPath": {{JsonSerializer.Serialize(entryPointFileFullPath)}} }""");
-            });
-            var node = JsonNode.Parse(runApi.AllOutput);
-            return (Content: node["Content"].GetValue<string>(),
-                ProjectPath: node["ProjectPath"].GetValue<string>(),
-                FilePath: entryPointFileFullPath);
         }
 
         internal TestDirectory CreateTestDirectory()

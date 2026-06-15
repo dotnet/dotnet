@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" Condition="'$(RunScenarioTests)' == 'true'" />
     <ProjectReference Include="Microsoft.DotNet.Tests\Microsoft.DotNet.Tests.csproj" />
+    <ProjectReference Include="Microsoft.DotNet.Reproducibility.Tests\Microsoft.DotNet.Reproducibility.Tests.csproj" />
 
     <!-- Source-build specific tests. -->
     <ProjectReference Include="Microsoft.DotNet.SourceBuild.Tests\Microsoft.DotNet.SourceBuild.Tests.csproj"
@@ -47,6 +48,12 @@
     <Copy SourceFiles="@(DownloadedNupkg)"
           DestinationFolder="$(ExtraTestDependenciesRestoreSourcePath)" 
           Condition="@(DownloadedNupkg->Count()) > 0" />
+  </Target>
+
+  <Target Name="SetAzureDevOpsVariableForTestResults"
+          Condition="'$(ContinuousIntegrationBuild)' == 'true'"
+          BeforeTargets="Test">
+    <Message Importance="High" Text="##vso[task.setvariable variable=hasTestResults]true" />
   </Target>
 
 </Project>

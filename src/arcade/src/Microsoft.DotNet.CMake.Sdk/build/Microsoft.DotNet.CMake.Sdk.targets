@@ -6,8 +6,9 @@
     <VSWhereVersion Condition="'$(VSWhereVersion)' == ''">3.1.7</VSWhereVersion>
   </PropertyGroup>
 
-  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.CreateCMakeFileApiQuery" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" />
-  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.GetCMakeArtifactsFromFileApi" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.CreateCMakeFileApiQuery" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="Microsoft.DotNet.CMake.Sdk.GetCMakeArtifactsFromFileApi" AssemblyFile="$(MicrosoftDotNetCMakeSdkTaskAssembly)" Runtime="NET" Architecture="*" />
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 

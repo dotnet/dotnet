@@ -5,11 +5,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Microsoft.Extensions.CommandLineUtils;
 using NuGet.CommandLine.XPlat.ListPackage;
 using NuGet.Commands;
 using NuGet.Common;
@@ -20,137 +20,174 @@ namespace NuGet.CommandLine.XPlat
 {
     internal static class ListPackageCommand
     {
-        public static void Register(
-            CommandLineApplication app,
-            Func<ILogger> getLogger,
+        internal static void Register(
+            Command parent,
+            Func<ILoggerWithColor> getLogger,
             Action<LogLevel> setLogLevel,
-            Func<IListPackageCommandRunner> getCommandRunner)
+            Func<IListPackageCommandRunner> getCommandRunner,
+            TextWriter? consoleOut = null,
+            TextWriter? consoleError = null)
         {
-            app.Command("list", listpkg =>
+            var listCommand = new Command("list", Strings.ListPkg_Description);
+
+            // The .NET SDK always resolves and forwards a concrete project/solution path to this command
+            // (both `dotnet package list` and the classic `dotnet list package` route through the SDK's
+            // PackageListCommand, which defaults to the current directory and resolves it to a file before
+            // invoking NuGet). ExactlyOne therefore only affects direct invocation of this executable, where
+            // omitting the path previously threw an ArgumentNullException; it now produces a clean parse error.
+            var path = new Argument<string>("<PROJECT | SOLUTION>")
             {
-                listpkg.Description = Strings.ListPkg_Description;
-                listpkg.HelpOption(XPlatUtility.HelpOption);
+                Description = Strings.ListPkg_PathDescription,
+                Arity = ArgumentArity.ExactlyOne
+            };
 
-                listpkg.Option(
-                    CommandConstants.ForceEnglishOutputOption,
-                    Strings.ForceEnglishOutput_Description,
-                    CommandOptionType.NoValue);
+            var framework = new Option<string[]>("--framework")
+            {
+                Description = Strings.ListPkg_FrameworkDescription,
+                Arity = ArgumentArity.OneOrMore
+            };
 
-                var path = listpkg.Argument(
-                    "<PROJECT | SOLUTION>",
-                    Strings.ListPkg_PathDescription,
-                    multipleValues: false);
+            var deprecatedReport = new Option<bool>("--deprecated")
+            {
+                Description = Strings.ListPkg_DeprecatedDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var framework = listpkg.Option(
-                    "--framework",
-                    Strings.ListPkg_FrameworkDescription,
-                    CommandOptionType.MultipleValue);
+            var outdatedReport = new Option<bool>("--outdated")
+            {
+                Description = Strings.ListPkg_OutdatedDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var deprecatedReport = listpkg.Option(
-                    "--deprecated",
-                    Strings.ListPkg_DeprecatedDescription,
-                    CommandOptionType.NoValue);
+            var vulnerableReport = new Option<bool>("--vulnerable")
+            {
+                Description = Strings.ListPkg_VulnerableDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var outdatedReport = listpkg.Option(
-                    "--outdated",
-                    Strings.ListPkg_OutdatedDescription,
-                    CommandOptionType.NoValue);
+            var includeTransitive = new Option<bool>("--include-transitive")
+            {
+                Description = Strings.ListPkg_TransitiveDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var vulnerableReport = listpkg.Option(
-                    "--vulnerable",
-                    Strings.ListPkg_VulnerableDescription,
-                    CommandOptionType.NoValue);
+            var prerelease = new Option<bool>("--include-prerelease")
+            {
+                Description = Strings.ListPkg_PrereleaseDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var includeTransitive = listpkg.Option(
-                    "--include-transitive",
-                    Strings.ListPkg_TransitiveDescription,
-                    CommandOptionType.NoValue);
+            var highestPatch = new Option<bool>("--highest-patch")
+            {
+                Description = Strings.ListPkg_HighestPatchDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var prerelease = listpkg.Option(
-                    "--include-prerelease",
-                    Strings.ListPkg_PrereleaseDescription,
-                    CommandOptionType.NoValue);
+            var highestMinor = new Option<bool>("--highest-minor")
+            {
+                Description = Strings.ListPkg_HighestMinorDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var highestPatch = listpkg.Option(
-                    "--highest-patch",
-                    Strings.ListPkg_HighestPatchDescription,
-                    CommandOptionType.NoValue);
+            var source = new Option<string[]>("--source")
+            {
+                Description = Strings.ListPkg_SourceDescription,
+                Arity = ArgumentArity.OneOrMore
+            };
 
-                var highestMinor = listpkg.Option(
-                    "--highest-minor",
-                    Strings.ListPkg_HighestMinorDescription,
-                    CommandOptionType.NoValue);
+            var config = new Option<string>("--config")
+            {
+                Description = Strings.ListPkg_ConfigDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var source = listpkg.Option(
-                    "--source",
-                    Strings.ListPkg_SourceDescription,
-                    CommandOptionType.MultipleValue);
+            var outputFormat = new Option<string>("--format")
+            {
+                Description = Strings.ListPkg_OutputFormatDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var config = listpkg.Option(
-                    "--config",
-                    Strings.ListPkg_ConfigDescription,
-                    CommandOptionType.SingleValue);
+            var outputVersion = new Option<string>("--output-version")
+            {
+                Description = Strings.ListPkg_OutputVersionDescription,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var outputFormat = listpkg.Option(
-                    "--format",
-                    Strings.ListPkg_OutputFormatDescription,
-                    CommandOptionType.SingleValue);
+            var interactive = new Option<bool>("--interactive")
+            {
+                Description = Strings.NuGetXplatCommand_Interactive,
+                Arity = ArgumentArity.Zero
+            };
 
-                var outputVersion = listpkg.Option(
-                    "--output-version",
-                    Strings.ListPkg_OutputVersionDescription,
-                    CommandOptionType.SingleValue);
+            var verbosity = new Option<string>("--verbosity", "-v")
+            {
+                Description = Strings.Verbosity_Description,
+                Arity = ArgumentArity.ZeroOrOne
+            };
 
-                var interactive = listpkg.Option(
-                    "--interactive",
-                    Strings.NuGetXplatCommand_Interactive,
-                    CommandOptionType.NoValue);
+            listCommand.Arguments.Add(path);
+            listCommand.Options.Add(framework);
+            listCommand.Options.Add(deprecatedReport);
+            listCommand.Options.Add(outdatedReport);
+            listCommand.Options.Add(vulnerableReport);
+            listCommand.Options.Add(includeTransitive);
+            listCommand.Options.Add(prerelease);
+            listCommand.Options.Add(highestPatch);
+            listCommand.Options.Add(highestMinor);
+            listCommand.Options.Add(source);
+            listCommand.Options.Add(config);
+            listCommand.Options.Add(outputFormat);
+            listCommand.Options.Add(outputVersion);
+            listCommand.Options.Add(interactive);
+            listCommand.Options.Add(verbosity);
 
-                var verbosity = listpkg.Option(
-                    "-v|--verbosity",
-                    Strings.Verbosity_Description,
-                    CommandOptionType.SingleValue);
+            listCommand.SetAction(async (parseResult, cancellationToken) =>
+            {
+                var logger = getLogger();
 
-                listpkg.OnExecute(async () =>
-                {
-                    var logger = getLogger();
+                var verbosityValue = parseResult.GetValue(verbosity) ?? string.Empty;
+                setLogLevel(XPlatUtility.MSBuildVerbosityToNuGetLogLevel(verbosityValue));
 
-                    setLogLevel(XPlatUtility.MSBuildVerbosityToNuGetLogLevel(verbosity.Value()));
+                var pathValue = parseResult.GetValue(path) ?? string.Empty;
+                var configValue = parseResult.GetValue(config);
+                var hasConfig = !string.IsNullOrEmpty(configValue);
 
-                    var settings = ProcessConfigFile(config.Value(), path.Value);
-                    var sources = source.Values;
+                var settings = ProcessConfigFile(configValue, pathValue);
+                var sourceValues = parseResult.GetValue(source) ?? Array.Empty<string>();
 
-                    var packageSources = GetPackageSources(settings, sources, config);
+                var packageSources = GetPackageSources(settings, sourceValues, hasConfig);
 
-                    var reportType = GetReportType(
-                        isOutdated: outdatedReport.HasValue(),
-                        isDeprecated: deprecatedReport.HasValue(),
-                        isVulnerable: vulnerableReport.HasValue());
+                var reportType = GetReportType(
+                    isOutdated: parseResult.GetValue(outdatedReport),
+                    isDeprecated: parseResult.GetValue(deprecatedReport),
+                    isVulnerable: parseResult.GetValue(vulnerableReport));
 
-                    IReportRenderer reportRenderer = GetOutputType(app.Out, app.Error, outputFormat.Value(), outputVersionOption: outputVersion.Value());
-                    var provider = new PackageSourceProvider(settings);
-                    var packageRefArgs = new ListPackageArgs(
-                        path.Value,
-                        packageSources,
-                        framework.Values,
-                        reportType,
-                        reportRenderer,
-                        includeTransitive.HasValue(),
-                        prerelease.HasValue(),
-                        highestPatch.HasValue(),
-                        highestMinor.HasValue(),
-                        provider.LoadAuditSources(),
-                        logger,
-                        CancellationToken.None);
+                IReportRenderer reportRenderer = GetOutputType(consoleOut ?? Console.Out, consoleError ?? Console.Error, parseResult.GetValue(outputFormat), outputVersionOption: parseResult.GetValue(outputVersion));
+                var provider = new PackageSourceProvider(settings);
+                var frameworkValues = parseResult.GetValue(framework) ?? Array.Empty<string>();
+                var packageRefArgs = new ListPackageArgs(
+                    pathValue,
+                    packageSources,
+                    frameworkValues.ToList(),
+                    reportType,
+                    reportRenderer,
+                    parseResult.GetValue(includeTransitive),
+                    parseResult.GetValue(prerelease),
+                    parseResult.GetValue(highestPatch),
+                    parseResult.GetValue(highestMinor),
+                    provider.LoadAuditSources(),
+                    logger,
+                    CancellationToken.None);
 
-                    WarnAboutIncompatibleOptions(packageRefArgs, reportRenderer);
+                WarnAboutIncompatibleOptions(packageRefArgs, reportRenderer);
 
-                    DefaultCredentialServiceUtility.SetupDefaultCredentialService(getLogger(), !interactive.HasValue());
+                DefaultCredentialServiceUtility.SetupDefaultCredentialService(getLogger(), !parseResult.GetValue(interactive));
 
-                    var listPackageCommandRunner = getCommandRunner();
-                    return await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
-                });
+                var listPackageCommandRunner = getCommandRunner();
+                return await listPackageCommandRunner.ExecuteCommandAsync(packageRefArgs);
             });
+
+            parent.Subcommands.Add(listCommand);
         }
 
         private static ReportType GetReportType(bool isDeprecated, bool isOutdated, bool isVulnerable)
@@ -171,7 +208,7 @@ namespace NuGet.CommandLine.XPlat
             throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.ListPkg_InvalidOptions));
         }
 
-        private static IReportRenderer GetOutputType(TextWriter consoleOut, TextWriter consoleError, string outputFormatOption, string outputVersionOption)
+        private static IReportRenderer GetOutputType(TextWriter consoleOut, TextWriter consoleError, string? outputFormatOption, string? outputVersionOption)
         {
             ReportOutputFormat outputFormat = ReportOutputFormat.Console;
             if (!string.IsNullOrEmpty(outputFormatOption) &&
@@ -193,7 +230,6 @@ namespace NuGet.CommandLine.XPlat
             IReportRenderer jsonReportRenderer;
 
             var currentlySupportedReportVersions = new List<string> { "1" };
-            // If customer pass unsupported version then error out instead of defaulting to version probably unsupported by customer machine.
             if (!string.IsNullOrEmpty(outputVersionOption) && !currentlySupportedReportVersions.Contains(outputVersionOption))
             {
                 throw new ArgumentException(string.Format(Strings.ListPkg_InvalidOutputVersion, outputVersionOption, string.Join(" ,", currentlySupportedReportVersions)));
@@ -215,7 +251,7 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        private static ISettings ProcessConfigFile(string configFile, string projectOrSolution)
+        private static ISettings ProcessConfigFile(string? configFile, string? projectOrSolution)
         {
             if (string.IsNullOrEmpty(configFile))
             {
@@ -229,10 +265,9 @@ namespace NuGet.CommandLine.XPlat
                 directory,
                 configFileName,
                 machineWideSettings: new XPlatMachineWideSetting());
-
         }
 
-        private static List<PackageSource> GetPackageSources(ISettings settings, IEnumerable<string> sources, CommandOption config)
+        private static List<PackageSource> GetPackageSources(ISettings settings, IEnumerable<string> sources, bool hasConfig)
         {
             var availableSources = PackageSourceProvider.LoadPackageSources(settings).Where(source => source.IsEnabled);
             var uniqueSources = new HashSet<string>();
@@ -247,7 +282,7 @@ namespace NuGet.CommandLine.XPlat
                 }
             }
 
-            if (packageSources.Count == 0 || config.HasValue())
+            if (packageSources.Count == 0 || hasConfig)
             {
                 packageSources.AddRange(availableSources);
             }

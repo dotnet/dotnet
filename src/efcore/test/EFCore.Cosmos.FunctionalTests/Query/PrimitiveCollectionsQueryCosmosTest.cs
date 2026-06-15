@@ -55,10 +55,11 @@ WHERE c["NullableInt"] IN (null, 999)
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Count_with_zero_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Count_with_zero_values();
 
         AssertSql(
@@ -72,10 +73,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Count_with_one_value()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Count_with_one_value();
 
         AssertSql(
@@ -89,10 +91,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Count_with_two_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Count_with_two_values();
 
         AssertSql(
@@ -106,10 +109,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Count_with_three_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Count_with_three_values();
 
         AssertSql(
@@ -247,10 +251,11 @@ WHERE c["Id"] NOT IN (2, 999)
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Min_with_two_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Min_with_two_values();
 
         AssertSql(
@@ -263,10 +268,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_List_Min_with_two_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_List_Min_with_two_values();
 
         AssertSql(
@@ -279,10 +285,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Max_with_two_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Max_with_two_values();
 
         AssertSql(
@@ -295,10 +302,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_List_Max_with_two_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_List_Max_with_two_values();
 
         AssertSql(
@@ -311,10 +319,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Min_with_three_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Min_with_three_values();
 
         AssertSql(
@@ -329,10 +338,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_List_Min_with_three_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_List_Min_with_three_values();
 
         AssertSql(
@@ -347,10 +357,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Max_with_three_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Max_with_three_values();
 
         AssertSql(
@@ -365,10 +376,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_List_Max_with_three_values()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_List_Max_with_three_values();
 
         AssertSql(
@@ -383,10 +395,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_of_nullable_value_type_Min()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_of_nullable_value_type_Min();
 
         AssertSql(
@@ -401,10 +414,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_of_nullable_value_type_Max()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_of_nullable_value_type_Max();
 
         AssertSql(
@@ -438,10 +452,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_of_nullable_value_type_with_null_Max()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_of_nullable_value_type_with_null_Max();
 
         AssertSql(
@@ -466,10 +481,11 @@ ReadItem(None, 2)
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_with_single_parameter_element_Count()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_with_single_parameter_element_Count();
 
         AssertSql(
@@ -513,10 +529,11 @@ WHERE ARRAY_CONTAINS(@Select, c["NullableString"])
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_Count_with_column_predicate_with_EF_Parameter()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_Count_with_column_predicate_with_EF_Parameter();
 
         AssertSql(
@@ -532,10 +549,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Inline_collection_in_query_filter()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Inline_collection_in_query_filter();
 
         AssertSql(
@@ -550,10 +568,15 @@ OFFSET 0 LIMIT 2
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    public override async Task Inline_collection_SelectMany_with_unreferenced_collection_value()
+        => await Assert.ThrowsAsync<InvalidOperationException>(
+            () => base.Inline_collection_SelectMany_with_unreferenced_collection_value());
+
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Parameter_collection_Count()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Parameter_collection_Count();
 
         AssertSql(
@@ -1235,7 +1258,7 @@ OFFSET 0 LIMIT 2
         AssertSql();
     }
 
-    [ConditionalFact]
+    [Fact]
     public override Task Multidimensional_array_is_not_supported()
         => base.Multidimensional_array_is_not_supported();
 
@@ -1299,10 +1322,11 @@ WHERE (ARRAY_LENGTH(c["Ints"]) = 2)
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Column_collection_Count_with_predicate()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Column_collection_Count_with_predicate();
 
         AssertSql(
@@ -1316,10 +1340,11 @@ WHERE ((
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Column_collection_Where_Count()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Column_collection_Where_Count();
 
         AssertSql(
@@ -2292,10 +2317,11 @@ WHERE ((c["$type"] = "SubType") AND (ARRAY_LENGTH(c["Ints"]) > 0))
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Values_of_enum_casted_to_underlying_value()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Values_of_enum_casted_to_underlying_value();
 
         AssertSql(
@@ -2311,7 +2337,7 @@ WHERE ((
 
     #region Cosmos-specific tests
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task IsDefined()
     {
         await AssertQuery(
@@ -2326,7 +2352,7 @@ WHERE IS_DEFINED(c["Ints"][2])
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task CoalesceUndefined()
     {
         await AssertQuery(
@@ -2343,7 +2369,7 @@ WHERE ((c["Ints"][2] ?? 999) = 999)
 
     #endregion Cosmos-specific tests
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 

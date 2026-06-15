@@ -18,6 +18,7 @@ using NuGet.ProjectModel;
 using NuGet.Repositories;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.Test
@@ -40,7 +41,8 @@ namespace NuGet.Commands.Test
                 string.Empty,
                 ProjectStyle.PackageReference,
                 path,
-                success: true);
+                success: true,
+                TestEnvironmentVariableReader.EmptyInstance);
 
             var props = TargetsUtility.GetMSBuildProperties(doc);
 
@@ -64,7 +66,8 @@ namespace NuGet.Commands.Test
                 string.Empty,
                 ProjectStyle.PackageReference,
                 "/tmp/test/project.assets.json",
-                success: true);
+                success: true,
+                TestEnvironmentVariableReader.EmptyInstance);
 
             var props = TargetsUtility.GetMSBuildProperties(doc);
             var items = TargetsUtility.GetMSBuildItems(doc);
@@ -177,10 +180,21 @@ namespace NuGet.Commands.Test
             // Arrange
             using (var randomProjectDirectory = TestDirectory.Create())
             {
-                var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(NullSettings.Instance);
+                var globalPackagesFolder = SettingsUtility.GetGlobalPackagesFolder(NullSettings.Instance, TestEnvironmentVariableReader.EmptyInstance);
+                IEnvironmentVariableReader environmentVariableReader = TestEnvironmentVariableReader.EmptyInstance;
 
                 if (!string.IsNullOrEmpty(globalPackagesFolder))
                 {
+                    if (RuntimeEnvironmentHelper.IsWindows)
+                    {
+                        var userProfile = Path.GetDirectoryName(Path.GetDirectoryName(globalPackagesFolder.TrimEnd(Path.DirectorySeparatorChar)));
+                        environmentVariableReader = new TestEnvironmentVariableReader(
+                            new Dictionary<string, string>()
+                            {
+                                { "UserProfile", userProfile },
+                            });
+                    }
+
                     // Act
                     var xml = BuildAssetsUtils.GenerateEmptyImportsFile();
 
@@ -190,7 +204,8 @@ namespace NuGet.Commands.Test
                         globalPackagesFolder,
                         ProjectStyle.PackageReference,
                         assetsFilePath: string.Empty,
-                        success: true);
+                        success: true,
+                        environmentVariableReader);
 
                     // Assert
                     var ns = XNamespace.Get("http://schemas.microsoft.com/developer/msbuild/2003");
@@ -206,7 +221,7 @@ namespace NuGet.Commands.Test
                     }
                     else
                     {
-                        expected = Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".nuget", "packages") + Path.DirectorySeparatorChar;
+                        expected = globalPackagesFolder;
                     }
                     Assert.Equal(expected, element.Value);
                 }
@@ -886,7 +901,8 @@ namespace NuGet.Commands.Test
                     string.Empty,
                     ProjectStyle.PackageReference,
                     assetsPath,
-                    success: true);
+                    success: true,
+                    TestEnvironmentVariableReader.EmptyInstance);
 
                 var props = TargetsUtility.GetMSBuildProperties(doc);
 
@@ -914,7 +930,8 @@ namespace NuGet.Commands.Test
                     string.Empty,
                     ProjectStyle.PackageReference,
                     assetsPath,
-                    success: true);
+                    success: true,
+                    TestEnvironmentVariableReader.EmptyInstance);
 
                 var props = TargetsUtility.GetMSBuildProperties(doc);
 

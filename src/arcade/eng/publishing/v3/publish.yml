@@ -12,7 +12,6 @@ stages:
     displayName: Publish Assets and Symbols
     timeoutInMinutes: 120
     variables:
-    - group: DotNet-Symbol-Server-Pats
     - group: AzureDevOps-Artifact-Feeds-Pats
     - group: Publish-Build-Assets
 
@@ -134,6 +133,7 @@ stages:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
       inputs:
         azureSubscription: maestro-build-promotion
+        addSpnToEnvironment: true
         scriptType: ps
         scriptLocation: scriptPath
         scriptPath: $(System.DefaultWorkingDirectory)/eng/common/sdk-task.ps1
@@ -157,11 +157,9 @@ stages:
           /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
           /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt'
           /p:TempSymbolsAzureDevOpsOrg='dnceng'
-          /p:TempSymbolsAzureDevOpsOrgToken='$(dnceng-symbol-server-pat)'
           /p:SymbolRequestProject='dotnet'
           ${{ parameters.symbolPublishingAdditionalParameters}}
           /p:BuildQuality='${{ parameters.buildQuality }}'
-          /p:AzdoApiToken='$(dn-bot-all-orgs-build-rw-code-rw)'
           /p:ArtifactsBasePath='$(Build.ArtifactStagingDirectory)/'
           /p:BuildId='$(AzDOBuildId)'
           /p:AzureDevOpsOrg='$(AzDOAccount)'

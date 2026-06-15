@@ -15,6 +15,7 @@ using Moq;
 using NuGet.Frameworks;
 using NuGet.ProjectManagement;
 using NuGet.VisualStudio;
+using VSLangProj150;
 
 namespace NuGet.PackageManagement.VisualStudio.Test
 {
@@ -52,7 +53,23 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             _isCentralPackageVersionOverrideEnabled = isCentralPackageVersionOverrideEnabled;
             _isCentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
 
+            Mock.Get(BuildProperties)
+                .Setup(x => x.GetPropertyValue("MSBuildProjectName"))
+                .Returns(projectNames.ShortName);
+
+            Mock.Get(BuildProperties)
+                .Setup(x => x.GetPropertyValue("BuildingInsideVisualStudio"))
+                .Returns(bool.TrueString);
+
 #pragma warning disable CS0618 // Type or member is obsolete
+            Mock.Get(BuildProperties)
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.TargetFrameworkMoniker))))
+                .Returns(NuGetFramework.Parse(targetFrameworkString).DotNetFrameworkName);
+
+            Mock.Get(BuildProperties)
+                .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.MSBuildProjectExtensionsPath))))
+                .Returns(GetMSBuildProjectExtensionsPath());
+
             Mock.Get(BuildProperties)
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.ManagePackageVersionsCentrally))))
                 .Returns(_isCPVMEnabled.ToString());
@@ -162,6 +179,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         public bool IsCapabilityMatch(string capabilityExpression)
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsSupported(Reference6 projectReference)
+        {
+            return true;
         }
     }
 }

@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <Target Name="ValidateTargetQueues">
-    <Telemetry EventName="NETCORE_ENGINEERING_TELEMETRY" EventData="Category=Build" />
     <Error Condition="'@(HelixTargetQueue)' == ''" Text="You must specify at least one target queue to send a job to helix. Use the HelixTargetQueues property or HelixTargetQueue items." />
   </Target>
 
@@ -38,6 +37,15 @@
     <CancelHelixJobsIfBuildCancelled Condition="'$(CancelHelixJobsIfBuildCancelled)' != 'false'">true</CancelHelixJobsIfBuildCancelled>
     <FailOnWorkItemFailure Condition="'$(FailOnWorkItemFailure)' != 'false'">true</FailOnWorkItemFailure>
     <FailOnMissionControlTestFailure Condition="'$(FailOnMissionControlTestFailure)' != 'true'">false</FailOnMissionControlTestFailure>
+  </PropertyGroup>
+
+  <!--
+    When the standalone Helix Job Monitor is enabled, the build job that submits the Helix jobs
+    should not block waiting for them to complete - the monitor job will track completion and
+    publish results out-of-band.
+  -->
+  <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true'">
+    <WaitForWorkItemCompletion>false</WaitForWorkItemCompletion>
   </PropertyGroup>
 
   <Target Name="RestoreProjects"

@@ -30,7 +30,7 @@ validation checks.
 * All legs succeed (we'll provide a manual override in case legs fail but failures are known and/or
   we don't want to block the pipeline due to this errors)
 
-### [Build Validation Ring (Candidate Validation channel)](https://dnceng.visualstudio.com/internal/_git/dotnet-release?path=%2Fdocumentation%2Frelease-validation.md)
+### [Build Validation Ring (Candidate Validation channel)](https://dev.azure.com/dnceng/internal/_git/dotnet-release?path=%2Fdocumentation%2Frelease-validation.md)
 
 * BinSkim validation
 * Packages validation
@@ -82,8 +82,3 @@ post-build script. Zips are validated by the ASP team against an App Services te
 * Publish and validate Docker
 * Publish signed bits to dot.net
 * Publish release notes and metadata to GitHub
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CReleaseRingsPlan.md)](https://helix.dot.net/f/p/5?p=Documentation%5CReleaseRingsPlan.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CReleaseRingsPlan.md)</sub>
-<!-- End Generated Content-->

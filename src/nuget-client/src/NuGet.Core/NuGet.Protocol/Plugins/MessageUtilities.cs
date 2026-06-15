@@ -1,9 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
+using Newtonsoft.Json.Linq;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -31,7 +33,7 @@ namespace NuGet.Protocol.Plugins
                 throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(requestId));
             }
 
-            return new Message(requestId, type, method);
+            return new Message(requestId, type, method, (object?)null);
         }
 
         /// <summary>
@@ -63,9 +65,43 @@ namespace NuGet.Protocol.Plugins
                 throw new ArgumentNullException(nameof(payload));
             }
 
-            var jsonPayload = JsonSerializationUtilities.FromObject(payload);
+            return new Message(requestId, type, method, payload);
+        }
 
-            return new Message(requestId, type, method, jsonPayload);
+        /// <summary>
+        /// Serializes a message's payload to a JSON string.
+        /// Use this instead of accessing the obsolete <see cref="Message.Payload" /> directly.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns>A JSON string, or <see langword="null" /> if no payload exists.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based serialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based serialization.")]
+#endif
+        public static string? SerializePayload(Message message)
+        {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+
+            if (message.PayloadObject == null)
+            {
+                return null;
+            }
+
+            if (message.PayloadObject is JObject jobj)
+            {
+                return jobj.ToString(Newtonsoft.Json.Formatting.None);
+            }
+
+            using (var stringWriter = new System.IO.StringWriter())
+            using (var jsonWriter = new Newtonsoft.Json.JsonTextWriter(stringWriter))
+            {
+                JsonSerializationUtilities.Serialize(jsonWriter, message.PayloadObject);
+                return stringWriter.ToString();
+            }
         }
 
         /// <summary>
@@ -76,19 +112,28 @@ namespace NuGet.Protocol.Plugins
         /// <returns>The deserialized message payload of type <typeparamref name="TPayload" />
         /// or <see langword="null" /> if no payload exists.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="message" /> is <see langword="null" />.</exception>
-        public static TPayload DeserializePayload<TPayload>(Message message)
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
+        public static TPayload? DeserializePayload<TPayload>(Message message)
         {
             if (message == null)
             {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            if (message.Payload == null)
+            if (message.PayloadObject == null)
             {
-                return default(TPayload);
+                return default;
             }
 
-            return JsonSerializationUtilities.ToObject<TPayload>(message.Payload);
+            if (message.PayloadObject is Newtonsoft.Json.Linq.JObject jobj)
+            {
+                return JsonSerializationUtilities.ToObject<TPayload>(jobj);
+            }
+
+            return (TPayload)message.PayloadObject;
         }
     }
 }

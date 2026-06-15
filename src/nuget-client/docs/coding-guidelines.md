@@ -274,7 +274,55 @@ For example the following are correct:
    string name = item.Name; // NullReferenceException if selectedItem was not ListItem
    ```
 
+1. All new files added to the project must be nullable enabled. `#nullable disable` is not allowed in new files.
+
 Many of the guidelines, wherever possible, and potentially some not listed here, are enforced by an [EditorConfig](https://editorconfig.org "EditorConfig homepage") file (`.editorconfig`) at the root of the repository.
+
+## Prefer Immutability and Non-Null Types
+
+When writing new code or refactoring existing code, prefer types that are immutable and non-null. Immutable objects are easier to reason about, thread-safe by construction, and enable compiler optimizations — the JIT can cache property reads, skip defensive copies for readonly structs, and in some cases eliminate bounds checks. Non-null types make illegal states unrepresentable and push error detection from runtime to compile time.
+
+### Property accessor guidelines
+
+Use the most restrictive accessor that the code actually needs:
+
+| Scenario | Pattern | Example |
+|---|---|---|
+| Must be provided, immutable after creation | `required init` | `public required string Id { get; init; }` |
+| Optional at creation, immutable after | `init` | `public bool Listed { get; init; }` |
+| Collection, never replaced | get-only + inline init | `public IList<Item> Items { get; } = new List<Item>();` |
+| Truly mutable state | `set` | `public int RetryCount { get; set; }` |
+
+Think of it as a spectrum: **`required init`** > **`init`** > **`set`**. Use the most restrictive accessor that works.
+
+- **`{ get; init; }`** over `{ get; set; }` for properties set only at construction time. This is especially valuable for data-carrying types (DTOs, info objects, result types).
+- **`{ get; }` (get-only)** for collection properties initialized inline. There's no reason to expose a setter if the collection itself is never replaced, only mutated via `.Add()`.
+- **`required`** over accepting `null!` initializers for properties that must be provided. `required init` enforces that callers set the value, and the value is immutable once set.
+- **`readonly` fields** wherever the field isn't reassigned after construction. (This is already mentioned in the C# Coding Style section above, but bears repeating in this context.)
+
+### Non-null bias
+
+Default to non-null types. Only mark a type as nullable (`?`) when the value is genuinely optional — configuration, cache misses, "not found" semantics. Don't replace null with sentinel values (`string.Empty`, `Array.Empty<T>()`) if downstream code would silently misbehave — empty should not become the new null.
+
+### Null-forgiving operator (`!`)
+
+Every use of the null-forgiving operator (`!`) must be justified. A bare `!` suppresses the compiler's null analysis and, if the assumption is ever wrong, produces a `NullReferenceException` with no indication of where the null originated. Prefer one of these alternatives, in order:
+
+1. **Restructure so `!` is unnecessary.** Change the return type, field type, or control flow so the compiler can prove non-null on its own (e.g., return `Task<T>` instead of setting a field, use `required` properties, use `[NotNullWhen]`).
+2. **Use `?? throw`.** When a value should never be null but the compiler can't verify it, fail fast with a descriptive exception:
+
+   ```cs
+   var requestUri = request.RequestUri
+       ?? throw new ArgumentException("request.RequestUri must not be null");
+   ```
+
+3. **Use `!` with a comment explaining why it is safe.** Reserve this for cases where the alternatives above are impractical — for example, a field that is guaranteed non-null by construction but set to `null!` in `Dispose`:
+
+   ```cs
+   _httpContent = null!; // Release reference without disposing; field is never read after Dispose.
+   ```
+
+Do not use `!` merely to silence a warning. If you cannot explain why the value is guaranteed non-null, make the type nullable and let callers handle it.
 
 ### Getting or Setting Environment Variables
 

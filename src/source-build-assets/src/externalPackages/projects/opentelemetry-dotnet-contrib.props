@@ -1,0 +1,48 @@
+<!--
+  Validation metadata for the opentelemetry-dotnet-contrib component. Imported by the sibling
+  .proj at build time and loaded standalone by UpdateExternalMetadata and ExternalPackageTests.
+
+  This file deliberately declares no SDK and has no upward import chain so it can be loaded
+  with plain `new Project(filePath, …)` in any host — including inside `dotnet test`, where
+  MSBuildLocator cannot register because the test platform pre-loads Microsoft.Build.
+-->
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)validation.props" />
+
+  <PropertyGroup>
+    <!-- The upstream build uses MinVer to compute FileVersion/AssemblyVersion from git tags, but
+         MinVer is disabled here via /p:IntegrationBuild=true (see CommonBuildArgs). We pin both
+         AssemblyVersion and FileVersion explicitly to match the Microsoft-shipped contrib
+         packages, which each have AssemblyVersion = FileVersion = ReleaseVersion.BuildNumber,
+         where BuildNumber is the GitHub Actions run number from when that specific package's
+         release tag was published. Each contrib package is released independently, so the
+         BuildNumber differs per package. These must be updated when the submodule is updated;
+         eng/tools/UpdateExternalMetadata refreshes them from the MSFT-shipped packages.
+         See https://github.com/dotnet/source-build/issues/5577 -->
+    <!-- BuildNumber from MSFT-shipped OpenTelemetry.Instrumentation.Http release (tag Instrumentation.Http-1.15.1). -->
+    <OpenTelemetryDotNetContribHttpFileVersionRevision>1025</OpenTelemetryDotNetContribHttpFileVersionRevision>
+    <!-- AssemblyVersion of MSFT-shipped OpenTelemetry.Instrumentation.Http 1.15.1. -->
+    <OpenTelemetryDotNetContribHttpAssemblyVersionOverride>1.15.1.1025</OpenTelemetryDotNetContribHttpAssemblyVersionOverride>
+    <!-- BuildNumber from MSFT-shipped OpenTelemetry.Instrumentation.Runtime release (tag Instrumentation.Runtime-1.15.1). -->
+    <OpenTelemetryDotNetContribRuntimeFileVersionRevision>1029</OpenTelemetryDotNetContribRuntimeFileVersionRevision>
+    <!-- AssemblyVersion of MSFT-shipped OpenTelemetry.Instrumentation.Runtime 1.15.1. -->
+    <OpenTelemetryDotNetContribRuntimeAssemblyVersionOverride>1.15.1.1029</OpenTelemetryDotNetContribRuntimeAssemblyVersionOverride>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Each contrib package is released independently with its own ReleaseVersion + FileVersion
+         revision + AssemblyVersion, so each item names the specific properties to use. -->
+    <FileVersionValidationPackage Include="OpenTelemetry.Instrumentation.Http">
+      <FileVersionRevisionProperty>OpenTelemetryDotNetContribHttpFileVersionRevision</FileVersionRevisionProperty>
+      <AssemblyVersionOverrideProperty>OpenTelemetryDotNetContribHttpAssemblyVersionOverride</AssemblyVersionOverrideProperty>
+      <ReleaseVersionProperty>OpenTelemetryDotNetContribHttpReleaseVersion</ReleaseVersionProperty>
+    </FileVersionValidationPackage>
+    <FileVersionValidationPackage Include="OpenTelemetry.Instrumentation.Runtime">
+      <FileVersionRevisionProperty>OpenTelemetryDotNetContribRuntimeFileVersionRevision</FileVersionRevisionProperty>
+      <AssemblyVersionOverrideProperty>OpenTelemetryDotNetContribRuntimeAssemblyVersionOverride</AssemblyVersionOverrideProperty>
+      <ReleaseVersionProperty>OpenTelemetryDotNetContribRuntimeReleaseVersion</ReleaseVersionProperty>
+    </FileVersionValidationPackage>
+  </ItemGroup>
+
+</Project>

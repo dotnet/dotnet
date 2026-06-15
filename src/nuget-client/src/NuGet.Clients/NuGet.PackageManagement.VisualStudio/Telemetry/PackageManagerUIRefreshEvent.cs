@@ -104,7 +104,6 @@ namespace NuGet.PackageManagement.Telemetry
     {
         ActionsExecuted,
         CacheUpdated,
-        RestoreCompleted,
         CheckboxPrereleaseChanged,
         ClearSearch,
         ExecuteAction,
@@ -115,6 +114,7 @@ namespace NuGet.PackageManagement.Telemetry
         RestartSearchCommand,
         SourceSelectionChanged,
         PackagesMissingStatusChanged,
+        WindowActivated,
     }
 
     public enum RefreshOperationStatus

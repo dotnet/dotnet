@@ -25,7 +25,6 @@ namespace NuGet.Tests.Apex
 
         [TestMethod]
         [Timeout(LongerTimeout)]
-        [TestCategory("Gate")]
         public void SimpleInstallFromIVsInstaller()
         {
             // Arrange
@@ -100,6 +99,7 @@ namespace NuGet.Tests.Apex
 
             // Act
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName);
+            solutionService.SaveAll();
 
             // Assert
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
@@ -125,6 +125,7 @@ namespace NuGet.Tests.Apex
             // Act
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV1);
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV2);
+            solutionService.SaveAll();
 
             // Assert
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
@@ -159,6 +160,7 @@ namespace NuGet.Tests.Apex
 
             // Act
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV1);
+            solutionService.SaveAll();
 
             // Assert
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
@@ -194,11 +196,70 @@ namespace NuGet.Tests.Apex
             // Act
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV1);
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV2);
+            solutionService.SaveAll();
             // Assert
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
             string uniqueContentFile = Path.Combine(_pathContext.PackagesV2, TestPackageName + '.' + TestPackageVersionV2, "lib", "net45", "Thisisfromprivaterepo2.txt");
 
             // Make sure name squatting package not restored from secondary repository.
+            Assert.IsTrue(File.Exists(uniqueContentFile), $"'{uniqueContentFile}' should exist");
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task SimpleInstallFromIVsInstaller_PackageSourceMapping_WithMissingMappedSource_Fails()
+        {
+            // Arrange
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+            // Map the package pattern to a non-existent source "SecretPackages" — package exists in primary source but mapping won't route there.
+            _pathContext.Settings.AddPackageSourceMapping("SecretPackages", "Contoso.*", "Test.*");
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
+            solutionService.SaveAll();
+            EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
+
+            // Act — InstallPackage swallows InvalidOperationException, so the call returns without throwing.
+            nugetTestService.InstallPackage(project.UniqueName, TestPackageName);
+            solutionService.SaveAll();
+
+            // Assert
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task SimpleInstallLatestFromIVsInstaller_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage()
+        {
+            // Arrange
+            string secondarySourcePath = Directory.CreateDirectory(Path.Combine(_pathContext.SolutionRoot, SecondarySourceName)).FullName;
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(secondarySourcePath, TestPackageName, TestPackageVersionV1, "Thisisfromsecondaryrepo1.txt");
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(secondarySourcePath, TestPackageName, TestPackageVersionV2, "Thisisfromsecondaryrepo2.txt");
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1, "Thisisfromprivaterepo1.txt");
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV2, "Thisisfromprivaterepo2.txt");
+            _pathContext.Settings.AddSource(SecondarySourceName, secondarySourcePath);
+            _pathContext.Settings.AddPackageSourceMapping(SecondarySourceName, "External.*", "Others.*");
+            _pathContext.Settings.AddPackageSourceMapping(PrimarySourceName, "Contoso.*", "Test.*");
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension projExt = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject");
+            solutionService.SaveAll();
+            EnvDTE.Project project = VisualStudio.Dte.Solution.Projects.Item(1);
+
+            // Act — install latest (no version specified)
+            nugetTestService.InstallPackage(project.UniqueName, TestPackageName);
+            solutionService.SaveAll();
+
+            // Assert — latest version (2.0.0) should be installed from the mapped primary source
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
+
+            string uniqueContentFile = Path.Combine(_pathContext.PackagesV2, TestPackageName + '.' + TestPackageVersionV2, "lib", "net45", "Thisisfromprivaterepo2.txt");
             Assert.IsTrue(File.Exists(uniqueContentFile), $"'{uniqueContentFile}' should exist");
         }
 

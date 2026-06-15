@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))" />
   </ItemGroup>
 
   <ItemGroup>
@@ -80,5 +79,6 @@
     <InternalsVisibleTo Include="Test.Utility" />
     <InternalsVisibleTo Include="NuGet.Commands.FuncTest" />
     <InternalsVisibleTo Include="Dotnet.Integration.Test" />
+    <InternalsVisibleTo Include="NuGet.CommandLine.Xplat.Tests" />
   </ItemGroup>
 </Project>

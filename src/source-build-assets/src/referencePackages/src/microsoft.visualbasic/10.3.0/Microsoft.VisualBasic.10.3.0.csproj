@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Microsoft.VisualBasic</PackageId>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp2.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>10.3.0</PackageVersion>
     <AssemblyName>Microsoft.VisualBasic</AssemblyName>
     <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
@@ -19,6 +19,7 @@ When using NuGet 3.x this package requires at least version 3.4.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
     <MinClientVersion>2.12</MinClientVersion>
+    <PlaceholderTargetFrameworks>net45;netcoreapp2.0</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
 </Project>

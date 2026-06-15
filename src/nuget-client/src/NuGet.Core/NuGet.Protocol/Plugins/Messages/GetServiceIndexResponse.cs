@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -22,22 +20,35 @@ namespace NuGet.Protocol.Plugins
         public MessageResponseCode ResponseCode { get; }
 
         /// <summary>
+        /// Gets the service index (index.json) for the package source repository as a raw JSON string.
+        /// </summary>
+        [JsonProperty("ServiceIndex")]
+        [JsonConverter(typeof(NsjRawJsonStringConverter))]
+        [System.Text.Json.Serialization.JsonPropertyName("ServiceIndex")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(RawJsonStringConverter))]
+        public string? ServiceIndexJson { get; }
+
+        /// <summary>
         /// Gets the service index (index.json) for the package source repository.
         /// </summary>
-        public JObject ServiceIndex { get; }
+        [Obsolete("Use ServiceIndexJson instead. This property always returns null.")]
+        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public JObject? ServiceIndex => null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetServiceIndexResponse" /> class.
         /// </summary>
         /// <param name="responseCode">The response code.</param>
-        /// <param name="serviceIndex">The service index (index.json) for the package source repository.</param>
+        /// <param name="serviceIndexJson">The service index (index.json) for the package source repository as a raw JSON string.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="responseCode" />
         /// is an undefined <see cref="MessageResponseCode" /> value.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseCode" /> 
-        /// is <see cref="MessageResponseCode.Success" /> and <paramref name="serviceIndex" />
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseCode" />
+        /// is <see cref="MessageResponseCode.Success" /> and <paramref name="serviceIndexJson" />
         /// is <see langword="null" />.</exception>
         [JsonConstructor]
-        public GetServiceIndexResponse(MessageResponseCode responseCode, JObject serviceIndex)
+        [System.Text.Json.Serialization.JsonConstructor]
+        public GetServiceIndexResponse(MessageResponseCode responseCode, string? serviceIndexJson)
         {
             if (!Enum.IsDefined(typeof(MessageResponseCode), responseCode))
             {
@@ -49,13 +60,24 @@ namespace NuGet.Protocol.Plugins
                     nameof(responseCode));
             }
 
-            if (responseCode == MessageResponseCode.Success && serviceIndex == null)
+            if (responseCode == MessageResponseCode.Success && serviceIndexJson == null)
             {
-                throw new ArgumentNullException(nameof(serviceIndex));
+                throw new ArgumentNullException(nameof(serviceIndexJson));
             }
 
             ResponseCode = responseCode;
-            ServiceIndex = serviceIndex;
+            ServiceIndexJson = serviceIndexJson;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GetServiceIndexResponse" /> class.
+        /// </summary>
+        /// <param name="responseCode">The response code.</param>
+        /// <param name="serviceIndex">The service index (index.json) for the package source repository.</param>
+        [Obsolete("Use GetServiceIndexResponse(MessageResponseCode, string) instead.")]
+        public GetServiceIndexResponse(MessageResponseCode responseCode, JObject? serviceIndex)
+            : this(responseCode, serviceIndex?.ToString(Formatting.None))
+        {
         }
     }
 }

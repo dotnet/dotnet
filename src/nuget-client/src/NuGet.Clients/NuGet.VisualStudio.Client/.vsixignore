@@ -11,6 +11,8 @@ Microsoft.Bcl.HashCode.dll
 Microsoft.DataAI.NuGetRecommender.Contracts.dll
 Microsoft.Extensions.DependencyInjection.dll
 Microsoft.Extensions.DependencyInjection.Abstractions.dll
+Microsoft.Extensions.FileProviders.Abstractions.dll
+Microsoft.Extensions.Primitives.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.dll
 Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll
 Microsoft.IdentityModel.JsonWebTokens.dll
@@ -103,6 +105,7 @@ Microsoft.VisualStudio.Setup.Common.dll
 Microsoft.VisualStudio.Shell.Styles.dll
 Microsoft.VisualStudio.Shell.Styles.resources.dll
 System.Drawing.Common.dll
+System.Formats.Nrbf.dll
 System.IdentityModel.Tokens.Jwt.dll
 System.IO.FileSystem.AccessControl.dll
 System.Management.Automation.dll

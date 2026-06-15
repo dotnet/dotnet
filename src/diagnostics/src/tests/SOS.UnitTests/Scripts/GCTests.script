@@ -27,13 +27,7 @@ SOSCOMMAND:DumpStackObjects
 VERIFY:\s*<HEXVAL>\s+<HEXVAL>\s+System.IO.StringWriter\s+
 
 SOSCOMMAND:DumpObj <POUT>\w+\s+(<HEXVAL>)\s+(System.IO.StringWriter!\$0_)*System.IO.StringWriter\s+<POUT>
-IFDEF:MAJOR_RUNTIME_VERSION_2
-VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.IO.TextWriter\s+<DECVAL>\s+shared\s+static\s+Null\s+
-VERIFY:\s+>>\s+Domain:Value\s+<HEXVAL>:(<HEXVAL>|NotInit)\s+<<\s+
-ENDIF:MAJOR_RUNTIME_VERSION_2
-IFDEF:MAJOR_RUNTIME_VERSION_GE_3
-VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.IO.TextWriter\s+<DECVAL>\s+static\s+<HEXVAL>\s+Null\s+
-ENDIF:MAJOR_RUNTIME_VERSION_GE_3
+VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.IO.TextWriter\s+No\s+static\s+<HEXVAL>\s+Null\s+
 
 SOSCOMMAND:DumpStackObjects
 VERIFY:\s*<HEXVAL>\s+<HEXVAL>\s+([Gg][Cc]where!\$0_)*GCWhere\s+
@@ -53,7 +47,6 @@ VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+GCWhere\.Main\(\)\s+
 SOSCOMMAND:DumpObj <PREVPOUT>
 VERIFY:\s*Name:\s+GCWhere\s+
 VERIFY:\s+MethodTable:\s+<HEXVAL>\s+
-VERIFY:\s+(EEClass|Canonical MethodTable):\s+<HEXVAL>\s+
 VERIFY:\s+Fields:\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.String.*_string\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.UInt64.*52704621242434 _static\s+
@@ -61,12 +54,10 @@ VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.UInt64.*52704621242434 _stati
 SOSCOMMAND:DumpObj -nofields <PREVPOUT>
 VERIFY:\s*Name:\s+GCWhere\s+
 VERIFY:\s+MethodTable:\s+<HEXVAL>\s+
-VERIFY:\s+(EEClass|Canonical MethodTable):\s+<HEXVAL>\s+
 
 SOSCOMMAND:DumpObj -refs <PREVPOUT>
 VERIFY:\s*Name:\s+GCWhere\s+
 VERIFY:\s+MethodTable:\s+<HEXVAL>\s+
-VERIFY:\s+(EEClass|Canonical MethodTable):\s+<HEXVAL>\s+
 VERIFY:\s+Fields:\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.String.*_string\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.UInt64.*52704621242434 _static\s+
@@ -133,7 +124,6 @@ VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+GCWhere\.Main\(\)\s+
 SOSCOMMAND:DumpObj <PREVPOUT>
 VERIFY:\s*Name:\s+GCWhere\s+
 VERIFY:\s+MethodTable:\s+<HEXVAL>\s+
-VERIFY:\s+(EEClass|Canonical MethodTable):\s+<HEXVAL>\s+
 VERIFY:\s+Fields:\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.String.*_string\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.UInt64.*52704621242434 _static\s+
@@ -141,12 +131,10 @@ VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.UInt64.*52704621242434 _stati
 SOSCOMMAND:DumpObj -nofields <PREVPOUT>
 VERIFY:\s*Name:\s+GCWhere\s+
 VERIFY:\s+MethodTable:\s+<HEXVAL>\s+
-VERIFY:\s+(EEClass|Canonical MethodTable):\s+<HEXVAL>\s+
 
 SOSCOMMAND:DumpObj -refs <PREVPOUT>
 VERIFY:\s*Name:\s+GCWhere\s+
 VERIFY:\s+MethodTable:\s+<HEXVAL>\s+
-VERIFY:\s+(EEClass|Canonical MethodTable):\s+<HEXVAL>\s+
 VERIFY:\s+Fields:\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.String.*_string\s+
 VERIFY:\s+<HEXVAL>\s+<HEXVAL>\s+<HEXVAL>\s+System\.UInt64.*52704621242434 _static\s+

@@ -5,9 +5,7 @@
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Help;
 using System.Threading.Tasks;
-using Microsoft.Extensions.CommandLineUtils;
 using NuGet.CommandLine.XPlat.Commands;
 using NuGet.Common;
 
@@ -15,53 +13,6 @@ namespace NuGet.CommandLine.XPlat
 {
     internal class ConfigCommand
     {
-        private static HelpOption HelpOption = new HelpOption()
-        {
-            Arity = ArgumentArity.Zero
-        };
-
-        private static Argument<string> SetConfigKeyArgument = new Argument<string>(name: "config-key")
-        {
-            Arity = ArgumentArity.ExactlyOne,
-            Description = Strings.ConfigSetConfigKeyDescription,
-        };
-
-        private static Argument<string> UnsetConfigKeyArgument = new Argument<string>(name: "config-key")
-        {
-            Arity = ArgumentArity.ExactlyOne,
-            Description = Strings.ConfigUnsetConfigKeyDescription,
-        };
-
-        private static Argument<string> ConfigValueArgument = new Argument<string>(name: "config-value")
-        {
-            Arity = ArgumentArity.ExactlyOne,
-            Description = Strings.ConfigSetConfigValueDescription,
-        };
-
-        private static Argument<string> AllOrConfigKeyArgument = new Argument<string>(name: "all-or-config-key")
-        {
-            Arity = ArgumentArity.ExactlyOne,
-            Description = Strings.ConfigGetAllOrConfigKeyDescription
-        };
-
-        private static Option<string> WorkingDirectory = new Option<string>(name: "--working-directory")
-        {
-            Arity = ArgumentArity.ZeroOrOne,
-            Description = Strings.ConfigPathsWorkingDirectoryDescription
-        };
-
-        private static Option<bool> ShowPathOption = new Option<bool>(name: "--show-path")
-        {
-            Arity = ArgumentArity.Zero,
-            Description = Strings.ConfigGetShowPathDescription,
-        };
-
-        private static Option<string> ConfigFileOption = new Option<string>(name: "--configfile")
-        {
-            Arity = ArgumentArity.ZeroOrOne,
-            Description = Strings.Option_ConfigFile,
-        };
-
         internal static void LogException(Exception e, ILogger log)
         {
             // Log the error
@@ -78,18 +29,9 @@ namespace NuGet.CommandLine.XPlat
             log.LogVerbose(e.ToString());
         }
 
-        internal static void Register(CommandLineApplication app)
-        {
-            app.Command("config", configCmd =>
-            {
-                configCmd.Description = Strings.Config_Description;
-            });
-        }
-
-        internal static Command Register(Command app, Func<ILogger> getLogger)
+        internal static Command Register(Command app, Func<ILoggerWithColor> getLogger)
         {
             var ConfigCmd = new DocumentedCommand(name: "config", description: Strings.Config_Description, "https://aka.ms/dotnet/nuget/config");
-            ConfigCmd.Options.Add(HelpOption);
 
             // Options directly under the verb 'config'
 
@@ -132,14 +74,19 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigPaths(Command cmd, Func<ILogger> getLogger)
         {
-            cmd.Options.Add(WorkingDirectory);
-            cmd.Options.Add(HelpOption);
+            var workingDirectory = new Option<string>(name: "--working-directory")
+            {
+                Arity = ArgumentArity.ZeroOrOne,
+                Description = Strings.ConfigPathsWorkingDirectoryDescription
+            };
+
+            cmd.Options.Add(workingDirectory);
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
                 var args = new ConfigPathsArgs()
                 {
-                    WorkingDirectory = parseResult.GetValue(WorkingDirectory),
+                    WorkingDirectory = parseResult.GetValue(workingDirectory),
                 };
 
                 int exitCode = ConfigPathsRunner.Run(args, getLogger);
@@ -149,19 +96,36 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigGet(Command cmd, Func<ILogger> getLogger)
         {
-            cmd.Arguments.Add(AllOrConfigKeyArgument);
-            cmd.Options.Add(WorkingDirectory);
-            cmd.Options.Add(ShowPathOption);
-            cmd.Options.Add(HelpOption);
+            var allOrConfigKeyArgument = new Argument<string>(name: "all-or-config-key")
+            {
+                Arity = ArgumentArity.ExactlyOne,
+                Description = Strings.ConfigGetAllOrConfigKeyDescription
+            };
+
+            var workingDirectory = new Option<string>(name: "--working-directory")
+            {
+                Arity = ArgumentArity.ZeroOrOne,
+                Description = Strings.ConfigPathsWorkingDirectoryDescription
+            };
+
+            var showPathOption = new Option<bool>(name: "--show-path")
+            {
+                Arity = ArgumentArity.Zero,
+                Description = Strings.ConfigGetShowPathDescription,
+            };
+
+            cmd.Arguments.Add(allOrConfigKeyArgument);
+            cmd.Options.Add(workingDirectory);
+            cmd.Options.Add(showPathOption);
 
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
                 var args = new ConfigGetArgs()
                 {
-                    AllOrConfigKey = parseResult.GetValue(AllOrConfigKeyArgument),
-                    WorkingDirectory = parseResult.GetValue(WorkingDirectory),
-                    ShowPath = parseResult.GetValue(ShowPathOption),
+                    AllOrConfigKey = parseResult.GetValue(allOrConfigKeyArgument),
+                    WorkingDirectory = parseResult.GetValue(workingDirectory),
+                    ShowPath = parseResult.GetValue(showPathOption),
                 };
 
                 int exitCode = ConfigGetRunner.Run(args, getLogger);
@@ -171,18 +135,35 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigSet(Command cmd, Func<ILogger> getLogger)
         {
-            cmd.Arguments.Add(SetConfigKeyArgument);
-            cmd.Arguments.Add(ConfigValueArgument);
-            cmd.Options.Add(ConfigFileOption);
-            cmd.Options.Add(HelpOption);
+            var setConfigKeyArgument = new Argument<string>(name: "config-key")
+            {
+                Arity = ArgumentArity.ExactlyOne,
+                Description = Strings.ConfigSetConfigKeyDescription,
+            };
+
+            var configValueArgument = new Argument<string>(name: "config-value")
+            {
+                Arity = ArgumentArity.ExactlyOne,
+                Description = Strings.ConfigSetConfigValueDescription,
+            };
+
+            var configFileOption = new Option<string>(name: "--configfile")
+            {
+                Arity = ArgumentArity.ZeroOrOne,
+                Description = Strings.Option_ConfigFile,
+            };
+
+            cmd.Arguments.Add(setConfigKeyArgument);
+            cmd.Arguments.Add(configValueArgument);
+            cmd.Options.Add(configFileOption);
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
                 var args = new ConfigSetArgs()
                 {
-                    ConfigKey = parseResult.GetValue(SetConfigKeyArgument),
-                    ConfigValue = parseResult.GetValue(ConfigValueArgument),
-                    ConfigFile = parseResult.GetValue(ConfigFileOption),
+                    ConfigKey = parseResult.GetValue(setConfigKeyArgument),
+                    ConfigValue = parseResult.GetValue(configValueArgument),
+                    ConfigFile = parseResult.GetValue(configFileOption),
                 };
 
                 int exitCode = ConfigSetRunner.Run(args, getLogger);
@@ -192,16 +173,27 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigUnset(Command cmd, Func<ILogger> getLogger)
         {
-            cmd.Arguments.Add(UnsetConfigKeyArgument);
-            cmd.Options.Add(ConfigFileOption);
-            cmd.Options.Add(HelpOption);
+            var unsetConfigKeyArgument = new Argument<string>(name: "config-key")
+            {
+                Arity = ArgumentArity.ExactlyOne,
+                Description = Strings.ConfigUnsetConfigKeyDescription,
+            };
+
+            var configFileOption = new Option<string>(name: "--configfile")
+            {
+                Arity = ArgumentArity.ZeroOrOne,
+                Description = Strings.Option_ConfigFile,
+            };
+
+            cmd.Arguments.Add(unsetConfigKeyArgument);
+            cmd.Options.Add(configFileOption);
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
                 var args = new ConfigUnsetArgs()
                 {
-                    ConfigKey = parseResult.GetValue(UnsetConfigKeyArgument),
-                    ConfigFile = parseResult.GetValue(ConfigFileOption),
+                    ConfigKey = parseResult.GetValue(unsetConfigKeyArgument),
+                    ConfigFile = parseResult.GetValue(configFileOption),
                 };
 
                 int exitCode = ConfigUnsetRunner.Run(args, getLogger);

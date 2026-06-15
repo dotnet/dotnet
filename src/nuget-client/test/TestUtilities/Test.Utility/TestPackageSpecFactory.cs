@@ -370,6 +370,16 @@ public class TestPackageSpecFactory
         public required string Directory { get; init; }
         public required ITargetFramework OuterBuild { get; init; }
         public required IReadOnlyDictionary<string, ITargetFramework> TargetFrameworks { get; init; }
+        public Dictionary<string, string>? GlobalProperties { get; init; }
+
+        public string? GetGlobalProperty(string propertyName)
+        {
+            if (GlobalProperties is not null && GlobalProperties.TryGetValue(propertyName, out var value))
+            {
+                return value;
+            }
+            return null;
+        }
     }
 
     internal record TestTargetFramework : ITargetFramework

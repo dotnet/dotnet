@@ -41,13 +41,13 @@ jobs:
       - name: Enable git longpath
         run: git config --global core.longpaths true
       - name: Checkout caller repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
           path: repository
           fetch-depth: 0
       - name: Checkout arcade repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: dotnet/arcade
           path: arcade-repository 

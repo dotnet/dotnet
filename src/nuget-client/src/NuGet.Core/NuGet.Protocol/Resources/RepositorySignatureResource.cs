@@ -5,12 +5,16 @@
 
 using System;
 using System.Collections.Generic;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
 
 namespace NuGet.Protocol
 {
@@ -22,6 +26,10 @@ namespace NuGet.Protocol
 
         public IEnumerable<IRepositoryCertificateInfo> RepositoryCertificateInfos { get; }
 
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         public RepositorySignatureResource(JObject repoSignInformationContent, SourceRepository source)
         {
             var allRepositorySigned = repoSignInformationContent.GetBoolean(JsonProperties.AllRepositorySigned) ??
@@ -41,6 +49,27 @@ namespace NuGet.Protocol
                 }
             }
 
+            Source = source.PackageSource.Source;
+        }
+
+        internal RepositorySignatureResource(RepositorySignatureModel model, SourceRepository source)
+        {
+            AllRepositorySigned = model.AllRepositorySigned ??
+                throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToParseRepoSignInfor, JsonProperties.AllRepositorySigned, source.PackageSource.Source));
+
+            RepositoryCertificateInfo[] certs = model.SigningCertificates ??
+                throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToParseRepoSignInfor, JsonProperties.SigningCertificates, source.PackageSource.Source));
+
+            foreach (RepositoryCertificateInfo cert in certs)
+            {
+                if (!Uri.TryCreate(cert.ContentUrl, UriKind.Absolute, out Uri contentUrl)
+                    || !string.Equals(contentUrl.Scheme, "https", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new FatalProtocolException(Strings.RepositoryContentUrlMustBeHttps);
+                }
+            }
+
+            RepositoryCertificateInfos = certs;
             Source = source.PackageSource.Source;
         }
 

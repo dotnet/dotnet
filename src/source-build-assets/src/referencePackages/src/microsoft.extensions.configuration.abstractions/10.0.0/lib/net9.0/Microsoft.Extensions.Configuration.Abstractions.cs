@@ -49,6 +49,7 @@ namespace Microsoft.Extensions.Configuration
         public static string? GetConnectionString(this IConfiguration configuration, string name) { throw null; }
         public static IConfigurationSection GetRequiredSection(this IConfiguration configuration, string key) { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Property)]
     public sealed partial class ConfigurationKeyNameAttribute : System.Attribute
     {
@@ -64,15 +65,16 @@ namespace Microsoft.Extensions.Configuration
         public static string? GetParentPath(string? path) { throw null; }
         public static string? GetSectionKey(string? path) { throw null; }
     }
+
     public static partial class ConfigurationRootExtensions
     {
         public static string GetDebugView(this IConfigurationRoot root, System.Func<ConfigurationDebugViewContext, string>? processValue) { throw null; }
         public static string GetDebugView(this IConfigurationRoot root) { throw null; }
     }
+
     public partial interface IConfiguration
     {
         string? this[string key] { get; set; }
-
         System.Collections.Generic.IEnumerable<IConfigurationSection> GetChildren();
         Primitives.IChangeToken GetReloadToken();
         IConfigurationSection GetSection(string key);
@@ -81,9 +83,7 @@ namespace Microsoft.Extensions.Configuration
     public partial interface IConfigurationBuilder
     {
         System.Collections.Generic.IDictionary<string, object> Properties { get; }
-
         System.Collections.Generic.IList<IConfigurationSource> Sources { get; }
-
         IConfigurationBuilder Add(IConfigurationSource source);
         IConfigurationRoot Build();
     }
@@ -104,16 +104,13 @@ namespace Microsoft.Extensions.Configuration
     public partial interface IConfigurationRoot : IConfiguration
     {
         System.Collections.Generic.IEnumerable<IConfigurationProvider> Providers { get; }
-
         void Reload();
     }
 
     public partial interface IConfigurationSection : IConfiguration
     {
         string Key { get; }
-
         string Path { get; }
-
         string? Value { get; set; }
     }
 

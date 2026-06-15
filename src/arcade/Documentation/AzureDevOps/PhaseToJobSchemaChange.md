@@ -50,7 +50,7 @@ The Azure DevOps schema originally defined a schema which included [phase](#phas
 
 job.yml is the base.yml replacement which uses the "job" schema instead of the "phase" schema.
 
-See the [job](https://github.com/dotnet/arcade/blob/master/eng/common/templates/job/job.yml) template.
+See the [job](../../eng/common/templates/job/job.yml) template.
 
 Example:
 
@@ -84,7 +84,7 @@ The "jobs" template wraps the "[job](https://github.com/dotnet/arcade/blob/93b39
 
 If you are participating in dependency flow (publishing assets), it is recommended that you use the "jobs" template.
 
-See the [jobs](https://github.com/dotnet/arcade/blob/master/eng/common/templates/jobs/jobs.yml) template.
+See the [jobs](../../eng/common/templates/jobs/jobs.yml) template.
 
 Example:
 
@@ -158,7 +158,7 @@ azure-pipelines.yml
 variables:
   Build.Repository.Clean: true
   _HelixType: build/product/
-  _HelixSource: pr/dotnet/arcade-minimalci-sample/$(Build.SourceBranch)
+  _HelixSource: pr/dotnet/runtime/$(Build.SourceBranch)
 
 trigger:
 - master
@@ -214,7 +214,7 @@ jobs:
     enableTelemetry: true
     # Allow job.yml to add the "PublishBuildArtifacts" step - https://github.com/dotnet/arcade/blob/93b39c3209a5929662190c7e85b43b4f2a32bab1/eng/common/templates/job/job.yml#L38
     enablePublishBuildArtifacts: true
-    helixRepo: dotnet/arcade-minimalci-sample
+    helixRepo: dotnet/runtime
     pool:
       name: dotnet-external-temp
     strategy:
@@ -246,7 +246,7 @@ azure-pipelines.yml
 variables:
   Build.Repository.Clean: true
   _HelixType: build/product/
-  _HelixSource: pr/dotnet/arcade-minimalci-sample/$(Build.SourceBranch)
+  _HelixSource: pr/dotnet/runtime/$(Build.SourceBranch)
 
 trigger:
 - master
@@ -302,7 +302,7 @@ jobs:
     enablePublishBuildArtifacts: true
     # Add a dependent job which publishes build assets for dependency flow
     enablePublishBuildAssets: true
-    helixRepo: dotnet/arcade-minimalci-sample
+    helixRepo: dotnet/runtime
     # define jobs in the jobs object
     jobs:
     - job: Windows_NT
@@ -383,8 +383,3 @@ matrix: { string: { string: string } }
 #### job
 
 The job schema has replaced the phase schema and is publicly [documented](https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=vsts&tabs=schema#job)
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CAzureDevOps%5CPhaseToJobSchemaChange.md)](https://helix.dot.net/f/p/5?p=Documentation%5CAzureDevOps%5CPhaseToJobSchemaChange.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CAzureDevOps%5CPhaseToJobSchemaChange.md)</sub>
-<!-- End Generated Content-->

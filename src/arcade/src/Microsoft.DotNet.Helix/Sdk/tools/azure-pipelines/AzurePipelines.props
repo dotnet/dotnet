@@ -6,6 +6,15 @@
     <AzurePipelinesAvailable Condition="'$(AzurePipelinesAvailable)' != 'true'">false</AzurePipelinesAvailable>
   </PropertyGroup>
 
+  <!--
+    When the new standalone Helix Job Monitor is in charge of reporting test results, the in-build
+    Python reporter and Azure DevOps test run management must be disabled to avoid duplicate test
+    runs and conflicting result uploads.
+  -->
+  <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true'">
+    <EnableAzurePipelinesReporter>false</EnableAzurePipelinesReporter>
+  </PropertyGroup>
+
   <!-- We default the azure pipelines reporter to ON if we are running inside Azure Pipelines -->
   <PropertyGroup Condition="$(AzurePipelinesAvailable)">
     <EnableAzurePipelinesReporter Condition="'$(EnableAzurePipelinesReporter)' != 'false'">true</EnableAzurePipelinesReporter>

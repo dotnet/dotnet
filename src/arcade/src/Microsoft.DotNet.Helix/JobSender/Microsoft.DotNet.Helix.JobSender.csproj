@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <IsPackable>true</IsPackable>
     <RootNamespace>Microsoft.DotNet.Helix.Client</RootNamespace>
     <Description>This package provides a simple API for constructing and sending jobs to the Helix Api</Description>

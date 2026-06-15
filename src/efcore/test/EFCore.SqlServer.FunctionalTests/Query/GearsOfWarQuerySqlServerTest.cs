@@ -16,7 +16,7 @@ public class GearsOfWarQuerySqlServerTest : GearsOfWarQueryRelationalTestBase<Ge
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 
@@ -873,9 +873,7 @@ LEFT JOIN [Gears] AS [g] ON [t].[GearNickName] = [g].[Nickname] AND [t].[GearSqu
 
         AssertSql(
             """
-SELECT CASE
-    WHEN [c].[Name] IS NOT NULL THEN [c].[Name]
-END
+SELECT [c].[Name]
 FROM [Tags] AS [t]
 LEFT JOIN [Gears] AS [g] ON [t].[GearNickName] = [g].[Nickname] AND [t].[GearSquadId] = [g].[SquadId]
 LEFT JOIN [Tags] AS [t0] ON ([g].[Nickname] = [t0].[GearNickName] OR ([g].[Nickname] IS NULL AND [t0].[GearNickName] IS NULL)) AND ([g].[SquadId] = [t0].[GearSquadId] OR ([g].[SquadId] IS NULL AND [t0].[GearSquadId] IS NULL))
@@ -2048,10 +2046,7 @@ WHERE [g].[HasSoulPatch] = CAST(0 AS bit)
 SELECT [t].[Id], [t].[GearNickName], [t].[GearSquadId], [t].[IssueDate], [t].[Note]
 FROM [Tags] AS [t]
 LEFT JOIN [Gears] AS [g] ON [t].[GearNickName] = [g].[Nickname] AND [t].[GearSquadId] = [g].[SquadId]
-WHERE CASE
-    WHEN [g].[HasSoulPatch] = CAST(1 AS bit) THEN CAST(1 AS bit)
-    ELSE [g].[HasSoulPatch]
-END = CAST(0 AS bit)
+WHERE [g].[HasSoulPatch] = CAST(0 AS bit)
 """);
     }
 
@@ -2064,10 +2059,7 @@ END = CAST(0 AS bit)
 SELECT [t].[Id], [t].[GearNickName], [t].[GearSquadId], [t].[IssueDate], [t].[Note]
 FROM [Tags] AS [t]
 LEFT JOIN [Gears] AS [g] ON [t].[GearNickName] = [g].[Nickname] AND [t].[GearSquadId] = [g].[SquadId]
-WHERE CASE
-    WHEN [g].[HasSoulPatch] = CAST(0 AS bit) THEN CAST(0 AS bit)
-    ELSE [g].[HasSoulPatch]
-END = CAST(0 AS bit)
+WHERE [g].[HasSoulPatch] = CAST(0 AS bit)
 """);
     }
 
@@ -2377,7 +2369,7 @@ LEFT JOIN [Weapons] AS [w] ON [w].[SynergyWithId] IS NOT NULL
 """);
     }
 
-    [ConditionalTheory, MemberData(nameof(IsAsyncData)), SqlServerCondition(SqlServerCondition.SupportsSqlClr)]
+    [ConditionalTheory(typeof(SqlServerTestEnvironment), nameof(SqlServerTestEnvironment.IsSqlClrSupported)), MemberData(nameof(IsAsyncData))]
     public virtual async Task Where_AtTimeZone_datetime_constant(bool async)
     {
         using var context = CreateContext();
@@ -2399,7 +2391,7 @@ WHERE [m].[Timeline] = CAST('0010-05-03T12:00:00.0000000' AS datetime2) AT TIME 
 """);
     }
 
-    [ConditionalTheory, MemberData(nameof(IsAsyncData)), SqlServerCondition(SqlServerCondition.SupportsSqlClr)]
+    [ConditionalTheory(typeof(SqlServerTestEnvironment), nameof(SqlServerTestEnvironment.IsSqlClrSupported)), MemberData(nameof(IsAsyncData))]
     public virtual async Task Where_AtTimeZone_datetime_parameter(bool async)
     {
         using var context = CreateContext();
@@ -2426,7 +2418,7 @@ WHERE [m].[Timeline] = @dateTime AT TIME ZONE @timeZone
 """);
     }
 
-    [ConditionalTheory, MemberData(nameof(IsAsyncData)), SqlServerCondition(SqlServerCondition.SupportsSqlClr)]
+    [ConditionalTheory(typeof(SqlServerTestEnvironment), nameof(SqlServerTestEnvironment.IsSqlClrSupported)), MemberData(nameof(IsAsyncData))]
     public virtual async Task Where_AtTimeZone_datetime_column(bool async)
     {
         using var context = CreateContext();
@@ -3114,9 +3106,7 @@ WHERE [g].[Discriminator] = N'Officer' AND (
 
         AssertSql(
             """
-SELECT CASE
-    WHEN [f].[CommanderName] IS NOT NULL THEN [f].[CommanderName]
-END
+SELECT [f].[CommanderName]
 FROM [Factions] AS [f]
 """);
     }
@@ -3482,7 +3472,7 @@ FROM [Factions] AS [f]
 """);
     }
 
-    [ConditionalTheory(Skip = "Issue #34001 SqlServer never returns null for bool?")]
+    [Theory(Skip = "Issue #34001 SqlServer never returns null for bool?")]
     public override async Task ToString_boolean_computed_nullable(bool async)
     {
         await base.ToString_boolean_computed_nullable(async);
@@ -7476,7 +7466,7 @@ WHERE @rank = [g].[Rank]
 """);
     }
 
-    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    [Theory, MemberData(nameof(IsAsyncData))]
     public async Task DataLength_function_for_string_parameter(bool async)
     {
         await AssertQueryScalar(

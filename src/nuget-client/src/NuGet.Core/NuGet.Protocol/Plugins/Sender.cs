@@ -7,7 +7,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using NuGet.Common;
+using NuGet.Shared;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -25,6 +26,7 @@ namespace NuGet.Protocol.Plugins
         private bool _isDisposed;
         private readonly object _sendLock;
         private readonly TextWriter _textWriter;
+        private readonly IEnvironmentVariableReader _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="Sender" /> class.
@@ -32,6 +34,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="writer">A text writer.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="writer" /> is <see langword="null" />.</exception>
         public Sender(TextWriter writer)
+            : this(writer, environmentVariableReader: null)
+        {
+        }
+
+        internal Sender(TextWriter writer, IEnvironmentVariableReader environmentVariableReader)
         {
             if (writer == null)
             {
@@ -40,6 +47,7 @@ namespace NuGet.Protocol.Plugins
 
             _textWriter = writer;
             _sendLock = new object();
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <summary>
@@ -131,11 +139,24 @@ namespace NuGet.Protocol.Plugins
             {
                 lock (_sendLock)
                 {
-                    using (var jsonWriter = new JsonTextWriter(_textWriter))
+                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
                     {
-                        jsonWriter.CloseOutput = false;
-
+                        string json = System.Text.Json.JsonSerializer.Serialize(message, PluginJsonContext.Default.Message);
+                        _textWriter.WriteLine(json);
+                        _textWriter.Flush();
+                    }
+                    else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                    {
+                        string json = System.Text.Json.JsonSerializer.Serialize(message, PluginJsonContext.Default.Message);
+                        _textWriter.WriteLine(json);
+                        _textWriter.Flush();
+                    }
+                    else
+                    {
+                        using var jsonWriter = new Newtonsoft.Json.JsonTextWriter(_textWriter) { CloseOutput = false };
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
                         JsonSerializationUtilities.Serialize(jsonWriter, message);
+#pragma warning restore IL2026, IL3050
 
                         // We need to terminate JSON objects with a delimiter (i.e.:  a single
                         // newline sequence) to signal to the receiver when to stop reading.

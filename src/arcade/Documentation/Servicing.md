@@ -17,8 +17,3 @@ Servicing (updating) packages and tools that are used in support of the build is
   * In cases where very few repos are affected, updating the repo itself is a viable option.
   * In cases where no better option exists (last resort), the tools or package can fork or be quirked.
 * Only push a new CLI to the repos in the stack once it has been signed off by our consumer distros.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CServicing.md)](https://helix.dot.net/f/p/5?p=Documentation%5CServicing.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CServicing.md)</sub>
-<!-- End Generated Content-->

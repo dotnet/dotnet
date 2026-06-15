@@ -16,7 +16,7 @@ public class TPTGearsOfWarQuerySqlServerTest : TPTGearsOfWarQueryRelationalTestB
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 
@@ -1053,9 +1053,7 @@ LEFT JOIN (
 
         AssertSql(
             """
-SELECT CASE
-    WHEN [c].[Name] IS NOT NULL THEN [c].[Name]
-END
+SELECT [c].[Name]
 FROM [Tags] AS [t]
 LEFT JOIN (
     SELECT [g].[Nickname], [g].[SquadId]
@@ -2434,10 +2432,7 @@ LEFT JOIN (
     SELECT [g].[Nickname], [g].[SquadId], [g].[HasSoulPatch]
     FROM [Gears] AS [g]
 ) AS [s] ON [t].[GearNickName] = [s].[Nickname] AND [t].[GearSquadId] = [s].[SquadId]
-WHERE CASE
-    WHEN [s].[HasSoulPatch] = CAST(1 AS bit) THEN CAST(1 AS bit)
-    ELSE [s].[HasSoulPatch]
-END = CAST(0 AS bit)
+WHERE [s].[HasSoulPatch] = CAST(0 AS bit)
 """);
     }
 
@@ -2453,10 +2448,7 @@ LEFT JOIN (
     SELECT [g].[Nickname], [g].[SquadId], [g].[HasSoulPatch]
     FROM [Gears] AS [g]
 ) AS [s] ON [t].[GearNickName] = [s].[Nickname] AND [t].[GearSquadId] = [s].[SquadId]
-WHERE CASE
-    WHEN [s].[HasSoulPatch] = CAST(0 AS bit) THEN CAST(0 AS bit)
-    ELSE [s].[HasSoulPatch]
-END = CAST(0 AS bit)
+WHERE [s].[HasSoulPatch] = CAST(0 AS bit)
 """);
     }
 
@@ -3572,9 +3564,7 @@ WHERE [s].[Discriminator] = N'Officer' AND (
 
         AssertSql(
             """
-SELECT CASE
-    WHEN [l].[CommanderName] IS NOT NULL THEN [l].[CommanderName]
-END
+SELECT [l].[CommanderName]
 FROM [Factions] AS [f]
 LEFT JOIN [LocustHordes] AS [l] ON [f].[Id] = [l].[Id]
 WHERE [l].[Id] IS NOT NULL
@@ -8427,7 +8417,7 @@ WHERE @rank = [g].[Rank]
 """);
     }
 
-    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    [Theory, MemberData(nameof(IsAsyncData))]
     public async Task DataLength_function_for_string_parameter(bool async)
     {
         await AssertQueryScalar(
@@ -9718,7 +9708,7 @@ INNER JOIN [LocustHordes] AS [l] ON [f].[Id] = [l].[Id]
 """);
     }
 
-    [ConditionalTheory(Skip = "Issue #34001 SqlServer never returns null for bool?")]
+    [Theory(Skip = "Issue #34001 SqlServer never returns null for bool?")]
     public override async Task ToString_boolean_computed_nullable(bool async)
     {
         await base.ToString_boolean_computed_nullable(async);

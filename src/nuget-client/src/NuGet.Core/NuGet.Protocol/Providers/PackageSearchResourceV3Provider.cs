@@ -25,10 +25,11 @@ namespace NuGet.Protocol
             if (serviceIndex != null)
             {
                 var endpoints = serviceIndex.GetServiceEntryUris(ServiceTypes.SearchQueryService);
+                var packageTypeCapableEndpoints = serviceIndex.GetServiceEntryUris(ServiceTypes.SearchQueryService350);
                 var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
 
                 // construct a new resource
-                curResource = new PackageSearchResourceV3(httpSourceResource.HttpSource, endpoints);
+                curResource = new PackageSearchResourceV3(httpSourceResource.HttpSource, endpoints, packageTypeCapableEndpoints);
             }
 
             return new Tuple<bool, INuGetResource>(curResource != null, curResource);

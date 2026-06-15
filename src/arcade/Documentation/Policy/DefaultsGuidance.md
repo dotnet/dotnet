@@ -50,8 +50,3 @@ It is often challenging to reconcile differences between a given repo build and 
 * In most cases, repo owners can override the Arcade defaults. It should be understood that this will often result in additional risk and cost over time.  Regardless, it should continue to be the repo  team's 'call' what is done.
 * Eliminating (or reducing at least) this category is part of the cost of getting the value of a shared infra.
 * It's hard to do....as it often involves team culture change.  The idea though is that the effort (and pain) is worth it.
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CDefaultsGuidance.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CDefaultsGuidance.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CDefaultsGuidance.md)</sub>
-<!-- End Generated Content-->

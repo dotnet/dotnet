@@ -778,7 +778,7 @@ function MSBuild() {
       ExitWithExitCode 1
     }
 
-    $args += "/logger:$selectedPath"
+    # $args += "/logger:$selectedPath"
   }
 
   MSBuild-Core @args

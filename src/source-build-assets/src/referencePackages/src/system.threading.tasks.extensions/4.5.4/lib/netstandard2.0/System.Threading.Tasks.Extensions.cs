@@ -35,7 +35,6 @@ namespace System.Runtime.CompilerServices
     {
         private int _dummyPrimitive;
         public Threading.Tasks.ValueTask Task { get { throw null; } }
-
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine { }
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine { }
         public static AsyncValueTaskMethodBuilder Create() { throw null; }
@@ -51,7 +50,6 @@ namespace System.Runtime.CompilerServices
         private TResult _result;
         private int _dummyPrimitive;
         public Threading.Tasks.ValueTask<TResult> Task { get { throw null; } }
-
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : INotifyCompletion where TStateMachine : IAsyncStateMachine { }
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine) where TAwaiter : ICriticalNotifyCompletion where TStateMachine : IAsyncStateMachine { }
         public static AsyncValueTaskMethodBuilder<TResult> Create() { throw null; }
@@ -71,7 +69,6 @@ namespace System.Runtime.CompilerServices
             private readonly object _dummy;
             private readonly int _dummyPrimitive;
             public bool IsCompleted { get { throw null; } }
-
             public readonly void GetResult() { }
             public readonly void OnCompleted(Action continuation) { }
             public readonly void UnsafeOnCompleted(Action continuation) { }
@@ -90,7 +87,6 @@ namespace System.Runtime.CompilerServices
             private readonly object _dummy;
             private readonly int _dummyPrimitive;
             public bool IsCompleted { get { throw null; } }
-
             public readonly TResult GetResult() { throw null; }
             public readonly void OnCompleted(Action continuation) { }
             public readonly void UnsafeOnCompleted(Action continuation) { }
@@ -102,7 +98,6 @@ namespace System.Runtime.CompilerServices
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public bool IsCompleted { get { throw null; } }
-
         public readonly void GetResult() { }
         public readonly void OnCompleted(Action continuation) { }
         public readonly void UnsafeOnCompleted(Action continuation) { }
@@ -114,7 +109,6 @@ namespace System.Runtime.CompilerServices
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public bool IsCompleted { get { throw null; } }
-
         public readonly TResult GetResult() { throw null; }
         public readonly void OnCompleted(Action continuation) { }
         public readonly void UnsafeOnCompleted(Action continuation) { }
@@ -134,7 +128,6 @@ namespace System.Threading.Tasks
         public bool IsCompleted { get { throw null; } }
         public bool IsCompletedSuccessfully { get { throw null; } }
         public bool IsFaulted { get { throw null; } }
-
         public readonly Task AsTask() { throw null; }
         public readonly Runtime.CompilerServices.ConfiguredValueTaskAwaitable ConfigureAwait(bool continueOnCapturedContext) { throw null; }
         public override readonly bool Equals(object obj) { throw null; }
@@ -160,7 +153,6 @@ namespace System.Threading.Tasks
         public bool IsCompletedSuccessfully { get { throw null; } }
         public bool IsFaulted { get { throw null; } }
         public TResult Result { get { throw null; } }
-
         public readonly Task<TResult> AsTask() { throw null; }
         public readonly Runtime.CompilerServices.ConfiguredValueTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext) { throw null; }
         public override readonly bool Equals(object obj) { throw null; }

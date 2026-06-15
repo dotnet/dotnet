@@ -81,7 +81,7 @@ namespace NuGet.Protocol.Tests
         {
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => OfflineFeedUtility.AddPackageToSource(
-                    offlineFeedAddContext: null,
+                    offlineFeedAddContext: null!,
                     token: CancellationToken.None));
 
             Assert.Equal("offlineFeedAddContext", exception.ParamName);

@@ -147,6 +147,16 @@ parameters:
   type: stepList
   default: []
 
+# Custom steps to run before the build (after checkout and setup)
+- name: initSteps
+  type: stepList
+  default: []
+
+# When true, compute SOURCE_DATE_EPOCH from Build.BuildNumber and pass it to the build.
+- name: setSourceDateEpoch
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -162,6 +172,25 @@ parameters:
 - name: disableComponentGovernance
   type: boolean
   default: false
+
+# Source Index: name for the uploaded source index bundle (e.g., 'dotnet-dotnet').
+# When set, processes per-repo Build.binlog files and uploads SLN data.
+- name: sourceIndexName
+  type: string
+  default: ''
+
+- name: sourceIndexExcludeRepos
+  type: string
+  default: ''
+
+- name: sourceIndexIncludeRepos
+  type: string
+  default: ''
+
+# Additional job dependencies beyond reuseBuildArtifactsFrom
+- name: dependsOn
+  type: object
+  default: []
 
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
@@ -183,22 +212,23 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if gt(length(parameters.reuseBuildArtifactsFrom), 0) }}:
+  ${{ if or(gt(length(parameters.reuseBuildArtifactsFrom), 0), gt(length(parameters.dependsOn), 0)) }}:
     dependsOn:
-    - ${{ parameters.reuseBuildArtifactsFrom }}
+    - ${{ each dep in parameters.reuseBuildArtifactsFrom }}:
+      - ${{ dep }}
+    - ${{ each dep in parameters.dependsOn }}:
+      - ${{ dep }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
-  - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
-    - group: DotNet-VSTS-Infra-Access
-  - ${{ else }}:
+  - ${{ if ne(parameters.enableIBCOptimization, 'true') }}:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
   - name: additionalBuildArgs
     value: ''
   - name: runTestsTimeout
     value: 30
-  
+
   - ${{ if parameters.buildSourceOnly }}:
     - name: sharedComponentsDir
       value: $(Agent.TempDirectory)/shared-components
@@ -343,7 +373,7 @@ jobs:
   ### Additional properties
   - ${{ if eq(parameters.enableIBCOptimization, 'true') }}:
     - name: ibcProperties
-      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(dn-bot-devdiv-drop-r-code-r)'
+      value: '/p:EnableIBCOptimization=true /p:IBCDropAccessToken=$(IBCDropAccessToken)'
   - ${{ else }}:
     - name: ibcProperties
       value: ''
@@ -412,6 +442,16 @@ jobs:
     fetchDepth: 1
     retryCountOnTaskFailure: 5
 
+  - ${{ parameters.initSteps }}
+
+  - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+    - pwsh: |
+        # extract the date and revision from the build number (YYYYMMDD.Revision) and use it to calculate the SOURCE_DATE_EPOCH
+        $parts = '$(Build.BuildNumber)'.Split('.')
+        $epoch = ([DateTimeOffset]::ParseExact($parts[0], 'yyyyMMdd', $null, 'AssumeUniversal')).ToUnixTimeSeconds() + [int]$parts[1]
+        Write-Host "Calculated SOURCE_DATE_EPOCH: $epoch from Build.BuildNumber: $(Build.BuildNumber)"
+        Write-Host "##vso[task.setvariable variable=SOURCE_DATE_EPOCH]$epoch"
+      displayName: Compute SOURCE_DATE_EPOCH
 
   # Create artifact staging directories upfront to satisfy 1ES templateContext.outputs validation
   # These directories are referenced in templateContext.outputs which validates paths at job start
@@ -431,8 +471,28 @@ jobs:
       displayName: Create artifact staging directories
       condition: always()
 
+  # Acquire a WIF-based access token for DevDiv AzDO when IBC optimization is enabled
+  # This replaces the dn-bot-devdiv-drop-r-code-r PAT with a federated identity credential
+  - ${{ if and(eq(parameters.enableIBCOptimization, 'true'), eq(variables['System.TeamProject'], 'internal')) }}:
+    - task: AzureCLI@2
+      displayName: Acquire DevDiv access token (WIF)
+      inputs:
+        azureSubscription: dnceng-devdiv-drop-r-code-r-wif-arm
+        scriptType: pscore
+        scriptLocation: inlineScript
+        inlineScript: |
+          $token = az account get-access-token --resource "499b84ac-1321-427f-aa17-267ca6975798" --query accessToken -o tsv
+          if (-not $token) { Write-Error "Failed to acquire DevDiv access token via WIF"; exit 1 }
+          Write-Host "##vso[task.setvariable variable=IBCDropAccessToken;issecret=true]$token"
+          Write-Host "Successfully acquired DevDiv access token via WIF for IBC optimization"
 
   - ${{ if not(parameters.isBuiltFromVmr) }}:
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - template: /eng/common/templates-official/steps/get-federated-access-token.yml
+        parameters:
+          federatedServiceConnection: VmrSyncPipeline
+          outputVariableName: AzdoToken
+
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self
       parameters:
@@ -510,8 +570,15 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
+          # Always use the VMR root's SetupNugetSources.ps1 rather than each inner repo's copy.
+          # The inner repo scripts dot-source that repo's eng/common/tools.ps1, which in turn imports
+          # the repo's configure-toolset.ps1. The root script only operates
+          # on the NuGet.config path passed to it, so it works for every repo.
+          # It's also convenient to use that so that changes don't need to be replicated on every
+          # inner repo's eng/common/ layout.
+          $setupScript = Join-Path "$(sourcesPath)" "eng/common/SetupNugetSources.ps1"
+
           function Setup-NuGetFeeds($repoDir, $description) {
-            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
             # Search for nuget.config using "Filter" to allow for case-insensitive matching.
             $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
@@ -537,7 +604,12 @@ jobs:
     # Authenticate with service connections to be able to pull packages to external nuget feeds.
     - task: NuGetAuthenticate@1
       inputs:
-        nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
+        nuGetServiceConnections: devdiv/dotnet-core-internal-tooling
+    - task: NuGetAuthenticate@1
+      displayName: Authenticate devdiv/Engineering feed (WIF)
+      inputs:
+        azureDevOpsServiceConnection: devdiv-engineering-feed-r-wif
+        feedUrl: https://devdiv.pkgs.visualstudio.com/_packaging/Engineering/nuget/v3/index.json
 
   - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
@@ -549,13 +621,11 @@ jobs:
 
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     # Node is a toolset dependency to build aspnetcore
-    # Keep in sync with aspnetcore: https://github.com/dotnet/aspnetcore/blob/7d5309210d8f7bae8fa074da495e9d009d67f1b4/.azure/pipelines/ci.yml#L719-L722
-    # Pinned to 24.14.1 to work around npm ci exit code 57005 bug in Node 24.15.
-    # Tracking issue to revert: https://github.com/dotnet/aspnetcore/issues/66501
+    # Keep in sync with aspnetcore: https://github.com/dotnet/aspnetcore/blob/main/.azure/pipelines/jobs/default-build.yml (UseNode@1 "Install Node" step)
     - task: UseNode@1
-      displayName: Install Node 24.14.1
+      displayName: Install Node 24.x
       inputs:
-        version: 24.14.1
+        version: 24.x
 
     - ${{ if eq(parameters.signDac, 'true') }}:
       # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
@@ -581,11 +651,14 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      ${{ if eq(parameters.sign, 'true') }}:
+      ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
         env:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-          ${{ if eq(parameters.signDac, 'true') }}:
-            ESRP_TOKEN: $(System.AccessToken)
+          ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+            SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+          ${{ if eq(parameters.sign, 'true') }}:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            ${{ if eq(parameters.signDac, 'true') }}:
+              ESRP_TOKEN: $(System.AccessToken)
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
@@ -610,7 +683,7 @@ jobs:
         displayName: Install dependencies
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
-          set -ex
+          set -e
 
           customPrepArgs="-c ${{ parameters.configuration }}"
           prepSdk=true
@@ -701,21 +774,22 @@ jobs:
              customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
              additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
           fi
-          
-          echo "Prep arguments: $customPrepArgs"
-          echo "Additional build arguments: $additionalBuildArgs"
 
           if [[ -n "$additionalBuildArgs" ]]; then
+            echo "Additional build arguments: $additionalBuildArgs"
             echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
           fi
 
+          echo ""
+          echo "=== Prep the Build ==="
+          echo "Running ./prep-source-build.sh $customPrepArgs"
           ./prep-source-build.sh $customPrepArgs
         displayName: Prep the Build
         workingDirectory: $(sourcesPath)
     - ${{ if ne(parameters.skipBuild, 'true') }}:
 
       - script: |
-          set -ex
+          set -e
           echo "=== System info: disk ==="
           df -h
 
@@ -727,7 +801,6 @@ jobs:
             cat /proc/meminfo
           fi
 
-          echo "=== Build ==="
           customEnvVars=""
           customPreBuildArgs=""
           customBuildArgs="$(baseArguments)"
@@ -740,7 +813,7 @@ jobs:
             extraBuildProperties="$extraBuildProperties $(signProperties)"
           else
             customBuildArgs="$customBuildArgs --source-only"
-            extraBuildProperties="$extraBuildProperties /p:ReportSbrpUsage=true"
+            extraBuildProperties="$extraBuildProperties /p:ReportSbaUsage=true"
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
@@ -811,12 +884,18 @@ jobs:
             echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
           fi
 
+          echo ""
+          echo "=== Build ==="
+          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if eq(parameters.sign, 'true') }}:
+        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
           env:
-            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+              SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
+            ${{ if eq(parameters.sign, 'true') }}:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
@@ -837,7 +916,7 @@ jobs:
           displayName: Copy Test NuGet Config for Smoke Tests
 
       - script: |
-          set -ex
+          set -e
 
           customPreBuildArgs=''
           customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
@@ -871,6 +950,9 @@ jobs:
             echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
           fi
 
+          echo ""
+          echo "=== Run Tests ==="
+          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
@@ -907,6 +989,15 @@ jobs:
           enableMicrobuild: true
           enableMicrobuildForMacAndLinux: true
 
+  - ${{ if and(ne(parameters.sourceIndexName, ''), eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - template: ../steps/source-index-stage1.yml
+      parameters:
+        sourceIndexName: ${{ parameters.sourceIndexName }}
+        sourcesPath: $(sourcesPath)
+        logsPath: $(sourcesPath)/artifacts/log/Release
+        excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
+        includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
+
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
     displayName: Copy logs to BuildLogs staging
@@ -918,7 +1009,7 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
-  # Only copy test results when tests ran
+  # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: CopyFiles@2
       displayName: Copy TestResults to BuildLogs staging
@@ -928,7 +1019,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: succeededOrFailed()
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -950,11 +1041,11 @@ jobs:
       continueOnError: true
       condition: always()
 
-  # Only upload test results when tests ran
+  # Only upload test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: succeededOrFailed()
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
       continueOnError: true
       inputs:
         testRunner: VSTest

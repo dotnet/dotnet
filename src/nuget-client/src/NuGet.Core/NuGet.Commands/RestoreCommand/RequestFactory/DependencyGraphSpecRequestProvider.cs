@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectModel;
@@ -181,7 +182,8 @@ namespace NuGet.Commands
                 auditSources,
                 restoreArgs.CacheContext,
                 restoreArgs.Log,
-                updateLastAccess);
+                updateLastAccess,
+                EnvironmentVariableWrapper.Instance);
 
             var rootPath = Path.GetDirectoryName(project.PackageSpec.FilePath);
 

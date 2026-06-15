@@ -1,0 +1,29 @@
+<!--
+  Shared validation-package defaults imported by each per-component <component>.props file in
+  this directory. Provides only the default property-name bindings for <FileVersionValidationPackage>
+  items; per-component override values live in the per-component <component>.props files.
+
+  This file deliberately declares no SDK and has no upward import chain so it can be loaded with
+  plain `new Project(filePath, …)` in any host — including inside `dotnet test`, where
+  MSBuildLocator cannot register because the test platform pre-loads Microsoft.Build.
+-->
+<Project>
+
+  <!-- Default property-name bindings for <FileVersionValidationPackage> items. Items inherit
+       these defaults unless they declare item-level metadata that overrides them. Defaulted
+       bindings are "validate if present": if the named property is not actually defined for
+       the component, that aspect is silently skipped for the item — so a component that
+       participates in only some aspects (e.g. just FileVersionRevision) needs no per-item
+       metadata. Explicit per-item metadata is still required when (a) the property name
+       differs from the default, or (b) a component has multiple items that would otherwise
+       collide on the same default property.
+       See eng/tools/CommonUtilities/CommonUtilities.cs for the parsing logic. -->
+  <ItemDefinitionGroup>
+    <FileVersionValidationPackage>
+      <FileVersionRevisionProperty>FileVersionRevision</FileVersionRevisionProperty>
+      <AssemblyVersionOverrideProperty>AssemblyVersionOverride</AssemblyVersionOverrideProperty>
+      <InformationalVersionOverrideProperty>InformationalVersionOverride</InformationalVersionOverrideProperty>
+    </FileVersionValidationPackage>
+  </ItemDefinitionGroup>
+
+</Project>

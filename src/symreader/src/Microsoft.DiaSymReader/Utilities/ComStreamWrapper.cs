@@ -174,12 +174,10 @@ namespace Microsoft.DiaSymReader
         void System.Runtime.InteropServices.ComTypes.IStream.SetSize(long libNewSize)
             => SetSize(libNewSize);
 
-        public void Stat(out STATSTG pstatstg, int grfStatFlag)
+        public void Stat(ref NativeSTATSTG pstatstg, int grfStatFlag)
         {
-            pstatstg = new STATSTG()
-            {
-                cbSize = _stream.Length
-            };
+            pstatstg = default;
+            pstatstg.cbSize = _stream.Length;
         }
 
         void System.Runtime.InteropServices.ComTypes.IStream.Stat(out System.Runtime.InteropServices.ComTypes.STATSTG pstatstg, int grfStatFlag)

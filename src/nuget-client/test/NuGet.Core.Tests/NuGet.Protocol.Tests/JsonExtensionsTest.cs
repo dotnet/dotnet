@@ -20,7 +20,7 @@ namespace NuGet.Protocol.Tests
             var metaData = token.FromJToken<PackageSearchMetadata>();
 
             // Assert
-            Assert.Null(metaData.ProjectUrl);
+            Assert.Null(metaData!.ProjectUrl);
         }
 
         [Fact]
@@ -33,8 +33,8 @@ namespace NuGet.Protocol.Tests
             var metaData = token.FromJToken<PackageSearchMetadata>();
 
             // Assert
-            Assert.Equal(metaData.DeprecationMetadata, await metaData.GetDeprecationMetadataAsync());
-            Assert.Equal(new[] { "CriticalBugs", "Legacy" }, metaData.DeprecationMetadata.Reasons);
+            Assert.Equal(metaData!.DeprecationMetadata, await metaData.GetDeprecationMetadataAsync());
+            Assert.Equal(new[] { "CriticalBugs", "Legacy" }, metaData.DeprecationMetadata!.Reasons);
             Assert.Equal("this is a message", metaData.DeprecationMetadata.Message);
             Assert.Null(metaData.DeprecationMetadata.AlternatePackage);
         }

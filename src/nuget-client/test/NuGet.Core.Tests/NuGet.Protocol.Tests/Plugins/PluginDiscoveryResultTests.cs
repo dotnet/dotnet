@@ -12,7 +12,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullPluginFile()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new PluginDiscoveryResult(pluginFile: null));
+                () => new PluginDiscoveryResult(pluginFile: null!));
 
             Assert.Equal("pluginFile", exception.ParamName);
         }

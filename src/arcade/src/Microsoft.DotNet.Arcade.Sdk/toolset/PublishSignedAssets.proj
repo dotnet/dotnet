@@ -11,10 +11,6 @@
       - AzdoTargetFeedPAT                       : Token to publish assets to feeds
   -->
 
-  <PropertyGroup>
-    <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
   </ItemGroup>

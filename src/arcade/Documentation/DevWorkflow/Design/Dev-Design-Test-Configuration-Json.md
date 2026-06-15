@@ -82,8 +82,3 @@ True if the property contains (case-insensitive) the value string
 The same as a raw string, but "*" can match any number of characters, and "?" can match one character
 #### {"regex": "value with .* regex"}
 true if the propety matches the regular expression
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Test-Configuration-Json.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Test-Configuration-Json.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CDev-Design-Test-Configuration-Json.md)</sub>
-<!-- End Generated Content-->

@@ -22,7 +22,8 @@ namespace ensure_nupkg_dependencies_on_source
                 _findPackageByIdResource = await _sourceRepository.GetResourceAsync<FindPackageByIdResource>(cancellationToken);
             }
 
-            return _findPackageByIdResource;
+            return _findPackageByIdResource
+                ?? throw new System.InvalidOperationException($"Source '{_sourceRepository.PackageSource.Source}' does not provide {nameof(FindPackageByIdResource)}.");
         }
     }
 }

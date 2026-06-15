@@ -11,7 +11,7 @@ namespace Microsoft.EntityFrameworkCore.Scaffolding;
 
 public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) : CompiledModelTestBase(fixture)
 {
-    [ConditionalFact]
+    [Fact]
     public virtual Task BigModel_with_JSON_columns()
         => Test(
             modelBuilder => BuildBigModel(modelBuilder, jsonColumns: true),
@@ -524,10 +524,13 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         {
             eb.ComplexCollection<IList<OwnedType>, OwnedType>(
                 "ManyOwned", "OwnedCollection", eb => eb.ToJson());
+            eb.ComplexProperty(p => p.Dependent, cb => cb.ToJson());
+            eb.HasIndex(e => e.Dependent, "IX_PrincipalDerived_Dependent");
+            eb.HasIndex(["ManyOwned[0].Details"], "IX_PrincipalDerived_ManyOwned_Indexer");
         });
     }
 
-    [ConditionalFact]
+    [Fact]
     public override Task ComplexTypes()
         => Test(
             BuildComplexTypesModel,
@@ -663,10 +666,34 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
                     Assert.All(detailsMappings, m => Assert.Same(detailsProp, m.Property));
                 }
             }
+
+            var manyOwnedDetailsProperty = manyOwnedComplexProperty.ComplexType.FindProperty(nameof(OwnedType.Details))!;
+
+            var manyOwnedIndexerIndex = principalDerived.GetIndexes().Single(i => i.Name == "IX_PrincipalDerived_ManyOwned_Indexer");
+            Assert.Same(manyOwnedDetailsProperty, manyOwnedIndexerIndex.Properties.Single());
+            Assert.NotNull(manyOwnedIndexerIndex.CollectionIndices);
+            Assert.Equal(new int?[] { 0 }, manyOwnedIndexerIndex.CollectionIndices.Single());
         }
+
+        var dependentComplexProperty = principalDerived.FindComplexProperty(nameof(PrincipalDerived<DependentBase<byte?>>.Dependent))!;
+        Assert.False(dependentComplexProperty.IsCollection);
+        Assert.True(dependentComplexProperty.ComplexType.IsMappedToJson());
+        Assert.Equal(
+            nameof(PrincipalDerived<DependentBase<byte?>>.Dependent),
+            dependentComplexProperty.ComplexType.GetContainerColumnName());
+
+        var dependentIndex = principalDerived.GetIndexes().Single(i => i.Name == "IX_PrincipalDerived_Dependent");
+        Assert.Single(dependentIndex.Properties);
+        Assert.Same(dependentComplexProperty, dependentIndex.Properties[0]);
+
+        var principalBaseTable2 = principalBase.GetTableMappings().Single().Table;
+        var dependentJsonColumn = principalBaseTable2.FindColumn(nameof(PrincipalDerived<DependentBase<byte?>>.Dependent))!;
+        Assert.NotNull(dependentJsonColumn);
+        var dependentTableIndex = principalBaseTable2.Indexes.Single(i => i.Name == "IX_PrincipalDerived_Dependent");
+        Assert.Same(dependentJsonColumn, dependentTableIndex.Columns.Single());
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Tpc_Sprocs()
         => Test(
             BuildTpcSprocsModel,
@@ -1052,7 +1079,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
             model.GetEntityTypes());
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Sequences()
         => Test(
             modelBuilder =>
@@ -1077,7 +1104,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
                 Assert.NotNull(longSequence.ToString());
             });
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task CheckConstraints()
         => Test(
             modelBuilder => modelBuilder.Entity<Data>(eb =>
@@ -1097,7 +1124,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
                     Assert.Throws<InvalidOperationException>(() => dataEntity.GetCheckConstraints()).Message);
             });
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Triggers()
         => Test(
             modelBuilder => modelBuilder.Entity<Data>(eb =>
@@ -1118,7 +1145,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
                 Assert.Equal(2, dataEntity.GetDeclaredTriggers().Count());
             });
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task DbFunctions()
         => Test<DbFunctionContext>(
             assertModel: model =>
@@ -1339,7 +1366,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Custom_function_type_mapping()
         => Test<FunctionTypeMappingContext>(
             assertModel: model =>
@@ -1365,7 +1392,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Custom_function_parameter_type_mapping()
         => Test<FunctionParameterTypeMappingContext>(
             assertModel: model =>
@@ -1392,7 +1419,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Throws_for_custom_function_translation()
         => Test<FunctionTranslationContext>(
             expectedExceptionMessage: RelationalStrings.CompiledModelFunctionTranslation("GetSqlFragmentStatic"));
@@ -1411,7 +1438,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual Task Dynamic_schema()
         => Test(
             modelBuilder => modelBuilder.Entity<Data>(eb =>

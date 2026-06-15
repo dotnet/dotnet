@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -34,6 +35,13 @@ using Test.Utility;
 using Test.Utility.VisualStudio;
 using Xunit;
 using Xunit.Abstractions;
+using AddPackageReferenceResult = Microsoft.VisualStudio.ProjectSystem.References.AddReferenceResult<Microsoft.VisualStudio.ProjectSystem.References.IUnresolvedPackageReference>;
+using CPSPackageReference = Microsoft.VisualStudio.ProjectSystem.References.PackageReference;
+using IConditionalPackageReferencesService = Microsoft.VisualStudio.ProjectSystem.References.IConditionalPackageReferencesService;
+using IPackageReferencesService = Microsoft.VisualStudio.ProjectSystem.References.IPackageReferencesService;
+using IProjectProperties = Microsoft.VisualStudio.ProjectSystem.Properties.IProjectProperties;
+using IUnresolvedPackageReference = Microsoft.VisualStudio.ProjectSystem.References.IUnresolvedPackageReference;
+using VSComposition = Microsoft.VisualStudio.Composition;
 using static NuGet.PackageManagement.VisualStudio.Test.ProjectFactories;
 
 namespace NuGet.PackageManagement.VisualStudio.Test
@@ -43,6 +51,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
     {
         private readonly Mock<IOutputConsoleProvider> _outputConsoleProviderMock;
         private readonly Lazy<IOutputConsoleProvider> _outputConsoleProvider;
+
         public CpsPackageReferenceProjectTests(GlobalServiceProvider globalServiceProvider)
             : base(globalServiceProvider)
         {
@@ -4562,6 +4571,84 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
+        public async Task InstallPackageAsync_WhenAllPackagesAreConditional_AddsPackageForEverySuccessfulFramework()
+        {
+            // Arrange
+            CpsPackageReferenceProject project = CreateCpsPackageReferenceProjectForConditionalPackageTests(
+                out TestConditionalPackageReferencesService conditionalPackageReferencesService,
+                out Mock<IPackageReferencesService> packageReferencesService);
+            BuildIntegratedInstallationContext installationContext = CreateInstallationContext(
+                areAllPackagesConditional: true);
+
+            // Act
+            await project.InstallPackageAsync(
+                "packageA",
+                VersionRange.Parse("2.0.0"),
+                new TestNuGetProjectContext(),
+                installationContext,
+                CancellationToken.None);
+
+            // Assert
+            conditionalPackageReferencesService.AddCalls
+                .Should()
+                .Equal(
+                    ("packageA", "2.0.0", "TargetFramework", "net8.0"),
+                    ("packageA", "2.0.0", "TargetFramework", "net9.0"));
+            packageReferencesService.Verify(
+                service => service.AddAsync(It.IsAny<string>(), It.IsAny<string>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task UninstallPackageAsync_WhenAllPackagesAreConditional_RemovesPackageForEverySuccessfulFramework()
+        {
+            // Arrange
+            CpsPackageReferenceProject project = CreateCpsPackageReferenceProjectForConditionalPackageTests(
+                out TestConditionalPackageReferencesService conditionalPackageReferencesService,
+                out Mock<IPackageReferencesService> packageReferencesService);
+            BuildIntegratedInstallationContext installationContext = CreateInstallationContext(
+                areAllPackagesConditional: true);
+
+            // Act
+            await project.UninstallPackageAsync("packageA", installationContext, CancellationToken.None);
+
+            // Assert
+            conditionalPackageReferencesService.RemoveCalls
+                .Should()
+                .Equal(
+                    ("packageA", "TargetFramework", "net8.0"),
+                    ("packageA", "TargetFramework", "net9.0"));
+            packageReferencesService.Verify(
+                service => service.RemoveAsync(It.IsAny<string>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task InstallPackageAsync_WhenPackageIsNotConditional_UsesSuggestedConfiguredProject()
+        {
+            // Arrange
+            CpsPackageReferenceProject project = CreateCpsPackageReferenceProjectForConditionalPackageTests(
+                out TestConditionalPackageReferencesService conditionalPackageReferencesService,
+                out Mock<IPackageReferencesService> packageReferencesService);
+            BuildIntegratedInstallationContext installationContext = CreateInstallationContext(
+                areAllPackagesConditional: false);
+
+            // Act
+            await project.InstallPackageAsync(
+                "packageA",
+                VersionRange.Parse("2.0.0"),
+                new TestNuGetProjectContext(),
+                installationContext,
+                CancellationToken.None);
+
+            // Assert
+            packageReferencesService.Verify(
+                service => service.AddAsync("packageA", "2.0.0"),
+                Times.Once);
+            conditionalPackageReferencesService.AddCalls.Should().BeEmpty();
+        }
+
+        [Fact]
         public async Task TestPackageManager_ExecuteNuGetProjectActionsAsync_WithProgressReporter_WhenChildProjectChanges_AssetsFileWritesForParentsAreReported()
         {
             using var pathContext = new SimpleTestPathContext();
@@ -4748,6 +4835,125 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.NotEmpty(packagesWithOrigins.InstalledPackages);
             Assert.NotEmpty(packagesWithOrigins.TransitivePackages);
             Assert.All(packagesWithOrigins.TransitivePackages, pkg => Assert.NotEmpty(pkg.TransitiveOrigins));
+        }
+
+        private static CpsPackageReferenceProject CreateCpsPackageReferenceProjectForConditionalPackageTests(
+            out TestConditionalPackageReferencesService conditionalPackageReferencesService,
+            out Mock<IPackageReferencesService> packageReferencesService)
+        {
+            VSComposition.ExportProvider exportProvider = CreateExportProvider(typeof(TestConditionalPackageReferencesService));
+            conditionalPackageReferencesService = (TestConditionalPackageReferencesService)exportProvider.GetExportedValue<IConditionalPackageReferencesService>();
+
+            packageReferencesService = new Mock<IPackageReferencesService>(MockBehavior.Strict);
+            var unresolvedPackageReference = new Mock<IUnresolvedPackageReference>();
+            unresolvedPackageReference
+                .SetupGet(reference => reference.Metadata)
+                .Returns(Mock.Of<IProjectProperties>());
+            packageReferencesService
+                .Setup(service => service.AddAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new AddPackageReferenceResult(
+                    unresolvedPackageReference.Object,
+                    added: true));
+            packageReferencesService
+                .Setup(service => service.RemoveAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
+            var configuredProjectServices = new Mock<ConfiguredProjectServices>();
+            configuredProjectServices
+                .SetupGet(services => services.PackageReferences)
+                .Returns(packageReferencesService.Object);
+            var configuredProject = new Mock<ConfiguredProject>();
+            configuredProject
+                .SetupGet(project => project.Services)
+                .Returns(configuredProjectServices.Object);
+
+            var unconfiguredProjectServices = new Mock<UnconfiguredProjectServices>();
+            unconfiguredProjectServices
+                .SetupGet(services => services.ExportProvider)
+                .Returns(exportProvider);
+            var unconfiguredProject = new Mock<UnconfiguredProject>();
+            unconfiguredProject
+                .SetupGet(project => project.Services)
+                .Returns(unconfiguredProjectServices.Object);
+            unconfiguredProject
+                .Setup(project => project.GetSuggestedConfiguredProjectAsync())
+                .ReturnsAsync(configuredProject.Object);
+
+            var projectServices = new Mock<INuGetProjectServices>();
+            projectServices
+                .SetupGet(services => services.ScriptService)
+                .Returns(Mock.Of<IProjectScriptHostService>());
+
+            return new CpsPackageReferenceProject(
+                projectName: "project",
+                projectUniqueName: "project",
+                projectFullPath: "project.csproj",
+                projectSystemCache: Mock.Of<IProjectSystemCache>(),
+                unconfiguredProject: new Microsoft.VisualStudio.Threading.AsyncLazy<UnconfiguredProject>(() => Task.FromResult(unconfiguredProject.Object)),
+                projectServices: projectServices.Object,
+                projectId: "project");
+        }
+
+        private static BuildIntegratedInstallationContext CreateInstallationContext(
+            bool areAllPackagesConditional)
+        {
+            return new BuildIntegratedInstallationContext
+            {
+                SuccessfulFrameworks = new List<string> { "net8.0", "net9.0" },
+                UnsuccessfulFrameworks = new List<string>(),
+                AreAllPackagesConditional = areAllPackagesConditional
+            };
+        }
+
+        private static VSComposition.ExportProvider CreateExportProvider(params Type[] exportedTypes)
+        {
+            var discovery = new VSComposition.AttributedPartDiscoveryV1(VSComposition.Resolver.DefaultInstance);
+            var parts = discovery.CreatePartsAsync(exportedTypes).GetAwaiter().GetResult();
+            var catalog = VSComposition.ComposableCatalog.Create(VSComposition.Resolver.DefaultInstance).AddParts(parts);
+            return VSComposition.CompositionConfiguration
+                .Create(catalog)
+                .ThrowOnErrors()
+                .CreateExportProviderFactory()
+                .CreateExportProvider();
+        }
+
+        [Export(typeof(IConditionalPackageReferencesService))]
+        [PartCreationPolicy(CreationPolicy.Shared)]
+        private sealed class TestConditionalPackageReferencesService : IConditionalPackageReferencesService
+        {
+            public List<(string PackageId, string Version, string ConditionName, string ConditionValue)> AddCalls { get; } = new();
+
+            public List<(string PackageId, string ConditionName, string ConditionValue)> RemoveCalls { get; } = new();
+
+            public Task<CPSPackageReference> AddAsync(
+                string packageId,
+                string version,
+                string conditionName,
+                string conditionValue)
+            {
+                AddCalls.Add((packageId, version, conditionName, conditionValue));
+                return Task.FromResult(CreatePackageReference());
+            }
+
+            public Task RemoveAsync(string packageId, string conditionName, string conditionValue)
+            {
+                RemoveCalls.Add((packageId, conditionName, conditionValue));
+                return Task.CompletedTask;
+            }
+
+            private static CPSPackageReference CreatePackageReference()
+            {
+                // The CPS PackageReference type has no public constructor and its real constructor requires
+                // MSBuild types that aren't available in unit tests, so create an uninitialized instance and
+                // set only the members the production code reads (IsAdded and Metadata).
+                var reference = (CPSPackageReference)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(CPSPackageReference));
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+
+                typeof(CPSPackageReference).GetField("isAdded", flags).SetValue(reference, true);
+                typeof(CPSPackageReference).GetField("metadata", flags).SetValue(reference, Mock.Of<IProjectProperties>());
+
+                return reference;
+            }
         }
     }
 }

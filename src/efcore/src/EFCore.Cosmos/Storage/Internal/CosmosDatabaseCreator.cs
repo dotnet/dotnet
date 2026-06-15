@@ -66,19 +66,12 @@ public class CosmosDatabaseCreator : IDatabaseCreator
 
         var created = new StrongBox<bool>(false);
         var dataInserted = new StrongBox<bool>(false);
-        var retrying = new StrongBox<bool>(false);
+        var seeded = new StrongBox<bool>(false);
         return _executionStrategy.ExecuteAsync(
-            (Creator: this, Created: created, DataInserted: dataInserted, Retrying: retrying),
+            (Creator: this, Created: created, DataInserted: dataInserted, Seeded: seeded),
             static async (_, state, ct) =>
             {
                 var creator = state.Creator;
-
-                if (state.Retrying.Value)
-                {
-                    creator._currentContext.Context.ChangeTracker.Clear();
-                }
-
-                state.Retrying.Value = true;
 
                 if (!state.DataInserted.Value)
                 {
@@ -101,8 +94,12 @@ public class CosmosDatabaseCreator : IDatabaseCreator
                     }
                 }
 
-                await creator.SeedDataAsync(state.Created.Value, cancellationToken: ct)
-                    .ConfigureAwait(false);
+                if (!state.Seeded.Value)
+                {
+                    await creator.SeedDataAsync(state.Created.Value, cancellationToken: ct)
+                        .ConfigureAwait(false);
+                    state.Seeded.Value = true;
+                }
 
                 return state.Created.Value;
             }, verifySucceeded: null, cancellationToken);
@@ -138,6 +135,8 @@ public class CosmosDatabaseCreator : IDatabaseCreator
             var indexes = new List<IIndex>();
             var vectors = new List<(IProperty Property, CosmosVectorType VectorType)>();
             var fullTextProperties = new List<(IProperty Property, string? Language)>();
+            IReadOnlyList<string>? automaticIndexingExceptions = null;
+            bool? automaticIndexingEnabled = null;
 
             foreach (var entityType in mappedTypes)
             {
@@ -149,6 +148,8 @@ public class CosmosDatabaseCreator : IDatabaseCreator
                 analyticalTtl ??= entityType.GetAnalyticalStoreTimeToLive();
                 defaultTtl ??= entityType.GetDefaultTimeToLive();
                 throughput ??= entityType.GetThroughput();
+                automaticIndexingExceptions ??= entityType.GetAutomaticIndexingExceptions();
+                automaticIndexingEnabled ??= entityType.GetAutomaticIndexingEnabled();
 
                 ProcessEntityType(entityType, indexes, vectors, fullTextProperties);
             }
@@ -162,7 +163,9 @@ public class CosmosDatabaseCreator : IDatabaseCreator
                 indexes,
                 vectors,
                 defaultFullTextLanguage ?? "en-US",
-                fullTextProperties);
+                fullTextProperties,
+                automaticIndexingExceptions,
+                automaticIndexingEnabled);
         }
 
         static void ProcessEntityType(
@@ -216,7 +219,16 @@ public class CosmosDatabaseCreator : IDatabaseCreator
             foreach (var targetSeed in entityType.GetSeedData())
             {
                 var runtimeEntityType = updateAdapter.Model.FindEntityType(entityType.Name)!;
-                var entry = updateAdapter.CreateEntry(targetSeed, runtimeEntityType);
+                var values = new Dictionary<IProperty, object?>();
+                foreach (var (name, value) in targetSeed)
+                {
+                    if (runtimeEntityType.FindProperty(name) is { } property)
+                    {
+                        values[property] = value;
+                    }
+                }
+
+                var entry = updateAdapter.CreateEntry(values, runtimeEntityType);
                 entry.EntityState = EntityState.Added;
             }
         }

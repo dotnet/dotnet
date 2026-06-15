@@ -37,7 +37,6 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
     public partial interface IMetricsListener
     {
         string Name { get; }
-
         MeasurementHandlers GetMeasurementHandlers();
         void Initialize(IObservableInstrumentsSource source);
         bool InstrumentPublished(System.Diagnostics.Metrics.Instrument instrument, out object? userState);
@@ -53,6 +52,7 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
         public string? MeterName { get { throw null; } }
         public MeterScope Scopes { get { throw null; } }
     }
+
     public partial interface IObservableInstrumentsSource
     {
         void RecordObservableInstruments();
@@ -68,6 +68,7 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
         public System.Diagnostics.Metrics.MeasurementCallback<long>? LongHandler { get { throw null; } set { } }
         public System.Diagnostics.Metrics.MeasurementCallback<short>? ShortHandler { get { throw null; } set { } }
     }
+
     [System.Flags]
     public enum MeterScope
     {
@@ -90,8 +91,82 @@ namespace Microsoft.Extensions.Diagnostics.Metrics
         public static MetricsOptions EnableMetrics(this MetricsOptions options, string? meterName, string? instrumentName = null, string? listenerName = null, MeterScope scopes = MeterScope.Global | MeterScope.Local) { throw null; }
         public static MetricsOptions EnableMetrics(this MetricsOptions options, string? meterName) { throw null; }
     }
+
     public partial class MetricsOptions
     {
         public System.Collections.Generic.IList<InstrumentRule> Rules { get { throw null; } }
+    }
+}
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
     }
 }

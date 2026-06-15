@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel;
@@ -35,6 +36,14 @@ public class HtmlLogger : ITestLoggerWithParameters
     private readonly XmlObjectSerializer _xmlSerializer;
     private readonly IHtmlTransformer _htmlTransformer;
     private Dictionary<string, string?>? _parametersDictionary;
+
+    // Matches XML 1.0 invalid characters (excluding valid surrogate pairs).
+    // Valid chars per spec: #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+    // The pattern allows valid high+low surrogate pairs to pass through unchanged;
+    // lone surrogates are treated as invalid.
+    private static readonly Regex InvalidXmlCharsRegex = new(
+        @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\uD800-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]",
+        RegexOptions.Compiled);
 
     public HtmlLogger()
         : this(new FileHelper(), new HtmlTransformer(), new DataContractSerializer(typeof(TestRunDetails)))
@@ -195,10 +204,10 @@ public class HtmlLogger : ITestLoggerWithParameters
 
         var testResult = new ObjectModel.TestResult
         {
-            DisplayName = e.Result.DisplayName ?? e.Result.TestCase.FullyQualifiedName,
-            FullyQualifiedName = e.Result.TestCase.FullyQualifiedName,
-            ErrorStackTrace = e.Result.ErrorStackTrace,
-            ErrorMessage = e.Result.ErrorMessage,
+            DisplayName = RemoveInvalidXmlChars(e.Result.DisplayName ?? e.Result.TestCase.FullyQualifiedName),
+            FullyQualifiedName = RemoveInvalidXmlChars(e.Result.TestCase.FullyQualifiedName),
+            ErrorStackTrace = RemoveInvalidXmlChars(e.Result.ErrorStackTrace),
+            ErrorMessage = RemoveInvalidXmlChars(e.Result.ErrorMessage),
             TestResultId = e.Result.TestCase.Id,
             Duration = GetFormattedDurationString(e.Result.Duration),
             ResultOutcome = e.Result.Outcome
@@ -310,7 +319,7 @@ public class HtmlLogger : ITestLoggerWithParameters
     {
         try
         {
-            var fileName = string.Format(CultureInfo.CurrentCulture, "{0}_{1}_{2}",
+            var fileName = string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}",
                 Environment.GetEnvironmentVariable("UserName"), Environment.MachineName,
                 FormatDateTimeForRunName(DateTime.Now));
 
@@ -350,17 +359,19 @@ public class HtmlLogger : ITestLoggerWithParameters
 
     private string GenerateUniqueFilePath(string fileName, string fileExtension)
     {
-        string fullFilePath;
         for (short i = 0; i < short.MaxValue; i++)
         {
             var fileNameWithIter = i == 0 ? fileName : Path.GetFileNameWithoutExtension(fileName) + $"[{i}]";
-            fullFilePath = Path.Combine(TestResultsDirPath!, $"TestResult_{fileNameWithIter}.{fileExtension}");
+            var fullFilePath = Path.Combine(TestResultsDirPath!, $"TestResult_{fileNameWithIter}.{fileExtension}");
+
             try
             {
-                using var _ = new FileStream(fullFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                // Use FileMode.CreateNew for atomic "create if not exists" to avoid
+                // cross-process race conditions when multiple vstest processes run in parallel.
+                using var _ = _fileHelper.GetStream(fullFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
                 return fullFilePath;
             }
-            catch (IOException) when (File.Exists(fullFilePath))
+            catch (IOException) when (_fileHelper.Exists(fullFilePath))
             {
                 // File already exists (another process created it), try next iteration.
             }
@@ -451,5 +462,28 @@ public class HtmlLogger : ITestLoggerWithParameters
         }
 
         return time.Count == 0 ? "< 1ms" : string.Join(" ", time);
+    }
+
+    /// <summary>
+    /// Removes characters that are invalid in XML 1.0 from a string.
+    /// </summary>
+    /// <remarks>
+    /// XML 1.0 valid characters: #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD].
+    /// Control characters in the range #x00-#x08, #x0B, #x0C, #x0E-#x1F are not valid and
+    /// will cause <see cref="DataContractSerializer"/> to throw an <see cref="System.Xml.XmlException"/>.
+    /// Invalid characters are replaced with their Unicode escape representation.
+    /// </remarks>
+    private static string? RemoveInvalidXmlChars(string? str)
+    {
+        if (str is null)
+        {
+            return null;
+        }
+
+        // From xml spec (http://www.w3.org/TR/xml/#charsets) valid chars:
+        // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+        // Valid surrogate pairs (representing U+10000–U+10FFFF) are allowed through unchanged;
+        // lone surrogates are replaced with their Unicode escape representation.
+        return InvalidXmlCharsRegex.Replace(str, m => $@"\u{(ushort)m.Value[0]:x4}");
     }
 }

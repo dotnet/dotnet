@@ -11,7 +11,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_ThrowsForNullException()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new MessageEventArgs(message: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => new MessageEventArgs(message: null!));
 
             Assert.Equal("message", exception.ParamName);
         }
@@ -19,7 +19,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_InitializesMessageProperty()
         {
-            var message = new Message(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
+            var message = MessageUtilities.Create(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
             var args = new MessageEventArgs(message);
 
             Assert.Same(message, args.Message);

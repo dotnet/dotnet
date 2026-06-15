@@ -5,9 +5,11 @@
 
 using System;
 using System.Collections.Concurrent;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using NuGet.Protocol.Core.Types;
 
 namespace NuGet.Protocol.Plugins
@@ -94,6 +96,10 @@ namespace NuGet.Protocol.Plugins
         /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public async Task HandleResponseAsync(
             IConnection connection,
             Message request,
@@ -129,13 +135,11 @@ namespace NuGet.Protocol.Plugins
 
             if (serviceIndex == null)
             {
-                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndex: null);
+                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndexJson: (string)null);
             }
             else
             {
-                var serviceIndexJson = JObject.Parse(serviceIndex.Json);
-
-                responsePayload = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndexJson);
+                responsePayload = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndex.Json);
             }
 
             await responseHandler.SendResponseAsync(request, responsePayload, cancellationToken);
