@@ -79,10 +79,10 @@
       "commitSha": "95b450294d0852c47cebef2d649437fadaca6ea7"
     },
     {
-      "barId": 317974,
+      "barId": 318496,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "5ffb31db6869f1445dfe8c7e0018a8f6042542db"
+      "commitSha": "10c2d44e17e2f33c772ee0e312eb893ecd2114cf"
     },
     {
       "barId": 316588,
@@ -115,10 +115,10 @@
       "commitSha": "8655fee9aae40ba74257255cbcd1f05edc2f48fa"
     },
     {
-      "barId": 318261,
+      "barId": 318657,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "736970b24155d95bb234b553bd0b4250fc672586"
+      "commitSha": "e9d055673a55259566889e270224074ca28d21ab"
     },
     {
       "barId": 308339,
@@ -127,10 +127,10 @@
       "commitSha": "c73f02dc21cc53262431529f1e30da0ea079d0e5"
     },
     {
-      "barId": 317616,
+      "barId": 318257,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "74cad43c1b14c4ff786bf3298026a7a380b35d39"
+      "commitSha": "f3c6abb7a5e4a539ba312500ec295195387170f4"
     },
     {
       "barId": 310504,
@@ -139,10 +139,10 @@
       "commitSha": "89c64d27d2d09565cb2cb0aef721e5c0cb139461"
     },
     {
-      "barId": 317670,
+      "barId": 318274,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "2236bae63f06a0d320a7137c7c1dd4d8bf7e0a95"
+      "commitSha": "1759c9464b6d9fbad6cbdb84ba07061d9d692e65"
     },
     {
       "barId": 291267,
