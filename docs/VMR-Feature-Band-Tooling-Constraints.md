@@ -17,7 +17,7 @@ If you contribute to a tooling repo and your change might land in a non-1xx band
 1. **You cannot edit shared component sources from a non-1xx band.** Sources for shared components (runtime, aspnetcore, etc.) are not present in non-1xx band branches. They are consumed as build output packages from the 1xx build. Fixes to those components must go in the **1xx band branch**.
 2. **The SDK used to build the band is fixed by the band's release stage.** You cannot rely on a newer SDK than the rule below allows — most notably, you cannot count on language features or APIs that only exist in the in-flight band's own SDK.
 3. **Toolset / Arcade are pinned per band.** The toolset version used to build a band is set when the band branch is snapped and only advances on each band release. See [Toolset / SDK version](#toolset--sdk-version-used-to-build-a-band).
-4. **Band-specific fixes must be applied to every band branch that needs them.** Unlike shared-component fixes, SDK / Roslyn / MSBuild fixes do not auto-flow across band branches.
+4. **Band-specific fixes must be applied to every band branch that needs them**, except for repos that have inter-branch merging implemented (like `dotnet/sdk`, where a merge bot forwards changes from 1xx into other band branches).
 5. **Forwarding a 1xx change that adds a reference to a brand-new shared-component package can be blocked on a non-1xx band** until the next public 1xx → Bxx dependency flow delivers a shared-component version that contains the new package. See [1xx Flow Timing section](#porting-a-1xx-change-to-a-non-1xx-band-servicing-flow-timing).
 
 ## Branch layout recap
