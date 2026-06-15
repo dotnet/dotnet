@@ -64,12 +64,53 @@ to .NET. The following sections describe how to add/upgrade the various types of
    This ensures the correct commit hash is embedded in the built binaries rather than the VMR's.
    If the component computes `FileVersion` from non-deterministic values (e.g., `DateTime.Now`),
    include a `FileVersionRevision` property set to the revision from the Microsoft-shipped package
-   and pass it via `/p:FileVersion` in the build command args.
-   Also include a `FileVersionValidationPackage` property naming a NuGet package produced by the
-   component so that tests can validate the revision.
+   and pass it via `/p:FileVersion` in the build command args. Per-component overrides like this
+   live in a sibling `src/externalPackages/projects/<component>.props` file that the `.proj`
+   imports via `<Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />`.
+
+   In that same `<component>.props`, also declare a `FileVersionValidationPackage` **item** naming a
+   NuGet package produced by the component so the metadata-update script and tests can validate the
+   version. The default property name bindings (defined in `src/externalPackages/projects/validation.props`
+   via `<ItemDefinitionGroup>`, imported by each per-component `.props`) point at conventional
+   property names — for the common case of one item per project using those names, no per-item
+   metadata is needed:
+
+   ```xml
+   <ItemGroup>
+     <FileVersionValidationPackage Include="Microsoft.MyPackage" />
+   </ItemGroup>
+   ```
+
+   The defaults bind `FileVersionRevisionProperty=FileVersionRevision`,
+   `AssemblyVersionOverrideProperty=AssemblyVersionOverride`, and
+   `InformationalVersionOverrideProperty=InformationalVersionOverride`. Each aspect is validated
+   only if the named property is defined in the `<component>.props` — items don't need to opt out
+   of aspects they don't override. If an aspect's property name is overridden per-item, the named
+   property **must** exist in the `<component>.props` or the tool/test will error.
+
+   When a single submodule produces multiple packages with different release versions or revisions
+   (each from its own release tag), declare one item per package, each with its own per-package
+   property names so the items don't compete to write the same property:
+
+   ```xml
+   <ItemGroup>
+     <FileVersionValidationPackage Include="MyOrg.PackageA">
+       <FileVersionRevisionProperty>MyOrgPackageAFileVersionRevision</FileVersionRevisionProperty>
+       <ReleaseVersionProperty>MyOrgPackageAReleaseVersion</ReleaseVersionProperty>
+     </FileVersionValidationPackage>
+     <FileVersionValidationPackage Include="MyOrg.PackageB">
+       <FileVersionRevisionProperty>MyOrgPackageBFileVersionRevision</FileVersionRevisionProperty>
+       <ReleaseVersionProperty>MyOrgPackageBReleaseVersion</ReleaseVersionProperty>
+     </FileVersionValidationPackage>
+   </ItemGroup>
+   ```
+
+   By default the release version is auto-derived from the `.proj` filename
+   (e.g. `my-component.proj` &rarr; `<MyComponentReleaseVersion>` in `eng/Versions.props`).
+   Setting `ReleaseVersionProperty` overrides that lookup.
 
    After defining the project, run the metadata update script to automatically populate
-   `SourceRevisionId` and `FileVersionRevision` from the submodule and published package:
+   `SourceRevisionId` and the package-derived properties from the submodule and published package:
 
    ```bash
    # Linux/macOS

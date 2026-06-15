@@ -1,0 +1,24 @@
+<!--
+  Validation metadata for the azure-activedirectory-identitymodel-extensions-for-dotnet
+  component. Imported by the sibling .proj at build time and loaded standalone by
+  UpdateExternalMetadata and ExternalPackageTests.
+
+  This file deliberately declares no SDK and has no upward import chain so it can be loaded
+  with plain `new Project(filePath, …)` in any host — including inside `dotnet test`, where
+  MSBuildLocator cannot register because the test platform pre-loads Microsoft.Build.
+-->
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)validation.props" />
+
+  <PropertyGroup>
+    <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
+         when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
+    <FileVersionRevision>50722</FileVersionRevision>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FileVersionValidationPackage Include="Microsoft.IdentityModel.Tokens" />
+  </ItemGroup>
+
+</Project>
