@@ -141,7 +141,7 @@ namespace SignCheckTask
         {
             Options = options;
 
-            Log = new Log(options.LogFile, options.ErrorLogFile, options.ResultsXmlFile, options.Verbosity);
+            Log = new Log(options.LogFile, options.ErrorLogFile, options.ResultsXmlFile, options.Verbosity, options.ConsoleOutput);
 
             if (Options.FileStatus.Count() > 0)
             {
