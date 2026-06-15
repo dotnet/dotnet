@@ -1,0 +1,27 @@
+<!--
+  Validation metadata for the vs-solutionpersistence component. Imported by the sibling .proj
+  at build time and loaded standalone by UpdateExternalMetadata and ExternalPackageTests.
+
+  This file deliberately declares no SDK and has no upward import chain so it can be loaded
+  with plain `new Project(filePath, …)` in any host — including inside `dotnet test`, where
+  MSBuildLocator cannot register because the test platform pre-loads Microsoft.Build.
+-->
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)validation.props" />
+
+  <PropertyGroup>
+    <!-- The upstream build uses Nerdbank.GitVersioning to compute the FileVersion revision
+         from git commit height, which cannot work in the VMR context. Set it here to match
+         the official NuGet package. See https://github.com/dotnet/source-build/issues/5512 -->
+    <FileVersionRevision>6595</FileVersionRevision>
+    <!-- NBGV is disabled in source-build, so pin these to the official package values. -->
+    <AssemblyVersionOverride>1.0.0.0</AssemblyVersionOverride>
+    <InformationalVersionOverride>1.0.52+19c3ca7dc9.RR</InformationalVersionOverride>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FileVersionValidationPackage Include="Microsoft.VisualStudio.SolutionPersistence" />
+  </ItemGroup>
+
+</Project>

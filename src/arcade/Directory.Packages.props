@@ -8,7 +8,7 @@
   <!-- Version properties used outside of PackageReference items -->
   <PropertyGroup>
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
-    <MicrosoftSignedWixVersion>3.14.1-9323.2545153</MicrosoftSignedWixVersion>
+    <MicrosoftSignedWixVersion>3.14.1-11131.2940454</MicrosoftSignedWixVersion>
     <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.4</MicrosoftWixToolsetSdkVersion>
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion/MicrosoftTestingPlatformVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
@@ -17,7 +17,7 @@
     <XUnitAnalyzersVersion>2.0.0-pre.51</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
     <XUnitRunnerVisualStudioVersion>4.0.0-pre.4</XUnitRunnerVisualStudioVersion>
-    <MicrosoftTestingPlatformVersion>2.2.1</MicrosoftTestingPlatformVersion>
+    <MicrosoftTestingPlatformVersion>2.2.3</MicrosoftTestingPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -64,20 +64,20 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.57.0" />
+    <PackageVersion Include="Azure.Core" Version="1.58.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="12.28.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
     <PackageVersion Include="Handlebars.Net" Version="2.1.6" />
     <PackageVersion Include="LZMA-SDK" Version="22.1.1" />
-    <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.1" />
-    <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
-    <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.4" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.2" />
+    <PackageVersion Include="Microsoft.Data.OData" Version="5.8.5" />
+    <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.84.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.29" />
-    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.29" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.84.2" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.6.0" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.6.0" />
     <PackageVersion Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
     <PackageVersion Include="Microsoft.WixToolset.Sdk" Version="$(MicrosoftWixToolsetSdkVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.OLE.Interop" Version="17.14.40260" />

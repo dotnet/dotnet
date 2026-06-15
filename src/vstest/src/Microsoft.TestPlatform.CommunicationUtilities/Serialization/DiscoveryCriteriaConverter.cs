@@ -75,7 +75,7 @@ internal class DiscoveryCriteriaConverter : JsonConverter<DiscoveryCriteria>
     {
         if (element.TryGetProperty(name, out var prop) && prop.ValueKind != JsonValueKind.Null)
         {
-            return StjSafe.Deserialize<T>(prop.GetRawText(), options);
+            return JsonSerializer.Deserialize<T>(prop.GetRawText(), options);
         }
 
         return default;
@@ -84,7 +84,7 @@ internal class DiscoveryCriteriaConverter : JsonConverter<DiscoveryCriteria>
     private static void WriteProperty<T>(Utf8JsonWriter writer, string name, T value, JsonSerializerOptions options)
     {
         writer.WritePropertyName(name);
-        StjSafe.Serialize(writer, value, options);
+        JsonSerializer.Serialize(writer, value, options);
     }
 }
 

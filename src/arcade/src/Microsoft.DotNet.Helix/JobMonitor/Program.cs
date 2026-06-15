@@ -12,6 +12,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     internal static class Program
     {
+        private const string AzdoErrorPrefix = "##vso[task.logissue type=error]";
+
         public static async Task<int> Main(string[] args)
         {
             JobMonitorOptions options = null;
@@ -23,7 +25,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             {
                 using ILoggerFactory errorLoggerFactory = CreateLoggerFactory(verbose: false);
                 ILogger errorLogger = errorLoggerFactory.CreateLogger<JobMonitorRunner>();
-                errorLogger.LogError(ex, "Helix Job Monitor terminated with an unhandled exception.");
+                LogError(errorLogger, ex, "Helix Job Monitor terminated with an unhandled exception.");
                 return 1;
             }
 
@@ -91,7 +93,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Helix Job Monitor terminated with an unhandled exception.");
+                LogError(logger, ex, "Helix Job Monitor terminated with an unhandled exception.");
                 return 1;
             }
         }
@@ -106,5 +108,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     .AddConsoleFormatter<CompactConsoleLoggerFormatter, SimpleConsoleFormatterOptions>();
             });
         }
+
+        private static void LogError(ILogger logger, Exception exception, string message)
+            => logger.LogError(exception, "{Prefix}{Message}", AzdoErrorPrefix, message);
     }
 }

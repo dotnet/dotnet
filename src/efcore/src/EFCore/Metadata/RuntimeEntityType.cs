@@ -202,6 +202,7 @@ public class RuntimeEntityType : RuntimeTypeBase, IRuntimeEntityType
     /// <param name="required">A value indicating whether the principal entity is required.</param>
     /// <param name="requiredDependent">A value indicating whether the dependent entity is required.</param>
     /// <param name="ownership">A value indicating whether this relationship defines an ownership.</param>
+    /// <param name="constrained">A value indicating whether the foreign key is constrained.</param>
     /// <returns>The newly created foreign key.</returns>
     public virtual RuntimeForeignKey AddForeignKey(
         IReadOnlyList<RuntimeProperty> properties,
@@ -211,10 +212,11 @@ public class RuntimeEntityType : RuntimeTypeBase, IRuntimeEntityType
         bool unique = false,
         bool required = false,
         bool requiredDependent = false,
-        bool ownership = false)
+        bool ownership = false,
+        bool constrained = true)
     {
         var foreignKey = new RuntimeForeignKey(
-            properties, principalKey, this, principalEntityType, deleteBehavior, unique, required, requiredDependent, ownership);
+            properties, principalKey, this, principalEntityType, deleteBehavior, unique, required, requiredDependent, ownership, constrained);
 
         _foreignKeys.Add(foreignKey);
 
@@ -530,13 +532,18 @@ public class RuntimeEntityType : RuntimeTypeBase, IRuntimeEntityType
     /// <param name="properties">The properties that are to be indexed.</param>
     /// <param name="name">The name of the index.</param>
     /// <param name="unique">A value indicating whether the values assigned to the indexed properties are unique.</param>
+    /// <param name="collectionIndices">
+    ///     The complex-collection indices traversed to reach each indexed property, or <see langword="null" />
+    ///     if the index does not traverse any complex collection. See <see cref="IReadOnlyIndex.CollectionIndices" />.
+    /// </param>
     /// <returns>The newly created index.</returns>
     public virtual RuntimeIndex AddIndex(
         IReadOnlyList<RuntimePropertyBase> properties,
         string? name = null,
-        bool unique = false)
+        bool unique = false,
+        IReadOnlyList<IReadOnlyList<int?>?>? collectionIndices = null)
     {
-        var index = new RuntimeIndex(properties, this, name, unique);
+        var index = new RuntimeIndex(properties, this, name, unique, collectionIndices);
         if (name != null)
         {
             (_namedIndexes ??= new Utilities.OrderedDictionary<string, RuntimeIndex>(StringComparer.Ordinal)).Add(name, index);

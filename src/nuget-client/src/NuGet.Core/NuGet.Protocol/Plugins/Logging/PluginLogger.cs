@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -14,7 +12,7 @@ namespace NuGet.Protocol.Plugins
     {
         private bool _isDisposed;
         private readonly Lazy<StreamWriter> _streamWriter;
-        private readonly string _logDirectoryPath;
+        private readonly string? _logDirectoryPath;
         private readonly DateTimeOffset _startTime;
         private readonly Stopwatch _stopwatch;
         private readonly object _streamWriterLock;
@@ -97,17 +95,21 @@ namespace NuGet.Protocol.Plugins
         {
             if (IsEnabled)
             {
+                string logDirectoryPath = _logDirectoryPath
+                    ?? throw new InvalidOperationException("Log directory must be set when plugin logging is enabled.");
                 FileInfo file;
                 int processId;
 
                 using (var process = Process.GetCurrentProcess())
                 {
-                    file = new FileInfo(process.MainModule.FileName);
+                    string processFileName = process.MainModule?.FileName
+                        ?? throw new InvalidOperationException("The current process must have a main module file name for plugin logging.");
+                    file = new FileInfo(processFileName);
                     processId = process.Id;
                 }
 
                 var fileName = $"NuGet_PluginLogFor_{Path.GetFileNameWithoutExtension(file.Name)}_{DateTime.UtcNow.Ticks:x}_{processId}.log";
-                var filePath = Path.Combine(_logDirectoryPath, fileName);
+                var filePath = Path.Combine(logDirectoryPath, fileName);
                 var stream = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.Read);
 
                 try

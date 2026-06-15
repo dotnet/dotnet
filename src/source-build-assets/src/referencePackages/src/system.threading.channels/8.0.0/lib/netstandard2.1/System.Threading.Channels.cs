@@ -26,6 +26,26 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Threading.Channels
 {
     public enum BoundedChannelFullMode

@@ -91,8 +91,6 @@ variables:
     - name: Codeql.Cadence 
       value: 0
 
-  # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
-  - group: DotNet-Symbol-Server-Pats
   # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
   - group: DotNet-VSTS-Infra-Access
   # DevDiv drop access token is acquired via WIF service connection (dnceng-devdiv-drop-rw-code-rw-wif)
@@ -111,8 +109,6 @@ variables:
       /p:TeamName=$(_TeamName)
       /p:DotNetFinalVersionKind=$(_ReleaseVersionKind)
       /p:DotNetPublishUsingPipelines=true
-      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
       /p:VisualStudioDropName=$(VisualStudioDropName)
       /p:GenerateSbom=true

@@ -3,7 +3,7 @@
 
 #nullable enable
 
-namespace NuGet.CommandLine.XPlat
+namespace NuGet.CommandLine.XPlat.Commands
 {
     internal static class CommandConstants
     {

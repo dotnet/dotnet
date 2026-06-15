@@ -1525,6 +1525,11 @@ NuGet vyžaduje zdroje HTTPS. Další informace najdete na https://aka.ms/nuget-
         <target state="translated">Závislost projektu {0} neurčuje verzi. Pokud chcete zajistit konzistentní výsledky obnovení, pro závislost zadejte verzi.</target>
         <note>0 - package id</note>
       </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
+      </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
         <target state="translated">Zjistila se verze balíčku, která nesplňuje omezení závislosti: {0} vyžaduje {1}, ale zjistila se verze {2}.</target>

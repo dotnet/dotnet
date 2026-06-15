@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Linq;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
@@ -30,6 +33,10 @@ namespace NuGet.Protocol
         private static readonly IReadOnlyList<ServiceIndexEntry> _emptyEntries = new List<ServiceIndexEntry>();
         private static readonly SemanticVersion _defaultVersion = new SemanticVersion(0, 0, 0);
 
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         internal ServiceIndexResourceV3(JObject index, DateTime requestTime, PackageSource packageSource)
         {
             _json = index.ToString();
@@ -37,6 +44,10 @@ namespace NuGet.Protocol
             _requestTime = requestTime;
         }
 
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         public ServiceIndexResourceV3(JObject index, DateTime requestTime) : this(index, requestTime, null) { }
 
         internal ServiceIndexResourceV3(ServiceIndexModel model, DateTime requestTime, PackageSource packageSource)
@@ -302,6 +313,10 @@ namespace NuGet.Protocol
         /// Read string values from an array or string.
         /// Returns an empty enumerable if the value is null.
         /// </summary>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Only called from JObject constructor which is annotated with [RUC]/[RDC].")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called from JObject constructor which is annotated with [RUC]/[RDC].")]
+#endif
         private static IEnumerable<string> GetValues(JToken token)
         {
             if (token?.Type == JTokenType.Array)

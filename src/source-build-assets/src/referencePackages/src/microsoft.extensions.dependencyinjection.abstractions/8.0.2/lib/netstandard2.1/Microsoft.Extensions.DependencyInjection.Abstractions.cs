@@ -328,3 +328,23 @@ namespace Microsoft.Extensions.DependencyInjection.Extensions
         public static void TryAddTransient<TService, TImplementation>(this IServiceCollection collection) where TService : class where TImplementation : class, TService { }
     }
 }
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
