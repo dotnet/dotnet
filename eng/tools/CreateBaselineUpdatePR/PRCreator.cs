@@ -99,7 +99,6 @@ public partial class PRCreator
         bool unionExclusions = pipeline switch
         {
             Pipelines.Sdk => true,
-            Pipelines.Reproducibility => true,
             Pipelines.License => false,
             _ => throw new ArgumentOutOfRangeException(nameof(pipeline))
         };
