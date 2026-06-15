@@ -97,7 +97,7 @@ When a tooling change lands in 1xx and also needs to ship in a non-1xx band, the
 
 ### Servicing release alignment
 
-- Only the 1xx band and at most one other band (2xx, 3xx, or 4xx) are in support at any given time. When a new band ships, the previous non-1xx band typically goes out of support — plan back-port work accordingly.
+- Only the 1xx band and at most one other band (2xx, 3xx, or 4xx) are in support at any given time (see [SDK lifecycle](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs#lifecycle) on Microsoft Learn). When a new band ships, the previous non-1xx band typically goes out of support — plan back-port work accordingly.
 - Release schedules across bands are **not** necessarily aligned (the exception is a security release in a shared component, which forces alignment).
 
 See [Managing SDK Bands → Band lifecycle](./VMR-Managing-SDK-Bands.md#band-lifecycle) for the full lifecycle and band-phase semantics.
