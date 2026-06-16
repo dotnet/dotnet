@@ -10,7 +10,10 @@
     },
     {
       "name": "aspnetcore",
-      "defaultRemote": "https://github.com/dotnet/aspnetcore"
+      "defaultRemote": "https://github.com/dotnet/aspnetcore",
+      "exclude": [
+        "src/submodules/MessagePack-CSharp/src/MessagePack.UnityClient/UserSettings/EditorUserSettings.asset"
+      ]
     },
     {
       "name": "cecil",
