@@ -505,6 +505,16 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
         <target state="translated">'{1}' 원본에서 '{0}'에 대한 패키지 메타데이터를 검색하는 동안 오류가 발생했습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterMultipleNotSupported">
+        <source>The source supports filtering by only one package type at a time.</source>
+        <target state="new">The source supports filtering by only one package type at a time.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterNotSupported">
+        <source>The source does not support filtering search results by package type.</source>
+        <target state="new">The source does not support filtering search results by package type.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Protocol_Search_LocalSourceNotFound">
         <source>The path '{0}' for the selected source could not be resolved.</source>
         <target state="translated">선택한 소스에 대한 '{0}' 경로를 확인할 수 없습니다.</target>
