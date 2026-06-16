@@ -525,7 +525,13 @@ namespace Test.Utility
               ""equal""
             ],
             ""title"": ""DeepEqual"",
-            ""version"": ""0.9.0""
+            ""version"": ""0.9.0"",
+            ""vulnerabilities"": [
+              {
+                ""advisoryUrl"": ""https://contoso.test/advisory/1"",
+                ""severity"": ""2""
+              }
+            ]
           },
           ""packageContent"": ""https://api.nuget.org/packages/deepequal.0.9.0.nupkg"",
           ""registration"": ""https://api.nuget.org/v3/registration0/deepequal/index.json""

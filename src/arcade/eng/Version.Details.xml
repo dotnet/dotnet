@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="953380f224e6f6ee72662fdee8b27900adbb29c2" BarId="316906" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="1edacc8de1a9fef827f05750fb9f64f1dcec9abd" BarId="317368" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -16,21 +16,21 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26302.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26309.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aa5dcbaa4fbec9c9f1ea9b3e9e4b7fc067f34d0b</Sha>
+      <Sha>33a0195c151df6325ddd3904b3e7f20677769f94</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26302.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26309.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>aa5dcbaa4fbec9c9f1ea9b3e9e4b7fc067f34d0b</Sha>
+      <Sha>33a0195c151df6325ddd3904b3e7f20677769f94</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.26268.2">
+    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.26304.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>8690d7113c92d2dd112a20bc77b80d314b8f669b</Sha>
+      <Sha>fbb25783f0112e453e5e46f5c5586c9e0f2ccaa3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.26268.2">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.26304.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>8690d7113c92d2dd112a20bc77b80d314b8f669b</Sha>
+      <Sha>fbb25783f0112e453e5e46f5c5586c9e0f2ccaa3</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="11.0.0-prerelease.26279.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
@@ -54,43 +54,43 @@
     </Dependency>
     <!-- Necessary for source-build. The dependency is loaded in during built-time
          by consumers of NuGetRepack.Tasks, so we cannot use a ref pack for it -->
-    <Dependency Name="System.IO.Packaging" Version="10.0.7">
+    <Dependency Name="System.IO.Packaging" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the dependency
          to flow in and eliminates related prebuilts. -->
-    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the dependency
          to flow in and eliminates related prebuilts. -->
-    <Dependency Name="Microsoft.Extensions.DependencyInjection" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.DependencyInjection" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
     <!-- Necessary for source-build. The dependency is loaded in during built-time
          by consumers of SharedFramework.Sdk (such as runtime), so we cannot use a ref pack for it -->
-    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Http" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.Http" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the dependency
          to flow in and eliminates related prebuilts. -->
-    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.Logging.Console" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
@@ -106,17 +106,17 @@
       <Uri>https://github.com/dotnet/command-line-api</Uri>
       <Sha>c7b5e07cfed85e88c162dc1c916efaff03742e6e</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Pkcs" Version="10.0.7">
+    <Dependency Name="System.Security.Cryptography.Pkcs" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.7">
+    <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.26278.5">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.26303.1">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>c8baaa69459cb9049bffa6094f53524e5f49c652</Sha>
+      <Sha>83b91de25bce49051da742a4e211ba50b2b7ffe3</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
     <Dependency Name="Microsoft.Build" Version="17.12.50">
@@ -166,11 +166,11 @@
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>779eff1e73420573dd39dbbe54896ff8f08955e1</Sha>
     </Dependency>
-    <Dependency Name="System.Composition" Version="10.0.7">
+    <Dependency Name="System.Composition" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="10.0.7">
+    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>dc5fd7a8dce8309e4add8fd4bd5d8718f221b15a</Sha>
     </Dependency>

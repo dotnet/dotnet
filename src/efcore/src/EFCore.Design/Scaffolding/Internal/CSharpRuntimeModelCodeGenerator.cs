@@ -2531,6 +2531,13 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
                     .Append(_code.Literal(true));
             }
 
+            if (!foreignKey.IsConstrained)
+            {
+                mainBuilder.AppendLine(",")
+                    .Append("constrained: ")
+                    .Append(_code.Literal(false));
+            }
+
             mainBuilder
                 .AppendLine(");")
                 .AppendLine()
@@ -2818,6 +2825,23 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
                 .AppendLine();
 
             SetNavigationBaseProperties(navigation, memberAccessReplacements, parameters);
+
+            if (parameters.ForNativeAot)
+            {
+                AddNamespace(navigation.TargetEntityType.ClrType, parameters.Namespaces);
+                AddNamespace(navigation.DeclaringEntityType.ClrType, parameters.Namespaces);
+                mainBuilder
+                    .Append(navigationVariable)
+                    .AppendLine(".SetManyToManyLoaderFactory(")
+                    .IncrementIndent()
+                    .Append("static (factory, navigation) => factory.Create<")
+                    .Append(_code.Reference(navigation.TargetEntityType.ClrType))
+                    .Append(", ")
+                    .Append(_code.Reference(navigation.DeclaringEntityType.ClrType))
+                    .AppendLine(">(navigation));")
+                    .DecrementIndent()
+                    .AppendLine();
+            }
 
             CreateAnnotations(navigation, _annotationCodeGenerator.Generate, parameters);
 

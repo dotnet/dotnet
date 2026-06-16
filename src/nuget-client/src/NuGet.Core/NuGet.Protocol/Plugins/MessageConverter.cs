@@ -164,7 +164,7 @@ namespace NuGet.Protocol.Plugins
                 }
             }
 
-            return new Message(requestId, messageType, messageMethod, payload);
+            return new Message(requestId!, messageType, messageMethod, payload);
         }
 
         public override void Write(Utf8JsonWriter writer, Message value, JsonSerializerOptions options)

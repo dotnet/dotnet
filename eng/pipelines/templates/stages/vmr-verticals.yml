@@ -159,7 +159,7 @@ stages:
           enableIBCOptimization: ${{ variables.ibcEnabled }}
           brandingType: ${{ variables.brandingType }}
           sourceIndexName: dotnet-dotnet-windows
-          sourceIndexIncludeRepos: 'winforms wpf windowsdesktop'
+          sourceIndexIncludeRepos: 'winforms wpf windowsdesktop aspnetcore'
 
     - ${{ if containsValue(parameters.verifications, 'unified-build-windows-x86') }}:
       - template: ../jobs/vmr-build.yml
