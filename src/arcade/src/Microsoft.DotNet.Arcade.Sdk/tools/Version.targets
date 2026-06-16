@@ -118,7 +118,12 @@
       -->
       <_NativeVersionFileContents>
 <![CDATA[
-static char sccsid[] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+#if defined(__GNUC__) && !defined(__clang__) && defined(TARGET_SUNOS) && defined(TARGET_AMD64)
+char sccsid[] __attribute__((used, weak)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");
+#else
+static char sccsid[] __attribute__((used, retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+#endif
  ]]>
       </_NativeVersionFileContents>
     </PropertyGroup>

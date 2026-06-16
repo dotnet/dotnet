@@ -125,7 +125,9 @@ Note: Packages that were **deleted** in SBA since the VMR commit may still appea
 unreferenced report (because the VMR still has them). This is fine — leave them in the
 deletion candidates since they've already been intentionally removed from SBA.
 
-### Step 4: Present Initial Deletion Candidates
+### Step 4: Classify Candidates by Age
+
+Apply a tiered grace-period strategy based on when each package was added to the repository.
 
 Compute the initial deletion candidates:
 
@@ -134,70 +136,89 @@ initialProtected = knownFalsePositives + notYetFlowedPackages (combined set)
 candidatesForDeletion = unreferencedPackages - initialProtected
 ```
 
-Display the results:
+**Determine the age of each candidate** by finding the commit that first introduced its
+directory:
 
-```
-=== Unreferenced Packages Report ===
-
-Protected (will NOT be deleted):
-  - textOnlyPackages/microsoft.build.notargets/3.7.0 (known false positive)
-  - textOnlyPackages/microsoft.build.traversal/3.4.0 (known false positive)
-  - externalPackages/opentelemetry.api/1.x.x (not yet flowed to VMR)
-
-Candidates for deletion (<N> packages):
-  - <type>/<name>/<version>
-  - <type>/<name>/<version>
-  ...
+```bash
+# Get the date when a package was first added
+git log --diff-filter=A --follow --format=%aI -- "src/<type>/src/<name>/<version>/" | tail -1
 ```
 
-**Ask the user:**
-> "Are there any packages in the deletion list that should be kept because their
-> uptake is still in progress? (i.e., the package was added to SBA but the consuming
-> repo hasn't yet merged the PR that depends on it)"
+If no commit is found (e.g., the package predates the repo's git history), treat the
+package as having an age exceeding the mature threshold.
 
-If the user does not identify any such packages, proceed directly to Step 6.
+Apply the following classification:
 
-### Step 5: Resolve Dependencies of Pending-Uptake Packages
+| Age | Classification | Action |
+|-----|---------------|--------|
+| < 14 days | Recent | Protected — skip entirely |
+| 14–60 days | Middle window | Delete, but @-mention author in PR |
+| > 60 days | Mature | Delete |
 
-If the user identifies packages whose uptake is still in progress, we need to find their
-dependencies so those aren't deleted either. Rather than building a full dependency graph
-of the entire repo upfront, only resolve dependencies for the specific packages that need
-protection.
+### Step 5: Identify Authors for Middle-Window Packages
 
-**For each pending-uptake package the user identifies:**
+For packages in the middle window (added between 14 and 60 days ago), identify the
+original author so they can be @-mentioned in the PR.
 
-1. Build the repo (or the specific package) to produce NuGet packages:
+**Identify the original author:**
+
+```bash
+# Get the commit that added the package
+git log --diff-filter=A --follow --format="%H %an <%ae>" -- "src/<type>/src/<name>/<version>/" | tail -1
+```
+
+Then find the associated PR to get the GitHub username:
+
+```bash
+# Find PR associated with the commit
+gh pr list --repo dotnet/source-build-assets --search "<commit_sha>" --state merged --json number,author --jq '.[0].author.login'
+```
+
+Record the author and addition date for each middle-window package — these will be
+included in the PR body (see Step 7).
+
+### Step 5a: Resolve Dependencies of Middle-Window Packages
+
+Middle-window packages may have transitive dependencies that are also in the deletion
+candidate list. Those dependencies should also be treated as middle-window (and their
+authors notified in the PR).
+
+For each middle-window package, resolve its dependencies:
+
+1. Build the package to produce a `.nupkg`:
    ```bash
    ./build.sh -sb --projects /full/path/to/<package>.csproj
    ```
 
-2. Inspect the resulting `.nupkg` in `artifacts/packages/` to extract its dependencies:
+2. Extract dependencies from the nupkg:
    ```bash
-   # List dependencies from the nuspec inside the nupkg
    unzip -p artifacts/packages/Release/Shipping/<PackageId>.<Version>.nupkg "*.nuspec" | grep -A1 "<dependency "
    ```
 
-3. Cross-reference those dependencies against the deletion candidates. Any dependency that
-   appears in the deletion list should also be protected.
+3. Any dependency that appears in the mature deletion list should be reclassified as
+   middle-window (attributed to the same author). These will appear in the Action
+   Required table in the PR alongside the package that depends on them.
+   Repeat transitively.
 
-4. Repeat transitively: if a newly-protected dependency itself has dependencies in the
-   deletion list, protect those too.
-
-After resolving all transitive dependencies, recompute and **re-present** the final state:
+Display the final classification:
 
 ```
-=== Updated Deletion Plan ===
+=== Cleanup Report ===
 
-Additionally protected (pending uptake + dependencies):
-  - <type>/<package> (uptake in progress)
-  - <type>/<dep-package> (dependency of <package>)
+Protected (will NOT be deleted):
+  - textOnlyPackages/microsoft.build.notargets/3.7.0 (known false positive)
+  - referencePackages/some.new.package/1.0.0 (recent: added 5 days ago)
 
-Final candidates for deletion (<N> packages):
-  - <type>/<name>/<version>
-  - ...
+Deleting (<N> packages):
+  Mature:
+    - <type>/<name>/<version> (age: 95 days)
+  Middle window (authors will be notified in PR):
+    - <type>/<name>/<version> (age: 25 days, author: @username)
+  Dependencies of middle-window packages:
+    - <type>/<name>/<version> (dependency of <parent-package>, <parent-package-2>)
 ```
 
-**Ask the user to confirm** the final deletion list before proceeding.
+Proceed to Step 6 with both **mature** and **middle-window** packages.
 
 ### Step 6: Delete Packages
 
@@ -238,8 +259,10 @@ Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
 ```
 
 Create a PR **against the upstream repo** (`dotnet/source-build-assets`), not a personal fork.
-The PR body should only list the deleted packages — do not include protected/excluded packages
-as that creates noise and raises questions for reviewers.
+
+If there are middle-window packages, include an "Action Required" section in the PR body
+that @-mentions the original authors. This gives them visibility and a chance to revert
+specific deletions before the PR merges.
 
 ```bash
 gh pr create \
@@ -249,9 +272,25 @@ gh pr create \
 
 <list each deleted package as type/name/version, one per line>
 
+## Action Required
+
+The following packages were added recently but are not yet referenced in the VMR.
+If uptake is still in progress, ask Copilot to revert these package deletions from
+this PR.
+
+| Package | Added | Author |
+|---------|-------|--------|
+| \`<type>/<name>/<version>\` | <N> days ago | @<author> |
+
+Dependencies of the above packages (also being removed):
+- \`<type>/<name>/<version>\` (dependency of \`<parent-package>\`, \`<parent-package-2>\`)
+
 ---
 Generated by the [cleanup-unreferenced-packages](.github/skills/cleanup-unreferenced-packages/SKILL.md) skill."
 ```
+
+Omit the "Action Required" section entirely if there are no middle-window packages.
+Omit the "Dependencies" list if there are no reclassified transitive dependencies.
 
 After the PR is created, trigger a full VMR source build to validate the removals:
 
@@ -266,10 +305,9 @@ gh pr comment <pr_number> --repo dotnet/source-build-assets --body "/azp run sou
   reporter doesn't detect SDK-style usage.
 - When in doubt, err on the side of keeping a package. It's much easier to delete later
   than to re-add and coordinate flows.
-- Packages with pending uptake should **not** be stored in the config file. They should be
-  identified fresh by the user each time the skill runs. The expectation is that pending
-  uptake is short-lived — either the consuming repo merges within the release cycle or the
-  packages should be cleaned up.
+- Middle-window author notifications happen directly in the PR body via @-mentions.
+  If a package's uptake is still in progress, the author can ask Copilot to revert
+  those specific deletions from the PR.
 
 ## Config File Schema
 

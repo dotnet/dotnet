@@ -72,6 +72,10 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(string.Join(", ", "deepequal", "deep", "equal"), result.Tags);
                 Assert.Equal("DeepEqual", result.Title);
                 Assert.True(result.IsListed);
+
+                var vulnerability = Assert.Single(result.Vulnerabilities);
+                Assert.Equal(2, vulnerability.Severity);
+                Assert.Equal("https://contoso.test/advisory/1", vulnerability.AdvisoryUrl.OriginalString);
             }
         }
 

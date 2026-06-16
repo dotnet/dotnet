@@ -570,8 +570,15 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
+          # Always use the VMR root's SetupNugetSources.ps1 rather than each inner repo's copy.
+          # The inner repo scripts dot-source that repo's eng/common/tools.ps1, which in turn imports
+          # the repo's configure-toolset.ps1. The root script only operates
+          # on the NuGet.config path passed to it, so it works for every repo.
+          # It's also convenient to use that so that changes don't need to be replicated on every
+          # inner repo's eng/common/ layout.
+          $setupScript = Join-Path "$(sourcesPath)" "eng/common/SetupNugetSources.ps1"
+
           function Setup-NuGetFeeds($repoDir, $description) {
-            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
             # Search for nuget.config using "Filter" to allow for case-insensitive matching.
             $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
@@ -676,7 +683,7 @@ jobs:
         displayName: Install dependencies
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
-          set -ex
+          set -e
 
           customPrepArgs="-c ${{ parameters.configuration }}"
           prepSdk=true
@@ -767,21 +774,22 @@ jobs:
              customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
              additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
           fi
-          
-          echo "Prep arguments: $customPrepArgs"
-          echo "Additional build arguments: $additionalBuildArgs"
 
           if [[ -n "$additionalBuildArgs" ]]; then
+            echo "Additional build arguments: $additionalBuildArgs"
             echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
           fi
 
+          echo ""
+          echo "=== Prep the Build ==="
+          echo "Running ./prep-source-build.sh $customPrepArgs"
           ./prep-source-build.sh $customPrepArgs
         displayName: Prep the Build
         workingDirectory: $(sourcesPath)
     - ${{ if ne(parameters.skipBuild, 'true') }}:
 
       - script: |
-          set -ex
+          set -e
           echo "=== System info: disk ==="
           df -h
 
@@ -793,7 +801,6 @@ jobs:
             cat /proc/meminfo
           fi
 
-          echo "=== Build ==="
           customEnvVars=""
           customPreBuildArgs=""
           customBuildArgs="$(baseArguments)"
@@ -877,6 +884,9 @@ jobs:
             echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
           fi
 
+          echo ""
+          echo "=== Build ==="
+          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
@@ -906,7 +916,7 @@ jobs:
           displayName: Copy Test NuGet Config for Smoke Tests
 
       - script: |
-          set -ex
+          set -e
 
           customPreBuildArgs=''
           customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
@@ -940,6 +950,9 @@ jobs:
             echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
           fi
 
+          echo ""
+          echo "=== Run Tests ==="
+          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests

@@ -45,9 +45,29 @@ namespace Microsoft.SignCheck.Verification
                         reader = new TarReader(gzipStream);
                     }
 
-                    TarEntry entry;
-                    while ((entry = reader.TryGetNextTarEntry()) != null)
+                    while (true)
                     {
+                        TarEntry entry;
+                        try
+                        {
+                            entry = reader.TryGetNextTarEntry();
+                        }
+                        catch (InvalidDataException) when (FileExtension == ".gz")
+                        {
+                            // A bare .gz file is not necessarily a tarball — it can also be a
+                            // single gzipped payload (e.g. HTTP-precompressed static web assets
+                            // like blazor.server.js.gz). In that case TarReader throws when it
+                            // tries to parse the decompressed bytes as tar headers. Treat as
+                            // "no nested entries" instead of failing; the file itself still gets
+                            // its detached PGP signature checked by the base class.
+                            yield break;
+                        }
+
+                        if (entry == null)
+                        {
+                            yield break;
+                        }
+
                         // Skip directories
                         if (!entry.Name.EndsWith("/"))
                         {

@@ -1,8 +1,8 @@
-# MessagePack for C# (.NET, .NET Core, Unity, Xamarin)
+# MessagePack for C# (.NET Framework, .NET 6, Unity, Xamarin)
 
 [![NuGet](https://img.shields.io/nuget/v/MessagePack.svg)](https://www.nuget.org/packages/messagepack)
 [![NuGet](https://img.shields.io/nuget/vpre/MessagePack.svg)](https://www.nuget.org/packages/messagepack)
-[![Releases](https://img.shields.io/github/release/neuecc/MessagePack-CSharp.svg)][Releases]
+[![Releases](https://img.shields.io/github/release/neuecc/MessagePack-CSharp.svg)](https://github.com/MessagePack-CSharp/MessagePack-CSharp/releases)
 
 [![Join the chat at https://gitter.im/MessagePack-CSharp/Lobby](https://badges.gitter.im/MessagePack-CSharp/Lobby.svg)](https://gitter.im/MessagePack-CSharp/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://dev.azure.com/ils0086/MessagePack-CSharp/_apis/build/status/MessagePack-CSharp-CI?branchName=master)](https://dev.azure.com/ils0086/MessagePack-CSharp/_build/latest?definitionId=2&branchName=master)
@@ -63,12 +63,13 @@ MessagePack has a compact binary size and a full set of general purpose expressi
     - [StreamJsonRpc](#streamjsonrpc)
 - [How to build](#how-to-build)
 - [Author Info](#author-info)
+- [Code of Conduct & .NET Foundation notice](#coc)
 
 ## Installation
 
 This library is distributed via NuGet. Special [Unity support](#unity) is available, too.
 
-We target .NET Standard 2.0 with special optimizations for .NET Core 2.1+, making it compatible with most reasonably recent .NET runtimes such as Core 2.0 and later, Framework 4.6.1 and later, Mono 5.4 and later and Unity 2018.3 and later.
+We target .NET Standard 2.0 with special optimizations for .NET 6+, making it compatible with most reasonably recent .NET runtimes such as Core 2.0 and later, Framework 4.6.1 and later, Mono 5.4 and later and Unity 2018.3 and later.
 The library code is pure C# (with Just-In-Time IL code generation on some platforms).
 
 ### NuGet packages
@@ -95,7 +96,7 @@ Install-Package MessagePack.AspNetCoreMvcFormatter
 
 ### Unity
 
-For Unity projects, the [releases][Releases] page provides downloadable `.unitypackage` files. When using in Unity IL2CPP or Xamarin AOT environments, please carefully read the [pre-code generation section](#aot).
+For Unity projects, the [Releases](https://github.com/MessagePack-CSharp/MessagePack-CSharp/releases) page provides downloadable `.unitypackage` files. When using in Unity IL2CPP or Xamarin AOT environments, please carefully read the [pre-code generation section](#aot).
 
 ### Migration notes from v1.x
 
@@ -1531,7 +1532,7 @@ Within the *reserved* ranges, this library defines or implements extensions that
 
 Unity lowest supported version is `2018.3`, API Compatibility Level supports both `.NET 4.x` and `.NET Standard 2.0`.
 
-You can install the `unitypackage` from the [releases][Releases] page.
+You can install the `unitypackage` from the [Releases](https://github.com/MessagePack-CSharp/MessagePack-CSharp/releases) page.
 If your build targets .NET Framework 4.x and runs on mono, you can use it as is.
 But if your build targets IL2CPP, you can not use `Dynamic***Resolver`, so it is required to use pre-code generation. Please see [pre-code generation section](#aot).
 
@@ -1566,7 +1567,7 @@ The `MessagePack.UnityShims` NuGet package is for .NET server-side serialization
 
 If you want to share a class between Unity and a server, you can use `SharedProject` or `Reference as Link` or a glob reference (with `LinkBase`), etc. Anyway, you need to share at source-code level. This is a sample project structure using a glob reference (recommended).
 
-- ServerProject(.NET 4.6/.NET Core/.NET Standard)
+- ServerProject(.NET Framework 4.6/.NET/.NET Standard)
   - \[`<Compile Include="..\UnityProject\Assets\Scripts\Shared\**\*.cs" LinkBase="Shared" />`\]
   - \[MessagePack\]
   - \[MessagePack.UnityShims\]
@@ -1584,7 +1585,7 @@ For all other Unity targets, AOT is required.
 
 If you want to avoid the upfront dynamic generation cost or you need to run on Xamarin or Unity, you need AOT code generation. `mpc` (MessagePackCompiler) is the code generator of MessagePack for C#. mpc uses [Roslyn](https://github.com/dotnet/roslyn) to analyze source code.
 
-First of all, mpc requires [.NET Core 3 Runtime](https://dotnet.microsoft.com/download). The easiest way to acquire and run mpc is as a dotnet tool.
+First of all, mpc requires [.NET 6+ Runtime](https://dotnet.microsoft.com/download). The easiest way to acquire and run mpc is as a dotnet tool.
 
 ```
 dotnet tool install --global MessagePack.Generator
@@ -1603,11 +1604,7 @@ Once you have the tool installed, simply invoke using `dotnet mpc` within your r
 
 ```
 dotnet mpc --help
-```
 
-Alternatively, you can download mpc from the [releases][Releases] page, that includes platform native binaries (that don't require a separate dotnet runtime).
-
-```
 Usage: mpc [options...]
 
 Options:
@@ -1677,7 +1674,7 @@ In Unity, you can use MessagePack CodeGen windows at `Windows -> MessagePack -> 
 
 ![](https://user-images.githubusercontent.com/46207/69414381-f14da400-0d55-11ea-9f8d-9af448d347dc.png)
 
-Install the .NET Core runtime, install mpc (as a .NET Core Tool as described above), and execute `dotnet mpc`. Currently this tool is experimental so please tell me your opinion.
+Install the .NET runtime, install mpc (as a .NET Tool as described above), and execute `dotnet mpc`. Currently this tool is experimental so please tell me your opinion.
 
 In Xamarin, you can install the [the `MessagePack.MSBuild.Tasks` NuGet package](doc/msbuildtask.md) into your projects to pre-compile fast serialization code and run in environments where JIT compilation is not allowed.
 
@@ -1697,16 +1694,11 @@ The StreamJsonRpc library is based on [JSON-RPC](https://www.jsonrpc.org/) and i
 
 See our [contributor's guide](CONTRIBUTING.md).
 
-## Author Info
+## <a name="coc"></a>Code of Conduct
 
-Yoshifumi Kawai (a.k.a. neuecc) is a software developer in Japan.
-He is the Director/CTO at Grani, Inc.
-Grani is a mobile game developer company in Japan and well known for using C#.
-He is awarding Microsoft MVP for Visual C# since 2011.
-He is known as the creator of [UniRx](https://github.com/neuecc/UniRx/) (Reactive Extensions for Unity)
+This project has adopted the code of conduct defined by the Contributor Covenant to clarify expected behavior in our community.
+For more information see the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/code-of-conduct).
 
-* Blog: [https://medium.com/@neuecc](https://medium.com/@neuecc) (English)
-* Blog: [http://neue.cc/](http://neue.cc/) (Japanese)
-* Twitter: [https://twitter.com/neuecc](https://twitter.com/neuecc) (Japanese)
+## .NET Foundation
 
-[Releases]: https://github.com/neuecc/MessagePack-CSharp/releases
+This project is supported by the [.NET Foundation](https://dotnetfoundation.org).

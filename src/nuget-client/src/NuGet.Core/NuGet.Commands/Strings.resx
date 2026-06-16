@@ -610,6 +610,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</value>
     <comment>{0} - packages lock file path</comment>
   </data>
+  <data name="Warning_RestoreLockedModeAndForceEvaluate" xml:space="preserve">
+    <value>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</value>
+    <comment>Do not localize RestoreLockedMode and RestoreForceEvaluate</comment>
+  </data>
   <data name="Log_WritingPackagesLockFile" xml:space="preserve">
     <value>Writing packages lock file at disk. Path: {0}</value>
     <comment>{0} - Path to packages lock file</comment>

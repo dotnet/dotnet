@@ -13,6 +13,11 @@
     <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
     <UseSystemResourceKeys>true</UseSystemResourceKeys>
     <XmlResolverIsNetworkingEnabledByDefault>false</XmlResolverIsNetworkingEnabledByDefault>
+    <!--
+      Enable control flow guard
+      https://github.com/dotnet/docs/blob/main/docs/core/deploying/native-aot/security.md#control-flow-guard
+    -->
+    <ControlFlowGuard>Guard</ControlFlowGuard>
     <UseCommonLocateNativeCompilerTarget Condition="'$(OS)' != 'Windows_NT'">true</UseCommonLocateNativeCompilerTarget>
   </PropertyGroup>
 

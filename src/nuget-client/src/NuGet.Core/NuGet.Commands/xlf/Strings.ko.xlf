@@ -1525,6 +1525,11 @@ NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhe
         <target state="translated">프로젝트 종속성 '{0}'이(가) 버전을 지정하지 않습니다. 일관된 복원 결과를 보장하기 위해 종속성에 대한 버전을 포함합니다.</target>
         <note>0 - package id</note>
       </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
+      </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
         <target state="translated">종속성 제약 조건 밖의 패키지 버전이 검색되었습니다. {0}에는 {1}이(가) 필요하지만 버전 {2}이(가) 확인되었습니다.</target>

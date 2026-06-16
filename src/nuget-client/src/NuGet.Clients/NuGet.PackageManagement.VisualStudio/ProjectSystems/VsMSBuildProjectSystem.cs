@@ -522,7 +522,7 @@ namespace NuGet.PackageManagement.VisualStudio
                         NuGetProjectContext.Log(level,
                             Strings.FailedToUpdateBindingRedirects,
                             fileName,
-                            ex.Message);
+                            ExceptionUtilities.DisplayMessage(ex));
 
                         if (behavior.FailOperations)
                         {

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -21,7 +19,6 @@ namespace NuGet.Protocol.Plugins
         [JsonRequired]
         public MessageResponseCode ResponseCode { get; }
 
-#nullable enable
         /// <summary>
         /// Gets the service index (index.json) for the package source repository as a raw JSON string.
         /// </summary>
@@ -30,7 +27,6 @@ namespace NuGet.Protocol.Plugins
         [System.Text.Json.Serialization.JsonPropertyName("ServiceIndex")]
         [System.Text.Json.Serialization.JsonConverter(typeof(RawJsonStringConverter))]
         public string? ServiceIndexJson { get; }
-#nullable disable
 
         /// <summary>
         /// Gets the service index (index.json) for the package source repository.
@@ -38,7 +34,7 @@ namespace NuGet.Protocol.Plugins
         [Obsolete("Use ServiceIndexJson instead. This property always returns null.")]
         [JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public JObject ServiceIndex => null;
+        public JObject? ServiceIndex => null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetServiceIndexResponse" /> class.
@@ -50,7 +46,6 @@ namespace NuGet.Protocol.Plugins
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseCode" />
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="serviceIndexJson" />
         /// is <see langword="null" />.</exception>
-#nullable enable
         [JsonConstructor]
         [System.Text.Json.Serialization.JsonConstructor]
         public GetServiceIndexResponse(MessageResponseCode responseCode, string? serviceIndexJson)
@@ -73,7 +68,6 @@ namespace NuGet.Protocol.Plugins
             ResponseCode = responseCode;
             ServiceIndexJson = serviceIndexJson;
         }
-#nullable disable
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GetServiceIndexResponse" /> class.
@@ -81,7 +75,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="responseCode">The response code.</param>
         /// <param name="serviceIndex">The service index (index.json) for the package source repository.</param>
         [Obsolete("Use GetServiceIndexResponse(MessageResponseCode, string) instead.")]
-        public GetServiceIndexResponse(MessageResponseCode responseCode, JObject serviceIndex)
+        public GetServiceIndexResponse(MessageResponseCode responseCode, JObject? serviceIndex)
             : this(responseCode, serviceIndex?.ToString(Formatting.None))
         {
         }
