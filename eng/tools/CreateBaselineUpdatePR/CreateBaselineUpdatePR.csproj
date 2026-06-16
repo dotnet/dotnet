@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Suppress CS8002 because DarcLib assemblies are not signed -->
+    <NoWarn>$(NoWarn);CS8002</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
