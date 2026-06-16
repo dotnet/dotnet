@@ -10,14 +10,15 @@
       '$(TargetOS)' != 'solaris'
     ">true</_NativeAotSupportedOS>
 
-    <!-- Allow architectures via RID suffix match -->
+    <!-- Reject unsupported architectures via RID suffix match -->
     <_NativeAotSupportedArch Condition="
-      '$(TargetArchitecture)' == 'x64' or
-      '$(TargetArchitecture)' == 'arm64' or
-      '$(TargetArchitecture)' == 'arm' or
-      '$(TargetArchitecture)' == 'loongarch64' or
-      '$(TargetArchitecture)' == 'riscv64' or
-      ('$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x86')
+      '$(TargetArchitecture)' != 'armel' and
+      '$(TargetArchitecture)' != 'armv6' and
+      '$(TargetArchitecture)' != 'mips64' and
+      '$(TargetArchitecture)' != 'ppc64le' and
+      '$(TargetArchitecture)' != 's390x' and
+      '$(TargetArchitecture)' != 'wasm' and
+      ('$(TargetArchitecture)' != 'x86' or '$(TargetOS)' == 'windows')
     ">true</_NativeAotSupportedArch>
 
     <NativeAotSupported Condition="
