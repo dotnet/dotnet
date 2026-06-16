@@ -17,7 +17,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.6.26309.107</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.6.26309.107</MicrosoftNETCoreILAsmPackageVersion>
     <MicrosoftNETCoreILDAsmPackageVersion>11.0.0-preview.6.26309.107</MicrosoftNETCoreILDAsmPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>11.0.0-preview.6.26309.107</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>11.0.0-preview.6.26309.107</MicrosoftWin32SystemEventsPackageVersion>
     <runtimewinx64MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.6.26309.107</runtimewinx64MicrosoftNETCoreILAsmPackageVersion>
     <runtimewinx86MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.6.26309.107</runtimewinx86MicrosoftNETCoreILAsmPackageVersion>
@@ -47,7 +46,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCoreILAsmVersion>$(MicrosoftNETCoreILAsmPackageVersion)</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>$(MicrosoftNETCoreILDAsmPackageVersion)</MicrosoftNETCoreILDAsmVersion>
-    <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
     <MicrosoftWin32SystemEventsVersion>$(MicrosoftWin32SystemEventsPackageVersion)</MicrosoftWin32SystemEventsVersion>
     <runtimewinx64MicrosoftNETCoreILAsmVersion>$(runtimewinx64MicrosoftNETCoreILAsmPackageVersion)</runtimewinx64MicrosoftNETCoreILAsmVersion>
     <runtimewinx86MicrosoftNETCoreILAsmVersion>$(runtimewinx86MicrosoftNETCoreILAsmPackageVersion)</runtimewinx86MicrosoftNETCoreILAsmVersion>

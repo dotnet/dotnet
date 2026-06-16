@@ -8,10 +8,6 @@ Note: if the Uri is a new place, you will need to add a subscription from that p
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="winforms" Sha="208ef2315076662693d3fcac7a77c855e9496252" BarId="318061" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="11.0.0-preview.6.26309.107">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>208ef2315076662693d3fcac7a77c855e9496252</Sha>
-    </Dependency>
     <Dependency Name="System.Resources.Extensions" Version="11.0.0-preview.6.26309.107">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>208ef2315076662693d3fcac7a77c855e9496252</Sha>
