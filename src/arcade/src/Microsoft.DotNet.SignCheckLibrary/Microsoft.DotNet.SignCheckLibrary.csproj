@@ -28,11 +28,6 @@
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.Cab.dll" />
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.dll" />
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.Package.dll" />
-    <Reference Include="$(WixInstallPath)\wix.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="$(WixInstallPath)\winterop.dll" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

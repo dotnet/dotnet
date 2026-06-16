@@ -51,6 +51,7 @@ namespace NuGet.Protocol
 
         [JsonProperty(PropertyName = JsonProperties.DownloadCount)]
         [JsonPropertyName(JsonProperties.DownloadCount)]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         [JsonInclude]
         public long? DownloadCount { get; internal set; }
 
@@ -201,6 +202,7 @@ namespace NuGet.Protocol
 
         [JsonProperty(PropertyName = JsonProperties.PrefixReserved)]
         [JsonPropertyName(JsonProperties.PrefixReserved)]
+        [System.Text.Json.Serialization.JsonConverter(typeof(SafeBoolStjConverter))]
         [JsonInclude]
         public bool PrefixReserved { get; internal set; }
 
@@ -302,6 +304,7 @@ namespace NuGet.Protocol
 
         [JsonProperty(PropertyName = JsonProperties.Listed)]
         [JsonPropertyName(JsonProperties.Listed)]
+        [System.Text.Json.Serialization.JsonConverter(typeof(SafeBoolStjConverter))]
         [JsonInclude]
         public bool IsListed { get; internal set; } = true;
 
