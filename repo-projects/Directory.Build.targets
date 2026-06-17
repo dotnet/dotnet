@@ -31,7 +31,7 @@
 
     <!-- Branding -->
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'repodefault' or '$(RepoDotNetFinalVersionKind)' == ''"></RepoDotNetFinalVersionKindArg>
-    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>
+    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=''</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'preview'">/p:DotNetFinalVersionKind=prerelease</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'release'">/p:DotNetFinalVersionKind=release</RepoDotNetFinalVersionKindArg>
     <CommonArgs Condition="'$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
