@@ -58,4 +58,20 @@
     <Copyright>$(CopyrightMicrosoft)</Copyright>
   </PropertyGroup>
 
+  <!--
+    In source-build, the SDK ships native binaries with embedded debug symbols (no separate
+    symbol files and no .gnu_debuglink); this is enforced for every native ELF in the SDK by the
+    source-build native-symbol validation. Native AOT defaults StripSymbols to true on non-Windows,
+    which strips its output into a separate file and adds a .gnu_debuglink section. Disable stripping
+    for any project that publishes with Native AOT so the produced binary retains embedded DWARF.
+    This is the AOT analog of the KeepNativeSymbols=true that source-build uses for native
+    (CMake-built) binaries. Scoped to PublishAot projects so non-AOT builds are unaffected, and only
+    applies in source-build (DotNetBuildSourceOnly); Microsoft builds still strip and ship separate
+    symbols. Imported via Sdk.targets (after the project sets PublishAot) so the condition is known.
+    See https://github.com/dotnet/source-build/issues/5567.
+  -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(PublishAot)' == 'true'">
+    <StripSymbols>false</StripSymbols>
+  </PropertyGroup>
+
 </Project>

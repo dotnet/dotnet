@@ -9,6 +9,15 @@
 
     <_originalTargetOS>$(RuntimeIdentifier.SubString(0, $(RuntimeIdentifier.LastIndexOf('-'))))</_originalTargetOS>
     <_originalTargetOS Condition="'$(_targetsNonPortableSdkRid)' == 'true'">$(NETCoreSdkPortableRuntimeIdentifier.SubString(0, $(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))))</_originalTargetOS>
+    <!--
+      In a source-build leg the bootstrap SDK may be portable (so $(NETCoreSdkRuntimeIdentifier) is the
+      portable RID), yet we build for the non-portable target RID ($(TargetRid), e.g. centos.10-x64).
+      The SDK already resolves the host ILCompiler pack and the target NativeAOT runtime pack correctly
+      for that case, but the target OS derived from the RID (e.g. 'centos') is not a valid ILC target OS.
+      Map it to the portable base OS (e.g. 'linux'), mirroring the non-portable SDK RID handling above,
+      without altering the host/target pack names (those must match what the SDK resolved).
+    -->
+    <_originalTargetOS Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(RuntimeIdentifier)' == '$(TargetRid)' and '$(RuntimeIdentifier)' != '$(NETCoreSdkPortableRuntimeIdentifier)'">$(NETCoreSdkPortableRuntimeIdentifier.SubString(0, $(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))))</_originalTargetOS>
     <_originalTargetOS Condition="$(_originalTargetOS.Contains('.'))">$(_originalTargetOS.SubString(0, $(_originalTargetOS.IndexOf('.'))))</_originalTargetOS>
     <_originalTargetOS Condition="$(_originalTargetOS.StartsWith('win'))">win</_originalTargetOS>
 

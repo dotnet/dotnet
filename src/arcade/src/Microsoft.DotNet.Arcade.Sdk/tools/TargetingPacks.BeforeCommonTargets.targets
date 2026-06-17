@@ -100,15 +100,28 @@
 
   <!--
     When .NET gets built from source, make the SDK aware there are bootstrap packages
-    for Microsoft.NETCore.App.Runtime.<rid> and Microsoft.NETCore.App.Crossgen2.<rid>.
+    for Microsoft.NETCore.App.Runtime.<rid> (including the NativeAOT-labeled runtime pack),
+    Microsoft.NETCore.App.Crossgen2.<rid>, and the ILCompiler packs
+    (runtime.<rid>.Microsoft.DotNet.ILCompiler / Microsoft.NETCore.App.Runtime.NativeAOT.<rid>).
+    The on-disk previous SDK does not list the build's non-portable RID in these RID sets, so
+    append it in-memory here. This allows publishing for the non-portable RID (e.g. self-contained,
+    ReadyToRun, and AOT) to validate and restore the matching source-built packs.
+
+    Use $(TargetRid) (the build's non-portable RID, e.g. centos.10-x64), not
+    $(NETCoreSdkRuntimeIdentifier). In a stage 1 source-build leg the previous SDK is the Microsoft
+    portable SDK, whose $(NETCoreSdkRuntimeIdentifier) is the portable RID (e.g. linux-x64) and would
+    not unblock publishing for the build's non-portable RID.
   -->
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
-      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</RuntimePackRuntimeIdentifiers>
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownRuntimePack>
     <KnownCrossgen2Pack Update="@(KnownCrossgen2Pack->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2'))">
-      <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier)</Crossgen2RuntimeIdentifiers>
+      <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(TargetRid)</Crossgen2RuntimeIdentifiers>
     </KnownCrossgen2Pack>
+    <KnownILCompilerPack Update="@(KnownILCompilerPack->WithMetadataValue('Identity', 'Microsoft.DotNet.ILCompiler'))">
+      <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(TargetRid)</ILCompilerRuntimeIdentifiers>
+    </KnownILCompilerPack>
   </ItemGroup>
 
   <!--
