@@ -25,11 +25,6 @@
     <!-- MSBuild Task DLLs need to be versioned with every build -->
     <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
 
-    <!-- PackageReference NETStandard.Library will not be pruned. By design. -->
-    <NoWarn>$(NoWarn);NU1510</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <OutputPath>$(BaseOutputPath)</OutputPath>
     <DefineConstants>$(DefineConstants);EXTENSIONS</DefineConstants>
     <IsPackable>true</IsPackable>
@@ -46,9 +41,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="Runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" />
-    <PackageReference Include="NETStandard.Library.NETFramework" ExcludeAssets="All" NoWarn="NU1701" />
-    <!-- Lift dependency of NETStandard.Library.NETFramework to version produced in SBA. -->
-    <PackageReference Include="NETStandard.Library" VersionOverride="$(NETStandardLibraryVersion)" ExcludeAssets="All" />
+    <PackageDownload Include="NETStandard.Library.NETFramework" Version="[$(NETStandardLibraryNETFrameworkVersion)]" />
   </ItemGroup>
 
   <ItemGroup>
