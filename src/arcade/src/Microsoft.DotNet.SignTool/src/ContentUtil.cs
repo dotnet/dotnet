@@ -65,7 +65,7 @@ namespace Microsoft.DotNet.SignTool
         {
             try
             {
-                using (var stream = new FileStream(filePath, FileMode.Open))
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 using (var peReader = new PEReader(stream))
                 {
                     return peReader.PEHeaders.CorHeader != null;
@@ -81,7 +81,7 @@ namespace Microsoft.DotNet.SignTool
         {
             const int CROSSGEN_FLAG = 4;
 
-            using (var stream = new FileStream(filePath, FileMode.Open))
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (var peReader = new PEReader(stream))
             {
                 return ((int)peReader.PEHeaders.CorHeader.Flags & CROSSGEN_FLAG) == CROSSGEN_FLAG;
@@ -115,7 +115,7 @@ namespace Microsoft.DotNet.SignTool
         {
             try
             {
-                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     if (stream.Length < 4)
                         return ExecutableType.None;
