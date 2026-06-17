@@ -22,6 +22,9 @@
     <!-- Ignore checking for OS API compatibility as we aren't targeting just the Windows platform  -->
     <NoWarn>$(NoWarn);CA1416</NoWarn>
 
+    <!-- PackageReference NETStandard.Library will not be pruned. By design. -->
+    <NoWarn>$(NoWarn);NU1510</NoWarn>
+
     <!--
       Mark as Native AOT compatible. This will enable relevant analyzers.
       https://learn.microsoft.com/dotnet/core/deploying/native-aot/#aot-compatibility-analyzers

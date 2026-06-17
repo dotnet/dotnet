@@ -10,13 +10,12 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
+    <TargetFrameworks>$(SdkTargetFramework);net472</TargetFrameworks>
+
     <Description>The MSBuild targets and tasks which extend MSBuild's common targets.</Description>
     <OutputType>Library</OutputType>
     <RootNamespace>Microsoft.NET.Build.Tasks</RootNamespace>
-    <TargetFrameworks>$(SdkTargetFramework);net472</TargetFrameworks>
-  </PropertyGroup>
 
-  <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <EnableDefaultItems>false</EnableDefaultItems>
     <GenerateDependencyFile>false</GenerateDependencyFile>
@@ -25,6 +24,9 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <!-- MSBuild Task DLLs need to be versioned with every build -->
     <AutoGenerateAssemblyVersion>true</AutoGenerateAssemblyVersion>
+
+    <!-- PackageReference NETStandard.Library will not be pruned. By design. -->
+    <NoWarn>$(NoWarn);NU1510</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
