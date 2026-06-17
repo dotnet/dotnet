@@ -54,7 +54,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [InlineData("{\"LogLevel\":\"Warning\",\"Message\":3}", "3")]
         public void JsonDeserialization_ReturnsCorrectObject(string json, string message)
         {
-            var request = JsonSerializationUtilities.Deserialize<LogRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<LogRequest>(json)!;
 
             Assert.Equal(LogLevel.Warning, request.LogLevel);
             Assert.Equal(message, request.Message);

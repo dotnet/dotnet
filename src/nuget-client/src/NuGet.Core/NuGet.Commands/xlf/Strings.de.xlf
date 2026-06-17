@@ -1527,7 +1527,7 @@ NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter https://ak
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate überschreibt RestoreLockedMode. Die Paketsperrdatei wird erneut ausgewertet und neu generiert, und der gesperrte Modus wird ignoriert.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

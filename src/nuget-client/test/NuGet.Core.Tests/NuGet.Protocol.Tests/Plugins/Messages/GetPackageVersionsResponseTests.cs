@@ -59,7 +59,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObjectForSuccess()
         {
             var json = "{\"ResponseCode\":\"Success\",\"Versions\":[\"a\"]}";
-            var response = JsonSerializationUtilities.Deserialize<GetPackageVersionsResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetPackageVersionsResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.Success, response.ResponseCode);
             Assert.Equal(new[] { "a" }, response.Versions);
@@ -69,7 +69,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObjectForNotFound()
         {
             var json = "{\"ResponseCode\":\"NotFound\"}";
-            var response = JsonSerializationUtilities.Deserialize<GetPackageVersionsResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetPackageVersionsResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.NotFound, response.ResponseCode);
             Assert.Null(response.Versions);

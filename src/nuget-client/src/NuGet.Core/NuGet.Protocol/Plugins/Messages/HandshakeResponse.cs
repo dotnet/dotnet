@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Newtonsoft.Json;
 using NuGet.Versioning;
@@ -25,6 +26,13 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         [System.Text.Json.Serialization.JsonConverter(typeof(StjSemanticVersionConverter))]
         public SemanticVersion? ProtocolVersion { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the handshake succeeded. When <see langword="true" />,
+        /// <see cref="ProtocolVersion" /> is guaranteed to be non-<see langword="null" />.
+        /// </summary>
+        [MemberNotNullWhen(true, nameof(ProtocolVersion))]
+        internal bool IsSuccess => ResponseCode == MessageResponseCode.Success;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HandshakeResponse" /> class.
