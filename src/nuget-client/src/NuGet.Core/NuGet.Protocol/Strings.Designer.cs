@@ -934,6 +934,24 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The source does not support filtering search results by package type..
+        /// </summary>
+        internal static string Protocol_PackageTypeFilterNotSupported {
+            get {
+                return ResourceManager.GetString("Protocol_PackageTypeFilterNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source supports filtering by only one package type at a time..
+        /// </summary>
+        internal static string Protocol_PackageTypeFilterMultipleNotSupported {
+            get {
+                return ResourceManager.GetString("Protocol_PackageTypeFilterMultipleNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The path &apos;{0}&apos; for the selected source could not be resolved..
         /// </summary>
         internal static string Protocol_Search_LocalSourceNotFound {

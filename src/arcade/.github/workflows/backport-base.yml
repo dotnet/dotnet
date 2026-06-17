@@ -53,7 +53,7 @@ jobs:
       pull-requests: write
     steps:
     - name: Extract backport target branch
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       id: target-branch-extractor
       with:
         result-encoding: string
@@ -67,7 +67,7 @@ jobs:
 
           return target_branch[1];
     - name: Unlock comments if PR is locked
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       if: ${{ github.event.issue.locked == true }}
       with:
         script: |
@@ -78,7 +78,7 @@ jobs:
             repo: context.repo.repo,
           });
     - name: Post backport started comment to pull request
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       with:
         script: |
           const target_branch = '${{ steps.target-branch-extractor.outputs.result }}';
@@ -91,11 +91,11 @@ jobs:
             body: backport_start_body
           });
     - name: Checkout repo
-      uses: actions/checkout@v6
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       with:
         fetch-depth: 0
     - name: Run backport
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       env:
         GH_TOKEN: ${{ github.token }}
         BACKPORT_PR_TITLE_TEMPLATE: ${{ inputs.pr_title_template }}
@@ -301,7 +301,7 @@ jobs:
           }
 
     - name: Re-lock PR comments
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       if: ${{ github.event.issue.locked == true && (success() || failure()) }}
       with:
         script: |
