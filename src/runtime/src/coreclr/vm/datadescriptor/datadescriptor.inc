@@ -41,6 +41,7 @@ CDAC_TYPE_FIELD(Thread, T_UINT32, State, cdac_data<Thread>::State)
 CDAC_TYPE_FIELD(Thread, T_UINT32, PreemptiveGCDisabled, cdac_data<Thread>::PreemptiveGCDisabled)
 CDAC_TYPE_FIELD(Thread, T_POINTER, RuntimeThreadLocals, cdac_data<Thread>::RuntimeThreadLocals)
 CDAC_TYPE_FIELD(Thread, T_POINTER, Frame, cdac_data<Thread>::Frame)
+CDAC_TYPE_FIELD(Thread, T_POINTER, GCFrame, cdac_data<Thread>::GCFrame)
 CDAC_TYPE_FIELD(Thread, T_POINTER, CachedStackBase, cdac_data<Thread>::CachedStackBase)
 CDAC_TYPE_FIELD(Thread, T_POINTER, CachedStackLimit, cdac_data<Thread>::CachedStackLimit)
 CDAC_TYPE_FIELD(Thread, T_POINTER, ExceptionTracker, cdac_data<Thread>::ExceptionTracker)
@@ -70,6 +71,14 @@ CDAC_TYPE_FIELD(ThreadStore, T_INT32, BackgroundCount, cdac_data<ThreadStore>::B
 CDAC_TYPE_FIELD(ThreadStore, T_INT32, PendingCount, cdac_data<ThreadStore>::PendingCount)
 CDAC_TYPE_FIELD(ThreadStore, T_INT32, DeadCount, cdac_data<ThreadStore>::DeadCount)
 CDAC_TYPE_END(ThreadStore)
+
+CDAC_TYPE_BEGIN(GCFrame)
+CDAC_TYPE_INDETERMINATE(GCFrame)
+CDAC_TYPE_FIELD(GCFrame, T_POINTER, Next, cdac_data<GCFrame>::Next)
+CDAC_TYPE_FIELD(GCFrame, T_POINTER, ObjRefs, cdac_data<GCFrame>::ObjRefs)
+CDAC_TYPE_FIELD(GCFrame, T_UINT32, NumObjRefs, cdac_data<GCFrame>::NumObjRefs)
+CDAC_TYPE_FIELD(GCFrame, T_UINT32, GCFlags, cdac_data<GCFrame>::GCFlags)
+CDAC_TYPE_END(GCFrame)
 
 CDAC_TYPE_BEGIN(RuntimeThreadLocals)
 CDAC_TYPE_INDETERMINATE(RuntimeThreadLocals)
@@ -201,6 +210,12 @@ CDAC_TYPE_FIELD(Delegate, T_POINTER, MethodPtrAux, cdac_data<DelegateObject>::Me
 CDAC_TYPE_FIELD(Delegate, T_NINT, InvocationCount, cdac_data<DelegateObject>::InvocationCount)
 CDAC_TYPE_END(Delegate)
 
+CDAC_TYPE_BEGIN(TypedByRef)
+CDAC_TYPE_INDETERMINATE(TypedByRef)
+CDAC_TYPE_FIELD(TypedByRef, T_POINTER, Data, offsetof(TypedByRef, data))
+CDAC_TYPE_FIELD(TypedByRef, EXTERN_TYPE(TypeHandle), Type, offsetof(TypedByRef, type))
+CDAC_TYPE_END(TypedByRef)
+
 CDAC_TYPE_BEGIN(StackTraceArrayHeader)
 CDAC_TYPE_SIZE(cdac_data<StackTraceArray>::HeaderSize)
 CDAC_TYPE_FIELD(StackTraceArrayHeader, T_UINT32, Size, cdac_data<StackTraceArray>::Size)
@@ -220,9 +235,6 @@ CDAC_TYPE_FIELD(InteropSyncBlockInfo, T_POINTER, CCW, cdac_data<InteropSyncBlock
 CDAC_TYPE_FIELD(InteropSyncBlockInfo, T_POINTER, RCW, cdac_data<InteropSyncBlockInfo>::RCW)
 CDAC_TYPE_FIELD(InteropSyncBlockInfo, T_POINTER, CCF, cdac_data<InteropSyncBlockInfo>::CCF)
 #endif // FEATURE_COMINTEROP
-#ifdef FEATURE_OBJCMARSHAL
-CDAC_TYPE_FIELD(InteropSyncBlockInfo, T_POINTER, TaggedMemory, cdac_data<InteropSyncBlockInfo>::TaggedMemory)
-#endif // FEATURE_OBJCMARSHAL
 CDAC_TYPE_END(InteropSyncBlockInfo)
 
 CDAC_TYPE_BEGIN(SyncBlock)
@@ -1038,8 +1050,15 @@ CDAC_TYPE_FIELD(ILCodeVersionNode, T_NUINT, VersionId, cdac_data<ILCodeVersionNo
 CDAC_TYPE_FIELD(ILCodeVersionNode, T_POINTER, Next, cdac_data<ILCodeVersionNode>::Next)
 CDAC_TYPE_FIELD(ILCodeVersionNode, T_UINT32, RejitState, cdac_data<ILCodeVersionNode>::RejitState)
 CDAC_TYPE_FIELD(ILCodeVersionNode, T_POINTER, ILAddress, cdac_data<ILCodeVersionNode>::ILAddress)
+CDAC_TYPE_FIELD(ILCodeVersionNode, TYPE(InstrumentedILOffsetMapping), InstrumentedILMap, cdac_data<ILCodeVersionNode>::InstrumentedILMap)
 CDAC_TYPE_FIELD(ILCodeVersionNode, T_UINT32, Deoptimized, cdac_data<ILCodeVersionNode>::Deoptimized)
 CDAC_TYPE_END(ILCodeVersionNode)
+
+CDAC_TYPE_BEGIN(InstrumentedILOffsetMapping)
+CDAC_TYPE_INDETERMINATE(InstrumentedILOffsetMapping)
+CDAC_TYPE_FIELD(InstrumentedILOffsetMapping, T_UINT32, Count, cdac_data<InstrumentedILOffsetMapping>::Count)
+CDAC_TYPE_FIELD(InstrumentedILOffsetMapping, T_POINTER, Map, cdac_data<InstrumentedILOffsetMapping>::Map)
+CDAC_TYPE_END(InstrumentedILOffsetMapping)
 #endif // FEATURE_CODE_VERSIONING
 
 #ifdef PROFILING_SUPPORTED
