@@ -12,13 +12,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@bb9eccb](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCbb9eccba9080e07bce32c0bc27c3564c753a7cfe)*
+*[_git/dotnet-aspnetcore@adc32c3](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCadc32c3f0fb0a6818507ce9267bb715d7ec9c40b)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@d72f9c8](https://github.com/google/googletest/tree/d72f9c8aea6817cdf1ca0ac10887f328de7f3da2)*
+    *[google/googletest@7140cd4](https://github.com/google/googletest/tree/7140cd416cecd7462a8aae488024abeee55598e4)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
-    *[aspnet/MessagePack-CSharp@9aeb12b](https://github.com/aspnet/MessagePack-CSharp/tree/9aeb12b9bdb024512ffe2e4bddfa2785dca6e39e)*
+    *[aspnet/MessagePack-CSharp@9614e6f](https://github.com/aspnet/MessagePack-CSharp/tree/9614e6f396e959ad67e4ba655d5ab6e1311bed23)*
 - `src/cecil`  
-*[dotnet/cecil@dc12f3e](https://github.com/dotnet/cecil/tree/dc12f3e6ccb3fd7b76c0d5ee3365e6b58d796de0)*
+*[dotnet/cecil@fca1a68](https://github.com/dotnet/cecil/tree/fca1a685c57d208f52fd7e7ba48e2059e3bf0c34)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@02fe27c](https://github.com/dotnet/command-line-api/tree/02fe27cd6a9b001c8feb7938e6ef4b3799745759)*
 - `src/deployment-tools`  
@@ -26,13 +26,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/tree/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
 - `src/emsdk`  
-*[dotnet/emsdk@35ebe6f](https://github.com/dotnet/emsdk/tree/35ebe6f3e6953f878ed92f637ad8d7f27202f7a6)*
+*[dotnet/emsdk@ac9f809](https://github.com/dotnet/emsdk/tree/ac9f8092f4f527cb3ace4aac03f8d1dbadc39983)*
 - `src/format`  
 *[dotnet/format@a8be5ff](https://github.com/dotnet/format/tree/a8be5ff9c558f921f565c461dd7688905f84742a)*
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@cbedfb2](https://github.com/dotnet/installer/tree/cbedfb2c7d358dcc1493af537a3073b6b97c2bf9)*
+*[dotnet/installer@a853486](https://github.com/dotnet/installer/tree/a853486c92cc9c85a0465cd30c19e61e06e53ff1)*
 - `src/msbuild`  
 *[dotnet/msbuild@7806cbf](https://github.com/dotnet/msbuild/tree/7806cbf7b0fd91ea6ab55c2e42d8ed973114e197)*
 - `src/nuget-client`  
@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@0963af6](https://github.com/dotnet/roslyn-analyzers/tree/0963af6bfc2a3d5083faa2b7c1c91a4eee29a6f4)*
 - `src/runtime`  
-*[_git/dotnet-runtime@46295af](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC46295af5828b062bbbf93a9cef50fd8cb9fbcb09)*
+*[_git/dotnet-runtime@58638b5](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC58638b5ff167db8be72d99d93dea9e64551ff54b)*
 - `src/sdk`  
-*[_git/dotnet-sdk@0469530](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC0469530ded3939054a9235201f11d7a48a3b94ab)*
+*[_git/dotnet-sdk@482592d](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC482592d3d9a2d04040a7ad3467c4c0bc264d8c1f)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@2bb24ee](https://github.com/dotnet/source-build-assets/tree/2bb24ee4d15de5a4550abed0265ca9e0ef0beae3)*
 - `src/source-build-externals`  
@@ -84,7 +84,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/tree/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
-*[dotnet/templating@16f9517](https://github.com/dotnet/templating/tree/16f951772c2dd2b72b22982f742b0deb88622870)*
+*[dotnet/templating@889b459](https://github.com/dotnet/templating/tree/889b459499e9518b34b926cf423ac9a78429bcc3)*
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/tree/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
