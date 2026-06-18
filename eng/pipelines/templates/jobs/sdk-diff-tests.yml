@@ -187,12 +187,11 @@ jobs:
       publishRunAttachments: true
       testRunTitle: $(Agent.JobName)
 
-  - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
+  - ${{ if eq(parameters.publishTestResultsPr, 'true') }}:
       - template: ../steps/create-baseline-update-pr.yml
         parameters:
           dotnetPath: $(DotNetPath)
           pipeline: sdk
-          repo: dotnet/dotnet
           originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/SdkContentTests
           updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
           pullRequestTitle: Update Source-Build SDK Diff Tests Baselines and Exclusions
