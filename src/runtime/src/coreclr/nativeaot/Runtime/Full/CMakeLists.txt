@@ -100,8 +100,7 @@ if (CLR_CMAKE_TARGET_WIN32)
   # compiler PDB. CMake does not assign a compile PDB to OBJECT libraries, so the
   # objects archived into Runtime.WorkstationGC/Runtime.ServerGC would otherwise
   # reference a vc140.pdb that is absent when these static libs are statically
-  # linked by the AOT compiler publish projects, producing LNK4099 (treated as an
-  # error under /WX).
+  # linked by the AOT compiler publish projects, producing LNK4099.
   target_compile_options(Runtime.GC.Workstation PRIVATE /Z7)
   target_compile_options(Runtime.GC.Server PRIVATE /Z7)
 endif (CLR_CMAKE_TARGET_WIN32)
