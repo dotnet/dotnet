@@ -17,7 +17,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.6.26313.102</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.6.26313.102</MicrosoftNETCoreILAsmPackageVersion>
     <MicrosoftNETCoreILDAsmPackageVersion>11.0.0-preview.6.26313.102</MicrosoftNETCoreILDAsmPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>11.0.0-preview.6.26313.102</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>11.0.0-preview.6.26313.102</MicrosoftWin32SystemEventsPackageVersion>
     <runtimewinx64MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.6.26313.102</runtimewinx64MicrosoftNETCoreILAsmPackageVersion>
     <runtimewinx86MicrosoftNETCoreILAsmPackageVersion>11.0.0-preview.6.26313.102</runtimewinx86MicrosoftNETCoreILAsmPackageVersion>
@@ -43,11 +42,11 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
     <MicrosoftDotNetRemoteExecutorVersion>$(MicrosoftDotNetRemoteExecutorPackageVersion)</MicrosoftDotNetRemoteExecutorVersion>
     <MicrosoftDotNetXUnitV3ExtensionsVersion>$(MicrosoftDotNetXUnitV3ExtensionsPackageVersion)</MicrosoftDotNetXUnitV3ExtensionsVersion>
-    <MicrosoftNETSdkILVersion>$(MicrosoftNETSdkILPackageVersion)</MicrosoftNETSdkILVersion>
+    <MicrosoftNETSdkILVersion>$(Mic
+      rosoftNETSdkILPackageVersion)</MicrosoftNETSdkILVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCoreILAsmVersion>$(MicrosoftNETCoreILAsmPackageVersion)</MicrosoftNETCoreILAsmVersion>
     <MicrosoftNETCoreILDAsmVersion>$(MicrosoftNETCoreILDAsmPackageVersion)</MicrosoftNETCoreILDAsmVersion>
-    <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
     <MicrosoftWin32SystemEventsVersion>$(MicrosoftWin32SystemEventsPackageVersion)</MicrosoftWin32SystemEventsVersion>
     <runtimewinx64MicrosoftNETCoreILAsmVersion>$(runtimewinx64MicrosoftNETCoreILAsmPackageVersion)</runtimewinx64MicrosoftNETCoreILAsmVersion>
     <runtimewinx86MicrosoftNETCoreILAsmVersion>$(runtimewinx86MicrosoftNETCoreILAsmPackageVersion)</runtimewinx86MicrosoftNETCoreILAsmVersion>

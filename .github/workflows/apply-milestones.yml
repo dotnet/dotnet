@@ -6,7 +6,12 @@ on:
     branches:
       - 'main'
       - 'release/**'
-    paths: ['src/source-manifest.json']
+    # NOTE: Intentionally NO `paths:` filter here. GitHub omits the changed-files
+    # list from the pull_request webhook payload when a PR modifies more than 300
+    # files, which makes `paths` filters silently fail to match — the workflow
+    # never runs for large codeflow PRs (e.g. dotnet/dotnet#7184, 415 files).
+    # Instead, the job below always runs on merged PRs and the script no-ops
+    # when src/source-manifest.json was not changed (see extractChildPRs).
   workflow_dispatch:
     inputs:
       dry-run:
