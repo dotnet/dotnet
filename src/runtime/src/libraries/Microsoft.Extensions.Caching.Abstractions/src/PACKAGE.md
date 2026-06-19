@@ -45,6 +45,8 @@ The main types provided by this library are:
 * In-memory caching: [Microsoft.Extensions.Caching.Memory](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Memory/)
 * SQL Server caching: [Microsoft.Extensions.Caching.SqlServer](https://www.nuget.org/packages/Microsoft.Extensions.Caching.SqlServer/)
 * Redis caching: [Microsoft.Extensions.Caching.StackExchangeRedis](https://www.nuget.org/packages/Microsoft.Extensions.Caching.StackExchangeRedis/)
+* Cosmos DB caching: [Microsoft.Extensions.Caching.Cosmos](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Cosmos/)
+* Postgres caching: [Microsoft.Extensions.Caching.Postgres](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Postgres/)
 
 ## Feedback & Contributing
 
