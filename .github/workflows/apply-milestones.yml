@@ -48,7 +48,29 @@ jobs:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 2  # Need parent commit for diff
 
+      # Codeflow PRs (the only PRs that produce child-repo milestones) are the
+      # ones that change src/source-manifest.json. Every other merged PR — most
+      # notably fork PRs, which on `pull_request` events have NO access to the
+      # MILESTONE_APP_* secrets and would otherwise fail the token step below —
+      # has nothing to do here. Detect the codeflow signal up front so those PRs
+      # skip the token + apply steps and the job exits green instead of red.
+      - name: Detect codeflow change
+        id: codeflow
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -qx 'src/source-manifest.json'; then
+            echo 'src/source-manifest.json changed — codeflow PR, proceeding.'
+            echo 'is-codeflow=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'src/source-manifest.json not changed — not a codeflow PR, nothing to milestone. Skipping.'
+            echo 'is-codeflow=false' >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Generate dotnet org token
+        if: >-
+          github.event_name == 'workflow_dispatch' ||
+          steps.codeflow.outputs.is-codeflow == 'true'
         uses: actions/create-github-app-token@v3
         id: dotnet-token
         with:
@@ -67,6 +89,9 @@ jobs:
       #     owner: microsoft
 
       - name: Apply milestones
+        if: >-
+          github.event_name == 'workflow_dispatch' ||
+          steps.codeflow.outputs.is-codeflow == 'true'
         uses: actions/github-script@v9
         env:
           DOTNET_TOKEN: ${{ steps.dotnet-token.outputs.token }}
