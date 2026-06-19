@@ -54,18 +54,27 @@ jobs:
       # MILESTONE_APP_* secrets and would otherwise fail the token step below —
       # has nothing to do here. Detect the codeflow signal up front so those PRs
       # skip the token + apply steps and the job exits green instead of red.
+      #
+      # Use the PR's file list from the API (the default GITHUB_TOKEN can read it
+      # even for fork PRs) rather than a local `git diff` of the merge commit, so
+      # the signal reflects the full PR independent of merge strategy (rebase /
+      # squash / merge) and shallow-checkout depth.
       - name: Detect codeflow change
         id: codeflow
         if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          if git diff --name-only HEAD^ HEAD | grep -qx 'src/source-manifest.json'; then
-            echo 'src/source-manifest.json changed — codeflow PR, proceeding.'
-            echo 'is-codeflow=true' >> "$GITHUB_OUTPUT"
-          else
-            echo 'src/source-manifest.json not changed — not a codeflow PR, nothing to milestone. Skipping.'
-            echo 'is-codeflow=false' >> "$GITHUB_OUTPUT"
-          fi
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            const isCodeflow = files.some(f => f.filename === 'src/source-manifest.json');
+            core.info(isCodeflow
+              ? 'src/source-manifest.json changed — codeflow PR, proceeding.'
+              : 'src/source-manifest.json not changed — not a codeflow PR, nothing to milestone. Skipping.');
+            core.setOutput('is-codeflow', isCodeflow ? 'true' : 'false');
 
       - name: Generate dotnet org token
         if: >-
