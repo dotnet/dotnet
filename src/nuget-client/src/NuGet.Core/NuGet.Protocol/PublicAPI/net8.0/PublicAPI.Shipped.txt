@@ -832,9 +832,9 @@ NuGet.Protocol.PackageUpdateResourceV2Provider.PackageUpdateResourceV2Provider()
 NuGet.Protocol.PackageUpdateResourceV3Provider
 NuGet.Protocol.PackageUpdateResourceV3Provider.PackageUpdateResourceV3Provider() -> void
 NuGet.Protocol.PackageVulnerabilityMetadata
-~NuGet.Protocol.PackageVulnerabilityMetadata.AdvisoryUrl.get -> System.Uri
+NuGet.Protocol.PackageVulnerabilityMetadata.AdvisoryUrl.get -> System.Uri!
 NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata() -> void
-~NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata(System.Uri advisoryUrl, int severity) -> void
+NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata(System.Uri! advisoryUrl, int severity) -> void
 NuGet.Protocol.PackageVulnerabilityMetadata.Severity.get -> int
 NuGet.Protocol.PackageVulnerabilitySeverity
 NuGet.Protocol.PackageVulnerabilitySeverity.Critical = 3 -> NuGet.Protocol.PackageVulnerabilitySeverity
@@ -1391,10 +1391,10 @@ NuGet.Protocol.RepositoryCertificateInfo.RepositoryCertificateInfo() -> void
 NuGet.Protocol.RepositoryCertificateInfo.Subject.get -> string!
 NuGet.Protocol.RepositorySignatureResource
 NuGet.Protocol.RepositorySignatureResource.AllRepositorySigned.get -> bool
-~NuGet.Protocol.RepositorySignatureResource.RepositoryCertificateInfos.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo>
-~NuGet.Protocol.RepositorySignatureResource.RepositorySignatureResource(Newtonsoft.Json.Linq.JObject repoSignInformationContent, NuGet.Protocol.Core.Types.SourceRepository source) -> void
-~NuGet.Protocol.RepositorySignatureResource.RepositorySignatureResource(bool allRepositorySigned, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo> repositoryCertInfos) -> void
-~NuGet.Protocol.RepositorySignatureResource.Source.get -> string
+NuGet.Protocol.RepositorySignatureResource.RepositoryCertificateInfos.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo!>!
+NuGet.Protocol.RepositorySignatureResource.RepositorySignatureResource(Newtonsoft.Json.Linq.JObject! repoSignInformationContent, NuGet.Protocol.Core.Types.SourceRepository! source) -> void
+NuGet.Protocol.RepositorySignatureResource.RepositorySignatureResource(bool allRepositorySigned, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.IRepositoryCertificateInfo!>! repositoryCertInfos) -> void
+NuGet.Protocol.RepositorySignatureResource.Source.get -> string!
 NuGet.Protocol.RepositorySignatureResource.UpdateRepositorySignatureInfo() -> void
 NuGet.Protocol.RepositorySignatureResourceProvider
 NuGet.Protocol.RepositorySignatureResourceProvider.RepositorySignatureResourceProvider() -> void
@@ -1423,15 +1423,15 @@ NuGet.Protocol.ServiceIndexEntry.ServiceIndexEntry(System.Uri! serviceUri, strin
 NuGet.Protocol.ServiceIndexEntry.Type.get -> string!
 NuGet.Protocol.ServiceIndexEntry.Uri.get -> System.Uri!
 NuGet.Protocol.ServiceIndexResourceV3
-~NuGet.Protocol.ServiceIndexResourceV3.ServiceIndexResourceV3(Newtonsoft.Json.Linq.JObject index, System.DateTime requestTime) -> void
+NuGet.Protocol.ServiceIndexResourceV3.ServiceIndexResourceV3(Newtonsoft.Json.Linq.JObject! index, System.DateTime requestTime) -> void
 NuGet.Protocol.ServiceIndexResourceV3Provider
 NuGet.Protocol.ServiceIndexResourceV3Provider.MaxCacheDuration.get -> System.TimeSpan
 NuGet.Protocol.ServiceIndexResourceV3Provider.MaxCacheDuration.set -> void
 NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo
 NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.CachedTime.get -> System.DateTime
 NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.CachedTime.set -> void
-~NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.Index.get -> NuGet.Protocol.ServiceIndexResourceV3
-~NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.Index.set -> void
+NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.Index.get -> NuGet.Protocol.ServiceIndexResourceV3?
+NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.Index.set -> void
 NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexCacheInfo.ServiceIndexCacheInfo() -> void
 NuGet.Protocol.ServiceIndexResourceV3Provider.ServiceIndexResourceV3Provider() -> void
 NuGet.Protocol.ServiceTypes
@@ -1850,7 +1850,7 @@ override NuGet.Protocol.ProxyAuthenticationHandler.SendAsync(System.Net.Http.Htt
 ~override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader>
 ~override NuGet.Protocol.RemoteV3FindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.ReportAbuseResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.RepositorySignatureResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.RepositorySignatureResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.SafeBoolConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.SafeBoolConverter.CanRead.get -> bool
 override NuGet.Protocol.SafeBoolConverter.CanWrite.get -> bool
@@ -1865,7 +1865,7 @@ override NuGet.Protocol.SemanticVersionConverter.CanConvert(System.Type! objectT
 override NuGet.Protocol.SemanticVersionConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
 override NuGet.Protocol.SemanticVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
 override NuGet.Protocol.ServerWarningLogHandler.SendAsync(System.Net.Http.HttpRequestMessage! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
-~override NuGet.Protocol.ServiceIndexResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.ServiceIndexResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.SymbolPackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.V2FeedListResource.ListAsync(string searchTerm, bool prerelease, bool allVersions, bool includeDelisted, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Common.IEnumerableAsync<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
 ~override NuGet.Protocol.V2FeedListResource.Source.get -> string
@@ -2116,11 +2116,11 @@ virtual NuGet.Protocol.Plugins.Receiver.Close() -> void
 ~virtual NuGet.Protocol.RegistrationResourceV3.GetUri(NuGet.Packaging.Core.PackageIdentity package) -> System.Uri
 ~virtual NuGet.Protocol.RegistrationResourceV3.GetUri(string id, NuGet.Versioning.NuGetVersion version) -> System.Uri
 ~virtual NuGet.Protocol.RegistrationResourceV3.GetUri(string packageId) -> System.Uri
-~virtual NuGet.Protocol.ServiceIndexResourceV3.Entries.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.ServiceIndexEntry>
-~virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntries(NuGet.Versioning.NuGetVersion clientVersion, params string[] orderedTypes) -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.ServiceIndexEntry>
-~virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntries(params string[] orderedTypes) -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.ServiceIndexEntry>
-~virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntryUri(params string[] orderedTypes) -> System.Uri
-~virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntryUris(NuGet.Versioning.NuGetVersion clientVersion, params string[] orderedTypes) -> System.Collections.Generic.IReadOnlyList<System.Uri>
-~virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntryUris(params string[] orderedTypes) -> System.Collections.Generic.IReadOnlyList<System.Uri>
-~virtual NuGet.Protocol.ServiceIndexResourceV3.Json.get -> string
+virtual NuGet.Protocol.ServiceIndexResourceV3.Entries.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.ServiceIndexEntry!>!
+virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntries(NuGet.Versioning.NuGetVersion! clientVersion, params string![]! orderedTypes) -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.ServiceIndexEntry!>!
+virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntries(params string![]! orderedTypes) -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.ServiceIndexEntry!>!
+virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntryUri(params string![]! orderedTypes) -> System.Uri?
+virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntryUris(NuGet.Versioning.NuGetVersion! clientVersion, params string![]! orderedTypes) -> System.Collections.Generic.IReadOnlyList<System.Uri!>!
+virtual NuGet.Protocol.ServiceIndexResourceV3.GetServiceEntryUris(params string![]! orderedTypes) -> System.Collections.Generic.IReadOnlyList<System.Uri!>!
+virtual NuGet.Protocol.ServiceIndexResourceV3.Json.get -> string!
 virtual NuGet.Protocol.ServiceIndexResourceV3.RequestTime.get -> System.DateTime
