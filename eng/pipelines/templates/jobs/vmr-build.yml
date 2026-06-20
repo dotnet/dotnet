@@ -637,6 +637,23 @@ jobs:
           scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
 
 
+    # Enable WER LocalDumps for crossgen2.exe so a crash dump is captured if it
+    # FailFasts during the SDK crossgen layout step. Diagnoses dotnet/runtime#125699,
+    # which has hit several times at GetAllowSynthesis+0x31 with no captured dump.
+    # Dumps land under BuildLogs and ride out via the existing 'Publish BuildLogs'
+    # 1ES output above (condition: succeededOrFailed()).
+    - pwsh: |
+        $dumpDir = "$(Build.ArtifactStagingDirectory)\BuildLogs\crossgen2-dumps"
+        New-Item -ItemType Directory -Force -Path $dumpDir | Out-Null
+        $key = 'HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\crossgen2.exe'
+        New-Item -Path $key -Force | Out-Null
+        Set-ItemProperty -Path $key -Name DumpFolder -Type ExpandString -Value $dumpDir
+        Set-ItemProperty -Path $key -Name DumpType   -Type DWord        -Value 2  # MiniDumpWithFullMemory
+        Set-ItemProperty -Path $key -Name DumpCount  -Type DWord        -Value 3
+        Write-Host "WER LocalDumps configured for crossgen2.exe -> $dumpDir"
+      displayName: Enable WER LocalDumps for crossgen2
+      continueOnError: true
+
     - script: build.cmd
         $(baseArguments)
         $(signArguments)
