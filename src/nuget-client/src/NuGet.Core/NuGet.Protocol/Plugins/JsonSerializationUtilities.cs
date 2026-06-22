@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
@@ -48,14 +46,14 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <typeparam name="T">The deserialization type.</typeparam>
         /// <param name="json">JSON to deserialize.</param>
-        /// <returns>An instance of <typeparamref name="T" />.</returns>
+        /// <returns>An instance of <typeparamref name="T" />, or <see langword="null" /> if the JSON represents a null value.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="json" />
         /// is either <see langword="null" /> or an empty string.</exception>
 #if NET5_0_OR_GREATER
         [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
         [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
 #endif
-        public static T Deserialize<T>(string json)
+        public static T? Deserialize<T>(string json)
             where T : class
         {
             if (string.IsNullOrEmpty(json))
@@ -115,13 +113,13 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <typeparam name="T">The deserialization type.</typeparam>
         /// <param name="jObject">A JSON object.</param>
-        /// <returns>An instance of <typeparamref name="T" />.</returns>
+        /// <returns>An instance of <typeparamref name="T" />, or <see langword="null" /> if the JSON represents a null value.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="jObject" /> is <see langword="null" />.</exception>
 #if NET5_0_OR_GREATER
         [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
         [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
 #endif
-        public static T ToObject<T>(JObject jObject)
+        public static T? ToObject<T>(JObject jObject)
         {
             if (jObject == null)
             {

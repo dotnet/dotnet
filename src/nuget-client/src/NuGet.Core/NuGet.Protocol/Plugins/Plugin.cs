@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Threading;
@@ -16,7 +14,7 @@ namespace NuGet.Protocol.Plugins
     {
         private bool _isClosed;
         private readonly TimeSpan _idleTimeout;
-        private readonly Timer _idleTimer;
+        private readonly Timer? _idleTimer;
         private readonly object _idleTimerLock;
         private bool _isDisposed;
         private readonly bool _isOwnProcess;
@@ -25,27 +23,27 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Occurs before the plugin closes.
         /// </summary>
-        public event EventHandler BeforeClose;
+        public event EventHandler? BeforeClose;
 
         /// <summary>
         /// Occurs when the plugin has closed.
         /// </summary>
-        public event EventHandler Closed;
+        public event EventHandler? Closed;
 
         /// <summary>
         /// Occurs when a plugin process has exited.
         /// </summary>
-        public event EventHandler<PluginEventArgs> Exited;
+        public event EventHandler<PluginEventArgs>? Exited;
 
         /// <summary>
         /// Occurs when a plugin or plugin connection has faulted.
         /// </summary>
-        public event EventHandler<FaultedPluginEventArgs> Faulted;
+        public event EventHandler<FaultedPluginEventArgs>? Faulted;
 
         /// <summary>
         /// Occurs when a plugin has been idle for the configured idle timeout period.
         /// </summary>
-        public event EventHandler<PluginEventArgs> Idle;
+        public event EventHandler<PluginEventArgs>? Idle;
 
         /// <summary>
         /// Gets the connection for the plugin
@@ -87,7 +85,7 @@ namespace NuGet.Protocol.Plugins
         {
         }
 
-        internal Plugin(string filePath, IConnection connection, IPluginProcess process, bool isOwnProcess, TimeSpan idleTimeout, string id)
+        internal Plugin(string filePath, IConnection connection, IPluginProcess process, bool isOwnProcess, TimeSpan idleTimeout, string? id)
         {
             if (string.IsNullOrEmpty(filePath))
             {
@@ -216,22 +214,22 @@ namespace NuGet.Protocol.Plugins
             }
         }
 
-        private void OnExited(object sender, IPluginProcess pluginProcess)
+        private void OnExited(object? sender, IPluginProcess pluginProcess)
         {
             Exited?.Invoke(this, new PluginEventArgs(this));
         }
 
-        private void OnFaulted(object sender, ProtocolErrorEventArgs e)
+        private void OnFaulted(object? sender, ProtocolErrorEventArgs e)
         {
             Faulted?.Invoke(this, new FaultedPluginEventArgs(this, e.Exception));
         }
 
-        private void OnIdleTimer(object state)
+        private void OnIdleTimer(object? state)
         {
             Idle?.Invoke(this, new PluginEventArgs(this));
         }
 
-        private void OnMessageReceived(object sender, MessageEventArgs e)
+        private void OnMessageReceived(object? sender, MessageEventArgs e)
         {
             lock (_idleTimerLock)
             {

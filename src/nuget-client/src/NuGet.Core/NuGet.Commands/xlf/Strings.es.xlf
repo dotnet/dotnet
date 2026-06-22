@@ -1527,7 +1527,7 @@ NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere p
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate invalida RestoreLockedMode; el archivo de bloqueo de paquetes se volverá a evaluar y regenerar, y se omitirá el modo bloqueado.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

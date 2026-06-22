@@ -1527,7 +1527,7 @@ NuGet vyžaduje zdroje HTTPS. Další informace najdete na https://aka.ms/nuget-
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate přepisuje RestoreLockedMode; soubor zámků balíčků bude znovu vyhodnocen a vygenerován a uzamčený režim bude ignorován.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

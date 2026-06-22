@@ -1527,7 +1527,7 @@ NuGet için HTTPS kaynakları gereklidir. Daha fazla bilgi için şuraya başvur
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate, RestoreLockedMode değerini geçersiz kılıyor; paketler kilit dosyası yeniden değerlendirilecek ve yeniden oluşturulacak, kilitli mod yoksayılır.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

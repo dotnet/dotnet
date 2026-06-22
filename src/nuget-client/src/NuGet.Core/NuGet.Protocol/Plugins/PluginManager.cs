@@ -1,12 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -137,7 +136,7 @@ namespace NuGet.Protocol.Plugins
 
                         if (pluginCreationResult.Item1)
                         {
-                            pluginCreationResults.Add(pluginCreationResult.Item2);
+                            pluginCreationResults.Add(pluginCreationResult.Item2!);
                         }
                     }
                 }
@@ -154,7 +153,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="requestedOperationClaim">The requested operation claim</param>
         /// <param name="cancellationToken">cancellation token</param>
         /// <returns>A plugin creation result, null if the requested plugin cannot handle the given operation claim</returns>
-        public Task<Tuple<bool, PluginCreationResult>> TryGetSourceAgnosticPluginAsync(PluginDiscoveryResult pluginDiscoveryResult, OperationClaim requestedOperationClaim, CancellationToken cancellationToken)
+        public Task<Tuple<bool, PluginCreationResult?>> TryGetSourceAgnosticPluginAsync(PluginDiscoveryResult pluginDiscoveryResult, OperationClaim requestedOperationClaim, CancellationToken cancellationToken)
         {
             if (pluginDiscoveryResult == null)
             {
@@ -184,12 +183,12 @@ namespace NuGet.Protocol.Plugins
         /// <param name="serviceIndex">service index</param>
         /// <param name="cancellationToken">cancellation token</param>
         /// <returns>A plugin creation result, null if the requested plugin cannot handle the given operation claim</returns>
-        private async Task<Tuple<bool, PluginCreationResult>> TryCreatePluginAsync(
+        private async Task<Tuple<bool, PluginCreationResult?>> TryCreatePluginAsync(
             PluginDiscoveryResult result,
             OperationClaim requestedOperationClaim,
             PluginRequestKey requestKey,
-            string packageSourceRepository,
-            string serviceIndex,
+            string? packageSourceRepository,
+            string? serviceIndex,
             CancellationToken cancellationToken)
         {
             // This is a non cancellable task.
@@ -200,7 +199,7 @@ namespace NuGet.Protocol.Plugins
             // We could consider handling each of this operations more cleverly, 
             // but simplicity and readability is prioritized           
             cancellationToken = CancellationToken.None;
-            PluginCreationResult pluginCreationResult = null;
+            PluginCreationResult? pluginCreationResult = null;
             var cacheEntry = new PluginCacheEntry(_pluginsCacheDirectoryPath.Value, result.PluginFile.Path, requestKey.PackageSourceRepository);
 
             ConcurrencyUtilities.ExecuteWithFileLocked(cacheEntry.CacheFileName, cacheEntry.LoadFromFile);
@@ -255,7 +254,7 @@ namespace NuGet.Protocol.Plugins
                     }
                     else
                     {
-                        pluginCreationResult = new PluginCreationResult(result.Message);
+                        pluginCreationResult = new PluginCreationResult(result.Message!);
                     }
                 }
                 catch (Exception e)
@@ -269,7 +268,7 @@ namespace NuGet.Protocol.Plugins
                 }
             }
 
-            return new Tuple<bool, PluginCreationResult>(pluginCreationResult != null, pluginCreationResult);
+            return new Tuple<bool, PluginCreationResult?>(pluginCreationResult != null, pluginCreationResult);
         }
 
         private async Task<Lazy<IPluginMulticlientUtilities>> PerformOneTimePluginInitializationAsync(IPlugin plugin, CancellationToken cancellationToken)
@@ -297,6 +296,13 @@ namespace NuGet.Protocol.Plugins
             return utilities;
         }
 
+        [MemberNotNull(nameof(EnvironmentVariableReader))]
+        [MemberNotNull(nameof(_discoverer))]
+        [MemberNotNull(nameof(_pluginsCacheDirectoryPath))]
+        [MemberNotNull(nameof(_connectionOptions))]
+        [MemberNotNull(nameof(_pluginFactory))]
+        [MemberNotNull(nameof(_pluginOperationClaims))]
+        [MemberNotNull(nameof(_pluginUtilities))]
         private void Initialize(IEnvironmentVariableReader reader,
             Lazy<IPluginDiscoverer> pluginDiscoverer,
             Func<TimeSpan, IPluginFactory> pluginFactoryCreator,
@@ -324,11 +330,11 @@ namespace NuGet.Protocol.Plugins
 
         private static async Task<IReadOnlyList<OperationClaim>> GetPluginOperationClaimsAsync(
             IPlugin plugin,
-            string packageSourceRepository,
-            string serviceIndex,
+            string? packageSourceRepository,
+            string? serviceIndex,
             CancellationToken cancellationToken)
         {
-            if (plugin.Connection.ProtocolVersion.Equals(Plugins.ProtocolConstants.Version100) && (string.IsNullOrEmpty(packageSourceRepository) || serviceIndex == null))
+            if (plugin.Connection.ProtocolVersion?.Equals(Plugins.ProtocolConstants.Version100) == true && (string.IsNullOrEmpty(packageSourceRepository) || serviceIndex == null))
             {
                 throw new ArgumentException("Cannot invoke get operation claims with null arguments on a " + Plugins.ProtocolConstants.Version100 + " plugin");
             }
@@ -354,7 +360,7 @@ namespace NuGet.Protocol.Plugins
 
         private bool IsPluginPossiblyAvailable()
         {
-            string pluginEnvVariable;
+            string? pluginEnvVariable;
 
 #if IS_DESKTOP
             pluginEnvVariable = EnvironmentVariableReader.GetEnvironmentVariable(EnvironmentVariableConstants.DesktopPluginPaths);
@@ -365,13 +371,13 @@ namespace NuGet.Protocol.Plugins
             return !string.IsNullOrEmpty(pluginEnvVariable);
         }
 
-        private void OnPluginClosed(object sender, EventArgs e)
+        private void OnPluginClosed(object? sender, EventArgs e)
         {
             if (sender is IPlugin plugin)
             {
                 plugin.Closed -= OnPluginClosed;
 
-                _pluginUtilities.TryRemove(plugin.Id, out Lazy<IPluginMulticlientUtilities> utilities);
+                _pluginUtilities.TryRemove(plugin.Id, out _);
             }
         }
 
@@ -437,7 +443,7 @@ namespace NuGet.Protocol.Plugins
                 PackageSourceRepository = packageSourceRepository;
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 return Equals(obj as PluginRequestKey);
             }
@@ -447,7 +453,7 @@ namespace NuGet.Protocol.Plugins
                 return HashCodeCombiner.GetHashCode(PluginFilePath, PackageSourceRepository);
             }
 
-            public bool Equals(PluginRequestKey other)
+            public bool Equals(PluginRequestKey? other)
             {
                 if (ReferenceEquals(this, other))
                 {
