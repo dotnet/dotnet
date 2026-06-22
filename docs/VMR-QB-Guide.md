@@ -137,7 +137,7 @@ Re-bootstrap PRs are periodic automated PRs opened by `dotnet-bot` on servicing 
 
 - Author: `dotnet-bot`
 - Title pattern: `.NET X.Y.Z-... Updates` or `.NET X.Y.Z-... <Month> <Year> Updates`
-- Target branch: a `release/*` servicing branch
+- Target branch: `main` (for preview releases) or a `release/*` servicing branch
 
 ### Merge criteria
 
