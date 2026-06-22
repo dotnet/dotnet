@@ -42,11 +42,11 @@ namespace MessagePackAnalyzer
                 return;
             }
 
-            SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            SemanticModel? model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
             var typeInfo = context.Diagnostics[0]?.Properties.GetValueOrDefault("type", null);
-            INamedTypeSymbol? namedSymbol = (typeInfo != null)
-                ? model.Compilation.GetTypeByMetadataName(typeInfo.Replace("global::", string.Empty))
+            INamedTypeSymbol? namedSymbol = typeInfo is not null
+                ? model?.Compilation.GetTypeByMetadataName(typeInfo.Replace("global::", string.Empty))
                 : null;
 
             if (namedSymbol is null)
@@ -91,13 +91,13 @@ namespace MessagePackAnalyzer
                     {
                         targetType = (property != null)
                             ? (model.GetDeclaredSymbol(property) as IPropertySymbol)?.Type
-                            : (model.GetDeclaredSymbol(field) as IFieldSymbol)?.Type;
+                            : (model.GetDeclaredSymbol(field!) as IFieldSymbol)?.Type;
                     }
                     else
                     {
                         targetType = (property != null)
                             ? (model.GetDeclaredSymbol(property) as IPropertySymbol)?.ContainingType
-                            : (model.GetDeclaredSymbol(field) as IFieldSymbol)?.ContainingType;
+                            : (model.GetDeclaredSymbol(field!) as IFieldSymbol)?.ContainingType;
                     }
                 }
 
@@ -148,18 +148,32 @@ namespace MessagePackAnalyzer
                 .Select(x => x.ConstructorArguments[0])
                 .Where(x => !x.IsNull)
                 .Where(x => x.Value is int)
-                .Select(x => (int)x.Value)
+                .Select(x => (int)x.Value!)
                 .DefaultIfEmpty(-1) // if empty, start from zero.
                 .Max() + 1;
 
             foreach (ISymbol member in targets)
             {
-                if (member.GetAttributes().FindAttributeShortName(MessagePackAnalyzer.KeyAttributeShortName) is null)
+                if (!member.IsImplicitlyDeclared &&
+                    member.GetAttributes().FindAttributeShortName(MessagePackAnalyzer.KeyAttributeShortName) is null)
                 {
                     SyntaxNode node = await member.DeclaringSyntaxReferences[0].GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
                     var documentEditor = await solutionEditor.GetDocumentEditorAsync(document.Project.Solution.GetDocumentId(node.SyntaxTree), cancellationToken).ConfigureAwait(false);
                     var syntaxGenerator = SyntaxGenerator.GetGenerator(documentEditor.OriginalDocument);
-                    documentEditor.AddAttribute(node, syntaxGenerator.Attribute("MessagePack.KeyAttribute", syntaxGenerator.LiteralExpression(startOrder++)));
+                    AttributeListSyntax attributeList = (AttributeListSyntax)syntaxGenerator.Attribute("MessagePack.KeyAttribute", syntaxGenerator.LiteralExpression(startOrder++));
+                    if (node is ParameterSyntax parameter)
+                    {
+                        // The primary constructor requires special target on the attribute list.
+                        attributeList = attributeList.WithTarget(
+                            SyntaxFactory.AttributeTargetSpecifier(SyntaxFactory.Token(SyntaxKind.PropertyKeyword)))
+                            .WithLeadingTrivia(parameter.GetLeadingTrivia());
+                        ParameterSyntax attributedParameter = parameter.AddAttributeLists(attributeList);
+                        documentEditor.ReplaceNode(parameter, attributedParameter);
+                    }
+                    else
+                    {
+                        documentEditor.AddAttribute(node, attributeList);
+                    }
                 }
             }
 

@@ -454,6 +454,11 @@
         <target state="translated">Свойство "{0}" не должно быть пустым или равным NULL.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">Невозможно прочитать сведения о проекте для "{0}": {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">Невозможно добавить доверенный репозиторий. В пакете нет подписи репозитория или второй подписи.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} не будет урезано. Рассмотрите возможность удаления этого пакета из зависимостей, так как он, вероятно, не требуется.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} не будет урезано. Этот пакет доступен автоматически, и на него не нужно явно ссылаться. Удалите элемент PackageReference.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1496,6 +1501,12 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
         <target state="translated">{0} не задает включенную нижнюю границу для зависимости {1}. Использовалась версия {2}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">Пакет "{0}" {1} использует нерекомендуемую платформу MonoAndroid вместо "net6.0-android" или более поздней версии. Рассмотрите возможность обновления этого пакета до более новой версии или обратитесь к автору пакета.</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">У пакета "{0}" {1} есть известная уязвимость {3} (уровень серьезности: {2})</target>
@@ -1513,6 +1524,11 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">Зависимость проекта "{0}" не указывает версию. Включите версию для зависимости, чтобы обеспечить согласованные результаты восстановления.</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate переопределяет RestoreLockedMode; файл блокировки пакетов будет повторно оценен и сгенерирован заново, а режим блокировки будет игнорироваться.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

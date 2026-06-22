@@ -448,6 +448,7 @@ namespace NuGet.Test.Utility
             context.Frameworks.AddRange(frameworks.Select(f => new SimpleTestProjectFrameworkContext(NuGetFramework.Parse(f)) { TargetAlias = f }));
             context.ToolingVersion15 = true;
             context.Properties.Add("BuildWithNetFrameworkHostedCompiler", bool.FalseString);
+            context.Properties.Add("AutomaticallyUseReferenceAssemblyPackages", bool.FalseString);
             return context;
         }
 
@@ -633,7 +634,7 @@ namespace NuGet.Test.Utility
                             xml,
                             "PackageReference",
                             package.Id,
-                            referenceFramework,
+                            referenceFramework?.IsSpecificFramework == true ? referenceFramework.GetShortFolderName() : string.Empty,
                             props,
                             attributes);
                     }
@@ -663,7 +664,7 @@ namespace NuGet.Test.Utility
                             xml,
                             "PackageDownload",
                             package.Id,
-                            referenceFramework,
+                            referenceFramework?.IsSpecificFramework == true ? referenceFramework.GetShortFolderName() : string.Empty,
                             props,
                             attributes);
                     }
@@ -710,7 +711,7 @@ namespace NuGet.Test.Utility
                             xml,
                             "ProjectReference",
                             $"{project.ProjectPath}",
-                            referenceFramework,
+                            referenceFramework?.IsSpecificFramework == true ? referenceFramework.GetShortFolderName() : string.Empty,
                             props,
                             new Dictionary<string, string>());
                     }
@@ -735,7 +736,7 @@ namespace NuGet.Test.Utility
                         xml,
                         "DotNetCliToolReference",
                         $"{tool.Id}",
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         props,
                         attributes);
                 }
@@ -770,7 +771,7 @@ namespace NuGet.Test.Utility
                         xml,
                         "ProjectReference",
                         $"{project.ProjectPath}",
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         props,
                         new Dictionary<string, string>());
                 }

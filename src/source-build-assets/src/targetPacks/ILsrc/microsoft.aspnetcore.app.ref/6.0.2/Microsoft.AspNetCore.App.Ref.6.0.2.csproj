@@ -1,1 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.AspNetCore.App.Ref</PackageId>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <PackageVersion>6.0.2</PackageVersion>
+    <AssemblyName>Microsoft.AspNetCore.App.Ref</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+    <Serviceable>true</Serviceable>
+    <Description>Provides a default set of APIs for building an ASP.NET Core application. Contains reference assemblies, documentation, and other design-time assets.
+
+This package is an internal implementation of the .NET Core SDK and is not meant to be used as a normal PackageReference.
+
+This package was built from the source code at https://github.com/dotnet/aspnetcore/tree/1dcf7acfacf0fe154adcc23270cb0da11ff44ace</Description>
+    <PackageProjectUrl>https://asp.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>aspnetcore targeting-pack</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageType>DotnetPlatform</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/FrameworkList.xml" Pack="true" PackagePath="data" />
+    <None Include="data/PackageOverrides.txt" Pack="true" PackagePath="data" />
+    <None Include="data/PlatformManifest.txt" Pack="true" PackagePath="data" />
+    <None Include="THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

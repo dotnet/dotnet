@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using Microsoft.Build.Execution;
 using NuGet.Commands.Restore;
@@ -29,7 +27,7 @@ namespace NuGet.Build.Tasks.Console
             return list;
         }
 
-        public string GetProperty(string propertyName)
+        public string? GetProperty(string propertyName)
         {
             var value = _projectInstance.GetPropertyValue(propertyName).Trim();
             if (string.IsNullOrEmpty(value))

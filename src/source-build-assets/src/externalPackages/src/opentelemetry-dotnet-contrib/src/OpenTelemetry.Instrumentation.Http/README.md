@@ -42,7 +42,7 @@ HTTP instrumentation must be enabled at application startup.
 
 Starting with .NET 9, trace instrumentation is natively implemented, and the
 HttpClient library emits attributes defined in the
-[OpenTelemetry Specification](https://github.com/open-telemetry/semantic-conventions/blob/v1.28.0/docs/http/http-spans.md).
+[OpenTelemetry Specification](https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md).
 When running on .NET 9+ this instrumentation library will not add/change/override
 any attributes set by the native instrumentation but it is still required for
 performing context propagation using the OpenTelemetry SDK and supports additional
@@ -72,7 +72,7 @@ public class Program
 ```
 
 Following list of attributes are added by default on activity. See
-[http-spans](https://github.com/open-telemetry/semantic-conventions/tree/v1.23.0/docs/http/http-spans.md)
+[http-spans](https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md#http-client-span)
 for more details about each individual attribute:
 
 * `error.type`
@@ -126,7 +126,7 @@ to see how to enable this instrumentation in an ASP.NET application.
 Following list of attributes are added by default on
 `http.client.request.duration` metric. See
 [http-metrics](https://github.com/open-telemetry/semantic-conventions/tree/v1.23.0/docs/http/http-metrics.md)
-for more details about each individual attribute. `.NET8.0` and above supports
+for more details about each individual attribute. .NET 8 and above supports
 additional metrics, see [list of metrics produced](#list-of-metrics-produced) for
 more details.
 
@@ -147,14 +147,14 @@ instrumentation emits the following metric:
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `http.client.request.duration`    | [Specification](https://github.com/open-telemetry/semantic-conventions/blob/release/v1.23.x/docs/http/http-metrics.md#metric-httpclientrequestduration) |
 
-Starting from `.NET8.0`, metrics instrumentation is natively implemented, and
+Starting from .NET 8, metrics instrumentation is natively implemented, and
 the HttpClient library has incorporated support for [built-in
 metrics](https://learn.microsoft.com/dotnet/core/diagnostics/built-in-metrics-system-net)
 following the OpenTelemetry semantic conventions. The library includes additional
 metrics beyond those defined in the
 [specification](https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-metrics.md),
 covering additional scenarios for HttpClient users. When the application targets
-`.NET8.0` and newer versions, the instrumentation library automatically enables
+.NET 8 and newer versions, the instrumentation library automatically enables
 all `built-in` metrics by default.
 
 Note that the `AddHttpClientInstrumentation()` extension simplifies the process
@@ -173,7 +173,7 @@ to achieve this.
 
 > [!NOTE]
 > There is no difference in features or emitted metrics when enabling metrics
-using `AddMeter()` or `AddHttpClientInstrumentation()` on `.NET8.0` and newer
+using `AddMeter()` or `AddHttpClientInstrumentation()` on .NET 8 and newer
 versions.
 <!-- This comment is to make sure the two notes above and below are not merged -->
 > [!NOTE]

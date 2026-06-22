@@ -82,7 +82,10 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
             return;
         }
 
-        this.AddMessageEvent(typeof(TRequest).Name, (request as IMessage)!, request: true);
+        if (request is IMessage message)
+        {
+            this.AddMessageEvent(typeof(TRequest).Name, message, request: true);
+        }
     }
 
     /// <summary>
@@ -100,7 +103,10 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
             return;
         }
 
-        this.AddMessageEvent(typeof(TResponse).Name, (response as IMessage)!, request: false);
+        if (response is IMessage message)
+        {
+            this.AddMessageEvent(typeof(TResponse).Name, message, request: false);
+        }
     }
 
     /// <summary>
@@ -239,8 +245,13 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     /// <param name="eventName">Name of the event.</param>
     /// <param name="message">The message.</param>
     /// <param name="request">if true this is a request message.</param>
-    private void AddMessageEvent(string eventName, IMessage message, bool request)
+    private void AddMessageEvent(string eventName, IMessage? message, bool request)
     {
+        if (message == null)
+        {
+            return;
+        }
+
         var messageSize = message.CalculateSize();
 
         var attributes = new ActivityTagsCollection(

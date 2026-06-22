@@ -371,7 +371,8 @@ public sealed partial class SelectExpression : TableExpressionBase
                                         continue;
 
                                     default:
-                                        throw new UnreachableException();
+                                        throw new UnreachableException(
+                                            "Unexpected complex property binding when processing identifiers for Distinct.");
                                 }
                             }
                         }
@@ -1286,10 +1287,13 @@ public sealed partial class SelectExpression : TableExpressionBase
                                         keyProjectionIndex != null ? projectionIndexMap[keyProjectionIndex.Value] : null));
                             }
 
+                            // The outer projection still references the same underlying JSON column; only the
+                            // index into the outer projection changes, so preserve JsonColumn for the shaper.
                             remappedConstant = Constant(
                                 new JsonProjectionInfo(
                                     projectionIndexMap[jsonProjectionInfo.JsonColumnIndex],
-                                    newKeyAccessInfo));
+                                    newKeyAccessInfo,
+                                    jsonProjectionInfo.JsonColumn));
                             break;
                         }
 
@@ -1317,7 +1321,8 @@ public sealed partial class SelectExpression : TableExpressionBase
                                 newChildrenProjectionInfo.Add(
                                     (new JsonProjectionInfo(
                                             projectionIndexMap[childProjectionInfo.JsonProjectionInfo.JsonColumnIndex],
-                                            newKeyAccessInfo),
+                                            newKeyAccessInfo,
+                                            childProjectionInfo.JsonProjectionInfo.JsonColumn),
                                         childProjectionInfo.Navigation));
                             }
 
@@ -1356,7 +1361,7 @@ public sealed partial class SelectExpression : TableExpressionBase
                     StructuralTypeProjectionExpression p => AddStructuralTypeProjection(p),
                     JsonQueryExpression p => AddJsonProjection(p),
                     SqlExpression p => Constant(AddToProjection(p, projectionMember.Last?.Name)),
-                    _ => throw new UnreachableException()
+                    _ => throw new UnreachableException("Unexpected expression type in projection mapping.")
                 };
             }
 
@@ -1451,7 +1456,8 @@ public sealed partial class SelectExpression : TableExpressionBase
                             break;
 
                         default:
-                            throw new UnreachableException();
+                            throw new UnreachableException(
+                                "Unexpected complex property binding when building structural type projection.");
                     }
                 }
             }
@@ -1505,10 +1511,10 @@ public sealed partial class SelectExpression : TableExpressionBase
                     break;
 
                 default:
-                    throw new UnreachableException();
+                    throw new UnreachableException("Unexpected structural type when building JSON projection.");
             }
 
-            return Constant(new JsonProjectionInfo(jsonColumnIndex, keyAccessInfo));
+            return Constant(new JsonProjectionInfo(jsonColumnIndex, keyAccessInfo, jsonQueryExpression.JsonColumn.Column));
         }
 
         static IReadOnlyList<IProperty> GetMappedKeyProperties(IKey key)
@@ -2391,7 +2397,8 @@ public sealed partial class SelectExpression : TableExpressionBase
                             continue;
 
                         default:
-                            throw new UnreachableException();
+                            throw new UnreachableException(
+                                "Unexpected complex property binding in set operation over structural types.");
                     }
 
                     void ProcessJson(JsonQueryExpression jsonQuery1, JsonQueryExpression jsonQuery2)
@@ -2419,7 +2426,9 @@ public sealed partial class SelectExpression : TableExpressionBase
                         select1._projection.Add(innerProjection);
                         select2._projection.Add(new ProjectionExpression(jsonScalar2, alias));
 
-                        var outerColumn = CreateColumnExpression(innerProjection, setOperationAlias);
+                        // The JsonColumn always represents the containing JSON column, so flow its model column through the set
+                        // operation even though the projection itself is a JsonScalarExpression (which has no model column of its own).
+                        var outerColumn = CreateColumnExpression(innerProjection, setOperationAlias, jsonQuery1.JsonColumn.Column);
                         if (jsonScalar1.IsNullable || jsonScalar2.IsNullable)
                         {
                             outerColumn = outerColumn.MakeNullable();
@@ -2453,7 +2462,8 @@ public sealed partial class SelectExpression : TableExpressionBase
                 }
 
                 var outerProjection = new StructuralTypeProjectionExpression(
-                    type, propertyExpressions, complexPropertyCache, nullable: false, discriminatorExpression);
+                    type, propertyExpressions, complexPropertyCache, nullable: false, discriminatorExpression,
+                    structuralProjection1.TableMap);
 
                 if (outerIdentifiers.Length > 0 && outerProjection is { StructuralType: IEntityType entityType })
                 {
@@ -2654,7 +2664,7 @@ public sealed partial class SelectExpression : TableExpressionBase
             var sourceTableForAnnotations = FindRootTableExpressionForColumn(selectExpression, identifyingColumn);
             var ownerType = navigation.DeclaringEntityType;
             var entityType = navigation.TargetEntityType;
-            var principalMappings = ownerType.GetViewOrTableMappings().Select(e => e.Table);
+            var principalMappings = ownerType.GetQueryMappings().Select(e => e.Table);
             var derivedType = ownerType.BaseType != null;
             var derivedTpt = derivedType && ownerType.GetMappingStrategy() == RelationalAnnotationNames.TptMappingStrategy;
             var parentNullable = identifyingColumn.IsNullable;
@@ -2665,11 +2675,11 @@ public sealed partial class SelectExpression : TableExpressionBase
                 || derivedType;
             if (derivedTpt)
             {
-                principalMappings = principalMappings.Except(ownerType.BaseType!.GetViewOrTableMappings().Select(e => e.Table));
+                principalMappings = principalMappings.Except(ownerType.BaseType!.GetQueryMappings().Select(e => e.Table));
             }
 
             var principalTables = principalMappings.ToList();
-            var dependentTables = entityType.GetViewOrTableMappings().Select(e => e.Table).ToList();
+            var dependentTables = entityType.GetQueryMappings().Select(e => e.Table).ToList();
             var baseTableIndex = selectExpression._tables.FindIndex(teb => ReferenceEquals(teb.UnwrapJoin(), tableExpressionBase));
             var dependentMainTable = dependentTables[0];
             var tableMap = new Dictionary<ITableBase, string>();
@@ -2898,6 +2908,7 @@ public sealed partial class SelectExpression : TableExpressionBase
         InnerJoin,
         LeftJoin,
         RightJoin,
+        FullJoin,
         CrossJoin,
         CrossApply,
         OuterApply
@@ -2919,8 +2930,8 @@ public sealed partial class SelectExpression : TableExpressionBase
         var innerMemberInfo = transparentIdentifierType.GetTypeInfo().GetDeclaredField("Inner")!;
         var outerClientEval = _clientProjections.Count > 0;
         var innerClientEval = innerSelect._clientProjections.Count > 0;
-        var outerNullable = joinType is JoinType.RightJoin;
-        var innerNullable = joinType is JoinType.LeftJoin or JoinType.OuterApply;
+        var outerNullable = joinType is JoinType.RightJoin or JoinType.FullJoin;
+        var innerNullable = joinType is JoinType.LeftJoin or JoinType.OuterApply or JoinType.FullJoin;
 
         if (outerClientEval)
         {
@@ -3150,7 +3161,10 @@ public sealed partial class SelectExpression : TableExpressionBase
         if (Limit != null
             || Offset != null
             || IsDistinct
-            || GroupBy.Count > 0)
+            || GroupBy.Count > 0
+            // When the outer becomes nullable (RIGHT/FULL JOIN), an outer predicate must be applied before the join; otherwise it
+            // would be rendered as a post-join WHERE that incorrectly filters out the unmatched inner rows (where the outer is null).
+            || (joinType is JoinType.RightJoin or JoinType.FullJoin && Predicate != null))
         {
             var sqlRemappingVisitor = PushdownIntoSubqueryInternal();
             innerSelect = sqlRemappingVisitor.Remap(innerSelect);
@@ -3176,10 +3190,10 @@ public sealed partial class SelectExpression : TableExpressionBase
             _identifier.Clear();
             innerSelect._identifier.Clear();
         }
-        else if (!isToOneJoin || joinType is JoinType.RightJoin)
+        else if (!isToOneJoin || joinType is JoinType.RightJoin or JoinType.FullJoin)
         {
             // This is cardinality-increasing join - add identifiers from the inner.
-            // Note that we do the same for right joins, since these make the outer identifiers nullable; that could mean that
+            // Note that we do the same for right/full joins, since these make the outer identifiers nullable; that could mean that
             // multiple inner rows get the same NULL identifier.
             switch (joinType)
             {
@@ -3198,9 +3212,23 @@ public sealed partial class SelectExpression : TableExpressionBase
                     _identifier.AddRange(innerSelect._identifier);
                     break;
 
-                default:
+                case JoinType.FullJoin:
+                    // Both sides may be unmatched, so make the outer identifiers nullable and add the inner identifiers made nullable.
+                    for (var i = 0; i < _identifier.Count; i++)
+                    {
+                        var identifier = _identifier[i];
+                        _identifier[i] = (identifier.Column.MakeNullable(), identifier.Comparer);
+                    }
+
+                    _identifier.AddRange(innerSelect._identifier.Select(e => (e.Column.MakeNullable(), e.Comparer)));
+                    break;
+
+                case JoinType.InnerJoin or JoinType.CrossJoin or JoinType.CrossApply:
                     _identifier.AddRange(innerSelect._identifier);
                     break;
+
+                default:
+                    throw new UnreachableException();
             }
         }
 
@@ -3210,6 +3238,7 @@ public sealed partial class SelectExpression : TableExpressionBase
             JoinType.InnerJoin => new InnerJoinExpression(innerTable, joinPredicate!, isPrunableJoin),
             JoinType.LeftJoin => new LeftJoinExpression(innerTable, joinPredicate!, isPrunableJoin),
             JoinType.RightJoin => new RightJoinExpression(innerTable, joinPredicate!),
+            JoinType.FullJoin => new FullJoinExpression(innerTable, joinPredicate!),
             JoinType.CrossJoin => new CrossJoinExpression(innerTable),
             JoinType.CrossApply => new CrossApplyExpression(innerTable),
             JoinType.OuterApply => (TableExpressionBase)new OuterApplyExpression(innerTable),
@@ -3380,7 +3409,7 @@ public sealed partial class SelectExpression : TableExpressionBase
                             ExpressionType.GreaterThan => ExpressionType.LessThan,
                             ExpressionType.GreaterThanOrEqual => ExpressionType.LessThanOrEqual,
 
-                            _ => throw new UnreachableException()
+                            _ => throw new UnreachableException($"Unexpected operator type '{sqlBinaryExpression.OperatorType}'.")
                         };
 
                         return new SqlBinaryExpression(
@@ -3545,6 +3574,14 @@ public sealed partial class SelectExpression : TableExpressionBase
         => AddJoin(JoinType.LeftJoin, ref innerSelectExpression, out _, joinPredicate);
 
     /// <summary>
+    ///     Adds the given <see cref="SelectExpression" /> to table sources using FULL JOIN.
+    /// </summary>
+    /// <param name="innerSelectExpression">A <see cref="SelectExpression" /> to join with.</param>
+    /// <param name="joinPredicate">A predicate to use for the join.</param>
+    public void AddFullJoin(SelectExpression innerSelectExpression, SqlExpression joinPredicate)
+        => AddJoin(JoinType.FullJoin, ref innerSelectExpression, out _, joinPredicate);
+
+    /// <summary>
     ///     Adds the given <see cref="SelectExpression" /> to table sources using CROSS JOIN.
     /// </summary>
     /// <param name="innerSelectExpression">A <see cref="SelectExpression" /> to join with.</param>
@@ -3658,6 +3695,20 @@ public sealed partial class SelectExpression : TableExpressionBase
         Expression outerShaper)
         => AddJoin(
             JoinType.RightJoin, (SelectExpression)innerSource.QueryExpression, outerShaper, innerSource.ShaperExpression, joinPredicate);
+
+    /// <summary>
+    ///     Adds the query expression of the given <see cref="ShapedQueryExpression" /> to table sources using FULL JOIN and combine shapers.
+    /// </summary>
+    /// <param name="innerSource">A <see cref="ShapedQueryExpression" /> to join with.</param>
+    /// <param name="joinPredicate">A predicate to use for the join.</param>
+    /// <param name="outerShaper">An expression for outer shaper.</param>
+    /// <returns>An expression which shapes the result of this join.</returns>
+    public Expression AddFullJoin(
+        ShapedQueryExpression innerSource,
+        SqlExpression joinPredicate,
+        Expression outerShaper)
+        => AddJoin(
+            JoinType.FullJoin, (SelectExpression)innerSource.QueryExpression, outerShaper, innerSource.ShaperExpression, joinPredicate);
 
     /// <summary>
     ///     Adds the query expression of the given <see cref="ShapedQueryExpression" /> to table sources using CROSS JOIN and combine shapers.
@@ -3939,7 +3990,8 @@ public sealed partial class SelectExpression : TableExpressionBase
                         continue;
 
                     default:
-                        throw new UnreachableException();
+                        throw new UnreachableException(
+                            "Unexpected complex property binding when lifting structural projection from subquery.");
                 }
             }
 
@@ -3952,7 +4004,8 @@ public sealed partial class SelectExpression : TableExpressionBase
             }
 
             var newEntityProjection = new StructuralTypeProjectionExpression(
-                projection.StructuralType, propertyExpressions, complexPropertyCache, nullable: false, discriminatorExpression);
+                projection.StructuralType, propertyExpressions, complexPropertyCache, nullable: false, discriminatorExpression,
+                projection.TableMap);
 
             if (projection.StructuralType is IEntityType entityType2)
             {
@@ -3987,7 +4040,10 @@ public sealed partial class SelectExpression : TableExpressionBase
                 jsonQueryExpression.JsonColumn.TypeMapping,
                 jsonQueryExpression.IsNullable);
 
-            var newJsonColumn = subquery.GenerateOuterColumn(subqueryAlias, jsonScalarExpression);
+            // The JsonColumn always represents the containing JSON column, so flow its model column through the pushdown even
+            // though the projection itself is a JsonScalarExpression (which has no model column of its own).
+            var newJsonColumn = subquery.GenerateOuterColumn(
+                subqueryAlias, jsonScalarExpression, column: jsonQueryExpression.JsonColumn.Column);
 
             Dictionary<IProperty, ColumnExpression>? newKeyPropertyMap = null;
 
@@ -4215,7 +4271,7 @@ public sealed partial class SelectExpression : TableExpressionBase
             IEntityType entityType => entityType.GetAllBaseTypes().Concat(entityType.GetDerivedTypesInclusive())
                 .SelectMany(t => t.GetDeclaredComplexProperties()),
             IComplexType complexType => complexType.GetDeclaredComplexProperties(),
-            _ => throw new UnreachableException()
+            _ => throw new UnreachableException("Unexpected structural type.")
         };
 
     private static ColumnExpression CreateColumnExpression(
@@ -4238,11 +4294,17 @@ public sealed partial class SelectExpression : TableExpressionBase
             column.PropertyMappings.First(m => m.Property == property).TypeMapping,
             nullable || column.IsNullable);
 
-    private static ColumnExpression CreateColumnExpression(ProjectionExpression subqueryProjection, string tableAlias)
+    private static ColumnExpression CreateColumnExpression(
+        ProjectionExpression subqueryProjection,
+        string tableAlias,
+        IColumnBase? column = null)
         => new(
             subqueryProjection.Alias,
             tableAlias,
-            column: subqueryProjection.Expression is ColumnExpression { Column: { } column } ? column : null,
+            // The referenced model column is the projected column's own model column, if any. JSON container columns are an
+            // exception: their JsonScalarExpression projection has no model column of its own, so callers lifting a JSON
+            // container (e.g. LiftJsonQueryFromSubquery) pass the containing column explicitly to preserve it across the subquery.
+            column: column ?? (subqueryProjection.Expression as ColumnExpression)?.Column,
             subqueryProjection.Type,
             subqueryProjection.Expression.TypeMapping!,
             nullable: subqueryProjection.Expression switch
@@ -4256,13 +4318,14 @@ public sealed partial class SelectExpression : TableExpressionBase
     private ColumnExpression GenerateOuterColumn(
         string tableAlias,
         SqlExpression projection,
-        string? columnAlias = null)
+        string? columnAlias = null,
+        IColumnBase? column = null)
     {
         // TODO: Add check if we can add projection in subquery to generate out column
         // Subquery having Distinct or GroupBy can block it.
         var index = AddToProjection(projection, columnAlias);
 
-        return CreateColumnExpression(_projection[index], tableAlias);
+        return CreateColumnExpression(_projection[index], tableAlias, column);
     }
 
     /// <inheritdoc />

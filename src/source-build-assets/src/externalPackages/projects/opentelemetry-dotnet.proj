@@ -1,9 +1,15 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- Per-component overrides (FileVersionRevision, AssemblyVersionOverride, etc.) and the
+       <FileVersionValidationPackage> item shared with the update-external-metadata tool
+       and ExternalPackageTests live in this sibling file. SourceRevisionId stays in the
+       .proj below — it's per-.proj source provenance, orthogonal to validation overrides. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
+
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
-    <SourceRevisionId>384911b7bbc9780c76197896dcd575a6be2cbf6d</SourceRevisionId>
+    <SourceRevisionId>d622e6c7c899527638b53a6b06919859f5752add</SourceRevisionId>
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
   </PropertyGroup>
 
@@ -13,6 +19,7 @@
       <OTelProviderExtProject>$(ProjectDirectory)src/OpenTelemetry.Api.ProviderBuilderExtensions/OpenTelemetry.Api.ProviderBuilderExtensions.csproj</OTelProviderExtProject>
       <OTelSdkProject>$(ProjectDirectory)src/OpenTelemetry/OpenTelemetry.csproj</OTelSdkProject>
       <OTelOtlpProject>$(ProjectDirectory)src/OpenTelemetry.Exporter.OpenTelemetryProtocol/OpenTelemetry.Exporter.OpenTelemetryProtocol.csproj</OTelOtlpProject>
+      <OTelInMemoryProject>$(ProjectDirectory)src/OpenTelemetry.Exporter.InMemory/OpenTelemetry.Exporter.InMemory.csproj</OTelInMemoryProject>
 
       <CommonBuildArgs>/p:Configuration=$(Configuration)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:DelaySign=$(DelaySign)</CommonBuildArgs>
@@ -20,6 +27,13 @@
       <CommonBuildArgs>$(CommonBuildArgs) /v:$(LogVerbosity)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) $(RedirectRepoOutputToLog)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:Version=$(OpenTelemetryDotNetReleaseVersion)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:AssemblyVersion=$(AssemblyVersionOverride)</CommonBuildArgs>
+      <CommonBuildArgs>$(CommonBuildArgs) /p:FileVersion=$(OpenTelemetryDotNetReleaseVersion).$(FileVersionRevision)</CommonBuildArgs>
+      <!-- Microsoft-shipped stable releases of OpenTelemetry have ExposeExperimentalFeatures=false (the
+           upstream MinVer-driven target flips it off for non-prerelease versions). With MinVer disabled
+           here, the upstream default of true would apply, exposing more public API than the official
+           NuGet packages. Match the shipped surface explicitly. -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:ExposeExperimentalFeatures=false</CommonBuildArgs>
       <!-- Source-build behavioral overrides (keeps patches minimal) -->
       <CommonBuildArgs>$(CommonBuildArgs) /p:DotNetBuildSourceOnly=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:UseArtifactsOutput=false</CommonBuildArgs>
@@ -71,6 +85,16 @@
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
     <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Otlp.binlog $(OTelOtlpProject) $(PackArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- 5. OpenTelemetry.Exporter.InMemory -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_InMemory.binlog $(OTelInMemoryProject) $(CommonBuildArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_InMemory.binlog $(OTelInMemoryProject) $(PackArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

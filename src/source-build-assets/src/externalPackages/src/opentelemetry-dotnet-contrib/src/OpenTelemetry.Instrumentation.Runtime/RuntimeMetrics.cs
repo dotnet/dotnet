@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Diagnostics.Metrics;
+using System.Runtime.ExceptionServices;
+#if NET
 using System.Reflection;
-using OpenTelemetry.Internal;
+#endif
 #if NET
 using JitInfo = System.Runtime.JitInfo;
 #endif
@@ -13,11 +15,9 @@ namespace OpenTelemetry.Instrumentation.Runtime;
 /// <summary>
 /// .NET runtime instrumentation.
 /// </summary>
-internal sealed class RuntimeMetrics
+internal sealed class RuntimeMetrics : IDisposable
 {
-    internal static readonly Assembly Assembly = typeof(RuntimeMetrics).Assembly;
-    internal static readonly AssemblyName AssemblyName = Assembly.GetName();
-    internal static readonly Meter MeterInstance = new(AssemblyName.Name!, Assembly.GetPackageVersion());
+    internal static readonly Meter MeterInstance = CreateMeterInstance();
 
 #if NET
     private const long NanosecondsPerTick = 100;
@@ -25,31 +25,124 @@ internal sealed class RuntimeMetrics
     private const int NumberOfGenerations = 3;
 
     private static readonly string[] GenNames = ["gen0", "gen1", "gen2", "loh", "poh"];
+    private static readonly Lock ExceptionSubscriptionSync = new();
+    private static readonly Counter<long> ExceptionCounter = MeterInstance.CreateCounter<long>(
+        "process.runtime.dotnet.exceptions.count",
+        description: "Count of exceptions that have been thrown in managed code, since the observation started. The value will be unavailable until an exception has been thrown after OpenTelemetry.Instrumentation.Runtime initialization.");
+
+    private static readonly EventHandler<FirstChanceExceptionEventArgs> FirstChanceExceptionHandler = static (source, e) =>
+    {
+        ExceptionCounter.Add(1);
+    };
+
+    private static int activeRuntimeMetricsInstances;
+
+    private bool disposed;
+
+#pragma warning disable SA1313
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RuntimeMetrics"/> class.
+    /// </summary>
+    /// <param name="_1">The options to define the metrics.</param>
+    public RuntimeMetrics(RuntimeInstrumentationOptions _1)
+#pragma warning restore SA1313
+    {
+        lock (ExceptionSubscriptionSync)
+        {
+            if (activeRuntimeMetricsInstances++ == 0)
+            {
+                AppDomain.CurrentDomain.FirstChanceException += FirstChanceExceptionHandler;
+            }
+        }
+    }
+
+    internal static int ActiveRuntimeMetricsInstances
+    {
+        get
+        {
+            lock (ExceptionSubscriptionSync)
+            {
+                return activeRuntimeMetricsInstances;
+            }
+        }
+    }
+
 #if NET
-    private static bool isGcInfoAvailable;
+    private static bool IsGcInfoAvailable
+    {
+        get
+        {
+            if (field)
+            {
+                return true;
+            }
+
+            if (GC.CollectionCount(0) > 0)
+            {
+                field = true;
+            }
+
+            return field;
+        }
+    }
 #endif
 
-    static RuntimeMetrics()
+    /// <inheritdoc/>
+    public void Dispose()
     {
-        MeterInstance.CreateObservableCounter(
+        lock (ExceptionSubscriptionSync)
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.disposed = true;
+
+            if (--activeRuntimeMetricsInstances == 0)
+            {
+                AppDomain.CurrentDomain.FirstChanceException -= FirstChanceExceptionHandler;
+            }
+        }
+    }
+
+    private static IEnumerable<Measurement<long>> GetGarbageCollectionCounts()
+    {
+        long collectionsFromHigherGeneration = 0;
+
+        for (var gen = NumberOfGenerations - 1; gen >= 0; --gen)
+        {
+            long collectionsFromThisGeneration = GC.CollectionCount(gen);
+
+            yield return new(collectionsFromThisGeneration - collectionsFromHigherGeneration, new KeyValuePair<string, object?>("generation", GenNames[gen]));
+
+            collectionsFromHigherGeneration = collectionsFromThisGeneration;
+        }
+    }
+
+    private static Meter CreateMeterInstance()
+    {
+        var meter = Metrics.MeterFactory.Create<RuntimeMetrics>(null); // These metrics are not in the Semantic Conventions
+
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.gc.collections.count",
             GetGarbageCollectionCounts,
             description: "Number of garbage collections that have occurred since process start.");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.gc.objects.size",
             () => GC.GetTotalMemory(false),
             unit: "bytes",
             description: "Count of bytes currently in use by objects in the GC heap that haven't been collected yet. Fragmentation and other GC committed memory pools are excluded.");
 
 #if NET
-        MeterInstance.CreateObservableCounter(
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.gc.allocations.size",
             () => GC.GetTotalAllocatedBytes(),
             unit: "bytes",
             description: "Count of bytes allocated on the managed GC heap since the process start. .NET objects are allocated from this heap. Object allocations from unmanaged languages such as C/C++ do not use this heap.");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.gc.committed_memory.size",
             () =>
             {
@@ -58,7 +151,7 @@ internal sealed class RuntimeMetrics
             unit: "bytes",
             description: "The amount of committed virtual memory for the managed GC heap, as observed during the latest garbage collection. Committed virtual memory may be larger than the heap size because it includes both memory for storing existing objects (the heap size) and some extra memory that is ready to handle newly allocated objects in the future. The value will be unavailable until at least one garbage collection has occurred.");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.gc.heap.size",
             () =>
             {
@@ -80,7 +173,7 @@ internal sealed class RuntimeMetrics
             unit: "bytes",
             description: "The heap size (including fragmentation), as observed during the latest garbage collection. The value will be unavailable until at least one garbage collection has occurred.");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.gc.heap.fragmentation.size",
             () =>
             {
@@ -106,111 +199,61 @@ internal sealed class RuntimeMetrics
         var getTotalPauseDuration = mi?.CreateDelegate<Func<TimeSpan>>();
         if (getTotalPauseDuration != null)
         {
-            MeterInstance.CreateObservableCounter(
+            meter.CreateObservableCounter(
                 "process.runtime.dotnet.gc.duration",
                 () => getTotalPauseDuration().Ticks * NanosecondsPerTick,
                 unit: "ns",
                 description: "The total amount of time paused in GC since the process start.");
         }
 
-        MeterInstance.CreateObservableCounter(
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.jit.il_compiled.size",
             () => JitInfo.GetCompiledILBytes(),
             unit: "bytes",
             description: "Count of bytes of intermediate language that have been compiled since the process start.");
 
-        MeterInstance.CreateObservableCounter(
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.jit.methods_compiled.count",
             () => JitInfo.GetCompiledMethodCount(),
             description: "The number of times the JIT compiler compiled a method since the process start. The JIT compiler may be invoked multiple times for the same method to compile with different generic parameters, or because tiered compilation requested different optimization settings.");
 
-        MeterInstance.CreateObservableCounter(
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.jit.compilation_time",
             () => JitInfo.GetCompilationTime().Ticks * NanosecondsPerTick,
             unit: "ns",
             description: "The amount of time the JIT compiler has spent compiling methods since the process start.");
 
-        MeterInstance.CreateObservableCounter(
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.monitor.lock_contention.count",
             () => Monitor.LockContentionCount,
             description: "The number of times there was contention when trying to acquire a monitor lock since the process start. Monitor locks are commonly acquired by using the lock keyword in C#, or by calling Monitor.Enter() and Monitor.TryEnter().");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.thread_pool.threads.count",
             () => (long)ThreadPool.ThreadCount,
             description: "The number of thread pool threads that currently exist.");
 
-        MeterInstance.CreateObservableCounter(
+        meter.CreateObservableCounter(
             "process.runtime.dotnet.thread_pool.completed_items.count",
             () => ThreadPool.CompletedWorkItemCount,
             description: "The number of work items that have been processed by the thread pool since the process start.");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.thread_pool.queue.length",
             () => ThreadPool.PendingWorkItemCount,
             description: "The number of work items that are currently queued to be processed by the thread pool.");
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.timer.count",
             () => Timer.ActiveCount,
             description: "The number of timer instances that are currently active. Timers can be created by many sources such as System.Threading.Timer, Task.Delay, or the timeout in a CancellationSource. An active timer is registered to tick at some point in the future and has not yet been canceled.");
 #endif
 
-        MeterInstance.CreateObservableUpDownCounter(
+        meter.CreateObservableUpDownCounter(
             "process.runtime.dotnet.assemblies.count",
             () => (long)AppDomain.CurrentDomain.GetAssemblies().Length,
             description: "The number of .NET assemblies that are currently loaded.");
 
-        var exceptionCounter = MeterInstance.CreateCounter<long>(
-            "process.runtime.dotnet.exceptions.count",
-            description: "Count of exceptions that have been thrown in managed code, since the observation started. The value will be unavailable until an exception has been thrown after OpenTelemetry.Instrumentation.Runtime initialization.");
-
-        AppDomain.CurrentDomain.FirstChanceException += (source, e) =>
-        {
-            exceptionCounter.Add(1);
-        };
-    }
-#pragma warning disable SA1313
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RuntimeMetrics"/> class.
-    /// </summary>
-    /// <param name="_1">The options to define the metrics.</param>
-    public RuntimeMetrics(RuntimeInstrumentationOptions _1)
-#pragma warning restore SA1313
-    {
-    }
-
-#if NET
-    private static bool IsGcInfoAvailable
-    {
-        get
-        {
-            if (isGcInfoAvailable)
-            {
-                return true;
-            }
-
-            if (GC.CollectionCount(0) > 0)
-            {
-                isGcInfoAvailable = true;
-            }
-
-            return isGcInfoAvailable;
-        }
-    }
-#endif
-
-    private static IEnumerable<Measurement<long>> GetGarbageCollectionCounts()
-    {
-        long collectionsFromHigherGeneration = 0;
-
-        for (var gen = NumberOfGenerations - 1; gen >= 0; --gen)
-        {
-            long collectionsFromThisGeneration = GC.CollectionCount(gen);
-
-            yield return new(collectionsFromThisGeneration - collectionsFromHigherGeneration, new KeyValuePair<string, object?>("generation", GenNames[gen]));
-
-            collectionsFromHigherGeneration = collectionsFromThisGeneration;
-        }
+        return meter;
     }
 }

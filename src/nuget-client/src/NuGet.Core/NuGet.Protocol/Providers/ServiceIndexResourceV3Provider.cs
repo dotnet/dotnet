@@ -1,18 +1,20 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
+using NuGet.Protocol.Utility;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.Protocol
@@ -27,29 +29,30 @@ namespace NuGet.Protocol
         private readonly ConcurrentDictionary<string, ServiceIndexCacheInfo> _cache;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private readonly EnhancedHttpRetryHelper _enhancedHttpRetryHelper;
-
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         /// <summary>
         /// Maximum amount of time to store index.json
         /// </summary>
         public TimeSpan MaxCacheDuration { get; protected set; }
 
-        public ServiceIndexResourceV3Provider() : this(EnvironmentVariableWrapper.Instance) { }
+        public ServiceIndexResourceV3Provider() : this(environmentVariableReader: null) { }
 
-        internal ServiceIndexResourceV3Provider(IEnvironmentVariableReader environmentVariableReader)
+        internal ServiceIndexResourceV3Provider(IEnvironmentVariableReader? environmentVariableReader)
             : base(typeof(ServiceIndexResourceV3),
                   nameof(ServiceIndexResourceV3Provider),
                   NuGetResourceProviderPositions.Last)
         {
             _cache = new ConcurrentDictionary<string, ServiceIndexCacheInfo>(StringComparer.OrdinalIgnoreCase);
             MaxCacheDuration = DefaultCacheDuration;
-            _enhancedHttpRetryHelper = new EnhancedHttpRetryHelper(environmentVariableReader);
+            _environmentVariableReader = environmentVariableReader;
+            _enhancedHttpRetryHelper = new EnhancedHttpRetryHelper(environmentVariableReader ?? EnvironmentVariableWrapper.Instance);
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            ServiceIndexResourceV3 index = null;
-            ServiceIndexCacheInfo cacheInfo = null;
+            ServiceIndexResourceV3? index = null;
+            ServiceIndexCacheInfo? cacheInfo = null;
             var url = source.PackageSource.Source;
 
             // the file type can easily rule out if we need to request the url
@@ -97,7 +100,7 @@ namespace NuGet.Protocol
                 index = cacheInfo.Index;
             }
 
-            return new Tuple<bool, INuGetResource>(index != null, index);
+            return new Tuple<bool, INuGetResource?>(index != null, index);
         }
 
         /// <summary>
@@ -111,14 +114,15 @@ namespace NuGet.Protocol
         /// <exception cref="OperationCanceledException">Logged to any provided <paramref name="log"/> as LogMinimal prior to throwing.</exception>
         /// <exception cref="FatalProtocolException">Encapsulates all other exceptions.</exception>
         /// <returns></returns>
-        private async Task<ServiceIndexResourceV3> GetServiceIndexResourceV3(
+        private async Task<ServiceIndexResourceV3?> GetServiceIndexResourceV3(
             SourceRepository source,
             DateTime utcNow,
             ILogger log,
             CancellationToken token)
         {
             var url = source.PackageSource.Source;
-            var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+            var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token)
+                ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
             var client = httpSourceResource.HttpSource;
 
             int maxRetries = _enhancedHttpRetryHelper.RetryCountOrDefault;
@@ -144,7 +148,7 @@ namespace NuGet.Protocol
                             },
                             async httpSourceResult =>
                             {
-                                var result = await ConsumeServiceIndexStreamAsync(httpSourceResult.Stream, utcNow, source.PackageSource, token);
+                                var result = await ConsumeServiceIndexStreamAsync(httpSourceResult.Stream!, utcNow, source.PackageSource, token);
 
                                 return result;
                             },
@@ -188,29 +192,82 @@ namespace NuGet.Protocol
             return null;
         }
 
-        private static async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamAsync(Stream stream, DateTime utcNow, PackageSource source, CancellationToken token)
+        private async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamAsync(Stream stream, DateTime utcNow, PackageSource source, CancellationToken token)
+        {
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await ConsumeServiceIndexStreamStjAsync(stream, utcNow, source, token);
+            }
+            else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            {
+                return await ConsumeServiceIndexStreamStjAsync(stream, utcNow, source, token);
+            }
+            else
+            {
+                return await ConsumeServiceIndexStreamNsjAsync(stream, utcNow, source, token);
+            }
+        }
+
+        private static async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamStjAsync(Stream stream, DateTime utcNow, PackageSource source, CancellationToken token)
+        {
+            ServiceIndexModel? index;
+            try
+            {
+                index = await JsonSerializer.DeserializeAsync(stream, JsonContext.Default.ServiceIndexModel, token);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidDataException(string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Protocol_InvalidJsonObject,
+                    source.Source), ex);
+            }
+
+            if (index is null)
+            {
+                throw new InvalidDataException(string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Protocol_InvalidJsonObject,
+                    source.Source));
+            }
+
+            // Use SemVer instead of NuGetVersion; the service index should always be in strict SemVer format.
+            if (!SemanticVersion.TryParse(index.Version, out SemanticVersion? version) || version.Major != 3)
+            {
+                throw new InvalidDataException(string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Protocol_UnsupportedVersion,
+                    index.Version));
+            }
+
+            return new ServiceIndexResourceV3(index, utcNow, source);
+        }
+
+        private static async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamNsjAsync(Stream stream, DateTime utcNow, PackageSource source, CancellationToken token)
         {
             // Parse the JSON
-            JObject json = await stream.AsJObjectAsync(token);
+            JObject json = (await stream.AsJObjectAsync(token))!;
 
             // Use SemVer instead of NuGetVersion, the service index should always be
             // in strict SemVer format
-            JToken versionToken;
+            JToken? versionToken;
             if (json.TryGetValue("version", out versionToken) &&
                 versionToken.Type == JTokenType.String)
             {
-                SemanticVersion version;
-                if (SemanticVersion.TryParse((string)versionToken, out version) &&
+                SemanticVersion? version;
+                if (SemanticVersion.TryParse((string)versionToken!, out version) &&
                     version.Major == 3)
                 {
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
                     return new ServiceIndexResourceV3(json, utcNow, source);
+#pragma warning restore IL2026, IL3050
                 }
                 else
                 {
                     string errorMessage = string.Format(
                         CultureInfo.CurrentCulture,
                         Strings.Protocol_UnsupportedVersion,
-                        (string)versionToken);
+                        (string?)versionToken);
                     throw new InvalidDataException(errorMessage);
                 }
             }
@@ -222,7 +279,7 @@ namespace NuGet.Protocol
 
         protected class ServiceIndexCacheInfo
         {
-            public ServiceIndexResourceV3 Index { get; set; }
+            public ServiceIndexResourceV3? Index { get; set; }
 
             public DateTime CachedTime { get; set; }
         }

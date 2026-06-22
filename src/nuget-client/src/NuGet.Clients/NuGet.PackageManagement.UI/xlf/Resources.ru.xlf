@@ -144,7 +144,7 @@
       </trans-unit>
       <trans-unit id="Button_Cancel">
         <source>_Cancel</source>
-        <target state="translated">_Отменить</target>
+        <target state="translated">_Отмена</target>
         <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
       </trans-unit>
       <trans-unit id="Button_Copy">
@@ -644,7 +644,7 @@
       </trans-unit>
       <trans-unit id="Label_PackagePrerelease">
         <source>Prerelease</source>
-        <target state="translated">Предварительный выпуск</target>
+        <target state="translated">Предварительная версия</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_PackageSelectForInfoToolTip">
@@ -1338,7 +1338,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Version_LatestPrerelease">
         <source>Latest prerelease</source>
-        <target state="translated">Последний предварительный выпуск</target>
+        <target state="translated">Последняя предварительная версия</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_LatestStable">

@@ -71,6 +71,7 @@
         <ResultsStdOutPath>$(TestResultsLogDir)$(_ResultFileNameNoExt).log</ResultsStdOutPath>
         <TestRunSettingsFile>$(TestRunSettingsFile)</TestRunSettingsFile>
         <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments)</TestRunnerAdditionalArguments>
+        <IsTestingPlatformApplication>$(IsTestingPlatformApplication)</IsTestingPlatformApplication>
         <RunArguments>$(RunArguments)</RunArguments>
         <RunCommand>$(RunCommand)</RunCommand>
       </TestToRun>

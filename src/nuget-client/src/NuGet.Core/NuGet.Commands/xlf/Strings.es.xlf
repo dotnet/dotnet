@@ -454,6 +454,11 @@
         <target state="translated">La propiedad "{0}" no debe ser NULL ni estar vacía.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">No se puede leer la información del proyecto de "{0}": {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">No se puede agregar un repositorio de confianza. El paquete no tiene ninguna contrafirma ni firma de repositorio.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} no se eliminará. Considere la posibilidad de quitar este paquete de las dependencias, ya que es probable que no sea necesario.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} no se eliminará. Este paquete está disponible automáticamente y no es necesario hacer referencia a él explícitamente. Quite el elemento PackageReference.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1496,6 +1501,12 @@ NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere p
         <target state="translated">{0} no proporciona un límite inferior inclusivo para la dependencia {1}. {2} se resolvió en su lugar.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">El paquete "{0}" {1} usa el marco MonoAndroid en desuso en lugar de "net6.0-android" o posterior. Considere la posibilidad de actualizar a una versión más reciente de este paquete o póngase en contacto con el autor del paquete.</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">El paquete "{0}" {1} tiene una vulnerabilidad de gravedad {2} conocida, {3}</target>
@@ -1513,6 +1524,11 @@ NuGet requiere orígenes HTTPS. Consulte https://aka.ms/nuget-https-everywhere p
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">La dependencia de proyecto '{0}' no especifica una versión. Incluya una versión para la dependencia para garantizar resultados de restauración coherentes.</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate invalida RestoreLockedMode; el archivo de bloqueo de paquetes se volverá a evaluar y regenerar, y se omitirá el modo bloqueado.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

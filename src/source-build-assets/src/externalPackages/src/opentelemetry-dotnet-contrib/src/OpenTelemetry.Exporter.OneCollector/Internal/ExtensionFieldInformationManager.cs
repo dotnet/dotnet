@@ -12,7 +12,7 @@ namespace OpenTelemetry.Exporter.OneCollector;
 
 internal sealed class ExtensionFieldInformationManager
 {
-    public const int MaxNumberOfCachedFieldInformations = 2048;
+    public const int MaxNumberOfCachedFieldInformation = 2048;
     private readonly Hashtable fieldInformationCache = new(16, StringComparer.OrdinalIgnoreCase);
 
     public static ExtensionFieldInformationManager SharedCache { get; } = new();
@@ -76,7 +76,7 @@ internal sealed class ExtensionFieldInformationManager
 
     private ExtensionFieldInformation ResolveExtensionFieldInformationRare(string fullFieldName)
     {
-        if (this.fieldInformationCache.Count >= MaxNumberOfCachedFieldInformations)
+        if (this.fieldInformationCache.Count >= MaxNumberOfCachedFieldInformation)
         {
             return BuildFieldInformation(fullFieldName);
         }
@@ -86,7 +86,7 @@ internal sealed class ExtensionFieldInformationManager
             if (this.fieldInformationCache[fullFieldName] is not ExtensionFieldInformation fieldInformation)
             {
                 fieldInformation = BuildFieldInformation(fullFieldName);
-                if (this.fieldInformationCache.Count < MaxNumberOfCachedFieldInformations)
+                if (this.fieldInformationCache.Count < MaxNumberOfCachedFieldInformation)
                 {
                     this.fieldInformationCache[fullFieldName] = fieldInformation;
                 }

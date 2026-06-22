@@ -19,8 +19,8 @@ namespace NuGet.Protocol.Tests
             var cache = new MetadataReferenceCache();
             var authors1 = new StringBuilder().Append("Contoso").ToString();
             var authors2 = new StringBuilder().Append("Contoso").ToString();
-            var metadata1 = new JObject { ["authors"] = authors1, ["description"] = "desc" }.FromJToken<PackageSearchMetadata>();
-            var metadata2 = new JObject { ["authors"] = authors2, ["description"] = "other" }.FromJToken<PackageSearchMetadata>();
+            var metadata1 = new JObject { ["authors"] = authors1, ["description"] = "desc" }.FromJToken<PackageSearchMetadata>()!;
+            var metadata2 = new JObject { ["authors"] = authors2, ["description"] = "other" }.FromJToken<PackageSearchMetadata>()!;
             Assert.NotSame(metadata1.Authors, metadata2.Authors);
 
             // Act

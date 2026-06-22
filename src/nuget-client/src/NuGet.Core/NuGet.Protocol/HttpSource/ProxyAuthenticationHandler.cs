@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.Net;
@@ -27,14 +25,14 @@ namespace NuGet.Protocol
         private static readonly SemaphoreSlim _credentialPromptLock = new SemaphoreSlim(1, 1);
 
         private readonly HttpClientHandler _clientHandler;
-        private readonly ICredentialService _credentialService;
+        private readonly ICredentialService? _credentialService;
         private readonly IProxyCredentialCache _credentialCache;
 
         private int _authRetries;
 
         public ProxyAuthenticationHandler(
             HttpClientHandler clientHandler,
-            ICredentialService credentialService,
+            ICredentialService? credentialService,
             IProxyCredentialCache credentialCache)
             : base(clientHandler)
         {
@@ -59,7 +57,7 @@ namespace NuGet.Protocol
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            HttpResponseMessage response = null;
+            HttpResponseMessage? response = null;
             var logger = request.GetOrCreateConfiguration().Logger;
 
             while (true)
@@ -72,6 +70,7 @@ namespace NuGet.Protocol
 
                 // Store the auth start before sending the request
                 var cacheVersion = _credentialCache.Version;
+                var requestUri = request.RequestUri ?? throw new ArgumentException(message: "request.RequestUri must not be null");
 
                 try
                 {
@@ -95,7 +94,7 @@ namespace NuGet.Protocol
                         return response;
                     }
 
-                    if (!await AcquireCredentialsAsync(request.RequestUri, cacheVersion, logger, cancellationToken))
+                    if (!await AcquireCredentialsAsync(requestUri, cacheVersion, _clientHandler.Proxy!, _credentialService!, logger, cancellationToken))
                     {
                         return response;
                     }
@@ -103,7 +102,7 @@ namespace NuGet.Protocol
                 catch (Exception ex)
                 when (ProxyAuthenticationRequired(ex) && _clientHandler.Proxy != null && _credentialService != null)
                 {
-                    if (!await AcquireCredentialsAsync(request.RequestUri, cacheVersion, logger, cancellationToken))
+                    if (!await AcquireCredentialsAsync(requestUri, cacheVersion, _clientHandler.Proxy!, _credentialService!, logger, cancellationToken))
                     {
                         throw;
                     }
@@ -126,7 +125,7 @@ namespace NuGet.Protocol
             return response?.StatusCode == HttpStatusCode.ProxyAuthenticationRequired;
         }
 
-        private static HttpWebResponse ExtractResponse(Exception ex)
+        private static HttpWebResponse? ExtractResponse(Exception ex)
         {
             var webException = ex.InnerException as WebException;
             var response = webException?.Response as HttpWebResponse;
@@ -146,7 +145,7 @@ namespace NuGet.Protocol
         }
 #endif
 
-        private async Task<bool> AcquireCredentialsAsync(Uri requestUri, Guid cacheVersion, ILogger log, CancellationToken cancellationToken)
+        private async Task<bool> AcquireCredentialsAsync(Uri requestUri, Guid cacheVersion, IWebProxy proxy, ICredentialService credentialService, ILogger log, CancellationToken cancellationToken)
         {
             try
             {
@@ -169,10 +168,14 @@ namespace NuGet.Protocol
                     return false;
                 }
 
-                var proxyAddress = _clientHandler.Proxy.GetProxy(requestUri);
+                var proxyAddress = proxy.GetProxy(requestUri);
+                if (proxyAddress == null)
+                {
+                    return false;
+                }
 
                 // prompt user for proxy credentials.
-                var credentials = await PromptForProxyCredentialsAsync(proxyAddress, _clientHandler.Proxy, log, cancellationToken);
+                var credentials = await PromptForProxyCredentialsAsync(proxyAddress, proxy, credentialService, log, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -193,9 +196,9 @@ namespace NuGet.Protocol
             }
         }
 
-        private async Task<NetworkCredential> PromptForProxyCredentialsAsync(Uri proxyAddress, IWebProxy proxy, ILogger log, CancellationToken cancellationToken)
+        private static async Task<NetworkCredential?> PromptForProxyCredentialsAsync(Uri proxyAddress, IWebProxy proxy, ICredentialService credentialService, ILogger log, CancellationToken cancellationToken)
         {
-            ICredentials promptCredentials;
+            ICredentials? promptCredentials;
 
             try
             {
@@ -204,7 +207,7 @@ namespace NuGet.Protocol
                     Strings.Http_CredentialsForProxy,
                     proxyAddress);
 
-                promptCredentials = await _credentialService.GetCredentialsAsync(
+                promptCredentials = await credentialService.GetCredentialsAsync(
                     proxyAddress,
                     proxy,
                     type: CredentialRequestType.Proxy,

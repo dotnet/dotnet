@@ -39,7 +39,7 @@
 
     <MSBuild Projects="$(InternalToolsRestoreProject)"
       Targets="Restore"
-      Properties="@(_RestoreToolsProps);RestoreConfigFile=$(InternalToolsRestoreConfig);_NETCORE_ENGINEERING_TELEMETRY=Restore"
+      Properties="@(_RestoreToolsProps);RestoreConfigFile=$(InternalToolsRestoreConfig)"
       Condition="'$(Restore)' == 'true'" />
   </Target>
 

@@ -434,7 +434,7 @@ static NuGet.Configuration.Settings.LoadDefaultSettings(string? root, string? co
 static NuGet.Configuration.Settings.LoadImmutableSettingsGivenConfigPaths(System.Collections.Generic.IList<string!>? configFilePaths, NuGet.Configuration.SettingsLoadingContext! settingsLoadingContext) -> NuGet.Configuration.ISettings!
 static NuGet.Configuration.Settings.LoadMachineWideSettings(string! root, params string![]! paths) -> NuGet.Configuration.ISettings!
 static NuGet.Configuration.Settings.LoadSettingsGivenConfigPaths(System.Collections.Generic.IList<string!>! configFilePaths) -> NuGet.Configuration.ISettings!
-static NuGet.Configuration.Settings.LoadSpecificSettings(string! root, string! configFileName) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadSpecificSettings(string? root, string! configFileName) -> NuGet.Configuration.ISettings!
 static NuGet.Configuration.SettingsUtility.DeleteConfigValue(NuGet.Configuration.ISettings! settings, string! key) -> bool
 static NuGet.Configuration.SettingsUtility.DeleteValue(NuGet.Configuration.ISettings! settings, string! section, string! attributeKey, string! attributeValue) -> bool
 static NuGet.Configuration.SettingsUtility.GetConfigValue(NuGet.Configuration.ISettings! settings, string! key, bool decrypt = false, bool isPath = false) -> string?

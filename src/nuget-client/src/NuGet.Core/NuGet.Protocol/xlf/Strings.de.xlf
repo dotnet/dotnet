@@ -81,8 +81,28 @@
       </trans-unit>
       <trans-unit id="Error_PackageIdentityDoesNotMatch">
         <source>Expected package {0} {1}, but got package {2} {3}</source>
-        <target state="new">Expected package {0} {1}, but got package {2} {3}</target>
+        <target state="translated">Paket {0} {1} erwartet, aber Paket {2} {3} erhalten</target>
         <note>0 and 2 are package names, and 1 and 3 are version numbers</note>
+      </trans-unit>
+      <trans-unit id="Error_RequiredJsonPropertyMissing">
+        <source>Required property '{0}' not found in JSON.</source>
+        <target state="translated">Die erforderliche Eigenschaft „{0}“ wurde in JSON nicht gefunden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnexpectedJsonToken">
+        <source>Unexpected JSON token type '{0}'.</source>
+        <target state="translated">Unerwarteter JSON-Tokentyp „{0}“.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnexpectedPayloadTokenType">
+        <source>Expected payload to be a JSON object but was `{0}`.</source>
+        <target state="translated">Es wurde erwartet, dass die Nutzdaten ein JSON-Objekt sind, aber sie waren `{0}`.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedPayloadType">
+        <source>Unsupported payload type `{0}`.</source>
+        <target state="translated">Nicht unterstützter Nutzdatentyp `{0}`.</target>
+        <note />
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
@@ -483,6 +503,16 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       <trans-unit id="Protocol_PackageMetadataError">
         <source>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</source>
         <target state="translated">Fehler beim Abrufen von Paketmetadaten für "{0}" aus der Quelle "{1}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterMultipleNotSupported">
+        <source>The source supports filtering by only one package type at a time.</source>
+        <target state="translated">Die Quelle unterstützt das Filtern jeweils nur nach einem Pakettyp.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterNotSupported">
+        <source>The source does not support filtering search results by package type.</source>
+        <target state="translated">Die Quelle unterstützt das Filtern von Suchergebnissen nach Pakettyp nicht.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_Search_LocalSourceNotFound">

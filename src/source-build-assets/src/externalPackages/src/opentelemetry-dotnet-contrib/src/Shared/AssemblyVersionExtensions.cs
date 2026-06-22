@@ -22,7 +22,7 @@ internal static class AssemblyVersionExtensions
         Debug.Assert(!string.IsNullOrEmpty(informationalVersion), "AssemblyInformationalVersionAttribute was not found in assembly");
 
 #if NET || NETSTANDARD2_1_OR_GREATER
-        var indexOfPlusSign = informationalVersion!.IndexOf('+', StringComparison.Ordinal);
+        var indexOfPlusSign = informationalVersion.IndexOf('+', StringComparison.Ordinal);
 #else
         var indexOfPlusSign = informationalVersion!.IndexOf('+');
 #endif

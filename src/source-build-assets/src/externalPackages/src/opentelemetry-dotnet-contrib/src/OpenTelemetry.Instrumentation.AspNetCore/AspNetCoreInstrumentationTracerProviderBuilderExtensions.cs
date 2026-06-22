@@ -109,10 +109,10 @@ public static class AspNetCoreInstrumentationTracerProviderBuilderExtensions
         {
             // TODO: Check with .NET team to see if this can be prevented
             // as this allows user to override the ActivitySource.
-            var activitySourceService = serviceProvider?.GetService<ActivitySource>();
-            if (activitySourceService != null)
+            var activitySource = serviceProvider?.GetService<ActivitySource>();
+            if (activitySource != null)
             {
-                builder.AddSource(activitySourceService.Name);
+                builder.AddSource(activitySource.Name);
             }
             else
             {

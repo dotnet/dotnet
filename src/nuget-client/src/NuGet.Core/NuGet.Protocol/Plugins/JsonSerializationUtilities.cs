@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -14,6 +15,10 @@ namespace NuGet.Protocol.Plugins
     /// <summary>
     /// JSON serialization/deserialization utilities.
     /// </summary>
+#if NET5_0_OR_GREATER
+    [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Legacy Newtonsoft.Json infrastructure; methods on this class are already annotated with [RUC]/[RDC].")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Legacy Newtonsoft.Json infrastructure; methods on this class are already annotated with [RUC]/[RDC].")]
+#endif
     public static class JsonSerializationUtilities
     {
         /// <summary>
@@ -41,10 +46,14 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <typeparam name="T">The deserialization type.</typeparam>
         /// <param name="json">JSON to deserialize.</param>
-        /// <returns>An instance of <typeparamref name="T" />.</returns>
+        /// <returns>An instance of <typeparamref name="T" />, or <see langword="null" /> if the JSON represents a null value.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="json" />
         /// is either <see langword="null" /> or an empty string.</exception>
-        public static T Deserialize<T>(string json)
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
+        public static T? Deserialize<T>(string json)
             where T : class
         {
             if (string.IsNullOrEmpty(json))
@@ -65,6 +74,10 @@ namespace NuGet.Protocol.Plugins
         /// <param name="value">An object to serialize.</param>
         /// <returns>A <see cref="JObject" />.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based serialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based serialization.")]
+#endif
         public static JObject FromObject(object value)
         {
             if (value == null)
@@ -81,6 +94,10 @@ namespace NuGet.Protocol.Plugins
         /// <param name="writer">A JSON writer.</param>
         /// <param name="value">The value to serialize.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="value" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based serialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based serialization.")]
+#endif
         public static void Serialize(JsonWriter writer, object value)
         {
             if (writer == null)
@@ -96,9 +113,13 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <typeparam name="T">The deserialization type.</typeparam>
         /// <param name="jObject">A JSON object.</param>
-        /// <returns>An instance of <typeparamref name="T" />.</returns>
+        /// <returns>An instance of <typeparamref name="T" />, or <see langword="null" /> if the JSON represents a null value.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="jObject" /> is <see langword="null" />.</exception>
-        public static T ToObject<T>(JObject jObject)
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
+        public static T? ToObject<T>(JObject jObject)
         {
             if (jObject == null)
             {

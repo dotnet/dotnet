@@ -1,7 +1,0 @@
-{
-  "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "ms-dotnettools.csharp",
-    "EditorConfig.EditorConfig"
-  ]
-}

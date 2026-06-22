@@ -167,7 +167,16 @@ internal sealed class AWSTracingPipelineHandler : PipelineHandler
                     {
                         if (this.awsServiceHelper.ParameterAttributeMap.TryGetValue(parameter, out var attribute))
                         {
-                            activity.SetTag(attribute, property.GetValue(request));
+                            var value = property.GetValue(request);
+
+                            if (value is string stringValue && this.awsServiceHelper.ArrayValueAttributeNames.Contains(attribute))
+                            {
+                                activity.SetTag(attribute, new string[] { stringValue });
+                            }
+                            else
+                            {
+                                activity.SetTag(attribute, value);
+                            }
                         }
                     }
                 }

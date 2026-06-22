@@ -24,7 +24,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => _handlers.AddOrUpdate(
                     MessageMethod.Handshake,
-                    addHandlerFunc: null,
+                    addHandlerFunc: null!,
                     updateHandlerFunc: oldHandler => oldHandler));
 
             Assert.Equal("addHandlerFunc", exception.ParamName);
@@ -37,7 +37,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 () => _handlers.AddOrUpdate(
                     MessageMethod.Handshake,
                     () => Mock.Of<IRequestHandler>(),
-                    updateHandlerFunc: null));
+                    updateHandlerFunc: null!));
 
             Assert.Equal("updateHandlerFunc", exception.ParamName);
         }
@@ -49,8 +49,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             _handlers.AddOrUpdate(MessageMethod.Handshake, () => handler, oldHandler => handler);
 
-            IRequestHandler actualHandler;
-            var wasAdded = _handlers.TryGet(MessageMethod.Handshake, out actualHandler);
+            var wasAdded = _handlers.TryGet(MessageMethod.Handshake, out var actualHandler);
 
             Assert.True(wasAdded);
             Assert.Same(handler, actualHandler);
@@ -65,8 +64,7 @@ namespace NuGet.Protocol.Plugins.Tests
             _handlers.AddOrUpdate(MessageMethod.Handshake, () => firstHandler, h => firstHandler);
             _handlers.AddOrUpdate(MessageMethod.Handshake, () => secondHandler, h => secondHandler);
 
-            IRequestHandler actualHandler;
-            var wasUpdated = _handlers.TryGet(MessageMethod.Handshake, out actualHandler);
+            var wasUpdated = _handlers.TryGet(MessageMethod.Handshake, out var actualHandler);
 
             Assert.True(wasUpdated);
             Assert.Same(secondHandler, actualHandler);
@@ -76,7 +74,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void TryAdd_ThrowsForNullHandler()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => _handlers.TryAdd(MessageMethod.Handshake, handler: null));
+                () => _handlers.TryAdd(MessageMethod.Handshake, handler: null!));
 
             Assert.Equal("handler", exception.ParamName);
         }
@@ -103,8 +101,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             _handlers.TryAdd(MessageMethod.Handshake, _handler);
 
-            IRequestHandler handler;
-            var wasGotten = _handlers.TryGet(MessageMethod.Handshake, out handler);
+            var wasGotten = _handlers.TryGet(MessageMethod.Handshake, out var handler);
 
             Assert.True(wasGotten);
             Assert.Same(_handler, handler);
@@ -113,8 +110,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void TryGet_ReturnsFalseIfNotGotten()
         {
-            IRequestHandler handler;
-            var wasGotten = _handlers.TryGet(MessageMethod.Handshake, out handler);
+            var wasGotten = _handlers.TryGet(MessageMethod.Handshake, out var handler);
 
             Assert.False(wasGotten);
             Assert.Null(handler);

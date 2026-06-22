@@ -6296,7 +6296,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
             }
         }
 
-        [Fact(Skip = "https://github.com/NuGet/Home/issues/8601")]
+        [Fact]
         public void PackCommand_Deterministic_MultiplePackInvocations_CreateIdenticalPackages()
         {
             var nugetexe = Util.GetNuGetExePath();
@@ -6329,7 +6329,11 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
   </metadata>
 </package>");
 
-                var command = "pack packageA.nuspec -Deterministic -OutputDirectory {0}";
+                var timestamp = new DateTimeOffset(year: 2020, month: 1, day: 1,
+                                                   hour: 0, minute: 0, second: 0,
+                                                   offset: TimeSpan.Zero);
+
+                var command = "pack packageA.nuspec -Deterministic -DeterministicTimestamp {0} -OutputDirectory {1}";
                 byte[][] packageBytes = new byte[2][];
 
                 for (var i = 0; i < 2; i++)
@@ -6340,7 +6344,7 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
                     var r = CommandRunner.Run(
                         nugetexe,
                         workingDirectory,
-                        string.Format(command, path),
+                        string.Format(command, timestamp.ToString("o"), path),
                         testOutputHelper: _testOutputHelper);
                     Assert.True(0 == r.ExitCode, r.Output + " " + r.Errors);
 

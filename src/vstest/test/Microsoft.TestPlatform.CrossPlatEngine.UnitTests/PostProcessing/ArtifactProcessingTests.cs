@@ -97,7 +97,7 @@ public class ArtifactProcessingTests
         _artifactProcessingManager.CollectArtifacts(testRunCompleteEventArgs, string.Empty);
 
         // assert
-        _fileHelperMock.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Once);
+        _fileHelperMock.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Exactly(2));
         _fileHelperMock.Verify(x => x.WriteAllTextToFile(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
         _dataSerializer.Verify(x => x.SerializePayload(It.IsAny<string>(), It.IsAny<TestRunCompleteEventArgs>()), Times.Once);
     }

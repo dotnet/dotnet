@@ -16,8 +16,7 @@ internal class ServerCertificateValidationProvider
     private ServerCertificateValidationProvider(X509Certificate2Collection trustedCertificates, IServerCertificateValidationEventSource log)
     {
         this.trustedCertificates = trustedCertificates;
-        this.ValidationCallback = (_, cert, chain, errors) =>
-            this.ValidateCertificate(cert != null ? new X509Certificate2(cert) : null, chain, errors);
+        this.ValidationCallback = (_, cert, chain, errors) => this.ValidateCertificate(cert, chain, errors);
         this.log = log;
     }
 
@@ -80,7 +79,7 @@ internal class ServerCertificateValidationProvider
         return false;
     }
 
-    private bool ValidateCertificate(X509Certificate2? cert, X509Chain? chain, SslPolicyErrors errors)
+    private bool ValidateCertificate(X509Certificate? cert, X509Chain? chain, SslPolicyErrors errors)
     {
         var isSslPolicyPassed = errors is SslPolicyErrors.None or SslPolicyErrors.RemoteCertificateChainErrors;
         if (!isSslPolicyPassed)
@@ -111,8 +110,13 @@ internal class ServerCertificateValidationProvider
         chain.ChainPolicy.ExtraStore.AddRange(this.trustedCertificates);
         chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
-        // building the chain to process basic validations e.g. signature, use, expiration, revocation
-        var isValidChain = chain.Build(cert);
+        bool isValidChain;
+
+        using (var certificate2 = new X509Certificate2(cert))
+        {
+            // Building the chain to process basic validations e.g. signature, use, expiration, revocation
+            isValidChain = chain.Build(certificate2);
+        }
 
         if (!isValidChain)
         {

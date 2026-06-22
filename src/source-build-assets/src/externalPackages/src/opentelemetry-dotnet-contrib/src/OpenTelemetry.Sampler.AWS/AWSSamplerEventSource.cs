@@ -6,7 +6,7 @@ using System.Diagnostics.Tracing;
 namespace OpenTelemetry.Sampler.AWS;
 
 [EventSource(Name = "OpenTelemetry-Sampler-AWS")]
-internal class AWSSamplerEventSource : EventSource
+internal sealed class AWSSamplerEventSource : EventSource
 {
     public static AWSSamplerEventSource Log = new AWSSamplerEventSource();
 

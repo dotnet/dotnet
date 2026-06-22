@@ -51,14 +51,12 @@ internal sealed class AWSEC2Detector : IResourceDetector
         return Resource.Empty;
     }
 
-    internal static AWSEC2IdentityDocumentModel? DeserializeResponse(string response)
-    {
+    internal static AWSEC2IdentityDocumentModel? DeserializeResponse(string response) =>
 #if NETFRAMEWORK
-        return ResourceDetectorUtils.DeserializeFromString<AWSEC2IdentityDocumentModel>(response);
+        ResourceDetectorUtils.DeserializeFromString<AWSEC2IdentityDocumentModel>(response);
 #else
-        return ResourceDetectorUtils.DeserializeFromString(response, SourceGenerationContext.Default.AWSEC2IdentityDocumentModel);
+        ResourceDetectorUtils.DeserializeFromString(response, SourceGenerationContext.Default.AWSEC2IdentityDocumentModel);
 #endif
-    }
 
     internal List<KeyValuePair<string, object>> ExtractResourceAttributes(AWSEC2IdentityDocumentModel? identity, string hostName)
     {
@@ -79,9 +77,7 @@ internal sealed class AWSEC2Detector : IResourceDetector
     }
 
     private static string GetAWSEC2Token()
-    {
-        return AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync(AWSEC2MetadataTokenUrl, HttpMethod.Put, new KeyValuePair<string, string>(AWSEC2MetadataTokenTTLHeader, "60")));
-    }
+        => ResourceDetectorUtils.SendOutRequest(AWSEC2MetadataTokenUrl, HttpMethod.Put, new KeyValuePair<string, string>(AWSEC2MetadataTokenTTLHeader, "60"));
 
     private static AWSEC2IdentityDocumentModel? GetAWSEC2Identity(string token)
     {
@@ -92,12 +88,8 @@ internal sealed class AWSEC2Detector : IResourceDetector
     }
 
     private static string GetIdentityResponse(string token)
-    {
-        return AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync(AWSEC2IdentityDocumentUrl, HttpMethod.Get, new KeyValuePair<string, string>(AWSEC2MetadataTokenHeader, token)));
-    }
+        => ResourceDetectorUtils.SendOutRequest(AWSEC2IdentityDocumentUrl, HttpMethod.Get, new KeyValuePair<string, string>(AWSEC2MetadataTokenHeader, token));
 
     private static string GetAWSEC2HostName(string token)
-    {
-        return AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync(AWSEC2HostNameUrl, HttpMethod.Get, new KeyValuePair<string, string>(AWSEC2MetadataTokenHeader, token)));
-    }
+        => ResourceDetectorUtils.SendOutRequest(AWSEC2HostNameUrl, HttpMethod.Get, new KeyValuePair<string, string>(AWSEC2MetadataTokenHeader, token));
 }

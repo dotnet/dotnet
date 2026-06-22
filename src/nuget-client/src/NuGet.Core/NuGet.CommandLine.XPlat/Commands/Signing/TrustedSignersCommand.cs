@@ -4,9 +4,9 @@
 #nullable disable
 
 using System;
+using System.CommandLine;
 using System.Globalization;
 using System.Threading.Tasks;
-using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -17,228 +17,179 @@ namespace NuGet.CommandLine.XPlat
 {
     internal static class TrustedSignersCommand
     {
-        internal static void Register(CommandLineApplication app,
-                      Func<ILogger> getLogger,
+        internal static void Register(Command parent,
+                      Func<ILoggerWithColor> getLogger,
                       Action<LogLevel> setLogLevel)
         {
-            app.Command("trust", trustedSignersCmd =>
+            var trustedSignersCmd = new Command("trust", Strings.TrustCommandDescription);
+
+            // --- list subcommand ---
+            var listCommand = new Command("list", Strings.TrustListCommandDescription);
             {
-                // sub-commands
-                trustedSignersCmd.Command("list", (listCommand) =>
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                listCommand.Options.Add(configFile);
+                listCommand.Options.Add(verbosity);
+
+                listCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    listCommand.Description = Strings.TrustListCommandDescription;
-                    CommandOption configFile = listCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    listCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption verbosity = listCommand.VerbosityOption();
-
-                    listCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.List, algorithm: null, allowUntrustedRootOption: false, owners: null, verbosity, configFile, getLogger, setLogLevel);
-                    });
+                    return await ExecuteCommand(TrustCommand.List, algorithm: null, allowUntrustedRootOption: false, owners: null, parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel);
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(listCommand);
 
-                trustedSignersCmd.Command("sync", (syncCommand) =>
+            // --- sync subcommand ---
+            var syncCommand = new Command("sync", Strings.TrustSyncCommandDescription);
+            {
+                var name = new Argument<string>("NAME") { Description = Strings.TrustedSignerNameExists };
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                syncCommand.Arguments.Add(name);
+                syncCommand.Options.Add(configFile);
+                syncCommand.Options.Add(verbosity);
+
+                syncCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    syncCommand.Description = Strings.TrustSyncCommandDescription;
-                    CommandOption configFile = syncCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    syncCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption verbosity = syncCommand.VerbosityOption(); ;
-
-                    CommandArgument name = syncCommand.Argument("<NAME>",
-                                               Strings.TrustedSignerNameExists);
-
-                    syncCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.Sync, algorithm: null, allowUntrustedRootOption: false, owners: null, verbosity, configFile, getLogger, setLogLevel, name: name.Value);
-                    });
+                    return await ExecuteCommand(TrustCommand.Sync, algorithm: null, allowUntrustedRootOption: false, owners: null, parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel, name: parseResult.GetValue(name));
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(syncCommand);
 
-                trustedSignersCmd.Command("remove", (syncCommand) =>
+            // --- remove subcommand ---
+            var removeCommand = new Command("remove", Strings.TrustRemoveCommandDescription);
+            {
+                var name = new Argument<string>("NAME") { Description = Strings.TrustedSignerNameToRemove };
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                removeCommand.Arguments.Add(name);
+                removeCommand.Options.Add(configFile);
+                removeCommand.Options.Add(verbosity);
+
+                removeCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    syncCommand.Description = Strings.TrustRemoveCommandDescription;
-                    CommandOption configFile = syncCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    syncCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption verbosity = syncCommand.VerbosityOption();
-
-                    CommandArgument name = syncCommand.Argument("<NAME>",
-                                               Strings.TrustedSignerNameToRemove);
-
-                    syncCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.Remove, algorithm: null, allowUntrustedRootOption: false, owners: null, verbosity, configFile, getLogger, setLogLevel, name: name.Value);
-                    });
+                    return await ExecuteCommand(TrustCommand.Remove, algorithm: null, allowUntrustedRootOption: false, owners: null, parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel, name: parseResult.GetValue(name));
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(removeCommand);
 
-                trustedSignersCmd.Command("author", (authorCommand) =>
+            // --- author subcommand ---
+            var authorCommand = new Command("author", Strings.TrustAuthorCommandDescription);
+            {
+                var name = new Argument<string>("NAME") { Description = Strings.TrustedSignerNameToAdd };
+                var package = new Argument<string>("PACKAGE") { Description = Strings.TrustLocalSignedNupkgPath };
+                var allowUntrustedRootOption = new Option<bool>("--allow-untrusted-root") { Description = Strings.TrustCommandAllowUntrustedRoot, Arity = ArgumentArity.Zero };
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                authorCommand.Arguments.Add(name);
+                authorCommand.Arguments.Add(package);
+                authorCommand.Options.Add(allowUntrustedRootOption);
+                authorCommand.Options.Add(configFile);
+                authorCommand.Options.Add(verbosity);
+
+                authorCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    authorCommand.Description = Strings.TrustAuthorCommandDescription;
-
-                    CommandOption allowUntrustedRootOption = authorCommand.Option(
-                                                "--allow-untrusted-root",
-                                                Strings.TrustCommandAllowUntrustedRoot,
-                                                CommandOptionType.NoValue);
-
-                    CommandOption configFile = authorCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    authorCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption verbosity = authorCommand.VerbosityOption();
-
-                    CommandArgument name = authorCommand.Argument("<NAME>",
-                                               Strings.TrustedSignerNameToAdd);
-                    CommandArgument package = authorCommand.Argument("<PACKAGE>",
-                                               Strings.TrustLocalSignedNupkgPath);
-
-                    authorCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.Author, algorithm: null, allowUntrustedRootOption.HasValue(), owners: null, verbosity, configFile, getLogger, setLogLevel, name: name.Value, sourceUrl: null, packagePath: package.Value);
-                    });
+                    return await ExecuteCommand(TrustCommand.Author, algorithm: null, parseResult.GetValue(allowUntrustedRootOption), owners: null, parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel, name: parseResult.GetValue(name), sourceUrl: null, packagePath: parseResult.GetValue(package));
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(authorCommand);
 
-                trustedSignersCmd.Command("repository", (repositoryCommand) =>
+            // --- repository subcommand ---
+            var repositoryCommand = new Command("repository", Strings.TrustRepositoryCommandDescription);
+            {
+                var name = new Argument<string>("NAME") { Description = Strings.TrustedSignerNameToAdd };
+                var package = new Argument<string>("PACKAGE") { Description = Strings.TrustLocalSignedNupkgPath };
+                var allowUntrustedRootOption = new Option<bool>("--allow-untrusted-root") { Description = Strings.TrustCommandAllowUntrustedRoot, Arity = ArgumentArity.Zero };
+                var owners = new Option<string>("--owners") { Description = Strings.TrustCommandOwners, Arity = ArgumentArity.ZeroOrOne };
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                repositoryCommand.Arguments.Add(name);
+                repositoryCommand.Arguments.Add(package);
+                repositoryCommand.Options.Add(allowUntrustedRootOption);
+                repositoryCommand.Options.Add(owners);
+                repositoryCommand.Options.Add(configFile);
+                repositoryCommand.Options.Add(verbosity);
+
+                repositoryCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    repositoryCommand.Description = Strings.TrustRepositoryCommandDescription;
-
-                    CommandOption allowUntrustedRootOption = repositoryCommand.Option(
-                                                "--allow-untrusted-root",
-                                                Strings.TrustCommandAllowUntrustedRoot,
-                                                CommandOptionType.NoValue);
-
-                    CommandOption configFile = repositoryCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    repositoryCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption owners = repositoryCommand.Option(
-                        "--owners",
-                        Strings.TrustCommandOwners,
-                        CommandOptionType.SingleValue);
-
-                    CommandOption verbosity = repositoryCommand.VerbosityOption();
-
-                    CommandArgument name = repositoryCommand.Argument("<NAME>",
-                                               Strings.TrustedSignerNameToAdd);
-                    CommandArgument package = repositoryCommand.Argument("<PACKAGE>",
-                                               Strings.TrustLocalSignedNupkgPath);
-
-                    repositoryCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.Repository, algorithm: null, allowUntrustedRootOption.HasValue(), owners: owners, verbosity, configFile, getLogger, setLogLevel, name: name.Value, sourceUrl: null, packagePath: package.Value);
-                    });
+                    return await ExecuteCommand(TrustCommand.Repository, algorithm: null, parseResult.GetValue(allowUntrustedRootOption), owners: parseResult.GetValue(owners), parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel, name: parseResult.GetValue(name), sourceUrl: null, packagePath: parseResult.GetValue(package));
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(repositoryCommand);
 
-                trustedSignersCmd.Command("certificate", (certificateCommand) =>
+            // --- certificate subcommand ---
+            var certificateCommand = new Command("certificate", Strings.TrustRepositoryCommandDescription);
+            {
+                var name = new Argument<string>("NAME") { Description = Strings.TrustedCertificateSignerNameToAdd };
+                var fingerprint = new Argument<string>("FINGERPRINT") { Description = Strings.TrustCertificateFingerprint };
+                var algorithm = new Option<string>("--algorithm") { Description = Strings.TrustCommandAlgorithm, Arity = ArgumentArity.ZeroOrOne };
+                var allowUntrustedRootOption = new Option<bool>("--allow-untrusted-root") { Description = Strings.TrustCommandAllowUntrustedRoot, Arity = ArgumentArity.Zero };
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                certificateCommand.Arguments.Add(name);
+                certificateCommand.Arguments.Add(fingerprint);
+                certificateCommand.Options.Add(algorithm);
+                certificateCommand.Options.Add(allowUntrustedRootOption);
+                certificateCommand.Options.Add(configFile);
+                certificateCommand.Options.Add(verbosity);
+
+                certificateCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    certificateCommand.Description = Strings.TrustRepositoryCommandDescription;
-
-                    CommandOption algorithm = certificateCommand.Option(
-                        "--algorithm",
-                        Strings.TrustCommandAlgorithm,
-                        CommandOptionType.SingleValue);
-
-                    CommandOption allowUntrustedRootOption = certificateCommand.Option(
-                                                "--allow-untrusted-root",
-                                                Strings.TrustCommandAllowUntrustedRoot,
-                                                CommandOptionType.NoValue);
-
-                    CommandOption configFile = certificateCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    certificateCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption verbosity = certificateCommand.VerbosityOption();
-
-                    CommandArgument name = certificateCommand.Argument("<NAME>",
-                                               Strings.TrustedCertificateSignerNameToAdd);
-                    CommandArgument fingerprint = certificateCommand.Argument("<FINGERPRINT>",
-                                               Strings.TrustCertificateFingerprint);
-
-                    certificateCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.Certificate, algorithm, allowUntrustedRootOption.HasValue(), owners: null, verbosity, configFile, getLogger, setLogLevel, name: name.Value, sourceUrl: null, packagePath: null, fingerprint: fingerprint.Value);
-                    });
+                    return await ExecuteCommand(TrustCommand.Certificate, algorithm: parseResult.GetValue(algorithm), parseResult.GetValue(allowUntrustedRootOption), owners: null, parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel, name: parseResult.GetValue(name), sourceUrl: null, packagePath: null, fingerprint: parseResult.GetValue(fingerprint));
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(certificateCommand);
 
-                trustedSignersCmd.Command("source", (sourceCommand) =>
+            // --- source subcommand ---
+            var sourceCommand = new Command("source", Strings.TrustSourceCommandDescription);
+            {
+                var name = new Argument<string>("NAME") { Description = Strings.TrustSourceSignerName };
+                var sourceUrl = new Option<string>("--source-url") { Description = Strings.TrustSourceUrl, Arity = ArgumentArity.ZeroOrOne };
+                var owners = new Option<string>("--owners") { Description = Strings.TrustCommandOwners, Arity = ArgumentArity.ZeroOrOne };
+                var configFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+                var verbosity = CreateVerbosityOption();
+
+                sourceCommand.Arguments.Add(name);
+                sourceCommand.Options.Add(sourceUrl);
+                sourceCommand.Options.Add(owners);
+                sourceCommand.Options.Add(configFile);
+                sourceCommand.Options.Add(verbosity);
+
+                sourceCommand.SetAction(async (parseResult, cancellationToken) =>
                 {
-                    sourceCommand.Description = Strings.TrustSourceCommandDescription;
-
-                    CommandOption configFile = sourceCommand.Option(
-                        "--configfile",
-                        Strings.Option_ConfigFile,
-                        CommandOptionType.SingleValue);
-
-                    sourceCommand.HelpOption(XPlatUtility.HelpOption);
-
-                    CommandOption owners = sourceCommand.Option(
-                        "--owners",
-                        Strings.TrustCommandOwners,
-                        CommandOptionType.SingleValue);
-
-                    CommandOption sourceUrl = sourceCommand.Option(
-                        "--source-url",
-                        Strings.TrustSourceUrl,
-                        CommandOptionType.SingleValue);
-
-                    CommandOption verbosity = sourceCommand.VerbosityOption();
-
-                    CommandArgument name = sourceCommand.Argument("<NAME>",
-                        Strings.TrustSourceSignerName);
-
-                    sourceCommand.OnExecute(async () =>
-                    {
-                        return await ExecuteCommand(TrustCommand.Source, algorithm: null, allowUntrustedRootOption: false, owners, verbosity, configFile, getLogger, setLogLevel, name: name.Value, sourceUrl: sourceUrl.Value());
-                    });
+                    return await ExecuteCommand(TrustCommand.Source, algorithm: null, allowUntrustedRootOption: false, owners: parseResult.GetValue(owners), parseResult.GetValue(verbosity), parseResult.GetValue(configFile), getLogger, setLogLevel, name: parseResult.GetValue(name), sourceUrl: parseResult.GetValue(sourceUrl));
                 });
+            }
+            trustedSignersCmd.Subcommands.Add(sourceCommand);
 
-                // Main command
-                trustedSignersCmd.Description = Strings.TrustCommandDescription;
-                CommandOption mainConfigFile = trustedSignersCmd.Option(
-                    "--configfile",
-                    Strings.Option_ConfigFile,
-                    CommandOptionType.SingleValue);
+            // --- Main command (defaults to list behavior) ---
+            var mainConfigFile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile, Arity = ArgumentArity.ZeroOrOne };
+            var mainVerbosity = CreateVerbosityOption();
 
-                trustedSignersCmd.HelpOption(XPlatUtility.HelpOption);
+            trustedSignersCmd.Options.Add(mainConfigFile);
+            trustedSignersCmd.Options.Add(mainVerbosity);
 
-                CommandOption mainVerbosity = trustedSignersCmd.VerbosityOption();
-
-                trustedSignersCmd.OnExecute(async () =>
-                {
-                    // If no command specified then default to List command.
-                    return await ExecuteCommand(TrustCommand.List, algorithm: null, allowUntrustedRootOption: false, owners: null, mainVerbosity, mainConfigFile, getLogger, setLogLevel);
-                });
+            trustedSignersCmd.SetAction(async (parseResult, cancellationToken) =>
+            {
+                // If no command specified then default to List command.
+                return await ExecuteCommand(TrustCommand.List, algorithm: null, allowUntrustedRootOption: false, owners: null, parseResult.GetValue(mainVerbosity), parseResult.GetValue(mainConfigFile), getLogger, setLogLevel);
             });
+
+            parent.Subcommands.Add(trustedSignersCmd);
         }
 
         private static async Task<int> ExecuteCommand(TrustCommand action,
-                      CommandOption algorithm,
+                      string algorithm,
                       bool allowUntrustedRootOption,
-                      CommandOption owners,
-                      CommandOption verbosity,
-                      CommandOption configFile,
-                      Func<ILogger> getLogger,
+                      string owners,
+                      string verbosity,
+                      string configFile,
+                      Func<ILoggerWithColor> getLogger,
                       Action<LogLevel> setLogLevel,
                       string name = null,
                       string sourceUrl = null,
@@ -249,7 +200,7 @@ namespace NuGet.CommandLine.XPlat
 
             try
             {
-                ISettings settings = XPlatUtility.ProcessConfigFile(configFile.Value());
+                ISettings settings = XPlatUtility.ProcessConfigFile(configFile);
 
                 var trustedSignersArgs = new TrustedSignersArgs()
                 {
@@ -258,15 +209,15 @@ namespace NuGet.CommandLine.XPlat
                     Name = name,
                     ServiceIndex = sourceUrl,
                     CertificateFingerprint = fingerprint,
-                    FingerprintAlgorithm = algorithm?.Value(),
+                    FingerprintAlgorithm = algorithm,
                     AllowUntrustedRoot = allowUntrustedRootOption,
                     Author = action == TrustCommand.Author,
                     Repository = action == TrustCommand.Repository,
-                    Owners = CommandLineUtility.SplitAndJoinAcrossMultipleValues(owners?.Values),
+                    Owners = CommandLineUtility.SplitAndJoinAcrossMultipleValues(owners != null ? new[] { owners } : null),
                     Logger = logger
                 };
 
-                setLogLevel(XPlatUtility.MSBuildVerbosityToNuGetLogLevel(verbosity.Value()));
+                setLogLevel(XPlatUtility.MSBuildVerbosityToNuGetLogLevel(verbosity));
 
                 // Add is the only action which does certificate chain building.
                 if (trustedSignersArgs.Action == TrustedSignersAction.Add)
@@ -322,12 +273,13 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        private static CommandOption VerbosityOption(this CommandLineApplication command)
+        private static Option<string> CreateVerbosityOption()
         {
-            return command.Option(
-                "-v|--verbosity",
-                Strings.Verbosity_Description,
-                CommandOptionType.SingleValue);
+            return new Option<string>("--verbosity", "-v")
+            {
+                Description = Strings.Verbosity_Description,
+                Arity = ArgumentArity.ZeroOrOne
+            };
         }
 
         private static TrustedSignersAction MapTrustEnumAction(TrustCommand trustCommand)

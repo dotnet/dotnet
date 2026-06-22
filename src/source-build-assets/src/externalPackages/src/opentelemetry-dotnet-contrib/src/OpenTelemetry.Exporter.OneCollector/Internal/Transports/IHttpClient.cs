@@ -38,14 +38,12 @@ internal sealed class HttpClientWrapper : IHttpClient
     public HttpResponseMessage Send(
         HttpRequestMessage request,
         HttpCompletionOption completionOption,
-        CancellationToken cancellationToken)
-    {
+        CancellationToken cancellationToken) =>
 #if NET
-        return this.synchronousSendSupportedByCurrentPlatform
+        this.synchronousSendSupportedByCurrentPlatform
             ? this.httpClient.Send(request, completionOption, cancellationToken)
             : this.httpClient.SendAsync(request, completionOption, cancellationToken).GetAwaiter().GetResult();
 #else
-        return this.httpClient.SendAsync(request, completionOption, cancellationToken).GetAwaiter().GetResult();
+        this.httpClient.SendAsync(request, completionOption, cancellationToken).GetAwaiter().GetResult();
 #endif
-    }
 }

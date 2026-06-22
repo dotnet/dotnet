@@ -16,7 +16,7 @@ namespace OpenTelemetry.Instrumentation.SqlClient;
 #endif
 internal sealed class SqlClientInstrumentation : IDisposable
 {
-    public static readonly SqlClientInstrumentation Instance = new SqlClientInstrumentation();
+    public static readonly SqlClientInstrumentation Instance = new();
 
     public readonly InstrumentationHandleManager HandleManager = new();
 
@@ -63,12 +63,10 @@ internal sealed class SqlClientInstrumentation : IDisposable
     public static SqlClientTraceInstrumentationOptions TracingOptions { get; set; } = new SqlClientTraceInstrumentationOptions();
 
     /// <inheritdoc/>
-    public void Dispose()
-    {
+    public void Dispose() =>
 #if NETFRAMEWORK
         this.sqlEventSourceListener?.Dispose();
 #else
         this.diagnosticSourceSubscriber?.Dispose();
 #endif
-    }
 }

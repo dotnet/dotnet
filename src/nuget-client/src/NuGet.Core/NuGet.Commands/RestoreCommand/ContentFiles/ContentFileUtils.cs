@@ -23,6 +23,11 @@ namespace NuGet.Commands
     {
         private const string ContentFilesFolderName = "contentFiles/";
 
+        // Synthetic absolute root for InMemoryDirectoryInfo. The current version of FileSystemGlobbing
+        // resolves  file paths via Path.GetFullPath but stores rootDir as-is — both must be absolute for
+        // the internal StartsWith check. The value doesn't affect matching results.
+        private const string MatcherRoot = "/_";
+
         /// <summary>
         /// Get all content groups that have the nearest TxM
         /// </summary>
@@ -99,47 +104,55 @@ namespace NuGet.Commands
                 }
             }
 
-            // Virtual root for file globbing
-            var rootDirectory = new VirtualFileInfo(SingleFileProvider.RootDir, isDirectory: true);
-
-            // Apply all nuspec property mappings to the files returned by content model
-            foreach (var filesEntry in nuspecContentFiles)
+            // Build a reverse-lookup from relative path (under contentFiles/) to the entry list,
+            // and a single InMemoryDirectoryInfo over all candidate paths. This lets us call
+            // Matcher.Execute once per nuspec entry instead of once per (entry × file), reducing
+            // MatcherContext + internal list/array allocations from O(N×M) to O(N).
+            Dictionary<string, List<ContentFilesEntry>> relativePathToEntries = new(entryMappings.Count, StringComparer.OrdinalIgnoreCase);
+            foreach ((string file, List<ContentFilesEntry> entries) in entryMappings)
             {
-                // this is validated in the nuspec reader
-                Debug.Assert(filesEntry.Include != null, "invalid contentFiles entry");
+                // Remove contentFiles/ from the string
+                Debug.Assert(file.StartsWith(ContentFilesFolderName, StringComparison.OrdinalIgnoreCase),
+                    "invalid file path: " + file);
 
-                // Create a filesystem matcher for globbing patterns
-                var matcher = new Matcher(StringComparison.OrdinalIgnoreCase);
-                matcher.AddInclude(filesEntry.Include);
-
-                if (filesEntry.Exclude != null)
+                // All files should begin with the same root folder
+                if (file.Length > rootFolderPathLength)
                 {
-                    matcher.AddExclude(filesEntry.Exclude);
+                    var relativePath = file.Substring(rootFolderPathLength, file.Length - rootFolderPathLength);
+                    relativePathToEntries.Add(relativePath, entries);
+                }
+            }
+
+            if (relativePathToEntries.Count > 0)
+            {
+                var absolutePaths = new List<string>(relativePathToEntries.Count);
+                foreach (var key in relativePathToEntries.Keys)
+                {
+                    absolutePaths.Add(Path.Combine(MatcherRoot, key));
                 }
 
-                // Check each file against the patterns
-                foreach ((var file, var entries) in entryMappings)
+                var sharedDirectory = new InMemoryDirectoryInfo(MatcherRoot, absolutePaths);
+
+                // Apply all nuspec property mappings to the files returned by content model
+                foreach (var filesEntry in nuspecContentFiles)
                 {
-                    // Remove contentFiles/ from the string
-                    Debug.Assert(file.StartsWith(ContentFilesFolderName, StringComparison.OrdinalIgnoreCase),
-                        "invalid file path: " + file);
+                    // this is validated in the nuspec reader
+                    Debug.Assert(filesEntry.Include != null, "invalid contentFiles entry");
 
-                    // All files should begin with the same root folder
-                    if (file.Length > rootFolderPathLength)
+                    // Create a filesystem matcher for globbing patterns
+                    var matcher = new Matcher(StringComparison.OrdinalIgnoreCase);
+                    matcher.AddInclude(filesEntry.Include);
+
+                    if (filesEntry.Exclude != null)
                     {
-                        var relativePath = file.Substring(rootFolderPathLength, file.Length - rootFolderPathLength);
+                        matcher.AddExclude(filesEntry.Exclude);
+                    }
 
-                        // Check if the nuspec group include/exclude patterns apply to the file
-                        var globbingDirectory = new FileProviderGlobbingDirectory(
-                            fileProvider: new SingleFileProvider(relativePath),
-                            fileInfo: rootDirectory,
-                            parent: null);
-
-                        // Currently Matcher only returns the file name not the full path, each file must be
-                        // check individually.
-                        var matchResults = matcher.Execute(globbingDirectory);
-
-                        if (matchResults.HasMatches)
+                    // Match all candidate paths in a single Execute call.
+                    var matchResults = matcher.Execute(sharedDirectory);
+                    foreach (var match in matchResults.Files)
+                    {
+                        if (relativePathToEntries.TryGetValue(match.Path, out var entries))
                         {
                             entries.Add(filesEntry);
                         }

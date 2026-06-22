@@ -52,11 +52,13 @@ internal sealed class CommonSchemaJsonSerializationState
             this.AssignNewExtensionToLookupIndex(ref lookupIndex);
         }
 #else
+#pragma warning disable IDE0370 // Suppression is unnecessary
         if (!this.keys.TryGetValue(fieldInformation!.ExtensionName!, out var lookupIndex))
         {
             this.AssignNewExtensionToLookupIndex(ref lookupIndex);
             this.keys[fieldInformation.ExtensionName!] = lookupIndex;
         }
+#pragma warning restore IDE0370 // Suppression is unnecessary
 #endif
 
         if (lookupIndex == -1)
@@ -78,7 +80,7 @@ internal sealed class CommonSchemaJsonSerializationState
 
         unsafe
         {
-            keyLookup.ValueIndicies[keyLookup.Count++] = index;
+            keyLookup.ValueIndices[keyLookup.Count++] = index;
         }
     }
 
@@ -108,9 +110,9 @@ internal sealed class CommonSchemaJsonSerializationState
                 unsafe
                 {
 #if NET
-                    ref var attribute = ref allValues[keyLookup.ValueIndicies[i]];
+                    ref var attribute = ref allValues[keyLookup.ValueIndices[i]];
 #else
-                    var attribute = allValues[keyLookup.ValueIndicies[i]];
+                    var attribute = allValues[keyLookup.ValueIndices[i]];
 #endif
                     var fieldInformation = attribute.Key;
 
@@ -186,6 +188,6 @@ internal sealed class CommonSchemaJsonSerializationState
     private unsafe struct KeyValueLookup
     {
         public int Count;
-        public fixed int ValueIndicies[MaxNumberOfExtensionValuesPerKey];
+        public fixed int ValueIndices[MaxNumberOfExtensionValuesPerKey];
     }
 }

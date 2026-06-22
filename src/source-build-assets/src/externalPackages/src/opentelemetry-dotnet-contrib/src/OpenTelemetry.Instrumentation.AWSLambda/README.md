@@ -3,7 +3,7 @@
 | Status | |
 | ------ | --- |
 | Stability | [Stable](../../README.md#stable) |
-| Code Owners | [@rypdal](https://github.com/rypdal), [@Oberon00](https://github.com/Oberon00), [@normj](https://github.com/normj), [@lukeina2z](https://github.com/lukeina2z) |
+| Code Owners | [@rypdal](https://github.com/rypdal), [@Oberon00](https://github.com/Oberon00), [@normj](https://github.com/normj) |
 
 [![NuGet version badge](https://img.shields.io/nuget/v/OpenTelemetry.Instrumentation.AWSLambda)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.AWSLambda)
 [![NuGet download count badge](https://img.shields.io/nuget/dt/OpenTelemetry.Instrumentation.AWSLambda)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.AWSLambda)
@@ -143,7 +143,7 @@ public class Function
 ## Semantic Conventions
 
 _For an overview on Semantic Conventions, see
-[Open Telemetery - Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/)_.
+[Open Telemetry - Semantic Conventions](https://opentelemetry.io/docs/concepts/semantic-conventions/)_.
 
 While this library is intended for production use, it relies on several
 Semantic Conventions that are still considered Experimental, meaning

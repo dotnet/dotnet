@@ -1,11 +1,15 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#if INCLUDE_SQL_QUERY_PARSER
 using System.Diagnostics;
+#endif
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
+#if INCLUDE_SQL_QUERY_PARSER
 using OpenTelemetry.Instrumentation;
 using OpenTelemetry.Trace;
+#endif
 
 namespace OpenTelemetry.Internal;
 
@@ -59,6 +63,7 @@ internal static class DatabaseSemanticConventionHelper
         return DatabaseSemanticConvention.Old;
     }
 
+#if INCLUDE_SQL_QUERY_PARSER
     public static void ApplyConventionsForQueryText(
         Activity activity,
         string? commandText,
@@ -66,8 +71,8 @@ internal static class DatabaseSemanticConventionHelper
         bool emitNewAttributes,
         bool sanitizeQuery = true)
     {
-        string queryText = commandText ?? string.Empty;
-        string querySummary = string.Empty;
+        var queryText = commandText ?? string.Empty;
+        var querySummary = string.Empty;
 
         if (sanitizeQuery)
         {
@@ -100,8 +105,8 @@ internal static class DatabaseSemanticConventionHelper
         ref string activityName,
         bool sanitizeQuery = true)
     {
-        string queryText = commandText ?? string.Empty;
-        string querySummary = string.Empty;
+        var queryText = commandText ?? string.Empty;
+        var querySummary = string.Empty;
 
         if (sanitizeQuery)
         {
@@ -151,6 +156,7 @@ internal static class DatabaseSemanticConventionHelper
         tagsList.Add(SemanticConventions.AttributeDbQuerySummary, dbQuerySummary);
         activityName = dbQuerySummary;
     }
+#endif
 
     private static bool TryGetConfiguredValues(IConfiguration configuration, [NotNullWhen(true)] out HashSet<string>? values)
     {
@@ -164,7 +170,9 @@ internal static class DatabaseSemanticConventionHelper
                 return false;
             }
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
             var stringValues = stringValue!.Split(separator: Separator, options: StringSplitOptions.RemoveEmptyEntries);
+#pragma warning restore IDE0370 // Suppression is unnecessary
             values = new HashSet<string>(stringValues, StringComparer.OrdinalIgnoreCase);
             return true;
         }

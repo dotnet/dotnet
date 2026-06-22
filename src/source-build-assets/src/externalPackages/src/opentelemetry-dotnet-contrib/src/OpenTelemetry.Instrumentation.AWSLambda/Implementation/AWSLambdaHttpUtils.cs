@@ -59,7 +59,7 @@ internal class AWSLambdaHttpUtils
                 (hostName, hostPort) = GetHostAndPort(httpScheme, albHostHeader);
                 break;
             default:
-                return Enumerable.Empty<KeyValuePair<string, object>>();
+                return [];
         }
 
         var tags = semanticConventions.AttributeBuilder;

@@ -459,7 +459,10 @@ namespace NuGet.Commands
                     !_packArgs.ExcludeEmptyDirectories,
                     _packArgs.Deterministic,
                     _packArgs.Logger,
-                    _packArgs.Version);
+                    _packArgs.Version)
+                {
+                    DeterministicTimestamp = _packArgs.DeterministicTimestamp,
+                };
             }
 
             return new PackageBuilder(
@@ -469,7 +472,10 @@ namespace NuGet.Commands
                 !_packArgs.ExcludeEmptyDirectories,
                 _packArgs.Deterministic,
                 _packArgs.Logger,
-                _packArgs.Version);
+                _packArgs.Version)
+            {
+                DeterministicTimestamp = _packArgs.DeterministicTimestamp,
+            };
         }
 
         private bool BuildFromProjectFile(string path)

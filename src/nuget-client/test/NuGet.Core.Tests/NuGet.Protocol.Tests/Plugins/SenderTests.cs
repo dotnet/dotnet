@@ -2,22 +2,32 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Common;
+using NuGet.Shared;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
     public class SenderTests
     {
-        private readonly Message _message = new Message(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
+        private readonly Message _message = MessageUtilities.Create(requestId: "a", type: MessageType.Request, method: MessageMethod.None);
+
+        private static IEnvironmentVariableReader CreateEnvReader(bool useStj) =>
+            useStj
+                ? new TestEnvironmentVariableReader(
+                    new Dictionary<string, string> { [NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar] = "true" })
+                : TestEnvironmentVariableReader.EmptyInstance;
 
         [Fact]
         public void Constructor_ThrowsForNull()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new Sender(writer: null));
+                () => new Sender(writer: null!));
 
             Assert.Equal("writer", exception.ParamName);
         }
@@ -100,7 +110,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 sender.Connect();
 
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => sender.SendAsync(message: null, cancellationToken: CancellationToken.None));
+                    () => sender.SendAsync(message: null!, cancellationToken: CancellationToken.None));
 
                 Assert.Equal("message", exception.ParamName);
             }
@@ -175,11 +185,13 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public async Task SendAsync_WritesMessageToWriter()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task SendAsync_WritesMessageToWriter(bool useStj)
         {
             using (var writer = new StringWriter())
-            using (var sender = new Sender(writer))
+            using (var sender = new Sender(writer, CreateEnvReader(useStj)))
             {
                 sender.Connect();
 

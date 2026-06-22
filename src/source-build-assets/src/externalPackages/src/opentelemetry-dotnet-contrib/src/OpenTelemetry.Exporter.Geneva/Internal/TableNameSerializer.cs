@@ -31,12 +31,11 @@ internal sealed class TableNameSerializer
 
     public TableNameSerializer(GenevaExporterOptions options, string defaultTableName)
     {
-        Debug.Assert(options != null, "options were null");
         Debug.Assert(!string.IsNullOrWhiteSpace(defaultTableName), "defaultEventName was null or whitespace");
 
         this.defaultTableName = BuildStr8BufferForAsciiString(defaultTableName);
 
-        if (options!.TableNameMappings != null)
+        if (options.TableNameMappings != null)
         {
             var tempTableMappings = new Dictionary<string, byte[]>(options.TableNameMappings.Count, DictionaryKeyComparer);
             foreach (var kv in options.TableNameMappings)

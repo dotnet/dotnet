@@ -24,7 +24,6 @@ using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
-using Test.Utility;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -6598,7 +6597,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "PackageDownload",
                                     packageX1.Id,
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -6795,7 +6794,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "PackageDownload",
                                     packageX1.Id,
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -7092,7 +7091,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "FrameworkReference",
                                     "FrameworkRefY",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -7175,7 +7174,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "FrameworkReference",
                                     "FrameworkRefY",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
                 attributes.Add("PrivateAssets", "all");
@@ -7183,7 +7182,7 @@ namespace NuGet.CommandLine.Test
                                     xml,
                                     "FrameworkReference",
                                     "FrameworkRefSupressed",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     props,
                                     attributes);
 
@@ -9727,7 +9726,7 @@ namespace NuGet.CommandLine.Test
                 var project = SimpleTestProjectContext.CreateNETCoreWithSDK(
                     "proj",
                     pathContext.SolutionRoot,
-                    $"{TestConstants.ProjectTargetFramework}-windows");
+                    $"net10.0-windows");
 
                 project.AddPackageToAllFrameworks(packageX);
                 solution.Projects.Add(project);
@@ -9746,7 +9745,7 @@ namespace NuGet.CommandLine.Test
 
                 var propsItemGroups = propsXML.Root.Elements().Where(e => e.Name.LocalName == "ItemGroup").ToList();
 
-                Assert.Contains($"'$(TargetFramework)' == '{TestConstants.ProjectTargetFramework}-windows' AND '$(ExcludeRestorePackageImports)' != 'true'", propsItemGroups[1].Attribute(XName.Get("Condition")).Value.Trim());
+                Assert.Contains($"'$(TargetFramework)' == 'net10.0-windows' AND '$(ExcludeRestorePackageImports)' != 'true'", propsItemGroups[1].Attribute(XName.Get("Condition")).Value.Trim());
             }
         }
 
@@ -10977,7 +10976,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                     xml,
                                     item,
                                     "X",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     new Dictionary<string, string>(),
                                     attributes);
 
@@ -10987,7 +10986,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                     xml,
                                     item,
                                     "X",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     new Dictionary<string, string>(),
                                     attributes);
                 xml.Save(projectA.ProjectPath);
@@ -11045,7 +11044,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                     xml,
                                     "PackageReference",
                                     "X",
-                                    NuGetFramework.AnyFramework,
+                                    string.Empty,
                                     new Dictionary<string, string>(),
                                     new Dictionary<string, string>());
                 xml.Save(projectA.ProjectPath);
@@ -11268,7 +11267,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     xml,
                     "PackageReference",
                     "D",
-                    NuGetFramework.AnyFramework,
+                    string.Empty,
                     new Dictionary<string, string>(),
                     new Dictionary<string, string>());
 

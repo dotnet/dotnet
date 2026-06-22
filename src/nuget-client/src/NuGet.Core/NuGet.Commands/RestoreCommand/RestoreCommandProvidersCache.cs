@@ -45,7 +45,8 @@ namespace NuGet.Commands
                 auditSources: Array.Empty<SourceRepository>(),
                 cacheContext,
                 log,
-                updateLastAccess: false);
+                updateLastAccess: false,
+                EnvironmentVariableWrapper.Instance);
         }
 
         public RestoreCommandProviders GetOrCreate(
@@ -63,7 +64,8 @@ namespace NuGet.Commands
                 auditSources: Array.Empty<SourceRepository>(),
                 cacheContext,
                 log,
-                updateLastAccess);
+                updateLastAccess,
+                EnvironmentVariableWrapper.Instance);
         }
 
         public RestoreCommandProviders GetOrCreate(
@@ -75,10 +77,31 @@ namespace NuGet.Commands
             ILogger log,
             bool updateLastAccess)
         {
+            return GetOrCreate(
+                globalPackagesPath,
+                fallbackPackagesPaths,
+                packageSources,
+                auditSources,
+                cacheContext,
+                log,
+                updateLastAccess,
+                EnvironmentVariableWrapper.Instance);
+        }
+
+        internal RestoreCommandProviders GetOrCreate(
+            string globalPackagesPath,
+            IReadOnlyList<string> fallbackPackagesPaths,
+            IReadOnlyList<SourceRepository> packageSources,
+            IReadOnlyList<SourceRepository> auditSources,
+            SourceCacheContext cacheContext,
+            ILogger log,
+            bool updateLastAccess,
+            IEnvironmentVariableReader environmentVariableReader)
+        {
             NuGetv3LocalRepository globalPackages = CreateGlobalPackagedRepository(globalPackagesPath, updateLastAccess);
             List<NuGetv3LocalRepository> fallbackFolders = GetFallbackFolderRepositories(fallbackPackagesPaths);
-            List<IRemoteDependencyProvider> localProviders = CreateLocalProviders(globalPackagesPath, fallbackPackagesPaths, cacheContext, log);
-            List<IRemoteDependencyProvider> remoteProviders = CreateRemoveProviders(packageSources, cacheContext, log);
+            List<IRemoteDependencyProvider> localProviders = CreateLocalProviders(globalPackagesPath, fallbackPackagesPaths, cacheContext, log, environmentVariableReader);
+            List<IRemoteDependencyProvider> remoteProviders = CreateRemoteProviders(packageSources, cacheContext, log, environmentVariableReader);
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders = CreateVulnerabilityProviders(packageSources, auditSources, log);
 
             return new RestoreCommandProviders(globalPackages, fallbackFolders, localProviders, remoteProviders, _fileCache, vulnerabilityInformationProviders);
@@ -104,7 +127,7 @@ namespace NuGet.Commands
             return fallbackFolders;
         }
 
-        private List<IRemoteDependencyProvider> CreateLocalProviders(string globalPackagesPath, IReadOnlyList<string> fallbackPackagesPaths, SourceCacheContext cacheContext, ILogger log)
+        private List<IRemoteDependencyProvider> CreateLocalProviders(string globalPackagesPath, IReadOnlyList<string> fallbackPackagesPaths, SourceCacheContext cacheContext, ILogger log, IEnvironmentVariableReader environmentVariableReader)
         {
             var local = _localProvider.GetOrAdd(globalPackagesPath, (path) =>
             {
@@ -119,7 +142,8 @@ namespace NuGet.Commands
                     ignoreFailedSources: true,
                     ignoreWarning: true,
                     fileCache: _fileCache,
-                    isFallbackFolderSource: false);
+                    isFallbackFolderSource: false,
+                    environmentVariableReader: environmentVariableReader);
             });
 
             var localProviders = new List<IRemoteDependencyProvider>(fallbackPackagesPaths.Count + 1) { local };
@@ -140,7 +164,8 @@ namespace NuGet.Commands
                         ignoreFailedSources: false,
                         ignoreWarning: false,
                         fileCache: _fileCache,
-                        isFallbackFolderSource: true);
+                        isFallbackFolderSource: true,
+                        environmentVariableReader: environmentVariableReader);
                 });
 
                 localProviders.Add(localProvider);
@@ -149,7 +174,7 @@ namespace NuGet.Commands
             return localProviders;
         }
 
-        private List<IRemoteDependencyProvider> CreateRemoveProviders(IReadOnlyList<SourceRepository> sources, SourceCacheContext cacheContext, ILogger log)
+        private List<IRemoteDependencyProvider> CreateRemoteProviders(IReadOnlyList<SourceRepository> sources, SourceCacheContext cacheContext, ILogger log, IEnvironmentVariableReader environmentVariableReader)
         {
             var remoteProviders = new List<IRemoteDependencyProvider>(sources.Count);
 
@@ -162,7 +187,8 @@ namespace NuGet.Commands
                     cacheContext.IgnoreFailedSources,
                     ignoreWarning: false,
                     fileCache: _fileCache,
-                    isFallbackFolderSource: false));
+                    isFallbackFolderSource: false,
+                    environmentVariableReader: environmentVariableReader));
 
                 remoteProviders.Add(remoteProvider);
             }

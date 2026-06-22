@@ -16,7 +16,7 @@ The following pre-requisites are not hard requirements, but enabling dependency 
 
 - Internal builds produced out of https://dev.azure.com/dnceng/internal
 
-- Publishing using the [Arcade SDK](https://github.com/dotnet/arcade/blob/master/Documentation/StartHere.md#im-ready-to-get-started-what-do-i-do)
+- Publishing using the [Arcade SDK](README.md#im-ready-to-get-started-what-do-i-do)
 
 ## Publishing
 
@@ -24,15 +24,15 @@ The following pre-requisites are not hard requirements, but enabling dependency 
 
 #### 1. Copy files from eng/ folder
 
-Copy `Versions.props`, `Versions.Details.xml` and the `common/` folder from the `eng/` folder of the [arcade-validation](https://github.com/dotnet/arcade-validation/tree/master/eng) repo. 
+Copy `Versions.props`, `Version.Details.xml` and the `common/` folder from the `eng/` folder of the [arcade-validation](https://github.com/dotnet/arcade-validation/tree/main/eng) repo. 
 
 This folder contains required version files as well as Pipeline templates used for publishing assets.
 
-For more information about version files go to: https://github.com/dotnet/arcade/blob/master/Documentation/DependencyDescriptionFormat.md
+For more information about version files go to: [DependencyDescriptionFormat.md](DependencyDescriptionFormat.md)
 
 #### 2. Enable Arcade publishing and publishing to the Build Asset Registry
 
-To enable publishing of your assets, follow the instructions outlined in https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Publishing.md#basic-onboarding-scenario
+To enable publishing of your assets, follow the instructions outlined in [Publishing.md](Publishing.md#basic-onboarding-scenario).
 
 ## Consuming
 
@@ -40,25 +40,25 @@ To enable publishing of your assets, follow the instructions outlined in https:/
 
 #### 1. Add or copy Version.Details.xml
 
-Dependency consumption depends on the [details file](https://github.com/dotnet/arcade/blob/master/Documentation/DependencyDescriptionFormat.md#details-file) defining what dependencies your repo is going to consume.
+Dependency consumption depends on the [details file](DependencyDescriptionFormat.md#details-file) defining what dependencies your repo is going to consume.
 
-You can create this file or copy the file from arcade-minimalci-sample's [Version.Details.xml](https://github.com/dotnet/arcade-minimalci-sample/blob/master/eng/Version.Details.xml) file as a starting point.
+You can create this file or copy [Version.Details.xml](https://github.com/dotnet/runtime/blob/main/eng/Version.Details.xml) from dotnet/runtime as a starting point.
 
 #### 2. Add or copy your expression files
 
-Dependency flow will update versions in your [expression files](https://github.com/dotnet/arcade-minimalci-sample/blob/master/eng/Version.Details.xml).
+Dependency flow will update versions in your [expression files](https://github.com/dotnet/runtime/blob/main/eng/Versions.props).
 
-You can create these files or copy them from the arcade-minimalci-sample repo:
+You can create these files or copy them from dotnet/runtime:
 
-- [Version.props](https://github.com/dotnet/arcade-minimalci-sample/blob/master/eng/Versions.props)
+- [Versions.props](https://github.com/dotnet/runtime/blob/main/eng/Versions.props)
 
-- [global.json](https://github.com/dotnet/arcade-minimalci-sample/blob/master/global.json)
+- [global.json](https://github.com/dotnet/runtime/blob/main/global.json)
 
 #### 3. Add subscriptions and channels
 
-More about [Channels, Branches, and Subscriptions](https://github.com/dotnet/arcade/blob/master/Documentation/BranchesChannelsAndSubscriptions.md)
+More about [Channels, Branches, and Subscriptions](BranchesChannelsAndSubscriptions.md)
 
-[Scenarios](https://github.com/dotnet/arcade/blob/master/Documentation/BranchesChannelsAndSubscriptions.md#scenarios)
+[Scenarios](BranchesChannelsAndSubscriptions.md#scenarios)
 
 ##### 3.1. Join the `arcade-contrib` team
 
@@ -203,8 +203,3 @@ To validate that created subscriptions and channels work as expected you'd need 
    - Last Build: N/A
    ```
 2. Incase of any errors contact @dnceng. 
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDependencyFlowOnboarding.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDependencyFlowOnboarding.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDependencyFlowOnboarding.md)</sub>
-<!-- End Generated Content-->

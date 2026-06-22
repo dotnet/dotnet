@@ -60,6 +60,7 @@ internal static class ActivityHelper
         Activity? activity = null;
         try
         {
+            Baggage.Current = propagationContext.Baggage;
             activity = onRequestStartedCallback?.Invoke(context, propagationContext.ActivityContext);
         }
         catch (Exception callbackEx)
@@ -71,8 +72,6 @@ internal static class ActivityHelper
         {
             if (textMapPropagator is not TraceContextPropagator)
             {
-                Baggage.Current = propagationContext.Baggage;
-
                 context.Items[ContextKey] = new ContextHolder(activity, RuntimeContext.GetValue(BaggageSlotName));
             }
             else

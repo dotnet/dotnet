@@ -12,7 +12,7 @@ internal sealed class AspNetCoreTraceEnrichmentProcessor
 
     public AspNetCoreTraceEnrichmentProcessor(IEnumerable<AspNetCoreTraceEnricher> enrichers)
     {
-        this.enrichers = enrichers.ToArray();
+        this.enrichers = [.. enrichers];
     }
 
     public void EnrichWithHttpRequest(Activity activity, HttpRequest request)

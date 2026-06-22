@@ -11,6 +11,9 @@ internal sealed class HeartbeatService : IBackgroundService, IOpAmpListener<Conn
 {
     public const string Name = "heartbeat-service";
 
+    // Safe upper bound.
+    private static readonly ulong MaxHeartbeatIntervalSeconds = (ulong)TimeSpan.MaxValue.TotalSeconds;
+
     private readonly FrameDispatcher dispatcher;
     private readonly FrameProcessor processor;
     private readonly CancellationTokenSource cts;
@@ -56,9 +59,15 @@ internal sealed class HeartbeatService : IBackgroundService, IOpAmpListener<Conn
         var newInterval = message.ConnectionSettings.Opamp?.HeartbeatIntervalSeconds ?? 0;
         if (newInterval > 0)
         {
+            // Clamp to TimeSpan.MaxValue to avoid OverflowException from server-supplied values
+            // that exceed the representable range.
+            var interval = newInterval > MaxHeartbeatIntervalSeconds
+                ? TimeSpan.MaxValue
+                : TimeSpan.FromSeconds(newInterval);
+
             OpAmpClientEventSource.Log.HeartbeatServiceTimerUpdateReceived(newInterval);
 
-            this.CreateOrUpdateTimer(TimeSpan.FromSeconds(newInterval));
+            this.CreateOrUpdateTimer(interval);
         }
     }
 

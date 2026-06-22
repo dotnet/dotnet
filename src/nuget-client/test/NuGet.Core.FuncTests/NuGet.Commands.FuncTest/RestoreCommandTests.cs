@@ -2095,7 +2095,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2146,7 +2146,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2367,7 +2367,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2418,7 +2418,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2469,7 +2469,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2520,7 +2520,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2572,7 +2572,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -2624,7 +2624,7 @@ namespace NuGet.Commands.FuncTest
                     context.IgnoreFailedSources = true;
                     var cachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(NullSettings.Instance));
 
-                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), context, logger);
+                    var provider = new RestoreCommandProvidersCache().GetOrCreate(packagesDir, new List<string>(), sources.Select(cachingSourceProvider.CreateRepository).ToList(), Array.Empty<SourceRepository>(), context, logger, updateLastAccess: false, environmentVariableReader: TestEnvironmentVariableReader.EmptyInstance);
                     var request = new RestoreRequest(spec, provider, context, clientPolicyContext: null, PackageSourceMapping.GetPackageSourceMapping(NullSettings.Instance), log: logger, lockFileBuilderCache: new LockFileBuilderCache())
                     {
                         LockFilePath = Path.Combine(projectDir, "project.lock.json")
@@ -3444,6 +3444,228 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("ManageProject"));
             result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("A"));
             result.LockFile.LogMessages.Should().HaveCount(0);
+        }
+
+        // CppCli (net10.0-windows7.0 + secondaryFramework=native) -> CppNative (native)
+        [Fact]
+        public async Task RestoreCommand_WithCPPCliProject_WithNativeProjectReference_Succeeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // C++/CLI project: dual-compatible (net10.0-windows7.0 + native) with a package dependency
+            var cppCliProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""net10.0-windows7.0"": {
+                            ""targetAlias"" : ""net10.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net462"",
+                                ""net47"",
+                                ""net471"",
+                                ""net472"",
+                                ""net48"",
+                                ""net481""
+                            ],
+                            ""secondaryFramework"" : ""native"",
+                            ""dependencies"": {
+                                ""A"": {
+                                    ""version"" : ""1.0.0""
+                                }
+                            }
+                        }
+                    }
+                }";
+
+            // Native C++ project: targets only native framework
+            var nativeProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""native"": {
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            // Arrange
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("A", "1.0.0"));
+
+            var logger = new TestLogger();
+
+            var cppCliProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppCli", pathContext.SolutionRoot, cppCliProjectJson);
+            var nativeProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppNative", pathContext.SolutionRoot, nativeProjectJson);
+
+            cppCliProject = cppCliProject.WithTestProjectReference(nativeProject);
+            CreateFakeProjectFile(nativeProject);
+
+            // Act
+            var result = await new RestoreCommand(
+                ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, cppCliProject, nativeProject))
+                .ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert: After fix, restore should succeed — C++/CLI project with
+            // secondaryFramework=native should be compatible with native project references.
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.Libraries.Should().HaveCount(2);
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("CppNative"));
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("A"));
+            result.LockFile.LogMessages.Where(m => m.Code == NuGetLogCode.NU1201).Should().HaveCount(0,
+                "C++/CLI project with secondaryFramework=native should be compatible with native project references");
+        }
+
+        // CppCli (net10.0-windows7.0 + secondaryFramework=native) -> CppNative (native) with native package dependency
+        // Ensures the native project's package dependencies flow through correctly as transitive dependencies.
+        // https://github.com/NuGet/Home/issues/14876
+        [Fact]
+        public async Task RestoreCommand_WithCPPCliProject_WithNativeProjectReferenceWithPackageDependency_Succeeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // C++/CLI project: dual-compatible (net10.0-windows7.0 + native)
+            var cppCliProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""net10.0-windows7.0"": {
+                            ""targetAlias"" : ""net10.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net462"",
+                                ""net47"",
+                                ""net471"",
+                                ""net472"",
+                                ""net48"",
+                                ""net481""
+                            ],
+                            ""secondaryFramework"" : ""native""
+                        }
+                    }
+                }";
+
+            // Native C++ project: targets native framework with a native package dependency
+            var nativeProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""native"": {
+                            ""dependencies"": {
+                                ""NativeLib"": {
+                                    ""version"" : ""1.0.0""
+                                }
+                            }
+                        }
+                    }
+                }";
+
+            // Arrange
+            var nativePackage = new SimpleTestPackageContext("NativeLib", "1.0.0");
+            nativePackage.AddFile("lib/native/NativeLib.dll");
+
+            var nativeTransitive = new SimpleTestPackageContext("NativeLib.Transitive", "1.0.0");
+            nativeTransitive.AddFile("lib/native/NativeLib.Transitive.dll");
+
+            nativePackage.PerFrameworkDependencies.Add(CommonFrameworks.Native,
+                new List<SimpleTestPackageContext> { nativeTransitive });
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                nativePackage,
+                nativeTransitive);
+
+            var logger = new TestLogger();
+
+            var cppCliProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppCli", pathContext.SolutionRoot, cppCliProjectJson);
+            var nativeProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppNative", pathContext.SolutionRoot, nativeProjectJson);
+
+            cppCliProject = cppCliProject.WithTestProjectReference(nativeProject);
+            CreateFakeProjectFile(nativeProject);
+
+            // Act
+            var result = await new RestoreCommand(
+                ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, cppCliProject, nativeProject))
+                .ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.Libraries.Should().HaveCount(3);
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("CppNative"));
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("NativeLib"));
+            result.LockFile.Libraries.Should().Contain(e => e.Name.Equals("NativeLib.Transitive"));
+            result.LockFile.LogMessages.Where(m => m.Code == NuGetLogCode.NU1201).Should().HaveCount(0);
+        }
+
+        // CppNative (native) -> CppCli (net10.0-windows7.0 + secondaryFramework=native)
+        // A native project referencing a C++/CLI project is not expected to be compatible.
+        [Fact]
+        public async Task RestoreCommand_WithNativeProject_WithCPPCliProjectReference_RaisesNU1201()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Native C++ project: targets only native framework, references the C++/CLI project
+            var nativeProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""native"": {
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            // C++/CLI project: dual-compatible (net10.0-windows7.0 + native)
+            var cppCliProjectJson = @"
+                {
+                    ""frameworks"": {
+                        ""net10.0-windows7.0"": {
+                            ""targetAlias"" : ""net10.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net462"",
+                                ""net47"",
+                                ""net471"",
+                                ""net472"",
+                                ""net48"",
+                                ""net481""
+                            ],
+                            ""secondaryFramework"" : ""native"",
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            // Arrange
+            var logger = new TestLogger();
+
+            var nativeProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppNative", pathContext.SolutionRoot, nativeProjectJson);
+            var cppCliProject = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "CppCli", pathContext.SolutionRoot, cppCliProjectJson);
+
+            nativeProject = nativeProject.WithTestProjectReference(cppCliProject);
+            CreateFakeProjectFile(cppCliProject);
+
+            // Act
+            var result = await new RestoreCommand(
+                ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, nativeProject, cppCliProject))
+                .ExecuteAsync();
+            await result.CommitAsync(logger, CancellationToken.None);
+
+            // Assert: NU1201 is expected — a native project cannot consume a C++/CLI project.
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().Contain(m => m.Code == NuGetLogCode.NU1201);
         }
 
         // Project1(net5.0) -> A(net472) -> B(net472)
@@ -4487,6 +4709,128 @@ namespace NuGet.Commands.FuncTest
 
                 return json;
             }
+        }
+
+        // When a managed project (B) references a C++/CLI project (A) that has a package
+        // with build/native/ targets, restoring B first causes A to miss the build/native/ targets
+        // due to a LockFileBuilderCache collision. When both projects use AssetTargetFallback with
+        // the same imports, NuGetFrameworkFullComparer treats DualCompatibilityFramework(net6.0, native)
+        // as equal to plain net6.0, causing the criteria cache to return wrong selection criteria.
+        [Fact]
+        public async Task RestoreCommand_CppCliWithNativeBuildTargets_SharedCache_RestoreOrderDoesNotAffectBuildAssets()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Package structure:
+            // MyPackage: build/native/MyPackage.targets (only matched by native framework criteria)
+            // MyPackage depends on MyPackage-binaries
+            // MyPackage-binaries: buildTransitive/MyPackage-binaries.targets
+            var binariesPackage = new SimpleTestPackageContext("MyPackage-binaries", "1.0.0");
+            binariesPackage.AddFile("buildTransitive/MyPackage-binaries.targets");
+
+            var myPackage = new SimpleTestPackageContext("MyPackage", "1.0.0");
+            myPackage.AddFile("build/native/MyPackage.targets");
+            myPackage.Dependencies.Add(binariesPackage);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                myPackage,
+                binariesPackage);
+
+            // Project A: C++/CLI (net6.0-windows7.0 + secondaryFramework=native + ATF)
+            // Direct PackageReference to MyPackage
+            var projectAJson = @"
+                {
+                    ""frameworks"": {
+                        ""net6.0-windows7.0"": {
+                            ""targetAlias"" : ""net6.0-windows7.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net472""
+                            ],
+                            ""secondaryFramework"" : ""native"",
+                            ""dependencies"": {
+                                ""MyPackage"": ""1.0.0""
+                            }
+                        }
+                    }
+                }";
+
+            // Project B: managed net6.0-windows7.0 with same ATF imports, references Project A
+            var projectBJson = @"
+                {
+                    ""frameworks"": {
+                        ""net6.0-windows7.0"": {
+                            ""targetAlias"" : ""net6.0-windows7.0"",
+                            ""assetTargetFallback"" : true,
+                            ""imports"" : [
+                                ""net461"",
+                                ""net472""
+                            ],
+                            ""dependencies"": {
+                            }
+                        }
+                    }
+                }";
+
+            var logger = new TestLogger();
+
+            var projectA = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "ProjectA", pathContext.SolutionRoot, projectAJson);
+            var projectB = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec(
+                "ProjectB", pathContext.SolutionRoot, projectBJson);
+
+            // B references A (default PrivateAssets = contentfiles;analyzers;build)
+            projectB = projectB.WithTestProjectReference(projectA);
+            CreateFakeProjectFile(projectA);
+
+            // Use DependencyGraphSpecRequestProvider which naturally shares a LockFileBuilderCache
+            // across all projects in the solution restore
+            var dgSpec = ProjectTestHelpers.GetDGSpecForAllProjects(projectB, projectA);
+
+            var restoreContext = new RestoreArgs()
+            {
+                CacheContext = new SourceCacheContext(),
+                Log = logger,
+                GlobalPackagesFolder = pathContext.UserPackagesFolder,
+                Sources = new List<string>() { pathContext.PackageSource },
+            };
+
+            var dgProvider = new DependencyGraphSpecRequestProvider(
+                new RestoreCommandProvidersCache(),
+                dgSpec);
+
+            IReadOnlyList<RestoreSummaryRequest> requests = await dgProvider.CreateRequests(restoreContext);
+
+            // Restore B first, then A (the problematic order)
+            var requestB = requests.Single(r => r.Request.Project.Name.Equals("ProjectB", StringComparison.OrdinalIgnoreCase));
+            var requestA = requests.Single(r => r.Request.Project.Name.Equals("ProjectA", StringComparison.OrdinalIgnoreCase));
+
+            var resultB = await new RestoreCommand(requestB.Request).ExecuteAsync();
+            resultB.Success.Should().BeTrue();
+
+            var resultA = await new RestoreCommand(requestA.Request).ExecuteAsync();
+            resultA.Success.Should().BeTrue();
+
+            // Assert: A's lock file should include build/native/MyPackage.targets
+            resultA.LockFile.Targets.Should().HaveCount(1);
+            var targetA = resultA.LockFile.Targets[0];
+
+            var myPackageLib = targetA.Libraries.First(l => l.Name.Equals("MyPackage", StringComparison.OrdinalIgnoreCase));
+            myPackageLib.Build.Should().ContainSingle()
+                .Which.Path.Should().Be("build/native/MyPackage.targets");
+
+            var binariesLib = targetA.Libraries.First(l => l.Name.Equals("MyPackage-binaries", StringComparison.OrdinalIgnoreCase));
+            binariesLib.Build.Should().ContainSingle()
+                .Which.Path.Should().Be("buildTransitive/MyPackage-binaries.targets");
+
+            // Assert: B should not get build assets (transitive through P2P with PrivateAssets=build)
+            resultB.LockFile.Targets.Should().HaveCount(1);
+            var targetB = resultB.LockFile.Targets[0];
+            var myPackageLibB = targetB.Libraries.First(l => l.Name.Equals("MyPackage", StringComparison.OrdinalIgnoreCase));
+            myPackageLibB.Build.Should().BeEmpty();
         }
 
         private static JObject BasicConfigWithNet46

@@ -346,16 +346,11 @@ internal static class MessagePackSerializer
         {
             cursor += 1;
             cb = Encoding.ASCII.GetBytes(value, 0, cch, buffer, cursor);
-            if (cb <= LIMIT_MAX_FIX_STRING_LENGTH_IN_BYTES)
-            {
-                cursor += cb;
-                buffer[start] = unchecked((byte)(MIN_FIX_STR | cb));
-                return cursor;
-            }
-            else
-            {
-                throw new ArgumentException($"The input string: \"{value}\" has non-ASCII characters in it.", nameof(value));
-            }
+
+            cursor += cb;
+            buffer[start] = unchecked((byte)(MIN_FIX_STR | cb));
+
+            return cursor;
         }
 
         if (cch <= LIMIT_MAX_STR8_LENGTH_IN_BYTES)
@@ -363,16 +358,11 @@ internal static class MessagePackSerializer
             cursor += 2;
             cb = Encoding.ASCII.GetBytes(value, 0, cch, buffer, cursor);
             cursor += cb;
-            if (cb <= LIMIT_MAX_STR8_LENGTH_IN_BYTES)
-            {
-                buffer[start] = STR8;
-                buffer[start + 1] = unchecked((byte)cb);
-                return cursor;
-            }
-            else
-            {
-                throw new ArgumentException($"The input string: \"{value}\" has non-ASCII characters in it.", nameof(value));
-            }
+
+            buffer[start] = STR8;
+            buffer[start + 1] = unchecked((byte)cb);
+
+            return cursor;
         }
 
         cursor += 3;
@@ -403,9 +393,7 @@ internal static class MessagePackSerializer
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SerializeUnicodeString(byte[] buffer, int cursor, string? value, int stringSizeLimitCharCount = DEFAULT_STRING_SIZE_LIMIT_CHAR_COUNT)
-    {
-        return value == null ? SerializeNull(buffer, cursor) : SerializeUnicodeString(buffer, cursor, value.AsSpan(), stringSizeLimitCharCount);
-    }
+        => value == null ? SerializeNull(buffer, cursor) : SerializeUnicodeString(buffer, cursor, value.AsSpan(), stringSizeLimitCharCount);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SerializeUnicodeString(byte[] buffer, int cursor, ReadOnlySpan<char> value, int stringSizeLimitCharCount = DEFAULT_STRING_SIZE_LIMIT_CHAR_COUNT)
@@ -582,9 +570,7 @@ internal static class MessagePackSerializer
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int SerializeUtcDateTime(byte[] buffer, int cursor, DateTime utc)
-    {
-        return SerializeTimestamp96(buffer, cursor, utc.Ticks);
-    }
+        => SerializeTimestamp96(buffer, cursor, utc.Ticks);
 
     public static int Serialize(byte[] buffer, int cursor, object? obj)
     {
@@ -670,14 +656,8 @@ internal static class MessagePackSerializer
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe long Float64ToInt64(double value)
-    {
-        return *(long*)&value;
-    }
+    private static unsafe long Float64ToInt64(double value) => *(long*)&value;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe int Float32ToInt32(float value)
-    {
-        return *(int*)&value;
-    }
+    private static unsafe int Float32ToInt32(float value) => *(int*)&value;
 }

@@ -7,9 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
-using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -79,7 +77,6 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        // https://github.com/NuGet/Home/issues/14823: This should use `dotnet package add` when it supports file-based apps.
         [Fact]
         public async Task AddPkg_FileBasedApp()
         {
@@ -95,56 +92,23 @@ namespace Dotnet.Integration.Test
                 Console.WriteLine();
                 """);
 
-            var tempDir = Path.Join(pathContext.WorkingDirectory, "temp");
-            Directory.CreateDirectory(tempDir);
-
-            // Generate DG file.
-            var dgFile = Path.Join(tempDir, "dg.json");
-            _fixture.RunDotnetExpectSuccess(fbaDir, $"build app.cs -t:GenerateRestoreGraphFile -p:RestoreGraphOutputPath={ArgumentEscaper.EscapeAndConcatenate([dgFile])}", testOutputHelper: _testOutputHelper);
-
-            // Get project content.
-            var virtualProject = _fixture.GetFileBasedAppVirtualProject(appFile, _testOutputHelper);
-            _testOutputHelper.WriteLine("before:\n" + virtualProject.Content);
-            Assert.DoesNotContain("PackageReference", virtualProject.Content);
-            using var builder = new TestVirtualProjectBuilder(virtualProject);
-
             // Create a package.
             var packageX = XPlatTestUtils.CreatePackage();
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, packageX);
 
             // Add the package.
-            using var outWriter = new StringWriter();
-            using var errorWriter = new StringWriter();
-            var testApp = new CommandLineApplication
-            {
-                Out = outWriter,
-                Error = errorWriter,
-            };
-            AddPackageReferenceCommand.Register(
-                testApp,
-                () => new TestLogger(_testOutputHelper),
-                () => new AddPackageReferenceCommandRunner(),
-                () => builder);
-            int result = testApp.Execute([
-                "add",
-                "--project", appFile,
-                "--package", "packageX",
-                "--dg-file", dgFile,
-            ]);
+            _fixture.RunDotnetExpectSuccess(fbaDir, "package add packageX --file app.cs --version 1.0.0", testOutputHelper: _testOutputHelper);
 
-            var output = outWriter.ToString();
-            var error = errorWriter.ToString();
-
-            _testOutputHelper.WriteLine(output);
-            _testOutputHelper.WriteLine(error);
-
-            Assert.Equal(0, result);
-
-            Assert.Empty(error);
-
-            var modifiedProjectContent = builder.ModifiedContent;
-            _testOutputHelper.WriteLine("after:\n" + modifiedProjectContent);
-            Assert.Contains("""<PackageReference Include="packageX" Version="1.0.0" />""", modifiedProjectContent);
+            // Verify the full content of the modified .cs file.
+            var modifiedContent = File.ReadAllText(appFile);
+            _testOutputHelper.WriteLine("after:\n" + modifiedContent);
+            Assert.Equal(
+                """
+                #:package packageX@1.0.0
+                #:property PublishAot=false
+                Console.WriteLine();
+                """,
+                modifiedContent);
         }
 
         [Fact]

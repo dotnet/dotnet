@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using NuGet.Common;
@@ -24,7 +22,7 @@ namespace NuGet.Protocol
         /// <exception cref="InvalidPackageIdException">
         /// Thrown if <paramref name="packageId"/> is not a valid NuGet package ID.
         /// </exception>
-        internal static void Validate(string packageId, IEnvironmentVariableReader env = null)
+        internal static void Validate(string packageId, IEnvironmentVariableReader? env = null)
         {
             bool isDisabled = env == null
                 ? IsValidationDisabled.Value

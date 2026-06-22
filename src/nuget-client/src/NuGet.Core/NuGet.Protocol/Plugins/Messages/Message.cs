@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -13,6 +11,7 @@ namespace NuGet.Protocol.Plugins
     /// <summary>
     /// Represents a message between a NuGet client and a plugin.
     /// </summary>
+    [System.Text.Json.Serialization.JsonConverter(typeof(MessageConverter))]
     public sealed class Message
     {
         /// <summary>
@@ -36,7 +35,13 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the optional message payload.
         /// </summary>
-        public JObject Payload { get; }
+        [Obsolete("Use MessageUtilities.DeserializePayload<T>() to access the payload.")]
+        [JsonIgnore]
+        public JObject? Payload => null;
+
+        [JsonProperty("Payload")]
+        [JsonConverter(typeof(ObjectPayloadConverter))]
+        internal object? PayloadObject { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Message" /> class.
@@ -51,8 +56,14 @@ namespace NuGet.Protocol.Plugins
         /// is an undefined <see cref="MessageType" /> value.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="method" />
         /// is an undefined <see cref="MessageMethod" /> value.</exception>
+        [Obsolete("Use MessageUtilities.Create<T>() to create messages.")]
+        public Message(string requestId, MessageType type, MessageMethod method, JObject? payload = null)
+            : this(requestId, type, method, (object?)payload)
+        {
+        }
+
         [JsonConstructor]
-        public Message(string requestId, MessageType type, MessageMethod method, JObject payload = null)
+        internal Message(string requestId, MessageType type, MessageMethod method, object? payload = null)
         {
             if (string.IsNullOrEmpty(requestId))
             {
@@ -82,7 +93,7 @@ namespace NuGet.Protocol.Plugins
             RequestId = requestId;
             Type = type;
             Method = method;
-            Payload = payload;
+            PayloadObject = payload;
         }
     }
 }

@@ -102,13 +102,13 @@ repository](https://github.com/open-telemetry/community/blob/main/guides/contrib
 *Find more about the maintainer role in [community
 repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).*
 
-### Emeritus Maintainer/Approver/Triager
+### Emeritus
 
-* [Cijo Thomas](https://github.com/cijothomas)
-* [Prashant Srivastava](https://github.com/srprash)
-* [Sergey Kanzhelev](https://github.com/SergeyKanzhelev)
-* [Utkarsh Umesan Pillai](https://github.com/utpilla)
-* [Vishwesh Bankwar](https://github.com/vishweshbankwar)
+* [Cijo Thomas](https://github.com/cijothomas), Maintainer
+* [Prashant Srivastava](https://github.com/srprash), Maintainer
+* [Sergey Kanzhelev](https://github.com/SergeyKanzhelev), Maintainer
+* [Utkarsh Umesan Pillai](https://github.com/utpilla), Maintainer
+* [Vishwesh Bankwar](https://github.com/vishweshbankwar), Maintainer
 
 For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 

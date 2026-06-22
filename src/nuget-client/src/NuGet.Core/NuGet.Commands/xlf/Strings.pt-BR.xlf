@@ -454,6 +454,11 @@
         <target state="translated">A propriedade '{0}' não deve ser nula ou vazia.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">Não é possível ler as informações do projeto para '{0}': {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">Não é possível adicionar o repositório confiável. O pacote não está assinado ou rubricado no repositório.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} não será podado. Considere remover este pacote das dependências, pois ele provavelmente é desnecessário.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} não será removido. Este pacote está disponível automaticamente e não precisa ser referenciado explicitamente. Remova o item PackageReference.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1496,6 +1501,12 @@ O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para 
         <target state="translated">{0} não fornece um limite inferior inclusivo para a dependência {1}. {2} foi resolvido.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">O pacote '{0}' {1} usa a estrutura MonoAndroid preterida em vez de 'net6.0-android' ou uma versão posterior. Considere atualizar para uma versão mais recente deste pacote ou entrar em contato com o autor do pacote.</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">O pacote '{0}' {1} tem uma {2} vulnerabilidade de gravidade conhecida, {3}</target>
@@ -1513,6 +1524,11 @@ O NuGet exige fontes HTTPS. Consulte https://aka.ms/nuget-https-everywhere para 
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">A dependência do projeto '{0}' não especifica uma versão. Inclua uma versão para a dependência para garantir resultados de restauração consistentes.</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate substitui RestoreLockedMode; o arquivo de bloqueio de pacotes será reavaliado e regenerado, e o modo de bloqueio será ignorado.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

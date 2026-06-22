@@ -59,7 +59,7 @@ internal static class EventHeaderExporter
                 break;
             case DateTime vdt:
                 // TODO: what format to use? an integer or a string?
-                string rfc3339String = vdt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.FFFFFFZ", CultureInfo.InvariantCulture);
+                var rfc3339String = vdt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.FFFFFFZ", CultureInfo.InvariantCulture);
                 eb.AddString16(key, rfc3339String);
                 break;
 
@@ -98,7 +98,7 @@ internal static class EventHeaderExporter
                 break;
             case DateTime[] vdtarray:
                 // TODO: is this ever called?
-                string[] rfc3339Strings = new string[vdtarray.Length];
+                var rfc3339Strings = new string[vdtarray.Length];
                 for (var i = 0; i < vdtarray.Length; ++i)
                 {
                     rfc3339Strings[i] = vdtarray[i].ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.FFFFFFZ", CultureInfo.InvariantCulture);
@@ -115,7 +115,7 @@ internal static class EventHeaderExporter
                 }
                 catch
                 {
-                    repr = $"ERROR: type {value!.GetType().FullName} is not supported";
+                    repr = $"ERROR: type {value.GetType().FullName} is not supported";
                 }
 
                 eb.AddString16(key, repr);

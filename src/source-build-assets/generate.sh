@@ -88,7 +88,7 @@ while [[ $# > 0 ]]; do
                 exit 1
             fi
 
-            IFS=, read -r packageName packageVersion packageTargetFrameworks <<< $2
+            IFS=, read -r packageName packageVersion packageTargetFrameworks <<< "$2"
             if [ -z ${packageVersion} ]; then
                 echo -e "${RED}ERROR: No package version supplied.${NC}"
                 exit 1

@@ -30,10 +30,7 @@ Do not launch the internal branch mirror (foobranch -> internal/foobranch)
 Do not launch the public mirror (foobranch -> foobranch)
 
 .PARAMETER AzDOPat
-PAT used to make AzDO modifications.  If UseKeyVault is passed, may be omitted
-
-.PARAMETER UseKeyVault
-If passed, looks up secrets in keyvault
+PAT used to make AzDO modifications. Must be provided explicitly.
 
 #>
 
@@ -43,8 +40,7 @@ param (
     [string]$BranchAndRepoFile,
     [switch]$NoInternalMergeMirror,
     [switch]$NoPublicMirror,
-    [string]$AzDOPat,
-    [switch]$UseKeyVault
+    [string]$AzDOPat
 )
 
 function LaunchMirrorBuild {
@@ -72,22 +68,10 @@ function LaunchMirrorBuild {
 
 $AzDOInternalInstance = "https://dev.azure.com/dnceng/internal"  
 
-# If UseKeyVault is set, grab keys from keyvault
-if ($UseKeyVault) {
-    try {
-        Write-Output "Obtaining required secrets from keyvault"
-        $AzDOPat = $(Get-AzKeyVaultSecret -VaultName 'EngKeyVault' -Name 'dn-bot-all-build-queue' -ErrorAction Stop).SecretValueText
-    }
-    catch {
-        Write-Error $_.Exception.Message
-        Write-Error "Failed to gather required credentials from EngKeyVault.  Consider passing them in directly."
-        exit
-    }
-} else {
-    if (!$AzDOPat) {
-        Write-Error "If not using key vault to find secrets, please provide AzDOPat"
-        exit
-    }
+# The legacy EngKeyVault lookup for dn-bot-all-build-queue was removed with WI 10088.
+if (!$AzDOPat) {
+    Write-Error "Please provide AzDOPat explicitly."
+    exit
 }
 
 # Set powershell to use TLS12 so that we don't error when talking to GitHub.

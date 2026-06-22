@@ -1,6 +1,13 @@
 import logging
 import os
-from helix.public import TestResult, TestResultAttachment
+try:
+    # Preferred: real helix-scripts types (allows pickle round-trip via the
+    # legacy PackingTestReporter path).
+    from helix.public import TestResult, TestResultAttachment
+except ImportError:
+    # Fallback: bundled shim used when helix-scripts is not installed on
+    # the test machine (e.g. AOT Helix client images).
+    from _helix_compat import TestResult, TestResultAttachment
 from typing import Iterable, List
 from formats import all_formats
 from helpers import get_env

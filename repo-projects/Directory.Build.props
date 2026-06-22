@@ -30,6 +30,8 @@
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
 
+    <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
+
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
@@ -217,6 +219,15 @@
   <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
   <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
     <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
+  </ItemGroup>
+
+  <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
+       Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
+       Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
+       By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
+       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
+  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
+    <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">

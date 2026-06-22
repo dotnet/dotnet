@@ -5,8 +5,9 @@
     <MicrosoftDotNetSourceBuildTasksAssembly>$(MSBuildThisFileDirectory)..\tools\net\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="ReadNuGetPackageInfos" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" />
-  <UsingTask TaskName="WriteUsageReports" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="ReadNuGetPackageInfos" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="WritePackageUsageData" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="WriteUsageReports" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksAssembly)" Runtime="NET" Architecture="*" />
 
 </Project>

@@ -116,7 +116,7 @@ public void ConfigureServices(IServiceCollection services)
 Following list of attributes are added by default on
 `http.server.request.duration` metric. See
 [http-metrics](https://github.com/open-telemetry/semantic-conventions/tree/v1.23.0/docs/http/http-metrics.md)
-for more details about each individual attribute. `.NET8.0` and above supports
+for more details about each individual attribute. .NET 8 and above supports
 additional metrics, see [list of metrics produced](#list-of-metrics-produced) for
 more details.
 
@@ -129,21 +129,21 @@ more details.
 
 #### List of metrics produced
 
-When the application targets `.NET6.0` or `.NET7.0`, the instrumentation emits
+When the application targets .NET 6 or .NET 7, the instrumentation emits
 the following metric:
 
 | Name                              | Details                                                                                                                                                 |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `http.server.request.duration`    | [Specification](https://github.com/open-telemetry/semantic-conventions/blob/release/v1.23.x/docs/http/http-metrics.md#metric-httpserverrequestduration) |
 
-Starting from `.NET8.0`, metrics instrumentation is natively implemented, and
+Starting from .NET 8, metrics instrumentation is natively implemented, and
 the ASP.NET Core library has incorporated support for [built-in
 metrics](https://learn.microsoft.com/dotnet/core/diagnostics/built-in-metrics-aspnetcore)
 following the OpenTelemetry semantic conventions. The library includes additional
 metrics beyond those defined in the
 [specification](https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-metrics.md),
 covering additional scenarios for ASP.NET Core users. When the application
-targets `.NET8.0` and newer versions, the instrumentation library automatically
+targets .NET 8 and newer versions, the instrumentation library automatically
 enables all `built-in` metrics by default.
 
 Note that the `AddAspNetCoreInstrumentation()` extension simplifies the process
@@ -162,7 +162,7 @@ to achieve this.
 
 > [!NOTE]
 > There is no difference in features or emitted metrics when enabling metrics
-using `AddMeter()` or `AddAspNetCoreInstrumentation()` on `.NET8.0` and newer
+using `AddMeter()` or `AddAspNetCoreInstrumentation()` on .NET 8 and newer
 versions.
 <!-- This comment is to make sure the two notes above and below are not merged -->
 > [!NOTE]

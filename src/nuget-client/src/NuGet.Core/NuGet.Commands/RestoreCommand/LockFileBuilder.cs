@@ -162,6 +162,8 @@ namespace NuGet.Commands
                 .OrderBy(graph => graph.Framework.ToString(), StringComparer.Ordinal)
                 .ThenBy(graph => graph.RuntimeIdentifier, StringComparer.Ordinal))
             {
+                var librariesWithMonoAndroidWarnings = new HashSet<LibraryIdentity>();
+
                 var target = lockFile.Version >= LockFileFormat.AliasedVersion ?
                     new LockFileTarget
                     {
@@ -185,6 +187,8 @@ namespace NuGet.Commands
                 bool warnForImportsOnGraph = tfi.Warn
                     && (target.TargetFramework is FallbackFramework
                         || target.TargetFramework is AssetTargetFallbackFramework);
+
+                bool checkMonoAndroidDeprecation = MonoAndroidDeprecation.ShouldCheck(project, targetGraph.Framework);
 
                 foreach (var graphItem in targetGraph.Flattened.OrderBy(x => x.Key))
                 {
@@ -226,7 +230,7 @@ namespace NuGet.Commands
                         var package = packageInfo.Package;
                         var libraryDependency = tfi.Dependencies.FirstOrDefault(e => e.Name.Equals(library.Name, StringComparison.OrdinalIgnoreCase));
 
-                        (LockFileTargetLibrary targetLibrary, bool usedFallbackFramework) = LockFileUtils.CreateLockFileTargetLibrary(
+                        (LockFileTargetLibrary targetLibrary, bool usedFallbackFramework, NuGetFramework compileAssetFramework, NuGetFramework runtimeAssetFramework) = LockFileUtils.CreateLockFileTargetLibrary(
                             libraryDependency?.Aliases,
                             libraries[ValueTuple.Create(library.Name, library.Version)],
                             package,
@@ -279,6 +283,29 @@ namespace NuGet.Commands
                                 // only log the warning once per library
                                 librariesWithWarnings.Add(library);
                             }
+                        }
+
+                        // Log NU1703 warning if the package uses the deprecated MonoAndroid framework
+                        if (checkMonoAndroidDeprecation
+                            && !librariesWithMonoAndroidWarnings.Contains(library)
+                            && (MonoAndroidDeprecation.IsMonoAndroidFramework(compileAssetFramework)
+                                || MonoAndroidDeprecation.IsMonoAndroidFramework(runtimeAssetFramework)))
+                        {
+                            var message = string.Format(CultureInfo.CurrentCulture,
+                                Strings.Warning_MonoAndroidFrameworkDeprecated,
+                                library.Name,
+                                library.Version);
+
+                            var logMessage = RestoreLogMessage.CreateWarning(
+                                NuGetLogCode.NU1703,
+                                message,
+                                library.Name,
+                                targetGraph.TargetGraphName);
+
+                            _logger.Log(logMessage);
+
+                            // only log the warning once per library
+                            librariesWithMonoAndroidWarnings.Add(library);
                         }
                     }
                 }

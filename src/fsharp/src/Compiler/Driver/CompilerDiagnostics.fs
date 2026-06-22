@@ -497,6 +497,8 @@ module OldStyleMessages =
     let NONTERM_classDefnMemberE () = Message("NONTERM.classDefnMember", "")
     let NONTERM_defnBindingsE () = Message("NONTERM.defnBindings", "")
     let NONTERM_classMemberSpfnE () = Message("NONTERM.classMemberSpfn", "")
+    let NONTERM_classMemberSpfnGetSetElementsE () = Message("NONTERM.classMemberSpfnGetSetElements", "")
+    let NONTERM_autoPropsDefnDeclE () = Message("NONTERM.autoPropsDefnDecl", "")
     let NONTERM_valSpfnE () = Message("NONTERM.valSpfn", "")
     let NONTERM_tyconSpfnE () = Message("NONTERM.tyconSpfn", "")
     let NONTERM_anonLambdaExprE () = Message("NONTERM.anonLambdaExpr", "")
@@ -1470,6 +1472,12 @@ type Exception with
                         | [ Parser.NONTERM_classMemberSpfn ] ->
                             os.AppendString(NONTERM_classMemberSpfnE().Format)
                             true
+                        | [ Parser.NONTERM_classMemberSpfnGetSetElements ] ->
+                            os.AppendString(NONTERM_classMemberSpfnGetSetElementsE().Format)
+                            true
+                        | [ Parser.NONTERM_autoPropsDefnDecl ] ->
+                            os.AppendString(NONTERM_autoPropsDefnDeclE().Format)
+                            true
                         | [ Parser.NONTERM_valSpfn ] ->
                             os.AppendString(NONTERM_valSpfnE().Format)
                             true
@@ -2092,7 +2100,7 @@ type FormattedDiagnostic =
     | Long of FSharpDiagnosticSeverity * FormattedDiagnosticDetailedInfo
 
 let FormatDiagnosticLocation (tcConfig: TcConfig) (m: Range) : FormattedDiagnosticLocation =
-    if equals m rangeStartup || equals m rangeCmdArgs then
+    if Range.equals m rangeStartup || Range.equals m rangeCmdArgs then
         {
             Range = m
             TextRepresentation = ""

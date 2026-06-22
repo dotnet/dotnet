@@ -28,9 +28,7 @@ public class HttpClientTraceInstrumentationOptions
 
     internal HttpClientTraceInstrumentationOptions(IConfiguration configuration)
     {
-        Debug.Assert(configuration != null, "configuration was null");
-
-        if (configuration!.TryGetBoolValue(
+        if (configuration.TryGetBoolValue(
            HttpInstrumentationEventSource.Log,
            "OTEL_DOTNET_EXPERIMENTAL_HTTPCLIENT_DISABLE_URL_QUERY_REDACTION",
            out var disableUrlQueryRedaction))
@@ -190,7 +188,5 @@ public class HttpClientTraceInstrumentationOptions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool TryParseHttpRequestMessage(string activityName, object arg1, [NotNullWhen(true)] out HttpRequestMessage? requestMessage)
-    {
-        return (requestMessage = arg1 as HttpRequestMessage) != null && activityName == "System.Net.Http.HttpRequestOut";
-    }
+        => (requestMessage = arg1 as HttpRequestMessage) != null && activityName == "System.Net.Http.HttpRequestOut";
 }

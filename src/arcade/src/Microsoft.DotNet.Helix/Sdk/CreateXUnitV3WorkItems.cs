@@ -110,7 +110,7 @@ namespace Microsoft.DotNet.Helix.Sdk
 
             // XUnit v3 tests are self-hosting - run the assembly directly with dotnet exec
             string resultArgs = UseMicrosoftTestingPlatformRunner
-                ? "--results-directory . --report-xunit --report-xunit-filename testResults.xml --auto-reporters off"
+                ? "--results-directory . --report-xunit-xml --report-xunit-xml-filename testResults.xml --auto-reporters off"
                 : "-xml testResults.xml -noAutoReporters";
 
             string command = $"{PathToDotnet} exec --roll-forward Major " +

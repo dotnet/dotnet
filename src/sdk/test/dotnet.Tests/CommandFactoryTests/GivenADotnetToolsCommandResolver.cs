@@ -59,5 +59,74 @@ namespace Microsoft.DotNet.Tests
             var commandPath = result.Args.Trim('"');
             commandPath.Should().Contain("dotnet-watch.dll");
         }
+
+        [Fact]
+        public void ItReturnsAnExecutableCommandSpecWhenExecutableExists()
+        {
+            var dotnetToolPath = TestAssetsManager.CreateTestDirectory().Path;
+            var commandName = "dotnet-user-secrets";
+            var toolDirectory = Path.Combine(dotnetToolPath, commandName, "1.0.0", "tools", "any", "win-x64");
+            Directory.CreateDirectory(toolDirectory);
+            var executableName = OperatingSystem.IsWindows() ? $"{commandName}.exe" : commandName;
+            var executablePath = Path.Combine(toolDirectory, executableName);
+
+            File.WriteAllText(executablePath, "test command that does nothing.");
+
+            var resolver = new DotnetToolsCommandResolver(dotnetToolPath);
+            var result = resolver.Resolve(new CommandResolverArguments()
+            {
+                CommandName = commandName,
+                CommandArguments = ["--help"],
+            });
+
+            result.Should().NotBeNull();
+            result.Path.Should().Be(executablePath);
+            result.Args.Should().Be("--help");
+        }
+    }
+
+    public class GivenADotnetToolsCommandResolverAggregateTools
+    {
+        [Theory]
+        [InlineData("dotnet-dev-certs")]
+        [InlineData("dotnet-user-jwts")]
+        [InlineData("dotnet-user-secrets")]
+        public void ItReturnsAnExecutableCommandSpecFromAggregateToolPackage(string commandName)
+        {
+            var dotnetToolPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var toolDirectory = Path.Combine(dotnetToolPath, "aspnetcoretools", "1.0.0", "tools", "any", "win-x64");
+            Directory.CreateDirectory(toolDirectory);
+            var executableName = OperatingSystem.IsWindows() ? $"{commandName}.exe" : commandName;
+            var executablePath = Path.Combine(toolDirectory, executableName);
+
+            try
+            {
+                File.WriteAllText(executablePath, "test command that does nothing.");
+
+                var resolver = new DotnetToolsCommandResolver(dotnetToolPath);
+                var result = resolver.Resolve(new CommandResolverArguments()
+                {
+                    CommandName = commandName,
+                    CommandArguments = ["--help"],
+                });
+
+                result.Should().NotBeNull();
+                result.Path.Should().Be(executablePath);
+                result.Args.Should().Be("--help");
+            }
+            finally
+            {
+                try
+                {
+                    if (Directory.Exists(dotnetToolPath))
+                    {
+                        Directory.Delete(dotnetToolPath, recursive: true);
+                    }
+                }
+                catch
+                {
+                }
+            }
+        }
     }
 }

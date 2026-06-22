@@ -27,7 +27,7 @@ dotnet add package --prerelease OpenTelemetry.OpAmp.Client
 using OpenTelemetry.OpAmp.Client;
 using OpenTelemetry.OpAmp.Client.Settings;
 
-var client = new OpAmpClient(opts =>
+using var client = new OpAmpClient(opts =>
 {
     // Set up the OpAMP server connection.
     // Supported options are HTTP (polling) and WebSocket connection.
@@ -46,6 +46,25 @@ await client.StartAsync();
 await client.StopAsync();
 ```
 
+## Security Considerations
+
+### Effective Configuration Reporting
+
+When effective configuration reporting is enabled, file contents are read in
+full and transmitted verbatim to the OpAMP server. There is no automatic
+redaction.
+
+- **Use TLS**: Configure `ServerUrl` with a `wss://` or `https://` scheme so
+  that configuration data is encrypted in transit.
+- **Avoid sensitive files**: Do not report files that contain secrets such as
+  passwords, API tokens, or private keys unless you fully trust the OpAMP server
+  and the network path to it.
+
+Call `StopAsync()` before disposal when the client should unregister cleanly
+from the server. `Dispose()` performs synchronous, best-effort cleanup of
+services and transport resources, but it does not send the agent disconnect
+message.
+
 ## References
 
-* [Open Agent Management Protocol](https://opentelemetry.io/docs/specs/opamp/)
+- [Open Agent Management Protocol](https://opentelemetry.io/docs/specs/opamp/)

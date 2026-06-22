@@ -19,6 +19,11 @@
 
     <TestRunNamePrefix>$(AGENT_JOBNAME) run on </TestRunNamePrefix>
     <XUnitWorkitemTimeout>300</XUnitWorkitemTimeout>
+
+    <!-- Use the standalone Helix Job Monitor pipeline job to publish test results,
+         instead of the in-build Python reporter. The corresponding monitor job is
+         configured in the Arcade pipeline YAML. -->
+    <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,12 +54,10 @@
 
     <!-- XUnit v3 tests are self-hosting executables and use XUnitV3Project instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
-    <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
     <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
-    <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -76,7 +79,7 @@
     <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64</TestRunName>
     </HelixTargetQueue>
-    <HelixTargetQueue Include="OSX.15.Amd64"/>
+    <HelixTargetQueue Include="OSX.26.Arm64"/>
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
@@ -93,7 +96,7 @@
     <HelixTargetQueue Include="(Debian.13.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64.Open</TestRunName>
     </HelixTargetQueue>
-    <HelixTargetQueue Include="OSX.15.Amd64.Open"/>
+    <HelixTargetQueue Include="OSX.26.Arm64.Open"/>
   </ItemGroup>
 
   <PropertyGroup Condition="!$(HelixTargetQueue.StartsWith('Windows'))">

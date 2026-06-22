@@ -5,7 +5,8 @@
     <MicrosoftDotNetBuildTasksWorkloadsAssembly>$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.Workloads.dll</MicrosoftDotNetBuildTasksWorkloadsAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="CreateVisualStudioWorkload" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" Runtime="NET" />
-  <UsingTask TaskName="CreateVisualStudioWorkloadSet" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" Runtime="NET" />
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="CreateVisualStudioWorkload" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" Runtime="NET" Architecture="*" />
+  <UsingTask TaskName="CreateVisualStudioWorkloadSet" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" Runtime="NET" Architecture="*" />
 
 </Project>

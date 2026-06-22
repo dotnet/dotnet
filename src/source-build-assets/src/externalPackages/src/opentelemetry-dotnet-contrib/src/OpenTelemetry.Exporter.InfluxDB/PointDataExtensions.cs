@@ -17,7 +17,7 @@ internal static class PointDataExtensions
         return pointData;
     }
 
-    public static PointData Tags(this PointData pointData, IEnumerable<KeyValuePair<string, object>>? tags)
+    public static PointData Tags<T>(this PointData pointData, IEnumerable<KeyValuePair<string, T>>? tags)
     {
         if (tags == null)
         {
@@ -26,7 +26,7 @@ internal static class PointDataExtensions
 
         foreach (var tag in tags)
         {
-            pointData = pointData.Tag(tag.Key, tag.Value.ToString());
+            pointData = pointData.Tag(tag.Key, tag.Value?.ToString());
         }
 
         return pointData;

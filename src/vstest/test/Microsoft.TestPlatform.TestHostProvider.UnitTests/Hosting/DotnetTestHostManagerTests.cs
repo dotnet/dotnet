@@ -544,6 +544,23 @@ public class DotnetTestHostManagerTests
     }
 
     [TestMethod]
+    public void GetTestHostProcessStartInfoShouldIncludeSourcePathInExceptionMessageWhenTesthostNotFound()
+    {
+        var sourcePath = Path.Combine(_temp, "mytest.dll");
+        var sourceDirectory = Path.GetDirectoryName(sourcePath)!;
+
+        // Ensure no testhost.dll exists anywhere
+        _mockFileHelper.Setup(fh => fh.Exists(It.IsAny<string>())).Returns(false);
+
+        Action action = () => _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
+
+        var exception = Assert.ThrowsExactly<TestPlatformException>(action);
+        Assert.Contains(sourcePath, exception.Message);
+        Assert.Contains(sourceDirectory, exception.Message);
+    }
+
+
+    [TestMethod]
     public void GetTestHostProcessStartInfoShouldIncludeSourceDirectoryAsWorkingDirectory()
     {
         // Absolute path to the source directory

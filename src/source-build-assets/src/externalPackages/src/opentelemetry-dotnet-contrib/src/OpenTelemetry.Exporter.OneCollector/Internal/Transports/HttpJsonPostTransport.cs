@@ -32,13 +32,11 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
         IHttpClient httpClient)
     {
         Debug.Assert(!string.IsNullOrWhiteSpace(instrumentationKey), "instrumentationKey was null or whitespace");
-        Debug.Assert(endpoint != null, "endpoint was null");
-        Debug.Assert(httpClient != null, "httpClient was null");
 
-        this.instrumentationKey = instrumentationKey!;
-        this.endpoint = endpoint!;
+        this.instrumentationKey = instrumentationKey;
+        this.endpoint = endpoint;
         this.compressionType = compressionType;
-        this.httpClient = httpClient!;
+        this.httpClient = httpClient;
 
         this.Description = $"http.jsonpost@{endpoint}";
     }
@@ -65,7 +63,7 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
 
         var failureRegistration = this.payloadTransmittedFailureCallbacks.Add(callback);
 
-        return new TranmissionCallbackWrapper(successRegistration, failureRegistration);
+        return new TransmissionCallbackWrapper(successRegistration, failureRegistration);
     }
 
     public bool Send(in TransportSendRequest sendRequest)
@@ -105,10 +103,10 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
                 request.Headers.TryAddWithoutValidation("NoResponseBody", "true");
             }
 
-            using var response = this.httpClient.Send(
-                request,
-                infoLoggingEnabled ? HttpCompletionOption.ResponseContentRead : HttpCompletionOption.ResponseHeadersRead,
-                CancellationToken.None);
+            var cancellationToken = CancellationToken.None;
+            var completionOption = HttpCompletionOption.ResponseHeadersRead;
+
+            using var response = this.httpClient.Send(request, completionOption, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
@@ -132,11 +130,14 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
             }
             else
             {
-                response.Headers.TryGetValues("Collector-Error", out var collectorErrors);
+                _ = response.Headers.TryGetValues("Collector-Error", out var collectorErrors);
 
-                var errorDetails = infoLoggingEnabled
-                    ? response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
-                    : null;
+                string? errorDetails = null;
+
+                if (infoLoggingEnabled)
+                {
+                    errorDetails = HttpClientHelpers.TryGetResponseBodyAsString(response, cancellationToken);
+                }
 
                 OneCollectorExporterEventSource.Log.WriteHttpTransportErrorResponseReceivedEventIfEnabled(
                     this.Description,
@@ -243,12 +244,12 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
         }
     }
 
-    private sealed class TranmissionCallbackWrapper : IDisposable
+    private sealed class TransmissionCallbackWrapper : IDisposable
     {
         private readonly IDisposable successRegistration;
         private readonly IDisposable failureRegistration;
 
-        public TranmissionCallbackWrapper(
+        public TransmissionCallbackWrapper(
             IDisposable successRegistration,
             IDisposable failureRegistration)
         {
@@ -271,9 +272,7 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
 
         public NonDisposingStreamContent(Stream stream)
         {
-            Debug.Assert(stream != null, "stream was null");
-
-            this.stream = stream!;
+            this.stream = stream;
         }
 
         protected override bool TryComputeLength(out long length)
@@ -285,19 +284,13 @@ internal sealed class HttpJsonPostTransport : ITransport, IDisposable
 
 #if NET
         protected override void SerializeToStream(Stream stream, TransportContext? context, CancellationToken cancellationToken)
-        {
-            this.stream.CopyTo(stream);
-        }
+            => this.stream.CopyTo(stream);
 
         protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context, CancellationToken cancellationToken)
-        {
-            return this.stream.CopyToAsync(stream, cancellationToken);
-        }
+            => this.stream.CopyToAsync(stream, cancellationToken);
 #endif
 
         protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
-        {
-            return this.stream.CopyToAsync(stream);
-        }
+            => this.stream.CopyToAsync(stream);
     }
 }

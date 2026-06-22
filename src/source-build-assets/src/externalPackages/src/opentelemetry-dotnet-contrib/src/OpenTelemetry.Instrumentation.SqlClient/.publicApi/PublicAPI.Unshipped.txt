@@ -1,9 +1,0 @@
-#nullable enable
-OpenTelemetry.Instrumentation.SqlClient.SqlClientTraceInstrumentationOptions
-OpenTelemetry.Instrumentation.SqlClient.SqlClientTraceInstrumentationOptions.SqlClientTraceInstrumentationOptions() -> void
-OpenTelemetry.Metrics.SqlClientMeterProviderBuilderExtensions
-OpenTelemetry.Trace.TracerProviderBuilderExtensions
-static OpenTelemetry.Metrics.SqlClientMeterProviderBuilderExtensions.AddSqlClientInstrumentation(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
-static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddSqlClientInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
-static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddSqlClientInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, string? name, System.Action<OpenTelemetry.Instrumentation.SqlClient.SqlClientTraceInstrumentationOptions!>? configureSqlClientTraceInstrumentationOptions) -> OpenTelemetry.Trace.TracerProviderBuilder!
-static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddSqlClientInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.SqlClient.SqlClientTraceInstrumentationOptions!>! configureSqlClientTraceInstrumentationOptions) -> OpenTelemetry.Trace.TracerProviderBuilder!

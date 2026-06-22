@@ -141,18 +141,25 @@ internal readonly struct Loader_1 : ILoader
 
     TargetPointer ILoader.GetRootAssembly()
     {
-        TargetPointer appDomainPointer = _target.ReadGlobalPointer(Constants.Globals.AppDomain);
-        Data.AppDomain appDomain = _target.ProcessedData.GetOrAdd<Data.AppDomain>(_target.ReadPointer(appDomainPointer));
+        TargetPointer defaultAppDomain = ((ILoader)this).GetAppDomain();
+        Data.AppDomain appDomain = _target.ProcessedData.GetOrAdd<Data.AppDomain>(defaultAppDomain);
         return appDomain.RootAssembly;
     }
 
     string ILoader.GetAppDomainFriendlyName()
     {
-        TargetPointer appDomainPointer = _target.ReadGlobalPointer(Constants.Globals.AppDomain);
-        Data.AppDomain appDomain = _target.ProcessedData.GetOrAdd<Data.AppDomain>(_target.ReadPointer(appDomainPointer));
+        TargetPointer defaultAppDomain = ((ILoader)this).GetAppDomain();
+        Data.AppDomain appDomain = _target.ProcessedData.GetOrAdd<Data.AppDomain>(defaultAppDomain);
         return appDomain.FriendlyName != TargetPointer.Null
             ? _target.ReadUtf16String(appDomain.FriendlyName)
             : DefaultDomainFriendlyName;
+    }
+
+    TargetPointer ILoader.GetAppDomain()
+    {
+        TargetPointer appDomainPointer = _target.ReadGlobalPointer(Constants.Globals.AppDomain);
+        TargetPointer appDomain = _target.ReadPointer(appDomainPointer);
+        return appDomain;
     }
 
     TargetPointer ILoader.GetModule(ModuleHandle handle)
@@ -438,7 +445,7 @@ internal readonly struct Loader_1 : ILoader
             }
         }
 
-        module.WriteFlags(_target, updatedFlags);
+        module.WriteFlags(updatedFlags);
     }
 
     bool ILoader.IsReadyToRun(ModuleHandle handle)
@@ -494,6 +501,8 @@ internal readonly struct Loader_1 : ILoader
     ModuleLookupTables ILoader.GetLookupTables(ModuleHandle handle)
     {
         Data.Module module = _target.ProcessedData.GetOrAdd<Data.Module>(handle.Address);
+        Target.TypeInfo lookupMapTypeInfo = _target.GetTypeInfo(DataType.ModuleLookupMap);
+        uint tableDataOffset = (uint)lookupMapTypeInfo.Fields[Constants.FieldNames.ModuleLookupMap.TableData].Offset;
         return new ModuleLookupTables(
             module.FieldDefToDescMap,
             module.ManifestModuleReferencesMap,
@@ -501,7 +510,8 @@ internal readonly struct Loader_1 : ILoader
             module.MethodDefToDescMap,
             module.TypeDefToMethodTableMap,
             module.TypeRefToMethodTableMap,
-            module.MethodDefToILCodeVersioningStateMap);
+            module.MethodDefToILCodeVersioningStateMap,
+            tableDataOffset);
     }
 
     private static (bool Done, uint NextIndex) IterateLookupMap(uint index) => (false, index + 1);
@@ -532,7 +542,8 @@ internal readonly struct Loader_1 : ILoader
 
     TargetPointer ILoader.GetModuleLookupMapElement(TargetPointer table, uint token, out TargetNUInt flags)
     {
-        if (table == TargetPointer.Null)
+        uint rid = EcmaMetadataUtils.GetRowId(token);
+        if (table == TargetPointer.Null || rid == 0)
         {
             flags = new TargetNUInt(0);
             return TargetPointer.Null;
@@ -540,9 +551,6 @@ internal readonly struct Loader_1 : ILoader
 
         Data.ModuleLookupMap lookupMap = _target.ProcessedData.GetOrAdd<Data.ModuleLookupMap>(table);
         ulong supportedFlagsMask = lookupMap.SupportedFlagsMask.Value;
-
-        uint rid = EcmaMetadataUtils.GetRowId(token);
-        ArgumentOutOfRangeException.ThrowIfZero(rid);
         (TargetPointer rval, uint _) = IterateModuleLookupMap(table, rid, SearchLookupMap).FirstOrDefault();
         flags = new TargetNUInt(rval & supportedFlagsMask);
         return rval & ~supportedFlagsMask;
@@ -699,38 +707,38 @@ internal readonly struct Loader_1 : ILoader
         };
     }
 
-    IReadOnlyDictionary<string, TargetPointer> ILoader.GetLoaderAllocatorHeaps(TargetPointer loaderAllocatorPointer)
+    IReadOnlyDictionary<LoaderAllocatorHeapType, TargetPointer> ILoader.GetLoaderAllocatorHeaps(TargetPointer loaderAllocatorPointer)
     {
         Data.LoaderAllocator loaderAllocator = _target.ProcessedData.GetOrAdd<Data.LoaderAllocator>(loaderAllocatorPointer);
         Target.TypeInfo laType = _target.GetTypeInfo(DataType.LoaderAllocator);
 
-        Dictionary<string, TargetPointer> heaps = new()
+        Dictionary<LoaderAllocatorHeapType, TargetPointer> heaps = new()
         {
-            [nameof(Data.LoaderAllocator.LowFrequencyHeap)] = loaderAllocator.LowFrequencyHeap,
-            [nameof(Data.LoaderAllocator.HighFrequencyHeap)] = loaderAllocator.HighFrequencyHeap,
-            [nameof(Data.LoaderAllocator.StaticsHeap)] = loaderAllocator.StaticsHeap,
-            [nameof(Data.LoaderAllocator.StubHeap)] = loaderAllocator.StubHeap,
-            [nameof(Data.LoaderAllocator.ExecutableHeap)] = loaderAllocator.ExecutableHeap,
+            [LoaderAllocatorHeapType.LowFrequencyHeap] = loaderAllocator.LowFrequencyHeap,
+            [LoaderAllocatorHeapType.HighFrequencyHeap] = loaderAllocator.HighFrequencyHeap,
+            [LoaderAllocatorHeapType.StaticsHeap] = loaderAllocator.StaticsHeap,
+            [LoaderAllocatorHeapType.StubHeap] = loaderAllocator.StubHeap,
+            [LoaderAllocatorHeapType.ExecutableHeap] = loaderAllocator.ExecutableHeap,
         };
 
         if (laType.Fields.ContainsKey(nameof(Data.LoaderAllocator.FixupPrecodeHeap)))
-            heaps[nameof(Data.LoaderAllocator.FixupPrecodeHeap)] = loaderAllocator.FixupPrecodeHeap!.Value;
+            heaps[LoaderAllocatorHeapType.FixupPrecodeHeap] = loaderAllocator.FixupPrecodeHeap!.Value;
 
         if (laType.Fields.ContainsKey(nameof(Data.LoaderAllocator.NewStubPrecodeHeap)))
-            heaps[nameof(Data.LoaderAllocator.NewStubPrecodeHeap)] = loaderAllocator.NewStubPrecodeHeap!.Value;
+            heaps[LoaderAllocatorHeapType.NewStubPrecodeHeap] = loaderAllocator.NewStubPrecodeHeap!.Value;
 
         if (laType.Fields.ContainsKey(nameof(Data.LoaderAllocator.DynamicHelpersStubHeap)))
-            heaps[nameof(Data.LoaderAllocator.DynamicHelpersStubHeap)] = loaderAllocator.DynamicHelpersStubHeap!.Value;
+            heaps[LoaderAllocatorHeapType.DynamicHelpersStubHeap] = loaderAllocator.DynamicHelpersStubHeap!.Value;
 
         if (loaderAllocator.VirtualCallStubManager != TargetPointer.Null)
         {
             Data.VirtualCallStubManager vcsMgr = _target.ProcessedData.GetOrAdd<Data.VirtualCallStubManager>(loaderAllocator.VirtualCallStubManager);
             Target.TypeInfo vcsType = _target.GetTypeInfo(DataType.VirtualCallStubManager);
 
-            heaps[nameof(Data.VirtualCallStubManager.IndcellHeap)] = vcsMgr.IndcellHeap;
+            heaps[LoaderAllocatorHeapType.IndcellHeap] = vcsMgr.IndcellHeap;
 
             if (vcsType.Fields.ContainsKey(nameof(Data.VirtualCallStubManager.CacheEntryHeap)))
-                heaps[nameof(Data.VirtualCallStubManager.CacheEntryHeap)] = vcsMgr.CacheEntryHeap!.Value;
+                heaps[LoaderAllocatorHeapType.CacheEntryHeap] = vcsMgr.CacheEntryHeap!.Value;
         }
 
         return heaps;

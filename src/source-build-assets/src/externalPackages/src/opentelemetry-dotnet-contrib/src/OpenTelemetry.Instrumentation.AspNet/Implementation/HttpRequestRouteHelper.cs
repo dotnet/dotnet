@@ -53,7 +53,7 @@ internal sealed class HttpRequestRouteHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool CompareStringToSubstring(string example, string target, int start)
     {
-        for (int i = 0; i < example.Length; i++)
+        for (var i = 0; i < example.Length; i++)
         {
             if (target[start + 1 + i] != example[i])
             {
@@ -76,12 +76,12 @@ internal sealed class HttpRequestRouteHelper
         var hasAction = !string.IsNullOrWhiteSpace(action);
         var sb = new StringBuilder(template.Length);
 
-        int i = 0;
+        var i = 0;
         while (i < template.Length)
         {
             if (template[i] == '{')
             {
-                int end = template.IndexOf('}', i + 1);
+                var end = template.IndexOf('}', i + 1);
                 if (end != -1)
                 {
                     if (hasController && CompareStringToSubstring(controllerToken, template, i))
@@ -118,7 +118,7 @@ internal sealed class HttpRequestRouteHelper
         }
 
         // Normalizes endings by removing trailing slashes.
-        int len = sb.Length;
+        var len = sb.Length;
         while (len > 0 && sb[len - 1] == '/')
         {
             len--;

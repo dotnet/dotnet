@@ -7,6 +7,7 @@ using Google.Protobuf;
 using OpAmp.Proto.V1;
 using OpenTelemetry.OpAmp.Client.Internal.Services.Heartbeat;
 using OpenTelemetry.OpAmp.Client.Internal.Utils;
+using OpenTelemetry.OpAmp.Client.Messages;
 using OpenTelemetry.OpAmp.Client.Settings;
 
 namespace OpenTelemetry.OpAmp.Client.Internal;
@@ -145,7 +146,63 @@ internal sealed class FrameBuilder : IFrameBuilder
             capabilities |= AgentCapabilities.AcceptsRemoteConfig;
         }
 
+        if (this.settings.EffectiveConfigurationReporting.EnableReporting)
+        {
+            capabilities |= AgentCapabilities.ReportsEffectiveConfig;
+        }
+
         this.currentMessage.Capabilities = (ulong)capabilities;
+
+        return this;
+    }
+
+    IFrameBuilder IFrameBuilder.AddCustomCapabilities(IEnumerable<string> capabilities)
+    {
+        this.EnsureInitialized();
+
+        this.currentMessage.CustomCapabilities = new CustomCapabilities();
+        this.currentMessage.CustomCapabilities.Capabilities.Add(capabilities);
+
+        return this;
+    }
+
+    IFrameBuilder IFrameBuilder.AddCustomMessage(string capability, string type, ReadOnlyMemory<byte> data)
+    {
+        this.EnsureInitialized();
+
+        this.currentMessage.CustomMessage = new CustomMessage
+        {
+            Capability = capability,
+            Type = type,
+            Data = ByteString.CopyFrom(data.Span),
+        };
+
+        return this;
+    }
+
+    IFrameBuilder IFrameBuilder.AddEffectiveConfig(IEnumerable<EffectiveConfigFile> files)
+    {
+        this.EnsureInitialized();
+
+        var configMap = new AgentConfigMap();
+        var fileMap = new Dictionary<string, global::OpAmp.Proto.V1.AgentConfigFile>(StringComparer.Ordinal);
+        foreach (var file in files)
+        {
+            fileMap.Add(file.FileName, new global::OpAmp.Proto.V1.AgentConfigFile()
+            {
+                Body = ByteString.CopyFrom(file.Content.Span),
+                ContentType = file.ContentType,
+            });
+        }
+
+        configMap.ConfigMap.Add(fileMap);
+
+        var effectiveConfig = new EffectiveConfig
+        {
+            ConfigMap = configMap,
+        };
+
+        this.currentMessage.EffectiveConfig = effectiveConfig;
 
         return this;
     }

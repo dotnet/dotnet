@@ -531,7 +531,7 @@ function MSBuild {
       ExitWithExitCode 1
     fi
 
-    args+=( "-logger:$selectedPath" )
+    # args+=( "-logger:$selectedPath" )
   fi
 
   MSBuild-Core "${args[@]}"
