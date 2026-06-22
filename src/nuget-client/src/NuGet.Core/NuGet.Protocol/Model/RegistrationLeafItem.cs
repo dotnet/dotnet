@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
@@ -16,10 +14,10 @@ namespace NuGet.Protocol.Model
     {
         [JsonProperty("catalogEntry")]
         [JsonPropertyName("catalogEntry")]
-        public PackageSearchMetadataRegistration CatalogEntry { get; set; }
+        public PackageSearchMetadataRegistration? CatalogEntry { get; set; }
 
         [JsonProperty(PropertyName = JsonProperties.PackageContent)]
         [JsonPropertyName(JsonProperties.PackageContent)]
-        public Uri PackageContent { get; set; }
+        public Uri? PackageContent { get; set; }
     }
 }

@@ -96,7 +96,7 @@ namespace NuGet.Protocol.Plugins.Tests
             string password,
             string[] authTypes)
         {
-            var response = JsonSerializationUtilities.Deserialize<GetCredentialsResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetCredentialsResponse>(json)!;
 
             Assert.Equal(responseCode, response.ResponseCode);
             Assert.Equal(username, response.Username);

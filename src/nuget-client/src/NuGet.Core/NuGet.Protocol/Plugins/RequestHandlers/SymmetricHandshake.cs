@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
@@ -23,9 +21,9 @@ namespace NuGet.Protocol.Plugins
         private readonly TimeSpan _handshakeTimeout;
         private bool _isDisposed;
         private readonly SemanticVersion _minimumProtocolVersion;
-        private HandshakeRequest _outboundHandshakeRequest;
+        private HandshakeRequest? _outboundHandshakeRequest;
         private readonly SemanticVersion _protocolVersion;
-        private TaskCompletionSource<int> _responseSentTaskCompletionSource;
+        private readonly TaskCompletionSource<int> _responseSentTaskCompletionSource;
         private readonly CancellationTokenSource _timeoutCancellationTokenSource;
 
         /// <summary>
@@ -116,7 +114,7 @@ namespace NuGet.Protocol.Plugins
         /// if the handshake was successful; otherwise, <see langword="null" />.</returns>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public async Task<SemanticVersion> HandshakeAsync(CancellationToken cancellationToken)
+        public async Task<SemanticVersion?> HandshakeAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -127,7 +125,7 @@ namespace NuGet.Protocol.Plugins
                 _outboundHandshakeRequest,
                 cancellationToken);
 
-            if (response != null && response.ResponseCode == MessageResponseCode.Success)
+            if (response?.IsSuccess == true)
             {
                 if (IsSupportedVersion(response.ProtocolVersion))
                 {
