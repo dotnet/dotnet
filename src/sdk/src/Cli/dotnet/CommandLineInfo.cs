@@ -24,6 +24,10 @@ public class CommandLineInfo
         Reporter.Output.WriteLine($"{LocalizableStrings.DotNetSdkInfoLabel}");
         Reporter.Output.WriteLine($" Version:           {Product.Version}");
         Reporter.Output.WriteLine($" Commit:            {commitSha}");
+        if (!string.IsNullOrEmpty(versionFile.VmrCommitSha) && versionFile.VmrCommitSha != versionFile.CommitSha)
+        {
+            Reporter.Output.WriteLine($" VMR Commit:        {versionFile.VmrCommitSha}");
+        }
         Reporter.Output.WriteLine($" Workload version:  {WorkloadInfoHelper.GetWorkloadsVersion()}");
         Reporter.Output.WriteLine($" MSBuild version:   {MSBuildForwardingAppWithoutLogging.MSBuildVersion}");
         Reporter.Output.WriteLine();
