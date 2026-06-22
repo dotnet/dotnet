@@ -11,8 +11,9 @@ Each morning:
 1. **Check build health** — Run the pipeline health assessment (see [Build Health Monitoring](#build-health-monitoring))
 2. **Check dependency flow** — Run the flow analysis and check the [Maestro dashboard](https://maestro.dot.net/codeflows?branch=main) (see [Code Flow Monitoring](#code-flow-monitoring))
 3. **Merge green code flow PRs** — Approve and merge any [code flow](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) PRs that are green (see [Merging Code Flow PRs](#merging-code-flow-prs))
-4. **Triage failures** — Identify broken builds or stale PRs and ping the appropriate owner (see [Repo Ownership](#repo-ownership))
-5. **Communicate** — Post updates in the appropriate Teams channels for any hot issues
+4. **Merge servicing re-bootstrap PRs** — Check for open re-bootstrap PRs opened by `dotnet-bot` (e.g. [PR #7149](https://github.com/dotnet/dotnet/pull/7149)) and merge any that are green (see [Merging Re-bootstrap PRs](#merging-re-bootstrap-prs))
+5. **Triage failures** — Identify broken builds or stale PRs and ping the appropriate owner (see [Repo Ownership](#repo-ownership))
+6. **Communicate** — Post updates in the appropriate Teams channels for any hot issues
 
 ## Before Your Shift
 
@@ -128,6 +129,22 @@ Some PRs will open with 0 files changed due to a merge conflict (e.g. [PR #6106 
 2. If the resolution is obvious, go ahead and push the fix
 3. If it's unclear, ping the repo owner
 
+## Merging Re-bootstrap PRs
+
+Re-bootstrap PRs are periodic automated PRs opened by `dotnet-bot` on servicing branches that update versioning and package references. They are titled something like ".NET X.Y.Z-... Updates" (e.g. [PR #7149](https://github.com/dotnet/dotnet/pull/7149) — ".NET 11.0.100-preview.5.26302.115 June 2026 Updates").
+
+### How to identify them
+
+- Author: `dotnet-bot`
+- Title pattern: `.NET X.Y.Z-... Updates` or `.NET X.Y.Z-... <Month> <Year> Updates`
+- Target branch: a `release/*` servicing branch
+
+### Merge criteria
+
+If CI is green, **approve and merge**.
+
+> **Note:** Like internal → public merge PRs, re-bootstrap PRs may fail the "Validate user changes in VMR / Run Validation Script" CI job because `Version.Details.props` was touched. This is expected — **merge anyway** by elevating to admin at https://repos.opensource.microsoft.com/orgs/dotnet/repos/dotnet (requires netvmr-lt membership).
+
 ## Which Branches to Monitor
 
 Monitor **all branches**: `main` and all `release/*` branches.
@@ -168,7 +185,7 @@ You can merge PRs into the preview branch **up until EOD on the day marked code 
 On release day, monitor these automated PRs for servicing branches:
 
 - **Internal → public merge PRs** (e.g. [PR #6182](https://github.com/dotnet/dotnet/pull/6182))
-- **Re-bootstrap PRs** (e.g. [PR #6174](https://github.com/dotnet/dotnet/pull/6174))
+- **Re-bootstrap PRs** (e.g. [PR #6174](https://github.com/dotnet/dotnet/pull/6174)) — see [Merging Re-bootstrap PRs](#merging-re-bootstrap-prs) for merge criteria
 
 Ensure they are merged or escalated if blocked.
 
