@@ -19,7 +19,7 @@ namespace Microsoft.SignCheck.Verification
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                throw new PlatformNotSupportedException("RPM unpacking is only supported on Linux.");
+                throw new PlatformNotSupportedException("RPM signature verification is only supported on Linux");
             }
 
             using var stream = File.Open(archivePath, FileMode.Open);
