@@ -40,7 +40,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Deserialize_ThrowsForNullJson()
         {
             var exception = Assert.Throws<ArgumentException>(
-                () => JsonSerializationUtilities.Deserialize<A>(json: null));
+                () => JsonSerializationUtilities.Deserialize<A>(json: null!));
 
             Assert.Equal("json", exception.ParamName);
         }
@@ -59,14 +59,14 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var a = JsonSerializationUtilities.Deserialize<A>(_expectedJson);
 
-            Assert.Equal(3, a.B);
+            Assert.Equal(3, a!.B);
         }
 
         [Fact]
         public void FromObject_ThrowsForNullValue()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => JsonSerializationUtilities.FromObject(value: null));
+                () => JsonSerializationUtilities.FromObject(value: null!));
 
             Assert.Equal("value", exception.ParamName);
         }
@@ -83,7 +83,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Serialize_ThrowsForNullWriter()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => JsonSerializationUtilities.Serialize(writer: null, value: _expectedObject));
+                () => JsonSerializationUtilities.Serialize(writer: null!, value: _expectedObject));
 
             Assert.Equal("writer", exception.ParamName);
         }
@@ -106,7 +106,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void ToObject_ThrowsForNullValue()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => JsonSerializationUtilities.ToObject<A>(jObject: null));
+                () => JsonSerializationUtilities.ToObject<A>(jObject: null!));
 
             Assert.Equal("jObject", exception.ParamName);
         }
@@ -117,7 +117,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var jObject = JObject.FromObject(_expectedObject);
             var a = JsonSerializationUtilities.ToObject<A>(jObject);
 
-            Assert.Equal(3, a.B);
+            Assert.Equal(3, a!.B);
         }
 
         private sealed class A

@@ -40,6 +40,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="$(SharedDirectory)\AotCompatibilityAttributes.cs" />
+    <Compile Include="$(SharedDirectory)\NuGetFeatureFlags.cs" />
   </ItemGroup>
 
   <ItemGroup>

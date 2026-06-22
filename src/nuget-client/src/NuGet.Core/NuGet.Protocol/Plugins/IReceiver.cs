@@ -13,12 +13,12 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Occurs when an unrecoverable fault has been caught.
         /// </summary>
-        event EventHandler<ProtocolErrorEventArgs> Faulted;
+        event EventHandler<ProtocolErrorEventArgs>? Faulted;
 
         /// <summary>
         /// Occurs when a message has been received.
         /// </summary>
-        event EventHandler<MessageEventArgs> MessageReceived;
+        event EventHandler<MessageEventArgs>? MessageReceived;
 
         /// <summary>
         /// Closes the connection.
