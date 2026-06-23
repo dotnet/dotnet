@@ -78,7 +78,7 @@ namespace NuGet.Protocol.Plugins.Tests
             string username,
             string password)
         {
-            var request = JsonSerializationUtilities.Deserialize<SetCredentialsRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<SetCredentialsRequest>(json)!;
 
             Assert.Equal(packageSourceRepository, request.PackageSourceRepository);
             Assert.Equal(proxyUsername, request.ProxyUsername);

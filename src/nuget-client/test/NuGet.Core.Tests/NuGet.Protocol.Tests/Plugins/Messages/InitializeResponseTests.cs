@@ -41,7 +41,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [InlineData("{\"ResponseCode\":\"Error\"}", MessageResponseCode.Error)]
         public void JsonDeserialization_ReturnsCorrectObject(string json, MessageResponseCode responseCode)
         {
-            var response = JsonSerializationUtilities.Deserialize<InitializeResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<InitializeResponse>(json)!;
 
             Assert.Equal(responseCode, response.ResponseCode);
         }

@@ -23,7 +23,7 @@ namespace Microsoft.SignCheck.Verification
             {
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    throw new PlatformNotSupportedException($"Mach-O signature verification is only supported on macOS.");
+                    throw new PlatformNotSupportedException($"Mach-O signature verification is only supported on macOS");
                 }
 
                 using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -46,7 +46,14 @@ namespace Microsoft.SignCheck.Verification
             }
             catch (Exception ex) when (ex is PlatformNotSupportedException || ex is InvalidDataException)
             {
-                var svr = SignatureVerificationResult.UnsupportedFileTypeResult(path, parent, virtualPath);
+                // PNSE → off-macOS, use the exception message as the reason fragment;
+                // InvalidDataException → the file isn't actually a Mach-O, fall back to
+                // "unsupported file type".
+                string reason = ex is PlatformNotSupportedException
+                    ? ex.Message
+                    : SignCheckResources.SkipReasonUnsupportedFileType;
+                var svr = SignatureVerificationResult.UnsupportedFileTypeResult(path, parent, virtualPath,
+                    string.Format(SignCheckResources.DetailSkippedFormat, reason));
                 svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, SignCheckResources.NA);
                 return svr;
             }

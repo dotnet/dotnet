@@ -41,7 +41,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = $"{{\"ProcessId\":{_processId}}}";
-            var request = JsonSerializationUtilities.Deserialize<MonitorNuGetProcessExitRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<MonitorNuGetProcessExitRequest>(json)!;
 
             Assert.Equal(_processId, request.ProcessId);
         }

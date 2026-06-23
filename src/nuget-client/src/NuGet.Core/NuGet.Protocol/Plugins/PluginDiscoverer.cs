@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,10 +18,10 @@ namespace NuGet.Protocol.Plugins
     public sealed class PluginDiscoverer : IPluginDiscoverer
     {
         private bool _isDisposed;
-        private List<PluginFile> _pluginFiles;
-        private readonly string _netCoreOrNetFXPluginPaths;
-        private readonly string _nuGetPluginPaths;
-        private IEnumerable<PluginDiscoveryResult> _results;
+        private List<PluginFile>? _pluginFiles;
+        private readonly string? _netCoreOrNetFXPluginPaths;
+        private readonly string? _nuGetPluginPaths;
+        private IEnumerable<PluginDiscoveryResult>? _results;
         private readonly SemaphoreSlim _semaphore;
         private readonly IEnvironmentVariableReader _environmentVariableReader;
 
@@ -96,7 +94,7 @@ namespace NuGet.Protocol.Plugins
                 if (!string.IsNullOrEmpty(_netCoreOrNetFXPluginPaths))
                 {
                     // NUGET_NETFX_PLUGIN_PATHS, NUGET_NETCORE_PLUGIN_PATHS have been set.
-                    var filePaths = _netCoreOrNetFXPluginPaths.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                    var filePaths = _netCoreOrNetFXPluginPaths!.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
                     _pluginFiles = GetPluginFiles(filePaths, cancellationToken);
                 }
                 else if (!string.IsNullOrEmpty(_nuGetPluginPaths))
@@ -111,7 +109,11 @@ namespace NuGet.Protocol.Plugins
                     var directories = new List<string> { PluginDiscoveryUtility.GetNuGetHomePluginsPath() };
 #if IS_DESKTOP
                     // Internal plugins are only supported for .NET Framework scenarios, namely msbuild.exe
-                    directories.Add(PluginDiscoveryUtility.GetInternalPlugins());
+                    var internalPlugins = PluginDiscoveryUtility.GetInternalPlugins();
+                    if (internalPlugins != null)
+                    {
+                        directories.Add(internalPlugins);
+                    }
 #endif
                     var filePaths = PluginDiscoveryUtility.GetConventionBasedPlugins(directories);
                     _pluginFiles = GetPluginFiles(filePaths, cancellationToken);
@@ -148,7 +150,7 @@ namespace NuGet.Protocol.Plugins
             return _results;
         }
 
-        private static List<PluginFile> GetPluginFiles(IEnumerable<string> filePaths, CancellationToken cancellationToken)
+        private static List<PluginFile> GetPluginFiles(IEnumerable<string>? filePaths, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -210,7 +212,7 @@ namespace NuGet.Protocol.Plugins
                     }
                     else if (Directory.Exists(path))
                     {
-                        List<PluginFile> plugins = GetNetToolsPluginsInDirectory(path);
+                        List<PluginFile>? plugins = GetNetToolsPluginsInDirectory(path);
 
                         if (plugins != null)
                         {
@@ -241,7 +243,7 @@ namespace NuGet.Protocol.Plugins
             {
                 if (PathValidator.IsValidLocalPath(path) || PathValidator.IsValidUncPath(path))
                 {
-                    List<PluginFile> plugins = GetNetToolsPluginsInDirectory(path);
+                    List<PluginFile>? plugins = GetNetToolsPluginsInDirectory(path);
 
                     if (plugins != null)
                     {
@@ -253,9 +255,9 @@ namespace NuGet.Protocol.Plugins
             return pluginFiles;
         }
 
-        private static List<PluginFile> GetNetToolsPluginsInDirectory(string directoryPath)
+        private static List<PluginFile>? GetNetToolsPluginsInDirectory(string directoryPath)
         {
-            List<PluginFile> pluginFiles = null;
+            List<PluginFile>? pluginFiles = null;
 
             if (!Directory.Exists(directoryPath))
             {
