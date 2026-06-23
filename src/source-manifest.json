@@ -19,10 +19,10 @@
       "commitSha": "7c7711bb0cc0f7273b19061bfc335a640b7700f2"
     },
     {
-      "barId": 319400,
+      "barId": 319663,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "e775a976a210698020837be79dde8db8ddf218ef"
+      "commitSha": "292b67f42d16802776a2b8129d162344165b869c"
     },
     {
       "barId": 319303,
@@ -49,10 +49,10 @@
       "commitSha": "52decd1eeea01ce6e2da5790adc6dbe57a76c92c"
     },
     {
-      "barId": 319288,
+      "barId": 319810,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "12f8fddc9f37a12daa51396ed91f03ee1d6f5c71"
+      "commitSha": "cae250c4742b362257baead7b4b61b0fe8ceb28e"
     },
     {
       "barId": 296673,
