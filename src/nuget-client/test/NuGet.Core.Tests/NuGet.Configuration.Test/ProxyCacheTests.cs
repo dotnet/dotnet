@@ -166,5 +166,19 @@ namespace NuGet.Configuration.Test
                 Assert.Equal(password, credentials.Password);
             }
         }
+
+        [Fact]
+        public void ResetCache_DiscardsCachedInstance()
+        {
+            // Arrange
+            ProxyCache first = ProxyCache.Instance;
+
+            // Act
+            ProxyCache.ResetCache();
+            ProxyCache second = ProxyCache.Instance;
+
+            // Assert: a process reused across builds rebuilds the proxy cache from the current environment/config.
+            Assert.NotSame(first, second);
+        }
     }
 }
