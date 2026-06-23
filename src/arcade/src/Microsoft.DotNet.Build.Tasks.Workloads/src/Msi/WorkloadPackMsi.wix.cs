@@ -38,7 +38,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public override string Create()
         {
-            using WixDocument productDoc = CreateProduct();
+            WixDocument productDoc = CreateProduct();
 
             // Add the default installation directory based on the workload pack kind.
             string directoryReference = MsiDirectories.InstallDir;
@@ -58,6 +58,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             // Harvest the template.
             productDoc.GetFeature("F_PackageContents")
                 .AddComponentGroupRef(HarvestDirectory(_package.DestinationDirectory, directoryReference));
+            productDoc.Save();
 
             return "";
         }

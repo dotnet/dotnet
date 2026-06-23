@@ -61,7 +61,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public override string Create()
         {
-            using WixDocument productDoc = CreateProduct();
+            WixDocument productDoc = CreateProduct();
 
             // Add the manifest directories. The temporary installer in the SDK (6.0) used lower invariants
             // of the manifest ID. We have to do the same to ensure stable GUIDs are generated for components.
@@ -115,6 +115,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
                 NuGetPackageFiles[jsonFullPath] = @"\data\extractedManifest\" + Path.GetFileName(jsonFullPath);
             }
+
+            productDoc.Save();
 
             return "";
         }

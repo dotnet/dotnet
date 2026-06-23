@@ -10,7 +10,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     /// <summary>
     /// Class for loading and modifying existing WiX XML source files to support compositional authoring.
     /// </summary>
-    public class WixDocument : IDisposable
+    public class WixDocument 
     {
         private static readonly XNamespace s_wixNamespace = "http://wixtoolset.org/schemas/v4/wxs";
 
@@ -34,7 +34,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             _path = path;
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Save the current current state of the WiX XML document to the orignal file path.
+        /// </summary>
+        public void Save()
         {
             _doc.Save(_path);
         }
@@ -81,22 +84,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             GetElement("Feature", id);
 
         /// <summary>
-        /// Creates a new ComponentGroup with a Files element (for harvesting) and adds a ComponentGroupRef
-        /// to the specified Feature element. The ComponentGroup will be added as a Fragment if the document
-        /// root is Wix or as a child if the root element is Package.
-        /// </summary>
-        /// <param name="feature">The Feature to update.</param>
-        /// <param name="directory">Directory reference for the root of the harvested files.</param>
-        /// <param name="include">Specifies the file selection pattern.</param>
-        /// <exception cref="InvalidOperationException" />
-        public void AddFiles(string featureId, string directory, string include)
-        {
-            var feature = GetFeature(featureId) ??
-                throw new InvalidOperationException($"The specified feature does not exist: {featureId}");
-            AddFiles(feature, directory, include);
-        }
-
-        /// <summary>
         /// Adds a RegistryKey element to the specified component.
         /// </summary>
         /// <param name="componentId">The identifier of the component.</param>
@@ -134,53 +121,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         public void AddCustomActionRef(string id) =>
             Package.Add(new XElement(s_wixNamespace + "CustomActionRef",
                 new XAttribute("Id", id)));
-
-        /// <summary>
-        /// Creates a new ComponentGroup with a Files element (for harvesting) and adds a ComponentGroupRef
-        /// to the specified Feature element. The ComponentGroup will be added as a Fragment if the document
-        /// root is Wix or as a child if the root element is Package.
-        /// </summary>
-        /// <param name="feature">The Feature to update.</param>
-        /// <param name="directory">Directory reference for the root of the harvested files.</param>
-        /// <param name="include">Specifies the file selection pattern.</param>
-        /// <remarks>
-        /// The Files element replaces HEAT in WiX v7. The harvested content is generated in memory by WiX.
-        /// </remarks>
-        public void AddFiles(XElement feature, string directory, string include)
-        {
-            if (feature.Name.LocalName == "Feature")
-            {
-                // Generate a new component group with a random ID and attach the Files element to it.
-                // For example:
-                // <ComponentGroup Id="cg2AA828FD77244E8FA8A164FF450A281F">
-                //   <Files Directory="someDir" Include="C:\foo\bar\**.dll" />
-                // </ComponentGroup>
-                string componentGroupId = $"cg{Guid.NewGuid():N}";
-
-                XElement componentGroup = new XElement(s_wixNamespace + "ComponentGroup",
-                    new XAttribute("Id", componentGroupId),
-                    new XElement(s_wixNamespace + "Files",
-                        new XAttribute("Directory", directory),
-                        new XAttribute("Include", include)));
-
-                feature.Add(new XElement(s_wixNamespace + "ComponentGroupRef",
-                    new XAttribute("Id", componentGroupId)));
-
-                if (_doc.Root.Name.LocalName == "Wix")
-                {
-                    _doc.Root.Add(new XElement(s_wixNamespace + "Fragment",
-                        componentGroup));
-                }
-                else if (_doc.Root.Name.LocalName == "Package")
-                {
-                    _doc.Root.Add(componentGroup);
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException($"Cannot add Files to a non-Feature element ({feature.Name}");
-            }
-        }
 
         /// <summary>
         /// Creates a directory element with the provided name and unique identifier.

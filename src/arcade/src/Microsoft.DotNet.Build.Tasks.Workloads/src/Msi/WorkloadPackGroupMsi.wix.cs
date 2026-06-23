@@ -37,7 +37,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public override string Create()
         {
-            using WixDocument productDoc = CreateProduct();
+            WixDocument productDoc = CreateProduct();
 
             XElement installRecordKey = base.CreateInstallationRecord();
 
@@ -78,6 +78,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             }
 
             productDoc.AddRegistryKey("C_InstallationRecord", installRecordKey);
+            productDoc.Save();
 
             return "";
         }

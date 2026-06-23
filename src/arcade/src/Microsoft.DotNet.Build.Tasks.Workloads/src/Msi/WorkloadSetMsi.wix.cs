@@ -34,7 +34,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
         public override string Create()
         {
-            using WixDocument productDoc = CreateProduct();
+            WixDocument productDoc = CreateProduct();
 
             productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
 
@@ -47,6 +47,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             string packageDataDirectory = Path.Combine(_package.DestinationDirectory, "data");
             productDoc.GetFeature("F_PackageContents")
                 .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDir));
+            productDoc.Save();
 
             return "";
         }
