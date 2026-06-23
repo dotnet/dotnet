@@ -153,6 +153,8 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
+    <!-- Temporarily disable deterministic timestamps https://github.com/dotnet/dotnet/issues/7331 -->
+    <CommonArgs>$(CommonArgs) /p:DeterministicTimestamp=false</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
