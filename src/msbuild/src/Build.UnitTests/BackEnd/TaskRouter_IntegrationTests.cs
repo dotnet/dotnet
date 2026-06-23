@@ -385,20 +385,23 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_ReturnsTrueForRestoreTask()
+        public void NeedsTaskHostInMultiThreadedMode_RestoreTask_RunsInMainProcess()
         {
-            TaskRouter.RequiresTransientTaskHost(typeof(NuGet.Build.Tasks.RestoreTask)).ShouldBeTrue();
+            // RestoreTask resets its own static state, so it runs in the main process (no TaskHost) despite having
+            // no MSBuildMultiThreadableTaskAttribute.
+            TaskRouter.NeedsTaskHostInMultiThreadedMode(typeof(NuGet.Build.Tasks.RestoreTask)).ShouldBeFalse();
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_ReturnsFalseForRegularTask()
+        public void NeedsTaskHostInMultiThreadedMode_RegularNonEnlightenedTask_NeedsTaskHost()
         {
-            TaskRouter.RequiresTransientTaskHost(typeof(NonEnlightenedTestTask)).ShouldBeFalse();
-            TaskRouter.RequiresTransientTaskHost(typeof(AttributeTestTask)).ShouldBeFalse();
+            // A regular task without the attribute is still isolated in a TaskHost sidecar.
+            TaskRouter.NeedsTaskHostInMultiThreadedMode(typeof(NonEnlightenedTestTask)).ShouldBeTrue();
+            TaskRouter.NeedsTaskHostInMultiThreadedMode(typeof(AttributeTestTask)).ShouldBeFalse();
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_RoutedToTaskHost_InMultiThreadedMode()
+        public void RestoreTask_RunsInMainProcess_InMultiThreadedMode()
         {
             string projectContent = $@"
 <Project>
@@ -432,12 +435,12 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
             BuildResult result = buildManager.Build(buildParameters, buildRequestData);
 
             result.OverallResult.ShouldBe(BuildResultCode.Success);
-            TaskRouterTestHelper.AssertTaskUsedTaskHost(logger, "RestoreTask");
+            TaskRouterTestHelper.AssertTaskRanInProcess(logger, "RestoreTask");
             logger.FullLog.ShouldContain("RestoreTask executed");
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_RoutedToTaskHost_InServerMode()
+        public void RestoreTask_RunsInMainProcess_InServerMode()
         {
             string projectContent = $@"
 <Project>
@@ -475,12 +478,12 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
             BuildResult result = buildManager.Build(buildParameters, buildRequestData);
 
             result.OverallResult.ShouldBe(BuildResultCode.Success);
-            TaskRouterTestHelper.AssertTaskUsedTaskHost(logger, "RestoreTask");
+            TaskRouterTestHelper.AssertTaskRanInProcess(logger, "RestoreTask");
             logger.FullLog.ShouldContain("RestoreTask executed");
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_GetsFreshProcess_OnEachInvocation_InMultiThreadedMode()
+        public void RestoreTask_RunsInSameProcess_AcrossBuilds_InMultiThreadedMode()
         {
             string projectContent = $@"
 <Project>
@@ -491,7 +494,7 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
     </Target>
 </Project>";
 
-            string projectFile = Path.Combine(_testProjectsDir, "RestoreTaskFreshProcess.proj");
+            string projectFile = Path.Combine(_testProjectsDir, "RestoreTaskSameProcess.proj");
             File.WriteAllText(projectFile, projectContent);
 
             var logger = new MockLogger(_output);
@@ -500,10 +503,6 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
                 MultiThreaded = true,
                 Loggers = [logger],
                 DisableInProcNode = false,
-
-                // Reuse must stay ON so we test the workaround, not natural process death.
-                // With reuse off the test cannot distinguish "transient TaskHost (workaround)"
-                // from "sidecar TaskHost that happened to die between builds".
                 EnableNodeReuse = true,
             };
 
@@ -514,25 +513,25 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
                 ["TestTarget"],
                 null);
 
-            // Two separate Build cycles. The workaround forces nodeReuse=false on the spawned
-            // TaskHost so it dies at EndBuild, giving the next Build a fresh process.
+            // Two separate Build cycles. RestoreTask now runs in the main (in-proc) process and relies on NuGet's
+            // per-restore reset rather than process death, so both builds execute it in the SAME process.
             BuildManager buildManager = BuildManager.DefaultBuildManager;
             BuildResult result1 = buildManager.Build(buildParameters, buildRequestData);
             BuildResult result2 = buildManager.Build(buildParameters, buildRequestData);
 
             result1.OverallResult.ShouldBe(BuildResultCode.Success);
             result2.OverallResult.ShouldBe(BuildResultCode.Success);
-            TaskRouterTestHelper.AssertTaskUsedTaskHost(logger, "RestoreTask");
+            TaskRouterTestHelper.AssertTaskRanInProcess(logger, "RestoreTask");
 
             int[] pids = ExtractReportedPids(logger.FullLog);
 
             pids.Length.ShouldBe(2, $"Expected two RestoreTask invocations to log a PID. Log:{Environment.NewLine}{logger.FullLog}");
-            pids[0].ShouldNotBe(pids[1], "Each build must spawn a fresh TaskHost so NuGet static state cannot leak across builds.");
-            pids.ShouldNotContain(Process.GetCurrentProcess().Id, "TaskHost should be out-of-process from the test runner.");
+            pids[0].ShouldBe(pids[1], "RestoreTask now runs in the main process across builds; its static state is reset per restore rather than reclaimed by process death.");
+            pids[0].ShouldBe(Process.GetCurrentProcess().Id, "RestoreTask runs in the main (in-proc) process.");
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_GetsFreshProcess_OnEachInvocation_InServerMode()
+        public void RestoreTask_RunsInSameProcess_AcrossBuilds_InServerMode()
         {
             string projectContent = $@"
 <Project>
@@ -543,7 +542,7 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
     </Target>
 </Project>";
 
-            string projectFile = Path.Combine(_testProjectsDir, "RestoreTaskFreshProcessServer.proj");
+            string projectFile = Path.Combine(_testProjectsDir, "RestoreTaskSameProcessServer.proj");
             File.WriteAllText(projectFile, projectContent);
 
             var logger = new MockLogger(_output);
@@ -552,8 +551,6 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
                 MultiThreaded = false,
                 Loggers = [logger],
                 DisableInProcNode = false,
-
-                // Reuse must stay ON so we test the workaround, not natural process death.
                 EnableNodeReuse = true,
 
                 // Simulate running under the MSBuild Server.
@@ -567,21 +564,19 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
                 ["TestTarget"],
                 null);
 
-            // Two separate Build cycles. The workaround forces nodeReuse=false on the spawned
-            // TaskHost so it dies at EndBuild, giving the next Build a fresh process.
             BuildManager buildManager = BuildManager.DefaultBuildManager;
             BuildResult result1 = buildManager.Build(buildParameters, buildRequestData);
             BuildResult result2 = buildManager.Build(buildParameters, buildRequestData);
 
             result1.OverallResult.ShouldBe(BuildResultCode.Success);
             result2.OverallResult.ShouldBe(BuildResultCode.Success);
-            TaskRouterTestHelper.AssertTaskUsedTaskHost(logger, "RestoreTask");
+            TaskRouterTestHelper.AssertTaskRanInProcess(logger, "RestoreTask");
 
             int[] pids = ExtractReportedPids(logger.FullLog);
 
             pids.Length.ShouldBe(2, $"Expected two RestoreTask invocations to log a PID. Log:{Environment.NewLine}{logger.FullLog}");
-            pids[0].ShouldNotBe(pids[1], "Each build must spawn a fresh TaskHost so NuGet static state cannot leak across builds.");
-            pids.ShouldNotContain(Process.GetCurrentProcess().Id, "TaskHost should be out-of-process from the test runner.");
+            pids[0].ShouldBe(pids[1], "RestoreTask now runs in the long-lived host process across builds; its static state is reset per restore.");
+            pids[0].ShouldBe(Process.GetCurrentProcess().Id, "RestoreTask runs in the main (in-proc) process.");
         }
 
         private static int[] ExtractReportedPids(string log)
@@ -596,7 +591,7 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
         }
 
         [Fact]
-        public void RequiresTransientTaskHost_RunsInProcess_WhenNoMTOrServer()
+        public void RestoreTask_RunsInProcess_WhenNoMTOrServer()
         {
             string projectContent = $@"
 <Project>
