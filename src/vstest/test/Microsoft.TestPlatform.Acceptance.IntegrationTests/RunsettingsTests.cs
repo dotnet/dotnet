@@ -362,7 +362,6 @@ public class RunsettingsTests : AcceptanceTestBase
         }
 
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), runsettingsPath, FrameworkArgValue, _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments += GetDiagArg(TempDirectory.Path);
 
         if (!string.IsNullOrWhiteSpace(additionalArgs))
         {
@@ -377,7 +376,7 @@ public class RunsettingsTests : AcceptanceTestBase
         InvokeVsTest(arguments);
 
         // assert
-        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, TempDirectory.Path, testhostProcessNames, arguments, GetConsoleRunnerPath());
+        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, DiagLogsDirectory, testhostProcessNames, arguments, GetConsoleRunnerPath());
         ValidateSummaryStatus(2, 2, 2);
 
         //cleanup

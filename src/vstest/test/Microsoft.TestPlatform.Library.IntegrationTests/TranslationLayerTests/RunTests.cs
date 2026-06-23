@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -186,8 +187,8 @@ public class RunTests : AcceptanceTestBase
             _runEventHandler);
 
         var errorMessagePattern = runnerInfo.IsNetFrameworkTarget
-            ? $"The active test run was aborted. Reason: Test host process crashed : Process is terminated due to StackOverflowException.*"
-            : $"The active test run was aborted. Reason: Test host process crashed : Stack overflow.*";
+            ? $"The active test run was aborted. Reason: Test host process crashed : Process path: *{Environment.NewLine}Process is terminated due to StackOverflowException.*"
+            : $"The active test run was aborted. Reason: Test host process crashed : Process path: *{Environment.NewLine}Stack overflow.*";
 
         _runEventHandler.Errors.Should().ContainSingle()
             .Which.Should().Match(errorMessagePattern);

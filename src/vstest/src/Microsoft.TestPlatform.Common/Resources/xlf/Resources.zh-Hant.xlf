@@ -122,6 +122,21 @@
         <target state="translated">找不到資料收集器 '{0}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataCollectionContextNotInitialized">
+        <source>The data collection environment context has not been initialized. Ensure that session started before processing test case events.</source>
+        <target state="translated">資料收集環境內容尚未初始化。請確認工作階段在處理測試案例事件之前已啟動。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseEndMissingTestElement">
+        <source>TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.</source>
+        <target state="translated">TestCaseEndEventArgs.TestElement 為 null。資料收集器無法在沒有測試元素的情況下結束測試案例。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseStartMissingTestElement">
+        <source>TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.</source>
+        <target state="translated">TestCaseStartEventArgs.TestElement 為 null。資料收集器無法在沒有測試元素的情況下開始測試案例。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
         <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
         <target state="translated">資料收集器 '{0}' 要求要在測試執行環境中將環境變數 '{1}' 的值設為 '{2}'，但另一個資料收集器 '{3}' 已要求了同一個環境變數，但具有不同的值 '{4}'。</target>
