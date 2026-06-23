@@ -143,8 +143,6 @@ Re-bootstrap PRs are periodic automated PRs opened by `dotnet-bot` that update v
 
 If CI is green, **approve and merge**.
 
-> **Note:** Like internal → public merge PRs, re-bootstrap PRs may fail the "Validate user changes in VMR / Run Validation Script" CI job because `Version.Details.props` was touched. This is expected — **merge anyway** by elevating to admin at https://repos.opensource.microsoft.com/orgs/dotnet/repos/dotnet (requires netvmr-lt membership).
-
 ## Which Branches to Monitor
 
 Monitor **all branches**: `main` and all `release/*` branches.
