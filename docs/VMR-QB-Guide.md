@@ -11,7 +11,7 @@ Each morning:
 1. **Check build health** — Run the pipeline health assessment (see [Build Health Monitoring](#build-health-monitoring))
 2. **Check dependency flow** — Run the flow analysis and check the [Maestro dashboard](https://maestro.dot.net/codeflows?branch=main) (see [Code Flow Monitoring](#code-flow-monitoring))
 3. **Merge green code flow PRs** — Approve and merge any [code flow](https://github.com/dotnet/dotnet/pulls/app%2Fdotnet-maestro) PRs that are green (see [Merging Code Flow PRs](#merging-code-flow-prs))
-4. **Merge servicing re-bootstrap PRs** — Check for open re-bootstrap PRs opened by `dotnet-bot` (e.g. [PR #7149](https://github.com/dotnet/dotnet/pull/7149)) and merge any that are green (see [Merging Re-bootstrap PRs](#merging-re-bootstrap-prs))
+4. **Merge re-bootstrap PRs** — Check for open re-bootstrap PRs opened by `dotnet-bot` (e.g. [PR #7149](https://github.com/dotnet/dotnet/pull/7149)) and merge any that are green (see [Merging Re-bootstrap PRs](#merging-re-bootstrap-prs))
 5. **Triage failures** — Identify broken builds or stale PRs and ping the appropriate owner (see [Repo Ownership](#repo-ownership))
 6. **Communicate** — Post updates in the appropriate Teams channels for any hot issues
 
