@@ -96,12 +96,12 @@
       </trans-unit>
       <trans-unit id="Error_UnexpectedPayloadTokenType">
         <source>Expected payload to be a JSON object but was `{0}`.</source>
-        <target state="new">Expected payload to be a JSON object but was `{0}`.</target>
+        <target state="translated">必要なペイロードは JSON オブジェクトでしたが、`{0}` でした。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedPayloadType">
         <source>Unsupported payload type `{0}`.</source>
-        <target state="new">Unsupported payload type `{0}`.</target>
+        <target state="translated">サポートされていないペイロードの種類 `{0}` です。</target>
         <note />
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -503,6 +503,16 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       <trans-unit id="Protocol_PackageMetadataError">
         <source>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</source>
         <target state="translated">ソース '{1}' から '{0}' のパッケージ メタデータを取得するときにエラーが発生しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterMultipleNotSupported">
+        <source>The source supports filtering by only one package type at a time.</source>
+        <target state="translated">ソースでは、一度に 1 つのパッケージの種類のみでフィルターできます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageTypeFilterNotSupported">
+        <source>The source does not support filtering search results by package type.</source>
+        <target state="translated">ソースでは、パッケージの種類で検索結果を絞り込むことはできません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_Search_LocalSourceNotFound">

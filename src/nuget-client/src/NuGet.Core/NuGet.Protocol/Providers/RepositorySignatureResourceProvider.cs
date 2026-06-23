@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.Linq;
@@ -18,11 +16,11 @@ namespace NuGet.Protocol
 {
     public class RepositorySignatureResourceProvider : ResourceProvider
     {
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         public RepositorySignatureResourceProvider() : this(null) { }
 
-        internal RepositorySignatureResourceProvider(IEnvironmentVariableReader environmentVariableReader)
+        internal RepositorySignatureResourceProvider(IEnvironmentVariableReader? environmentVariableReader)
            : base(typeof(RepositorySignatureResource),
                  nameof(RepositorySignatureResource),
                  NuGetResourceProviderPositions.Last)
@@ -30,9 +28,9 @@ namespace NuGet.Protocol
             _environmentVariableReader = environmentVariableReader;
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            RepositorySignatureResource resource = null;
+            RepositorySignatureResource? resource = null;
             var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>(token);
             if (serviceIndex != null)
             {
@@ -44,10 +42,10 @@ namespace NuGet.Protocol
                 }
             }
 
-            return new Tuple<bool, INuGetResource>(resource != null, resource);
+            return new Tuple<bool, INuGetResource?>(resource != null, resource);
         }
 
-        private async Task<RepositorySignatureResource> GetRepositorySignatureResourceAsync(
+        private async Task<RepositorySignatureResource?> GetRepositorySignatureResourceAsync(
             SourceRepository source,
             ServiceIndexEntry serviceEntry,
             ILogger log,
@@ -62,7 +60,8 @@ namespace NuGet.Protocol
                 throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.RepositorySignaturesResourceMustBeHttps, source.PackageSource.Source));
             }
 
-            var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+            var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token)
+                ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
             var client = httpSourceResource.HttpSource;
             var cacheKey = GenerateCacheKey(serviceEntry);
 
@@ -75,36 +74,66 @@ namespace NuGet.Protocol
 
                     try
                     {
-                        return await client.GetAsync(
-                            new HttpSourceCachedRequest(
-                                serviceEntry.Uri.AbsoluteUri,
-                                cacheKey,
-                                cacheContext)
-                            {
-                                EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream),
-                                MaxTries = 1,
-                                IsRetry = retry > 1,
-                                IsLastAttempt = retry == maxRetries
-                            },
-                            async httpSourceResult =>
-                            {
-                                if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch
-                                    || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                        if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+                        {
+                            return await client.GetAsync(
+                                new HttpSourceCachedRequest(
+                                    serviceEntry.Uri.AbsoluteUri,
+                                    cacheKey,
+                                    cacheContext)
+                                {
+                                    EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream),
+                                    MaxTries = 1,
+                                    IsRetry = retry > 1,
+                                    IsLastAttempt = retry == maxRetries
+                                },
+                                async httpSourceResult =>
                                 {
                                     var model = await JsonSerializer.DeserializeAsync(
-                                        httpSourceResult.Stream,
+                                        httpSourceResult.Stream!,
                                         RepositorySignatureJsonContext.Default.RepositorySignatureModel,
-                                        token);
+                                        token)
+                                        ?? throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToReadRepositorySignature, repositorySignaturesResourceUri.AbsoluteUri));
                                     return new RepositorySignatureResource(model, source);
-                                }
-                                else
+                                },
+                                log,
+                                token);
+                        }
+                        else
+                        {
+                            return await client.GetAsync(
+                                new HttpSourceCachedRequest(
+                                    serviceEntry.Uri.AbsoluteUri,
+                                    cacheKey,
+                                    cacheContext)
                                 {
-                                    var json = await httpSourceResult.Stream.AsJObjectAsync(token);
-                                    return new RepositorySignatureResource(json, source);
-                                }
-                            },
-                            log,
-                            token);
+                                    EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream),
+                                    MaxTries = 1,
+                                    IsRetry = retry > 1,
+                                    IsLastAttempt = retry == maxRetries
+                                },
+                                async httpSourceResult =>
+                                {
+                                    if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                                    {
+                                        var model = await JsonSerializer.DeserializeAsync(
+                                            httpSourceResult.Stream!,
+                                            RepositorySignatureJsonContext.Default.RepositorySignatureModel,
+                                            token)
+                                            ?? throw new FatalProtocolException(string.Format(CultureInfo.CurrentCulture, Strings.Log_FailedToReadRepositorySignature, repositorySignaturesResourceUri.AbsoluteUri));
+                                        return new RepositorySignatureResource(model, source);
+                                    }
+                                    else
+                                    {
+                                        var json = (await httpSourceResult.Stream!.AsJObjectAsync(token))!;
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
+                                        return new RepositorySignatureResource(json, source);
+#pragma warning restore IL2026, IL3050
+                                    }
+                                },
+                                log,
+                                token);
+                        }
                     }
                     catch (Exception ex) when (retry < maxRetries)
                     {

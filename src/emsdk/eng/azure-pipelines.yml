@@ -70,9 +70,9 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 --publish
+                /p:TargetOS=osx
                 /p:TargetArchitecture=x64
                 /p:TargetRid=osx-x64
-                /p:AssetManifestOS=osx
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - bash: |
@@ -99,9 +99,9 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 --publish
+                /p:TargetOS=osx
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=osx-arm64
-                /p:AssetManifestOS=osx
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - bash: |
@@ -129,9 +129,9 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 --publish
+                /p:TargetOS=linux
                 /p:TargetArchitecture=x64
                 /p:TargetRid=linux-x64
-                /p:AssetManifestOS=linux
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - bash: |
@@ -158,9 +158,9 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 --publish
+                /p:TargetOS=linux
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=linux-arm64
-                /p:AssetManifestOS=linux
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - bash: |
@@ -187,9 +187,9 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 --publish
+                /p:TargetOS=linux-musl
                 /p:TargetArchitecture=x64
                 /p:TargetRid=linux-musl-x64
-                /p:AssetManifestOS=linux-musl
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - bash: |
@@ -216,9 +216,9 @@ extends:
                 --configuration $(_BuildConfig)
                 --pack
                 --publish
+                /p:TargetOS=linux-musl
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=linux-musl-arm64
-                /p:AssetManifestOS=linux-musl
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - bash: |
@@ -246,9 +246,9 @@ extends:
                 -configuration $(_BuildConfig)
                 -pack
                 -publish
+                /p:TargetOS=windows
                 /p:TargetArchitecture=x64
                 /p:TargetRid=win-x64
-                /p:AssetManifestOS=win
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - script: |
@@ -275,9 +275,9 @@ extends:
                 -configuration $(_BuildConfig)
                 -pack
                 -publish
+                /p:TargetOS=windows
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=win-arm64
-                /p:AssetManifestOS=win
                 $(_InternalBuildArgs)
               displayName: Build and Publish
             - script: |

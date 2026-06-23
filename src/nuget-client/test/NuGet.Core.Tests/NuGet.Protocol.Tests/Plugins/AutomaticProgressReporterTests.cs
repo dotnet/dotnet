@@ -18,7 +18,7 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => AutomaticProgressReporter.Create(
-                        connection: null,
+                        connection: null!,
                         request: test.Request,
                         interval: test.Interval,
                         cancellationToken: CancellationToken.None));
@@ -35,7 +35,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => AutomaticProgressReporter.Create(
                         test.Connection.Object,
-                        request: null,
+                        request: null!,
                         interval: test.Interval,
                         cancellationToken: CancellationToken.None));
 

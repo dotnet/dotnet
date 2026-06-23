@@ -63,7 +63,7 @@ namespace NuGet.Protocol.Plugins.Tests
             MessageResponseCode responseCode,
             string hash)
         {
-            var response = JsonSerializationUtilities.Deserialize<GetPackageHashResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetPackageHashResponse>(json)!;
 
             Assert.Equal(responseCode, response.ResponseCode);
             Assert.Equal(hash, response.Hash);

@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
 /// <see cref="LspServices"/> instance by <see cref="LanguageServerWorkspaceFactoryServiceFactory"/> and
 /// disposed when the LSP server shuts down.
 /// </summary>
-internal sealed class LanguageServerWorkspaceFactory : ILspService, IHostWorkspaceProvider
+internal sealed class LanguageServerWorkspaceFactory : ILspService, IHostWorkspaceProvider, IDisposable
 {
     private readonly ILogger _logger;
     private readonly ImmutableArray<string> _solutionLevelAnalyzerPaths;
@@ -30,7 +30,6 @@ internal sealed class LanguageServerWorkspaceFactory : ILspService, IHostWorkspa
     public LanguageServerWorkspaceFactory(
         HostServicesProvider hostServicesProvider,
         ILspServices lspServices,
-        IEnumerable<Lazy<IDynamicFileInfoProvider, FileExtensionsMetadata>> dynamicFileInfoProviders,
         ExtensionAssemblyManager extensionManager,
         IEnumerable<IAnalyzerAssemblyRedirector> assemblyRedirectors,
         ILoggerFactory loggerFactory)
@@ -70,7 +69,6 @@ internal sealed class LanguageServerWorkspaceFactory : ILspService, IHostWorkspa
         miscellaneousFilesWorkspace.ProjectSystemProjectFactory = MiscellaneousFilesWorkspaceProjectFactory;
 
         ProjectSystemHostInfo = new ProjectSystemHostInfo(
-            DynamicFileInfoProviders: [.. dynamicFileInfoProviders],
             AnalyzerAssemblyRedirectors: [.. assemblyRedirectors]);
     }
 
@@ -81,6 +79,12 @@ internal sealed class LanguageServerWorkspaceFactory : ILspService, IHostWorkspa
     public ProjectSystemHostInfo ProjectSystemHostInfo { get; }
 
     Workspace IHostWorkspaceProvider.Workspace => HostWorkspace;
+
+    public void Dispose()
+    {
+        HostProjectFactory.Dispose();
+        MiscellaneousFilesWorkspaceProjectFactory.Dispose();
+    }
 
     private ImmutableArray<AnalyzerFileReference> CreateSolutionLevelAnalyzerReferences(IAnalyzerAssemblyLoaderProvider loaderProvider)
     {

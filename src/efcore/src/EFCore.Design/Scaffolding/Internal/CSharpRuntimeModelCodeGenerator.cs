@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
@@ -2142,6 +2143,43 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
         mainBuilder.AppendLine();
     }
 
+    private static void CollectionIndicesLiteral(
+        IndentedStringBuilder mainBuilder,
+        IReadOnlyList<IReadOnlyList<int?>?> collectionIndices)
+    {
+        mainBuilder.Append("[");
+        for (var i = 0; i < collectionIndices.Count; i++)
+        {
+            if (i > 0)
+            {
+                mainBuilder.Append(", ");
+            }
+
+            var entry = collectionIndices[i];
+            if (entry is null)
+            {
+                mainBuilder.Append("null");
+                continue;
+            }
+
+            mainBuilder.Append("[");
+            for (var j = 0; j < entry.Count; j++)
+            {
+                if (j > 0)
+                {
+                    mainBuilder.Append(", ");
+                }
+
+                var value = entry[j];
+                mainBuilder.Append(value is null ? "null" : value.Value.ToString(CultureInfo.InvariantCulture));
+            }
+
+            mainBuilder.Append("]");
+        }
+
+        mainBuilder.Append("]");
+    }
+
     private void Create(
         IIndex index,
         CSharpRuntimeAnnotationCodeGeneratorParameters parameters,
@@ -2168,6 +2206,13 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
             mainBuilder.AppendLine(",")
                 .Append("unique: ")
                 .Append(_code.Literal(true));
+        }
+
+        if (index.CollectionIndices is { } collectionIndices)
+        {
+            mainBuilder.AppendLine(",")
+                .Append("collectionIndices: ");
+            CollectionIndicesLiteral(mainBuilder, collectionIndices);
         }
 
         mainBuilder
@@ -2486,6 +2531,13 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
                     .Append(_code.Literal(true));
             }
 
+            if (!foreignKey.IsConstrained)
+            {
+                mainBuilder.AppendLine(",")
+                    .Append("constrained: ")
+                    .Append(_code.Literal(false));
+            }
+
             mainBuilder
                 .AppendLine(");")
                 .AppendLine()
@@ -2773,6 +2825,23 @@ public class CSharpRuntimeModelCodeGenerator : ICompiledModelCodeGenerator
                 .AppendLine();
 
             SetNavigationBaseProperties(navigation, memberAccessReplacements, parameters);
+
+            if (parameters.ForNativeAot)
+            {
+                AddNamespace(navigation.TargetEntityType.ClrType, parameters.Namespaces);
+                AddNamespace(navigation.DeclaringEntityType.ClrType, parameters.Namespaces);
+                mainBuilder
+                    .Append(navigationVariable)
+                    .AppendLine(".SetManyToManyLoaderFactory(")
+                    .IncrementIndent()
+                    .Append("static (factory, navigation) => factory.Create<")
+                    .Append(_code.Reference(navigation.TargetEntityType.ClrType))
+                    .Append(", ")
+                    .Append(_code.Reference(navigation.DeclaringEntityType.ClrType))
+                    .AppendLine(">(navigation));")
+                    .DecrementIndent()
+                    .AppendLine();
+            }
 
             CreateAnnotations(navigation, _annotationCodeGenerator.Generate, parameters);
 

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 
 namespace NuGet.Protocol.Plugins
@@ -15,12 +13,12 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Occurs before the plugin closes.
         /// </summary>
-        event EventHandler BeforeClose;
+        event EventHandler? BeforeClose;
 
         /// <summary>
         /// Occurs when the plugin has closed.
         /// </summary>
-        event EventHandler Closed;
+        event EventHandler? Closed;
 
         /// <summary>
         /// Gets the connection for the plugin.

@@ -570,8 +570,15 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
+          # Always use the VMR root's SetupNugetSources.ps1 rather than each inner repo's copy.
+          # The inner repo scripts dot-source that repo's eng/common/tools.ps1, which in turn imports
+          # the repo's configure-toolset.ps1. The root script only operates
+          # on the NuGet.config path passed to it, so it works for every repo.
+          # It's also convenient to use that so that changes don't need to be replicated on every
+          # inner repo's eng/common/ layout.
+          $setupScript = Join-Path "$(sourcesPath)" "eng/common/SetupNugetSources.ps1"
+
           function Setup-NuGetFeeds($repoDir, $description) {
-            $setupScript = Join-Path $repoDir "eng/common/SetupNugetSources.ps1"
             # Search for nuget.config using "Filter" to allow for case-insensitive matching.
             $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
@@ -630,6 +637,23 @@ jobs:
           scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
 
 
+    # Enable WER LocalDumps for crossgen2.exe so a crash dump is captured if it
+    # FailFasts during the SDK crossgen layout step. Diagnoses dotnet/runtime#125699,
+    # which has hit several times at GetAllowSynthesis+0x31 with no captured dump.
+    # Dumps land under BuildLogs and ride out via the existing 'Publish BuildLogs'
+    # 1ES output above (condition: succeededOrFailed()).
+    - pwsh: |
+        $dumpDir = "$(Build.ArtifactStagingDirectory)\BuildLogs\crossgen2-dumps"
+        New-Item -ItemType Directory -Force -Path $dumpDir | Out-Null
+        $key = 'HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\crossgen2.exe'
+        New-Item -Path $key -Force | Out-Null
+        Set-ItemProperty -Path $key -Name DumpFolder -Type ExpandString -Value $dumpDir
+        Set-ItemProperty -Path $key -Name DumpType   -Type DWord        -Value 2  # MiniDumpWithFullMemory
+        Set-ItemProperty -Path $key -Name DumpCount  -Type DWord        -Value 3
+        Write-Host "WER LocalDumps configured for crossgen2.exe -> $dumpDir"
+      displayName: Enable WER LocalDumps for crossgen2
+      continueOnError: true
+
     - script: build.cmd
         $(baseArguments)
         $(signArguments)
@@ -663,7 +687,6 @@ jobs:
           -excludeCIBinarylog
           /bl:artifacts/log/Release/Test.binlog
         displayName: Run Tests
-        name: RunTests
         workingDirectory: ${{ variables.sourcesPath }}
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
@@ -677,7 +700,7 @@ jobs:
         displayName: Install dependencies
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
-          set -ex
+          set -e
 
           customPrepArgs="-c ${{ parameters.configuration }}"
           prepSdk=true
@@ -768,21 +791,22 @@ jobs:
              customPrepArgs="${customPrepArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
              additionalBuildArgs="${additionalBuildArgs} --with-packages $(previouslySourceBuiltArtifactsDir)"
           fi
-          
-          echo "Prep arguments: $customPrepArgs"
-          echo "Additional build arguments: $additionalBuildArgs"
 
           if [[ -n "$additionalBuildArgs" ]]; then
+            echo "Additional build arguments: $additionalBuildArgs"
             echo "##vso[task.setvariable variable=additionalBuildArgs]$additionalBuildArgs"
           fi
 
+          echo ""
+          echo "=== Prep the Build ==="
+          echo "Running ./prep-source-build.sh $customPrepArgs"
           ./prep-source-build.sh $customPrepArgs
         displayName: Prep the Build
         workingDirectory: $(sourcesPath)
     - ${{ if ne(parameters.skipBuild, 'true') }}:
 
       - script: |
-          set -ex
+          set -e
           echo "=== System info: disk ==="
           df -h
 
@@ -794,7 +818,6 @@ jobs:
             cat /proc/meminfo
           fi
 
-          echo "=== Build ==="
           customEnvVars=""
           customPreBuildArgs=""
           customBuildArgs="$(baseArguments)"
@@ -878,6 +901,9 @@ jobs:
             echo "Current hard limit (ulimit -Hn): $(ulimit -Hn 2>/dev/null || echo 'unknown')" >&2
           fi
 
+          echo ""
+          echo "=== Build ==="
+          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
@@ -907,7 +933,7 @@ jobs:
           displayName: Copy Test NuGet Config for Smoke Tests
 
       - script: |
-          set -ex
+          set -e
 
           customPreBuildArgs=''
           customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
@@ -941,10 +967,12 @@ jobs:
             echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
           fi
 
+          echo ""
+          echo "=== Run Tests ==="
+          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
           $customPreBuildArgs ./build.sh $buildArgs
 
         displayName: Run Tests
-        name: RunTests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ if eq(parameters.sign, 'True') }}:
@@ -1008,7 +1036,7 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/TestResults'
         CleanTargetFolder: true
       continueOnError: true
-      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
 
   - task: CopyFiles@2
     displayName: Copy unmerged artifacts to staging directory
@@ -1034,7 +1062,7 @@ jobs:
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
       displayName: Publish Test Results
-      condition: and(succeededOrFailed(), ne(variables['RunTests.result'], 'Skipped'))
+      condition: and(eq(variables['hasTestResults'], 'true'), succeededOrFailed())
       continueOnError: true
       inputs:
         testRunner: VSTest

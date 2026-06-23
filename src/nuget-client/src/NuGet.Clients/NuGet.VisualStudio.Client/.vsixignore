@@ -105,6 +105,7 @@ Microsoft.VisualStudio.Setup.Common.dll
 Microsoft.VisualStudio.Shell.Styles.dll
 Microsoft.VisualStudio.Shell.Styles.resources.dll
 System.Drawing.Common.dll
+System.Formats.Nrbf.dll
 System.IdentityModel.Tokens.Jwt.dll
 System.IO.FileSystem.AccessControl.dll
 System.Management.Automation.dll

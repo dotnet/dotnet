@@ -65,7 +65,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => factory.GetOrCreateAsync(
                     new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid)),
-                    arguments: null,
+                    arguments: null!,
                     requestHandlers: new RequestHandlers(),
                     options: ConnectionOptions.CreateDefault(),
                     sessionCancellationToken: CancellationToken.None));
@@ -82,7 +82,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 () => factory.GetOrCreateAsync(
                     new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid)),
                     arguments: PluginConstants.PluginArguments,
-                    requestHandlers: null,
+                    requestHandlers: null!,
                     options: ConnectionOptions.CreateDefault(),
                     sessionCancellationToken: CancellationToken.None));
 
@@ -99,7 +99,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     new PluginFile(filePath: "a", state: new Lazy<PluginFileState>(() => PluginFileState.Valid)),
                     arguments: PluginConstants.PluginArguments,
                     requestHandlers: new RequestHandlers(),
-                    options: null,
+                    options: null!,
                     sessionCancellationToken: CancellationToken.None));
 
             Assert.Equal("options", exception.ParamName);
@@ -170,7 +170,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => PluginFactory.CreateFromCurrentProcessAsync(
-                    requestHandlers: null,
+                    requestHandlers: null!,
                     options: ConnectionOptions.CreateDefault(),
                     sessionCancellationToken: CancellationToken.None));
 
@@ -183,7 +183,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => PluginFactory.CreateFromCurrentProcessAsync(
                     requestHandlers: new RequestHandlers(),
-                    options: null,
+                    options: null!,
                     sessionCancellationToken: CancellationToken.None));
 
             Assert.Equal("options", exception.ParamName);

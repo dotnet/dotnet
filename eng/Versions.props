@@ -23,6 +23,13 @@
 
     <!-- Arcade features -->
     <UseVSTestRunner>true</UseVSTestRunner>
+
+    <!-- Disable NuGet audit when online feeds are not available (offline source-build).
+         The root NuGet.config defines audit sources pointing to nuget.org, which is
+         unreachable in offline builds. This is set here because eng/Versions.props is
+         imported by all projects, including arcade toolset bootstrap projects that don't
+         see the VMR root Directory.Build.props. -->
+    <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -43,8 +50,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>11.0.100-preview.5.26227.104</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>11.0.100-preview.5.26227.104</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>11.0.100-preview.5.26302.115</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>11.0.100-preview.5.26302.115</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
@@ -58,10 +65,10 @@
     <!-- roslyn dependencies -->
     <MicrosoftCodeAnalysisVersion>4.4.0</MicrosoftCodeAnalysisVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.7</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>10.0.7</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>10.0.7</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftExtensionsHostingVersion>10.0.7</MicrosoftExtensionsHostingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.8</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.8</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.8</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.8</MicrosoftExtensionsHostingVersion>
     <SystemSecurityCryptographyXmlVersion>10.0.8</SystemSecurityCryptographyXmlVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>

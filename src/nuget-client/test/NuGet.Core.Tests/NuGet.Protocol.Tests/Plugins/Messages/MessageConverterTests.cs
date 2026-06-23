@@ -37,7 +37,7 @@ namespace NuGet.Protocol.Plugins.Tests
             System.Text.Json.JsonSerializer.Deserialize(json, PluginJsonContext.Default.Message)!;
 
         private static Message DeserializeWithNsj(string json) =>
-            JsonSerializationUtilities.Deserialize<Message>(json);
+            JsonSerializationUtilities.Deserialize<Message>(json)!;
 
         private static object[] Msg(MessageType type, MessageMethod method, object payload) =>
             new object[] { MessageUtilities.Create("test-id", type, method, payload) };
@@ -909,7 +909,7 @@ namespace NuGet.Protocol.Plugins.Tests
             useStj ? DeserializeWithStj(json) : DeserializeWithNsj(json);
 
         private static T GetPayload<T>(Message message) where T : class =>
-            MessageUtilities.DeserializePayload<T>(message);
+            MessageUtilities.DeserializePayload<T>(message)!;
 
         private static T RoundtripPayload<T>(Message message, bool useStj) where T : class
         {

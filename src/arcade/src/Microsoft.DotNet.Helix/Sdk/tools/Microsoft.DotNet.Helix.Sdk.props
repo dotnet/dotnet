@@ -30,6 +30,15 @@
     <EnableHelixJobMonitor Condition="'$(EnableHelixJobMonitor)' != 'true'">false</EnableHelixJobMonitor>
   </PropertyGroup>
 
+  <!--
+    Feature flag: when 'true', the Helix Sdk logs a preview queue-health summary (estimated wait,
+    queue depth, snapshot time) for each submitted job, plus warnings when the estimated wait
+    exceeds the SLA or the snapshot is stale. Off by default.
+  -->
+  <PropertyGroup>
+    <EnableShowHelixQueueStats Condition="'$(EnableShowHelixQueueStats)' != 'true'">false</EnableShowHelixQueueStats>
+  </PropertyGroup>
+
   <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
   <UsingTask TaskName="SendHelixJob" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="WaitForHelixJobCompletion" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />

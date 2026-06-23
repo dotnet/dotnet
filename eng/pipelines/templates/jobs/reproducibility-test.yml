@@ -135,13 +135,12 @@ jobs:
       publishRunAttachments: true
       testRunTitle: Tests_$(Agent.JobName)
 
-  - ${{ if and(eq(parameters.publishTestResultsPr, 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))) }}:
+  - ${{ if eq(parameters.publishTestResultsPr, 'true') }}:
       # Publish both Updated*Exclusions.txt and Updated*Baseline.diff. The CreateBaselineUpdatePR
       # tool filters to files prefixed with "Updated", so other build logs in BuildLogs are ignored.
       - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
         parameters:
           pipeline: reproducibility
-          repo: dotnet/dotnet
           originalFilesDirectory: test/Microsoft.DotNet.Reproducibility.Tests/assets
           updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
           pullRequestTitle: ${{ parameters.pullRequestTitle }}

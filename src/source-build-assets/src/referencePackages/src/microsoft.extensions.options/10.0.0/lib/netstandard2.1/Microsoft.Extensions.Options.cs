@@ -381,6 +381,8 @@ namespace Microsoft.Extensions.Options
     {
         public static readonly ValidateOptionsResult Skip;
         public static readonly ValidateOptionsResult Success;
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "Failures")]
+        [System.Diagnostics.CodeAnalysis.MemberNotNullWhen(true, "FailureMessage")]
         public bool Failed { get { throw null; } protected set { } }
         public string? FailureMessage { get { throw null; } protected set { } }
         public System.Collections.Generic.IEnumerable<string>? Failures { get { throw null; } protected set { } }
@@ -467,5 +469,25 @@ namespace Microsoft.Extensions.Options
         public string? Name { get { throw null; } }
         public System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5, bool> Validation { get { throw null; } }
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
+    }
+}
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
     }
 }

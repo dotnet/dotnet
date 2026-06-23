@@ -586,6 +586,28 @@
     <MSBuild Projects="@(MsiPackageProjects)" Properties="IsShippingPackage=true;IncludeSymbols=false" Targets="Restore;Pack" />
   </Target>
 
+<<<<<<< HEAD
+=======
+  <!-- Target to create a single wixpack for signing -->
+  <Target Name="CreateWixPack">
+    <ItemGroup>
+      <_WixObj Include="$(_WixObjDir)\**\*.wixobj" />
+    </ItemGroup>
+
+    <CreateLightCommandPackageDrop
+      LightCommandWorkingDir="$(LightCommandObjDir)"
+      OutputFolder="$(LightCommandPackagesDir)"
+      NoLogo="true"
+      Cultures="en-us"
+      InstallerFile="$(_Msi)"
+      SuppressValidation="true"
+      WixExtensions="WixUIExtension;WixDependencyExtension;WixUtilExtension"
+      WixSrcFiles="@(_WixObj)">
+      <Output TaskParameter="OutputFile" PropertyName="_LightCommandPackageNameOutput" />
+    </CreateLightCommandPackageDrop>
+  </Target>
+
+>>>>>>> main
   <!-- These are just individual targets for testing local builds. -->
   <Target Name="BuildSwixProjects">
     <ItemGroup>

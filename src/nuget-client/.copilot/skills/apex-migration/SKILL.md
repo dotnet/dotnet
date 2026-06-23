@@ -1,10 +1,10 @@
 ---
 name: apex-migration
 description: >-
-  Migrate NuGet PowerShell E2E tests to C# Apex tests. 
-Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/. 
-Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
-Also trigger whenever the user wants to write a new Apex test.
+  Migrate NuGet PowerShell E2E tests to C# Apex tests or unit tests. 
+Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/ or to a unit test in test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/. 
+Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", "cmdlet unit test", "PowerShell unit test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
+Also trigger whenever the user wants to write a new Apex test or a new PMC cmdlet unit test.
 ---
 
 # Migrating PowerShell E2E Tests to Apex Tests
@@ -16,12 +16,13 @@ to C# Apex tests that run the **exact same scenario**, then remove the PS test f
 ## Workflow
 
 1. **Read the PS test** — understand what it does: which project type, which PMC commands, what assertions.
-2. **Pick the right Apex file** — match the scenario to an existing test class (see File Placement below).
-3. **Translate** — use the mappings in this skill to convert each PS construct to its Apex equivalent.
-4. **Verify** — run `get_errors` or build the Apex project to confirm it compiles cleanly.
-5. **Remove the PS function** — delete the migrated function from the PS test file.
-6. **If already covered** — if an existing Apex test already covers the same scenario, just delete the PS test. No new Apex test needed.
-7. **Update this skill** — if you discovered new mappings, gotchas, or corrections, add them to the appropriate section of this file (e.g., new rows in the mapping tables, new bullets in Common gotchas).
+2. **Decide: unit test or Apex test** — if it only tests cmdlet behavior (filtering, listing, prerelease logic) without needing VS project system integration, write a unit test. Otherwise use Apex.
+3. **Pick the right file** — for Apex, match the scenario to an existing test class (see File Placement below). For unit tests, use the cmdlet-specific file in `Cmdlets/` (see Unit test file placement below).
+4. **Translate** — use the mappings in this skill to convert each PS construct to its C# equivalent.
+5. **Verify** — run `get_errors` or build the project to confirm it compiles cleanly.
+6. **Remove the PS function** — delete the migrated function from the PS test file.
+7. **If already covered** — if an existing Apex or unit test already covers the same scenario, just delete the PS test. No new test needed.
+8. **Update this skill** — if you discovered new mappings, gotchas, or corrections, add them to the appropriate section of this file.
 
 ## File placement
 
@@ -29,15 +30,16 @@ Choose the target file by **interaction surface**, not project type:
 
 | Interaction surface | Apex file |
 |---|---|
-| PMC commands (Install-Package, Update-Package, etc.) | `NuGetConsoleTestCase.cs` |
+| `Get-Package` command scenarios (`-ListAvailable`, `-Updates`, `-Filter`, path source variants, prerelease behaviors) | `GetPackageTestCase.cs` |
+| Other PMC commands (Install-Package, Update-Package, Uninstall-Package, Get-Project) | `NuGetConsoleTestCase.cs` |
 | NuGet UI / Package Manager dialog | `NuGetUITestCase.cs` |
 | IVsPackageInstaller / IVsServices API | `IVsServicesTestCase.cs` |
 | Sync/binding redirect scenarios | `SyncPackageTestCase.cs` |
 | Audit / vulnerability scenarios | `NuGetAuditTests.cs` |
 | .NET Core project-creation / restore / source-mapping | `NetCoreProjectTestCase.cs` |
 
-PMC tests for PackageReference projects still go in `NuGetConsoleTestCase.cs` — the deciding
-factor is whether the test exercises the PMC console, not the project's package management style.
+PMC tests for PackageReference projects still follow command-based placement. For `Get-Package`
+scenarios use `GetPackageTestCase.cs`; for other PMC commands use `NuGetConsoleTestCase.cs`.
 
 ## Template mapping
 
@@ -340,3 +342,170 @@ This section captures lessons learned from actual migration runs that don't fit 
 ### 2026-05-20: PackageReferenceTestCase patterns
 
 - **PR #7246 incorrectly removed `Test-NetCoreConsoleAppClean`** — it was claimed to be covered by Apex Daily's `VerifyCacheFileInsideObjFolder`, but that test is in Daily (different cadence) and bundles 3 behaviors. We properly covered it by adding `NetCoreConsoleApp` to `GetPackageReferenceTemplates()` in `PackageReferenceTestCase.CleanDeletesCacheFile`.
+
+---
+
+# Migrating PowerShell E2E Tests to Unit Tests
+
+Some E2E tests exercise **cmdlet behavior** (parameter handling, filtering, prerelease logic) rather than Visual Studio integration. These are better covered by fast unit tests that invoke the cmdlet directly in a PowerShell runspace — no VS instance needed.
+
+## When to use unit tests vs Apex tests
+
+| Scenario | Target |
+|---|---|
+| Tests that verify cmdlet parameter behavior (filtering, prerelease, -AllVersions, -Updates) | **Unit test** |
+| Tests that verify VS integration (project creation, restore, UI, solution operations) | **Apex test** |
+| Tests that exercise Install/Update/Uninstall side effects on actual project files | **Apex test** |
+| Tests that only query package sources or list installed packages | **Unit test** |
+
+The key distinction: if the test needs a real Visual Studio instance, solution, or project system, use Apex. If it only needs the cmdlet logic + a mock package source, use a unit test.
+
+## Unit test project
+
+Unit tests live in:
+```
+test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/Cmdlets/
+```
+
+The project (`NuGetConsole.Host.PowerShell.Test.csproj`) references:
+- `NuGet.PackageManagement.PowerShellCmdlets` (the source project)
+- `VisualStudio.Test.Utility` (shared test helpers)
+- `Microsoft.VisualStudio.Sdk.TestFramework.Xunit` (VS mocking infrastructure)
+
+Tests run sequentially via `xunit.runner.json`:
+```json
+{
+  "maxParallelThreads": 1,
+  "parallelizeTestCollections": false
+}
+```
+
+## Test infrastructure
+
+The reference implementation is in:
+```
+test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/Cmdlets/GetPackageCommandTests.cs
+```
+
+Read this file for the full working patterns. Key architectural details below.
+
+### CmdletRunspaceFixture (inner class in test file)
+
+Creates a real PowerShell runspace with the cmdlet registered via `SessionStateCmdletEntry`. Key points:
+- Constructor takes `activeSource` (always pass `pathContext.PackageSource` — never nuget.org)
+- Registers the cmdlet type (e.g., `typeof(GetPackageCommand)`) into `InitialSessionState`
+- `Invoke(cmdletName, parameters)` runs the cmdlet and returns `IList<PSObject>`
+- Is `IDisposable` — use with `using var`
+
+When adding tests for a **different cmdlet** (e.g., `Install-Package`), create a new fixture class that registers that cmdlet's type instead.
+
+### TestPSHost (inner class in test file)
+
+A minimal `PSHost` that provides `PrivateData` with two properties NuGet cmdlets require:
+- `"activePackageSource"` — the source URL/path the cmdlet defaults to
+- `"CancellationTokenKey"` — a `CancellationToken` (use `CancellationToken.None` in tests)
+
+Without these, cmdlets throw during initialization.
+
+### VS Service Mocking (constructor)
+
+The test class implements `IAsyncServiceProvider` and sets up mocks in the constructor:
+- Takes `GlobalServiceProvider` (from xUnit collection `MockedVS.Collection`)
+- Mocks `IVsSolutionManager` — must set `IsSolutionOpen = true`, `IsSolutionAvailableAsync = true`, and provide a default project via `GetDefaultNuGetProjectAsync()`
+- Mocks `IComponentModel` — registers all services the cmdlet's `Preprocess()` method resolves: `ISettings`, `IVsSolutionManager`, `ISourceControlManagerProvider`, `ICommonOperations`, `IPackageRestoreManager`, `IDeleteOnRestartManager`, `IRestoreProgressReporter`, and `ISourceRepositoryProvider`
+- Calls `ServiceLocator.InitializePackageServiceProvider(this)` to wire it all up
+
+If a new cmdlet requires additional services, add them to the `IComponentModel` mock setup.
+
+## Unit test file placement
+
+| Cmdlet | Test file |
+|---|---|
+| `Get-Package` | `Cmdlets/GetPackageCommandTests.cs` |
+| `Install-Package` | `Cmdlets/InstallPackageCommandTests.cs` (create if needed) |
+| `Update-Package` | `Cmdlets/UpdatePackageCommandTests.cs` (create if needed) |
+| `Uninstall-Package` | `Cmdlets/UninstallPackageCommandTests.cs` (create if needed) |
+| `Find-Package` | `Cmdlets/FindPackageCommandTests.cs` (create if needed) |
+
+When creating a new test file, follow the same structure as `GetPackageCommandTests.cs` — copy the class skeleton (constructor, `IAsyncServiceProvider`, inner fixture/host classes) and adapt the cmdlet type.
+
+## Key patterns
+
+### Creating test packages
+
+Use `SimpleTestPathContext` + `SimpleTestPackageUtility` (same utilities as other NuGet tests):
+
+```csharp
+using var pathContext = new SimpleTestPathContext();
+
+await SimpleTestPackageUtility.CreatePackagesAsync(
+    pathContext.PackageSource,
+    new SimpleTestPackageContext("PackageA", "1.0.0"),
+    new SimpleTestPackageContext("PackageA", "2.0.0-beta"));
+```
+
+### Setting up the source repository provider
+
+Register a real `ISourceRepositoryProvider` pointing at the local test source via `TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(localPath))`. See `SetupSourceRepositoryProvider()` in the reference file.
+
+### Setting up installed packages (for -Updates tests)
+
+Create a mock `NuGetProject` with `PackageReference` entries and wire it into `_solutionManager.GetNuGetProjectsAsync()` / `GetDefaultNuGetProjectAsync()`. See `CreateMockProject()` and `SetupProjectWithInstalledPackage()` helpers in the reference file.
+
+### Invoking cmdlets
+
+```csharp
+using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+var results = fixture.Invoke(
+    "Get-Package",
+    new Dictionary<string, object>
+    {
+        { "ListAvailable", true },
+        { "Source", pathContext.PackageSource },
+        { "Filter", "TestPackage" },
+    });
+```
+
+Switch parameters (`-ListAvailable`, `-AllVersions`, `-IncludePrerelease`) are passed as `true` in the dictionary.
+
+### Asserting results
+
+Results come back as `PSObject` wrappers. Cast `BaseObject` to the expected type:
+
+| Scenario | BaseObject type |
+|---|---|
+| `-ListAvailable` | `PowerShellRemotePackage` |
+| Installed (no switch) | `PowerShellInstalledPackage` |
+| `-Updates` | `PowerShellUpdatePackage` |
+
+Use FluentAssertions: `results.Should().ContainSingle()`, then cast and assert `.Id`, `.Version`, `.Versions`.
+
+## Unit test style rules
+
+- Use xUnit (`[Fact]`) with FluentAssertions.
+- Test class uses `[Collection(MockedVS.Collection)]` and takes `GlobalServiceProvider` in constructor.
+- Method names: `{CmdletName}{Scenario}_{Expectation}Async` (e.g., `GetPackageListAvailable_WithFilter_ReturnsMatchingPackageAsync`).
+- Use `using var` for disposables.
+- Arrange/Act/Assert pattern with comments.
+- All tests are `async Task` (package creation is async).
+- Use `var` for locals except value tuples.
+
+## Unit test migration workflow
+
+1. **Identify testable behavior** — read the PS test and determine if it's testing cmdlet logic or VS integration.
+2. **Check existing unit test coverage** — look in `Cmdlets/` for the relevant command test file.
+3. **Write the unit test** — use the patterns above.
+4. **Build** — `dotnet build test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/NuGetConsole.Host.PowerShell.Test.csproj`
+5. **Run** — `dotnet test test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/NuGetConsole.Host.PowerShell.Test.csproj`
+6. **Remove the PS test function** — delete the migrated function from the PS E2E file.
+7. **Keep one Apex sanity test** — if migrating *all* PS tests for a given cmdlet to unit tests, keep (or create) one Apex test that exercises the basic end-to-end flow through VS. Unit tests mock the VS layer, so a single Apex test ensures the real integration still works. This sanity test should cover multiple scenarios in a single test case to maximize breadth without adding multiple slow VS-launching tests — e.g., `GetPackageTestCase.cs` has a lifecycle test that installs, lists, updates, and uninstalls all in one method.
+
+## Tests that should be unit tests (not Apex)
+
+PS E2E tests that do any of the following are good candidates for unit tests:
+- Only call `Get-Package` with `-ListAvailable`, `-Filter`, `-AllVersions`, `-Updates`, `-Prerelease`
+- Assert returned package IDs/versions without modifying project state
+- Test behavior with different source configurations
+- Verify filtering/sorting logic
+- Test prerelease inclusion/exclusion behavior

@@ -135,6 +135,8 @@ public class CosmosDatabaseCreator : IDatabaseCreator
             var indexes = new List<IIndex>();
             var vectors = new List<(IProperty Property, CosmosVectorType VectorType)>();
             var fullTextProperties = new List<(IProperty Property, string? Language)>();
+            IReadOnlyList<string>? automaticIndexingExceptions = null;
+            bool? automaticIndexingEnabled = null;
 
             foreach (var entityType in mappedTypes)
             {
@@ -146,6 +148,8 @@ public class CosmosDatabaseCreator : IDatabaseCreator
                 analyticalTtl ??= entityType.GetAnalyticalStoreTimeToLive();
                 defaultTtl ??= entityType.GetDefaultTimeToLive();
                 throughput ??= entityType.GetThroughput();
+                automaticIndexingExceptions ??= entityType.GetAutomaticIndexingExceptions();
+                automaticIndexingEnabled ??= entityType.GetAutomaticIndexingEnabled();
 
                 ProcessEntityType(entityType, indexes, vectors, fullTextProperties);
             }
@@ -159,7 +163,9 @@ public class CosmosDatabaseCreator : IDatabaseCreator
                 indexes,
                 vectors,
                 defaultFullTextLanguage ?? "en-US",
-                fullTextProperties);
+                fullTextProperties,
+                automaticIndexingExceptions,
+                automaticIndexingEnabled);
         }
 
         static void ProcessEntityType(
@@ -213,7 +219,16 @@ public class CosmosDatabaseCreator : IDatabaseCreator
             foreach (var targetSeed in entityType.GetSeedData())
             {
                 var runtimeEntityType = updateAdapter.Model.FindEntityType(entityType.Name)!;
-                var entry = updateAdapter.CreateEntry(targetSeed, runtimeEntityType);
+                var values = new Dictionary<IProperty, object?>();
+                foreach (var (name, value) in targetSeed)
+                {
+                    if (runtimeEntityType.FindProperty(name) is { } property)
+                    {
+                        values[property] = value;
+                    }
+                }
+
+                var entry = updateAdapter.CreateEntry(values, runtimeEntityType);
                 entry.EntityState = EntityState.Added;
             }
         }

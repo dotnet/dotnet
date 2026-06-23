@@ -73,6 +73,16 @@ namespace NuGet.Protocol.Tests.Converters
         }
 
         [Fact]
+        public void Deserialize_EmptyString_ReturnsNull()
+        {
+            // Act
+            var actual = JsonSerializer.Deserialize<VersionRange>("\"\"", JsonContext.Default.VersionRange);
+
+            // Assert
+            actual.Should().BeNull();
+        }
+
+        [Fact]
         public void Json_RoundTripsSerialization()
         {
             // Arrange

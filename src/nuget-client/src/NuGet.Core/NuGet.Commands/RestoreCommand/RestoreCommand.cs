@@ -1396,6 +1396,21 @@ namespace NuGet.Commands
                 return (success, isLockFileValid, packagesLockFile);
             }
 
+            // RestoreLockedMode and RestoreForceEvaluate are contradictory: locked mode requires the lock file to remain
+            // unchanged, while force-evaluate re-evaluates the dependencies and regenerates it. When both are set,
+            // force-evaluate takes precedence; warn so the requested locked mode being ignored is not silent.
+            if (_isLockFileEnabled
+                && _request.IsRestoreOriginalAction
+                && _request.RestoreForceEvaluate
+                && _request.Project.RestoreMetadata.RestoreLockProperties.RestoreLockedMode
+                && SdkAnalysisLevelMinimums.IsEnabled(
+                    _request.Project.RestoreMetadata.SdkAnalysisLevel,
+                    _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.V11_0_100))
+            {
+                await _request.Log.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1512, Strings.Warning_RestoreLockedModeAndForceEvaluate));
+            }
+
             // read packages.lock.json file if exists and RestoreForceEvaluate flag is not set to true
             if (!_request.RestoreForceEvaluate && File.Exists(packagesLockFilePath))
             {
