@@ -1,7 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Storage.Json;
+
+namespace Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -9,12 +12,11 @@ namespace Microsoft.EntityFrameworkCore.Metadata.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-/// <remarks>
-///     The service lifetime is <see cref="ServiceLifetime.Singleton" />. This means a single instance
-///     is used by many <see cref="DbContext" /> instances. The implementation must be thread-safe.
-///     This service cannot depend on services registered as <see cref="ServiceLifetime.Scoped" />.
-/// </remarks>
-public interface IMemberClassifier
+public class CosmosTypeMapping<
+    [DynamicallyAccessedMembers(
+        DynamicallyAccessedMemberTypes.PublicMethods
+        | DynamicallyAccessedMemberTypes.PublicProperties)]
+    T> : CosmosTypeMapping
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -22,9 +24,7 @@ public interface IMemberClassifier
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    IReadOnlyDictionary<PropertyInfo, (Type Type, bool? ShouldBeOwned)> GetNavigationCandidates(
-        IConventionEntityType entityType,
-        bool useAttributes);
+    public static new CosmosTypeMapping<T> Default { get; } = new();
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -32,11 +32,14 @@ public interface IMemberClassifier
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    Type? FindCandidateNavigationPropertyType(
-        MemberInfo memberInfo,
-        IConventionModel model,
-        bool useAttributes,
-        out bool? shouldBeOwned);
+    public CosmosTypeMapping(
+        ValueComparer? comparer = null,
+        ValueComparer? keyComparer = null,
+        CoreTypeMapping? elementMapping = null,
+        JsonValueReaderWriter? jsonValueReaderWriter = null)
+        : base(typeof(T), comparer, keyComparer, elementMapping, jsonValueReaderWriter)
+    {
+    }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -44,11 +47,10 @@ public interface IMemberClassifier
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    bool IsCandidatePrimitiveProperty(
-        MemberInfo memberInfo,
-        IConventionModel model,
-        bool useAttributes,
-        out CoreTypeMapping? typeMapping);
+    protected CosmosTypeMapping(CoreTypeMappingParameters parameters)
+        : base(parameters)
+    {
+    }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -56,12 +58,10 @@ public interface IMemberClassifier
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    bool IsCandidateComplexProperty(
-        MemberInfo memberInfo,
-        IConventionModel model,
-        bool useAttributes,
-        out Type? elementType,
-        out bool explicitlyConfigured);
+    protected override ValueComparer CreateDefaultComparer(bool favorStructuralComparisons)
+        => ClrType == typeof(T)
+            ? ValueComparer.CreateDefault<T>(favorStructuralComparisons)
+            : base.CreateDefaultComparer(favorStructuralComparisons);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -69,7 +69,14 @@ public interface IMemberClassifier
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    IReadOnlyCollection<Type> GetInverseCandidateTypes(IConventionEntityType entityType, bool useAttributes);
+    public override CoreTypeMapping WithComposedConverter(
+        ValueConverter? converter,
+        ValueComparer? comparer = null,
+        ValueComparer? keyComparer = null,
+        CoreTypeMapping? elementMapping = null,
+        JsonValueReaderWriter? jsonValueReaderWriter = null)
+        => new CosmosTypeMapping<T>(
+            Parameters.WithComposedConverter(converter, comparer, keyComparer, elementMapping, jsonValueReaderWriter));
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -77,8 +84,6 @@ public interface IMemberClassifier
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    IParameterBindingFactory? FindServicePropertyCandidateBindingFactory(
-        MemberInfo memberInfo,
-        IConventionModel model,
-        bool useAttributes);
+    protected override CoreTypeMapping Clone(CoreTypeMappingParameters parameters)
+        => new CosmosTypeMapping<T>(parameters);
 }
