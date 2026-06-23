@@ -131,7 +131,7 @@ Some PRs will open with 0 files changed due to a merge conflict (e.g. [PR #6106 
 
 ## Merging Re-bootstrap PRs
 
-Re-bootstrap PRs are periodic automated PRs opened by `dotnet-bot` on servicing branches that update versioning and package references. They are titled something like ".NET X.Y.Z-... Updates" (e.g. [PR #7149](https://github.com/dotnet/dotnet/pull/7149) — ".NET 11.0.100-preview.5.26302.115 June 2026 Updates").
+Re-bootstrap PRs are periodic automated PRs opened by `dotnet-bot` that update versioning and package references on `main` (for preview releases) and `release/*` servicing branches. They are titled something like ".NET X.Y.Z-... Updates" (e.g. [PR #7149](https://github.com/dotnet/dotnet/pull/7149) — ".NET 11.0.100-preview.5.26302.115 June 2026 Updates").
 
 ### How to identify them
 
