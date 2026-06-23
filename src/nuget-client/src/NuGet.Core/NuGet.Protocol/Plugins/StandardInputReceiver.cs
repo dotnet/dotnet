@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Threading;
@@ -23,8 +21,8 @@ namespace NuGet.Protocol.Plugins
     {
         private readonly TextReader _reader;
         private readonly CancellationTokenSource _receiveCancellationTokenSource;
-        private Task _receiveThread;
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private Task? _receiveThread;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="StandardInputReceiver" /> class.
@@ -36,7 +34,7 @@ namespace NuGet.Protocol.Plugins
         {
         }
 
-        internal StandardInputReceiver(TextReader reader, IEnvironmentVariableReader environmentVariableReader)
+        internal StandardInputReceiver(TextReader reader, IEnvironmentVariableReader? environmentVariableReader)
         {
             if (reader == null)
             {
@@ -109,15 +107,15 @@ namespace NuGet.Protocol.Plugins
                 TaskScheduler.Default);
         }
 
-        private void Receive(object state)
+        private void Receive(object? state)
         {
-            Message message = null;
+            Message? message = null;
 
             try
             {
-                var cancellationToken = (CancellationToken)state;
+                var cancellationToken = (CancellationToken)state!;
 
-                string line;
+                string? line;
 
                 // Reading from the standard input stream is a blocking call; while we're
                 // in a read call we can't respond to cancellation requests.

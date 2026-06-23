@@ -19,10 +19,10 @@
       "commitSha": "bfbfbc086f655fbf86b64d54934744d1c705a330"
     },
     {
-      "barId": 313821,
+      "barId": 319320,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "45d252d1056414e6fcf3c2c79351d853090f96da"
+      "commitSha": "a0a3894db4aba12e535e7eaaffd921345365d05d"
     },
     {
       "barId": 316255,
@@ -31,10 +31,10 @@
       "commitSha": "f8c30e60063b6e4bc74f4ca40519456eb3a88be8"
     },
     {
-      "barId": 318654,
+      "barId": 319497,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "3a9d1f8a7ba2a6cae33f6953af77086bfbe02906"
+      "commitSha": "2ed38e6a008d4610cf0884217ae5ffeb0f9cecba"
     },
     {
       "barId": 319718,
@@ -49,34 +49,34 @@
       "commitSha": "ab6c174ee0688a5d08faefc4db75268a3755bf90"
     },
     {
-      "barId": 319065,
+      "barId": 319417,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "eb5f50d5aa2a8822fdb0a3b144f467ee2bd84870"
+      "commitSha": "7c7711bb0cc0f7273b19061bfc335a640b7700f2"
     },
     {
-      "barId": 319132,
+      "barId": 319400,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "ccfd927ce49e41eb576ae31e895fe5c589b16e84"
+      "commitSha": "e775a976a210698020837be79dde8db8ddf218ef"
     },
     {
-      "barId": 318800,
+      "barId": 319303,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "d66371a144edb0b5e74c08012cea1edb1cbe01e7"
+      "commitSha": "b67e16eecf51af828f4e9e6e3a7113b8c6403d7b"
     },
     {
-      "barId": 318627,
+      "barId": 318995,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "94180ea43ae879ba286300360d677cc72f0a1369"
+      "commitSha": "4789c5066ee1943f2b17a72efa25d68333abc1e3"
     },
     {
-      "barId": 319355,
+      "barId": 319553,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "ecbe39abe6aa5c1f962126c15aacee97935a32bf"
+      "commitSha": "4cb447e6c483c8845a2e91c6c319c7424216b057"
     },
     {
       "barId": 313279,

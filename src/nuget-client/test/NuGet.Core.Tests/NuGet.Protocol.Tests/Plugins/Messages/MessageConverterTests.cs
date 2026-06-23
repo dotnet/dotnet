@@ -37,7 +37,7 @@ namespace NuGet.Protocol.Plugins.Tests
             System.Text.Json.JsonSerializer.Deserialize(json, PluginJsonContext.Default.Message)!;
 
         private static Message DeserializeWithNsj(string json) =>
-            JsonSerializationUtilities.Deserialize<Message>(json);
+            JsonSerializationUtilities.Deserialize<Message>(json)!;
 
         private static object[] Msg(MessageType type, MessageMethod method, object payload) =>
             new object[] { MessageUtilities.Create("test-id", type, method, payload) };

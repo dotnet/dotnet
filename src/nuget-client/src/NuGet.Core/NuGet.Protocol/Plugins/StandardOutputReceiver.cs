@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Common;
 using NuGet.Shared;
@@ -20,7 +18,7 @@ namespace NuGet.Protocol.Plugins
     {
         private bool _hasConnected;
         private readonly IPluginProcess _process;
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="StandardOutputReceiver" /> class.
@@ -32,7 +30,7 @@ namespace NuGet.Protocol.Plugins
         {
         }
 
-        internal StandardOutputReceiver(IPluginProcess process, IEnvironmentVariableReader environmentVariableReader)
+        internal StandardOutputReceiver(IPluginProcess process, IEnvironmentVariableReader? environmentVariableReader)
         {
             if (process == null)
             {
@@ -100,27 +98,28 @@ namespace NuGet.Protocol.Plugins
             _hasConnected = true;
         }
 
-        private void OnLineRead(object sender, LineReadEventArgs e)
+        private void OnLineRead(object? sender, LineReadEventArgs e)
         {
-            Message message = null;
+            Message? message = null;
 
             // Top-level exception handler for a worker pool thread.
             try
             {
-                if (!IsClosed && !string.IsNullOrEmpty(e.Line))
+                string? line = e.Line;
+                if (!IsClosed && line != null && line.Length > 0)
                 {
                     if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
                     {
-                        message = System.Text.Json.JsonSerializer.Deserialize(e.Line, PluginJsonContext.Default.Message);
+                        message = System.Text.Json.JsonSerializer.Deserialize(line, PluginJsonContext.Default.Message);
                     }
                     else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
                     {
-                        message = System.Text.Json.JsonSerializer.Deserialize(e.Line, PluginJsonContext.Default.Message);
+                        message = System.Text.Json.JsonSerializer.Deserialize(line, PluginJsonContext.Default.Message);
                     }
                     else
                     {
 #pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
-                        message = JsonSerializationUtilities.Deserialize<Message>(e.Line);
+                        message = JsonSerializationUtilities.Deserialize<Message>(line);
 #pragma warning restore IL2026, IL3050
                     }
 

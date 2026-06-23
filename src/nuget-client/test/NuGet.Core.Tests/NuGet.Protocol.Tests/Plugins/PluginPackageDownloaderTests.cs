@@ -34,7 +34,7 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => new PluginPackageDownloader(
-                        plugin: null,
+                        plugin: null!,
                         packageIdentity: _packageIdentity,
                         packageReader: packageReader,
                         packageSourceRepository: _packageSourceRepository));
@@ -54,7 +54,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => new PluginPackageDownloader(
                         Mock.Of<IPlugin>(),
-                        packageIdentity: null,
+                        packageIdentity: null!,
                         packageReader: packageReader,
                         packageSourceRepository: _packageSourceRepository));
 
@@ -69,7 +69,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 () => new PluginPackageDownloader(
                     Mock.Of<IPlugin>(),
                     _packageIdentity,
-                    packageReader: null,
+                    packageReader: null!,
                     packageSourceRepository: _packageSourceRepository));
 
             Assert.Equal("packageReader", exception.ParamName);
@@ -428,7 +428,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var test = PluginPackageDownloaderTest.Create())
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => test.Downloader.SetExceptionHandler(handleExceptionAsync: null));
+                    () => test.Downloader.SetExceptionHandler(handleExceptionAsync: null!));
 
                 Assert.Equal("handleExceptionAsync", exception.ParamName);
             }
