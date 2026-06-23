@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.Build.Tasks.Core</PackageId>
+    <TargetFrameworks>net10.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>18.6.3</PackageVersion>
+    <AssemblyName>Microsoft.Build.Tasks.Core</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Description>This package contains the Microsoft.Build.Tasks assembly which implements the commonly used tasks of MSBuild.</Description>
+    <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>MSBuild</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <ProjectReference Include="../../microsoft.build.framework/18.6.3/Microsoft.Build.Framework.18.6.3.csproj" />
+    <ProjectReference Include="../../microsoft.build.utilities.core/18.6.3/Microsoft.Build.Utilities.Core.18.6.3.csproj" />
+    <ProjectReference Include="../../system.codedom/10.0.3/System.CodeDom.10.0.3.csproj" />
+    <ProjectReference Include="../../system.resources.extensions/10.0.3/System.Resources.Extensions.10.0.3.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.pkcs/10.0.3/System.Security.Cryptography.Pkcs.10.0.3.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.xml/10.0.3/System.Security.Cryptography.Xml.10.0.3.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/10.0.3/System.Configuration.ConfigurationManager.10.0.3.csproj" />
+    <ProjectReference Include="../../system.diagnostics.eventlog/10.0.3/System.Diagnostics.EventLog.10.0.3.csproj" />
+    <ProjectReference Include="../../system.formats.nrbf/10.0.3/System.Formats.Nrbf.10.0.3.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/10.0.3/System.Security.Cryptography.ProtectedData.10.0.3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.build.framework/18.6.3/Microsoft.Build.Framework.18.6.3.csproj" />
+    <ProjectReference Include="../../microsoft.build.utilities.core/18.6.3/Microsoft.Build.Utilities.Core.18.6.3.csproj" />
+    <ProjectReference Include="../../system.memory/4.6.3/System.Memory.4.6.3.csproj" />
+    <ProjectReference Include="../../system.runtime.compilerservices.unsafe/6.1.2/System.Runtime.CompilerServices.Unsafe.6.1.2.csproj" />
+  </ItemGroup>
+
+</Project>
