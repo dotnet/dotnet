@@ -9,17 +9,22 @@
 
   <PropertyGroup>
     <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.CodeCoverage.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.CodeCoverage</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing codecoverage code-coverage</PackageTags>
     <PackageDescription>
       Microsoft.CodeCoverage package brings infra for collecting code coverage from vstest.console.exe and "dotnet test".
     </PackageDescription>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <NoWarn>$(NoWarn);NU1702</NoWarn>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- This package ships only build/ tooling and a bundled content tree, not its own assembly,
+         and declares no NuGet dependencies. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <!-- NU5128: empty dependency groups; NU5100/NU5109/NU5118/NU5127: assemblies/content ship under
+         build\ and the root rather than lib\, which is intentional for this tooling package. -->
+    <NoWarn>$(NoWarn);NU1702;NU5128;NU5100;NU5109;NU5118;NU5127</NoWarn>
+    <!-- The bundled Microsoft.Internal.CodeCoverage content tree is added per-TFM (its package path
+         property is only defined in the inner build), gated to a single TFM so it ships once. -->
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeInternalCodeCoverageContent</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,4 +50,30 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <!-- Package contents (previously authored in the .nuspec). -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+
+    <!-- Third party notices: at the package root and alongside the build tooling. -->
+    <None Include="ThirdPartyNoticesCodeCoverage.txt" Pack="true" PackagePath="ThirdPartyNotices.txt" />
+    <None Include="ThirdPartyNoticesCodeCoverage.txt" Pack="true" PackagePath="build\netstandard2.0\ThirdPartyNotices.txt" />
+
+    <!-- MSBuild integration. -->
+    <None Include="Microsoft.CodeCoverage.props" Pack="true" PackagePath="build\netstandard2.0\" />
+    <None Include="Microsoft.CodeCoverage.targets" Pack="true" PackagePath="build\netstandard2.0\" />
+  </ItemGroup>
+
+  <!-- The code coverage tooling, instrumentation engines and shims come pre-laid-out as a
+       build\ + lib\ content tree in the Microsoft.Internal.CodeCoverage package; ship it at the root.
+       This runs in the inner (per-TFM) build because the package path property is only defined there,
+       and is gated to a single TFM so the content is added exactly once. PackagePath=%(RecursiveDir)
+       preserves the folder structure. -->
+  <Target Name="IncludeInternalCodeCoverageContent" Condition="'$(TargetFramework)' == 'net462'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\Microsoft.CodeCoverage\**\*">
+        <PackagePath>%(RecursiveDir)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
 </Project>

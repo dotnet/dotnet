@@ -28,10 +28,9 @@ public class DataCollectionTests : AcceptanceTestBase
 
         var assemblyPaths = GetAssetFullPath("SimpleTestProject2.dll");
         string runSettings = GetRunsettingsFilePath(TempDirectory.Path);
-        string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
         var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", "netstandard2.0"));
         var arguments = PrepareArguments(assemblyPaths, null, runSettings, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /TestAdapterPath:{extensionsPath}");
+        arguments = string.Concat(arguments, $" /TestAdapterPath:{extensionsPath}");
 
         var env = new Dictionary<string, string?>
         {
@@ -52,11 +51,10 @@ public class DataCollectionTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var assemblyPaths = GetAssetFullPath("SimpleTestProject2.dll");
-        string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
         var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", "netstandard2.0"));
 
         var arguments = PrepareArguments(assemblyPaths, null, null, FrameworkArgValue, runnerInfo.InIsolationValue, TempDirectory.Path);
-        arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /Collect:SampleDataCollector", $" /TestAdapterPath:{extensionsPath}");
+        arguments = string.Concat(arguments, $" /Collect:SampleDataCollector", $" /TestAdapterPath:{extensionsPath}");
 
         var env = new Dictionary<string, string?>
         {
@@ -104,10 +102,9 @@ public class DataCollectionTests : AcceptanceTestBase
         var assemblyPath = GetAssetFullPath("SimpleTestProject.dll");
         var secondAssemblyPath = GetAssetFullPath("SimpleTestProject2.dll");
         string runSettings = GetRunsettingsFilePath(TempDirectory.Path);
-        string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
         var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("AttachmentProcessorDataCollector.dll", "netstandard2.0"));
         var arguments = PrepareArguments([assemblyPath, secondAssemblyPath], null, runSettings, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /TestAdapterPath:{extensionsPath}");
+        arguments = string.Concat(arguments, $" /TestAdapterPath:{extensionsPath}");
 
         XElement runSettingsXml = XElement.Load(runSettings);
 
@@ -147,7 +144,7 @@ public class DataCollectionTests : AcceptanceTestBase
 
         Assert.AreEqual(2, fileContent.Distinct().Count());
 
-        var dataCollectorsLogs = Directory.GetFiles(TempDirectory.Path, "*.datacollector.*", SearchOption.TopDirectoryOnly);
+        var dataCollectorsLogs = Directory.GetFiles(DiagLogsDirectory, "*.datacollector.*", SearchOption.TopDirectoryOnly);
         Assert.AreEqual(2, dataCollectorsLogs.Distinct().Count());
         foreach (var dataCollectorLogFile in dataCollectorsLogs)
         {
@@ -200,7 +197,6 @@ public class DataCollectionTests : AcceptanceTestBase
         // Verify attachments
         var isTestRunLevelAttachmentFound = false;
         var testCaseLevelAttachmentsCount = 0;
-        var diaglogsFileCount = 0;
 
         var resultFiles = Directory.GetFiles(resultsDir, "*.txt", SearchOption.AllDirectories);
 
@@ -217,15 +213,16 @@ public class DataCollectionTests : AcceptanceTestBase
             {
                 testCaseLevelAttachmentsCount++;
             }
-
-            if (file.Contains("diaglog"))
-            {
-                diaglogsFileCount++;
-            }
         }
 
         Assert.IsTrue(isTestRunLevelAttachmentFound);
         Assert.AreEqual(3, testCaseLevelAttachmentsCount);
+
+        // Diag logs are placed in DiagLogsDirectory by the auto-injected --diag flag.
+        // The files are named log.txt, log.host.*.txt, log.datacollector.*.txt.
+        var diaglogsFileCount = Directory.Exists(DiagLogsDirectory)
+            ? Directory.GetFiles(DiagLogsDirectory, "log*", SearchOption.TopDirectoryOnly).Length
+            : 0;
         Assert.AreEqual(3, diaglogsFileCount);
     }
 

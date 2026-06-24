@@ -6,33 +6,39 @@
   <PropertyGroup>
     <!-- Don't pack on non-Windows as it doesn't build correctly. -->
     <IsPackable Condition="'$(OS)' == 'Windows_NT'">true</IsPackable>
-    <NuspecFile>Microsoft.TestPlatform.TestHost.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.TestHost</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
       Testplatform host executes the test using specified adapter.
     </PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- This package bundles the testhost runtime output rather than shipping its own assembly. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- NU5128: net462 ships an empty dependency group; NU5100: bundled assemblies live under lib\ and
+         build\ rather than being the project's own build output. -->
+    <NoWarn>$(NoWarn);NU5128;NU5100</NoWarn>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeTestHostContent</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
-  <ItemGroup Label="NuGet">
-    <NuspecProperty Include="NewtonsoftJsonVersion=$(NewtonsoftJsonVersion)" />
-    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)src\testhost\testhost.csproj" PrivateAssets="all" />
+    <ProjectReference Include="$(RepoRoot)src\testhost.x86\testhost.x86.csproj" PrivateAssets="all" />
+    <!-- ObjectModel ships as its own package, so it is a real dependency for the .NET build. -->
+    <ProjectReference Include="$(RepoRoot)src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj"
+                      Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) " />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="_._">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="$(RepoRoot)src\testhost\testhost.csproj" />
-    <ProjectReference Include="$(RepoRoot)src\testhost.x86\testhost.x86.csproj" />
-  </ItemGroup>
+  <!-- The testhost executables are bundled as content, not consumed as packages, so they must not
+       appear as NuGet dependencies. PrivateAssets is not honored for these exe project references, so
+       drop them from the resolved dependency list before the nuspec is generated. -->
+  <Target Name="RemoveTestHostProjectDependencies" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_ProjectReferencesWithVersions Remove="@(_ProjectReferencesWithVersions)"
+                                      Condition=" '%(Filename)' == 'testhost' or '%(Filename)' == 'testhost.x86' " />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Internal.Dia" Version="$(TestPlatformMSDiaVersion)" PrivateAssets="All" GeneratePathProperty="true" />
@@ -50,6 +56,9 @@
   </Target>
 
   <ItemGroup>
+    <None Update="_._">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Microsoft.TestPlatform.TestHost.props" Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -57,4 +66,49 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <!-- Package contents that are independent of the build framework. -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="$(SrcPackageFolder)ThirdPartyNotices.txt" Pack="true" PackagePath="" />
+    <!-- .NET Framework consumers get the testhost shipped with vstest.console, so only a stub is needed. -->
+    <None Include="_._" Pack="true" PackagePath="lib\net462\" />
+  </ItemGroup>
+
+  <!-- Bundle the .NET testhost runtime output: the platform assemblies and satellites in lib\net8.0,
+       the msdia natives, the testhost launchers under build\net8.0 and the MSBuild props/targets.
+       Runs in the inner net8.0 build (where the output and Dia path property are available). -->
+  <Target Name="IncludeTestHostContent"
+          Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) "
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <!-- Platform assemblies (everything except this package's own TestHost assembly). -->
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.VisualStudio.TestPlatform.*.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.*.dll"
+                              Exclude="$(OutputPath)Microsoft.TestPlatform.TestHost.dll"
+                              PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)testhost.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)testhost.deps.json" PackagePath="lib/$(TargetFramework)/" />
+
+      <!-- msdia natives. -->
+      <TfmSpecificPackageFile Include="$(OutputPath)x86\msdia140.dll" PackagePath="lib/$(TargetFramework)/x86/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)x64\msdia140.dll" PackagePath="lib/$(TargetFramework)/x64/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)arm64\msdia140.dll" PackagePath="lib/$(TargetFramework)/arm64/" />
+
+      <!-- testhost launchers (see the original nuspec for why the AnyCPU testhost.dll is used for x64). -->
+      <TfmSpecificPackageFile Include="$(OutputPath)testhost.dll" PackagePath="build/$(TargetFramework)/x64/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)testhost.exe" PackagePath="build/$(TargetFramework)/x64/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)testhost.x86.dll" PackagePath="build/$(TargetFramework)/x86/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)testhost.x86.exe" PackagePath="build/$(TargetFramework)/x86/" />
+
+      <!-- MSBuild integration. -->
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.TestHost.props" PackagePath="build/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.TestHost.targets" PackagePath="build/$(TargetFramework)/" />
+
+      <!-- Satellite resources for the bundled assemblies (CommunicationUtilities, CrossPlatEngine, Common). -->
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+    </ItemGroup>
+  </Target>
 </Project>

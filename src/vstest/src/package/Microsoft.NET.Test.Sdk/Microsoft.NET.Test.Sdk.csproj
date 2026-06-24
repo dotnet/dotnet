@@ -1,42 +1,74 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <!-- Multi-target so that pack emits per-framework dependency groups (net8.0 and net462). -->
+    <TargetFrameworks>net8.0;net462</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
     <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.NET.Test.Sdk.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.NET.Test.Sdk</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
       The MSbuild targets and properties for building .NET test projects.
     </PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- This is a build/targets-only package: it ships MSBuild props/targets and _._ lib stubs,
+         not its own assembly. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- The package's assembly has no sources of its own. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" />
   </ItemGroup>
 
+  <!-- Package dependencies, expressed per target framework via references to the sibling packable projects.
+       net8.0 depends on TestHost and CodeCoverage; net462 depends on CodeCoverage only
+       (TestHost gets shipped with vstest.console on .NET Framework).
+       PrivateAssets="none" so the generated nuspec dependency does not exclude the Build (and Analyzers)
+       assets: consumers must import TestHost's and CodeCoverage's MSBuild props/targets (e.g. the
+       Microsoft.TestPlatform.TestHost.props that deploys the testhost.exe apphost). This matches the
+       hand-written nuspec, whose dependencies carried no exclude. By default pack emits
+       exclude="Build,Analyzers" for a ProjectReference, which would suppress those props. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="..\Microsoft.TestPlatform.TestHost\Microsoft.TestPlatform.TestHost.csproj" PrivateAssets="none" />
+  </ItemGroup>
   <ItemGroup>
-    <None Update="_._">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Microsoft.NET.Test.Sdk.props">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Microsoft.NET.Test.Sdk.targets">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="netcoreapp\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="netfx\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Microsoft.CodeCoverage\Microsoft.CodeCoverage.csproj" PrivateAssets="none" />
+  </ItemGroup>
+
+  <!-- README.md is referenced by PackageReadmeFile. -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <!-- Ship the MSBuild props/targets into the build and buildMultiTargeting folders.
+       The root .props goes to every TFM folder; the .targets vary by TFM:
+         - net8.0   uses netcoreapp\Microsoft.NET.Test.Sdk.targets and the Program.* launcher files
+         - net462   uses netfx\Microsoft.NET.Test.Sdk.targets
+         - netcoreapp2.0 / netstandard2.0 use the root Microsoft.NET.Test.Sdk.targets (incompatibility shim) -->
+  <ItemGroup>
+    <!-- props (same file for all frameworks) -->
+    <None Include="Microsoft.NET.Test.Sdk.props" Pack="true" PackagePath="build\net8.0\;build\net462\;build\netcoreapp2.0\;build\netstandard2.0\;buildMultiTargeting\net8.0\;buildMultiTargeting\net462\;buildMultiTargeting\netcoreapp2.0\;buildMultiTargeting\netstandard2.0\" />
+
+    <!-- net8.0 targets + launcher program files -->
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build\net8.0\" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" Pack="true" PackagePath="build\net8.0\" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.fs" Pack="true" PackagePath="build\net8.0\" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.vb" Pack="true" PackagePath="build\net8.0\" />
+
+    <!-- net462 targets -->
+    <None Include="netfx\Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build\net462\" />
+
+    <!-- netcoreapp2.0 / netstandard2.0 incompatibility-shim targets (root targets file) -->
+    <None Include="Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build\netcoreapp2.0\;build\netstandard2.0\;buildMultiTargeting\netcoreapp2.0\;buildMultiTargeting\netstandard2.0\" />
+
+    <!-- Empty lib stubs (no assembly is shipped). lib/native/_._ marks the package compatible with
+         native (C++) test projects. Note: the previous nuspec also declared an empty native0.0
+         dependency group; MSBuild pack only emits dependency groups for real build TFMs, so that empty
+         group is dropped. This is behaviorally equivalent since the group carried no dependencies. -->
+    <None Include="_._" Pack="true" PackagePath="lib\net8.0\;lib\net462\;lib\native\" />
   </ItemGroup>
 </Project>

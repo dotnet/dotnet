@@ -10,18 +10,29 @@
 
   <PropertyGroup>
     <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.TestPlatform.ObjectModel.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.ObjectModel</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
       The Microsoft Test Platform Object Model.
     </PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeBundledAssembliesInPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" PrivateAssets="all" />
   </ItemGroup>
+
+  <!-- Bundle CoreUtilities and PlatformAbstractions DLLs + satellite resources into the package (they are not separate NuGet packages). -->
+  <Target Name="IncludeBundledAssembliesInPackage">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.CoreUtilities.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.PlatformAbstractions.dll" PackagePath="lib/$(TargetFramework)/" />
+      <!-- Satellite resources for bundled assemblies -->
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CoreUtilities.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.PlatformAbstractions.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System.Xml" />
@@ -37,6 +48,10 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net48')) != 'true' and '$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
