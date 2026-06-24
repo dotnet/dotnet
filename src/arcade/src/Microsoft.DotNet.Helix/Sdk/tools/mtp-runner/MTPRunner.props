@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <_HelixMonoQueueTargets>$(_HelixMonoQueueTargets);$(MSBuildThisFileDirectory)XUnitV3Runner.targets</_HelixMonoQueueTargets>
+    <_HelixMonoQueueTargets>$(_HelixMonoQueueTargets);$(MSBuildThisFileDirectory)MTPRunner.targets</_HelixMonoQueueTargets>
   </PropertyGroup>
 
 </Project>

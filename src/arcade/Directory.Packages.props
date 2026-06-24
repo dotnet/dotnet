@@ -64,7 +64,7 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.58.0" />
+    <PackageVersion Include="Azure.Core" Version="1.59.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
@@ -74,17 +74,17 @@
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.2" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
-    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
+    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.0.727802" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.84.2" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="3.6.0" />
-    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.6.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.7.0" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
     <PackageVersion Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
     <PackageVersion Include="Microsoft.WixToolset.Sdk" Version="$(MicrosoftWixToolsetSdkVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.OLE.Interop" Version="17.14.40260" />
     <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Octokit" Version="14.0.0" />
-    <PackageVersion Include="Polly.Core" Version="8.6.6" />
+    <PackageVersion Include="Polly.Core" Version="8.7.0" />
     <PackageVersion Include="sn" Version="1.0.0" />
     <PackageVersion Include="xunit" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.abstractions" Version="2.0.3" />

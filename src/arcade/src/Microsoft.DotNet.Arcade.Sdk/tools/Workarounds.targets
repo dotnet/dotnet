@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project>
+<Project InitialTargets="NormalizeNetCoreSdkRootCasing">
 
   <!-- Workaround for https://github.com/Microsoft/msbuild/issues/1310 -->
   <Target Name="ForceGenerationOfBindingRedirects"
@@ -184,4 +184,341 @@
     </ItemGroup>
   </Target>
 
+  <!--
+    =========
+    TEMPORARY WORKAROUND for https://github.com/dotnet/msbuild/issues/14026
+    =========
+
+    Problem
+    ~~~~~~~
+    The .NET task host handshake "salt" is a case-sensitive hash of the SDK tools
+    directory. The two sides derive that directory string differently:
+
+      * Host  (.NET Framework MSBuild, e.g. VS): hashes the $(NetCoreSdkRoot)
+        property, whose drive-letter casing is propagated verbatim from the
+        environment (e.g. an Azure DevOps "D:\a\_work\1\s" sources path) and is
+        never canonicalized, because managed Path.* APIs preserve the caller's
+        drive casing.
+
+      * Child (.NET task host): resolves its own path via Environment.ProcessPath
+        (GetModuleFileNameW under the hood), which on some agents reports the
+        volume's canonical drive-letter casing ("d:").
+
+    When those casings differ ("D:" vs "d:") the salts differ and the handshake
+    fails with:
+
+        error MSB4216: Could not run the "..." task because MSBuild could not
+        create or connect to a task host with runtime "NET" ...
+
+    Fix
+    ~~~
+    Rewrite ONLY the drive letter of $(NetCoreSdkRoot) to the casing the child
+    will use, so the host computes the same salt. To learn that casing we launch
+    the SDK's dotnet host (dotnet.exe - the runtime host, which always runs and
+    lives on the same volume as the SDK) on a tiny throwaway project whose inline
+    task reads GetModuleFileNameW(NULL) - the exact API behind the child's
+    Environment.ProcessPath. We adopt the returned drive letter only when it is
+    the same letter as $(NetCoreSdkRoot) differing solely in case, so this can
+    never change the actual drive, only its casing.
+
+    NOTE: an earlier revision used GetFinalPathNameByHandle on $(NetCoreSdkRoot).
+    That always returns an UPPERCASE drive letter on the affected agents, so it
+    did not match the child's lowercase "d:" and was a silent no-op (proven from
+    the failing build's comm traces / binlog). Launching the SDK's own MSBuild.exe
+    apphost instead fails because its matching runtime is not resolvable in the
+    host process environment. The dotnet-host probe avoids both problems.
+
+    This is Windows-only, idempotent, cached per drive, and a safe no-op when the
+    probe cannot run.
+
+    Knobs
+    ~~~~~
+    * $(DisableNetCoreSdkRootDriveCasingWorkaround)=true
+        Fully disables this workaround (the target is skipped).
+
+    * $(NetCoreSdkRootDriveCasingOverride)=lower | upper
+        Deterministic escape hatch. Forces the $(NetCoreSdkRoot) drive letter to
+        the requested casing WITHOUT probing, for emergencies or testing. Both a
+        property and an environment variable of the same name work.
+
+    Remove this workaround once BOTH the VS MSBuild host and the .NET SDK task
+    host carry the bilateral salt-casing normalization from #14026.
+
+    Wiring
+    ~~~~~~
+    Implemented in Workarounds.targets, imported automatically by
+    Microsoft.DotNet.Arcade.Sdk (see sdk/Sdk.targets). The InitialTargets on this
+    <Project> aggregates into the importing project's InitialTargets, so the target
+    runs before the first .NET task host is launched. NetCoreSdkRoot is defined
+    during evaluation, so it is available when the target runs, and the handshake
+    salt reads the live (target-mutated) property value.
+    =========
+  -->
+
+  <UsingTask TaskName="NormalizeSdkRootDriveCasing"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+             Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != ''">
+    <ParameterGroup>
+      <SdkRoot ParameterType="System.String" Required="true" />
+      <Override ParameterType="System.String" />
+      <Result ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs"><![CDATA[
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+
+public class NormalizeSdkRootDriveCasing : Task
+{
+    [Required]
+    public string SdkRoot { get; set; }
+
+    public string Override { get; set; }
+
+    [Output]
+    public string Result { get; set; }
+
+    private const string Marker = "__SDKDRIVEPROBE__=";
+
+    // Cache the registered drive letter per drive for the lifetime of the MSBuild process,
+    // so the (one-time) dotnet-host probe launch is not repeated for every project's InitialTargets.
+    private static readonly object s_lock = new object();
+    private static readonly Dictionary<char, char> s_driveCache = new Dictionary<char, char>();
+
+    public override bool Execute()
+    {
+        // Best-effort: never fail the build over a casing tweak. Default to a no-op.
+        Result = SdkRoot;
+
+        try
+        {
+            if (string.IsNullOrEmpty(SdkRoot) || SdkRoot.Length < 2 || SdkRoot[1] != ':')
+            {
+                return true;
+            }
+
+            // Deterministic escape hatch: the NetCoreSdkRootDriveCasingOverride property = "lower" or
+            // "upper" forces the drive-letter casing without probing the SDK, for emergencies or testing.
+            if (!string.IsNullOrEmpty(Override))
+            {
+                char forced = SdkRoot[0];
+                if (string.Equals(Override, "lower", StringComparison.OrdinalIgnoreCase))
+                {
+                    forced = char.ToLowerInvariant(SdkRoot[0]);
+                }
+                else if (string.Equals(Override, "upper", StringComparison.OrdinalIgnoreCase))
+                {
+                    forced = char.ToUpperInvariant(SdkRoot[0]);
+                }
+
+                if (forced != SdkRoot[0])
+                {
+                    Result = forced + SdkRoot.Substring(1);
+                    Log.LogMessage(MessageImportance.High,
+                        "Forced NetCoreSdkRoot drive casing '{0}' -> '{1}' via NetCoreSdkRootDriveCasingOverride='{2}' (#14026 workaround).",
+                        SdkRoot[0], forced, Override);
+                }
+
+                return true;
+            }
+
+            char registeredDrive = GetRegisteredSdkDrive(SdkRoot);
+            // Casing-only guard: only adopt the probed drive when it is the SAME letter as the SDK's
+            // (differing solely in case). This can never change the actual drive, only its casing.
+            if (registeredDrive != '\0' &&
+                registeredDrive != SdkRoot[0] &&
+                char.ToUpperInvariant(registeredDrive) == char.ToUpperInvariant(SdkRoot[0]))
+            {
+                Result = registeredDrive + SdkRoot.Substring(1);
+                Log.LogMessage(MessageImportance.High,
+                    "Normalized NetCoreSdkRoot drive casing '{0}' -> '{1}' to match the SDK task host (#14026 workaround).",
+                    SdkRoot[0], registeredDrive);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.LogMessage(MessageImportance.Low, "NormalizeSdkRootDriveCasing skipped: {0}", ex.Message);
+        }
+
+        return true;
+    }
+
+    // Returns the volume-registered drive letter for the SDK, derived the same way the .NET task host
+    // child does: by launching the SDK's dotnet host and reading the drive-letter casing
+    // GetModuleFileNameW(NULL) - the API behind Environment.ProcessPath - resolves for that process.
+    // Returns '\0' if it cannot be determined.
+    private char GetRegisteredSdkDrive(string sdkRoot)
+    {
+        char driveKey = sdkRoot[0];
+        lock (s_lock)
+        {
+            if (s_driveCache.TryGetValue(driveKey, out char cached))
+            {
+                return cached;
+            }
+
+            char probed = ProbeSdkDrive(sdkRoot);
+            s_driveCache[driveKey] = probed;
+            return probed;
+        }
+    }
+
+    // Finds the dotnet host (dotnet.exe) ON THE SAME VOLUME as the SDK, so its drive-letter casing
+    // matches what the task host child will report. Prefers the dotnet root derived from the SDK
+    // directory (<dotnetRoot>\sdk\<ver>\ -> <dotnetRoot>\dotnet.exe), then DOTNET_HOST_PATH but only
+    // if it is on the same drive letter as the SDK. Returns null if none exists.
+    private static string LocateDotnetHost(string sdkRoot)
+    {
+        try
+        {
+            // sdkRoot = <dotnetRoot>\sdk\<version>\  ->  up two directories = <dotnetRoot>.
+            string sdkVersionDir = sdkRoot.TrimEnd('\\', '/');
+            string sdkDir = Path.GetDirectoryName(sdkVersionDir);
+            string dotnetRoot = Path.GetDirectoryName(sdkDir);
+            if (!string.IsNullOrEmpty(dotnetRoot))
+            {
+                string candidate = Path.Combine(dotnetRoot, "dotnet.exe");
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+        catch
+        {
+            // fall through to DOTNET_HOST_PATH
+        }
+
+        string fromEnv = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
+        if (!string.IsNullOrEmpty(fromEnv) && fromEnv.Length >= 2 && fromEnv[1] == ':' &&
+            char.ToUpperInvariant(fromEnv[0]) == char.ToUpperInvariant(sdkRoot[0]) &&
+            File.Exists(fromEnv) &&
+            fromEnv.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase))
+        {
+            return fromEnv;
+        }
+
+        return null;
+    }
+
+    private char ProbeSdkDrive(string sdkRoot)
+    {
+        // Launch the dotnet host (NOT the SDK's MSBuild.exe apphost, which needs a matching runtime
+        // that may not be resolvable in this process's environment). dotnet.exe is the runtime host
+        // itself, lives on the same volume as the SDK, and always launches; its own process-path
+        // drive-letter casing (GetModuleFileNameW) therefore equals the casing the .NET task host
+        // child will report for the SDK directory.
+        string dotnetExe = LocateDotnetHost(sdkRoot);
+        if (dotnetExe == null)
+        {
+            Log.LogMessage(MessageImportance.Low, "NormalizeSdkRootDriveCasing: dotnet host not found for SDK '{0}'.", sdkRoot);
+            return '\0';
+        }
+
+        string tasksDll = Path.Combine(sdkRoot, "Microsoft.Build.Tasks.Core.dll");
+        string tempDir = Path.Combine(Path.GetTempPath(), "sdkdrvprobe_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+        string proj = Path.Combine(tempDir, "probe.proj");
+
+        // Bare <Project> (no Sdk attribute / no imports) so it does NOT re-import Arcade and cannot
+        // recurse into this workaround. The inline task P/Invokes GetModuleFileNameW(NULL) - the exact
+        // API behind the child task host's Environment.ProcessPath - so we read the same drive-letter
+        // casing the child will. No CDATA in the inner task code (it would close the outer CDATA).
+        var probe = new StringBuilder();
+        probe.Append("<Project>");
+        probe.Append("<UsingTask TaskName=\"PrintProcPath\" TaskFactory=\"RoslynCodeTaskFactory\" AssemblyFile=\"").Append(tasksDll).Append("\">");
+        probe.Append("<Task><Code Type=\"Class\" Language=\"cs\">\n");
+        probe.Append("using System;\n");
+        probe.Append("using System.Runtime.InteropServices;\n");
+        probe.Append("using System.Text;\n");
+        probe.Append("using Microsoft.Build.Framework;\n");
+        probe.Append("using Microsoft.Build.Utilities;\n");
+        probe.Append("public class PrintProcPath : Task {\n");
+        probe.Append("  [DllImport(\"kernel32.dll\", CharSet = CharSet.Unicode, SetLastError = true)]\n");
+        probe.Append("  static extern uint GetModuleFileNameW(IntPtr hModule, StringBuilder lpFilename, uint nSize);\n");
+        probe.Append("  public override bool Execute() {\n");
+        probe.Append("    var sb = new StringBuilder(1024);\n");
+        probe.Append("    GetModuleFileNameW(IntPtr.Zero, sb, 1024u);\n");
+        probe.Append("    Log.LogMessage(MessageImportance.High, \"").Append(Marker).Append("\" + sb.ToString());\n");
+        probe.Append("    return true;\n");
+        probe.Append("  }\n");
+        probe.Append("}\n");
+        probe.Append("</Code></Task></UsingTask>");
+        probe.Append("<Target Name=\"P\"><PrintProcPath /></Target>");
+        probe.Append("</Project>");
+        File.WriteAllText(proj, probe.ToString());
+
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = dotnetExe,
+                Arguments = "msbuild \"" + proj + "\" -nologo -nodeReuse:false -v:m -t:P",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                WorkingDirectory = tempDir,
+            };
+
+            using (var p = Process.Start(psi))
+            {
+                string stdout = p.StandardOutput.ReadToEnd();
+                string stderr = p.StandardError.ReadToEnd();
+                if (!p.WaitForExit(120000))
+                {
+                    try { p.Kill(); } catch { }
+                    Log.LogMessage(MessageImportance.Low, "NormalizeSdkRootDriveCasing: probe timed out launching '{0}'.", dotnetExe);
+                    return '\0';
+                }
+
+                int idx = stdout.IndexOf(Marker, StringComparison.Ordinal);
+                if (idx >= 0)
+                {
+                    string resolved = stdout.Substring(idx + Marker.Length).TrimStart();
+                    int nl = resolved.IndexOfAny(new[] { '\r', '\n' });
+                    if (nl >= 0)
+                    {
+                        resolved = resolved.Substring(0, nl);
+                    }
+
+                    if (resolved.Length >= 2 && resolved[1] == ':')
+                    {
+                        return resolved[0];
+                    }
+                }
+                else
+                {
+                    Log.LogMessage(MessageImportance.Low,
+                        "NormalizeSdkRootDriveCasing: probe produced no result (exit {0}). stderr=[{1}]",
+                        p.ExitCode, stderr.Replace("\r", "").Replace("\n", " | "));
+                }
+            }
+        }
+        finally
+        {
+            try { Directory.Delete(tempDir, recursive: true); } catch { }
+        }
+
+        return '\0';
+    }
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="NormalizeNetCoreSdkRootCasing"
+          Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true'">
+    <NormalizeSdkRootDriveCasing SdkRoot="$(NetCoreSdkRoot)" Override="$(NetCoreSdkRootDriveCasingOverride)">
+      <Output TaskParameter="Result" PropertyName="NetCoreSdkRoot" />
+    </NormalizeSdkRootDriveCasing>
+  </Target>
+
 </Project>
+
