@@ -57,11 +57,13 @@
 
     <!-- Third party notices: at the package root and alongside the build tooling. -->
     <None Include="ThirdPartyNoticesCodeCoverage.txt" Pack="true" PackagePath="ThirdPartyNotices.txt" />
-    <None Include="ThirdPartyNoticesCodeCoverage.txt" Pack="true" PackagePath="build\netstandard2.0\ThirdPartyNotices.txt" />
+    <None Include="ThirdPartyNoticesCodeCoverage.txt" Pack="true" PackagePath="build/netstandard2.0/ThirdPartyNotices.txt" />
 
-    <!-- MSBuild integration. -->
-    <None Include="Microsoft.CodeCoverage.props" Pack="true" PackagePath="build\netstandard2.0\" />
-    <None Include="Microsoft.CodeCoverage.targets" Pack="true" PackagePath="build\netstandard2.0\" />
+    <!-- MSBuild integration. Use forward slashes in PackagePath: MSBuild Pack decides folder-vs-file by a
+         trailing OS directory separator, so a trailing '\' is only honored on Windows. On Linux (e.g. the VMR
+         vertical build) a trailing '\' is not a separator and the files get mis-placed (NU5129). '/' works on both. -->
+    <None Include="Microsoft.CodeCoverage.props" Pack="true" PackagePath="build/netstandard2.0/" />
+    <None Include="Microsoft.CodeCoverage.targets" Pack="true" PackagePath="build/netstandard2.0/" />
   </ItemGroup>
 
   <!-- The code coverage tooling, instrumentation engines and shims come pre-laid-out as a

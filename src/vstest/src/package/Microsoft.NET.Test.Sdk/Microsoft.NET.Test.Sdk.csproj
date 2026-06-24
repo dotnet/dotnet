@@ -50,25 +50,27 @@
          - net462   uses netfx\Microsoft.NET.Test.Sdk.targets
          - netcoreapp2.0 / netstandard2.0 use the root Microsoft.NET.Test.Sdk.targets (incompatibility shim) -->
   <ItemGroup>
-    <!-- props (same file for all frameworks) -->
-    <None Include="Microsoft.NET.Test.Sdk.props" Pack="true" PackagePath="build\net8.0\;build\net462\;build\netcoreapp2.0\;build\netstandard2.0\;buildMultiTargeting\net8.0\;buildMultiTargeting\net462\;buildMultiTargeting\netcoreapp2.0\;buildMultiTargeting\netstandard2.0\" />
+    <!-- props (same file for all frameworks). Forward slashes: MSBuild Pack only treats a trailing OS directory
+         separator as a folder marker, so a trailing '\' is honored on Windows but not on Linux (the VMR vertical
+         build), where the files would be mis-placed (NU5129). '/' is a directory separator on both. -->
+    <None Include="Microsoft.NET.Test.Sdk.props" Pack="true" PackagePath="build/net8.0/;build/net462/;build/netcoreapp2.0/;build/netstandard2.0/;buildMultiTargeting/net8.0/;buildMultiTargeting/net462/;buildMultiTargeting/netcoreapp2.0/;buildMultiTargeting/netstandard2.0/" />
 
     <!-- net8.0 targets + launcher program files -->
-    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build\net8.0\" />
-    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" Pack="true" PackagePath="build\net8.0\" />
-    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.fs" Pack="true" PackagePath="build\net8.0\" />
-    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.vb" Pack="true" PackagePath="build\net8.0\" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build/net8.0/" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.cs" Pack="true" PackagePath="build/net8.0/" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.fs" Pack="true" PackagePath="build/net8.0/" />
+    <None Include="netcoreapp\Microsoft.NET.Test.Sdk.Program.vb" Pack="true" PackagePath="build/net8.0/" />
 
     <!-- net462 targets -->
-    <None Include="netfx\Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build\net462\" />
+    <None Include="netfx\Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build/net462/" />
 
     <!-- netcoreapp2.0 / netstandard2.0 incompatibility-shim targets (root targets file) -->
-    <None Include="Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build\netcoreapp2.0\;build\netstandard2.0\;buildMultiTargeting\netcoreapp2.0\;buildMultiTargeting\netstandard2.0\" />
+    <None Include="Microsoft.NET.Test.Sdk.targets" Pack="true" PackagePath="build/netcoreapp2.0/;build/netstandard2.0/;buildMultiTargeting/netcoreapp2.0/;buildMultiTargeting/netstandard2.0/" />
 
     <!-- Empty lib stubs (no assembly is shipped). lib/native/_._ marks the package compatible with
          native (C++) test projects. Note: the previous nuspec also declared an empty native0.0
          dependency group; MSBuild pack only emits dependency groups for real build TFMs, so that empty
          group is dropped. This is behaviorally equivalent since the group carried no dependencies. -->
-    <None Include="_._" Pack="true" PackagePath="lib\net8.0\;lib\net462\;lib\native\" />
+    <None Include="_._" Pack="true" PackagePath="lib/net8.0/;lib/net462/;lib/native/" />
   </ItemGroup>
 </Project>
