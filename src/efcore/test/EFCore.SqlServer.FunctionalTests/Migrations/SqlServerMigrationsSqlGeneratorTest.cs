@@ -80,6 +80,26 @@ CREATE UNIQUE INDEX [IX_People_Name] ON [dbo].[People] ([FirstName], [LastName])
     }
 
     [Fact]
+    public virtual void AddColumnOperation_mistyped_default_legacy()
+    {
+        Generate(
+            new AddColumnOperation
+            {
+                Table = "People",
+                Name = "Id",
+                ClrType = typeof(int),
+                ColumnType = "int",
+                DefaultValue = "",
+                IsNullable = false
+            });
+
+        AssertSql(
+            """
+ALTER TABLE [People] ADD [Id] int NOT NULL DEFAULT N'';
+""");
+    }
+
+    [Fact]
     public virtual void AddColumnOperation_identity_legacy()
     {
         Generate(
@@ -307,10 +327,9 @@ ALTER TABLE [Person] ADD [RowVersion] rowversion NULL;
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[People]') AND [c].[name] = N'LuckyNumber');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[People]') AND [c].[name] = N'LuckyNumber';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [People] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [People] ALTER COLUMN [LuckyNumber] int NOT NULL;
 """);
@@ -383,10 +402,9 @@ ALTER TABLE [People] ADD FOREIGN KEY ([SpouseId]) REFERENCES [People];
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Files]') AND [c].[name] = N'FileSize');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Files]') AND [c].[name] = N'FileSize';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Files] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [Files] DROP COLUMN [FileSize];
 ALTER TABLE [Files] ADD [FileSize] AS LEN([FileContents]);
@@ -409,10 +427,9 @@ ALTER TABLE [Files] ADD [FileSize] AS LEN([FileContents]);
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[People]') AND [c].[name] = N'Id');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[People]') AND [c].[name] = N'Id';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [People] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [People] ALTER COLUMN [Id] int NOT NULL;
 """);
@@ -442,10 +459,9 @@ ALTER TABLE [People] ALTER COLUMN [Id] int NOT NULL;
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Person] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [Person] ALTER COLUMN [Name] nvarchar(30) NULL;
 """);
@@ -481,10 +497,9 @@ ALTER TABLE [Person] ALTER COLUMN [Name] nvarchar(30) NULL;
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Person] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [Person] ALTER COLUMN [Name] nvarchar(30) NULL;
 GO
@@ -522,10 +537,9 @@ CREATE INDEX [IX_Person_Name] ON [Person] ([Name]);
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Person] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [Person] ALTER COLUMN [Name] nvarchar(450) NULL;
 GO
@@ -555,10 +569,9 @@ CREATE INDEX [IX_Person_Name] ON [Person] ([Name]);
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Id');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Id';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Person] DROP CONSTRAINT ' + @var + ';');
 ALTER TABLE [Person] ALTER COLUMN [Id] bigint NOT NULL;
 """);
@@ -1937,10 +1950,9 @@ EXEC(N'CREATE UNIQUE INDEX [IX_Table1_Column1] ON [Table1] ([Column1]) WHERE [Co
         AssertSql(
             """
 DECLARE @var nvarchar(max);
-SELECT @var = QUOTENAME([d].[name])
-FROM [sys].[default_constraints] [d]
-INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
-WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name');
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Person]') AND [c].[name] = N'Name';
 IF @var IS NOT NULL EXEC(N'ALTER TABLE [Person] DROP CONSTRAINT ' + @var + ';');
 EXEC(N'UPDATE [Person] SET [Name] = N'''' WHERE [Name] IS NULL');
 ALTER TABLE [Person] ALTER COLUMN [Name] nvarchar(max) NOT NULL;

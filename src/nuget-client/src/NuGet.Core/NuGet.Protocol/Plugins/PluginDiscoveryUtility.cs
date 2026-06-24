@@ -1,6 +1,4 @@
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +9,7 @@ namespace NuGet.Protocol.Plugins
 {
     public static class PluginDiscoveryUtility
     {
-        public static Lazy<string> InternalPluginDiscoveryRoot { get; set; }
+        public static Lazy<string>? InternalPluginDiscoveryRoot { get; set; }
 
         private static string NuGetPluginsDirectory = "Plugins";
 
@@ -20,7 +18,7 @@ namespace NuGet.Protocol.Plugins
         /// The internal plugins located next to the NuGet assemblies.
         /// </summary>
         /// <returns>Internal plugins</returns>
-        public static string GetInternalPlugins()
+        public static string? GetInternalPlugins()
         {
             return InternalPluginDiscoveryRoot?.Value ??
                 GetNuGetPluginsDirectoryRelativeToNuGetAssembly(typeof(PluginDiscoveryUtility).Assembly.Location); // NuGet.*.dll
@@ -32,7 +30,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="msbuildDirectoryPath">The MsBuildExe directory path. Needs to be a valid path. file:// not supported.</param>
         /// <returns>The NuGet plugins directory, null if <paramref name="msbuildDirectoryPath"/> is null</returns>
         /// <remarks>The MSBuild.exe is in MSBuild\Current\Bin, the Plugins directory is in Common7\IDE\CommonExtensions\Microsoft\NuGet\Plugins</remarks>
-        public static string GetInternalPluginRelativeToMSBuildDirectory(string msbuildDirectoryPath)
+        public static string? GetInternalPluginRelativeToMSBuildDirectory(string msbuildDirectoryPath)
         {
             if (string.IsNullOrEmpty(msbuildDirectoryPath))
             {
@@ -53,11 +51,11 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="nugetAssemblyPath">The path to a NuGet assembly in CommonExtensions\NuGet, needs to be a valid path. file:// not supported</param>
         /// <returns>The NuGet plugins directory in CommonExtensions\NuGet\Plugins, null if the <paramref name="nugetAssemblyPath"/> is null</returns>
-        public static string GetNuGetPluginsDirectoryRelativeToNuGetAssembly(string nugetAssemblyPath)
+        public static string? GetNuGetPluginsDirectoryRelativeToNuGetAssembly(string nugetAssemblyPath)
         {
             return !string.IsNullOrEmpty(nugetAssemblyPath) ?
                     Path.Combine(
-                        Path.GetDirectoryName(nugetAssemblyPath),
+                        Path.GetDirectoryName(nugetAssemblyPath)!,
                         NuGetPluginsDirectory
                         ) :
                     null;

@@ -1527,7 +1527,7 @@ NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhe
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate는 RestoreLockedMode를 재정의합니다. 패키지 잠금 파일은 다시 평가되고 다시 생성되며, 잠금 모드는 무시됩니다.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

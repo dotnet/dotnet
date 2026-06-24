@@ -31,12 +31,13 @@ public partial class DependentBaseEntityType
             typeof(CompiledModelTestBase.DependentBase<byte?>),
             baseEntityType,
             discriminatorProperty: "EnumDiscriminator",
-            discriminatorValue: CompiledModelTestBase.Enum1.One,
             derivedTypesCount: 1,
             propertyCount: 6,
             navigationCount: 1,
             foreignKeyCount: 2,
             keyCount: 1);
+
+        runtimeEntityType.SetDiscriminatorValueFromProviderValue(1);
 
         var principalId = runtimeEntityType.AddProperty(
             "PrincipalId",
@@ -54,20 +55,7 @@ public partial class DependentBaseEntityType
             shadowIndex: 0,
             relationshipIndex: 0,
             storeGenerationIndex: 0);
-        principalId.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<long>(
-                bool (long v1, long v2) => v1 == v2,
-                int (long v) => ((object)v).GetHashCode(),
-                long (long v) => v),
-            keyComparer: new ValueComparer<long>(
-                bool (long v1, long v2) => v1 == v2,
-                int (long v) => ((object)v).GetHashCode(),
-                long (long v) => v),
-            providerValueComparer: new ValueComparer<long>(
-                bool (long v1, long v2) => v1 == v2,
-                int (long v) => ((object)v).GetHashCode(),
-                long (long v) => v),
-            clrType: typeof(long),
+        principalId.TypeMapping = CosmosTypeMapping<long>.Default.Clone(
             jsonValueReaderWriter: JsonInt64ReaderWriter.Instance);
         principalId.SetCurrentValueComparer(new EntryCurrentValueComparer<long>(principalId));
 
@@ -86,27 +74,13 @@ public partial class DependentBaseEntityType
             shadowIndex: 1,
             relationshipIndex: 1,
             storeGenerationIndex: 1);
-        principalAlternateId.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<Guid>(
-                bool (Guid v1, Guid v2) => v1 == v2,
-                int (Guid v) => ((object)v).GetHashCode(),
-                Guid (Guid v) => v),
-            keyComparer: new ValueComparer<Guid>(
-                bool (Guid v1, Guid v2) => v1 == v2,
-                int (Guid v) => ((object)v).GetHashCode(),
-                Guid (Guid v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            converter: new ValueConverter<Guid, string>(
-                string (Guid v) => v.ToString("D"),
-                Guid (string v) => new Guid(v)),
+        principalAlternateId.TypeMapping = CosmosTypeMapping<string>.Default.Clone(
+            comparer: DefaultValueComparer<Guid>.Default,
+            providerValueComparer: DefaultValueComparer<string>.Default,
+            converter: GuidToStringConverter.Instance,
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Guid, string>(
                 JsonStringReaderWriter.Instance,
-                new ValueConverter<Guid, string>(
-                    string (Guid v) => v.ToString("D"),
-                    Guid (string v) => new Guid(v))));
+                GuidToStringConverter.Instance));
         principalAlternateId.SetCurrentValueComparer(new EntryCurrentValueComparer<Guid>(principalAlternateId));
         principalAlternateId.SetSentinelFromProviderValue("00000000-0000-0000-0000-000000000000");
 
@@ -126,27 +100,13 @@ public partial class DependentBaseEntityType
             shadowIndex: 2,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        enumDiscriminator.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<CompiledModelTestBase.Enum1>(
-                bool (CompiledModelTestBase.Enum1 v1, CompiledModelTestBase.Enum1 v2) => object.Equals(((object)v1), ((object)v2)),
-                int (CompiledModelTestBase.Enum1 v) => ((object)v).GetHashCode(),
-                CompiledModelTestBase.Enum1 (CompiledModelTestBase.Enum1 v) => v),
-            keyComparer: new ValueComparer<CompiledModelTestBase.Enum1>(
-                bool (CompiledModelTestBase.Enum1 v1, CompiledModelTestBase.Enum1 v2) => object.Equals(((object)v1), ((object)v2)),
-                int (CompiledModelTestBase.Enum1 v) => ((object)v).GetHashCode(),
-                CompiledModelTestBase.Enum1 (CompiledModelTestBase.Enum1 v) => v),
-            providerValueComparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            converter: new ValueConverter<CompiledModelTestBase.Enum1, int>(
-                int (CompiledModelTestBase.Enum1 value) => ((int)value),
-                CompiledModelTestBase.Enum1 (int value) => ((CompiledModelTestBase.Enum1)value)),
+        enumDiscriminator.TypeMapping = CosmosTypeMapping<int>.Default.Clone(
+            comparer: ValueComparer<CompiledModelTestBase.Enum1>.Default,
+            providerValueComparer: DefaultValueComparer<int>.Default,
+            converter: EnumToNumberConverter<CompiledModelTestBase.Enum1, int>.Instance,
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<CompiledModelTestBase.Enum1, int>(
                 JsonInt32ReaderWriter.Instance,
-                new ValueConverter<CompiledModelTestBase.Enum1, int>(
-                    int (CompiledModelTestBase.Enum1 value) => ((int)value),
-                    CompiledModelTestBase.Enum1 (int value) => ((CompiledModelTestBase.Enum1)value))));
+                EnumToNumberConverter<CompiledModelTestBase.Enum1, int>.Instance));
         enumDiscriminator.SetSentinelFromProviderValue(0);
 
         var id = runtimeEntityType.AddProperty(
@@ -181,23 +141,9 @@ public partial class DependentBaseEntityType
             shadowIndex: -1,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        id.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<byte>(
-                bool (byte v1, byte v2) => v1 == v2,
-                int (byte v) => ((int)v),
-                byte (byte v) => v),
-            keyComparer: new ValueComparer<byte>(
-                bool (byte v1, byte v2) => v1 == v2,
-                int (byte v) => ((int)v),
-                byte (byte v) => v),
-            providerValueComparer: new ValueComparer<byte>(
-                bool (byte v1, byte v2) => v1 == v2,
-                int (byte v) => ((int)v),
-                byte (byte v) => v),
-            clrType: typeof(byte),
+        id.TypeMapping = CosmosTypeMapping<byte>.Default.Clone(
             jsonValueReaderWriter: JsonByteReaderWriter.Instance);
         id.SetComparer(new NullableValueComparer<byte>(id.TypeMapping.Comparer));
-        id.SetKeyComparer(new NullableValueComparer<byte>(id.TypeMapping.KeyComparer));
 
         var __id = runtimeEntityType.AddProperty(
             "__id",
@@ -215,20 +161,7 @@ public partial class DependentBaseEntityType
             shadowIndex: 3,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        __id.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            keyComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            clrType: typeof(string),
+        __id.TypeMapping = CosmosTypeMapping<string>.Default.Clone(
             jsonValueReaderWriter: JsonStringReaderWriter.Instance);
         __id.AddAnnotation("Cosmos:PropertyName", "id");
 
@@ -247,20 +180,7 @@ public partial class DependentBaseEntityType
             shadowIndex: 4,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        __jObject.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            keyComparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            providerValueComparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            clrType: typeof(JObject));
+        __jObject.TypeMapping = CosmosTypeMapping<JObject>.Default;
         __jObject.AddAnnotation("Cosmos:PropertyName", "");
 
         var key = runtimeEntityType.AddKey(
@@ -277,7 +197,8 @@ public partial class DependentBaseEntityType
             principalEntityType,
             deleteBehavior: DeleteBehavior.Cascade,
             unique: true,
-            required: true);
+            required: true,
+            constrained: false);
 
         return runtimeForeignKey;
     }
@@ -289,7 +210,8 @@ public partial class DependentBaseEntityType
             principalEntityType,
             deleteBehavior: DeleteBehavior.ClientNoAction,
             unique: true,
-            required: true);
+            required: true,
+            constrained: false);
 
         var principal = declaringEntityType.AddNavigation("Principal",
             runtimeForeignKey,

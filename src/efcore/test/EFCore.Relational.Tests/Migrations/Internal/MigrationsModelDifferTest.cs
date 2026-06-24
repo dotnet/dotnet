@@ -9903,7 +9903,6 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
     {
     }
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact]
     public virtual void Convert_table_from_owned_to_complex_properties_mapped_to_json()
         => Execute(
@@ -10005,7 +10004,6 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                     });
             },
             Assert.Empty);
-#pragma warning restore EF8001 // Owned JSON entities are obsolete
 
     [Fact]
     public virtual void Add_complex_collection_mapped_to_json_uses_empty_array_as_default_value()
@@ -10101,7 +10099,6 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                 Assert.IsType<DropColumnOperation>(downOps[0]);
             });
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact]
     public virtual void Add_owned_collection_mapped_to_json_has_nullable_column()
         => Execute(
@@ -10148,9 +10145,7 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                 Assert.Equal(1, downOps.Count);
                 Assert.IsType<DropColumnOperation>(downOps[0]);
             });
-#pragma warning restore EF8001 // Owned JSON entities are obsolete
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact]
     public virtual void Add_owned_reference_with_nested_collection_mapped_to_json_uses_empty_object_as_default_value()
         => Execute(
@@ -10201,7 +10196,6 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
                 Assert.Equal(1, downOps.Count);
                 Assert.IsType<DropColumnOperation>(downOps[0]);
             });
-#pragma warning restore EF8001 // Owned JSON entities are obsolete
 
     [Fact]
     public virtual void Noop_on_complex_properties()
@@ -12789,6 +12783,62 @@ public class MigrationsModelDifferTest : MigrationsModelDifferTestBase
             source => source.Entity("Cat", x => x.Property<string>("Name").HasAnnotation("CustomAnnotation", "Value with\r\nnewlines")),
             target => target.Entity("Cat", x => x.Property<string>("Name").HasAnnotation("CustomAnnotation", "Value with\nnewlines")),
             result => Assert.Empty(result));
+
+    [Fact]
+    public void Unconstrained_foreign_key_produces_no_AddForeignKeyOperation()
+        => Execute(
+            _ => { },
+            modelBuilder =>
+            {
+                modelBuilder.Entity("Principal", x => x.Property<int>("Id"));
+                modelBuilder.Entity(
+                    "Dependent",
+                    x =>
+                    {
+                        x.Property<int>("Id");
+                        x.Property<int>("PrincipalId");
+                        x.HasOne("Principal").WithMany().HasForeignKey("PrincipalId").IsConstrained(false);
+                    });
+            },
+            result =>
+            {
+                Assert.DoesNotContain(result, o => o is AddForeignKeyOperation);
+                Assert.All(result.OfType<CreateTableOperation>(), op => Assert.Empty(op.ForeignKeys));
+                Assert.Contains(result, o => o is CreateIndexOperation);
+            });
+
+    [Fact]
+    public void Making_a_foreign_key_unconstrained_drops_the_constraint()
+        => Execute(
+            modelBuilder =>
+            {
+                modelBuilder.Entity("Principal", x => x.Property<int>("Id"));
+                modelBuilder.Entity(
+                    "Dependent",
+                    x =>
+                    {
+                        x.Property<int>("Id");
+                        x.Property<int>("PrincipalId");
+                        x.HasOne("Principal").WithMany().HasForeignKey("PrincipalId");
+                    });
+            },
+            modelBuilder =>
+            {
+                modelBuilder.Entity("Principal", x => x.Property<int>("Id"));
+                modelBuilder.Entity(
+                    "Dependent",
+                    x =>
+                    {
+                        x.Property<int>("Id");
+                        x.Property<int>("PrincipalId");
+                        x.HasOne("Principal").WithMany().HasForeignKey("PrincipalId").IsConstrained(false);
+                    });
+            },
+            result =>
+            {
+                Assert.Contains(result, o => o is DropForeignKeyOperation);
+                Assert.DoesNotContain(result, o => o is AddForeignKeyOperation);
+            });
 
     protected override TestHelpers TestHelpers
         => FakeRelationalTestHelpers.Instance;

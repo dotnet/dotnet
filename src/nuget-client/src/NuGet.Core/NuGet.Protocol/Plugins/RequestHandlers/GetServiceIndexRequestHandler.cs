@@ -1,10 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Protocol.Core.Types;
@@ -93,6 +94,10 @@ namespace NuGet.Protocol.Plugins
         /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public async Task HandleResponseAsync(
             IConnection connection,
             Message request,
@@ -116,19 +121,19 @@ namespace NuGet.Protocol.Plugins
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var getRequest = MessageUtilities.DeserializePayload<GetServiceIndexRequest>(request);
-            SourceRepository sourceRepository;
-            ServiceIndexResourceV3 serviceIndex = null;
+            // Deserialized payload is non-null for well-formed handler requests.
+            var getRequest = MessageUtilities.DeserializePayload<GetServiceIndexRequest>(request)!;
+            ServiceIndexResourceV3? serviceIndex = null;
             GetServiceIndexResponse responsePayload;
 
-            if (_repositories.TryGetValue(getRequest.PackageSourceRepository, out sourceRepository))
+            if (_repositories.TryGetValue(getRequest.PackageSourceRepository, out var sourceRepository))
             {
                 serviceIndex = await sourceRepository.GetResourceAsync<ServiceIndexResourceV3>(cancellationToken);
             }
 
             if (serviceIndex == null)
             {
-                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndexJson: (string)null);
+                responsePayload = new GetServiceIndexResponse(MessageResponseCode.NotFound, serviceIndexJson: (string?)null);
             }
             else
             {

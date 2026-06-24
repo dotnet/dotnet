@@ -48,7 +48,11 @@ namespace NuGet.Protocol
             Common.ILogger log,
             CancellationToken token)
         {
-            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch || NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await IdStartsWithStjAsync(packageIdPrefix, includePrerelease, log, token);
+            }
+            else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
             {
                 return await IdStartsWithStjAsync(packageIdPrefix, includePrerelease, log, token);
             }

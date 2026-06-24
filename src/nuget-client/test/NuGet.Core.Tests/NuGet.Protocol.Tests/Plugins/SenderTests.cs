@@ -27,7 +27,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNull()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new Sender(writer: null));
+                () => new Sender(writer: null!));
 
             Assert.Equal("writer", exception.ParamName);
         }
@@ -110,7 +110,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 sender.Connect();
 
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => sender.SendAsync(message: null, cancellationToken: CancellationToken.None));
+                    () => sender.SendAsync(message: null!, cancellationToken: CancellationToken.None));
 
                 Assert.Equal("message", exception.ParamName);
             }

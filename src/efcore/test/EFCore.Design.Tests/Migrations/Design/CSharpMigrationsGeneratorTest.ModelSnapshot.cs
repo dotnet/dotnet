@@ -122,6 +122,54 @@ partial class MySnapshot : ModelSnapshot
     }
 
     [Fact]
+    public void Snapshot_with_mismatched_key_and_foreign_key_property_types_is_usable()
+    {
+        const string snapshotCode =
+            """
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#nullable disable
+
+namespace RootNamespace;
+
+partial class Snapshot : ModelSnapshot
+{
+    protected override void BuildModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .HasAnnotation("ProductVersion", "10.0.0");
+
+        modelBuilder.Entity("Dependent", b =>
+            {
+                b.Property<long>("Id")
+                    .HasColumnType("bigint");
+
+                b.HasKey("Id");
+
+                b.HasOne("Principal")
+                    .WithMany()
+                    .HasForeignKey("Id");
+            });
+
+        modelBuilder.Entity("Principal", b =>
+            {
+                b.Property<short>("Id")
+                    .HasColumnType("smallint");
+
+                b.HasKey("Id");
+            });
+    }
+}
+
+""";
+
+        var snapshotModel = BuildModelFromSnapshotSource(snapshotCode);
+
+        Assert.Single(snapshotModel.FindEntityType("Dependent")!.GetForeignKeys());
+    }
+
+    [Fact]
     public void Snapshot_with_migration_id()
     {
         var generator = CreateMigrationsCodeGenerator();
@@ -408,6 +456,79 @@ partial class MySnapshot : ModelSnapshot
     private enum EnumS8 : sbyte
     {
         SomeValue = sbyte.MinValue
+    }
+
+    [Fact]
+    public virtual void Unconstrained_foreign_key_is_stored_in_snapshot()
+        => Test(
+            builder =>
+            {
+                builder.Entity<UnconstrainedFkPrincipal>();
+                builder.Entity<UnconstrainedFkDependent>()
+                    .HasOne(e => e.Principal).WithMany().HasForeignKey(e => e.PrincipalId).IsConstrained(false);
+            },
+            AddBoilerPlate(
+                GetHeading()
+                + """
+        modelBuilder.Entity("Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+UnconstrainedFkDependent", b =>
+            {
+                var id = b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
+
+                b.Property<int>("PrincipalId")
+                    .HasColumnType("int");
+
+                b.HasKey("Id");
+
+                b.HasIndex("PrincipalId");
+
+                b.ToTable("UnconstrainedFkDependent", "DefaultSchema");
+            });
+
+        modelBuilder.Entity("Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+UnconstrainedFkPrincipal", b =>
+            {
+                var id = b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
+
+                b.HasKey("Id");
+
+                b.ToTable("UnconstrainedFkPrincipal", "DefaultSchema");
+            });
+
+        modelBuilder.Entity("Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+UnconstrainedFkDependent", b =>
+            {
+                b.HasOne("Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+UnconstrainedFkPrincipal", "Principal")
+                    .WithMany()
+                    .HasForeignKey("PrincipalId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired()
+                    .IsConstrained(false);
+
+                b.Navigation("Principal");
+            });
+"""),
+            o =>
+            {
+                var fk = o.FindEntityType(typeof(UnconstrainedFkDependent).FullName)!.GetForeignKeys().Single();
+                Assert.False(fk.IsConstrained);
+            });
+
+    private class UnconstrainedFkPrincipal
+    {
+        public int Id { get; set; }
+    }
+
+    private class UnconstrainedFkDependent
+    {
+        public int Id { get; set; }
+        public int PrincipalId { get; set; }
+        public UnconstrainedFkPrincipal Principal { get; set; }
     }
 
     private class EntityWithOneProperty
@@ -1031,6 +1152,31 @@ partial class MySnapshot : ModelSnapshot
             });
 """),
             o => Assert.Equal("EntityWithOneProperty", o.GetEntityTypes().Single().GetViewName()));
+
+    [Fact] // Issue #26067
+    public void ToTable_with_default_null_schema_is_not_changed_on_snapshot_round_trip()
+    {
+        // When the default schema is null, regenerating the snapshot from a model that was itself
+        // built from a snapshot (as happens when removing a migration) must not add a redundant
+        // ", (string)null" schema argument to every ToTable call.
+        var modelBuilder = CreateConventionalModelBuilder();
+        modelBuilder.HasDefaultSchema(null);
+        modelBuilder.Model.RemoveAnnotation(CoreAnnotationNames.ProductVersion);
+        modelBuilder.Entity<EntityWithOneProperty>().Ignore(e => e.EntityWithTwoProperties);
+
+        var model = modelBuilder.FinalizeModel(designTime: true, skipValidation: true);
+
+        var generator = CreateMigrationsGenerator();
+        var code = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", model);
+
+        Assert.Contains(@"b.ToTable(""EntityWithOneProperty"");", code);
+        Assert.DoesNotContain("(string)null", code);
+
+        var roundTrippedModel = BuildModelFromSnapshotSource(code);
+        var roundTrippedCode = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", roundTrippedModel);
+
+        Assert.Equal(code, roundTrippedCode, ignoreLineEndingDifferences: true);
+    }
 
     [Fact]
     public void Views_with_schemas_are_stored_in_the_model_snapshot()
@@ -3611,6 +3757,67 @@ partial class Snapshot : ModelSnapshot
                     a => a.Name == SqlServerAnnotationNames.TemporalPeriodEndPropertyName && a.Value as string == "PeriodEnd");
             });
 
+    [Fact]
+    public virtual void Temporal_table_with_visible_period_columns_is_stored_in_snapshot()
+        => Test(
+            builder => builder.Entity<EntityWithStringProperty>().ToTable(tb => tb.IsTemporal(ttb =>
+            {
+                ttb.UseHistoryTable("HistoryTable");
+                ttb.HasPeriodStart("Start").HasColumnName("PeriodStart").IsHidden(false);
+                ttb.HasPeriodEnd("End").HasColumnName("PeriodEnd").IsHidden(false);
+            })),
+            AddBoilerPlate(
+                GetHeading()
+                + """
+        modelBuilder.Entity("Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+EntityWithStringProperty", b =>
+            {
+                var id = b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
+
+                b.Property<DateTime>("End")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("PeriodEnd");
+
+                b.Property<string>("Name")
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<DateTime>("Start")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .HasColumnType("datetime2")
+                    .HasColumnName("PeriodStart");
+
+                b.HasKey("Id");
+
+                b.ToTable("EntityWithStringProperty", "DefaultSchema");
+
+                b.ToTable(tb => tb.IsTemporal(ttb =>
+                        {
+                            ttb.UseHistoryTable("HistoryTable");
+                            ttb
+                                .HasPeriodStart("Start")
+                                .HasColumnName("PeriodStart")
+                                .IsHidden(false);
+                            ttb
+                                .HasPeriodEnd("End")
+                                .HasColumnName("PeriodEnd")
+                                .IsHidden(false);
+                        }));
+            });
+""", usingSystem: true),
+            o =>
+            {
+                var temporalEntity = o.FindEntityType(
+                    "Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+EntityWithStringProperty");
+
+                Assert.True(temporalEntity.IsTemporal());
+                Assert.False(temporalEntity.GetProperty("Start").IsHidden());
+                Assert.False(temporalEntity.GetProperty("End").IsHidden());
+            });
+
     #endregion
 
     #region Owned types
@@ -4399,7 +4606,6 @@ partial class Snapshot : ModelSnapshot
                 Assert.NotNull(testOwnee.FindCheckConstraint("CK_TestOwnee_TestEnum_Enum_Constraint"));
             });
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact]
     public virtual void Owned_types_mapped_to_json_are_stored_in_snapshot()
         => Test(
@@ -4638,7 +4844,6 @@ partial class Snapshot : ModelSnapshot
                 Assert.Equal("EntityWithTwoProperties", ownedType1.GetContainerColumnName());
                 Assert.Equal("json", ownedType1.GetContainerColumnType());
             });
-#pragma warning restore EF8001 // Owned JSON entities are obsolete
 
     private class Order
     {

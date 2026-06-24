@@ -398,7 +398,7 @@ nuget init \\foo\packages \\bar\packages</target>
       </trans-unit>
       <trans-unit id="InstallCommandPrerelease">
         <source>Allows prerelease packages to be installed. This flag is not required when restoring packages by installing from packages.config.</source>
-        <target state="translated">Allows prerelease packages to be installed. This flag is not required when restoring packages by installing from packages.config.</target>
+        <target state="translated">Позволяет устанавливать предварительные версии пакетов. Этот флаг не требуется при восстановлении пакетов путем установки из файла packages.config.</target>
         <note>Please don't localize "packages.config".</note>
       </trans-unit>
       <trans-unit id="InstallCommandRequireConsent">
@@ -456,7 +456,7 @@ nuget install ninject -o c:\foo</target>
       </trans-unit>
       <trans-unit id="ListCommandPrerelease">
         <source>Allow prerelease packages to be shown.</source>
-        <target state="translated">Разрешить отображение пакетов предварительных выпусков.</target>
+        <target state="translated">Разрешить отображение пакетов предварительных версий.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListCommandSourceDescription">
@@ -849,7 +849,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="SearchCommandPreRelease">
         <source>Include prerelease packages.</source>
-        <target state="translated">Include prerelease packages.</target>
+        <target state="translated">Включить предварительные версии пакетов.</target>
         <note />
       </trans-unit>
       <trans-unit id="SearchCommandSourceDescription">

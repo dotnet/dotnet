@@ -1204,7 +1204,9 @@ public class CSharpSnapshotGenerator : ICSharpSnapshotGenerator
             }
 
             if (schema != null
-                || (schemaAnnotation != null && tableName != null))
+                || (schemaAnnotation != null
+                    && tableName != null
+                    && entityType.GetDefaultSchema() != null))
             {
                 stringBuilder
                     .Append(", ");
@@ -1792,6 +1794,13 @@ public class CSharpSnapshotGenerator : ICSharpSnapshotGenerator
                 stringBuilder
                     .AppendLine()
                     .Append(".IsRequired()");
+            }
+
+            if (!foreignKey.IsConstrained)
+            {
+                stringBuilder
+                    .AppendLine()
+                    .Append(".IsConstrained(false)");
             }
         }
 

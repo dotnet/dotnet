@@ -98,7 +98,7 @@ steps:
     
     $source_manifest_path = "$(Build.ArtifactStagingDirectory)/source-manifest.json"
     $headers = @{
-      Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$(dn-bot-all-drop-rw-code-rw-release-all)"))
+      Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$(System.AccessToken)"))
     }
     Invoke-WebRequest -Uri $url -Headers $headers -OutFile $source_manifest_path
 
@@ -135,7 +135,7 @@ steps:
       $outputPath = "$(Build.ArtifactStagingDirectory)/base-assets/"
       $darcPath = "$(InstallDarc.darcPath)"
       $githubPat = "$(BotAccount-dotnet-bot-repo-PAT)"
-      $azdevPat = "$(dn-bot-all-drop-rw-code-rw-release-all)"
+      $azdevPat = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
 
       $nonShipping = $false
       if ("${{ parameters.command }}" -eq "assets") {

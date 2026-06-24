@@ -11,6 +11,7 @@ namespace NuGet.Protocol.Model
     {
         [JsonProperty("totalHits")]
         [JsonPropertyName("totalHits")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public long TotalHits { get; set; }
 
         [JsonProperty("data")]

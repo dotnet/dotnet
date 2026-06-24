@@ -269,17 +269,22 @@ public class CosmosSessionTokensTest(CosmosSessionTokensTest.CosmosFixture fixtu
         await context.SaveChangesAsync();
 
         // Order between the two containers within a single SaveChanges is not guaranteed; look up by name.
-        var initialDefaultContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Take(2).Single(c => c.containerName == nameof(CosmosSessionTokenContext));
-        var initialOtherContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Take(2).Single(c => c.containerName == OtherContainerName);
+        Assert.Equal(2, _sessionTokenStorage.TrackSessionTokenCalls.Count);
+        var initialDefaultContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Single(c => c.containerName == nameof(CosmosSessionTokenContext));
+        var initialOtherContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Single(c => c.containerName == OtherContainerName);
+
+        // Separate the create phase from the delete phase so the assertions below don't depend on
+        // the relative ordering or count of the two phases' tracked calls.
+        _sessionTokenStorage.TrackSessionTokenCalls.Clear();
 
         context.Customers.Remove(customer);
         context.OtherContainerCustomers.Remove(otherContainerCustomer);
 
         await context.SaveChangesAsync();
 
-        Assert.Equal(4, _sessionTokenStorage.TrackSessionTokenCalls.Count);
-        var defaultContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Skip(2).Single(c => c.containerName == nameof(CosmosSessionTokenContext));
-        var otherContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Skip(2).Single(c => c.containerName == OtherContainerName);
+        Assert.Equal(2, _sessionTokenStorage.TrackSessionTokenCalls.Count);
+        var defaultContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Single(c => c.containerName == nameof(CosmosSessionTokenContext));
+        var otherContainerCall = _sessionTokenStorage.TrackSessionTokenCalls.Single(c => c.containerName == OtherContainerName);
 
         Assert.NotEmpty(defaultContainerCall.sessionToken);
         Assert.NotEmpty(otherContainerCall.sessionToken);
@@ -573,18 +578,16 @@ public class CosmosSessionTokensTest(CosmosSessionTokensTest.CosmosFixture fixtu
         }
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/291 (Session tokens not properly tracked)
     public class CosmosNonSharedSessionTokenTests(NonSharedFixture fixture) : NonSharedModelTestBase(fixture), IClassFixture<NonSharedFixture>
     {
         protected override ITestStoreFactory NonSharedTestStoreFactory
         => CosmosTestStoreFactory.Instance;
 
-        protected override string NonSharedStoreName => nameof(CosmosSessionTokensTest);
+        protected override string NonSharedStoreName => nameof(CosmosNonSharedSessionTokenTests);
 
         protected override TestStore CreateTestStore() => CosmosTestStore.Create(NonSharedStoreName, (cfg) => cfg.SessionTokenManagementMode(Cosmos.Infrastructure.SessionTokenManagementMode.SemiAutomatic));
 
-        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/322
-        [ConditionalFact(typeof(CosmosTestEnvironment), nameof(CosmosTestEnvironment.IsNotLinuxEmulator))]
+        [Fact]
         public virtual async Task UseSessionTokens_uses_session_tokens()
         {
             var contextFactory = await InitializeNonSharedTest<CosmosSessionTokenContext>();
@@ -628,8 +631,7 @@ public class CosmosSessionTokensTest(CosmosSessionTokensTest.CosmosFixture fixtu
             Assert.Null(result);
         }
 
-        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/322
-        [ConditionalFact(typeof(CosmosTestEnvironment), nameof(CosmosTestEnvironment.IsNotLinuxEmulator))]
+        [Fact]
         public virtual async Task Read_item_session_not_found_throws_CosmosException()
         {
             var contextFactory = await InitializeNonSharedTest<CosmosSessionTokenContext>();
@@ -716,7 +718,7 @@ public class CosmosSessionTokensTest(CosmosSessionTokensTest.CosmosFixture fixtu
             Assert.True(_sessionTokenStorage.ClearCalled);
         }
 
-        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/319
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/331
         [ConditionalTheory(typeof(CosmosTestEnvironment), nameof(CosmosTestEnvironment.IsNotLinuxEmulator))]
         [InlineData(AutoTransactionBehavior.Never)]
         [InlineData(AutoTransactionBehavior.Always)]

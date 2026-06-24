@@ -1210,6 +1210,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 jsonEntity, parentEntity, navigation);
 
         /// <summary>
+        ///     No JSON element mapping was found for '{structuralType}.{name}' on column '{columnName}'.
+        /// </summary>
+        public static string JsonElementMappingNotFound(object? structuralType, object? name, object? columnName)
+            => string.Format(
+                GetString("JsonElementMappingNotFound", nameof(structuralType), nameof(name), nameof(columnName)),
+                structuralType, name, columnName);
+
+        /// <summary>
         ///     The database returned the empty string when a JSON object was expected.
         /// </summary>
         public static string JsonEmptyString
@@ -1406,6 +1414,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("JsonPropertyNameShouldBeConfiguredOnNestedNavigation");
 
         /// <summary>
+        ///     The JSON query expression for '{structuralType}' has no underlying column.
+        /// </summary>
+        public static string JsonQueryExpressionWithoutUnderlyingColumn(object? structuralType)
+            => string.Format(
+                GetString("JsonQueryExpressionWithoutUnderlyingColumn", nameof(structuralType)),
+                structuralType);
+
+        /// <summary>
         ///     Composing LINQ operators over collections inside JSON documents isn't supported or hasn't been implemented by your EF provider.
         /// </summary>
         public static string JsonQueryLinqOperatorsNotSupported
@@ -1556,6 +1572,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("ModificationCommandInvalidEntityStateSensitive", nameof(entityType), nameof(keyValues), nameof(entityState)),
                 entityType, keyValues, entityState);
+
+        /// <summary>
+        ///     The annotation '{annotationName}' was specified twice with potentially different values. Specifying the same annotation multiple times for different providers is no longer supported. Review the generated Migration to ensure it is correct and, if necessary, edit the Migration to fix any issues.
+        /// </summary>
+        public static string MultipleAnnotationConflict(object? annotationName)
+            => string.Format(
+                GetString("MultipleAnnotationConflict", nameof(annotationName)),
+                annotationName);
 
         /// <summary>
         ///     Entity type '{entityType}' is mapped to multiple columns with name '{columnName}', and one of them is configured as a JSON column. Assign different names to the columns.
@@ -4089,6 +4113,31 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
                             level,
                             RelationalEventId.OptionalDependentWithoutIdentifyingPropertyWarning,
                             _resourceManager.GetString("LogOptionalDependentWithoutIdentifyingProperty")!)));
+            }
+
+            return (EventDefinition<string>)definition;
+        }
+
+        /// <summary>
+        ///     The entity type '{entityType}' is an owned entity type mapped to JSON as a collection, which uses a synthesized ordinal key. Mapping owned entity collections to JSON is obsolete; map it as a complex type collection or configure a non-shadow key instead. See https://aka.ms/efcore-docs-json-owned-entities for more information.
+        /// </summary>
+        public static EventDefinition<string> LogOwnedEntityMappedToJsonCollection(IDiagnosticsLogger logger)
+        {
+            var definition = ((RelationalLoggingDefinitions)logger.Definitions).LogOwnedEntityMappedToJsonCollection;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((RelationalLoggingDefinitions)logger.Definitions).LogOwnedEntityMappedToJsonCollection,
+                    logger,
+                    static logger => new EventDefinition<string>(
+                        logger.Options,
+                        RelationalEventId.OwnedEntityMappedToJsonCollectionWarning,
+                        LogLevel.Warning,
+                        "RelationalEventId.OwnedEntityMappedToJsonCollectionWarning",
+                        level => LoggerMessage.Define<string>(
+                            level,
+                            RelationalEventId.OwnedEntityMappedToJsonCollectionWarning,
+                            _resourceManager.GetString("LogOwnedEntityMappedToJsonCollection")!)));
             }
 
             return (EventDefinition<string>)definition;

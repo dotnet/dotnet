@@ -1107,19 +1107,19 @@ namespace Dotnet.Integration.Test
 
         [PlatformTheory(Platform.Windows)]
         [InlineData(" --include-transitive", true)]
-        [InlineData(" --include-transitive --framework net10.0", false)]
+        [InlineData(" --include-transitive --framework " + TestConstants.ProjectTargetFramework, false)]
         [InlineData(" --include-transitive --framework net472", true)]
         [InlineData("", false)]
         public async Task DeprecatedOption_WithMultiTargetedProjectsAndDeprecatedPackages_Succeeds(string additionalOptions, bool shouldReportTransitivePackages)
         {
             // Arrange
             using var pathContext = _fixture.CreateSimpleTestPathContext();
-            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472;net10.0");
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472;" + TestConstants.ProjectTargetFramework);
 
             var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
             var packageB100 = new SimpleTestPackageContext("B", "1.0.0");
             packageA100.PerFrameworkDependencies.Add(FrameworkConstants.CommonFrameworks.Net472, [packageB100]);
-            packageA100.PerFrameworkDependencies.Add(FrameworkConstants.CommonFrameworks.Net10_0, []);
+            packageA100.PerFrameworkDependencies.Add(TestConstants.DefaultTargetFramework, []);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
 

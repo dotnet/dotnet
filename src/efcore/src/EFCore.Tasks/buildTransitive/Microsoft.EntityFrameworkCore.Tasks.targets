@@ -40,7 +40,7 @@ For Publish:
   -->
 
   <Target Name="_EFGenerateFilesAfterBuild"
-          Condition="'$(_EFGenerationStage)'=='' And ('$(EFScaffoldModelStage)'=='build' Or '$(EFPrecompileQueriesStage)'=='build')">
+          Condition="'$(_EFGenerationStage)'=='' And '$(DesignTimeBuild)' != 'True' And ('$(EFScaffoldModelStage)'=='build' Or '$(EFPrecompileQueriesStage)'=='build')">
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="_EFGenerateFiles"
              BuildInParallel="$(BuildInParallel)"
@@ -51,7 +51,7 @@ For Publish:
   <Target Name="_EFGenerateFilesBeforePublish"
           AfterTargets="GetCopyToPublishDirectoryItems"
           BeforeTargets="GeneratePublishDependencyFile"
-          Condition="'$(_EFGenerationStage)'=='' And ('$(EFScaffoldModelStage)'=='publish' Or '$(EFPrecompileQueriesStage)'=='publish' Or '$(_EFPublishAot)'=='true' Or '$(PublishAot)'=='true')">
+          Condition="'$(_EFGenerationStage)'=='' And '$(DesignTimeBuild)' != 'True' And ('$(EFScaffoldModelStage)'=='publish' Or '$(EFPrecompileQueriesStage)'=='publish' Or '$(_EFPublishAot)'=='true' Or '$(PublishAot)'=='true')">
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="_EFGenerateFiles"
              BuildInParallel="$(BuildInParallel)"
@@ -173,7 +173,7 @@ For Publish:
        This target has the same Inputs and Outputs as CoreCompile to run only if CoreCompile isn't going to be skipped -->
   <Target Name="_EFPrepareForCompile"
           DependsOnTargets="_EFProcessGeneratedFiles"
-          Condition="'$(_EFGenerationStage)'==''"
+          Condition="'$(_EFGenerationStage)'=='' And '$(DesignTimeBuild)' != 'True'"
           Inputs="$(MSBuildAllProjects);
                   @(Compile);
                   @(_CoreCompileResourceInputs);

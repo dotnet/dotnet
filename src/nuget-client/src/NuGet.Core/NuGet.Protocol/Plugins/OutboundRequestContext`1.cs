@@ -1,10 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,14 +26,14 @@ namespace NuGet.Protocol.Plugins
         private bool _isKeepAlive;
         private readonly IPluginLogger _logger;
         private readonly Message _request;
-        private readonly TaskCompletionSource<TResult> _taskCompletionSource;
+        private readonly TaskCompletionSource<TResult?> _taskCompletionSource;
         private readonly TimeSpan? _timeout;
-        private readonly Timer _timer;
+        private readonly Timer? _timer;
 
         /// <summary>
         /// Gets the completion task.
         /// </summary>
-        public Task<TResult> CompletionTask => _taskCompletionSource.Task;
+        public Task<TResult?> CompletionTask => _taskCompletionSource.Task;
 
         /// <summary>
         /// Initializes a new <see cref="OutboundRequestContext{TResult}" /> class.
@@ -102,7 +103,7 @@ namespace NuGet.Protocol.Plugins
 
             _connection = connection;
             _request = request;
-            _taskCompletionSource = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _taskCompletionSource = new TaskCompletionSource<TResult?>(TaskCreationOptions.RunContinuationsAsynchronously);
             _timeout = timeout;
             _isKeepAlive = isKeepAlive;
             RequestId = request.RequestId;
@@ -149,6 +150,10 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="progress">A progress notification.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public override void HandleProgress(Message progress)
         {
             if (progress == null)
@@ -160,7 +165,8 @@ namespace NuGet.Protocol.Plugins
 
             if (_timeout.HasValue && _isKeepAlive)
             {
-                _timer.Change(_timeout.Value, Timeout.InfiniteTimeSpan);
+                // _timer is non-null whenever _timeout.HasValue (see constructor).
+                _timer!.Change(_timeout.Value, Timeout.InfiniteTimeSpan);
             }
         }
 
@@ -169,6 +175,10 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="response">A response.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="response" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public override void HandleResponse(Message response)
         {
             if (response == null)
@@ -186,6 +196,10 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="fault">A fault response.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public override void HandleFault(Message fault)
         {
             if (fault == null)
@@ -195,7 +209,7 @@ namespace NuGet.Protocol.Plugins
 
             var payload = MessageUtilities.DeserializePayload<Fault>(fault);
 
-            throw new ProtocolException(payload.Message);
+            throw new ProtocolException(payload?.Message);
         }
 
         protected override void Dispose(bool disposing)
@@ -241,7 +255,7 @@ namespace NuGet.Protocol.Plugins
             }
         }
 
-        private void OnTimeout(object state)
+        private void OnTimeout(object? state)
         {
             Debug.WriteLine($"Request {_request.RequestId} timed out.");
 
