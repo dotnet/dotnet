@@ -8,7 +8,7 @@ using NuGet.Versioning;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 {
-    internal class MsiMetadata
+    internal class WorkloadPackageMetadata : IWorkloadPackageMetadata
     {
         public string Id
         {
@@ -59,7 +59,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             get;
         }
 
-        public MsiMetadata(string id, NuGetVersion packageVersion, Version msiVersion, string authors, string copyright, string description, string title, string? licenseUrl, string projectUrl, string swixPackageId)
+        public WorkloadPackageMetadata(string id, NuGetVersion packageVersion, Version msiVersion, string authors, string copyright, string description, string title, string? licenseUrl, string projectUrl, string swixPackageId)
         {
             Id = id;
             PackageVersion = packageVersion;
@@ -71,22 +71,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             LicenseUrl = licenseUrl;
             ProjectUrl = projectUrl;
             SwixPackageId = swixPackageId;
-        }
-
-        public static MsiMetadata Create(WorkloadPackageBase package)
-        {
-            return new(
-                package.Id,
-                package.PackageVersion,
-                package.MsiVersion,
-                package.Authors,
-                package.Copyright,
-                package.Description,
-                package.Title,
-                package.LicenseUrl,
-                package.ProjectUrl,
-                package.SwixPackageId
-                );
         }
     }
 }

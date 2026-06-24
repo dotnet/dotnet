@@ -101,6 +101,46 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// Gets the package associated with a specific workload pack for the specified platform.
+        /// </summary>
+        /// <param name="packageSource">The path where workload packages reside.</param>
+        /// <param name="pack"></param>
+        /// <returns></returns>
+        internal static string? GetSourcePackage(string packageSource, WorkloadPack pack, string platform)
+        {
+            if (pack.IsAlias && pack.AliasTo != null)
+            {
+                foreach (string rid in pack.AliasTo.Keys)
+                {
+                    string sourcePackage = Path.Combine(packageSource, $"{pack.AliasTo[rid]}.{pack.Version}.nupkg");
+
+                    switch (rid)
+                    {
+                        case "win7":
+                        case "win10":
+                        case "win":
+                        case "any":
+                            return sourcePackage;
+                        default:
+                            if (rid == $"win-{platform}")
+                            {
+                                return sourcePackage;
+                            }
+                            // Unsupported RID.
+                            continue;
+                    }
+                }
+            }
+            else
+            {
+                // For non-RID specific packs we'll produce MSIs for each supported platform.
+                return Path.Combine(packageSource, $"{pack.Id}.{pack.Version}.nupkg");
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Creates a workload pack package from the provided NuGet package and workload pack.
         /// </summary>
         /// <param name="pack">The workload pack determines the type of package to create.</param>

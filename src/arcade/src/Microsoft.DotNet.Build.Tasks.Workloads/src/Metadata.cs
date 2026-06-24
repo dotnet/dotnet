@@ -36,8 +36,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public static readonly string SdkFeatureBand = nameof(SdkFeatureBand);
         public static readonly string ShortName = nameof(ShortName);
         public static readonly string SourcePackage = nameof(SourcePackage);
+        public static readonly string SourcePath = nameof(SourcePath);
         public static readonly string SwixPackageId = nameof(SwixPackageId);
         public static readonly string SwixProject = nameof(SwixProject);
+
+        /// <summary>
+        /// The file system path of the generated wixpack archive used for signing.
+        /// </summary>
+        public static readonly string WixPack = nameof(WixPack);
 
         /// <summary>
         /// Metadata describing whether the VS authoring supports the machineArch SWIX property.
@@ -52,11 +58,5 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
 
         public static readonly string Title = nameof(Title);
         public static readonly string Version = nameof(Version);
-
-        /// <summary>
-        /// Metadata used by tasks generating MSIs to specify the path of .wixobj files produced by
-        /// the compiler.
-        /// </summary>
-        public static readonly string WixObj = nameof(WixObj);
     }
 }
