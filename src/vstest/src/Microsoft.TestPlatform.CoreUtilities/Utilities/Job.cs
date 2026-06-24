@@ -63,7 +63,7 @@ internal class Job<TPayload>
     /// <summary>
     /// Gets the signal that this job is being processed.
     /// </summary>
-    public ManualResetEvent? WaitManualResetEvent { get; private set; }
+    public ManualResetEventSlim? WaitManualResetEvent { get; private set; }
 
     /// <summary>
     /// Gets the size of this job instance. This is used to manage the total size of Job Queue.
@@ -75,7 +75,7 @@ internal class Job<TPayload>
     /// </summary>
     /// <param name="waitEvent"> The wait Event. </param>
     /// <returns> The wait job. </returns>
-    public static Job<TPayload> CreateWaitJob(ManualResetEvent waitEvent)
+    public static Job<TPayload> CreateWaitJob(ManualResetEventSlim waitEvent)
     {
         ValidateArg.NotNull(waitEvent, nameof(waitEvent));
 
