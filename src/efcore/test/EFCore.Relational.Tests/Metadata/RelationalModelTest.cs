@@ -3569,10 +3569,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                 cb.Ignore(c => c.ComplexProperty);
                 cb.Ignore(c => c.Details);
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
                 cb.OwnsOne(c => c.DateDetails, o => o.ToJson("date_details"));
                 cb.OwnsMany(c => c.Addresses, o => o.ToJson("addresses"));
-#pragma warning restore EF8001
             });
 
             var model = Finalize(modelBuilder);
@@ -3768,7 +3766,6 @@ namespace Microsoft.EntityFrameworkCore.Metadata
 
             modelBuilder.Entity<EntityWithJsonOwnedWithCollection>(eb =>
             {
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
                 eb.OwnsOne(
                     e => e.OwnedWithTags,
                     b =>
@@ -3778,17 +3775,16 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                         var tags = b.PrimitiveCollection(e => e.Tags);
                         tags.Metadata.SetTypeMapping(
                             (RelationalTypeMapping)new StringTypeMapping("json", null).Clone(
-                                clrType: typeof(List<string>),
+                                converter: new ValueConverter<List<string>, string>(v => null!, v => null!),
                                 elementMapping: new StringTypeMapping("nvarchar(max)", null)));
 
                         var enumValues = b.PrimitiveCollection(e => e.EnumValues);
                         enumValues.Metadata.SetTypeMapping(
                             (RelationalTypeMapping)new StringTypeMapping("json", null).Clone(
-                                clrType: typeof(List<PrimitiveCollectionEnum>),
+                                converter: new ValueConverter<List<PrimitiveCollectionEnum>, string>(v => null!, v => null!),
                                 elementMapping: new IntTypeMapping("int")));
                         enumValues.ElementType(b => b.HasConversion<int>());
                     });
-#pragma warning restore EF8001
             });
 
             var model = Finalize(modelBuilder);
@@ -3850,10 +3846,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                 cb.Ignore(c => c.Details);
                 cb.Ignore(c => c.ComplexProperty);
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
                 cb.OwnsOne(c => c.DateDetails, o => o.ToJson("date_details"));
                 cb.OwnsMany(c => c.Addresses, o => o.ToJson("addresses"));
-#pragma warning restore EF8001
             });
 
             modelBuilder.HasDbFunction(
@@ -4034,7 +4028,8 @@ namespace Microsoft.EntityFrameworkCore.Metadata
                 configureContext: b =>
                     b.ConfigureWarnings(w => w.Default(WarningBehavior.Throw)
                         .Ignore(RelationalEventId.ForeignKeyTpcPrincipalWarning)
-                        .Ignore(RelationalEventId.AllIndexPropertiesNotMappedToAnyTable)));
+                        .Ignore(RelationalEventId.AllIndexPropertiesNotMappedToAnyTable)
+                        .Ignore(RelationalEventId.OwnedEntityMappedToJsonCollectionWarning)));
 
         public static void AssertEqual(IRelationalModel expectedModel, IRelationalModel actualModel)
             => RelationalModelAsserter.Instance.AssertEqual(expectedModel, actualModel);

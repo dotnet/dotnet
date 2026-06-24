@@ -2,13 +2,13 @@
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26227.104">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26302.115">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>bf38c69d5d4087d1098b5f31283ad147feadf787</Sha>
+      <Sha>f7b4c5716faaee8fb8a289aed29118cad955c45f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="11.0.0-beta.26227.104">
+    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="11.0.0-beta.26302.115">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>bf38c69d5d4087d1098b5f31283ad147feadf787</Sha>
+      <Sha>f7b4c5716faaee8fb8a289aed29118cad955c45f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="11.0.0-beta.26227.104">
       <Uri>https://github.com/dotnet/dotnet</Uri>

@@ -57,7 +57,6 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
             modelBuilder);
     }
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact] // Issue #33913
     public virtual void Detects_well_known_concrete_collections_mapped_as_owned_entity_type()
     {
@@ -72,7 +71,6 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
                 "CoreEventId.AccidentalEntityType"),
             modelBuilder);
     }
-#pragma warning restore EF8001
 
     protected class MyEntity<T>
     {
@@ -592,6 +590,18 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
                 nameof(DependentFour.PrincipalFourId) + "2",
                 nameof(DependentFour.PrincipalFourId)),
             modelBuilder);
+    }
+
+    [Fact]
+    public virtual void Passes_on_foreign_key_with_matching_model_type_and_mismatched_provider_type()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+
+        modelBuilder.Entity<A>().HasOne<B>().WithMany().HasForeignKey(a => a.P0).HasPrincipalKey(b => b.Id);
+        modelBuilder.Entity<A>().Property(a => a.P0).HasConversion<long>();
+        modelBuilder.Entity<B>().Property(b => b.Id).HasConversion<short>();
+
+        Validate(modelBuilder);
     }
 
     [Fact]
@@ -1171,6 +1181,43 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
     }
 
     [Fact]
+    public virtual void Detects_union_mapped_as_entity_type()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+
+        modelBuilder.Entity<UnionEntity>();
+
+        VerifyError(
+            CoreStrings.UnionTypeNotSupported(nameof(UnionEntity)),
+            modelBuilder);
+    }
+
+    [Fact]
+    public virtual void Detects_union_mapped_as_complex_type()
+    {
+        var modelBuilder = CreateConventionModelBuilder();
+
+        modelBuilder.Entity<WithUnionComplexProperty>().ComplexProperty(e => e.Union);
+
+        VerifyError(
+            CoreStrings.UnionTypeNotSupported(
+                nameof(WithUnionComplexProperty) + "." + nameof(WithUnionComplexProperty.Union) + "#" + nameof(UnionEntity)),
+            modelBuilder);
+    }
+
+    [System.Runtime.CompilerServices.Union]
+    protected class UnionEntity
+    {
+        public int Id { get; set; }
+    }
+
+    protected class WithUnionComplexProperty
+    {
+        public int Id { get; set; }
+        public UnionEntity Union { get; set; }
+    }
+
+    [Fact]
     public virtual void Detects_non_list_complex_collection()
     {
         var modelBuilder = CreateConventionModelBuilder();
@@ -1532,6 +1579,61 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
         VerifyError(
             CoreStrings.MultipleOwnerships(
                 nameof(ReferencedEntity), "'SampleEntity.ReferencedEntity', 'SampleEntity.AnotherReferencedEntity'"),
+            builder);
+    }
+
+    [Fact]
+    public virtual void Detects_ownership_with_non_cascade_delete_behavior()
+    {
+        var builder = CreateConventionlessModelBuilder();
+        var modelBuilder = (InternalModelBuilder)builder.GetInfrastructure();
+        var entityTypeBuilder = modelBuilder.Entity(typeof(SampleEntity), ConfigurationSource.Convention);
+        entityTypeBuilder.PrimaryKey([nameof(SampleEntity.Id)], ConfigurationSource.Convention);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.Name), ConfigurationSource.Explicit);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.Number), ConfigurationSource.Explicit);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.OtherSamples), ConfigurationSource.Explicit);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.AnotherReferencedEntity), ConfigurationSource.Explicit);
+
+        var ownershipBuilder = entityTypeBuilder.HasOwnership(
+            typeof(ReferencedEntity), nameof(SampleEntity.ReferencedEntity), ConfigurationSource.Convention);
+
+        var ownedTypeBuilder = ownershipBuilder.Metadata.DeclaringEntityType.Builder;
+        ownedTypeBuilder.PrimaryKey(ownershipBuilder.Metadata.Properties.Select(p => p.Name).ToList(), ConfigurationSource.Convention);
+        ownedTypeBuilder.Ignore(nameof(ReferencedEntity.Id), ConfigurationSource.Explicit);
+        ownedTypeBuilder.Ignore(nameof(ReferencedEntity.SampleEntityId), ConfigurationSource.Explicit);
+
+        ownershipBuilder.Metadata.DeleteBehavior = DeleteBehavior.Restrict;
+
+        VerifyError(
+            CoreStrings.OwnershipNotCascadeDelete(
+                nameof(SampleEntity), nameof(ReferencedEntity), DeleteBehavior.Restrict, DeleteBehavior.Cascade),
+            builder);
+    }
+
+    [Fact]
+    public virtual void Detects_optional_ownership()
+    {
+        var builder = CreateConventionlessModelBuilder();
+        var modelBuilder = (InternalModelBuilder)builder.GetInfrastructure();
+        var entityTypeBuilder = modelBuilder.Entity(typeof(SampleEntity), ConfigurationSource.Convention);
+        entityTypeBuilder.PrimaryKey([nameof(SampleEntity.Id)], ConfigurationSource.Convention);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.Name), ConfigurationSource.Explicit);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.Number), ConfigurationSource.Explicit);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.OtherSamples), ConfigurationSource.Explicit);
+        entityTypeBuilder.Ignore(nameof(SampleEntity.AnotherReferencedEntity), ConfigurationSource.Explicit);
+
+        var ownershipBuilder = entityTypeBuilder.HasOwnership(
+            typeof(ReferencedEntity), nameof(SampleEntity.ReferencedEntity), ConfigurationSource.Convention);
+
+        var ownedTypeBuilder = ownershipBuilder.Metadata.DeclaringEntityType.Builder;
+        ownedTypeBuilder.PrimaryKey(ownershipBuilder.Metadata.Properties.Select(p => p.Name).ToList(), ConfigurationSource.Convention);
+        ownedTypeBuilder.Ignore(nameof(ReferencedEntity.Id), ConfigurationSource.Explicit);
+        ownedTypeBuilder.Ignore(nameof(ReferencedEntity.SampleEntityId), ConfigurationSource.Explicit);
+
+        ownershipBuilder.Metadata.IsRequired = false;
+
+        VerifyError(
+            CoreStrings.OwnershipNotRequired(nameof(SampleEntity), nameof(ReferencedEntity)),
             builder);
     }
 
