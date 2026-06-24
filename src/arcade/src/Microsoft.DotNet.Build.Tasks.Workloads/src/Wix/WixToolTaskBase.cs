@@ -48,6 +48,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
             ToolName = Path.GetFileName(toolPath);
         }
         
-        protected override string GenerateFullPathToTool() => ToolPath;
+        protected override string GenerateFullPathToTool() => Path.Combine(ToolPath, ToolName);
     }
 }
