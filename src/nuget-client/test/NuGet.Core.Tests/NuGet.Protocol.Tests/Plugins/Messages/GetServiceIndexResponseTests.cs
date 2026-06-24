@@ -51,7 +51,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObjectForSuccess()
         {
             var json = "{\"ResponseCode\":\"Success\",\"ServiceIndex\":{\"a\":\"b\"}}";
-            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.Success, response.ResponseCode);
             Assert.Equal("{\"a\":\"b\"}", response.ServiceIndexJson);
@@ -61,7 +61,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObjectForNotFound()
         {
             var json = "{\"ResponseCode\":\"NotFound\"}";
-            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.NotFound, response.ResponseCode);
             Assert.Null(response.ServiceIndexJson);

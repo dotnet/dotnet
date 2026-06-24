@@ -39,7 +39,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = "{\"Message\":\"a\"}";
-            var fault = JsonSerializationUtilities.Deserialize<Fault>(json);
+            var fault = JsonSerializationUtilities.Deserialize<Fault>(json)!;
 
             Assert.Equal("a", fault.Message);
         }

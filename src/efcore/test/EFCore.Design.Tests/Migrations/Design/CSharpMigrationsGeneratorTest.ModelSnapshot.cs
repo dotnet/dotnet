@@ -122,6 +122,54 @@ partial class MySnapshot : ModelSnapshot
     }
 
     [Fact]
+    public void Snapshot_with_mismatched_key_and_foreign_key_property_types_is_usable()
+    {
+        const string snapshotCode =
+            """
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#nullable disable
+
+namespace RootNamespace;
+
+partial class Snapshot : ModelSnapshot
+{
+    protected override void BuildModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .HasAnnotation("ProductVersion", "10.0.0");
+
+        modelBuilder.Entity("Dependent", b =>
+            {
+                b.Property<long>("Id")
+                    .HasColumnType("bigint");
+
+                b.HasKey("Id");
+
+                b.HasOne("Principal")
+                    .WithMany()
+                    .HasForeignKey("Id");
+            });
+
+        modelBuilder.Entity("Principal", b =>
+            {
+                b.Property<short>("Id")
+                    .HasColumnType("smallint");
+
+                b.HasKey("Id");
+            });
+    }
+}
+
+""";
+
+        var snapshotModel = BuildModelFromSnapshotSource(snapshotCode);
+
+        Assert.Single(snapshotModel.FindEntityType("Dependent")!.GetForeignKeys());
+    }
+
+    [Fact]
     public void Snapshot_with_migration_id()
     {
         var generator = CreateMigrationsCodeGenerator();
@@ -1104,6 +1152,31 @@ partial class MySnapshot : ModelSnapshot
             });
 """),
             o => Assert.Equal("EntityWithOneProperty", o.GetEntityTypes().Single().GetViewName()));
+
+    [Fact] // Issue #26067
+    public void ToTable_with_default_null_schema_is_not_changed_on_snapshot_round_trip()
+    {
+        // When the default schema is null, regenerating the snapshot from a model that was itself
+        // built from a snapshot (as happens when removing a migration) must not add a redundant
+        // ", (string)null" schema argument to every ToTable call.
+        var modelBuilder = CreateConventionalModelBuilder();
+        modelBuilder.HasDefaultSchema(null);
+        modelBuilder.Model.RemoveAnnotation(CoreAnnotationNames.ProductVersion);
+        modelBuilder.Entity<EntityWithOneProperty>().Ignore(e => e.EntityWithTwoProperties);
+
+        var model = modelBuilder.FinalizeModel(designTime: true, skipValidation: true);
+
+        var generator = CreateMigrationsGenerator();
+        var code = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", model);
+
+        Assert.Contains(@"b.ToTable(""EntityWithOneProperty"");", code);
+        Assert.DoesNotContain("(string)null", code);
+
+        var roundTrippedModel = BuildModelFromSnapshotSource(code);
+        var roundTrippedCode = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", roundTrippedModel);
+
+        Assert.Equal(code, roundTrippedCode, ignoreLineEndingDifferences: true);
+    }
 
     [Fact]
     public void Views_with_schemas_are_stored_in_the_model_snapshot()
@@ -4533,7 +4606,6 @@ partial class Snapshot : ModelSnapshot
                 Assert.NotNull(testOwnee.FindCheckConstraint("CK_TestOwnee_TestEnum_Enum_Constraint"));
             });
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact]
     public virtual void Owned_types_mapped_to_json_are_stored_in_snapshot()
         => Test(
@@ -4772,7 +4844,6 @@ partial class Snapshot : ModelSnapshot
                 Assert.Equal("EntityWithTwoProperties", ownedType1.GetContainerColumnName());
                 Assert.Equal("json", ownedType1.GetContainerColumnType());
             });
-#pragma warning restore EF8001 // Owned JSON entities are obsolete
 
     private class Order
     {

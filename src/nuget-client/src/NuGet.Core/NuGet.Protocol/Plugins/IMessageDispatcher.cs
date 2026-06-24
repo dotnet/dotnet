@@ -80,7 +80,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <typeparamref name="TInbound" />
         /// from the target.</returns>
-        Task<TInbound> DispatchRequestAsync<TOutbound, TInbound>(
+        Task<TInbound?> DispatchRequestAsync<TOutbound, TInbound>(
             MessageMethod method,
             TOutbound payload,
             CancellationToken cancellationToken)

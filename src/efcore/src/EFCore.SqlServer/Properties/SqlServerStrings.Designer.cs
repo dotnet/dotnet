@@ -200,6 +200,14 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                 index, entityType, property);
 
         /// <summary>
+        ///     Full-text index '{index}' on entity type '{entityType}' was configured with the '{option}' option, which is not supported on full-text indexes.
+        /// </summary>
+        public static string FullTextIndexUnsupportedOption(object? index, object? entityType, object? option)
+            => string.Format(
+                GetString("FullTextIndexUnsupportedOption", nameof(index), nameof(entityType), nameof(option)),
+                index, entityType, option);
+
+        /// <summary>
         ///     Multiple full-text catalogs are marked as default. Only one full-text catalog can be the default.
         /// </summary>
         public static string FullTextMultipleDefaultCatalogs
@@ -235,6 +243,14 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
         public static string IncludePropertyNotFound(object? property, object? index, object? entityType)
             => string.Format(
                 GetString("IncludePropertyNotFound", nameof(property), nameof(index), nameof(entityType)),
+                property, index, entityType);
+
+        /// <summary>
+        ///     The include property '{property}' specified on the index {index} on entity type '{entityType}' is contained within a JSON-mapped type. Properties contained within JSON-mapped types cannot be included in an index.
+        /// </summary>
+        public static string IncludePropertyInJsonMappedType(object? property, object? index, object? entityType)
+            => string.Format(
+                GetString("IncludePropertyInJsonMappedType", nameof(property), nameof(index), nameof(entityType)),
                 property, index, entityType);
 
         /// <summary>
@@ -542,6 +558,14 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
             => string.Format(
                 GetString("VectorIndexRequiresType", nameof(index), nameof(entityType)),
                 index, entityType);
+
+        /// <summary>
+        ///     Vector index '{index}' on entity type '{entityType}' was configured with the '{option}' option, which is not supported on vector indexes.
+        /// </summary>
+        public static string VectorIndexUnsupportedOption(object? index, object? entityType, object? option)
+            => string.Format(
+                GetString("VectorIndexUnsupportedOption", nameof(index), nameof(entityType), nameof(option)),
+                index, entityType, option);
 
         /// <summary>
         ///     Vector property '{propertyName}' is on '{structuralType}' which is mapped to JSON. Vector properties are not supported within JSON documents.
@@ -1190,7 +1214,7 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
         }
 
         /// <summary>
-        ///     The query uses 'VectorSearch' on property '{property}' of entity type '{entityType}', but 'WithApproximate()' was not specified. The query will perform an exact brute-force search instead of using a vector index. Call 'WithApproximate()' after 'Take()' to use the vector index for better performance. To identify the code which triggers this warning, call 'ConfigureWarnings(w =&gt; w.Throw(SqlServerEventId.VectorSearchWithoutApproximateWarning))'.
+        ///     The query uses 'VectorSearch' on property '{property}' of entity type '{entityType}', but 'WithApproximate()' was not specified. The query will perform an exact brute-force search instead of using a vector index. Call 'WithApproximate()' after 'Take()' to use the vector index for better performance. To identify the code which triggers this warning, call 'ConfigureWarnings(w =&gt; w.Throw(SqlServerEventId.VectorSearchWithoutApproximateIndexWarning))'.
         /// </summary>
         public static EventDefinition<string, string> LogVectorSearchWithoutApproximate(IDiagnosticsLogger logger)
         {
@@ -1202,12 +1226,12 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Internal
                     logger,
                     static logger => new EventDefinition<string, string>(
                         logger.Options,
-                        SqlServerEventId.VectorSearchWithoutApproximateWarning,
+                        SqlServerEventId.VectorSearchWithoutApproximateIndexWarning,
                         LogLevel.Warning,
-                        "SqlServerEventId.VectorSearchWithoutApproximateWarning",
+                        "SqlServerEventId.VectorSearchWithoutApproximateIndexWarning",
                         level => LoggerMessage.Define<string, string>(
                             level,
-                            SqlServerEventId.VectorSearchWithoutApproximateWarning,
+                            SqlServerEventId.VectorSearchWithoutApproximateIndexWarning,
                             _resourceManager.GetString("LogVectorSearchWithoutApproximate")!)));
             }
 
