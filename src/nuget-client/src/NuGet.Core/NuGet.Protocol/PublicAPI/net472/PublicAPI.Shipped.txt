@@ -417,22 +417,22 @@ NuGet.Protocol.FeedTypeResourceProvider.FeedTypeResourceProvider() -> void
 NuGet.Protocol.FeedTypeUtility
 NuGet.Protocol.FindLocalPackagesResource
 NuGet.Protocol.FindLocalPackagesResource.FindLocalPackagesResource() -> void
-~NuGet.Protocol.FindLocalPackagesResource.Root.get -> string
-~NuGet.Protocol.FindLocalPackagesResource.Root.set -> void
+NuGet.Protocol.FindLocalPackagesResource.Root.get -> string!
+NuGet.Protocol.FindLocalPackagesResource.Root.set -> void
 NuGet.Protocol.FindLocalPackagesResourcePackagesConfig
-~NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.FindLocalPackagesResourcePackagesConfig(string root) -> void
+NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.FindLocalPackagesResourcePackagesConfig(string! root) -> void
 NuGet.Protocol.FindLocalPackagesResourcePackagesConfigProvider
 NuGet.Protocol.FindLocalPackagesResourcePackagesConfigProvider.FindLocalPackagesResourcePackagesConfigProvider() -> void
 NuGet.Protocol.FindLocalPackagesResourceUnzipped
-~NuGet.Protocol.FindLocalPackagesResourceUnzipped.FindLocalPackagesResourceUnzipped(string root) -> void
+NuGet.Protocol.FindLocalPackagesResourceUnzipped.FindLocalPackagesResourceUnzipped(string! root) -> void
 NuGet.Protocol.FindLocalPackagesResourceUnzippedProvider
 NuGet.Protocol.FindLocalPackagesResourceUnzippedProvider.FindLocalPackagesResourceUnzippedProvider() -> void
 NuGet.Protocol.FindLocalPackagesResourceV2
-~NuGet.Protocol.FindLocalPackagesResourceV2.FindLocalPackagesResourceV2(string root) -> void
+NuGet.Protocol.FindLocalPackagesResourceV2.FindLocalPackagesResourceV2(string! root) -> void
 NuGet.Protocol.FindLocalPackagesResourceV2Provider
 NuGet.Protocol.FindLocalPackagesResourceV2Provider.FindLocalPackagesResourceV2Provider() -> void
 NuGet.Protocol.FindLocalPackagesResourceV3
-~NuGet.Protocol.FindLocalPackagesResourceV3.FindLocalPackagesResourceV3(string root) -> void
+NuGet.Protocol.FindLocalPackagesResourceV3.FindLocalPackagesResourceV3(string! root) -> void
 NuGet.Protocol.FindLocalPackagesResourceV3Provider
 NuGet.Protocol.FindLocalPackagesResourceV3Provider.FindLocalPackagesResourceV3Provider() -> void
 NuGet.Protocol.FindPackagesByIdNupkgDownloader
@@ -622,7 +622,7 @@ NuGet.Protocol.LocalPackageFileCache.LocalPackageFileCache() -> void
 NuGet.Protocol.LocalPackageFileCache.UpdateLastAccessTime(string! nupkgMetadataPath) -> void
 NuGet.Protocol.LocalPackageInfo
 NuGet.Protocol.LocalPackageInfo.LocalPackageInfo() -> void
-~NuGet.Protocol.LocalPackageInfo.LocalPackageInfo(NuGet.Packaging.Core.PackageIdentity identity, string path, System.DateTime lastWriteTimeUtc, System.Lazy<NuGet.Packaging.NuspecReader> nuspec, bool useFolder) -> void
+NuGet.Protocol.LocalPackageInfo.LocalPackageInfo(NuGet.Packaging.Core.PackageIdentity! identity, string! path, System.DateTime lastWriteTimeUtc, System.Lazy<NuGet.Packaging.NuspecReader!>! nuspec, bool useFolder) -> void
 NuGet.Protocol.LocalPackageListResource
 ~NuGet.Protocol.LocalPackageListResource.LocalPackageListResource(NuGet.Protocol.Core.Types.PackageSearchResource localPackageSearchResource, string baseAddress) -> void
 NuGet.Protocol.LocalPackageMetadataResource
@@ -630,35 +630,35 @@ NuGet.Protocol.LocalPackageMetadataResource
 NuGet.Protocol.LocalPackageMetadataResourceProvider
 NuGet.Protocol.LocalPackageMetadataResourceProvider.LocalPackageMetadataResourceProvider() -> void
 NuGet.Protocol.LocalPackageSearchMetadata
-~NuGet.Protocol.LocalPackageSearchMetadata.Authors.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Protocol.LocalPackageSearchMetadata.Description.get -> string
+NuGet.Protocol.LocalPackageSearchMetadata.Authors.get -> string?
+NuGet.Protocol.LocalPackageSearchMetadata.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Protocol.LocalPackageSearchMetadata.Description.get -> string?
 NuGet.Protocol.LocalPackageSearchMetadata.DownloadCount.get -> long?
-~NuGet.Protocol.LocalPackageSearchMetadata.GetDeprecationMetadataAsync() -> System.Threading.Tasks.Task<NuGet.Protocol.PackageDeprecationMetadata>
-~NuGet.Protocol.LocalPackageSearchMetadata.GetVersionsAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>>
-~NuGet.Protocol.LocalPackageSearchMetadata.IconUrl.get -> System.Uri
-~NuGet.Protocol.LocalPackageSearchMetadata.Identity.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.Protocol.LocalPackageSearchMetadata.GetDeprecationMetadataAsync() -> System.Threading.Tasks.Task<NuGet.Protocol.PackageDeprecationMetadata?>!
+NuGet.Protocol.LocalPackageSearchMetadata.GetVersionsAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo!>!>!
+NuGet.Protocol.LocalPackageSearchMetadata.IconUrl.get -> System.Uri?
+NuGet.Protocol.LocalPackageSearchMetadata.Identity.get -> NuGet.Packaging.Core.PackageIdentity!
 NuGet.Protocol.LocalPackageSearchMetadata.IsListed.get -> bool
-~NuGet.Protocol.LocalPackageSearchMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
-~NuGet.Protocol.LocalPackageSearchMetadata.LicenseUrl.get -> System.Uri
-~NuGet.Protocol.LocalPackageSearchMetadata.LoadFileAsText(string path) -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.LocalPackageSearchMetadata(NuGet.Protocol.LocalPackageInfo package) -> void
-~NuGet.Protocol.LocalPackageSearchMetadata.Owners.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Protocol.LocalPackageSearchMetadata.PackageDetailsUrl.get -> System.Uri
-~NuGet.Protocol.LocalPackageSearchMetadata.PackagePath.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.PackageReader.get -> System.Func<NuGet.Packaging.PackageReaderBase>
+NuGet.Protocol.LocalPackageSearchMetadata.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata?
+NuGet.Protocol.LocalPackageSearchMetadata.LicenseUrl.get -> System.Uri?
+NuGet.Protocol.LocalPackageSearchMetadata.LoadFileAsText(string! path) -> string!
+NuGet.Protocol.LocalPackageSearchMetadata.LocalPackageSearchMetadata(NuGet.Protocol.LocalPackageInfo! package) -> void
+NuGet.Protocol.LocalPackageSearchMetadata.Owners.get -> string?
+NuGet.Protocol.LocalPackageSearchMetadata.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string!>?
+NuGet.Protocol.LocalPackageSearchMetadata.PackageDetailsUrl.get -> System.Uri?
+NuGet.Protocol.LocalPackageSearchMetadata.PackagePath.get -> string!
+NuGet.Protocol.LocalPackageSearchMetadata.PackageReader.get -> System.Func<NuGet.Packaging.PackageReaderBase!>!
 NuGet.Protocol.LocalPackageSearchMetadata.PrefixReserved.get -> bool
-~NuGet.Protocol.LocalPackageSearchMetadata.ProjectUrl.get -> System.Uri
+NuGet.Protocol.LocalPackageSearchMetadata.ProjectUrl.get -> System.Uri?
 NuGet.Protocol.LocalPackageSearchMetadata.Published.get -> System.DateTimeOffset?
-~NuGet.Protocol.LocalPackageSearchMetadata.ReadmeFileUrl.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.ReadmeUrl.get -> System.Uri
-~NuGet.Protocol.LocalPackageSearchMetadata.ReportAbuseUrl.get -> System.Uri
+NuGet.Protocol.LocalPackageSearchMetadata.ReadmeFileUrl.get -> string?
+NuGet.Protocol.LocalPackageSearchMetadata.ReadmeUrl.get -> System.Uri?
+NuGet.Protocol.LocalPackageSearchMetadata.ReportAbuseUrl.get -> System.Uri?
 NuGet.Protocol.LocalPackageSearchMetadata.RequireLicenseAcceptance.get -> bool
-~NuGet.Protocol.LocalPackageSearchMetadata.Summary.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.Tags.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.Title.get -> string
-~NuGet.Protocol.LocalPackageSearchMetadata.Vulnerabilities.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.PackageVulnerabilityMetadata>
+NuGet.Protocol.LocalPackageSearchMetadata.Summary.get -> string?
+NuGet.Protocol.LocalPackageSearchMetadata.Tags.get -> string!
+NuGet.Protocol.LocalPackageSearchMetadata.Title.get -> string!
+NuGet.Protocol.LocalPackageSearchMetadata.Vulnerabilities.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.PackageVulnerabilityMetadata!>?
 NuGet.Protocol.LocalPackageSearchResource
 ~NuGet.Protocol.LocalPackageSearchResource.LocalPackageSearchResource(NuGet.Protocol.FindLocalPackagesResource localResource) -> void
 NuGet.Protocol.LocalPackageSearchResourceProvider
@@ -1561,10 +1561,10 @@ NuGet.Repositories.NuGetv3LocalRepositoryUtility
 ~abstract NuGet.Protocol.Core.Types.PackageMetadataResource.GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
 ~abstract NuGet.Protocol.Core.Types.PackageSearchResource.SearchAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
 abstract NuGet.Protocol.Core.Types.ResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
-~abstract NuGet.Protocol.FindLocalPackagesResource.FindPackagesById(string id, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~abstract NuGet.Protocol.FindLocalPackagesResource.GetPackages(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
+abstract NuGet.Protocol.FindLocalPackagesResource.FindPackagesById(string! id, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+abstract NuGet.Protocol.FindLocalPackagesResource.GetPackage(System.Uri! path, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+abstract NuGet.Protocol.FindLocalPackagesResource.GetPackages(NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
 abstract NuGet.Protocol.Plugins.OutboundRequestContext.Dispose(bool disposing) -> void
 abstract NuGet.Protocol.Plugins.OutboundRequestContext.HandleCancelResponse() -> void
 abstract NuGet.Protocol.Plugins.OutboundRequestContext.HandleFault(NuGet.Protocol.Plugins.Message! fault) -> void
@@ -1678,27 +1678,27 @@ override NuGet.Protocol.DownloadTimeoutStream.Seek(long offset, System.IO.SeekOr
 override NuGet.Protocol.DownloadTimeoutStream.SetLength(long value) -> void
 override NuGet.Protocol.DownloadTimeoutStream.Write(byte[]! buffer, int offset, int count) -> void
 ~override NuGet.Protocol.FeedTypeResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.FindPackagesById(string id, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackages(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourcePackagesConfigProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.FindLocalPackagesResourceUnzipped.Exists(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> bool
-~override NuGet.Protocol.FindLocalPackagesResourceUnzipped.FindPackagesById(string id, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourceUnzipped.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourceUnzipped.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourceUnzipped.GetPackages(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourceUnzippedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.FindLocalPackagesResourceV2.FindPackagesById(string id, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourceV2.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourceV2.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourceV2.GetPackages(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.FindLocalPackagesResourceV3.FindPackagesById(string id, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourceV3.GetPackage(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourceV3.GetPackage(System.Uri path, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo
-~override NuGet.Protocol.FindLocalPackagesResourceV3.GetPackages(NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo>
-~override NuGet.Protocol.FindLocalPackagesResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.FindPackagesById(string! id, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackage(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackage(System.Uri! path, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackages(NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourcePackagesConfigProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.FindLocalPackagesResourceUnzipped.Exists(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> bool
+override NuGet.Protocol.FindLocalPackagesResourceUnzipped.FindPackagesById(string! id, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourceUnzipped.GetPackage(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourceUnzipped.GetPackage(System.Uri! path, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourceUnzipped.GetPackages(NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourceUnzippedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.FindLocalPackagesResourceV2.FindPackagesById(string! id, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourceV2.GetPackage(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourceV2.GetPackage(System.Uri! path, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourceV2.GetPackages(NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.FindLocalPackagesResourceV3.FindPackagesById(string! id, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourceV3.GetPackage(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourceV3.GetPackage(System.Uri! path, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
+override NuGet.Protocol.FindLocalPackagesResourceV3.GetPackages(NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
+override NuGet.Protocol.FindLocalPackagesResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.FingerprintsConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.FingerprintsConverter.CanWrite.get -> bool
 override NuGet.Protocol.FingerprintsConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object!
@@ -2098,8 +2098,8 @@ virtual NuGet.Protocol.Core.Types.SourceRepository.GetResource<T>(System.Threadi
 virtual NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync<T>() -> System.Threading.Tasks.Task<T?>!
 virtual NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync<T>(System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T?>!
 virtual NuGet.Protocol.Core.Types.SourceRepository.PackageSource.get -> NuGet.Configuration.PackageSource!
-~virtual NuGet.Protocol.FindLocalPackagesResource.Exists(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> bool
-~virtual NuGet.Protocol.FindLocalPackagesResource.Exists(string packageId, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> bool
+virtual NuGet.Protocol.FindLocalPackagesResource.Exists(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> bool
+virtual NuGet.Protocol.FindLocalPackagesResource.Exists(string! packageId, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> bool
 virtual NuGet.Protocol.HttpSource.Dispose(bool disposing) -> void
 virtual NuGet.Protocol.HttpSource.GetAsync<T>(NuGet.Protocol.HttpSourceCachedRequest! request, System.Func<NuGet.Protocol.HttpSourceResult!, System.Threading.Tasks.Task<T>!>! processAsync, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>!
 virtual NuGet.Protocol.HttpSource.TryReadCacheFile(string! uri, System.TimeSpan maxAge, string! cacheFile) -> System.IO.Stream?
@@ -2109,12 +2109,12 @@ virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddNuspec(string! manifestPath
 virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddRuntimeGraph(string! expandedPath) -> System.Lazy<NuGet.RuntimeModel.RuntimeGraph?>!
 virtual NuGet.Protocol.LocalPackageFileCache.GetOrAddSha512(string! sha512Path) -> System.Lazy<string!>!
 virtual NuGet.Protocol.LocalPackageFileCache.Sha512Exists(string! sha512Path) -> bool
-~virtual NuGet.Protocol.LocalPackageInfo.GetReader() -> NuGet.Packaging.PackageReaderBase
-~virtual NuGet.Protocol.LocalPackageInfo.Identity.get -> NuGet.Packaging.Core.PackageIdentity
+virtual NuGet.Protocol.LocalPackageInfo.GetReader() -> NuGet.Packaging.PackageReaderBase!
+virtual NuGet.Protocol.LocalPackageInfo.Identity.get -> NuGet.Packaging.Core.PackageIdentity!
 virtual NuGet.Protocol.LocalPackageInfo.IsNupkg.get -> bool
 virtual NuGet.Protocol.LocalPackageInfo.LastWriteTimeUtc.get -> System.DateTime
-~virtual NuGet.Protocol.LocalPackageInfo.Nuspec.get -> NuGet.Packaging.NuspecReader
-~virtual NuGet.Protocol.LocalPackageInfo.Path.get -> string
+virtual NuGet.Protocol.LocalPackageInfo.Nuspec.get -> NuGet.Packaging.NuspecReader!
+virtual NuGet.Protocol.LocalPackageInfo.Path.get -> string!
 virtual NuGet.Protocol.ODataServiceDocumentResourceV2.RequestTime.get -> System.DateTime
 virtual NuGet.Protocol.Plugins.PluginFactory.Dispose() -> void
 virtual NuGet.Protocol.Plugins.PluginFactory.GetOrCreateAsync(NuGet.Protocol.Plugins.PluginFile! pluginFile, System.Collections.Generic.IEnumerable<string!>! arguments, NuGet.Protocol.Plugins.IRequestHandlers! requestHandlers, NuGet.Protocol.Plugins.ConnectionOptions! options, System.Threading.CancellationToken sessionCancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Plugins.IPlugin!>!

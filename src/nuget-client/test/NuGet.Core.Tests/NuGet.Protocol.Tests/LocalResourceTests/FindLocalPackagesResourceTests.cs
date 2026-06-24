@@ -210,11 +210,11 @@ namespace NuGet.Protocol.Tests
                 {
                     // Act
                     var result = resource.GetPackage(PackageA3, testLogger, CancellationToken.None);
-                    var result2 = resource.GetPackage(UriUtility.CreateSourceUri(result.Path), testLogger, CancellationToken.None);
+                    var result2 = resource.GetPackage(UriUtility.CreateSourceUri(result!.Path), testLogger, CancellationToken.None);
 
                     // Assert
                     Assert.Equal(PackageA3, result.Identity);
-                    Assert.Equal(PackageA3, result2.Identity);
+                    Assert.Equal(PackageA3, result2!.Identity);
                 }
             }
         }

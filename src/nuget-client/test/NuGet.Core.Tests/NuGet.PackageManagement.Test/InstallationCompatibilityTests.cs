@@ -95,7 +95,7 @@ namespace NuGet.PackageManagement.Test
             Assert.Equal(
                 "The 'PackageA 1.0.0' package requires NuGet client version '10.0.0' or above, " +
                 $"but the current NuGet version is '{MinClientVersionUtility.GetNuGetClientVersion()}'. " +
-                "To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget",
+                "To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget",
                 ex.Message);
 
             tc.PackageReader.Verify(x => x.GetMinClientVersion(), Times.Never);

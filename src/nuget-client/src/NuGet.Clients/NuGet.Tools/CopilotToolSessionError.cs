@@ -14,5 +14,7 @@ namespace NuGetVSExtension
         CopilotServiceNotAvailable,
         McpToolServiceNotAvailable,
         ToolNotAvailable,
+        McpServerInfoServiceNotAvailable,
+        McpServerNotActive,
     }
 }

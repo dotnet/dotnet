@@ -1458,8 +1458,8 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="translated">구성에 정의된 {0} 패키지 원본이 있습니다. 중앙 패키지 관리를 사용하는 경우 패키지 원본을 패키지 원본 매핑(https://aka.ms/nuget-package-source-mapping)으로 매핑하거나 단일 패키지 원본을 지정하세요. 다음 원본이 정의됩니다. {1}</target>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">

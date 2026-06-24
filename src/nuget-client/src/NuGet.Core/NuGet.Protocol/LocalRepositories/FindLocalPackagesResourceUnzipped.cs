@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +24,7 @@ namespace NuGet.Protocol
 
         public FindLocalPackagesResourceUnzipped(string root)
         {
-            Root = root;
+            Root = root ?? throw new ArgumentNullException(nameof(root));
             _packages = new Lazy<IReadOnlyList<LocalPackageInfo>>(() => GetPackagesCore(root));
             _index = new Lazy<Dictionary<PackageIdentity, LocalPackageInfo>>(() => GetIndex(_packages));
             _pathIndex = new Lazy<Dictionary<Uri, LocalPackageInfo>>(() => GetPathIndex(_packages));
@@ -37,17 +35,15 @@ namespace NuGet.Protocol
             return _packages.Value.Where(package => StringComparer.OrdinalIgnoreCase.Equals(id, package.Identity.Id)).ToArray();
         }
 
-        public override LocalPackageInfo GetPackage(Uri path, ILogger logger, CancellationToken token)
+        public override LocalPackageInfo? GetPackage(Uri path, ILogger logger, CancellationToken token)
         {
-            LocalPackageInfo package;
-            _pathIndex.Value.TryGetValue(path, out package);
+            _pathIndex.Value.TryGetValue(path, out LocalPackageInfo? package);
             return package;
         }
 
-        public override LocalPackageInfo GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token)
+        public override LocalPackageInfo? GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token)
         {
-            LocalPackageInfo package;
-            _index.Value.TryGetValue(identity, out package);
+            _index.Value.TryGetValue(identity, out LocalPackageInfo? package);
             return package;
         }
 

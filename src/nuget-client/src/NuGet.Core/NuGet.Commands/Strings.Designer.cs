@@ -2574,7 +2574,7 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}.
+        ///   Looks up a localized string similar to There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}.
         /// </summary>
         internal static string Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping {
             get {
