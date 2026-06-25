@@ -199,9 +199,9 @@
       IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="PATH=$(NpmPath);npm_config_userconfig=$(RepoRoot)\.npmrc;npm_config_fetch_retries=10" />
 
-    <!-- clang-wrapper.sh hardcodes clang-19 at the moment so make sure it still exists -->
+    <!-- clang-wrapper.sh hardcodes clang-23 at the moment so make sure it still exists -->
     <Error Text="Update clang-wrapper.sh to point at the correct clang-* version"
-      Condition="!Exists('$(LLVMDir)\bin\clang-19') and !$([MSBuild]::IsOSPlatform(Windows))" />
+      Condition="!Exists('$(LLVMDir)\bin\clang-23') and !$([MSBuild]::IsOSPlatform(Windows))" />
     <Delete Files="$(LLVMDir)\bin\clang"
       Condition="!$([MSBuild]::IsOSPlatform(Windows))" />
     <Delete Files="$(BinaryenDir)\bin\binaryen-unittests"
@@ -226,7 +226,7 @@
       <EmBuilder Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))">./embuilder</EmBuilder>
     </PropertyGroup>
 
-    <!-- Emscripten 3.1.34 doesn't support multiple embuilder tasks in the same run -->
+    <!-- Emscripten doesn't support multiple embuilder tasks in the same run -->
     <Exec WorkingDirectory="$(EmscriptenDir)"
       Command="$(EmBuilder) build SYSTEM"
       EnvironmentVariables="EM_LLVM_ROOT=$(BuildLLVMDir)\bin;EM_BINARYEN_ROOT=$(BuildBinaryenDir);EM_NODE_JS=$(BuildNodeDir)\bin\node"/>
@@ -304,6 +304,18 @@
     <Delete Files="$(ArtifactsObjDir)node\bin\npm" />
     <Delete Files="$(ArtifactsObjDir)node\bin\npx" />
     <Delete Files="$(ArtifactsObjDir)node\lib\node_modules\.bin\google-closure-compiler" /> <!-- resistent to deletion -->
+
+    <!-- Remove tools we don't need -->
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-shell" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-shell.exe" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-reduce" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-reduce.exe" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-merge" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-merge.exe" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-fuzz-types" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-fuzz-types.exe" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-fuzz-lattices" />
+    <Delete Files="$(ArtifactsObjDir)upstream\bin\wasm-fuzz-lattices.exe" />
 
     <!-- on Windows these are identical copies that should be symlinks, remove them for now -->
     <!--<Delete Files="$(ArtifactsObjDir)upstream\bin\clang++.exe" /> Used by .23 directly -->

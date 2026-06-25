@@ -29,8 +29,8 @@
     <!-- sign macOS binaries from transport packages -->
     <FileSignInfo Include="node" CertificateName="MacDeveloper" />
     <FileSignInfo Include="python3" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="python3.11" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="clang-19" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="python3.13" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="clang-23" CertificateName="MacDeveloper" />
     <FileSignInfo Include="llvm-addr2line" CertificateName="MacDeveloper" />
     <FileSignInfo Include="llvm-ar" CertificateName="MacDeveloper" />
     <FileSignInfo Include="llvm-cxxfilt" CertificateName="MacDeveloper" />
@@ -49,14 +49,9 @@
     <FileSignInfo Include="wasm-ctor-eval" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-dis" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-emscripten-finalize" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-fuzz-lattices" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-fuzz-types" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-ld" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-merge" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-metadce" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-opt" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-reduce" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-shell" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-split" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm2js" CertificateName="MacDeveloper" />
   </ItemGroup>
