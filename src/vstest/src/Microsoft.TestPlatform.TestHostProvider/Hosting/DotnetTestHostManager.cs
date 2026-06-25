@@ -955,34 +955,43 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 {
 #if NETCOREAPP
                     using var doc = JsonDocument.Parse(stream);
-                    var runtimeOptions = doc.RootElement.GetProperty("runtimeOptions");
-                    var additionalProbingPaths = runtimeOptions.GetProperty("additionalProbingPaths");
-                    foreach (var x in additionalProbingPaths.EnumerateArray())
-                    {
-                        EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, x.GetString());
-                        string testHostFullPath;
-                        try
-                        {
-                            testHostFullPath = Path.Combine(x.GetString()!, testHostPath);
-                        }
-                        catch (ArgumentException)
-                        {
-                            // https://github.com/Microsoft/vstest/issues/847
-                            // skip any invalid paths and continue checking the others
-                            continue;
-                        }
 
-                        if (_fileHelper.Exists(testHostFullPath))
+                    if (doc.RootElement.TryGetProperty("runtimeOptions", out var runtimeOptions) &&
+                        runtimeOptions.TryGetProperty("additionalProbingPaths", out var additionalProbingPaths))
+                    {
+                        foreach (var x in additionalProbingPaths.EnumerateArray())
                         {
-                            EqtTrace.Verbose("DotnetTestHostmanager: Found testhost.dll in {0}", testHostFullPath);
-                            return testHostFullPath;
+                            EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, x.GetString());
+                            string testHostFullPath;
+                            try
+                            {
+                                testHostFullPath = Path.Combine(x.GetString()!, testHostPath);
+                            }
+                            catch (ArgumentException)
+                            {
+                                // https://github.com/Microsoft/vstest/issues/847
+                                // skip any invalid paths and continue checking the others
+                                continue;
+                            }
+
+                            if (_fileHelper.Exists(testHostFullPath))
+                            {
+                                EqtTrace.Verbose("DotnetTestHostmanager: Found testhost.dll in {0}", testHostFullPath);
+                                return testHostFullPath;
+                            }
                         }
                     }
 #else
                     using var reader = new StreamReader(stream);
                     var parsed = Json.Deserialize(reader) as IDictionary<string, object>;
-                    var runtimeOpts = parsed?["runtimeOptions"] as IDictionary<string, object>;
-                    var probingPaths = runtimeOpts?["additionalProbingPaths"] as IList<object>;
+                    var runtimeOpts = parsed is not null && parsed.TryGetValue("runtimeOptions", out var runtimeOptsObj)
+                        ? runtimeOptsObj as IDictionary<string, object>
+                        : null;
+
+                    var probingPaths = runtimeOpts is not null && runtimeOpts.TryGetValue("additionalProbingPaths", out var probingPathsObj)
+                        ? probingPathsObj as IList<object>
+                        : null;
+
                     if (probingPaths is not null)
                     {
                         foreach (var x in probingPaths)

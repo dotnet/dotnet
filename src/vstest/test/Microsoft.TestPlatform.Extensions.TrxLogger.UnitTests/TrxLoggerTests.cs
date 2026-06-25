@@ -146,6 +146,56 @@ public class TrxLoggerTests
     }
 
     [TestMethod]
+    public void TestMessageHandlerShouldSetOutcomeToFailedWhenErrorMessageIsReceived()
+    {
+        string message = "An error message";
+        TestRunMessageEventArgs trme = new(TestMessageLevel.Error, message);
+        _testableTrxLogger.TestMessageHandler(new object(), trme);
+
+        Assert.AreEqual(TrxLoggerObjectModel.TestOutcome.Failed, _testableTrxLogger.TestResultOutcome);
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldNotSetOutcomeToFailedWhenTreatErrorMessagesAsWarningsIsEnabled()
+    {
+        var events = new Mock<TestLoggerEvents>();
+        var parameters = new Dictionary<string, string?>
+        {
+            [DefaultLoggerParameterNames.TestRunDirectory] = DefaultTestRunDirectory,
+            [TrxLoggerConstants.LogFileNameKey] = "test.trx",
+            [TrxLoggerConstants.TreatErrorMessagesAsWarnings] = "true",
+        };
+        var logger = new TestableTrxLogger();
+        logger.Initialize(events.Object, parameters);
+
+        string message = "A data collector error message";
+        TestRunMessageEventArgs trme = new(TestMessageLevel.Error, message);
+        logger.TestMessageHandler(new object(), trme);
+
+        Assert.AreEqual(TrxLoggerObjectModel.TestOutcome.Passed, logger.TestResultOutcome);
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldStillRecordErrorMessageWhenTreatErrorMessagesAsWarningsIsEnabled()
+    {
+        var events = new Mock<TestLoggerEvents>();
+        var parameters = new Dictionary<string, string?>
+        {
+            [DefaultLoggerParameterNames.TestRunDirectory] = DefaultTestRunDirectory,
+            [TrxLoggerConstants.LogFileNameKey] = "test.trx",
+            [TrxLoggerConstants.TreatErrorMessagesAsWarnings] = "true",
+        };
+        var logger = new TestableTrxLogger();
+        logger.Initialize(events.Object, parameters);
+
+        string message = "A data collector error message";
+        TestRunMessageEventArgs trme = new(TestMessageLevel.Error, message);
+        logger.TestMessageHandler(new object(), trme);
+
+        Assert.HasCount(1, logger.GetRunLevelErrorsAndWarnings());
+    }
+
+    [TestMethod]
     public void TestResultHandlerShouldCaptureStartTimeInSummaryWithTimeStampDuringIntialize()
     {
         TestCase testCase = CreateTestCase("dummy string");
@@ -362,7 +412,7 @@ public class TrxLoggerTests
         _testableTrxLogger.TestResultHandler(new object(), resultEventArg3.Object);
 
         Assert.AreEqual(1, _testableTrxLogger.TestResultCount, "TestResultHandler is not creating hierarchical results when parent result is present.");
-        Assert.AreEqual(3, _testableTrxLogger.TotalTestCount, "TestResultHandler is not adding all inner results in parent test result.");
+        Assert.AreEqual(2, _testableTrxLogger.TotalTestCount, "TestResultHandler should count only inner DataDriven results, not the parent container.");
     }
 
     [TestMethod]
@@ -523,6 +573,43 @@ public class TrxLoggerTests
         _testableTrxLogger.TestResultHandler(new object(), resultEventArg3.Object);
 
         Assert.AreEqual(1, _testableTrxLogger.TestEntryCount, "TestResultHandler is adding multiple test entries for ordered test.");
+    }
+
+    [TestMethod]
+    public void TestResultHandlerShouldNotDoubleCountParentDataDrivenTestInTotalTestCount()
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/15643
+        // DataDriven test results were double-counted: the parent container result AND each inner
+        // data row result were all included in TotalTestCount / PassedTestCount / FailedTestCount.
+        TestCase testCase1 = CreateTestCase("TestCase1");
+
+        Guid parentExecutionId = Guid.NewGuid();
+
+        // Parent (container) result – arrives first
+        VisualStudio.TestPlatform.ObjectModel.TestResult parentResult = new(testCase1);
+        parentResult.Outcome = TestOutcome.Passed;
+        parentResult.SetPropertyValue(TrxLoggerConstants.ExecutionIdProperty, parentExecutionId);
+
+        // Inner data-row result 1 – Passed
+        VisualStudio.TestPlatform.ObjectModel.TestResult innerResult1 = new(testCase1);
+        innerResult1.Outcome = TestOutcome.Passed;
+        innerResult1.SetPropertyValue(TrxLoggerConstants.ExecutionIdProperty, Guid.NewGuid());
+        innerResult1.SetPropertyValue(TrxLoggerConstants.ParentExecIdProperty, parentExecutionId);
+
+        // Inner data-row result 2 – Failed
+        VisualStudio.TestPlatform.ObjectModel.TestResult innerResult2 = new(testCase1);
+        innerResult2.Outcome = TestOutcome.Failed;
+        innerResult2.SetPropertyValue(TrxLoggerConstants.ExecutionIdProperty, Guid.NewGuid());
+        innerResult2.SetPropertyValue(TrxLoggerConstants.ParentExecIdProperty, parentExecutionId);
+
+        _testableTrxLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(parentResult).Object);
+        _testableTrxLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(innerResult1).Object);
+        _testableTrxLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(innerResult2).Object);
+
+        // TotalTestCount should reflect the 2 actual data-row executions, not 3 (parent + 2 inner).
+        Assert.AreEqual(2, _testableTrxLogger.TotalTestCount, "Parent DataDriven result must not be counted separately in TotalTestCount.");
+        Assert.AreEqual(1, _testableTrxLogger.PassedTestCount, "Only the passed inner result should be counted.");
+        Assert.AreEqual(1, _testableTrxLogger.FailedTestCount, "Only the failed inner result should be counted.");
     }
 
     [TestMethod]
@@ -768,6 +855,37 @@ public class TrxLoggerTests
         MakeTestRunComplete();
 
         Assert.AreEqual(Path.Combine(DefaultTestRunDirectory, DefaultLogFileNameParameterValue), _testableTrxLogger.TrxFile, "Wrong Trx file name");
+    }
+
+    [TestMethod]
+    public void CustomTrxFileNameWithSubdirectoryShouldPlaceTrxAndAttachmentsUnderSameDirectory()
+    {
+        // Arrange: LogFileName contains a subdirectory component
+        var logger = new TestableTrxLogger();
+        var subDir = "subdir";
+        var fileName = "results.trx";
+        var parameters = new Dictionary<string, string?>
+        {
+            [DefaultLoggerParameterNames.TestRunDirectory] = DefaultTestRunDirectory,
+            [TrxLoggerConstants.LogFileNameKey] = Path.Combine(subDir, fileName),
+        };
+        logger.Initialize(_events.Object, parameters);
+
+        MakeTestRunComplete(logger);
+
+        try
+        {
+            // The TRX file must be at <TestRunDirectory>/<subDir>/<fileName>
+            var expectedTrxPath = Path.Combine(DefaultTestRunDirectory, subDir, fileName);
+            Assert.AreEqual(expectedTrxPath, logger.TrxFile, "TRX file should be in the specified subdirectory.");
+        }
+        finally
+        {
+            if (!string.IsNullOrEmpty(logger.TrxFile) && File.Exists(logger.TrxFile))
+            {
+                File.Delete(logger.TrxFile);
+            }
+        }
     }
 
     /// <summary>

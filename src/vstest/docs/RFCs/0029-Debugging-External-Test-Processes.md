@@ -4,9 +4,9 @@
 Introduce APIs to improve debugging support in Visual Studio for tests that run in an external process other than `testhost*.exe`.
 
 # Motivation
-Some test frameworks (examples include [TAEF](https://docs.microsoft.com/en-us/windows-hardware/drivers/taef/) and [Python](https://docs.microsoft.com/en-us/visualstudio/python/unit-testing-python-in-visual-studio)) need to execute tests in a external process other than `testhost*.exe`. When it comes to debugging such tests in Visual Studio today, there are a couple of problems. 
+Some test frameworks (examples include [TAEF](https://learn.microsoft.com/en-us/windows-hardware/drivers/taef/) and [Python](https://learn.microsoft.com/en-us/visualstudio/python/unit-testing-python-in-visual-studio)) need to execute tests in a external process other than `testhost*.exe`. When it comes to debugging such tests in Visual Studio today, there are a couple of problems. 
 
-1. A test adapter can request to launch a child process with debugger attached by calling  [`IFrameworkHandle.LaunchProcessWithDebuggerAttached()`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IFrameworkHandle.cs#L29) within adapter's implementation of [`ITestExecutor.RunTests()`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L23) (after checking that [`IRunContext.IsBeingDebugged`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IRunContext.cs#L32) is `true`). However, there is no supported way for a test adapter to request that debugger should be attached to an **already running process**.
+1. A test adapter can request to launch a child process with debugger attached by calling  [`IFrameworkHandle.LaunchProcessWithDebuggerAttached()`](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IFrameworkHandle.cs#L29) within adapter's implementation of [`ITestExecutor.RunTests()`](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L23) (after checking that [`IRunContext.IsBeingDebugged`](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IRunContext.cs#L32) is `true`). However, there is no supported way for a test adapter to request that debugger should be attached to an **already running process**.
 
 2. Even though a test adapter can launch a child process with debugger attached as described above, today the debugger is always attached to the `testhost*.exe` process as well. This means that **Visual Studio ends up debugging two processes** instead of just the single process where tests are running.
 
@@ -15,7 +15,7 @@ Debugging of Python tests is supported in VS today. However, the Python adapter 
 While this works for Python, not all test frameworks that need to support debugging of tests running in external processes would want their users to also install a VS extension. For this reason, debugging of TAEF tests is currently not supported in VS.
 
 # Proposed Changes
-1. Introduce a new `IFrameworkHandle2` interface that inherits [`IFrameworkHandle`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IFrameworkHandle.cs#L12) and adds the following `AttachDebuggerToProcess()` API that an adapter can invoke from within [`ITestExecutor.RunTests()`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L23) to attach debugger to an already running process. 
+1. Introduce a new `IFrameworkHandle2` interface that inherits [`IFrameworkHandle`](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IFrameworkHandle.cs#L12) and adds the following `AttachDebuggerToProcess()` API that an adapter can invoke from within [`ITestExecutor.RunTests()`](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L23) to attach debugger to an already running process. 
 
 ```
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
@@ -50,7 +50,7 @@ void ITestExecutor.RunTests(IEnumerable<TestCase> tests, IRunContext runContext,
 }
 ```
 
-2. Introduce a new `ITestExecutor2` interface that inherits [`ITestExecutor`](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L15) and adds the following `ShouldAttachToTestHost()` API. Newer adapters can choose to implement `ITestExecutor2` instead of `ITestExecutor`. If implemented, `ITestExecutor.ShouldAttachToTestHost()` will be invoked before `ITestExecutor.RunTests()` is invoked for any test execution. `ITestExecutor2.ShouldAttachToTestHost()` will also be supplied the same set of inputs as `ITestExecutor.RunTests()`. This would allow adapters to control whether or not the debugger should be attached to `testhost*.exe` for the subsequent invocation of `ITestExecutor.RunTests()`.
+2. Introduce a new `ITestExecutor2` interface that inherits [`ITestExecutor`](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestExecutor.cs#L15) and adds the following `ShouldAttachToTestHost()` API. Newer adapters can choose to implement `ITestExecutor2` instead of `ITestExecutor`. If implemented, `ITestExecutor.ShouldAttachToTestHost()` will be invoked before `ITestExecutor.RunTests()` is invoked for any test execution. `ITestExecutor2.ShouldAttachToTestHost()` will also be supplied the same set of inputs as `ITestExecutor.RunTests()`. This would allow adapters to control whether or not the debugger should be attached to `testhost*.exe` for the subsequent invocation of `ITestExecutor.RunTests()`.
 
 ```
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
@@ -83,7 +83,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter
 }
 ```
 
-3. Introduce a new `ITestHostLauncher2` interface that inherits [`ITestHostLauncher`](./src/Microsoft.TestPlatform.ObjectModel/Client/Interfaces/ITestHostLauncher.cs#L11) and adds the following `AttachToProcess()` API. Visual Studio's Test Explorer will supply an implementation of this interface via [`IVsTestConsoleWrapper.RunTestsWithCustomTestHost()`](./src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Interfaces/IVsTestConsoleWrapper.cs#L120) and `ITestHostLauncher2.AttachToProcess()` will be called when  `IFrameworkHandle2.AttachDebuggerToProcess()` is called within an adapter.
+3. Introduce a new `ITestHostLauncher2` interface that inherits [`ITestHostLauncher`](../../src/Microsoft.TestPlatform.ObjectModel/Client/Interfaces/ITestHostLauncher.cs#L11) and adds the following `AttachToProcess()` API. Visual Studio's Test Explorer will supply an implementation of this interface via [`IVsTestConsoleWrapper.RunTestsWithCustomTestHost()`](../../src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Interfaces/IVsTestConsoleWrapper.cs#L286) and `ITestHostLauncher2.AttachToProcess()` will be called when  `IFrameworkHandle2.AttachDebuggerToProcess()` is called within an adapter.
 
 ```
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces

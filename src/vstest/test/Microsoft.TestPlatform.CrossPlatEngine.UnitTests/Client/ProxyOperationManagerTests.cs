@@ -441,6 +441,153 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         _testOperationManager.Close();
     }
 
+    [TestMethod]
+    public void SetupChannelShouldIncludeProcessPathAndStdErrorWhenTestHostExitsWithBoth()
+    {
+        var processPath = @"C:\testhost.exe";
+        var stdError = "Unhandled exception. System.Exception: Boom";
+
+        _mockTestHostManager.Setup(
+                m => m.GetTestHostProcessStartInfo(
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<IDictionary<string, string?>>(),
+                    It.IsAny<TestRunnerConnectionInfo>()))
+            .Returns(new TestProcessStartInfo { FileName = processPath });
+
+        _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
+            .Callback(() =>
+            {
+                _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty));
+                _mockTestHostManager.Raise(t => t.HostExited += null, new HostProviderEventArgs(stdError));
+            })
+            .Returns(Task.FromResult(true));
+
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
+
+        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
+
+        var ex = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel(["test.dll"], DefaultRunSettings));
+        Assert.Contains("Process path:", ex.Message);
+        Assert.Contains(processPath, ex.Message);
+        Assert.Contains(stdError, ex.Message);
+    }
+
+    [TestMethod]
+    public void SetupChannelShouldIncludeOnlyStdErrorWhenProcessPathIsNull()
+    {
+        var stdError = "Unhandled exception. System.Exception: Boom";
+
+        _mockTestHostManager.Setup(
+                m => m.GetTestHostProcessStartInfo(
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<IDictionary<string, string?>>(),
+                    It.IsAny<TestRunnerConnectionInfo>()))
+            .Returns(new TestProcessStartInfo { FileName = null });
+
+        _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
+            .Callback(() =>
+            {
+                _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty));
+                _mockTestHostManager.Raise(t => t.HostExited += null, new HostProviderEventArgs(stdError));
+            })
+            .Returns(Task.FromResult(true));
+
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
+
+        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
+
+        var ex = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel(["test.dll"], DefaultRunSettings));
+        Assert.Contains(stdError, ex.Message);
+        Assert.DoesNotContain("Process path:", ex.Message);
+    }
+
+    [TestMethod]
+    public void SetupChannelShouldIncludeProcessPathWhenTestHostTimesOutWithNoStdError()
+    {
+        var processPath = @"C:\testhost.exe";
+
+        _mockTestHostManager.Setup(
+                m => m.GetTestHostProcessStartInfo(
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<IDictionary<string, string?>>(),
+                    It.IsAny<TestRunnerConnectionInfo>()))
+            .Returns(new TestProcessStartInfo { FileName = processPath });
+
+        _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
+            .Callback(() => _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty)))
+            .Returns(Task.FromResult(true));
+
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
+
+        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
+
+        var ex = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel(["test.dll"], DefaultRunSettings));
+        Assert.Contains($" Process path: {processPath}", ex.Message);
+    }
+
+    [TestMethod]
+    public void SetupChannelShouldPassCrashContextToRequestSenderOnTestHostExit()
+    {
+        var processPath = @"C:\testhost.exe";
+        var stdError = "Fatal error";
+
+        _mockTestHostManager.Setup(
+                m => m.GetTestHostProcessStartInfo(
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<IDictionary<string, string?>>(),
+                    It.IsAny<TestRunnerConnectionInfo>()))
+            .Returns(new TestProcessStartInfo { FileName = processPath });
+
+        _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
+            .Callback(() =>
+            {
+                _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty));
+                _mockTestHostManager.Raise(t => t.HostExited += null, new HostProviderEventArgs(stdError));
+            })
+            .Returns(Task.FromResult(true));
+
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
+
+        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
+
+        Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel(["test.dll"], DefaultRunSettings));
+
+        // Verify OnClientProcessExit was called with the crash context containing both path and error.
+        _mockRequestSender.Verify(
+            rs => rs.OnClientProcessExit(It.Is<string>(s => s.Contains(processPath) && s.Contains(stdError))),
+            Times.Once);
+    }
+
+    [TestMethod]
+    public void SetupChannelShouldIncludeProcessPathInErrorWhenTestHostExitsWithOnlyPath()
+    {
+        var processPath = @"C:\testhost.exe";
+
+        _mockTestHostManager.Setup(
+                m => m.GetTestHostProcessStartInfo(
+                    It.IsAny<IEnumerable<string>>(),
+                    It.IsAny<IDictionary<string, string?>>(),
+                    It.IsAny<TestRunnerConnectionInfo>()))
+            .Returns(new TestProcessStartInfo { FileName = processPath });
+
+        _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
+            .Callback(() =>
+            {
+                _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty));
+                // Host exits with empty stderr (no error output).
+                _mockTestHostManager.Raise(t => t.HostExited += null, new HostProviderEventArgs(string.Empty));
+            })
+            .Returns(Task.FromResult(true));
+
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>(), It.IsAny<CancellationToken>())).Returns(false);
+
+        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, _mockTestHostManager.Object);
+
+        var ex = Assert.ThrowsExactly<TestPlatformException>(() => operationManager.SetupChannel(["test.dll"], DefaultRunSettings));
+        // ThrowOnTestHostExited fires first; with no stderr the crash context is just the path.
+        Assert.Contains(processPath, ex.Message);
+    }
+
     private void SetupWaitForTestHostExit()
     {
         // Raise host exited when end session is called
