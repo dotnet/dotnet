@@ -1,12 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
-#if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
@@ -83,7 +79,8 @@ namespace NuGet.Protocol.Plugins
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var logRequest = MessageUtilities.DeserializePayload<LogRequest>(request);
+            // Deserialized payload is non-null for well-formed handler requests.
+            var logRequest = MessageUtilities.DeserializePayload<LogRequest>(request)!;
             MessageResponseCode responseCode;
 
             if (logRequest.LogLevel >= _logLevel)
@@ -107,6 +104,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="logger">A logger.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> is <see langword="null" />.</exception>
+        [MemberNotNull(nameof(_logger))]
         public void SetLogger(ILogger logger)
         {
             if (logger == null)

@@ -507,12 +507,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_PackageTypeFilterMultipleNotSupported">
         <source>The source supports filtering by only one package type at a time.</source>
-        <target state="new">The source supports filtering by only one package type at a time.</target>
+        <target state="translated">El origen solo admite el filtrado por un tipo de paquete a la vez.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_PackageTypeFilterNotSupported">
         <source>The source does not support filtering search results by package type.</source>
-        <target state="new">The source does not support filtering search results by package type.</target>
+        <target state="translated">El origen no admite el filtrado de resultados de búsqueda por tipo de paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="Protocol_Search_LocalSourceNotFound">

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 
@@ -19,9 +17,9 @@ namespace NuGet.Protocol.Plugins
         public CancellationToken CancellationToken { get; protected set; }
 
         /// <summary>
-        /// Gets the request ID.
+        /// Gets the request ID. Never null, protected constructor sets it.
         /// </summary>
-        public string RequestId { get; protected set; }
+        public string RequestId { get; protected set; } = null!;
 
         /// <summary>
         /// Disposes of this instance.

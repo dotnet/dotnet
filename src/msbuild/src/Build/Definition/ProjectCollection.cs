@@ -518,8 +518,8 @@ namespace Microsoft.Build.Evaluation
             {
                 if (s_assemblyDisplayVersion == null)
                 {
-                    var assembly = typeof(Constants).GetTypeInfo().Assembly;
-                    var fullInformationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+                    var assembly = typeof(Constants).Assembly;
+                    var fullInformationalVersion =  assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
                     // When built from the VMR, the InformationalVersion carries the VMR commit. Prefer the
                     // original MSBuild commit (RepoOriginalSourceRevisionId) so the displayed version maps

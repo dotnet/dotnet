@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Threading;
@@ -26,7 +24,7 @@ namespace NuGet.Protocol.Plugins
         private bool _isDisposed;
         private readonly object _sendLock;
         private readonly TextWriter _textWriter;
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="Sender" /> class.
@@ -38,7 +36,7 @@ namespace NuGet.Protocol.Plugins
         {
         }
 
-        internal Sender(TextWriter writer, IEnvironmentVariableReader environmentVariableReader)
+        internal Sender(TextWriter writer, IEnvironmentVariableReader? environmentVariableReader)
         {
             if (writer == null)
             {
