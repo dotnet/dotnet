@@ -104,7 +104,7 @@ namespace NuGet.Tests.Apex
 
         /// <summary>
         /// Verifies that Get-Package -ListAvailable returns a package whose IsUpdate property
-        /// is not set (falsy). The original E2E test (Test-GetPackagesWithNoUpdatesReturnPackagesWithIsUpdateNotSet)
+        /// is not set (false). The original E2E test (Test-GetPackagesWithNoUpdatesReturnPackagesWithIsUpdateNotSet)
         /// called Assert-False on $package.IsUpdate — which succeeds because PowerShellRemotePackage
         /// does not have an IsUpdate property, so PowerShell returns $null (falsy).
         /// </summary>
