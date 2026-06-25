@@ -16,10 +16,6 @@
   <PropertyGroup>
     <!-- This package is included even in source build -->
     <IsPackable>true</IsPackable>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true'">Microsoft.TestPlatform.Build.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true'">Microsoft.TestPlatform.Build.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Microsoft.TestPlatform.Build.sourcebuild.product.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.Build</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <RepositoryUrl>https://github.com/microsoft/vstest</RepositoryUrl>
@@ -27,6 +23,9 @@
     <PackageDescription>
       Build tasks and targets for running tests with Test Platform
     </PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,12 +33,12 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCorePackageVersion)" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup Label="NuGet">
-    <NuspecProperty Include="SourceBuildTfmCurrent=$(NetCurrent)" />
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Microsoft.TestPlatform.targets">
+    <Content Include="Microsoft.TestPlatform.targets" Pack="true" PackagePath="runtimes/any/native">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -5,7 +5,7 @@ This note outlines the proposed changes for the JSON protocol between an Editor/
 and the test platform.
 
 
-Here is the link to v1 specs: [Editors-API-Specification](./RFCs/0007-Editors-API-Specification.md)
+Here is the link to v1 specs: [Editors-API-Specification](./0007-Editors-API-Specification.md)
 
 ## Motivation
 Here are the key factors:

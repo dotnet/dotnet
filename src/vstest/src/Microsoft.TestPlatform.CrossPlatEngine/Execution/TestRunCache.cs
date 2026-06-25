@@ -91,7 +91,7 @@ internal class TestRunCache : ITestRunCache
 
         _cacheSize = cacheSize;
         _onCacheHit = onCacheHit;
-        _lastUpdate = DateTime.Now;
+        _lastUpdate = DateTime.UtcNow;
         _cacheTimeout = cacheTimeout;
         _inProgressTests = new Collection<TestCase>();
         _testResults = new Collection<TestResult>();
@@ -311,7 +311,7 @@ internal class TestRunCache : ITestRunCache
         {
             // Send results when the specified cache size has been reached or
             // after the specified cache timeout has been hit.
-            var timeDelta = DateTime.Now - _lastUpdate;
+            var timeDelta = DateTime.UtcNow - _lastUpdate;
 
             var inProgressTestsCount = _inProgressTests.Count;
 
@@ -339,7 +339,7 @@ internal class TestRunCache : ITestRunCache
         _onCacheHit(TestRunStatistics, _testResults, _inProgressTests);
         _testResults = new Collection<TestResult>();
         _inProgressTests = new Collection<TestCase>();
-        _lastUpdate = DateTime.Now;
+        _lastUpdate = DateTime.UtcNow;
 
         // Reset the timer
         _timer.Change(_cacheTimeout, _cacheTimeout);

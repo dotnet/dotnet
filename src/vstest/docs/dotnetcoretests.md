@@ -12,6 +12,6 @@ When dotnet build runs, the above mentioned packages are restored to the users' 
   }
 }
 
-In the case of the customer, the nuget packages aren't being restored to the paths defined in the <UnitTestProject>.runtimeconfig.dev.json resulting in the testhost.dll not being determined. The locations used for the nuget packages can be determined using the below : https://docs.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders#viewing-folder-locations
+In the case of the customer, the nuget packages aren't being restored to the paths defined in the <UnitTestProject>.runtimeconfig.dev.json resulting in the testhost.dll not being determined. The locations used for the nuget packages can be determined using the below : https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders#viewing-folder-locations
 
 To mitigate the issue and as a general recommendation for running dot net core tests with vstest task please ask the customer to publish the test project and point to the publish location for running tests. Publish ensures all needed dependencies are present for the tests to be executed alongside the test dll in case of dot net core tests.

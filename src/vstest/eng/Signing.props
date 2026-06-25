@@ -28,9 +28,6 @@
     <FileSignInfo Include="Microsoft.Deployment.Resources.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.Package.dll" CertificateName="3PartySHA2" />
-
-    <!-- Remove when using Arcade 11 -->
-    <FileExtensionSignInfo Include=".cab" CertificateName="None" Condition="'$(DotNetBuildFromVMR)' != 'true'" />
   </ItemGroup>
 
 </Project>

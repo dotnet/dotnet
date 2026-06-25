@@ -10,12 +10,12 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">Nous n’avons pas pu trouver testhost pour la source de test « {0} ».
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+Vérifiez ce qui suit : 
+  – Le projet de test référence le package NuGet « Microsoft.NET.Test.Sdk ».
+  – Le projet a été généré et la sortie se trouve dans « {1} ».
+  – L’infrastructure cible du projet correspond au runtime .NET installé.
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>

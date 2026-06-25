@@ -127,9 +127,24 @@ public partial class ProcessHelper : IProcessHelper
                 process.OutputDataReceived += (sender, args) => outputCallBack(sender as Process, args.Data);
             }
 
+            // Set once the redirected stderr stream reaches EOF (signaled by a null Data event,
+            // which is raised after all stderr lines have been handed to errorCallback). This is
+            // the only reliable signal that the asynchronously-collected error output is complete:
+            // neither WaitForExit(timeout) nor WaitForExitAsync guarantees the ErrorDataReceived
+            // callbacks have run. The exit handler below waits (bounded) on this before reading.
+            ManualResetEventSlim? errorStreamClosed = null;
             if (errorCallback != null)
             {
-                process.ErrorDataReceived += (sender, args) => errorCallback(sender as Process, args.Data);
+                errorStreamClosed = new ManualResetEventSlim(initialState: false);
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    if (args.Data is null)
+                    {
+                        errorStreamClosed.Set();
+                    }
+
+                    errorCallback(sender as Process, args.Data);
+                };
             }
 
             if (exitCallBack != null)
@@ -137,6 +152,7 @@ public partial class ProcessHelper : IProcessHelper
                 process.Exited += async (sender, args) =>
                 {
                     const int timeout = 500;
+                    var stopwatch = Stopwatch.StartNew();
 
                     if (sender is Process p)
                     {
@@ -148,9 +164,11 @@ public partial class ProcessHelper : IProcessHelper
                             // See ticket https://github.com/microsoft/vstest/issues/3375 to get the links to all
                             // issues, discussions and documentations.
                             //
-                            // On .NET 5 and later, the solution is simple, we can simply use WaitForExitAsync which
-                            // correctly ensure that some time is given to the child process (or any grandchild) to
-                            // flush before exit happens.
+                            // On .NET 5 and later we use WaitForExitAsync to give the child process (and any
+                            // grandchild) some time to exit. NOTE: WaitForExitAsync only waits for the process
+                            // to exit; it does NOT guarantee that the asynchronous Output/ErrorDataReceived
+                            // callbacks have finished delivering. The bounded stderr drain after this block
+                            // ensures the captured error output is complete before exitCallBack reads it.
                             //
                             // For older frameworks, the solution is more tricky but it seems we can get the expected
                             // behavior using the parameterless 'WaitForExit()' combined with an awaited Task.Run call.
@@ -203,6 +221,13 @@ public partial class ProcessHelper : IProcessHelper
                             // We "expect" TaskCanceledException, COMException (if process was disposed before calling
                             // the exit) or InvalidOperationException.
                         }
+
+                        // The process has exited. Within the SAME bounded budget used above, wait for the
+                        // redirected stderr to reach EOF so that asynchronously-collected error output
+                        // (e.g. a testhost crash callstack such as "Stack overflow.") is complete before the
+                        // exit callback consumes it. WaitForExit(timeout)/WaitForExitAsync do not guarantee
+                        // the ErrorDataReceived callbacks have run.
+                        WaitForErrorStreamToDrain(errorStreamClosed, timeout, stopwatch.ElapsedMilliseconds);
                     }
 
                     // If exit callback has code that access Process object, ensure that the exceptions handling should be done properly.
@@ -223,6 +248,28 @@ public partial class ProcessHelper : IProcessHelper
             {
                 process.BeginOutputReadLine();
             }
+        }
+    }
+
+    /// <summary>
+    /// Waits, bounded by the time remaining in <paramref name="budgetMilliseconds"/>, for the redirected
+    /// standard error stream to reach EOF (signaled via <paramref name="errorStreamClosed"/>). This ensures
+    /// all <see cref="Process.ErrorDataReceived"/> callbacks have completed - and therefore the captured
+    /// error output is complete - before it is consumed by the exit callback. It returns immediately when
+    /// there is no redirected error stream, when it has already drained, or when the budget is already
+    /// exhausted (e.g. a grandchild process keeps the pipe open), so the caller can never hang.
+    /// </summary>
+    internal static void WaitForErrorStreamToDrain(ManualResetEventSlim? errorStreamClosed, int budgetMilliseconds, long elapsedMilliseconds)
+    {
+        if (errorStreamClosed is null)
+        {
+            return;
+        }
+
+        var remainingMilliseconds = budgetMilliseconds - (int)elapsedMilliseconds;
+        if (remainingMilliseconds > 0)
+        {
+            errorStreamClosed.Wait(remainingMilliseconds);
         }
     }
 

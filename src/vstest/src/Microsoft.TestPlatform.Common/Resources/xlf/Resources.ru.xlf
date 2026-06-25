@@ -122,6 +122,21 @@
         <target state="translated">Не удалось найти сборщик данных "{0}"</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataCollectionContextNotInitialized">
+        <source>The data collection environment context has not been initialized. Ensure that session started before processing test case events.</source>
+        <target state="translated">Контекст среды сбора данных не был инициализирован. Убедитесь, что сеанс запущен, прежде чем приступать к обработке событий тестового сценария.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseEndMissingTestElement">
+        <source>TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.</source>
+        <target state="translated">TestCaseEndEventArgs.TestElement имеет значение null. Сборщик данных не может завершить тестовый сценарий без тестового элемента.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseStartMissingTestElement">
+        <source>TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.</source>
+        <target state="translated">TestCaseStartEventArgs.TestElement имеет значение null. Сборщику данных не удается запустить тестовый сценарий без тестового элемента.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
         <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
         <target state="translated">Сборщик данных "{0}" запросил, чтобы в окружении выполнения тестов была установлена переменная окружения "{1}" со значением "{2}", но другой сборщик данных "{3}" уже запросил эту переменную окружения со значением "{4}".</target>
