@@ -158,9 +158,52 @@ namespace NuGet.Protocol
             Common.ILogger logger = log ?? Common.NullLogger.Instance;
 
             //*TODOs : Take prerelease as parameter. Also it should return both listed and unlisted for powershell ?
-            var packages = await _regResource.GetPackageMetadata(packageId, includePrerelease, false, sourceCacheContext, logger, token);
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await VersionStartsWithFromItemsAsync(packageId, versionPrefix, includePrerelease, sourceCacheContext, logger, token);
+            }
+
+            if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+            {
+                return await VersionStartsWithFromItemsAsync(packageId, versionPrefix, includePrerelease, sourceCacheContext, logger, token);
+            }
+
+            return await VersionStartsWithFromJObjectsAsync(packageId, versionPrefix, includePrerelease, sourceCacheContext, logger, token);
+        }
+
+        private async Task<IEnumerable<NuGetVersion>> VersionStartsWithFromItemsAsync(
+            string packageId,
+            string versionPrefix,
+            bool includePrerelease,
+            SourceCacheContext sourceCacheContext,
+            Common.ILogger logger,
+            CancellationToken token)
+        {
             var versions = new List<NuGetVersion>();
-            foreach (var package in packages)
+            IReadOnlyList<RegistrationLeafItem> items = await _regResource.GetPackageMetadataItemsAsync(packageId, VersionRange.All, includePrerelease, includeUnlisted: false, sourceCacheContext, logger, token);
+            foreach (RegistrationLeafItem item in items.NoAllocEnumerate())
+            {
+                NuGetVersion version = item.CatalogEntry.Version;
+                if (version != null
+                    && version.ToString().StartsWith(versionPrefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    versions.Add(version);
+                }
+            }
+            return versions;
+        }
+
+        private async Task<IEnumerable<NuGetVersion>> VersionStartsWithFromJObjectsAsync(
+            string packageId,
+            string versionPrefix,
+            bool includePrerelease,
+            SourceCacheContext sourceCacheContext,
+            Common.ILogger logger,
+            CancellationToken token)
+        {
+            var versions = new List<NuGetVersion>();
+            IEnumerable<JObject> packages = await _regResource.GetPackageMetadata(packageId, includePrerelease, false, sourceCacheContext, logger, token);
+            foreach (JObject package in packages.NoAllocEnumerate())
             {
                 var version = (string)package["version"];
                 if (version.StartsWith(versionPrefix, StringComparison.OrdinalIgnoreCase))

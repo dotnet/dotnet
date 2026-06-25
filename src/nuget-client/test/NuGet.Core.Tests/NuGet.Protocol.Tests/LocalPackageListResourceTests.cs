@@ -174,6 +174,8 @@ namespace NuGet.Protocol.Tests
             public int _actualSkip { get; set; }
             public int _actualTake { get; set; }
 
+            public override bool SupportsPackageTypeFiltering => false;
+
             public override Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(string searchTerm, SearchFilter filters, int skip, int take, ILogger log, CancellationToken cancellationToken)
             {
                 _actualSearchTerm = searchTerm;

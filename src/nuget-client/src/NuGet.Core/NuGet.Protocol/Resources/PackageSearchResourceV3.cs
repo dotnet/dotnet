@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,24 +21,24 @@ namespace NuGet.Protocol
     public class PackageSearchResourceV3 : PackageSearchResource
     {
         private readonly HttpSource _client;
-        private readonly Uri[] _searchEndpoints;
-        private readonly HashSet<Uri> _packageTypeCapableEndpoints;
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private readonly IReadOnlyList<Uri> _searchEndpoints;
+        private readonly IReadOnlyList<Uri>? _packageTypeCapableEndpoints;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         internal PackageSearchResourceV3(
             HttpSource client,
-            IEnumerable<Uri> searchEndpoints,
-            IEnumerable<Uri> packageTypeCapableEndpoints = null,
-            IEnvironmentVariableReader environmentVariableReader = null)
+            IReadOnlyList<Uri> searchEndpoints,
+            IReadOnlyList<Uri>? packageTypeCapableEndpoints = null,
+            IEnvironmentVariableReader? environmentVariableReader = null)
             : base()
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _searchEndpoints = searchEndpoints?.ToArray() ?? throw new ArgumentNullException(nameof(searchEndpoints));
-            _packageTypeCapableEndpoints = packageTypeCapableEndpoints == null
-                ? null
-                : new HashSet<Uri>(packageTypeCapableEndpoints);
+            _searchEndpoints = searchEndpoints ?? throw new ArgumentNullException(nameof(searchEndpoints));
+            _packageTypeCapableEndpoints = packageTypeCapableEndpoints;
             _environmentVariableReader = environmentVariableReader;
         }
+
+        public override bool SupportsPackageTypeFiltering => _packageTypeCapableEndpoints?.Count > 0;
 
         /// <summary>
         /// Query nuget package list from nuget server. This implementation optimized for performance so doesn't iterate whole result 
@@ -65,18 +63,21 @@ namespace NuGet.Protocol
                 log,
                 cancellationToken);
 
-            var searchResults = searchResultMetadata
-                .Select(m => m.WithVersions(() => GetVersions(m, filter)))
-                .Select(m => { ((PackageSearchMetadataBuilder.ClonedPackageSearchMetadata)m).CacheStrings(metadataCache); return m; })
-                .ToArray();
+            List<IPackageSearchMetadata> searchResults = new(searchResultMetadata.Count);
+            foreach (var metadata in searchResultMetadata)
+            {
+                var withVersions = metadata.WithVersions(() => GetVersions(metadata, filter));
+                ((PackageSearchMetadataBuilder.ClonedPackageSearchMetadata)withVersions).CacheStrings(metadataCache);
+                searchResults.Add(withVersions);
+            }
 
             return searchResults;
         }
 
         private static IEnumerable<VersionInfo> GetVersions(PackageSearchMetadata metadata, SearchFilter filter)
         {
-            var uniqueVersions = new HashSet<Versioning.NuGetVersion>();
-            var versions = new List<VersionInfo>();
+            var uniqueVersions = new HashSet<Versioning.NuGetVersion>(metadata.ParsedVersions.Length + 1);
+            var versions = new List<VersionInfo>(metadata.ParsedVersions.Length + 1);
             foreach (var ver in metadata.ParsedVersions)
             {
                 if ((filter.IncludePrerelease || !ver.Version.IsPrerelease) && uniqueVersions.Add(ver.Version))
@@ -100,15 +101,10 @@ namespace NuGet.Protocol
                     Common.ILogger log,
                     CancellationToken cancellationToken)
         {
-            var packageTypeFilterRequested = filters.PackageTypes != null && filters.PackageTypes.Any();
+            bool packageTypeFilterRequested = !string.IsNullOrEmpty(filters.PackageType);
 
             if (packageTypeFilterRequested)
             {
-                if (filters.PackageTypes.Count() > 1)
-                {
-                    throw new ArgumentException(Strings.Protocol_PackageTypeFilterMultipleNotSupported, nameof(filters));
-                }
-
                 if (_packageTypeCapableEndpoints == null || _packageTypeCapableEndpoints.Count == 0)
                 {
                     throw new NotSupportedException(Strings.Protocol_PackageTypeFilterNotSupported);
@@ -117,13 +113,11 @@ namespace NuGet.Protocol
 
             // When package type filtering is requested, only iterate endpoints that advertise
             // SearchQueryService/3.5.0. Otherwise, use the full set of search endpoints.
-            var endpoints = packageTypeFilterRequested
-                ? _packageTypeCapableEndpoints.ToArray()
+            IReadOnlyList<Uri> endpoints = packageTypeFilterRequested
+                ? _packageTypeCapableEndpoints ?? []
                 : _searchEndpoints;
 
-            log.LogVerbose($"Found {endpoints.Length} search endpoints.");
-
-            for (var i = 0; i < endpoints.Length; i++)
+            for (var i = 0; i < endpoints.Count; i++)
             {
                 var endpoint = endpoints[i];
 
@@ -133,7 +127,7 @@ namespace NuGet.Protocol
                     "q=" + searchTerm +
                     "&skip=" + skip.ToString(CultureInfo.CurrentCulture) +
                     "&take=" + take.ToString(CultureInfo.CurrentCulture) +
-                    "&prerelease=" + filters.IncludePrerelease.ToString(CultureInfo.CurrentCulture).ToLowerInvariant();
+                    "&prerelease=" + (filters.IncludePrerelease ? "true" : "false");
 
                 if (filters.IncludeDelisted)
                 {
@@ -152,9 +146,7 @@ namespace NuGet.Protocol
 
                 if (packageTypeFilterRequested)
                 {
-                    // SearchQueryService/3.5.0 specifies a single 'packageType' parameter.
-                    // Multi-value inputs are rejected above; here the collection has exactly one entry.
-                    queryString += "&packageType=" + filters.PackageTypes.First();
+                    queryString += "&packageType=" + filters.PackageType;
                 }
 
                 queryString += "&semVerLevel=2.0.0";
@@ -172,7 +164,7 @@ namespace NuGet.Protocol
                 {
                     throw;
                 }
-                catch when (i < endpoints.Length - 1)
+                catch when (i < endpoints.Count - 1)
                 {
                     // Ignore all failures until the last endpoint
                 }
@@ -195,25 +187,6 @@ namespace NuGet.Protocol
             throw new FatalProtocolException(Strings.Protocol_MissingSearchService);
         }
 
-        private async Task<T> Search<T>(
-            Func<HttpSource, Uri, Task<T>> getResultAsync,
-            string searchTerm,
-            SearchFilter filters,
-            int skip,
-            int take,
-            Common.ILogger log,
-            CancellationToken cancellationToken)
-        {
-            return await SearchPage(
-                uri => getResultAsync(_client, uri),
-                searchTerm,
-                filters,
-                skip,
-                take,
-                log,
-                cancellationToken);
-        }
-
         /// <summary>
         /// Query nuget package list from nuget server. This implementation optimized for performance so doesn't iterate whole result 
         /// returned nuget server, so as soon as find "take" number of result packages then stop processing and return the result. 
@@ -225,7 +198,7 @@ namespace NuGet.Protocol
         /// <param name="log">Logger instance.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>List of package meta data.</returns>
-        internal async Task<IEnumerable<PackageSearchMetadata>> Search(
+        internal async Task<IReadOnlyList<PackageSearchMetadata>> Search(
             string searchTerm,
             SearchFilter filters,
             int skip,
@@ -233,8 +206,8 @@ namespace NuGet.Protocol
             Common.ILogger log,
             CancellationToken cancellationToken)
         {
-            return await Search(
-                (httpSource, uri) => httpSource.ProcessHttpStreamAsync(
+            return await SearchPage(
+                uri => _client.ProcessHttpStreamAsync(
                     new HttpSourceRequest(uri, Common.NullLogger.Instance),
                     s => ProcessHttpStreamTakeCountedItemAsync(s, take, cancellationToken),
                     Common.NullLogger.Instance,
@@ -247,17 +220,18 @@ namespace NuGet.Protocol
                 cancellationToken);
         }
 
-        internal async Task<IEnumerable<PackageSearchMetadata>> ProcessHttpStreamTakeCountedItemAsync(HttpResponseMessage httpInitialResponse, int take, CancellationToken token)
+        internal async Task<IReadOnlyList<PackageSearchMetadata>> ProcessHttpStreamTakeCountedItemAsync(HttpResponseMessage? httpInitialResponse, int take, CancellationToken token)
         {
             if (take <= 0)
             {
-                return Enumerable.Empty<PackageSearchMetadata>();
+                return [];
             }
 
-            return (await ProcessHttpStreamWithoutBufferingAsync(httpInitialResponse, (uint)take, token)).Data;
+            var results = await ProcessHttpStreamWithoutBufferingAsync(httpInitialResponse, (uint)take, token);
+            return results?.Data ?? [];
         }
 
-        private async Task<V3SearchResults> ProcessHttpStreamWithoutBufferingAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        private async Task<V3SearchResults?> ProcessHttpStreamWithoutBufferingAsync(HttpResponseMessage? httpInitialResponse, uint take, CancellationToken token)
         {
             if (httpInitialResponse == null)
             {
@@ -278,7 +252,7 @@ namespace NuGet.Protocol
             }
         }
 
-        private static async Task<V3SearchResults> ProcessHttpStreamWithStjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        private static async Task<V3SearchResults?> ProcessHttpStreamWithStjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
         {
 #if NETCOREAPP2_0_OR_GREATER
             using var stream = await httpInitialResponse.Content.ReadAsStreamAsync(token);
@@ -295,7 +269,7 @@ namespace NuGet.Protocol
             return results;
         }
 
-        private static async Task<V3SearchResults> ProcessHttpStreamWithNsjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
+        private static async Task<V3SearchResults?> ProcessHttpStreamWithNsjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
         {
 #pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
             var _newtonsoftConvertersSerializer = JsonSerializer.Create(JsonExtensions.ObjectSerializationSettings);

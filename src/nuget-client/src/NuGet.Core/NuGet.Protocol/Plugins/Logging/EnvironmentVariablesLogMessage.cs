@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 using NuGet.Common;
 
 namespace NuGet.Protocol.Plugins
@@ -31,21 +31,21 @@ namespace NuGet.Protocol.Plugins
 
         public override string ToString()
         {
-            var message = new JObject();
+            var message = new JsonObject();
 
             if (_handshakeTimeout.HasValue)
             {
-                message.Add("handshake timeout in seconds", _handshakeTimeout.Value);
+                message["handshake timeout in seconds"] = _handshakeTimeout.Value;
             }
 
             if (_idleTimeout.HasValue)
             {
-                message.Add("idle timeout in seconds", _idleTimeout.Value);
+                message["idle timeout in seconds"] = _idleTimeout.Value;
             }
 
             if (_requestTimeout.HasValue)
             {
-                message.Add("request timeout in seconds", _requestTimeout.Value);
+                message["request timeout in seconds"] = _requestTimeout.Value;
             }
 
             return ToString("environment variables", message);

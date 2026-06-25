@@ -24,7 +24,7 @@ namespace Dotnet.Integration.Test
         private DotnetIntegrationTestFixture _dotnetFixture;
         private SignCommandTestFixture _signFixture;
         private readonly ITestOutputHelper _testOutputHelper;
-        private const string _packageAlreadySignedError = "NU3001: The package already contains a signature. Please remove the existing signature before adding a new signature.";
+        private const string _packageAlreadySignedError = "NU3001: The package already contains a signature. Remove the existing signature before adding a new signature.";
         private readonly string _invalidPasswordError = "NU3001: Invalid password was provided for the certificate file";
         private readonly string _noCertFoundError = "NU3001: No certificates were found that meet all the given criteria.";
         private readonly string _chainBuildFailureErrorCode = NuGetLogCode.NU3018.ToString();

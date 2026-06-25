@@ -587,6 +587,48 @@ namespace NuGetConsole.Host.PowerShell.Test
             package.Id.Should().Be("ReleaseNotesPackage");
         }
 
+        /// <summary>
+        /// Verifies that Get-Package (installed) throws when no solution is open.
+        /// </summary>
+        [Fact]
+        public void GetPackage_WithNoOpenSolution_Throws()
+        {
+            // Arrange — override the default IsSolutionOpen = true to simulate no solution
+            _solutionManager.SetupGet(x => x.IsSolutionOpen).Returns(false);
+
+            SetupSourceRepositoryProvider("https://contoso.com/v3/index.json");
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: "https://contoso.com/v3/index.json");
+
+            // Act + Assert — terminating error is surfaced as a RuntimeException
+            var act = () => fixture.Invoke("Get-Package", new Dictionary<string, object>());
+            act.Should().Throw<RuntimeException>()
+                .Which.ErrorRecord.Exception.Message.Should()
+                .Contain("The current environment doesn't have a solution open.");
+        }
+
+        /// <summary>
+        /// Verifies that Get-Package (installed) throws when the solution exists but is not yet saved
+        /// (e.g., a text file was opened without saving the solution).
+        /// </summary>
+        [Fact]
+        public void GetPackage_WithUnsavedSolution_Throws()
+        {
+            // Arrange — solution is open but not saved (IsSolutionAvailableAsync returns false)
+            _solutionManager.SetupGet(x => x.IsSolutionOpen).Returns(true);
+            _solutionManager.Setup(x => x.IsSolutionAvailableAsync()).ReturnsAsync(false);
+
+            SetupSourceRepositoryProvider("https://contoso.com/v3/index.json");
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: "https://contoso.com/v3/index.json");
+
+            // Act + Assert — terminating error is surfaced as a RuntimeException
+            var act = () => fixture.Invoke("Get-Package", new Dictionary<string, object>());
+            act.Should().Throw<RuntimeException>()
+                .Which.ErrorRecord.Exception.Message.Should()
+                .Contain("Solution is not saved.");
+        }
+
         #region Helpers
 
         private void SetupSourceRepositoryProvider(string localSourcePath)
@@ -658,7 +700,7 @@ namespace NuGetConsole.Host.PowerShell.Test
         {
             private readonly Runspace _runspace;
 
-            public CmdletRunspaceFixture(string activeSource = "https://api.nuget.org/v3/index.json")
+            public CmdletRunspaceFixture(string activeSource = "https://contoso.com/v3/index.json")
             {
                 var host = new TestPSHost(activeSource);
                 var initialSessionState = InitialSessionState.CreateDefault();

@@ -3,7 +3,7 @@
 
 using System;
 using System.Reflection;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -38,18 +38,20 @@ namespace NuGet.Protocol.Plugins
 
         public override string ToString()
         {
-            var message = new JObject(
-                new JProperty("assembly full name", _fullName),
-                new JProperty("entry assembly full name", _entryAssemblyFullName));
+            var message = new JsonObject
+            {
+                ["assembly full name"] = _fullName,
+                ["entry assembly full name"] = _entryAssemblyFullName,
+            };
 
             if (!string.IsNullOrEmpty(_fileVersion))
             {
-                message.Add("file version", _fileVersion);
+                message["file version"] = _fileVersion;
             }
 
             if (!string.IsNullOrEmpty(_informationalVersion))
             {
-                message.Add("informational version", _informationalVersion);
+                message["informational version"] = _informationalVersion;
             }
 
             return ToString("assembly", message);

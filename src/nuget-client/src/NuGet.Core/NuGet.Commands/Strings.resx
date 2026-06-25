@@ -845,7 +845,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>The centrally pinned dependency '{0}' was not found in the resolved graph unexpectedly for node '{1}'. Please file an issue at https://github.com/NuGet/Home</value>
   </data>
   <data name="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping" xml:space="preserve">
-    <value>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</value>
+    <value>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</value>
     <comment>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</comment>
   </data>
   <data name="SourcesCommandNoMatchingSourcesFound" xml:space="preserve">
@@ -1189,5 +1189,8 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
   </data>
   <data name="Log_AliasContainsDisallowedCharacters" xml:space="preserve">
     <value>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</value>
+  </data>
+  <data name="RestrictedPackageIdWarning" xml:space="preserve">
+    <value>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</value>
   </data>
 </root>

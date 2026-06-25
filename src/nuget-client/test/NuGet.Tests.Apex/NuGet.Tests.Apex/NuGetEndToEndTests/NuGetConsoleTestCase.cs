@@ -942,7 +942,7 @@ namespace NuGet.Tests.Apex
             using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger);
 
             var source = "d:package";
-            var expectedMessage = $"Unsupported type of source '{source}'. Please provide an HTTP or local source.";
+            var expectedMessage = $"Unsupported type of source '{source}'. Provide an HTTP or local source.";
 
             var nugetConsole = GetConsole(testContext.Project);
 
@@ -978,7 +978,7 @@ namespace NuGet.Tests.Apex
 
             var packageName = "Rules";
             var source = "ftp://Rules";
-            var expectedMessage = $"Unsupported type of source '{source}'. Please provide an HTTP or local source.";
+            var expectedMessage = $"Unsupported type of source '{source}'. Provide an HTTP or local source.";
 
             var nugetConsole = GetConsole(testContext.Project);
 
@@ -1032,7 +1032,7 @@ namespace NuGet.Tests.Apex
             using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger);
 
             var source = "d:package";
-            var expectedMessage = $"Unsupported type of source '{source}'. Please provide an HTTP or local source.";
+            var expectedMessage = $"Unsupported type of source '{source}'. Provide an HTTP or local source.";
 
             var nugetConsole = GetConsole(testContext.Project);
 
@@ -1118,7 +1118,7 @@ namespace NuGet.Tests.Apex
             nugetConsole.InstallPackageFromPMC(packageName, packageVersion);
 
             var source = "d:package";
-            var expectedMessage = $"Unsupported type of source '{source}'. Please provide an HTTP or local source.";
+            var expectedMessage = $"Unsupported type of source '{source}'. Provide an HTTP or local source.";
 
             nugetConsole.Execute($"Update-Package {packageName} -Source {source}");
 
