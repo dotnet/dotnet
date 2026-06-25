@@ -124,8 +124,6 @@ public class JobQueue<T> : IDisposable
         _jobsQueue = new Queue<Job<T>>();
         _jobAdded = new ManualResetEventSlim(false);
         _queueProcessing = new ManualResetEventSlim(true);
-        _currentNumberOfBytesQueueIsHolding = 0;
-        _isDisposed = false;
 
         // Save off the arguments.
         _displayName = displayName;

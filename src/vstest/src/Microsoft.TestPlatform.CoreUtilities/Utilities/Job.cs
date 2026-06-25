@@ -39,16 +39,7 @@ internal class Job<TPayload>
     /// <summary>
     /// Gets a special job that indicates the queue should shutdown.
     /// </summary>
-    public static Job<TPayload> ShutdownJob
-    {
-        get
-        {
-            var shutdownJob = new Job<TPayload>();
-            shutdownJob.Shutdown = true;
-
-            return shutdownJob;
-        }
-    }
+    public static Job<TPayload> ShutdownJob => new() { Shutdown = true };
 
     /// <summary>
     /// Gets the job to be processed.
@@ -79,10 +70,7 @@ internal class Job<TPayload>
     {
         ValidateArg.NotNull(waitEvent, nameof(waitEvent));
 
-        var waitJob = new Job<TPayload>();
-        waitJob.WaitManualResetEvent = waitEvent;
-
-        return waitJob;
+        return new Job<TPayload> { WaitManualResetEvent = waitEvent };
     }
 
 }
