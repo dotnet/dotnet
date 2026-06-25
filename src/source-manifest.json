@@ -13,16 +13,16 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 320079,
+      "barId": 320254,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "7d37e582fcc0a607e568eba4be56bdf1bc102c47"
+      "commitSha": "9ae5fc5cfe81ec24f980fea30972be382f83f9b8"
     },
     {
-      "barId": 319885,
+      "barId": 320071,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "a47a64a9382828e968c3564d11f4e0afe99dc526"
+      "commitSha": "33d17672fac4c26656a201774f9894dff51a4e78"
     },
     {
       "barId": 320070,
@@ -49,10 +49,10 @@
       "commitSha": "52decd1eeea01ce6e2da5790adc6dbe57a76c92c"
     },
     {
-      "barId": 319980,
+      "barId": 320270,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "bf046880fb7c8d3862fc6bce9cf90aa52cf17249"
+      "commitSha": "c73b8ff5912c0dc8efec9b3081b69b2e7cbf61f9"
     },
     {
       "barId": 296673,
