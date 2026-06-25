@@ -58,6 +58,8 @@ The job monitor is a lightweight dedicated pipeline job that:
 
 This allows the original build jobs to stop waiting on Helix execution while still preserving test visibility and pass/fail behavior in the pipeline.
 
+![Helix Job Monitor](../../../Documentation/HelixJobMonitor.png)
+
 The job is added with the template at [/eng/common/core-templates/job/helix-job-monitor.yml](/eng/common/core-templates/job/helix-job-monitor.yml).
 
 Example:
@@ -83,6 +85,62 @@ Behavior notes:
 - If parseable xUnit, JUnit, or TRX result files are available, those are uploaded.
 - If no result files are found for a work item, no test results are uploaded for that work item; Helix work-item failures still affect the monitor job's final pass/fail status.
 - The reporter is safe to rerun because it checks for already-completed test runs and only processes new results.
+
+#### What changes for pipeline users when the monitor is on
+
+When `EnableHelixJobMonitor` is set, the Helix-submitting jobs and the Helix Job Monitor job play
+different roles than in the legacy ("inline") flow. The user-visible UX differs in a few important
+ways:
+
+- **The submitter job no longer waits for Helix.** The job that runs `SendHelixJob` now exits as
+  soon as the Helix jobs have been queued. It will go green in Azure DevOps long before the tests
+  finish running. **Don't interpret a green submitter job as "tests passed"** — it only means the
+  work was successfully queued.
+- **The monitor job owns pass/fail for tests.** The pipeline's overall test pass/fail status comes
+  from the Helix Job Monitor job. If the monitor is red, the tests (or the Helix work that runs
+  them) failed. If the monitor is green, all Helix work items passed (after any retries — see
+  below).
+- **Test results appear incrementally.** Results are uploaded to Azure DevOps as each Helix job
+  completes, not in a single batch at the end. The "Tests" tab will start populating while the
+  monitor is still running.
+- **Build agents are freed up sooner.** Because the submitter job exits early, build pool capacity
+  is no longer held hostage by long-running Helix queues. The monitor job runs on a lightweight
+  agent and is the only thing waiting on Helix.
+- **One monitor job per stage.** The monitor is scoped to a single Azure DevOps stage by default.
+  In a multi-stage pipeline you add the `helix-job-monitor.yml` template once per stage that
+  submits Helix work.
+
+#### How re-runs work with the monitor
+
+The monitor performs **automatic, in-pipeline retries of failed Helix work items** at the start of
+each monitor invocation. This is in addition to (and operates very differently from) the existing
+[test retry](#test-retry) feature, which retries individual tests within a single work item.
+
+What this means in practice:
+
+- **One-shot retry on entry.** When the monitor starts, it takes a snapshot of the Helix jobs for
+  the build and resubmits the failed work items from each completed job's latest incarnation.
+  Passing work items are not resubmitted; only the failed ones are.
+- **Re-running the monitor job re-runs failed Helix work.** If you re-run the **monitor job** in
+  Azure DevOps (e.g. via "Rerun failed jobs" on the build), it picks up where it left off:
+  - Passing work items from previous attempts are preserved.
+  - Failed work items are resubmitted to Helix. These are not built again; the same payloads are re-queued for execution.
+  - The monitor then waits for the new work items to complete, uploads their results, and folds
+    them into the pipeline test pass/fail status.
+  - A newer passing incarnation of a work item supersedes an older failed one, so retries
+    naturally converge — each rerun should resubmit fewer work items than the previous one.
+- **Test result uploads are deduplicated.** Each Helix job's test results are uploaded at most
+  once per build, even across monitor reruns. The monitor identifies already-uploaded jobs from
+  Azure DevOps test-run name markers, so it's always safe to re-run the monitor job.
+
+💡 The recommended workflow when something fails is therefore:
+
+1. Look at the monitor job's log to see which Helix work items failed and follow the linked
+   Helix console output.
+2. If the failure looks transient (flaky infrastructure, network blip, etc.), **re-run the monitor job**.
+   The monitor will resubmit only the failed work items.
+3. If the failure is a real product/test bug, fix it and push a new commit — that triggers a new
+   build with a fresh submitter + monitor pair.
 
 #### Adding the `microsoft.dotnet.helix.jobmonitor` package
 

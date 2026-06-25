@@ -1,127 +1,339 @@
-# Helix Job Monitor Runner Design
+# JobMonitorRunner — Technical Specification
 
-The Helix Job Monitor is intended to be a resilient observer for Azure DevOps
-pipeline jobs and the Helix work submitted by those jobs. It must assume it may
-crash, time out, or be retried at any point. Any behavior that must survive a
-restart can only be reconstructed from durable external state:
+This document is a behavioral specification of the Helix job monitor runner.
+It describes *what* the runner must do, not *how* it currently does it.
 
-- Azure DevOps test run name markers written by the monitor.
-- Helix job properties written when jobs are submitted or resubmitted.
+The current source lives at [JobMonitorRunner.cs](JobMonitorRunner.cs); use
+it only as the reference implementation, not as the specification.
 
-The monitor should not rely on in-memory state to make decisions that must remain
-correct across restarts.
+---
 
-## Stage scope
+## 1. Purpose
 
-Each monitor invocation owns exactly one Azure DevOps stage unless it is
-explicitly configured to monitor all stages. In the normal stage-scoped mode, the
-monitor must only look at:
+The runner is the body of a standalone CLI invoked as a single job inside an
+Azure DevOps pipeline stage. Its job is to:
 
-- Azure DevOps timeline jobs that belong to the monitor's stage.
-- Helix jobs whose `System.StageName` property is empty or matches the monitor's
-  stage.
+- Observe the Helix jobs submitted from the same build (by the Helix SDK
+  submitter) and the Azure DevOps timeline jobs running alongside it.
+- Resubmit failed Helix work items once per invocation.
+- Upload Helix work-item test results to Azure DevOps.
+- Return an exit code that reflects whether the monitored pipeline jobs and
+  the latest completed Helix work items all succeeded.
 
-Stage scope applies to retry, test-result upload, and pass/fail calculation. A
-failed job or failed Helix work item from another stage must not be retried,
-uploaded, or used to fail this monitor invocation.
+## 2. Operating model
 
-## Durable state
+### 2.1 Stage scope
 
-### Azure DevOps test run name markers
+Each invocation owns exactly one Azure DevOps stage. All decisions (retry,
+completion gating, upload, pass/fail) consider only:
 
-The monitor appends a Helix job name marker to each Azure DevOps test run name
-it creates. The marker format is `[HelixJob:<helix-job-name>]`, so the full test
-run name is `{original-name} [HelixJob:<helix-job-name>]`. Completed test runs
-with that marker are used only to determine whether test results for a Helix job
-have already been uploaded.
+- Azure DevOps timeline jobs belonging to the monitor's stage.
+- Helix jobs whose `System.StageName` property is empty (stage unknown) or matches the monitor's stage.
 
-The monitor uses the test run name instead of Azure DevOps test run tags because
-the Azure DevOps test runs API silently drops tags created with the run. Test run
-name markers do not determine whether Helix work should be retried, and test
-result upload success or failure does not determine whether the monitor passes or
-fails.
+Jobs and work items from other stages must not be retried, uploaded, or used
+to fail this invocation.
 
-### Helix job properties
+### 2.2 Durable state
 
-Helix job properties are the durable state for retry lineage. Resubmitted Helix
-jobs preserve the original job properties and add `PreviousHelixJobName`, which
-points to the Helix job that was resubmitted.
+The runner may crash, time out, or be retried at any point. Any behavior that
+must survive a restart can only be reconstructed from durable external state:
 
-This creates a chain of Helix job incarnations for the same logical work. The
-monitor uses that chain to find the latest incarnation of each job when deciding
-what to retry and what currently passes or fails.
+- **Azure DevOps test-run name markers** — the monitor appends
+  `[HelixJob:<helix-job-name>]` to each test-run name it creates. The
+  presence of that marker on a completed test run is the durable signal
+  that the corresponding Helix job's results have already been uploaded.
+  (Markers are used instead of test-run tags because the AzDO test-runs API
+  silently drops tags created with the run.)
+- **Helix job properties** — every resubmitted Helix job preserves the
+  original submitter's properties and adds `PreviousHelixJobName`, linking
+  to the job that was resubmitted. The chain of `PreviousHelixJobName`
+  links represents the incarnations of one logical piece of work.
 
-## Retry behavior
+In-memory state may be used freely within a single invocation but must never
+be the source of truth for cross-invocation correctness.
 
-Retry scheduling is separate from test result upload.
+### 2.3 Retry invariants
 
-1. Retry is performed only when the monitor starts.
-2. The monitor takes a Helix snapshot on entry and decides what to resubmit from
-   that snapshot.
-3. Work that fails after the monitor has started is not resubmitted during that
-   invocation. It can be resubmitted only by a later monitor invocation.
-4. A Helix job is considered for retry only if it is the latest completed
-   incarnation in its `PreviousHelixJobName` chain.
-5. If that latest completed incarnation has failed work items, only those failed
-   work items are resubmitted.
-6. Passing work items from the same Helix job are not included in the
-   resubmission.
-7. If a newer incarnation of a work item has completed and passed, older failed
-   incarnations must not cause another resubmission.
-8. If a newer incarnation is still running or waiting, it is not resubmitted
-   again on monitor entry.
+1. Retry runs exactly once per invocation, on entry, before polling begins.
+2. The set of work to resubmit is decided from a single Helix snapshot taken
+   on entry. Work that fails after the monitor has started is not
+   resubmitted during the current invocation; a later invocation may pick
+   it up.
+3. A Helix job is eligible for retry only if it is the latest completed
+   incarnation in its lineage chain (not superseded by a newer attempt).
+4. If that incarnation has failed work items, only the failed items are
+   resubmitted; passing items are not.
+5. If a newer incarnation of a work item has already completed and passed,
+   no further resubmission for that item occurs.
+6. If a newer incarnation is still running or waiting, no resubmission
+   occurs.
 
-This means repeated monitor retries should naturally submit fewer work items over
-time as newer incarnations complete successfully.
+Repeated monitor runs therefore submit progressively fewer work items as
+newer incarnations succeed.
 
-## Test result upload behavior
+### 2.4 Upload invariants
 
-Test result upload is also restart-resilient, but it is independent from retry.
+Upload is restart-resilient but logically independent from retry.
 
-1. Never upload the same Helix job's test results twice.
-2. Use Azure DevOps test run name markers on completed test runs to discover
-   which Helix jobs have already been uploaded by previous monitor invocations.
-3. For completed Helix jobs that have not been uploaded, upload all available
-   test results.
-4. Upload completed jobs in lineage order, from old to new. For example, if both
-   an original job and a resubmitted job have completed and neither has been
-   uploaded, upload the original job first and the resubmitted job second.
-5. Test result upload failures should be logged, but they do not affect the
-   monitor's pass/fail result.
+1. The same Helix job's test results are never uploaded twice. The durable
+   deduplication signal is the `[HelixJob:<name>]` marker on completed AzDO
+   test runs.
+2. For every completed Helix job not already uploaded, all available test
+   results are uploaded.
+3. Uploads happen in lineage order — oldest incarnation first. If both an
+   original job and its resubmission have completed and neither has been
+   uploaded, the original uploads first.
+4. Upload failures are logged but never affect pass/fail.
+5. A failed original Helix job may be resubmitted on entry and still have
+   its original test results uploaded during the same invocation if those
+   results were not uploaded earlier.
 
-This separation is important: a failed original Helix job may be resubmitted on
-entry and still have its original test results uploaded during the same monitor
-invocation if those results were not uploaded earlier.
+### 2.5 Pass/fail invariants
 
-## Monitor pass/fail behavior
+The exit code is determined by combining two checks:
 
-The monitor result must reflect both:
+- **AzDO side** — the monitor fails if any monitored AzDO job failed or
+  was canceled. Jobs whose work is being actively retried this invocation
+  are excluded from this check (their failure is represented by the
+  resubmitted Helix work).
+- **Helix side** — the monitor fails if the latest completed incarnation of
+  any submitted work item failed. A newer passing incarnation supersedes an
+  older failed one.
 
-- The Azure DevOps jobs it monitors.
-- The latest completed Helix work-item outcomes for submitted Helix work.
+Upload state never affects pass/fail.
 
-The monitor should fail when a monitored Azure DevOps job failed or was canceled,
-unless that Azure DevOps job's failure is represented by Helix work that the
-monitor is actively retrying on this invocation.
+Exit code is `0` only when both checks pass; otherwise `1`. Cancellation
+(timeout) also exits with `1`.
 
-The monitor should fail when the latest completed Helix incarnation for any work
-item failed. A newer passing incarnation supersedes an older failed incarnation.
+### 2.6 Crash and timeout resilience
 
-Test result upload state does not affect pass/fail. Uploads are reporting
-artifacts; Helix work-item state and monitored Azure DevOps job state determine
-the monitor result.
+The runner must be safe to re-run after any abrupt termination. In
+particular:
 
-## Crash and timeout resilience
+- Partial uploads must not cause duplicate uploads on the next run.
+- Retry candidates must be rediscovered from Helix job properties, not from
+  prior in-memory state.
+- Cancellation must drain in-flight uploads before exiting so partially
+  uploaded results are not lost.
+- On cancellation, in-flight Helix jobs should receive a best-effort cancel
+  request even though the runner's own cancellation token has already
+  fired. This requires a fresh, short-lived cancellation budget for the
+  cleanup path.
 
-Because the monitor may stop at any time:
+## 3. Inputs
 
-- It should be safe to rerun after partially uploading test results.
-- It should skip uploads for Helix jobs whose marker appears in completed Azure
-   DevOps test run names.
-- It should discover retry candidates again from Helix job properties on the
-  next entry.
-- It should not require any process-local memory from a prior invocation.
+The runner is configured by an options object. The semantically meaningful
+inputs are:
 
-The monitor may still have useful in-memory state while a single invocation is
-running, but durable correctness must come from Azure DevOps test run name
-markers and Helix job properties.
+| Input | Purpose |
+| --- | --- |
+| Helix endpoint + access token | Talk to the Helix service. |
+| Organization, project, repository, branch, build reason | Compose the Helix `source` filter (see §5.1). |
+| Build ID | Scope Helix and AzDO queries to this build. |
+| AzDO collection URI + project | Construct the test-results URL used in failure reports. |
+| Stage name | Stage scope (see §2.1). |
+| Polling interval | Delay between poll iterations; a minimum floor applies. |
+| Maximum wait | Reported in the timeout message; the timeout itself is enforced by the caller through cancellation. |
+| Job monitor name | Identifier of the monitor's own AzDO timeline record; used to exclude it from pass/fail. |
+| Working directory | Local staging directory for downloaded test results. |
+| Verbose flag | Forces a status snapshot every poll. |
+
+## 4. External contracts
+
+The runner depends on two service interfaces. The contracts are described
+behaviorally; method names are illustrative.
+
+### 4.1 Helix service
+
+- **List jobs for a build** — given the source filter and build ID, return
+  all Helix jobs that the submitter recorded for the build. The source
+  filter must be derivable from build metadata in lockstep with the
+  submitter (see §5.1).
+- **List work items for a job** — return all work-item summaries.
+- **Download test results** — given a job and a set of work-item names,
+  download recognized result files into a working directory. Individual
+  per-work-item failures must not abort the batch.
+- **Cancel a job** — best-effort cancellation.
+- **Resubmit failed work items** — given the original job and a set of
+  failed work items, submit a new Helix job that contains only those items.
+  The new job must inherit the original's submitter identity (stage, job
+  name, display name, test-run name, queue) and link back via
+  `PreviousHelixJobName`. May return "not possible" (e.g. queue gone), in
+  which case the runner skips that retry.
+
+### 4.2 Azure DevOps service
+
+- **Get timeline records** — return the build's timeline.
+- **Get processed Helix job names** — extract Helix job names from
+  `[HelixJob:<name>]` markers on completed test runs. This is the durable
+  upload-dedup signal.
+- **Create test run / upload results / complete test run** — the standard three-call sequence. Creation always creates a new in-progress test run; durable deduplication is based on the completed-run name marker (§2.2).
+
+## 5. Behavior
+
+### 5.1 Helix source filter
+
+On entry the runner derives a Helix `source` string from the build metadata
+(organization, project, repository, branch, build reason). This string must
+match what the Helix SDK submitter produced for the same build — for PR,
+scheduled, manual, IndividualCI, BatchedCI, and internal-official runs
+alike. Any change in derivation must be made in lockstep with the submitter,
+or the runner will silently fail to see its own jobs.
+
+### 5.2 Lifecycle
+
+1. Log the build and stage being monitored.
+2. Load the set of already-uploaded Helix job names (§2.2).
+3. Perform the one-shot retry pass (§5.3).
+4. Enter the poll loop (§5.4) until the build finishes or cancellation
+   fires.
+5. On cancellation (timeout), drain pending uploads, emit a timeout report
+   (§5.6), best-effort cancel in-flight Helix jobs (§2.6), and exit `1`.
+6. On normal completion, emit the final summary and exit per §2.5.
+
+### 5.3 Retry pass
+
+1. Take a Helix snapshot scoped to the stage.
+2. Reduce it to the latest incarnation of each lineage chain.
+3. For each completed latest incarnation that has failed work items, ask
+   the Helix service to resubmit just the failed items.
+4. Remember the AzDO submitter-job identifiers of successfully retried
+   work; these are the jobs to exclude from the AzDO failure check while
+   this invocation runs.
+5. Carry the snapshot plus the newly resubmitted jobs forward as the input
+   to the first poll iteration so the first iteration sees them
+   immediately. (Subsequent iterations refetch from Helix.)
+
+If nothing was eligible for retry, log that fact.
+
+### 5.4 Poll loop
+
+Each iteration:
+
+1. Check for cancellation.
+2. Fetch the AzDO timeline and the Helix snapshot, scoped to the stage.
+3. Update the in-memory view of each Helix job with the freshest snapshot
+   (so completion/failure transitions are not missed).
+4. Compute the set of completed Helix jobs (§5.5).
+5. **First pass — upload**: for each completed Helix job not already
+   uploaded (per §2.2), upload its test results and remember it as
+   processed. This pass is the only one that triggers uploads.
+6. **Second pass — outcome reconciliation**: for every completed Helix
+   job in scope, ensure its per-work-item outcomes are reflected in the
+   running outcome map (§5.7), processing lineage from oldest to newest so
+   newer incarnations supersede older ones. This pass must consider all
+   completed jobs — including ones uploaded by an earlier invocation —
+   because the outcome map is the only source for the pass/fail decision
+   and is not durable across invocations.
+7. Decide whether to log status this iteration. The decision uses the
+   verbose flag, whether any counts changed since the last status log, and
+   a maximum interval (so long-stable builds still emit periodic progress).
+8. Evaluate termination: all monitored AzDO jobs complete *and* all scoped
+   Helix jobs in the completed set. When true, wait for pending uploads,
+   emit the final report, and exit per §2.5.
+9. Otherwise sleep for the configured poll interval and repeat.
+
+### 5.5 Completion of a Helix job
+
+A Helix job is considered complete when the Helix service reports it
+finished or failed. As a fallback for jobs whose status transition has not
+yet been observed, the runner may treat a job as complete when every one of
+its expected work items has a terminal exit code. The fallback is only safe
+when the expected work-item count is known and non-zero.
+
+### 5.6 Timeout report
+
+On cancellation, the runner emits two grouped reports:
+
+- All scoped Helix jobs that are either not yet finished or finished but
+  not yet uploaded — each with its display name, status, expected
+  work-item count, and a clickable details URI.
+- All scoped non-monitor AzDO timeline jobs not yet in `completed` state —
+  each with its name, state, and result.
+
+If both groups are empty, emit a single critical-level note that nothing
+unfinished was tracked at the time of timeout (this means timeout fired
+during the brief window between completion and termination).
+
+### 5.7 Per-work-item outcome map
+
+The runner maintains an in-memory map from *logical work item* to its
+latest observed pass/fail status. A logical work item is identified by the
+work-item name plus a stable key that survives resubmission, so all
+incarnations of the same item collapse onto a single entry.
+
+The chain key must be deterministic and uniqueness-preserving:
+
+- A single AzDO matrix leg that fans out to multiple Helix queues must
+  produce distinct keys (one per queue) so per-queue failures are
+  preserved.
+- An original Helix job and its resubmission(s) on the same queue must
+  produce the same key so the latest incarnation overwrites the older one.
+- If lineage cannot be resolved (the predecessor link points outside the
+  jobs the runner has observed), the key falls back to a Helix-job-bound
+  identifier so independent jobs don't collide.
+
+The same key drives a parallel map of "failed work item console info" used
+to build the final failure report. When a later incarnation of a work item
+passes, its entry in that map is cleared.
+
+### 5.8 Failure reporting
+
+Failed Helix work items must produce clickable console-link warnings in the
+AzDO build log:
+
+- Once per failed work-item observation during status logs (deduplicated
+  across the invocation so we don't spam the same link).
+- Once per failed work item in a completed job during the upload pass
+  (same dedup).
+- At termination, a single aggregated error block listing every still-
+  failing work item, prefixed with the test-results URL for the build.
+
+Warnings use AzDO `task.logissue type=warning` formatting; the final
+aggregated error uses `task.logissue type=error`. Informational status
+lines are plain logger output.
+
+### 5.9 Test-result upload pipeline
+
+Uploads are fire-and-forget tasks tracked for later draining:
+
+- Each upload is queued asynchronously and tracked. Multiple uploads may
+  proceed concurrently.
+- An upload retries indefinitely on transient errors; only cancellation
+  exits the retry loop.
+- Both the normal-termination and cancellation paths wait for queued
+  uploads to drain before exiting. The cancellation drain uses a fresh
+  cancellation budget so uploads in progress when the runner token fires
+  are not abandoned.
+
+The upload sequence per job is: create (or reuse) a test run named
+`{TestRunName} [HelixJob:<name>]`, download results, upload them, complete
+the test run.
+
+### 5.10 Status logging
+
+When a status log is due, the runner emits a one-line summary of work
+counts (processed / completed / running / waiting jobs and work items). In
+verbose mode it additionally emits a tree-style breakdown per job and work
+item. The verbose tree is informational only.
+
+A Helix job is classified for status purposes as `Processed` (already
+uploaded), `Completed` (terminal but not yet uploaded), `Running` (has at
+least one work item), or `Waiting` (no work items observed yet).
+
+## 6. Externally observable formats
+
+These shapes are observed by other tools, downstream parsers, or tests and
+must be preserved:
+
+- AzDO test-run name marker: `[HelixJob:<helix-job-name>]`, appended to a
+  caller-supplied test-run name with a single space separator.
+- AzDO log decorations: `##vso[task.logissue type=warning]` for warnings,
+  `##vso[task.logissue type=error]` for errors. Informational lines use
+  plain logger output (no `##vso` prefix).
+- Test-results URL: the standard AzDO build-test-results-tab URL for the
+  build, used as the link in the final failure block.
+- A Helix work item is considered failed if its exit code is non-zero or
+  its state is not the terminal success state. A work item is considered
+  failed-and-terminal (worth reporting eagerly) when it is failed and not
+  still in flight.
