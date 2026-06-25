@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Scaffolding;
-using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Newtonsoft.Json.Linq;
 
@@ -66,21 +65,7 @@ public partial class DependentDerivedEntityType
             shadowIndex: -1,
             relationshipIndex: 0,
             storeGenerationIndex: -1);
-        id.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            keyComparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            providerValueComparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            clrType: typeof(int),
-            jsonValueReaderWriter: JsonInt32ReaderWriter.Instance);
+        id.TypeMapping = CosmosTypeMapping<int>.Default;
         id.SetCurrentValueComparer(new EntryCurrentValueComparer<int>(id));
 
         var type = runtimeEntityType.AddProperty(
@@ -99,21 +84,7 @@ public partial class DependentDerivedEntityType
             shadowIndex: 0,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        type.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            keyComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            clrType: typeof(string),
-            jsonValueReaderWriter: JsonStringReaderWriter.Instance);
+        type.TypeMapping = CosmosTypeMapping<string>.Default;
 
         var data = runtimeEntityType.AddProperty(
             "Data",
@@ -147,21 +118,7 @@ public partial class DependentDerivedEntityType
             shadowIndex: -1,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        data.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            keyComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            clrType: typeof(string),
-            jsonValueReaderWriter: JsonStringReaderWriter.Instance);
+        data.TypeMapping = CosmosTypeMapping<string>.Default;
 
         var __id = runtimeEntityType.AddProperty(
             "__id",
@@ -179,21 +136,7 @@ public partial class DependentDerivedEntityType
             shadowIndex: 1,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        __id.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            keyComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            clrType: typeof(string),
-            jsonValueReaderWriter: JsonStringReaderWriter.Instance);
+        __id.TypeMapping = CosmosTypeMapping<string>.Default;
         __id.AddAnnotation("Cosmos:PropertyName", "id");
 
         var __jObject = runtimeEntityType.AddProperty(
@@ -214,20 +157,7 @@ public partial class DependentDerivedEntityType
             shadowIndex: 2,
             relationshipIndex: -1,
             storeGenerationIndex: 0);
-        __jObject.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            keyComparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            providerValueComparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            clrType: typeof(JObject));
+        __jObject.TypeMapping = CosmosTypeMapping<JObject>.Default;
         __jObject.AddAnnotation("Cosmos:PropertyName", "");
 
         var key = runtimeEntityType.AddKey(

@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Versioning;
@@ -20,9 +21,9 @@ namespace NuGet.Protocol.Plugins
         private readonly TimeSpan _handshakeTimeout;
         private bool _isDisposed;
         private readonly SemanticVersion _minimumProtocolVersion;
-        private HandshakeRequest _outboundHandshakeRequest;
+        private HandshakeRequest? _outboundHandshakeRequest;
         private readonly SemanticVersion _protocolVersion;
-        private TaskCompletionSource<int> _responseSentTaskCompletionSource;
+        private readonly TaskCompletionSource<int> _responseSentTaskCompletionSource;
         private readonly CancellationTokenSource _timeoutCancellationTokenSource;
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace NuGet.Protocol.Plugins
         /// if the handshake was successful; otherwise, <see langword="null" />.</returns>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public async Task<SemanticVersion> HandshakeAsync(CancellationToken cancellationToken)
+        public async Task<SemanticVersion?> HandshakeAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -124,7 +125,7 @@ namespace NuGet.Protocol.Plugins
                 _outboundHandshakeRequest,
                 cancellationToken);
 
-            if (response != null && response.ResponseCode == MessageResponseCode.Success)
+            if (response?.IsSuccess == true)
             {
                 if (IsSupportedVersion(response.ProtocolVersion))
                 {
@@ -154,6 +155,10 @@ namespace NuGet.Protocol.Plugins
         /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public async Task HandleResponseAsync(
             IConnection connection,
             Message request,

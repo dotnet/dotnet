@@ -22,6 +22,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private const string AzdoWarningPrefix = "##vso[task.logissue type=warning]";
         private const string AzdoErrorPrefix = "##vso[task.logissue type=error]";
 
+        /// <summary>
+        /// Public link to the Helix Job Monitor user documentation. Printed at the start
+        /// and end of every monitor invocation so pipeline users can self-serve on what
+        /// the monitor does, how reruns work, and how it interacts with the rest of the
+        /// build.
+        /// </summary>
+        private const string DocumentationUri =
+            "https://github.com/dotnet/arcade/blob/main/src/Microsoft.DotNet.Helix/Sdk/Readme.md#helix-job-monitor-for-azure-devops";
+
         private readonly ILogger _logger;
         private readonly JobMonitorOptions _options;
         private readonly IHelixService _helix;
@@ -44,6 +53,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _options.CollectionUri,
                 _options.TeamProject,
                 _options.BuildId);
+
+            _logger.LogInformation(
+                "📖 Read more about what this monitor job does: {DocsUri}",
+                DocumentationUri);
         }
 
         public void LogRetryPassFoundNothing()
@@ -153,6 +166,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _state.WorkItemOutcomes.Count,
                 _state.ResubmittedWorkItemCount,
                 _state.FailedWorkItemCount);
+
+            _logger.LogInformation(
+                "📖 Read more about what this monitor job does: {DocsUri}",
+                DocumentationUri);
         }
 
         public void LogNonMonitorPipelineFailure()

@@ -1,27 +1,248 @@
-<Project Sdk="Microsoft.Build.NoTargets">
+<Project Sdk="Microsoft.Build.NoTargets" DefaultTargets="Execute">
 
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+
+    <SignDacEnabled Condition="'$(SignDacEnabled)' == ''">false</SignDacEnabled>
+
+    <SignCheckExclusionsFile>$(RepositoryEngineeringDir)SignCheckExclusionsFile.txt</SignCheckExclusionsFile>
+
+    <OutputLogsDirectory Condition="'$(OutputLogsDirectory)' == ''">$(ArtifactsLogDir)</OutputLogsDirectory>
+    <SignCheckLog Condition="'$(SignCheckLog)' == ''">$(OutputLogsDirectory)\signcheck.log</SignCheckLog>
+    <SignCheckErrorLog Condition="'$(SignCheckErrorLog)' == ''">$(OutputLogsDirectory)\signcheck.error.log</SignCheckErrorLog>
+    <SignCheckResultsXmlFile Condition="'$(SignCheckResultsXmlFile)' == ''">$(OutputLogsDirectory)\signcheck.xml</SignCheckResultsXmlFile>
+    <SignCheckInputDir Condition="'$(SignCheckInputDir)' == ''">$(BaseIntermediateDirectory)SignCheckFiles</SignCheckInputDir>
+    <!--
+      SignCheckTask treats unrooted InputFiles values as filename patterns to glob inside
+      ArtifactFolder rather than as directories to scan, so the input directory must be
+      absolute or the task fails with "Unable to find file 'X' in folder 'X'".
+    -->
+    <SignCheckInputDir>$([System.IO.Path]::GetFullPath('$(SignCheckInputDir)'))</SignCheckInputDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.SignCheckTask" />
+  </ItemGroup>
+
+  <Target Name="PrepareFilesInitialize">
+    <Message Importance="High" Text="Preparing files to sign check..." />
+    <Error Text="ArtifactDownloadDirectory must be set." Condition="'$(ArtifactDownloadDirectory)' == ''" />
+
+    <Error Text="ArtifactDownloadDirectory '$(ArtifactDownloadDirectory)' does not exist." Condition="!Exists('$(ArtifactDownloadDirectory)')" />
+
+    <ItemGroup>
+      <!--
+        MSBuild item globs only match files; a trailing-slash glob like '$(ArtifactDownloadDirectory)/*/'
+        never matches anything. Use Directory.GetDirectories so artifact subdirectories are enumerated.
+      -->
+      <_ArtifactDirectory Include="$([System.IO.Directory]::GetDirectories('$(ArtifactDownloadDirectory)'))" />
+    </ItemGroup>
+
+    <Error Text="No artifact directories found in '$(ArtifactDownloadDirectory)'." Condition="'@(_ArtifactDirectory)' == ''" />
+
+    <MakeDir Directories="$(OutputLogsDirectory)" />
+    <RemoveDir Directories="$(SignCheckInputDir)" />
+    <MakeDir Directories="$(SignCheckInputDir)" />
+  </Target>
+
+  <!--
+    Iterate over each downloaded artifact directory by self-invoking the project. Using the
+    MSBuild task instead of a batched Outputs="%(...)" target gives every iteration a fresh
+    item-state, matching the per-directory foreach loop semantics of the original C# task.
+    Without this isolation, items collected from earlier directories would leak into later
+    iterations (the unscoped metadata transform would rewrite their paths, the duplicate-
+    destination detection would delete files just moved by an earlier iteration, etc.).
+  -->
+  <Target Name="CollectArtifactFiles" DependsOnTargets="PrepareFilesInitialize">
+    <MSBuild
+      Projects="$(MSBuildProjectFile)"
+      Targets="CollectArtifactFilesForDirectory"
+      Properties="CurrentArtifactDirectory=%(_ArtifactDirectory.Identity);SignCheckInputDir=$(SignCheckInputDir)" />
+  </Target>
+
+  <Target Name="CollectArtifactFilesForDirectory">
     <PropertyGroup>
-      <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+      <_CurrentManifestsDirectory>$(CurrentArtifactDirectory)/manifests</_CurrentManifestsDirectory>
+    </PropertyGroup>
+
+    <Message Text="   No manifests in '$(CurrentArtifactDirectory)' to parse for files to sign check. All files defined in the directory will be included..."
+      Importance="High"
+      Condition="!Exists('$(_CurrentManifestsDirectory)')" />
+
+    <Message Text="   Parsing manifests in '$(_CurrentManifestsDirectory)' for files to sign check. All blobs and packages defined in the manifests will be included..."
+      Importance="High"
+      Condition="Exists('$(_CurrentManifestsDirectory)')" />
+
+    <ItemGroup Condition="!Exists('$(_CurrentManifestsDirectory)')">
+      <_SignCheckCandidate Include="$(CurrentArtifactDirectory)/**/*"
+        Exclude="$(_CurrentManifestsDirectory)/**" />
+      <_SignCheckCandidate Update="@(_SignCheckCandidate)"
+        RelativePath="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="Exists('$(_CurrentManifestsDirectory)')">
+      <_ManifestFile Include="$(_CurrentManifestsDirectory)/**/*.xml" />
+    </ItemGroup>
+
+    <!--
+      Arcade build manifests are rooted at <Build> (see Microsoft.DotNet.Build.Manifest.BuildModel),
+      not <Manifest>. Use a depth-agnostic XPath so this keeps working if the schema is ever wrapped.
+    -->
+    <XmlPeek
+      XmlInputPath="@(_ManifestFile)"
+      Query="//Blob[@DotNetReleaseShipping='true' and @Visibility='External']/@PipelineArtifactPath"
+      Condition="Exists('$(_CurrentManifestsDirectory)') and '@(_ManifestFile)' != ''">
+      <Output TaskParameter="Result" ItemName="_ManifestRelativePath" />
+    </XmlPeek>
+
+    <XmlPeek
+      XmlInputPath="@(_ManifestFile)"
+      Query="//Package[@DotNetReleaseShipping='true' and @Visibility='External']/@PipelineArtifactPath"
+      Condition="Exists('$(_CurrentManifestsDirectory)') and '@(_ManifestFile)' != ''">
+      <Output TaskParameter="Result" ItemName="_ManifestRelativePath" />
+    </XmlPeek>
+
+    <ItemGroup Condition="Exists('$(_CurrentManifestsDirectory)')">
+      <_SignCheckCandidate Include="@(_ManifestRelativePath)" Condition="'%(Identity)' != ''">
+        <RelativePath>%(Identity)</RelativePath>
+      </_SignCheckCandidate>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_SignCheckCandidate Remove="@(_SignCheckCandidate)" Condition="'%(RelativePath)' == '' or $([System.String]::Copy('%(RelativePath)').ToLowerInvariant().EndsWith('.txt')) or $([System.String]::Copy('%(RelativePath)').ToLowerInvariant().EndsWith('.sha512'))" />
+      <_SignCheckCandidate>
+        <SourcePath>$([System.IO.Path]::GetFullPath('$([System.IO.Path]::Combine(''$(CurrentArtifactDirectory)'', ''%(RelativePath)''))'))</SourcePath>
+        <DestinationPath>$([System.IO.Path]::GetFullPath('$([System.IO.Path]::Combine(''$(SignCheckInputDir)'', ''%(RelativePath)''))'))</DestinationPath>
+        <DestinationDirectory>$([System.IO.Path]::GetDirectoryName('$([System.IO.Path]::GetFullPath(''$([System.IO.Path]::Combine(''$(SignCheckInputDir)'', ''%(RelativePath)''))''))'))</DestinationDirectory>
+      </_SignCheckCandidate>
+
+      <_InvalidDestinationCandidate Include="@(_SignCheckCandidate)" Condition="'%(DestinationPath)' == '' or '%(DestinationDirectory)' == ''" />
+      <_MissingSourceCandidate Include="@(_SignCheckCandidate)" Condition="!Exists('%(SourcePath)')" />
+      <_DuplicateDestinationCandidate Include="@(_SignCheckCandidate)" Condition="Exists('%(DestinationPath)')" />
+
+      <_FilesToMove Include="@(_SignCheckCandidate)" Condition="'%(DestinationPath)' != '' and '%(DestinationDirectory)' != '' and Exists('%(SourcePath)')" />
+    </ItemGroup>
+
+    <Warning Text="Invalid destination path for %(_InvalidDestinationCandidate.RelativePath)." Condition="'@(_InvalidDestinationCandidate)' != ''" />
+    <Message Text="File %(_MissingSourceCandidate.RelativePath) missing from $(CurrentArtifactDirectory), skipping." Condition="'@(_MissingSourceCandidate)' != ''" />
+    <Warning Text="File %(_DuplicateDestinationCandidate.RelativePath) already exists in $(SignCheckInputDir), replacing." Condition="'@(_DuplicateDestinationCandidate)' != ''" />
+
+    <Delete Files="@(_DuplicateDestinationCandidate->'%(DestinationPath)')" />
+
+    <MakeDir Directories="@(_FilesToMove->'%(DestinationDirectory)')" />
+    <Move SourceFiles="@(_FilesToMove->'%(SourcePath)')" DestinationFiles="@(_FilesToMove->'%(DestinationPath)')" />
+  </Target>
+
+  <!--
+    DAC signing is performed only on official builds that targeted a 1xx feature-band release
+    branch with real signing enabled and were not source-only (see signDacEnabled in
+    eng/pipelines/templates/variables/vmr-build.yml). On every other build the DAC files
+    (mscordaccore.dll, mscordbi.dll) are intentionally not signed, so SignCheck must be told
+    to ignore them. We generate an intermediate exclusions file with the additional DAC entries
+    appended when DAC signing was disabled; when it was enabled we use the base exclusions file
+    as-is so that any DAC signing regression is actually caught.
+  -->
+  <Target Name="GenerateIntermediateSignCheckExclusionsFile" Condition="'$(SignDacEnabled)' != 'true'">
+    <PropertyGroup>
+      <!--
+        Write the augmented exclusions file under OutputLogsDirectory rather than the obj/
+        intermediate directory: the logs directory is published as a build artifact, so the
+        actual exclusions file used by SignCheck is available for inspection when diagnosing
+        a signing-validation failure. This matches the old C# task's behavior.
+      -->
+      <IntermediateSignCheckExclusionsFile>$(OutputLogsDirectory)/SignCheckExclusionsFile.txt</IntermediateSignCheckExclusionsFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
+      <SignCheckExclusionItem Include="mscordaccore.dll;;DAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches" />
+      <SignCheckExclusionItem Include="mscordbi.dll;;DAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches" />
     </ItemGroup>
 
-    <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.SigningValidation" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-    <Target Name="SigningValidation"
-            DependsOnTargets="ResolveProjectReferences"
-            AfterTargets="Build">
-      <Error Condition="'$(ArtifactDownloadDirectory)' == ''" Text="ArtifactDownloadDirectory is not set." />
-      <Error Condition="'$(SourceBranch)' == ''" Text="SourceBranch is not set." />
-      <Error Condition="'$(DotNetRootDirectory)' == ''" Text="DotNetRootDirectory is not set." />
-      <Error Condition="'$(OutputLogsDirectory)' == ''" Text="OutputLogsDirectory is not set." />
+    <Copy
+      SourceFiles="$(SignCheckExclusionsFile)"
+      DestinationFiles="$(IntermediateSignCheckExclusionsFile)"
+      SkipUnchangedFiles="true" />
 
-      <Microsoft.DotNet.UnifiedBuild.Tasks.SigningValidation
-        ArtifactDownloadDirectory="$(ArtifactDownloadDirectory)"
-        SourceBranch="$(SourceBranch)"
-        DotNetRootDirectory="$(DotNetRootDirectory)"
-        OutputLogsDirectory="$(OutputLogsDirectory)" />
-    </Target>
+    <WriteLinesToFile
+      File="$(IntermediateSignCheckExclusionsFile)"
+      Lines="@(SignCheckExclusionItem)"
+      Overwrite="false" />
+
+    <Message Text="Generated intermediate SignCheck exclusions file." />
+  </Target>
+
+  <Target Name="SignCheckCore" DependsOnTargets="CollectArtifactFiles;GenerateIntermediateSignCheckExclusionsFile">
+    <PropertyGroup>
+      <_SignCheckExclusionsFile Condition="Exists('$(IntermediateSignCheckExclusionsFile)')">$(IntermediateSignCheckExclusionsFile)</_SignCheckExclusionsFile>
+      <_SignCheckExclusionsFile Condition="'$(_SignCheckExclusionsFile)' == '' and Exists('$(SignCheckExclusionsFile)')">$(SignCheckExclusionsFile)</_SignCheckExclusionsFile>
+    </PropertyGroup>
+
+    <Microsoft.DotNet.SignCheckTask.SignCheckTask 
+      Recursive="true"
+      FileStatus="UnsignedFiles"
+      InputFiles="$(SignCheckInputDir)"
+      ExclusionsFile="$(_SignCheckExclusionsFile)"
+      EnableJarSignatureVerification="true"
+      VerifyStrongName="true"
+      LogFile="$(SignCheckLog)"
+      ErrorLogFile="$(SignCheckErrorLog)"
+      ResultsXmlFile="$(SignCheckResultsXmlFile)"
+      ArtifactFolder="$(SignCheckInputDir)" />
+
+    <OnError ExecuteTargets="ProcessSignCheckResults" />
+  </Target>
+
+  <Target Name="ProcessSignCheckResults">
+    <PropertyGroup>
+      <_SignCheckErrorLogExists>$([System.IO.File]::Exists('$(SignCheckErrorLog)'))</_SignCheckErrorLogExists>
+      <_SignCheckErrorLogContent Condition="'$(_SignCheckErrorLogExists)' == 'true'">$([System.IO.File]::ReadAllText('$(SignCheckErrorLog)').Trim())</_SignCheckErrorLogContent>
+    </PropertyGroup>
+
+    <Error Text="SignCheck error log not found at '$(SignCheckErrorLog)'. SignCheck likely failed to start or crashed before producing output."
+      Condition="'$(_SignCheckErrorLogExists)' != 'true'" />
+
+    <Error Text="SignCheck reported errors. See '$(SignCheckErrorLog)' for details:%0A$(_SignCheckErrorLogContent)"
+      Condition="'$(_SignCheckErrorLogContent)' != ''" />
+
+    <Error Text="SignCheck did not process any files."
+      Condition="Exists('$(SignCheckLog)') and $([System.IO.File]::ReadAllText('$(SignCheckLog)').Contains('No files were processed'))" />
+
+    <Error Text="SignCheck results XML file not found: $(SignCheckResultsXmlFile)"
+      Condition="!Exists('$(SignCheckResultsXmlFile)')" />
+
+    <XmlPeek
+      XmlInputPath="$(SignCheckResultsXmlFile)"
+      Query="//File[contains(@Outcome, 'Unsigned')]/@Name"
+      Condition="Exists('$(SignCheckResultsXmlFile)')">
+      <Output TaskParameter="Result" ItemName="_UnsignedSignCheckResult" />
+    </XmlPeek>
+
+    <XmlPeek
+      XmlInputPath="$(SignCheckResultsXmlFile)"
+      Query="//File[contains(@Error, 'matches a DO-NOT-SIGN exclusion and is signed')]/@Name"
+      Condition="Exists('$(SignCheckResultsXmlFile)')">
+      <Output TaskParameter="Result" ItemName="_DoNotSignViolationResult" />
+    </XmlPeek>
+
+    <Warning Text="There are @(_UnsignedSignCheckResult->Count()) unsigned files."
+      Condition="'@(_UnsignedSignCheckResult)' != ''" />
+    <Message Text="   %(_UnsignedSignCheckResult.Identity)"
+      Importance="High"
+      Condition="'@(_UnsignedSignCheckResult)' != ''" />
+
+    <Warning Text="There are @(_DoNotSignViolationResult->Count()) DO-NOT-SIGN violations."
+      Condition="'@(_DoNotSignViolationResult)' != ''" />
+    <Message Text="   %(_DoNotSignViolationResult.Identity)"
+      Importance="High"
+      Condition="'@(_DoNotSignViolationResult)' != ''" />
+
+    <Error Text="SignCheck detected signing issues. See logs for details."
+      Condition="'@(_UnsignedSignCheckResult)' != '' or '@(_DoNotSignViolationResult)' != ''" />
+  </Target>
+
+  <Target Name="Execute"
+          DependsOnTargets="
+            SignCheckCore;
+            ProcessSignCheckResults" />
 
   </Project>

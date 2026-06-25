@@ -85,7 +85,7 @@ WHERE c["$type"] IN ("SinglePartitionKeyEntity", "DerivedSinglePartitionKeyEntit
         AssertSql("""ReadItem(["PK1a"], OnlySinglePartitionKeyEntity|PK1a)""");
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/290 (Partial hierarchical partition key queries return too many results)
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/329 (Partial hierarchical partition key queries return too many results)
     public override async Task Predicate_with_partial_values_in_hierarchical_partition_key()
     {
         CosmosTestEnvironment.SkipOnLinuxEmulator();
@@ -114,7 +114,7 @@ WHERE (c["$type"] IN ("HierarchicalPartitionKeyEntity", "DerivedHierarchicalPart
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/290 (Partial hierarchical partition key queries return too many results)
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/329 (Partial hierarchical partition key queries return too many results)
     public override async Task Predicate_with_partial_values_in_only_hierarchical_partition_key()
     {
         CosmosTestEnvironment.SkipOnLinuxEmulator();
@@ -210,7 +210,7 @@ WHERE c["$type"] IN ("OnlySinglePartitionKeyEntity", "DerivedOnlySinglePartition
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/290 (Partial hierarchical partition key queries return too many results)
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/329 (Partial hierarchical partition key queries return too many results)
     public override async Task WithPartitionKey_with_partial_value_in_hierarchical_partition_key()
     {
         CosmosTestEnvironment.SkipOnLinuxEmulator();
@@ -362,6 +362,22 @@ WHERE (c["$type"] IN ("SinglePartitionKeyEntity", "DerivedSinglePartitionKeyEnti
         AssertSql("""ReadItem(["PK1a"], OnlySinglePartitionKeyEntity|PK1a)""");
     }
 
+    public override async Task WithPartitionKey_and_predicate_with_id_two_locals_same_value()
+    {
+        await base.WithPartitionKey_and_predicate_with_id_two_locals_same_value();
+
+        // Not ReadItem because pkForWith and pkForWhere are different parameter expressions (different names),
+        // so they can't be compared at translate time even though they have the same runtime value.
+        AssertSql(
+            """
+@pkForWhere='PK1'
+
+SELECT VALUE c
+FROM root c
+WHERE (c["$type"] IN ("SinglePartitionKeyEntity", "DerivedSinglePartitionKeyEntity") AND ((c["Id"] = "b29bced8-e1e5-420e-82d7-1c7a51703d34") AND (c["PartitionKey"] = @pkForWhere)))
+""");
+    }
+
     public override async Task Multiple_incompatible_predicate_comparisons_cause_no_ReadItem()
     {
         await base.Multiple_incompatible_predicate_comparisons_cause_no_ReadItem();
@@ -498,7 +514,7 @@ WHERE (c["$type"] = "DerivedSinglePartitionKeyEntity")
         AssertSql("""ReadItem(["PK1c"], OnlySinglePartitionKeyEntity|PK1c)""");
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/290 (Partial hierarchical partition key queries return too many results)
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/329 (Partial hierarchical partition key queries return too many results)
     public override async Task Predicate_with_partial_values_in_hierarchical_partition_key_leaf()
     {
         CosmosTestEnvironment.SkipOnLinuxEmulator();
@@ -514,7 +530,7 @@ WHERE (c["$type"] = "DerivedHierarchicalPartitionKeyEntity")
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/290 (Partial hierarchical partition key queries return too many results)
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/329 (Partial hierarchical partition key queries return too many results)
     public override async Task Predicate_with_partial_values_in_only_hierarchical_partition_key_leaf()
     {
         CosmosTestEnvironment.SkipOnLinuxEmulator();
@@ -610,7 +626,7 @@ WHERE (c["$type"] = "DerivedOnlySinglePartitionKeyEntity")
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/290 (Partial hierarchical partition key queries return too many results)
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/329 (Partial hierarchical partition key queries return too many results)
     public override async Task WithPartitionKey_with_partial_value_in_hierarchical_partition_key_leaf()
     {
         CosmosTestEnvironment.SkipOnLinuxEmulator();
@@ -760,6 +776,30 @@ WHERE ((c["$type"] = "DerivedSinglePartitionKeyEntity") AND (c["PartitionKey"] =
         await base.ReadItem_with_WithPartitionKey_with_only_partition_key_leaf();
 
         AssertSql("""ReadItem(["PK1c"], OnlySinglePartitionKeyEntity|PK1c)""");
+    }
+
+    public override async Task WithPartitionKey_and_predicate_with_id_and_conflicting_partition_key()
+    {
+        await base.WithPartitionKey_and_predicate_with_id_and_conflicting_partition_key();
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE (c["$type"] IN ("SinglePartitionKeyEntity", "DerivedSinglePartitionKeyEntity") AND ((c["Id"] = "b29bced8-e1e5-420e-82d7-1c7a51703d34") AND (c["PartitionKey"] = "PK2")))
+""");
+    }
+
+    public override async Task WithPartitionKey_and_predicate_with_id_and_conflicting_partition_key_leaf()
+    {
+        await base.WithPartitionKey_and_predicate_with_id_and_conflicting_partition_key_leaf();
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE ((c["$type"] = "DerivedSinglePartitionKeyEntity") AND ((c["Id"] = "188d3253-81be-4a87-b58f-a2bd07e6b98c") AND (c["PartitionKey"] = "PK2")))
+""");
     }
 
     public override async Task Multiple_incompatible_predicate_comparisons_cause_no_ReadItem_leaf()

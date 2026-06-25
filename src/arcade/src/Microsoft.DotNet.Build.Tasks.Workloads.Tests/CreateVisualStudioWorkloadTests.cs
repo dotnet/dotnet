@@ -2,15 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using AwesomeAssertions;
 using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+using WixToolset.Dtf.WindowsInstaller;
 using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
@@ -18,54 +19,115 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
     [Collection("Workload Creation")]
     public class CreateVisualStudioWorkloadTests : TestBase
     {
+        [SkipOnCI(reason: "This test builds the full WASM workload.")]
         [WindowsOnlyFact]
-        public static void ItCanCreateWorkloads()
+        public void ItCreatesPackGroups()
+        {
+            string packageSource = Path.Combine(TestAssetsPath, "wasm");
+            // Create intermediate outputs under %temp% to avoid path issues and make sure it's clean so we don't pick up
+            // conflicting sources from previous runs.
+            string testCaseDirectory = GetTestCaseDirectory();
+            string baseIntermediateOutputPath = testCaseDirectory;
+
+            ITaskItem[] manifestsPackages =
+            {
+                new TaskItem(Path.Combine(packageSource, "microsoft.net.workload.mono.toolchain.current.manifest-10.0.100.10.0.100.nupkg"))
+                .WithMetadata(Metadata.MsiVersion, "10.0.456")
+            };
+
+            IBuildEngine buildEngine = new MockBuildEngine();
+            CreateVisualStudioWorkload createWorkloadTask = new CreateVisualStudioWorkload()
+            {
+                AllowMissingPacks = true,
+                BaseOutputPath = Path.Combine(testCaseDirectory, "bin"),
+                BaseIntermediateOutputPath = baseIntermediateOutputPath,
+                BuildEngine = buildEngine,
+                ComponentResources = Array.Empty<ITaskItem>(),
+                CreateWorkloadPackGroups = true,
+                DisableParallelPackageGroupProcessing = false,
+                IsOutOfSupportInVisualStudio = false,
+                ManifestMsiVersion = null,
+                PackageSource = packageSource,
+                ShortNames = Array.Empty<ITaskItem>(),
+                WixExe = ToolsetInfo.WixExePath,
+                HeatExe = ToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
+                WorkloadManifestPackageFiles = manifestsPackages
+            };
+
+            bool result = createWorkloadTask.Execute();
+            Assert.True(result);
+
+            // Verify that the Visual Studio workload components reference workload pack groups.
+            string componentSwr = File.ReadAllText(
+                Path.Combine(Path.GetDirectoryName(
+                    createWorkloadTask.SwixProjects.FirstOrDefault(
+                        i => i.ItemSpec.Contains("wasm.tools.10.0.swixproj")).ItemSpec), "component.swr"));
+            Assert.Contains("vs.dependency id=wasm.tools.WorkloadPacks", componentSwr);
+
+            // Manifest installers should contain additional JSON files describing pack groups.
+            ITaskItem manifestMsi = createWorkloadTask.Msis.First(m => m.GetMetadata(Metadata.PackageType) == "manifest");
+            MsiUtils.GetAllFiles(manifestMsi.ItemSpec).Should().Contain(f => f.FileName.EndsWith("WorkloadPackGroups.json"));
+
+            // Verify the package group JSON and ensure there are no duplicates.
+            var json = File.ReadAllText(Path.Combine(manifestMsi.GetMetadata(Metadata.SourcePath), "json", "WorkloadPackGroups.json"));
+            var groupIds = JsonSerializer.Deserialize<JsonElement>(json).EnumerateArray();
+            groupIds.Count().Should().Be(groupIds.Distinct().Count(), "because there should be no duplicate pack group IDs");
+
+            // Verify that the workload component contains a reference to a workload pack group package.
+            string iosComponentSwr = File.ReadAllText(
+                Path.Combine(Path.GetDirectoryName(
+                    createWorkloadTask.SwixProjects.FirstOrDefault(
+                        i => i.ItemSpec.Contains("microsoft.net.runtime.ios.10.0.swixproj")).ItemSpec), "component.swr"));
+            iosComponentSwr.Should().Contain("vs.dependency id=microsoft.net.runtime.ios.WorkloadPacks");
+        }
+
+        [WindowsOnlyFact]
+        public void ItCanCreateWorkloads()
         {
             // Create intermediate outputs under %temp% to avoid path issues and make sure it's clean so we don't pick up
             // conflicting sources from previous runs.
-            string baseIntermediateOutputPath = Path.Combine(Path.GetTempPath(), "WL");
+            string testCaseDirectory = GetTestCaseDirectory();
+            string baseIntermediateOutputPath = testCaseDirectory;
 
-            if (Directory.Exists(baseIntermediateOutputPath))
-            {
-                Directory.Delete(baseIntermediateOutputPath, recursive: true);
-            }
-
-            ITaskItem[] manifestsPackages = new[]
-            {
-                new TaskItem(Path.Combine(TestBase.TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"))
+            ITaskItem[] manifestsPackages =
+            [
+                new TaskItem(Path.Combine(TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"))
                 .WithMetadata(Metadata.MsiVersion, "6.33.28")
-            };
+            ];
 
-            ITaskItem[] componentResources = new[]
-            {
+            ITaskItem[] componentResources =
+            [
                 new TaskItem("microsoft-net-sdk-emscripten")
                 .WithMetadata(Metadata.Title, ".NET WebAssembly Build Tools (Emscripten)")
                 .WithMetadata(Metadata.Description, "Build tools for WebAssembly ahead-of-time (AoT) compilation and native linking.")
                 .WithMetadata(Metadata.Version, "5.6.7.8")
-            };
+            ];
 
-            ITaskItem[] shortNames = new[]
-            {
+            ITaskItem[] shortNames =
+            [
                 new TaskItem("Microsoft.NET.Workload.Emscripten").WithMetadata("Replacement", "Emscripten"),
                 new TaskItem("microsoft.netcore.app.runtime").WithMetadata("Replacement", "Microsoft"),
                 new TaskItem("Microsoft.NETCore.App.Runtime").WithMetadata("Replacement", "Microsoft"),
                 new TaskItem("microsoft.net.runtime").WithMetadata("Replacement", "Microsoft"),
                 new TaskItem("Microsoft.NET.Runtime").WithMetadata("Replacement", "Microsoft")
-            };
+            ];
 
             IBuildEngine buildEngine = new MockBuildEngine();
 
             CreateVisualStudioWorkload createWorkloadTask = new CreateVisualStudioWorkload()
             {
                 AllowMissingPacks = true,
-                BaseOutputPath = TestBase.BaseOutputPath,
+                BaseOutputPath = Path.Combine(testCaseDirectory, "bin"),
                 BaseIntermediateOutputPath = baseIntermediateOutputPath,
                 BuildEngine = buildEngine,
                 ComponentResources = componentResources,
                 ManifestMsiVersion = null,
-                PackageSource = TestBase.TestAssetsPath,
+                PackageSource = TestAssetsPath,
                 ShortNames = shortNames,
-                WixToolsetPath = TestBase.WixToolsetPath,
+                WixExe = ToolsetInfo.WixExePath,
+                HeatExe = ToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
                 WorkloadManifestPackageFiles = manifestsPackages,
                 IsOutOfSupportInVisualStudio = true
             };
@@ -155,54 +217,52 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         }
 
         [WindowsOnlyFact]
-        public static void ItCanCreateWorkloadsThatSupportArm64InVisualStudio()
+        public void ItCanCreateWorkloadsThatSupportArm64InVisualStudio()
         {
             // Create intermediate outputs under %temp% to avoid path issues and make sure it's clean so we don't pick up
             // conflicting sources from previous runs.
-            string baseIntermediateOutputPath = Path.Combine(Path.GetTempPath(), "WLa64");
+            string testCaseDirectory = GetTestCaseDirectory();
+            string baseIntermediateOutputPath = testCaseDirectory;
 
-            if (Directory.Exists(baseIntermediateOutputPath))
-            {
-                Directory.Delete(baseIntermediateOutputPath, recursive: true);
-            }
-
-            ITaskItem[] manifestsPackages = new[]
-            {
+            ITaskItem[] manifestsPackages =
+            [
                 new TaskItem(Path.Combine(TestBase.TestAssetsPath, "microsoft.net.workload.emscripten.manifest-6.0.200.6.0.4.nupkg"))
                 .WithMetadata(Metadata.MsiVersion, "6.33.28")
                 .WithMetadata(Metadata.SupportsMachineArch, "true")
-            };
+            ];
 
-            ITaskItem[] componentResources = new[]
-            {
+            ITaskItem[] componentResources =
+            [
                 new TaskItem("microsoft-net-sdk-emscripten")
                 .WithMetadata(Metadata.Title, ".NET WebAssembly Build Tools (Emscripten)")
                 .WithMetadata(Metadata.Description, "Build tools for WebAssembly ahead-of-time (AoT) compilation and native linking.")
                 .WithMetadata(Metadata.Version, "5.6.7.8")
-            };
+            ];
 
-            ITaskItem[] shortNames = new[]
-            {
+            ITaskItem[] shortNames =
+            [
                 new TaskItem("Microsoft.NET.Workload.Emscripten").WithMetadata("Replacement", "Emscripten"),
                 new TaskItem("microsoft.netcore.app.runtime").WithMetadata("Replacement", "Microsoft"),
                 new TaskItem("Microsoft.NETCore.App.Runtime").WithMetadata("Replacement", "Microsoft"),
                 new TaskItem("microsoft.net.runtime").WithMetadata("Replacement", "Microsoft"),
                 new TaskItem("Microsoft.NET.Runtime").WithMetadata("Replacement", "Microsoft")
-            };
+            ];
 
             IBuildEngine buildEngine = new MockBuildEngine();
 
             CreateVisualStudioWorkload createWorkloadTask = new CreateVisualStudioWorkload()
             {
                 AllowMissingPacks = true,
-                BaseOutputPath = TestBase.BaseOutputPath,
+                BaseOutputPath = Path.Combine(testCaseDirectory, "bin"),
                 BaseIntermediateOutputPath = baseIntermediateOutputPath,
                 BuildEngine = buildEngine,
                 ComponentResources = componentResources,
                 ManifestMsiVersion = null,
-                PackageSource = TestBase.TestAssetsPath,
+                PackageSource = TestAssetsPath,
                 ShortNames = shortNames,
-                WixToolsetPath = TestBase.WixToolsetPath,
+                WixExe = ToolsetInfo.WixExePath,
+                HeatExe = ToolsetInfo.HeatExePath,
+                WixExtensions = WixExtensions,
                 WorkloadManifestPackageFiles = manifestsPackages,
             };
 

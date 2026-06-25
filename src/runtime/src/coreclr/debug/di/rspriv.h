@@ -2993,8 +2993,7 @@ public:
     IMDInternalImport * LookupMetaData(VMPTR_PEAssembly vmPEAssembly);
 
     // Helper functions for LookupMetaData implementation
-    IMDInternalImport * LookupMetaDataFromDebugger(VMPTR_PEAssembly vmPEAssembly,
-                                                   CordbModule * pModule);
+    IMDInternalImport * LookupMetaDataFromDebugger(CordbModule * pModule);
 
     IMDInternalImport * LookupMetaDataFromDebuggerForSingleFile(CordbModule * pModule,
                                                                 LPCWSTR pwszImagePath,
@@ -5850,7 +5849,7 @@ public:
     VMPTR_MethodDesc GetVMNativeCodeMethodDescToken() { return m_vmNativeCodeMethodDescToken; };
 
     // Worker function for GetReturnValueLiveOffset.
-    HRESULT GetReturnValueLiveOffsetImpl(Instantiation *currentInstantiation, ULONG32 ILoffset, ULONG32 bufferSize, ULONG32 *pFetched, ULONG32 *pOffsets);
+    HRESULT GetReturnValueVariableHomes(Instantiation *currentInstantiation, ULONG32 ILoffset, ULONG32 bufferSize, ULONG32 *pFetched, const ICorDebugInfo::NativeVarInfo **ppVarInfos);
 
     // get total size of the code including both hot and cold regions
     ULONG32 GetSize();
@@ -5920,8 +5919,6 @@ private:
 
     // Grabs the appropriate signature parser for a methodref, methoddef, methodspec.
     HRESULT GetSigParserFromFunction(mdToken mdFunction, mdToken *pClass, SigParser &methodSig, SigParser &genericSig);
-
-    int GetCallInstructionLength(BYTE *buffer, ULONG32 len);
 
     //-----------------------------------------------------------
     // Data members
@@ -7323,9 +7320,6 @@ private:
 
     // Worker function for GetReturnValueForILOffset.
     HRESULT GetReturnValueForILOffsetImpl(ULONG32 ILoffset, ICorDebugValue** ppReturnValue);
-
-    // Given pType, fills ppReturnValue with the correct value.
-    HRESULT GetReturnValueForType(CordbType *pType, ICorDebugValue **ppReturnValue);
 
     //-----------------------------------------------------------
     // Data members
@@ -8971,7 +8965,7 @@ public:
                        void *                    objectAddress,
                        CorElementType            type,
                        VMPTR_AppDomain           vmAppdomain,
-                       DebuggerIPCE_ObjectData * pInfo);
+                       DacDbiObjectData * pInfo);
 
     // get information about a TypedByRef object when the reference is the address of a TypedByRef structure.
     static
@@ -8979,7 +8973,7 @@ public:
                            CORDB_ADDRESS             pTypedByRef,
                            CorElementType            type,
                            VMPTR_AppDomain           vmAppDomain,
-                           DebuggerIPCE_ObjectData * pInfo);
+                           DacDbiObjectData * pInfo);
 
     //  get the address of the object referenced
     void * GetObjectAddress(MemoryRange localValue);
@@ -9008,7 +9002,7 @@ public:
     static HRESULT DereferenceCommon(CordbAppDomain *          pAppDomain,
                                      CordbType *               pType,
                                      CordbType *               pRealTypeOfTypedByref,
-                                     DebuggerIPCE_ObjectData * m_pInfo,
+                                     DacDbiObjectData * m_pInfo,
                                      ICorDebugValue **         ppValue);
 
     // Returns a pointer to the ValueHome field
@@ -9020,7 +9014,7 @@ public:
     //-----------------------------------------------------------
 
 public:
-    DebuggerIPCE_ObjectData  m_info;
+    DacDbiObjectData  m_info;
     CordbType *              m_realTypeOfTypedByref; // weak ref
 
     RefValueHome             m_valueHome;
@@ -9060,7 +9054,7 @@ public:
     CordbObjectValue(CordbAppDomain *          appdomain,
                      CordbType *               type,
                      TargetBuffer              remoteValue,
-                     DebuggerIPCE_ObjectData * pObjectData );
+                     DacDbiObjectData * pObjectData );
 
     virtual ~CordbObjectValue();
 
@@ -9202,7 +9196,7 @@ public:
 
     HRESULT Init();
 
-    DebuggerIPCE_ObjectData GetInfo() { return m_info; }
+    DacDbiObjectData GetInfo() { return m_info; }
     CordbHangingFieldTable * GetHangingFieldTable() { return &m_hangingFieldsInstance; }
 
     // Returns a pointer to the ValueHome field
@@ -9213,7 +9207,7 @@ protected:
     //-----------------------------------------------------------
     // Data members
     //-----------------------------------------------------------
-    DebuggerIPCE_ObjectData  m_info;
+    DacDbiObjectData  m_info;
     BYTE *                   m_pObjectCopy;     // local cached copy of the object
     BYTE *                   m_objectLocalVars; // var base in _this_ process
                                                 // points _into_ m_pObjectCopy
@@ -9525,7 +9519,7 @@ class CordbArrayValue : public CordbValue,
 public:
     CordbArrayValue(CordbAppDomain *          appdomain,
                     CordbType *               type,
-                    DebuggerIPCE_ObjectData * pObjectInfo,
+                    DacDbiObjectData *        pObjectInfo,
                     TargetBuffer              remoteValue);
     virtual ~CordbArrayValue();
 
@@ -9647,7 +9641,7 @@ public:
 
 private:
     // contains information about the array, such as rank, number of elements, element size, etc.
-    DebuggerIPCE_ObjectData  m_info;
+    DacDbiObjectData  m_info;
 
     // type of the elements
     CordbType               *m_elemtype;
@@ -9792,7 +9786,7 @@ private:
 
     BOOL                m_fCanBeValid;      // true if object "can" be valid. False when object is no longer valid.
     CorDebugHandleType m_handleType;        // handle type can be strong or weak
-    DebuggerIPCE_ObjectData  m_info;
+    DacDbiObjectData  m_info;
 ; // ICORDebugClass of this object when we create the handle
 };
 
@@ -10618,7 +10612,7 @@ public:
 
 private:
     RefWalkHandle mRefHandle;
-    BOOL mEnumStacksFQ;
+    BOOL mEnumStacks;
     UINT32 mHandleMask;
 };
 
@@ -11432,8 +11426,7 @@ class CordbAsyncFrame : public CordbBase, public ICorDebugILFrame, public ICorDe
     CORDB_ADDRESS m_diagnosticIP;
     CORDB_ADDRESS m_continuationAddress;
     UINT32 m_state;
-    int m_nNumberOfVars;
-    DacDbiArrayList<AsyncLocalData> m_asyncVars;
+    CQuickArrayList<AsyncLocalData> m_asyncVars;
 
     Instantiation     m_genericArgs;        // the generics type arguments
     BOOL              m_genericArgsLoaded;  // whether we have loaded and cached the generics type arguments

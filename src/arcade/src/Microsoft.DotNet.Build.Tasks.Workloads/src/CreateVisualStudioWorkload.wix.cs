@@ -84,6 +84,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             set;
         }
 
+        /// <summary>
+        /// When <see langword="true"/>, multiple packs are combined into a single installer.
+        /// </summary>
         public bool CreateWorkloadPackGroups
         {
             get;
@@ -100,12 +103,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             set;
         }
 
-        public bool UseWorkloadPackGroupsForVS
-        {
-            get;
-            set;
-        }
-
         /// <summary>
         /// If true, will skip creating MSIs for workload packs if they are part of a pack group
         /// </summary>
@@ -115,6 +112,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             set;
         }
 
+        /// <summary>
+        /// If true, workload pack groups are built sequentially.
+        /// </summary>
         public bool DisableParallelPackageGroupProcessing
         {
             get;
@@ -166,7 +166,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 Dictionary<string, WorkloadManifestMsi> manifestMsisByPlatform = new();
                 foreach (string platform in SupportedPlatforms)
                 {
-                    var manifestMsi = new WorkloadManifestMsi(manifestPackage, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath, EnableSideBySideManifests);
+                    WorkloadManifestMsi manifestMsi = new(manifestPackage, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, 
+                        EnableSideBySideManifests, CreateWixPacks);
                     manifestMsisToBuild.Add(manifestMsi);
                     manifestMsisByPlatform[platform] = manifestMsi;
                 }
@@ -207,7 +208,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                         WorkloadPackGroupJson packGroupJson = null;
                         if (CreateWorkloadPackGroups)
                         {
-                            packGroupId = WorkloadPackGroupPackage.GetPackGroupID(workload.Id);
+                            packGroupId = WorkloadPackGroupPackage.GetPackGroupId(workload.Id);
                             packGroupJson = new WorkloadPackGroupJson()
                             {
                                 GroupPackageId = packGroupId,
@@ -289,7 +290,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 string uniquePackGroupKey = string.Join("\r\n", kvp.Value.Select(p => p.PackagePath).OrderBy(p => p));
                                 if (!packGroupPackages.TryGetValue(uniquePackGroupKey, out var groupPackage))
                                 {
-                                    groupPackage = new WorkloadPackGroupPackage(workload.Id);
+                                    groupPackage = new WorkloadPackGroupPackage(workload.Id, manifestPackage);
                                     groupPackage.Packs.AddRange(kvp.Value);
                                     packGroupPackages[uniquePackGroupKey] = groupPackage;
                                 }
@@ -299,12 +300,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                     groupPackage.ManifestsPerPlatform[platform] = new();
                                 }
                                 groupPackage.ManifestsPerPlatform[platform].Add(manifestPackage);
-                            }
-
-                            foreach (var manifestMsi in manifestMsisByPlatform.Values)
-                            {
-                                manifestMsi.WorkloadPackGroups.AddRange(packGroupJsonList);
-                            }
+                            }                            
                         }
 
                         // Finally, add a component for the workload in Visual Studio.
@@ -327,81 +323,94 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                         }
                     }
                 }
+
+                if (CreateWorkloadPackGroups)
+                {
+                    foreach (var manifestMsi in manifestMsisByPlatform.Values)
+                    {
+                        manifestMsi.WorkloadPackGroups.AddRange(packGroupJsonList);
+                    }
+                }
             }
+
+            // Deduplicate packages and extract them. Building and extracting in parallel can cause issues as the same
+            // source package can be shared across multiple workloads and platforms.
+            Parallel.ForEach(buildData.Values.Select(d => d.Package).Distinct(), package =>
+            {
+                Log.LogMessage(MessageImportance.Low, string.Format(Strings.BuildExtractingPackage, package.PackagePath));
+                package.Extract();
+            });
 
             List<ITaskItem> msiItems = new();
             List<ITaskItem> swixProjectItems = new();
 
-            _ = Parallel.ForEach(buildData.Values, data =>
+            if (!CreateWorkloadPackGroups)
             {
-                // Extract the contents of the workload pack package.
-                Log.LogMessage(MessageImportance.Low, string.Format(Strings.BuildExtractingPackage, data.Package.PackagePath));
-                data.Package.Extract();
-
-                // Enumerate over the platforms and build each MSI once.
-                _ = Parallel.ForEach(data.FeatureBands.Keys, platform =>
+                _ = Parallel.ForEach(buildData.Values, data =>
                 {
-                    WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath);
-                    ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
+                    // Extract the contents of the workload pack package.
+                    Log.LogMessage(MessageImportance.Low, string.Format(Strings.BuildExtractingPackage, data.Package.PackagePath));
+                    data.Package.Extract();
 
-                    // Generate a .csproj to package the MSI and its manifest for CLI installs.
-                    MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
-                    msiOutputItem.SetMetadata(Metadata.PackageProject, csproj.Create());
-
-                    lock (msiItems)
+                    // Enumerate over the platforms and build each MSI once.
+                    _ = Parallel.ForEach(data.FeatureBands.Keys, platform =>
                     {
-                        msiItems.Add(msiOutputItem);
-                    }
+                        WorkloadPackMsi msi = new(data.Package, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
+                        ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
-                    foreach (ReleaseVersion sdkFeatureBand in data.FeatureBands[platform])
-                    {
-                        // Don't generate a SWIX package if the MSI targets arm64 and VS doesn't support machineArch
-                        if (_supportsMachineArch[sdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))
+                        // Generate a .csproj to package the MSI and its manifest for CLI installs.
+                        MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
+                        msiOutputItem.SetMetadata(Metadata.PackageProject, csproj.Create());
+
+                        lock (msiItems)
                         {
-                            MsiSwixProject swixProject = _supportsMachineArch[sdkFeatureBand] ?
-                                new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio) :
-                                new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio);
-                            string swixProj = swixProject.Create();
+                            msiItems.Add(msiOutputItem);
+                        }
 
-                            ITaskItem swixProjectItem = new TaskItem(swixProj);
-                            swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{sdkFeatureBand}");
-                            swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiPack);
-                            swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
-
-                            lock (swixProjectItems)
+                        foreach (ReleaseVersion sdkFeatureBand in data.FeatureBands[platform])
+                        {
+                            // Don't generate a SWIX package if the MSI targets arm64 and VS doesn't support machineArch
+                            if (_supportsMachineArch[sdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))
                             {
-                                swixProjectItems.Add(swixProjectItem);
+                                MsiSwixProject swixProject = _supportsMachineArch[sdkFeatureBand] ?
+                                    new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: null, machineArch: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio) :
+                                    new(msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, sdkFeatureBand, chip: msiOutputItem.GetMetadata(Metadata.Platform), outOfSupport: IsOutOfSupportInVisualStudio);
+                                string swixProj = swixProject.Create();
+
+                                ITaskItem swixProjectItem = new TaskItem(swixProj);
+                                swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{sdkFeatureBand}");
+                                swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiPack);
+                                swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
+
+                                lock (swixProjectItems)
+                                {
+                                    swixProjectItems.Add(swixProjectItem);
+                                }
                             }
                         }
-                    }
+                    });
                 });
-            });
-
-            //  Parallel processing of pack groups was causing file access errors for heat in an earlier version of this code
-            //  So we support a flag to disable the parallelization if that starts happening again
-            PossiblyParallelForEach(!DisableParallelPackageGroupProcessing, packGroupPackages.Values, packGroup =>
+            }
+            else
             {
-                foreach (var pack in packGroup.Packs)
+                //  Parallel processing of pack groups was causing file access errors for heat in an earlier version of this code
+                //  So we support a flag to disable the parallelization if that starts happening again
+                PossiblyParallelForEach(!DisableParallelPackageGroupProcessing, packGroupPackages.Values, packGroup =>
                 {
-                    pack.Extract();
-                }
-
-                foreach (var platform in packGroup.ManifestsPerPlatform.Keys)
-                {
-                    WorkloadPackGroupMsi msi = new(packGroup, platform, BuildEngine, WixToolsetPath, BaseIntermediateOutputPath);
-                    ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
-
-                    // Generate a .csproj to package the MSI and its manifest for CLI installs.
-                    MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
-                    msiOutputItem.SetMetadata(Metadata.PackageProject, csproj.Create());
-
-                    lock (msiItems)
+                    foreach (var platform in packGroup.ManifestsPerPlatform.Keys)
                     {
-                        msiItems.Add(msiOutputItem);
-                    }
+                        WorkloadPackGroupMsi msi = new(packGroup, platform, BuildEngine, WixToolsetConfig, BaseIntermediateOutputPath, CreateWixPacks);
+                        ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
-                    if (UseWorkloadPackGroupsForVS)
-                    {
+                        // Generate a .csproj to package the MSI and its manifest for CLI installs.
+                        MsiPayloadPackageProject csproj = new(msi.Metadata, msiOutputItem, BaseIntermediateOutputPath, BaseOutputPath, msi.NuGetPackageFiles);
+                        msiOutputItem.SetMetadata(Metadata.PackageProject, csproj.Create());
+
+                        lock (msiItems)
+                        {
+                            msiItems.Add(msiOutputItem);
+                        }
+
                         PossiblyParallelForEach(!DisableParallelPackageGroupProcessing, packGroup.ManifestsPerPlatform[platform], manifestPackage =>
                         {
                             // Don't generate a SWIX package if the MSI targets arm64 and VS doesn't support machineArch
@@ -424,14 +433,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                             }
                         });
                     }
-                }
-            });
+                });
+            }
 
             // Generate MSIs for the workload manifests along with a .csproj to package the MSI and a SWIX project for
             // Visual Studio.
             _ = Parallel.ForEach(manifestMsisToBuild, msi =>
             {
-                ITaskItem msiOutputItem = msi.Build(MsiOutputPath, IceSuppressions);
+                ITaskItem msiOutputItem = msi.Build(MsiOutputPath);
 
                 // Don't generate a SWIX package if the MSI targets arm64 and VS doesn't support machineArch
                 if (_supportsMachineArch[msi.Package.SdkFeatureBand] || !string.Equals(msiOutputItem.GetMetadata(Metadata.Platform), DefaultValues.arm64))

@@ -223,6 +223,48 @@ namespace NuGet.Packaging.Test
         }
 
         [Fact]
+        public void CreatePackageWithChangingOrderOfFilesIsDeterministic()
+        {
+            var sep = Path.DirectorySeparatorChar;
+            string[] hashes = new string[2];
+
+            for (var i = 0; i < 2; i++)
+            {
+                // Arrange
+                PackageBuilder builder = new PackageBuilder(deterministic: true)
+                {
+                    Id = "A",
+                    Version = NuGetVersion.Parse("1.0"),
+                    Description = "Descriptions",
+                    DeterministicTimestamp = "2009-02-13T23:31:30+00:00",
+                };
+
+                // With globs like <file src="**" >, the order of files can be
+                // random. Simulate that by using different order different
+                // times.
+                List<IPackageFile> files = new List<IPackageFile>
+                {
+                    CreatePackageFile(@"content" + sep + "file1.txt", new byte[] { 0x01 }),
+                    CreatePackageFile(@"content" + sep + "file2.txt", new byte[] { 0x02 }),
+                    CreatePackageFile(@"data" + sep + "file1.txt", new byte[] { 0x03 }),
+                    CreatePackageFile(@"data" + sep + "file2.txt", new byte[] { 0x04 }),
+                    CreatePackageFile(@"content" + sep + "file3.txt", new byte[] { 0x05 }),
+                };
+
+                if (i % 2 != 0)
+                {
+                    files.Reverse();
+                }
+
+                builder.Files.AddRange(files);
+
+                hashes[i] = builder.CalcPsmdcpName();
+            }
+
+            Assert.Equal(hashes[0], hashes[1]);
+        }
+
+        [Fact]
         public void CreatePackage_IncludesAStableOrderOfContentTypesXml()
         {
             // Arrange
@@ -3358,11 +3400,11 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
             return testDir;
         }
 
-        private static IPackageFile CreatePackageFile(string name)
+        private static IPackageFile CreatePackageFile(string name, byte[] buffer = null)
         {
             var file = new Mock<IPackageFile>();
             file.SetupGet(f => f.Path).Returns(name);
-            file.Setup(f => f.GetStream()).Returns(new MemoryStream());
+            file.Setup(f => f.GetStream()).Returns(() => buffer == null ? new MemoryStream() : new MemoryStream(buffer));
             file.Setup(f => f.LastWriteTime).Returns(DateTimeOffset.UtcNow);
 
             string effectivePath;

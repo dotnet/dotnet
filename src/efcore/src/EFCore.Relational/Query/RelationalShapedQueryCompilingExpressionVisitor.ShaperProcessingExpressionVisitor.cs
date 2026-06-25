@@ -2142,6 +2142,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                     {
                         var property = valueBufferTryReadValueMethodToProcess.Arguments[2].GetConstantValue<IProperty>();
                         var jsonPropertyName = property.GetJsonPropertyName()!;
+                        var jsonPropertyNameBytes = new RuntimeConstantExpression(
+                            jsonPropertyName + "Bytes",
+                            Call(
+                                Property(null, EncodingUtf8Property),
+                                Utf8GetBytesMethod,
+                                Constant(jsonPropertyName)));
                         testExpressions.Add(
                             Call(
                                 Field(
@@ -2151,10 +2157,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                 Convert(
                                     Call(
                                         ByteArrayAsSpanMethod,
-                                        Call(
-                                            Property(null, EncodingUtf8Property),
-                                            Utf8GetBytesMethod,
-                                            Constant(jsonPropertyName))),
+                                        jsonPropertyNameBytes),
                                     typeof(ReadOnlySpan<>).MakeGenericType(typeof(byte)))));
 
                         var propertyVariable = Variable(valueBufferTryReadValueMethodToProcess.Type);
@@ -2181,6 +2184,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                     foreach (var innerShaperMapElement in innerShapersMap)
                     {
                         var innerShaperMapElementKey = innerShaperMapElement.Key;
+                        var jsonPropertyNameBytes = new RuntimeConstantExpression(
+                            innerShaperMapElementKey + "Bytes",
+                            Call(
+                                Property(null, EncodingUtf8Property),
+                                Utf8GetBytesMethod,
+                                Constant(innerShaperMapElementKey)));
                         testExpressions.Add(
                             Call(
                                 Field(
@@ -2190,16 +2199,13 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                 Convert(
                                     Call(
                                         ByteArrayAsSpanMethod,
-                                        Call(
-                                            Property(null, EncodingUtf8Property),
-                                            Utf8GetBytesMethod,
-                                            Constant(innerShaperMapElementKey))),
+                                        jsonPropertyNameBytes),
                                     typeof(ReadOnlySpan<>).MakeGenericType(typeof(byte)))));
 
                         var propertyVariable = Variable(innerShaperMapElement.Value.Type);
                         finalBlockVariables.Add(propertyVariable);
 
-                        _navigationVariableMap[innerShaperMapElement.Key] = propertyVariable;
+                        _navigationVariableMap[innerShaperMapElementKey] = propertyVariable;
 
                         var moveNext = Call(managerVariable, Utf8JsonReaderManagerMoveNextMethod);
                         var captureState = Call(managerVariable, Utf8JsonReaderManagerCaptureStateMethod);
@@ -2456,13 +2462,19 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                             var genericMethod = StructuralTypeMaterializerSource.PopulateListMethod.MakeGenericMethod(
                                 property.ClrType.TryGetElementType(typeof(IEnumerable<>))!);
 #pragma warning restore EF1001 // Internal EF Core API usage.
+                            // The instance the property is being assigned to must be taken from the original assignment, not the
+                            // hard-coded 'instance'. For lazy-loading proxies, 'instance' is the converted (non-proxy) variable that
+                            // is only assigned at the end of the materializer, so reading the member from it here would dereference null.
+                            var instanceExpression = node.Left is MemberExpression { Expression: { } leftInstance }
+                                ? leftInstance
+                                : instance;
                             var currentVariable = Variable(parameter!.Type);
                             var convertedVariable = genericMethod.GetParameters()[1].ParameterType.IsAssignableFrom(currentVariable.Type)
                                 ? (Expression)currentVariable
                                 : Convert(currentVariable, genericMethod.GetParameters()[1].ParameterType);
                             return Block(
                                 [currentVariable],
-                                MakeMemberAccess(instance, property.GetMemberInfo(forMaterialization: true, forSet: false))
+                                MakeMemberAccess(instanceExpression, property.GetMemberInfo(forMaterialization: true, forSet: false))
                                     .Assign(currentVariable),
                                 IfThenElse(
                                     OrElse(
