@@ -75,7 +75,8 @@
 
     <ItemGroup Condition="!Exists('$(_CurrentManifestsDirectory)')">
       <_SignCheckCandidate Include="$(CurrentArtifactDirectory)/**/*"
-        Exclude="$(_CurrentManifestsDirectory)/**"
+        Exclude="$(_CurrentManifestsDirectory)/**" />
+      <_SignCheckCandidate Update="@(_SignCheckCandidate)"
         RelativePath="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
