@@ -74,7 +74,7 @@
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.2" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
-    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.0.727802" />
+    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.0.732101" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.84.2" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.7.0" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
