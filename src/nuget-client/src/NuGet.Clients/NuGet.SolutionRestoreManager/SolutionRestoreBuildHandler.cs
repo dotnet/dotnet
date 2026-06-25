@@ -15,7 +15,6 @@ using NuGet.Configuration;
 using NuGet.PackageManagement;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
-using SystemTask = System.Threading.Tasks.Task;
 using ThreadHelper = Microsoft.VisualStudio.Shell.ThreadHelper;
 
 namespace NuGet.SolutionRestoreManager
@@ -30,18 +29,16 @@ namespace NuGet.SolutionRestoreManager
     /// UpdateSolution_Cancel
     /// UpdateSolution_Done
     /// </remarks>
+    [Export]
     public sealed class SolutionRestoreBuildHandler
         : IVsUpdateSolutionEvents5, IDisposable
     {
         private const uint VSCOOKIE_NIL = 0;
 
-        [Import]
         private Lazy<ISettings> Settings { get; set; }
 
-        [Import]
         private Lazy<ISolutionRestoreWorker> SolutionRestoreWorker { get; set; }
 
-        [Import]
         private Lazy<ISolutionRestoreChecker> SolutionRestoreChecker { get; set; }
 
         /// <summary>
@@ -54,12 +51,16 @@ namespace NuGet.SolutionRestoreManager
         /// </summary>
         private uint _updateSolutionEventsCookieEx;
 
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider _serviceProvider;
-
-        private bool _isMEFInitialized;
-
-        private SolutionRestoreBuildHandler()
+        [ImportingConstructor]
+        internal SolutionRestoreBuildHandler(Lazy<ISettings> settings, Lazy<ISolutionRestoreWorker> restoreWorker, Lazy<ISolutionRestoreChecker> solutionRestoreChecker)
         {
+            Assumes.Present(settings);
+            Assumes.Present(restoreWorker);
+            Assumes.Present(solutionRestoreChecker);
+
+            Settings = settings;
+            SolutionRestoreWorker = restoreWorker;
+            SolutionRestoreChecker = solutionRestoreChecker;
         }
 
         // A constructor utilized for running unit-tests
@@ -78,8 +79,6 @@ namespace NuGet.SolutionRestoreManager
             SolutionRestoreWorker = new Lazy<ISolutionRestoreWorker>(() => restoreWorker);
             SolutionRestoreChecker = new Lazy<ISolutionRestoreChecker>(() => solutionRestoreChecker);
             _solutionBuildManager = buildManager;
-
-            _isMEFInitialized = true;
         }
 
         public void Dispose()
@@ -97,23 +96,12 @@ namespace NuGet.SolutionRestoreManager
         }
 
         // A factory method invoked internally only
-        internal static async Task<IDisposable> InitializeAsync(Microsoft.VisualStudio.Shell.IAsyncServiceProvider serviceProvider)
+        internal async Task InitializeAsync(Microsoft.VisualStudio.Shell.IAsyncServiceProvider serviceProvider)
         {
             Assumes.Present(serviceProvider);
 
-            var instance = new SolutionRestoreBuildHandler();
-
-            await instance.SubscribeAsync(serviceProvider);
-
-            return instance;
-        }
-
-        private async SystemTask SubscribeAsync(Microsoft.VisualStudio.Shell.IAsyncServiceProvider serviceProvider)
-        {
             // Don't use CPS thread helper because of RPS perf regression
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            _serviceProvider = serviceProvider;
 
             _solutionBuildManager = await serviceProvider.GetServiceAsync<SVsSolutionBuildManager, IVsSolutionBuildManager3>();
             Assumes.Present(_solutionBuildManager);
@@ -125,19 +113,9 @@ namespace NuGet.SolutionRestoreManager
 
         public void UpdateSolution_QueryDelayBuildAction(uint dwAction, out IVsTask pDelayTask)
         {
-            if (!_isMEFInitialized)
-            {
-                ThreadHelper.JoinableTaskFactory.Run(async () =>
-                {
-                    var componentModel = await _serviceProvider.GetComponentModelAsync();
-                    componentModel.DefaultCompositionService.SatisfyImportsOnce(this);
-                });
-
-                _isMEFInitialized = true;
-            }
-
             pDelayTask = SolutionRestoreWorker.Value.JoinableTaskFactory.RunAsyncAsVsTask(
-                VsTaskRunContext.UIThreadBackgroundPriority, (token) => RestoreAsync(dwAction, token));
+                VsTaskRunContext.UIThreadBackgroundPriority,
+                async (token) => await RestoreAsync(dwAction, token));
         }
 
         #endregion IVsUpdateSolutionEvents5

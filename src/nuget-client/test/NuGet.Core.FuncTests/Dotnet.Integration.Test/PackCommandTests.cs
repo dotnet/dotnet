@@ -86,6 +86,56 @@ namespace Dotnet.Integration.Test
             }
         }
 
+        // Other platforms may not have the same file locking behavior as Windows, so this test is only run on Windows.
+        [PlatformFact(Platform.Windows)]
+        public void Pack_DoesNotLeakSourceFileHandle()
+        {
+            // Arrange
+            using (var testDirectory = _dotnetFixture.CreateTestDirectory())
+            {
+                var projectName = "ClassLibrary1";
+                var workingDirectory = Path.Combine(testDirectory, projectName);
+                var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+
+                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, "classlib", testOutputHelper: _testOutputHelper);
+
+                // A physical file included in the package. PhysicalPackageFile.GetStream() returns
+                // File.OpenRead(SourcePath), so the leaked handle locks this very file on disk.
+                File.WriteAllText(Path.Combine(workingDirectory, "signme.txt"), "original content to be signed");
+                File.WriteAllText(Path.Combine(workingDirectory, "signed.txt"), "signed content");
+
+                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    var xml = XDocument.Load(stream);
+
+                    ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFramework", TestConstants.ProjectTargetFramework);
+                    ProjectFileUtils.AddProperty(xml, "Deterministic", "true");
+
+                    var itemGroupXml = @"<ItemGroup>
+    <None Include=""signme.txt"" Pack=""True"" PackagePath=""contentFiles/any/any/"" />
+  </ItemGroup>";
+                    // Simulate the signing step that copies signed files over the originals after pack.
+                    var signingTargetXml = @"<Target Name=""SimulateSigningOverwrite"" AfterTargets=""Pack"">
+    <Copy SourceFiles=""$(MSBuildProjectDirectory)/signed.txt""
+          DestinationFiles=""$(MSBuildProjectDirectory)/signme.txt""
+          OverwriteReadOnlyFiles=""true"" />
+  </Target>";
+                    ProjectFileUtils.AddCustomXmlToProjectRoot(xml, itemGroupXml);
+                    ProjectFileUtils.AddCustomXmlToProjectRoot(xml, signingTargetXml);
+                    ProjectFileUtils.WriteXmlToFile(xml, stream);
+                }
+
+                _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+
+                // Act & Assert
+                // With the handle leak, the post-pack Copy fails with a file-in-use/sharing-violation
+                // because PackTask still holds an open read handle on signme.txt, so pack exits non-zero.
+                var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"/p:PackageOutputPath={workingDirectory}", testOutputHelper: _testOutputHelper);
+
+                Assert.Equal("signed content", File.ReadAllText(Path.Combine(workingDirectory, "signme.txt")));
+            }
+        }
+
         [PlatformFact(Platform.Windows)]
         public void PackCommand_NewProject_OutputsInDefaultPaths()
         {
@@ -6662,6 +6712,33 @@ namespace ClassLibrary
             ProjectFileUtils.AddProperties(xml, bananaProps, " '$(TargetFramework)' == 'banana' ");
 
             ProjectFileUtils.WriteXmlToFile(xml, stream);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_PackageIdWithNonAsciiCharacters_NU5052()
+        {
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+
+            using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddProperty(xml, "PackageId", "Contöso.Utilities");
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+#if SDK_NEXT
+            result.AllOutput.Should().Contain("NU5052");
+#else
+            result.AllOutput.Should().NotContain("NU5052");
+#endif
         }
     }
 }

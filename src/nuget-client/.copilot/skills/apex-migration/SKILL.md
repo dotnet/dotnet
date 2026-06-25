@@ -274,6 +274,7 @@ using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCor
 - Get PMC console via `GetConsole(testContext.Project)` helper method in the test class.
 - Don't use the method-delegates-to-async-helper pattern unless the helper is actually called from
   multiple classes. Inline the test logic directly in the test method.
+- Do NOT add "Migrated from" comments in the test code. The PR description tracks the mapping — the code should stand on its own without referencing the old PS test.
 
 ## Tests that should NOT be migrated
 

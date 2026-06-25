@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 #endif
 using Newtonsoft.Json.Linq;
+using NuGet.Shared;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -126,6 +127,11 @@ namespace NuGet.Protocol.Plugins
             if (message.PayloadObject == null)
             {
                 return default;
+            }
+
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return (TPayload)message.PayloadObject;
             }
 
             if (message.PayloadObject is Newtonsoft.Json.Linq.JObject jobj)

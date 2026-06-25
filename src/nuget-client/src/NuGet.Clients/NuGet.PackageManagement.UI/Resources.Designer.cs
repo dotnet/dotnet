@@ -1727,7 +1727,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The name specified has already been added to the list of available package sources. Please provide a unique name..
+        ///   Looks up a localized string similar to The name specified has already been added to the list of available package sources. Provide a unique name..
         /// </summary>
         public static string ShowWarning_UniqueName {
             get {
@@ -1736,7 +1736,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The source specified has already been added to the list of available package sources. Please provide a unique source..
+        ///   Looks up a localized string similar to The source specified has already been added to the list of available package sources. Provide a unique source..
         /// </summary>
         public static string ShowWarning_UniqueSource {
             get {
@@ -1934,7 +1934,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)..
+        ///   Looks up a localized string similar to There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)..
         /// </summary>
         public static string Text_NoReadme {
             get {
@@ -2348,7 +2348,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please follow simple instructions from {0} to go back to previous state..
+        ///   Looks up a localized string similar to Follow the instructions at {0} to return to the previous state..
         /// </summary>
         public static string Upgrade_RevertSteps {
             get {

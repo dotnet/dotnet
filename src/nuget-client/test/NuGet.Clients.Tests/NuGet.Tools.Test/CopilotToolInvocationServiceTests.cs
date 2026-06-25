@@ -4,8 +4,13 @@
 #nullable enable
 
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Copilot;
+using Microsoft.VisualStudio.Copilot.Internal.Mcp;
+using Moq;
 using NuGet.PackageManagement.VisualStudio;
 using NuGetVSExtension;
 using Xunit;
@@ -99,6 +104,86 @@ namespace NuGet.Tools.Test
             };
 
             Assert.True(CopilotToolInvocationService.IsToolAvailable(functions, ValidNuGetToolName, AcceptableGroups));
+        }
+
+        [Theory]
+        [InlineData(McpServerState.Active, true)]
+        [InlineData(McpServerState.Suspended, true)]
+        [InlineData(McpServerState.Unknown, false)]
+        [InlineData(McpServerState.NotStarted, false)]
+        [InlineData(McpServerState.InputRequired, false)]
+        [InlineData(McpServerState.AuthRequired, false)]
+        [InlineData(McpServerState.Starting, false)]
+        [InlineData(McpServerState.Failed, false)]
+        [InlineData(McpServerState.Disabled, false)]
+        [InlineData(McpServerState.TrustRejected, false)]
+        [InlineData(null, false)]   // Server state not reported
+        public async Task IsServerAvailableAsync_SingleServerState_ReturnsExpected(McpServerState? state, bool expected)
+        {
+            IMcpServerInfoService infoService = CreateInfoService((McpServerConstants.NuGetMcpServerName, state));
+
+            bool result = await CopilotToolInvocationService.IsServerAvailableAsync(
+                infoService,
+                new[] { McpServerConstants.NuGetMcpServerName },
+                CancellationToken.None);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public async Task IsServerAvailableAsync_MultipleServers_OneActive_ReturnsTrue()
+        {
+            // First acceptable name is not active, second one is - verifies all names are checked.
+            IMcpServerInfoService infoService = CreateInfoService(
+                (McpServerConstants.NuGetMcpServerName, McpServerState.Failed),
+                (McpServerConstants.ComMicrosoftNuGetMcpServerName, McpServerState.Active));
+
+            bool result = await CopilotToolInvocationService.IsServerAvailableAsync(
+                infoService,
+                AcceptableGroups,
+                CancellationToken.None);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task IsServerAvailableAsync_MultipleServers_NoneActive_ReturnsFalse()
+        {
+            IMcpServerInfoService infoService = CreateInfoService(
+                (McpServerConstants.NuGetMcpServerName, McpServerState.Failed),
+                (McpServerConstants.ComMicrosoftNuGetMcpServerName, McpServerState.Disabled));
+
+            bool result = await CopilotToolInvocationService.IsServerAvailableAsync(
+                infoService,
+                AcceptableGroups,
+                CancellationToken.None);
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task IsServerAvailableAsync_EmptyServerNames_ReturnsFalse()
+        {
+            IMcpServerInfoService infoService = CreateInfoService();
+
+            bool result = await CopilotToolInvocationService.IsServerAvailableAsync(
+                infoService,
+                new string[0],
+                CancellationToken.None);
+
+            Assert.False(result);
+        }
+
+        private static IMcpServerInfoService CreateInfoService(params (string ServerName, McpServerState? State)[] states)
+        {
+            Dictionary<string, McpServerState?> map = states.ToDictionary(s => s.ServerName, s => s.State);
+
+            var mock = new Mock<IMcpServerInfoService>();
+            mock.Setup(s => s.GetServerStateAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns((string name, CancellationToken _) =>
+                    new ValueTask<McpServerState?>(map.TryGetValue(name, out McpServerState? state) ? state : null));
+
+            return mock.Object;
         }
     }
 }

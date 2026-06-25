@@ -108,7 +108,14 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             });
 
             Assert.IsType<InvalidDataException>(exception.InnerException);
-            Assert.IsType<JsonReaderException>(exception.InnerException.InnerException);
+            if (useStj)
+            {
+                Assert.IsAssignableFrom<System.Text.Json.JsonException>(exception.InnerException.InnerException);
+            }
+            else
+            {
+                Assert.IsType<JsonReaderException>(exception.InnerException.InnerException);
+            }
         }
 
         [Theory]

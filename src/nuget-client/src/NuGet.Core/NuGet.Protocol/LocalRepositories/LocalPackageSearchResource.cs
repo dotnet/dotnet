@@ -30,6 +30,8 @@ namespace NuGet.Protocol
             _localResource = localResource;
         }
 
+        public override bool SupportsPackageTypeFiltering => false;
+
         public async override Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(
             string searchTerm,
             SearchFilter filters,
