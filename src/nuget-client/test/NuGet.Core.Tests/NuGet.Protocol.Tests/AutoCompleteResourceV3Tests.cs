@@ -44,5 +44,33 @@ namespace NuGet.Protocol.Tests
             Assert.Equal(10, result.Count());
             Assert.NotEmpty(logger.Messages);
         }
+
+        [Theory]
+        [InlineData("true")]  // STJ path
+        [InlineData("false")] // NSJ path
+        public async Task VersionStartsWith_BothPaths_ReturnsResultsAsync(string useStj)
+        {
+            // Arrange
+            var responses = new Dictionary<string, string>();
+            responses.Add("http://testsource.test/v3/index.json", JsonData.IndexWithoutFlatContainer);
+            responses.Add("https://api.nuget.org/v3/registration0/deepequal/index.json", JsonData.DeepEqualRegistationIndex);
+
+            var repo = StaticHttpHandler.CreateSource("http://testsource.test/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var resource = (AutoCompleteResourceV3)(await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected AutoCompleteResource."));
+
+            var envReader = new Mock<IEnvironmentVariableReader>();
+            envReader.Setup(e => e.GetEnvironmentVariable(NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar)).Returns(useStj);
+            var testResource = new AutoCompleteResourceV3(resource._client, resource._serviceIndex, resource._regResource, envReader.Object);
+            var logger = new TestLogger();
+
+            using var sourceCacheContext = new SourceCacheContext();
+
+            // Act
+            var result = await testResource.VersionStartsWith("deepequal", "0.9", includePrerelease: true, sourceCacheContext, logger, CancellationToken.None);
+
+            // Assert
+            Assert.Equal("0.9.0", Assert.Single(result).ToNormalizedString());
+        }
     }
 }

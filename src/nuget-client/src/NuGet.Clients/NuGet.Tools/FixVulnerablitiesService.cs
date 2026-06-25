@@ -31,12 +31,12 @@ namespace NuGetVSExtension
                     CopilotDefaultTypes.StringName);
 
         [Import(typeof(ICopilotToolInvocationService))]
-        public ICopilotToolInvocationService? ToolInvocationService { get; set; }
+        public ICopilotToolInvocationService ToolInvocationService { get; set; } = null!;
 
-        [Import(typeof(IVsSolutionManager))]
+        [Import(typeof(IVsSolutionManager), AllowDefault = true)]
         public IVsSolutionManager? SolutionManager { get; set; }
 
-        [Import(typeof(VisualStudioActivityLogger))]
+        [Import(typeof(VisualStudioActivityLogger), AllowDefault = true)]
         public ILogger? ActivityLogger { get; set; }
 
         public async Task LaunchFixVulnerabilitiesAsync(CancellationToken cancellationToken)
@@ -93,6 +93,8 @@ namespace NuGetVSExtension
                 CopilotToolSessionError.ServiceBrokerNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.ServiceBrokerNotAvailable, Resources.Error_ServiceBrokerNotAvailable),
                 CopilotToolSessionError.CopilotServiceNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.CopilotServiceNotAvailable, Resources.Error_CopilotServiceNotAvailable),
                 CopilotToolSessionError.McpToolServiceNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.McpToolServiceNotAvailable, Resources.Error_McpToolServiceNotAvailable),
+                CopilotToolSessionError.McpServerInfoServiceNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.McpServerInfoServiceNotAvailable, Resources.Error_McpServerInfoServiceNotAvailable),
+                CopilotToolSessionError.McpServerNotActive => (FixVulnerabilitiesWithCopilotErrorType.McpServerNotActive, Resources.Error_McpServerNotActive),
                 CopilotToolSessionError.ToolNotAvailable => (FixVulnerabilitiesWithCopilotErrorType.NuGetSolverNotAvailable, Resources.Error_NuGetSolverNotAvailable),
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, null),
             };
