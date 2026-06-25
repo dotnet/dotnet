@@ -8,6 +8,7 @@
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <ProjectReference Remove="BuildComparer\BuildComparer.csproj" />
     <ProjectReference Remove="ChangeValidation\ChangeValidation.csproj" />
+    <ProjectReference Remove="CloakedFileScan\CloakedFileScan.csproj" />
     <ProjectReference Remove="CreateBaselineUpdatePR\CreateBaselineUpdatePR.csproj" />
   </ItemGroup>
 
