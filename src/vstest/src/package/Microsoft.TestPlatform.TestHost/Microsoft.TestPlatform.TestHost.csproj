@@ -72,7 +72,7 @@
     <None Include="README.md" Pack="true" PackagePath="" />
     <None Include="$(SrcPackageFolder)ThirdPartyNotices.txt" Pack="true" PackagePath="" />
     <!-- .NET Framework consumers get the testhost shipped with vstest.console, so only a stub is needed. -->
-    <None Include="_._" Pack="true" PackagePath="lib\net462\" />
+    <None Include="_._" Pack="true" PackagePath="lib/net462/" />
   </ItemGroup>
 
   <!-- Bundle the .NET testhost runtime output: the platform assemblies and satellites in lib\net8.0,

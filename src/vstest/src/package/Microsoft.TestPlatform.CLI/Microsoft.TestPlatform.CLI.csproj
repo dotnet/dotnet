@@ -22,6 +22,14 @@
     <!-- NU5109/NU5118: assemblies/content placed outside lib (intentional, everything ships under contentFiles).
          NU5128: no dependencies and no lib folder. -->
     <NoWarn>$(NoWarn);NU5109;NU5118;NU5128</NoWarn>
+    <!-- TFM of the cross-platform (.NET) content shipped by the source-build / non-Windows package layout.
+         In source-only builds Directory.Build.targets overrides TargetFrameworks to $(NetCurrent), so the
+         single produced output folder is $(_CliContentTfm). In all other builds (including the non-Windows
+         product/Microsoft build) this project builds $(NetSDKTargetFramework) and there is no $(NetCurrent)
+         output, so the content must be taken from $(NetSDKTargetFramework). Using the wrong TFM here makes
+         pack look for a non-existent output folder (e.g. .../Release/net11.0) and fail. -->
+    <_CliContentTfm Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</_CliContentTfm>
+    <_CliContentTfm Condition="'$(_CliContentTfm)' == ''">$(NetSDKTargetFramework)</_CliContentTfm>
   </PropertyGroup>
 
   <ItemGroup>
@@ -511,49 +519,49 @@
     <None Include="$(OutputPath)net10.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\Extensions\zh-Hant\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
   </ItemGroup>
 
-  <!-- Source-build and non-Windows ship the cross-platform ($(NetCurrent)) content only.
+  <!-- Source-build and non-Windows ship the cross-platform ($(_CliContentTfm)) content only.
        Mirrors Microsoft.TestPlatform.CLI.sourcebuild(.product).nuspec. -->
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT'">
-    <None Include="$(OutputPath)$(NetCurrent)\datacollector.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\datacollector.dll.config" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\datacollector.deps.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\datacollector.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.CommunicationUtilities.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.CoreUtilities.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.CrossPlatEngine.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.PlatformAbstractions.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.Utilities.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.VisualStudio.TestPlatform.Client.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.VisualStudio.TestPlatform.Common.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-5.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-6.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-7.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-8.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-9.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-10.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-11.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\testhost.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\testhost.deps.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\vstest.console.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\vstest.console.dll.config" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\vstest.console.deps.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\vstest.console.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.Diagnostics.NETCore.Client\Microsoft.Diagnostics.NETCore.Client.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.TestPlatform.TestHostRuntimeProvider.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(OutputPath)$(NetCurrent)\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" Pack="true" PackagePath="contentFiles\any\$(NetCurrent)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.dll.config" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.CommunicationUtilities.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.CoreUtilities.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.CrossPlatEngine.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.PlatformAbstractions.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.Utilities.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Client.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Common.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-1.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-1.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-2.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-2.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-3.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-3.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-5.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-6.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-7.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-8.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-9.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-10.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-11.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\testhost.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\testhost.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.dll.config" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.Diagnostics.NETCore.Client\Microsoft.Diagnostics.NETCore.Client.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.TestHostRuntimeProvider.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -640,59 +648,59 @@
        projects' resources have been copied into this project's output, so a clean build would match
        nothing. They are instead gathered at pack time: TargetsForTfmSpecificContentInPackage runs in
        the inner (per-TFM) build where $(OutputPath) is already populated. The target is gated to
-       $(NetCurrent) so the content is added exactly once.
+       $(_CliContentTfm) so the content is added exactly once.
        Note: in the inner build $(OutputPath) already points at the per-TFM output directory
        (e.g. artifacts\bin\...\Release\net11.0\), so the '$(OutputPath)**' globs only ever span that
        single TFM's sub-folders. %(RecursiveDir) is therefore just the language folder (cs, de, ...),
-       not a leading TFM directory, and the package layout stays contentFiles\any\$(NetCurrent)\<lang>\. -->
+       not a leading TFM directory, and the package layout stays contentFiles\any\$(_CliContentTfm)\<lang>\. -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT'">
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeCliSourceBuildResources</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <Target Name="_IncludeCliSourceBuildResources"
-          Condition="('$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT') and '$(TargetFramework)' == '$(NetCurrent)'"
+          Condition="('$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT') and '$(TargetFramework)' == '$(_CliContentTfm)'"
           Returns="@(TfmSpecificPackageFile)">
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.*.resources.dll"
                               Exclude="$(OutputPath)**\*TestHostRuntimeProvider*.resources.dll;$(OutputPath)**\*BlameDataCollector*.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\Extensions\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\Extensions\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.*.resources.dll"
                               Exclude="$(OutputPath)**\*Html*.resources.dll;$(OutputPath)**\*Trx*.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\Extensions\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\Extensions\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)**\vstest.console.resources.dll">
-        <PackagePath>contentFiles\any\$(NetCurrent)\%(RecursiveDir)</PackagePath>
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
         <BuildAction>None</BuildAction>
         <PackageCopyToOutput>true</PackageCopyToOutput>
         <PackageFlatten>false</PackageFlatten>
