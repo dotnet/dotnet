@@ -2,9 +2,9 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="e6542746cf944ff2a1a595edf2af006ef3046784" BarId="316522" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.9.0-preview.26304.2">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.9.0-preview.26319.2">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>ee1eb99f63f5fe83922113b913b1dad2393dc85b</Sha>
+      <Sha>42b0aaaa4ba69dd89c33eec653184f97a5c52340</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26281.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -26,9 +26,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26211.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26310.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a08169b890573cfd7f949ea9062c86a4db1aab1b</Sha>
+      <Sha>0a80b038bcc0d76b2f26c7f22062942de75779e6</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
