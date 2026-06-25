@@ -24,6 +24,10 @@
     <IsShippingVsix Condition="'$(IsShippingVsix)' == ''">$(IsShipping)</IsShippingVsix>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DeterministicTimestamp Condition="'$(DeterministicTimestamp)' == '' and '$(SOURCE_DATE_EPOCH)' != ''">$(SOURCE_DATE_EPOCH)</DeterministicTimestamp>
+  </PropertyGroup>
+
   <!--
     Specification: https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md
 
@@ -44,7 +48,10 @@
       and should only be enabled when it's necessary to test-install the MSIs produced by the build.
     -->
     <_BuildNumber>$(OfficialBuildId)</_BuildNumber>
-    <_BuildNumber Condition="'$(OfficialBuildId)' == ''">$([System.DateTime]::Now.ToString(yyyyMMdd)).1</_BuildNumber>
+    <!-- Use DeterministicTimestamp before falling back to wall-clock -->
+    <_BuildNumber Condition="'$(_BuildNumber)' == '' and '$(DeterministicTimestamp)' != '' and '$(DeterministicTimestamp)' != 'true' and '$(DeterministicTimestamp)' != 'false' and !$(DeterministicTimestamp.Contains('-'))">$([System.DateTimeOffset]::FromUnixTimeSeconds($(DeterministicTimestamp)).UtcDateTime.ToString(yyyyMMdd)).1</_BuildNumber>
+    <_BuildNumber Condition="'$(_BuildNumber)' == '' and $(DeterministicTimestamp.Contains('-'))">$([System.DateTimeOffset]::Parse($(DeterministicTimestamp)).UtcDateTime.ToString(yyyyMMdd)).1</_BuildNumber>
+    <_BuildNumber Condition="'$(_BuildNumber)' == ''">$([System.DateTime]::UtcNow.ToString(yyyyMMdd)).1</_BuildNumber>
 
     <!--
       OfficialBuildId is assumed to have format "20yymmdd.r" (the assumption is checked later in a target).

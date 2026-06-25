@@ -1269,6 +1269,66 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         /// <summary>
+        /// Regression: on cancellation the monitor must cancel in-flight Helix jobs immediately and
+        /// must not gate that on the test-result upload queue draining. An upload that is stuck in a
+        /// non-cancellable operation when the timeout fires must neither delay nor prevent Helix job
+        /// cancellation; its unfinished results are re-uploaded by a later monitor invocation.
+        /// </summary>
+        [Fact]
+        public async Task MonitorTimesOut_DoesNotWaitForUploadDrainBeforeCancellingHelixJobs()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+
+            // The upload of helix-finished starts but never completes and ignores cancellation,
+            // simulating an upload stuck in a non-cancellable network call when the timeout fires.
+            var uploadGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            azdo.UploadBlocker = uploadGate.Task;
+            azdo.UploadBlockerIgnoresCancellation = true;
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "inProgress"));
+
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-finished", "finished"),
+                    HelixJob("helix-running", "running"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-finished"] = PassFail(passed: ["finished-work-item"]),
+                });
+
+            using var cts = new CancellationTokenSource();
+            var runner = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo, helix,
+                async (_, _) =>
+                {
+                    // Cancel once the (stuck) upload is genuinely in flight.
+                    Task started = await Task.WhenAny(azdo.UploadStarted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                    started.Should().BeSameAs(azdo.UploadStarted.Task);
+                    cts.Cancel();
+                });
+
+            // RunAsync must return promptly even though an upload is stuck: it must not block on the
+            // drain. The WaitAsync guard fails the test (instead of hanging) if the drain is
+            // reintroduced ahead of cancellation.
+            int exitCode = await runner.RunAsync(cts.Token).WaitAsync(TimeSpan.FromSeconds(10));
+
+            exitCode.Should().Be(1);
+            // The still-running Helix job was cancelled despite the stuck in-flight upload.
+            helix.CanceledJobs.Should().BeEquivalentTo(["helix-running"]);
+            // The stuck upload never completed, so its job was not recorded as uploaded; a later
+            // monitor invocation re-uploads it.
+            azdo.UploadedJobNames.Should().BeEmpty();
+            azdo.UploadCompleted.Task.IsCompleted.Should().BeFalse();
+
+            // Release the stuck upload so the abandoned task can finish.
+            uploadGate.TrySetResult();
+        }
+
+        /// <summary>
         /// Regression: a Helix job that was "running" in the first poll and "finished" in a
         /// later poll must not be listed in the timeout error message or cancelled, because the
         /// monitor's cached snapshot has to reflect the latest Helix-side state when the

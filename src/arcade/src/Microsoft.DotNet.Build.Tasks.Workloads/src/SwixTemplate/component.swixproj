@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <PropertyGroup>
     <OutputArchitecture>neutral</OutputArchitecture>
     <OutputLocalized>false</OutputLocalized>
@@ -16,7 +15,5 @@
     <Package Include="component.res.swr" />
   </ItemGroup>
   
-  <Target Name="GetNativeManifest" />  
-
-  <Import Project="$(SwixBuildTargets)"/>  
+  <Import Project="$(SwixBuildTargets)"/>
 </Project>

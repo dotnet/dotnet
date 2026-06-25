@@ -14,9 +14,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     /// <summary>
     /// Fire-and-forget queue for AzDO test-result uploads. Each queued upload runs as an
-    /// independent task with indefinite retry on transient errors. Both normal completion
-    /// and cancellation paths must drain the queue before exiting so that results in
-    /// flight when the runner exits are not abandoned.
+    /// independent task with indefinite retry on transient errors. On normal completion the
+    /// queue is drained so results in flight when the runner exits are not lost. On
+    /// cancellation the queue is intentionally NOT drained: cancelling the in-flight Helix jobs
+    /// takes priority, and any unfinished upload is re-uploaded in full by a later monitor
+    /// invocation (a Helix job is only "processed" once its test run reaches the Completed state).
     /// </summary>
     internal sealed class TestResultUploadQueue
     {
@@ -44,8 +46,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         public void Enqueue(HelixJobInfo helixJob, IReadOnlyCollection<WorkItemSummary> workItems, CancellationToken cancellationToken)
         {
             IReadOnlyList<string> workItemNames = [.. workItems.Select(w => w.Name)];
-            // Detached from the runner's cancellation token so that the drain path can finish
-            // in-flight uploads on its own cancellation budget when the runner is canceled.
+            // Scheduling uses CancellationToken.None so the upload task is always allowed to start.
+            // The upload body still observes the runner's token, so when the runner is cancelled the
+            // upload stops promptly and the job's results are re-uploaded by a later invocation.
             Task uploadTask = Task.Run(() => UploadAsync(helixJob, workItemNames, cancellationToken), CancellationToken.None);
             _pending.Add(uploadTask);
         }

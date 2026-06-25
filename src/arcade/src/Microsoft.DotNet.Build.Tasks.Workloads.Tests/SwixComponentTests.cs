@@ -25,7 +25,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null);
 
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
@@ -54,7 +54,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null,
                 componentResources);
 
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
@@ -83,7 +83,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null,
                 componentResources);
 
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
@@ -109,7 +109,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, shortNames: shortNames);
 
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
@@ -123,7 +123,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, null, null);
 
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
@@ -152,7 +152,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             };
 
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null, componentResources);
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentResSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.res.swr"));
@@ -168,7 +168,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadManifest manifest = Create("mauiWorkloadManifest.json");
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("7.0.100"), workload, manifest, packGroupId: null);
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
@@ -183,7 +183,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
             var packGroupId = "microsoft.net.sdk.blazorwebassembly.aot.WorkloadPacks";
             SwixComponent component = SwixComponent.Create(new ReleaseVersion("7.0.100"), workload, manifest, packGroupId: packGroupId);
-            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            ComponentSwixProject project = new(component, GetTestCaseDirectory(), BaseOutputPath);
             string swixProj = project.Create();
 
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));

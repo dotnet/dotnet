@@ -13,20 +13,10 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
     {
         private SwixComponent _component;
 
-        protected override string ProjectFile
-        {
-            get;
-        }
-
-        /// <inheritdoc />
-        protected override string ProjectSourceDirectory
-        {
-            get;
-        }
-
         public ComponentSwixProject(SwixComponent component, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
             base(component.Name, component.Version, baseIntermediateOutputPath, baseOutputPath, outOfSupport)
         {
+            SourcePath = Path.Combine(SourcePath, $"{component.SdkFeatureBand}", $"{Path.GetRandomFileName()}");
             _component = component;
             ValidateRelativePackagePath(GetRelativePackagePath());
 
@@ -36,26 +26,20 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
                 throw new ArgumentException(string.Format(Strings.ComponentMustHaveAtLeastOneDependency, component.Name));
             }
 
-            ProjectSourceDirectory = Path.Combine(SwixDirectory, $"{component.SdkFeatureBand}",
-                $"{Path.GetRandomFileName()}");
-
             ReplacementTokens[SwixTokens.__VS_COMPONENT_TITLE__] = component.Title;
             ReplacementTokens[SwixTokens.__VS_COMPONENT_DESCRIPTION__] = component.Description;
             ReplacementTokens[SwixTokens.__VS_COMPONENT_CATEGORY__] = component.Category;
-            ReplacementTokens[SwixTokens.__VS_IS_UI_GROUP__] = component.IsUiGroup ? "yes" : "no";
-            ReplacementTokens[SwixTokens.__VS_PACKAGE_OUT_OF_SUPPORT__] = OutOfSupport ? "yes" : "no";
-            ReplacementTokens[SwixTokens.__VS_IS_ADVERTISED_PACKAGE__] = component.Advertise ? "yes" : "no";
+            ReplacementTokens[SwixTokens.__VS_IS_UI_GROUP__] = component.IsUiGroup ? DefaultValues.Swix.Yes : DefaultValues.Swix.No;
+            ReplacementTokens[SwixTokens.__VS_PACKAGE_OUT_OF_SUPPORT__] = OutOfSupport ? DefaultValues.Swix.Yes : DefaultValues.Swix.No;
+            ReplacementTokens[SwixTokens.__VS_IS_ADVERTISED_PACKAGE__] = component.Advertise ? DefaultValues.Swix.Yes : DefaultValues.Swix.No;
         }
 
         /// <inheritdoc />
         public override string Create()
         {
-            string swixProj = EmbeddedTemplates.Extract("component.swixproj", ProjectSourceDirectory, $"{Id}.{Version.ToString(2)}.swixproj");
-            string componentSwr = EmbeddedTemplates.Extract("component.swr", ProjectSourceDirectory);
-
-            ReplaceTokens(swixProj);
-            ReplaceTokens(EmbeddedTemplates.Extract("component.res.swr", ProjectSourceDirectory));
-            ReplaceTokens(componentSwr);
+            string swixProj = AddFile("component.swixproj", $"{Id}.{Version.ToString(2)}.swixproj");
+            string componentSwr = AddFile("component.swr");
+            AddFile("component.res.swr");
 
             // SWIX is indentation sensitive. The dependencies should be written as 
             //
