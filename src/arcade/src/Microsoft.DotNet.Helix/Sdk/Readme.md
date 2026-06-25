@@ -331,17 +331,40 @@ Given a local folder `$(TestFolder)` containing `runtests.cmd`, this will run `r
   </PropertyGroup>
 
   <!--
-    XUnit v3 Runner
-      Enabling this will create one work item for each xunit v3 test project specified.
-      XUnit v3 tests are self-hosting executables and do not need an external console runner.
-      This is enabled by specifying one or more XUnitV3Project items.
+    Microsoft.Testing.Platform (MTP) Runner
+      Enabling this will create one Helix work item per MTP-based test project. This
+      covers MSTest 4.x with the MTP runner, xUnit v3 with MTP (the default for v3),
+      NUnit with the MTP runner, TUnit, and any custom MTP-based framework.
+
+      Each test project must reference Microsoft.Testing.Extensions.TrxReport so that
+      results can be reported as a TRX file (which arcade's reporter consumes natively).
+      Projects built with MSTest.Sdk, or with Microsoft.DotNet.Arcade.Sdk's XUnitV3
+      targets, get this reference implicitly.
+
+      With MTP's --auto-reporters on by default the TRX reporter activates automatically.
+      The generated work item command passes only the built-in '--results-directory .'
+      so artifacts land in the work item working directory. Pass any reporter flags
+      (e.g. '--report-trx --report-trx-filename testResults.trx' if you need a
+      deterministic file name) via MTPAdditionalArguments below.
   -->
   <ItemGroup>
-    <XUnitV3Project Include="..\tests\bar.Tests.csproj"/>
+    <MTPProject Include="..\tests\bar.Tests.csproj"/>
   </ItemGroup>
   <PropertyGroup>
-    <!-- Whether to use the Microsoft Testing Platform runner. Defaults to true. -->
-    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <!-- Optional: per-work-item timeout (TimeSpan format). Defaults to 5 minutes. -->
+    <MTPWorkItemTimeout>00:05:00</MTPWorkItemTimeout>
+    <!--
+      Optional: extra command-line arguments appended to every MTP work item command,
+      between the built-in '--results-directory .' flag and any per-project Arguments
+      metadata. Use this for reporter or framework-specific MTP switches that should
+      not be forced on every framework. Examples:
+        '--report-trx --report-trx-filename testResults.trx' to control the TRX name
+        (requires Microsoft.Testing.Extensions.TrxReport).
+        '--auto-reporters off' to silence xUnit v3's auto-activated reporters - this
+        flag is registered by xUnit v3 only; MSTest / NUnit / TUnit reject it as an
+        unknown option, so it is not injected by default.
+    -->
+    <MTPAdditionalArguments></MTPAdditionalArguments>
   </PropertyGroup>
 
   <ItemGroup>

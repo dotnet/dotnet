@@ -36,6 +36,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public Task UploadBlocker { get; set; } = Task.CompletedTask;
 
         /// <summary>
+        /// When true, <see cref="UploadTestResultsAsync"/> waits on <see cref="UploadBlocker"/>
+        /// without observing the cancellation token, simulating an upload stuck in a
+        /// non-cancellable operation when the monitor is cancelled.
+        /// </summary>
+        public bool UploadBlockerIgnoresCancellation { get; set; }
+
+        /// <summary>
         /// Number of times <see cref="GetTimelineRecordsAsync"/> has been called.
         /// This equals the number of poll iterations the runner has completed.
         /// </summary>
@@ -135,7 +142,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public async Task<int> UploadTestResultsAsync(int testRunId, IReadOnlyList<WorkItemTestResults> results, CancellationToken cancellationToken)
         {
             UploadStarted.TrySetResult();
-            await UploadBlocker.WaitAsync(cancellationToken);
+            if (UploadBlockerIgnoresCancellation)
+            {
+                await UploadBlocker;
+            }
+            else
+            {
+                await UploadBlocker.WaitAsync(cancellationToken);
+            }
 
             lock (_sync)
             {
