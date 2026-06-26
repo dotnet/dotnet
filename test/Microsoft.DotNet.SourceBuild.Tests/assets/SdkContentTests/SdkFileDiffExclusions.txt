@@ -40,7 +40,6 @@
 ./packs/Microsoft.AspNetCore.App.Runtime.*/|sb
 ./packs/Microsoft.NETCore.App.Runtime.*/|sb
 
-
 # Needed for source-built NativeAOT with the source-built SDK
 ./library-packs/|sb
 ./packs/runtime.banana-rid.Microsoft.DotNet.ILCompiler/|sb
