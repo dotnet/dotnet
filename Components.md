@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@f71e9c9](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCf71e9c95745f7ef94eeed01d7482991fa7a680a6)*
+*[_git/dotnet-aspnetcore@03ef277](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC03ef277b368eb3b02122ca62f97d155845cfd5fa)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@7140cd4](https://github.com/google/googletest/tree/7140cd416cecd7462a8aae488024abeee55598e4)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@d86bedb](https://github.com/dotnet/installer/tree/d86bedb9d6a9217457e2a57540953957097302f4)*
+*[dotnet/installer@012cb88](https://github.com/dotnet/installer/tree/012cb8827025de3a3d8346332180686460a35d70)*
 - `src/msbuild`  
 *[dotnet/msbuild@7806cbf](https://github.com/dotnet/msbuild/tree/7806cbf7b0fd91ea6ab55c2e42d8ed973114e197)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@18fd75c](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC18fd75c847399745c43b5970fec840ba71064e80)*
 - `src/sdk`  
-*[_git/dotnet-sdk@baac56c](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCbaac56cb01e41610b9dbd4289436139344ee5d3e)*
+*[_git/dotnet-sdk@82e6875](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC82e6875e6438bd805543ff056c4162763ba7f3bd)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@2bb24ee](https://github.com/dotnet/source-build-assets/tree/2bb24ee4d15de5a4550abed0265ca9e0ef0beae3)*
 - `src/source-build-externals`  
