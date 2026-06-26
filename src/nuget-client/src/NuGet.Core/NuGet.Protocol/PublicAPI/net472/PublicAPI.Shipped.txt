@@ -576,8 +576,8 @@ NuGet.Protocol.IThrottle
 NuGet.Protocol.IThrottle.Release() -> void
 NuGet.Protocol.IThrottle.WaitAsync() -> System.Threading.Tasks.Task!
 NuGet.Protocol.IV2FeedParser
-~NuGet.Protocol.IV2FeedParser.GetPackagesPageAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
-~NuGet.Protocol.IV2FeedParser.GetSearchPageAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
+NuGet.Protocol.IV2FeedParser.GetPackagesPageAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage!>!
+NuGet.Protocol.IV2FeedParser.GetSearchPageAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage!>!
 NuGet.Protocol.IVulnerabilityInfoResource
 NuGet.Protocol.IVulnerabilityInfoResource.GetVulnerabilityInfoAsync(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Model.GetVulnerabilityInfoResult!>!
 NuGet.Protocol.InvalidCacheProtocolException
@@ -715,8 +715,8 @@ NuGet.Protocol.NullThrottle.NullThrottle() -> void
 NuGet.Protocol.NullThrottle.Release() -> void
 NuGet.Protocol.NullThrottle.WaitAsync() -> System.Threading.Tasks.Task!
 NuGet.Protocol.ODataServiceDocumentResourceV2
-~NuGet.Protocol.ODataServiceDocumentResourceV2.BaseAddress.get -> string
-~NuGet.Protocol.ODataServiceDocumentResourceV2.ODataServiceDocumentResourceV2(string baseAddress, System.DateTime requestTime) -> void
+NuGet.Protocol.ODataServiceDocumentResourceV2.BaseAddress.get -> string!
+NuGet.Protocol.ODataServiceDocumentResourceV2.ODataServiceDocumentResourceV2(string! baseAddress, System.DateTime requestTime) -> void
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.MaxCacheDuration.get -> System.TimeSpan
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.MaxCacheDuration.set -> void
@@ -724,8 +724,8 @@ NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheI
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.CachedTime.get -> System.DateTime
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.CachedTime.set -> void
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ODataServiceDocumentCacheInfo() -> void
-~NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.get -> NuGet.Protocol.ODataServiceDocumentResourceV2
-~NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.set -> void
+NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.get -> NuGet.Protocol.ODataServiceDocumentResourceV2?
+NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentCacheInfo.ServiceDocument.set -> void
 NuGet.Protocol.ODataServiceDocumentResourceV2Provider.ODataServiceDocumentResourceV2Provider() -> void
 NuGet.Protocol.PackageDeprecationMetadata
 NuGet.Protocol.PackageDeprecationMetadata.AlternatePackage.get -> NuGet.Protocol.AlternatePackageMetadata?
@@ -788,38 +788,38 @@ NuGet.Protocol.PackageSearchMetadataRegistration
 ~NuGet.Protocol.PackageSearchMetadataRegistration.CatalogUri.get -> System.Uri
 NuGet.Protocol.PackageSearchMetadataRegistration.PackageSearchMetadataRegistration() -> void
 NuGet.Protocol.PackageSearchMetadataV2Feed
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Authors.get -> string
+NuGet.Protocol.PackageSearchMetadataV2Feed.Authors.get -> string!
 NuGet.Protocol.PackageSearchMetadataV2Feed.Created.get -> System.DateTimeOffset?
-~NuGet.Protocol.PackageSearchMetadataV2Feed.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Protocol.PackageSearchMetadataV2Feed.DeprecationMetadata.get -> NuGet.Protocol.PackageDeprecationMetadata
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Description.get -> string
+NuGet.Protocol.PackageSearchMetadataV2Feed.DependencySets.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Protocol.PackageSearchMetadataV2Feed.DeprecationMetadata.get -> NuGet.Protocol.PackageDeprecationMetadata?
+NuGet.Protocol.PackageSearchMetadataV2Feed.Description.get -> string?
 NuGet.Protocol.PackageSearchMetadataV2Feed.DownloadCount.get -> long?
-~NuGet.Protocol.PackageSearchMetadataV2Feed.GetDeprecationMetadataAsync() -> System.Threading.Tasks.Task<NuGet.Protocol.PackageDeprecationMetadata>
-~NuGet.Protocol.PackageSearchMetadataV2Feed.GetVersionsAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>>
-~NuGet.Protocol.PackageSearchMetadataV2Feed.IconUrl.get -> System.Uri
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Identity.get -> NuGet.Packaging.Core.PackageIdentity
+NuGet.Protocol.PackageSearchMetadataV2Feed.GetDeprecationMetadataAsync() -> System.Threading.Tasks.Task<NuGet.Protocol.PackageDeprecationMetadata?>!
+NuGet.Protocol.PackageSearchMetadataV2Feed.GetVersionsAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo!>!>!
+NuGet.Protocol.PackageSearchMetadataV2Feed.IconUrl.get -> System.Uri?
+NuGet.Protocol.PackageSearchMetadataV2Feed.Identity.get -> NuGet.Packaging.Core.PackageIdentity!
 NuGet.Protocol.PackageSearchMetadataV2Feed.IsListed.get -> bool
 NuGet.Protocol.PackageSearchMetadataV2Feed.LastEdited.get -> System.DateTimeOffset?
-~NuGet.Protocol.PackageSearchMetadataV2Feed.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata
-~NuGet.Protocol.PackageSearchMetadataV2Feed.LicenseUrl.get -> System.Uri
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Owners.get -> string
-~NuGet.Protocol.PackageSearchMetadataV2Feed.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageDetailsUrl.get -> System.Uri
-~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageId.get -> string
-~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageSearchMetadataV2Feed(NuGet.Protocol.V2FeedPackageInfo package) -> void
-~NuGet.Protocol.PackageSearchMetadataV2Feed.PackageSearchMetadataV2Feed(NuGet.Protocol.V2FeedPackageInfo package, NuGet.Protocol.MetadataReferenceCache metadataCache) -> void
+NuGet.Protocol.PackageSearchMetadataV2Feed.LicenseMetadata.get -> NuGet.Packaging.LicenseMetadata?
+NuGet.Protocol.PackageSearchMetadataV2Feed.LicenseUrl.get -> System.Uri?
+NuGet.Protocol.PackageSearchMetadataV2Feed.Owners.get -> string!
+NuGet.Protocol.PackageSearchMetadataV2Feed.OwnersList.get -> System.Collections.Generic.IReadOnlyList<string!>?
+NuGet.Protocol.PackageSearchMetadataV2Feed.PackageDetailsUrl.get -> System.Uri?
+NuGet.Protocol.PackageSearchMetadataV2Feed.PackageId.get -> string!
+NuGet.Protocol.PackageSearchMetadataV2Feed.PackageSearchMetadataV2Feed(NuGet.Protocol.V2FeedPackageInfo! package) -> void
+NuGet.Protocol.PackageSearchMetadataV2Feed.PackageSearchMetadataV2Feed(NuGet.Protocol.V2FeedPackageInfo! package, NuGet.Protocol.MetadataReferenceCache! metadataCache) -> void
 NuGet.Protocol.PackageSearchMetadataV2Feed.PrefixReserved.get -> bool
-~NuGet.Protocol.PackageSearchMetadataV2Feed.ProjectUrl.get -> System.Uri
+NuGet.Protocol.PackageSearchMetadataV2Feed.ProjectUrl.get -> System.Uri?
 NuGet.Protocol.PackageSearchMetadataV2Feed.Published.get -> System.DateTimeOffset?
-~NuGet.Protocol.PackageSearchMetadataV2Feed.ReadmeFileUrl.get -> string
-~NuGet.Protocol.PackageSearchMetadataV2Feed.ReadmeUrl.get -> System.Uri
-~NuGet.Protocol.PackageSearchMetadataV2Feed.ReportAbuseUrl.get -> System.Uri
+NuGet.Protocol.PackageSearchMetadataV2Feed.ReadmeFileUrl.get -> string?
+NuGet.Protocol.PackageSearchMetadataV2Feed.ReadmeUrl.get -> System.Uri?
+NuGet.Protocol.PackageSearchMetadataV2Feed.ReportAbuseUrl.get -> System.Uri?
 NuGet.Protocol.PackageSearchMetadataV2Feed.RequireLicenseAcceptance.get -> bool
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Summary.get -> string
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Tags.get -> string
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Title.get -> string
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.Protocol.PackageSearchMetadataV2Feed.Vulnerabilities.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.PackageVulnerabilityMetadata>
+NuGet.Protocol.PackageSearchMetadataV2Feed.Summary.get -> string?
+NuGet.Protocol.PackageSearchMetadataV2Feed.Tags.get -> string?
+NuGet.Protocol.PackageSearchMetadataV2Feed.Title.get -> string!
+NuGet.Protocol.PackageSearchMetadataV2Feed.Version.get -> NuGet.Versioning.NuGetVersion!
+NuGet.Protocol.PackageSearchMetadataV2Feed.Vulnerabilities.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.PackageVulnerabilityMetadata!>?
 NuGet.Protocol.PackageSearchResourceV2Feed
 ~NuGet.Protocol.PackageSearchResourceV2Feed.PackageSearchResourceV2Feed(NuGet.Protocol.HttpSourceResource httpSourceResource, string baseAddress, NuGet.Configuration.PackageSource packageSource) -> void
 NuGet.Protocol.PackageSearchResourceV2FeedProvider
@@ -1453,53 +1453,53 @@ NuGet.Protocol.V2FeedListResource
 NuGet.Protocol.V2FeedListResourceProvider
 NuGet.Protocol.V2FeedListResourceProvider.V2FeedListResourceProvider() -> void
 NuGet.Protocol.V2FeedPackageInfo
-~NuGet.Protocol.V2FeedPackageInfo.Authors.get -> System.Collections.Generic.IEnumerable<string>
+NuGet.Protocol.V2FeedPackageInfo.Authors.get -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Protocol.V2FeedPackageInfo.Created.get -> System.DateTimeOffset?
-~NuGet.Protocol.V2FeedPackageInfo.Dependencies.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.DependencySets.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.PackageDependencyGroup>
-~NuGet.Protocol.V2FeedPackageInfo.Description.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.DownloadCount.get -> string
+NuGet.Protocol.V2FeedPackageInfo.Dependencies.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.DependencySets.get -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.PackageDependencyGroup!>!
+NuGet.Protocol.V2FeedPackageInfo.Description.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.DownloadCount.get -> string?
 NuGet.Protocol.V2FeedPackageInfo.DownloadCountAsInt.get -> int
-~NuGet.Protocol.V2FeedPackageInfo.DownloadUrl.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.GalleryDetailsUrl.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.IconUrl.get -> string
+NuGet.Protocol.V2FeedPackageInfo.DownloadUrl.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.GalleryDetailsUrl.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.IconUrl.get -> string?
 NuGet.Protocol.V2FeedPackageInfo.IsListed.get -> bool
 NuGet.Protocol.V2FeedPackageInfo.LastEdited.get -> System.DateTimeOffset?
-~NuGet.Protocol.V2FeedPackageInfo.LicenseUrl.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.MinClientVersion.get -> NuGet.Versioning.NuGetVersion
-~NuGet.Protocol.V2FeedPackageInfo.Owners.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Protocol.V2FeedPackageInfo.PackageHash.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.PackageHashAlgorithm.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.ProjectUrl.get -> string
+NuGet.Protocol.V2FeedPackageInfo.LicenseUrl.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.MinClientVersion.get -> NuGet.Versioning.NuGetVersion?
+NuGet.Protocol.V2FeedPackageInfo.Owners.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Protocol.V2FeedPackageInfo.PackageHash.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.PackageHashAlgorithm.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.ProjectUrl.get -> string?
 NuGet.Protocol.V2FeedPackageInfo.Published.get -> System.DateTimeOffset?
-~NuGet.Protocol.V2FeedPackageInfo.ReportAbuseUrl.get -> string
+NuGet.Protocol.V2FeedPackageInfo.ReportAbuseUrl.get -> string?
 NuGet.Protocol.V2FeedPackageInfo.RequireLicenseAcceptance.get -> bool
-~NuGet.Protocol.V2FeedPackageInfo.Summary.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.Tags.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.Title.get -> string
-~NuGet.Protocol.V2FeedPackageInfo.V2FeedPackageInfo(NuGet.Packaging.Core.PackageIdentity identity, string title, string summary, string description, System.Collections.Generic.IEnumerable<string> authors, System.Collections.Generic.IEnumerable<string> owners, string iconUrl, string licenseUrl, string projectUrl, string reportAbuseUrl, string galleryDetailsUrl, string tags, System.DateTimeOffset? created, System.DateTimeOffset? lastEdited, System.DateTimeOffset? published, string dependencies, bool requireLicenseAccept, string downloadUrl, string downloadCount, string packageHash, string packageHashAlgorithm, NuGet.Versioning.NuGetVersion minClientVersion) -> void
+NuGet.Protocol.V2FeedPackageInfo.Summary.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.Tags.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.Title.get -> string?
+NuGet.Protocol.V2FeedPackageInfo.V2FeedPackageInfo(NuGet.Packaging.Core.PackageIdentity! identity, string? title, string? summary, string? description, System.Collections.Generic.IEnumerable<string!>? authors, System.Collections.Generic.IEnumerable<string!>? owners, string? iconUrl, string? licenseUrl, string? projectUrl, string? reportAbuseUrl, string? galleryDetailsUrl, string? tags, System.DateTimeOffset? created, System.DateTimeOffset? lastEdited, System.DateTimeOffset? published, string? dependencies, bool requireLicenseAccept, string? downloadUrl, string? downloadCount, string? packageHash, string? packageHashAlgorithm, NuGet.Versioning.NuGetVersion? minClientVersion) -> void
 NuGet.Protocol.V2FeedPage
-~NuGet.Protocol.V2FeedPage.Items.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo>
-~NuGet.Protocol.V2FeedPage.NextUri.get -> string
-~NuGet.Protocol.V2FeedPage.V2FeedPage(System.Collections.Generic.List<NuGet.Protocol.V2FeedPackageInfo> items, string nextUri) -> void
+NuGet.Protocol.V2FeedPage.Items.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo!>!
+NuGet.Protocol.V2FeedPage.NextUri.get -> string?
+NuGet.Protocol.V2FeedPage.V2FeedPage(System.Collections.Generic.List<NuGet.Protocol.V2FeedPackageInfo!>! items, string? nextUri) -> void
 NuGet.Protocol.V2FeedParser
-~NuGet.Protocol.V2FeedParser.DownloadFromIdentity(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
-~NuGet.Protocol.V2FeedParser.DownloadFromUrl(NuGet.Packaging.Core.PackageIdentity package, System.Uri downloadUri, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
-~NuGet.Protocol.V2FeedParser.FindPackagesByIdAsync(string id, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo>>
-~NuGet.Protocol.V2FeedParser.FindPackagesByIdAsync(string id, bool includeUnlisted, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo>>
-~NuGet.Protocol.V2FeedParser.GetPackage(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPackageInfo>
-~NuGet.Protocol.V2FeedParser.GetPackagesPageAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
-~NuGet.Protocol.V2FeedParser.GetSearchPageAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
-~NuGet.Protocol.V2FeedParser.QueryV2FeedAsync(string relativeUri, string id, int max, bool ignoreNotFounds, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage>
-~NuGet.Protocol.V2FeedParser.Search(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo>>
-~NuGet.Protocol.V2FeedParser.Source.get -> string
-~NuGet.Protocol.V2FeedParser.V2FeedParser(NuGet.Protocol.HttpSource httpSource, string baseAddress) -> void
-~NuGet.Protocol.V2FeedParser.V2FeedParser(NuGet.Protocol.HttpSource httpSource, string baseAddress, string source) -> void
+NuGet.Protocol.V2FeedParser.DownloadFromIdentity(NuGet.Packaging.Core.PackageIdentity! package, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
+NuGet.Protocol.V2FeedParser.DownloadFromUrl(NuGet.Packaging.Core.PackageIdentity! package, System.Uri! downloadUri, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
+NuGet.Protocol.V2FeedParser.FindPackagesByIdAsync(string! id, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo!>!>!
+NuGet.Protocol.V2FeedParser.FindPackagesByIdAsync(string! id, bool includeUnlisted, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo!>!>!
+NuGet.Protocol.V2FeedParser.GetPackage(NuGet.Packaging.Core.PackageIdentity! package, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPackageInfo?>!
+NuGet.Protocol.V2FeedParser.GetPackagesPageAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage!>!
+NuGet.Protocol.V2FeedParser.GetSearchPageAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage!>!
+NuGet.Protocol.V2FeedParser.QueryV2FeedAsync(string! relativeUri, string? id, int max, bool ignoreNotFounds, NuGet.Protocol.Core.Types.SourceCacheContext? sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.V2FeedPage!>!
+NuGet.Protocol.V2FeedParser.Search(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<NuGet.Protocol.V2FeedPackageInfo!>!>!
+NuGet.Protocol.V2FeedParser.Source.get -> string!
+NuGet.Protocol.V2FeedParser.V2FeedParser(NuGet.Protocol.HttpSource! httpSource, string! baseAddress) -> void
+NuGet.Protocol.V2FeedParser.V2FeedParser(NuGet.Protocol.HttpSource! httpSource, string! baseAddress, string! source) -> void
 NuGet.Protocol.V2FeedQueryBuilder
-~NuGet.Protocol.V2FeedQueryBuilder.BuildFindPackagesByIdUri(string id) -> string
-~NuGet.Protocol.V2FeedQueryBuilder.BuildGetPackageUri(NuGet.Packaging.Core.PackageIdentity package) -> string
-~NuGet.Protocol.V2FeedQueryBuilder.BuildGetPackagesUri(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int? skip, int? take) -> string
-~NuGet.Protocol.V2FeedQueryBuilder.BuildSearchUri(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take) -> string
+NuGet.Protocol.V2FeedQueryBuilder.BuildFindPackagesByIdUri(string! id) -> string!
+NuGet.Protocol.V2FeedQueryBuilder.BuildGetPackageUri(NuGet.Packaging.Core.PackageIdentity! package) -> string!
+NuGet.Protocol.V2FeedQueryBuilder.BuildGetPackagesUri(string? searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int? skip, int? take) -> string!
+NuGet.Protocol.V2FeedQueryBuilder.BuildSearchUri(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take) -> string!
 NuGet.Protocol.V2FeedQueryBuilder.V2FeedQueryBuilder() -> void
 NuGet.Protocol.V2FeedUtilities
 NuGet.Protocol.V3FeedListResourceProvider
@@ -1769,7 +1769,7 @@ override NuGet.Protocol.Model.PackageVulnerabilityInfo.GetHashCode() -> int
 override NuGet.Protocol.NuGetVersionConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.NuGetVersionConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
 override NuGet.Protocol.NuGetVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
-~override NuGet.Protocol.ODataServiceDocumentResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.ODataServiceDocumentResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.PackageDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.PackageMetadataResourceV2Feed.GetMetadataAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
 ~override NuGet.Protocol.PackageMetadataResourceV2Feed.GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
@@ -2032,7 +2032,7 @@ static NuGet.Protocol.StreamExtensions.CopyToAsync(this System.IO.Stream! stream
 static NuGet.Protocol.TimeoutUtility.StartWithTimeout(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task!>! getTask, System.TimeSpan timeout, string? timeoutMessage, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task!
 static NuGet.Protocol.TimeoutUtility.StartWithTimeout<T>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! getTask, System.TimeSpan timeout, string? timeoutMessage, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>!
 static NuGet.Protocol.TokenStore.Instance.get -> NuGet.Protocol.TokenStore!
-~static NuGet.Protocol.V2FeedUtilities.CreatePackageSearchResult(NuGet.Protocol.V2FeedPackageInfo package, NuGet.Protocol.MetadataReferenceCache metadataCache, NuGet.Protocol.Core.Types.SearchFilter filter, NuGet.Protocol.V2FeedParser feedParser, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
+static NuGet.Protocol.V2FeedUtilities.CreatePackageSearchResult(NuGet.Protocol.V2FeedPackageInfo! package, NuGet.Protocol.MetadataReferenceCache! metadataCache, NuGet.Protocol.Core.Types.SearchFilter! filter, NuGet.Protocol.V2FeedParser! feedParser, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata!
 ~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.ProviderFactory factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
 ~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
 ~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, string source) -> NuGet.Protocol.Core.Types.SourceRepository
