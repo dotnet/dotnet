@@ -131,6 +131,13 @@ jobs:
             const config = JSON.parse(fs.readFileSync('.github/milestone-config.json', 'utf8'));
             const OPTED_OUT_REPOS = new Set(config.optedOutRepos.map(r => r.toLowerCase()));
 
+            // Repos that want their milestones created in the "closed" state.
+            // Some repos (e.g. dotnet/runtime) don't use preview milestones for
+            // triage, so creating them closed prevents contributors from being
+            // tempted to add issues to them. The GitHub API still allows this
+            // workflow to assign PRs to a closed milestone.
+            const CLOSED_MILESTONE_REPOS = new Set((config.closedMilestoneRepos || []).map(r => r.toLowerCase()));
+
             // --- Constants: 7 previews, 2 RCs per release ---
             const MAX_PREVIEWS = 7;
 
@@ -419,21 +426,22 @@ jobs:
               }
 
               if (!milestone) {
+                const milestoneState = CLOSED_MILESTONE_REPOS.has(`${owner}/${repo}`.toLowerCase()) ? 'closed' : 'open';
                 if (DRY_RUN) {
-                  core.info(`[DRY RUN] Would create milestone "${milestoneName}" in ${owner}/${repo}`);
+                  core.info(`[DRY RUN] Would create ${milestoneState} milestone "${milestoneName}" in ${owner}/${repo}`);
                   return -1;  // Sentinel value for dry run
                 }
-                core.info(`Creating milestone "${milestoneName}" in ${owner}/${repo}`);
+                core.info(`Creating ${milestoneState} milestone "${milestoneName}" in ${owner}/${repo}`);
                 try {
                   const { data: created } = await octokit.rest.issues.createMilestone({
-                    owner, repo, title: milestoneName,
+                    owner, repo, title: milestoneName, state: milestoneState,
                   });
                   return created.number;
                 } catch (e) {
                   // Handle race condition — another run may have created it
                   if (e.status === 422) {
                     const retryMilestones = await octokit.paginate(octokit.rest.issues.listMilestones, {
-                      owner, repo, state: 'open', per_page: 100,
+                      owner, repo, state: 'all', per_page: 100,
                     });
                     milestone = retryMilestones.find(m => m.title === milestoneName);
                     if (milestone) return milestone.number;
