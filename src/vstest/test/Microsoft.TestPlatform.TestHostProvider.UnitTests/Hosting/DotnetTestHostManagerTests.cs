@@ -999,6 +999,87 @@ public class DotnetTestHostManagerTests
     }
 
     [TestMethod]
+    [TestCategory("Windows")]
+    public void GetTestHostProcessStartInfoShouldClearDotnetRootForX86TestHostWithMismatchedDotnetRootWhenInvokedDirectly()
+    {
+        // Direct invocation (no VSTEST_DOTNET_ROOT_PATH) of an x86 testhost while an architecture-less DOTNET_ROOT
+        // points at a mismatched x64 install. The ambiguous DOTNET_ROOT is cleared and the architecture specific
+        // DOTNET_ROOT_X64 is set for the install's own architecture, so the x86 apphost no longer loads a mismatched
+        // hostfxr. See https://github.com/microsoft/vstest/issues/16151.
+        _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x86</TargetPlatform></RunConfiguration></RunSettings>");
+        _dotnetHostManager.OverrideExecutableArchitecture = true;
+        _dotnetHostManager.ExecutableArchitecture = PlatformArchitecture.X64;
+        _mockFileHelper.Setup(ph => ph.Exists("testhost.x86.exe")).Returns(true);
+        _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
+        _mockEnvironmentVariable.Reset();
+        _mockEnvironmentVariable.Setup(x => x.GetEnvironmentVariable("DOTNET_ROOT")).Returns(@"C:\Program Files\dotnet");
+
+        var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, null, _defaultConnectionInfo);
+
+        Assert.AreEqual(@"C:\Program Files\dotnet", startInfo.EnvironmentVariables!["DOTNET_ROOT_X64"]);
+        Assert.AreEqual(string.Empty, startInfo.EnvironmentVariables!["DOTNET_ROOT"]);
+    }
+
+    [TestMethod]
+    [TestCategory("Windows")]
+    public void GetTestHostProcessStartInfoShouldClearDotnetRootAndReestablishX86VariantForMatchingX86TestHostWhenInvokedDirectly()
+    {
+        // Direct invocation of an x86 testhost while an architecture-less DOTNET_ROOT points at a matching x86 install.
+        // The architecture-less DOTNET_ROOT is resolved to the architecture specific DOTNET_ROOT_X86 and cleared; the
+        // legacy resolution additionally re-establishes DOTNET_ROOT(x86), which legacy x86 apphosts honor.
+        _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x86</TargetPlatform></RunConfiguration></RunSettings>");
+        _dotnetHostManager.OverrideExecutableArchitecture = true;
+        _dotnetHostManager.ExecutableArchitecture = PlatformArchitecture.X86;
+        _mockFileHelper.Setup(ph => ph.Exists("testhost.x86.exe")).Returns(true);
+        _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
+        _mockEnvironmentVariable.Reset();
+        _mockEnvironmentVariable.Setup(x => x.GetEnvironmentVariable("DOTNET_ROOT")).Returns(@"C:\dotnet-x86");
+
+        var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, null, _defaultConnectionInfo);
+
+        Assert.AreEqual(@"C:\dotnet-x86", startInfo.EnvironmentVariables!["DOTNET_ROOT_X86"]);
+        Assert.AreEqual(@"C:\dotnet-x86", startInfo.EnvironmentVariables!["DOTNET_ROOT(x86)"]);
+        Assert.AreEqual(string.Empty, startInfo.EnvironmentVariables!["DOTNET_ROOT"]);
+    }
+
+    [TestMethod]
+    [TestCategory("Windows")]
+    public void GetTestHostProcessStartInfoShouldClearAndReinsertDotnetRootForMatchingX64TestHostWhenInvokedDirectly()
+    {
+        // Direct invocation of an x64 testhost while an architecture-less DOTNET_ROOT points at a matching x64 install.
+        // The architecture-less DOTNET_ROOT is resolved to the architecture specific DOTNET_ROOT_X64 and cleared; the
+        // legacy resolution then re-inserts the (matching) architecture-less DOTNET_ROOT for an apphost that does not
+        // understand DOTNET_ROOT_<ARCH>.
+        _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x64</TargetPlatform></RunConfiguration></RunSettings>");
+        _dotnetHostManager.OverrideExecutableArchitecture = true;
+        _dotnetHostManager.ExecutableArchitecture = PlatformArchitecture.X64;
+        _mockFileHelper.Setup(ph => ph.Exists("testhost.exe")).Returns(true);
+        _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
+        _mockEnvironmentVariable.Reset();
+        _mockEnvironmentVariable.Setup(x => x.GetEnvironmentVariable("DOTNET_ROOT")).Returns(@"D:\my-custom-x64-dotnet");
+
+        var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, null, _defaultConnectionInfo);
+
+        Assert.AreEqual(@"D:\my-custom-x64-dotnet", startInfo.EnvironmentVariables!["DOTNET_ROOT_X64"]);
+        Assert.AreEqual(@"D:\my-custom-x64-dotnet", startInfo.EnvironmentVariables!["DOTNET_ROOT"]);
+    }
+
+    [TestMethod]
+    [TestCategory("Windows")]
+    public void GetTestHostProcessStartInfoShouldNotPromoteWhenNoAmbientDotnetRoot()
+    {
+        _dotnetHostManager.Initialize(_mockMessageLogger.Object, "<RunSettings><RunConfiguration><TargetPlatform>x86</TargetPlatform></RunConfiguration></RunSettings>");
+        _mockFileHelper.Setup(ph => ph.Exists("testhost.x86.exe")).Returns(true);
+        _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
+        _mockEnvironmentVariable.Reset();
+
+        var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, null, _defaultConnectionInfo);
+
+        Assert.IsFalse(startInfo.EnvironmentVariables!.ContainsKey("DOTNET_ROOT_X86"));
+        Assert.IsFalse(startInfo.EnvironmentVariables!.ContainsKey("DOTNET_ROOT"));
+    }
+
+    [TestMethod]
     public async Task DotNetCoreErrorMessageShouldBeReadAsynchronouslyAsync()
     {
         var errorData = "Custom Error Strings";
@@ -1181,6 +1262,13 @@ public class DotnetTestHostManagerTests
             : base(processHelper, fileHelper, dotnetTestHostHelper, environment, runsettingsHelper, windowsRegistryHelper, environmentVariableHelper)
         {
         }
+
+        public bool OverrideExecutableArchitecture { get; set; }
+
+        public PlatformArchitecture? ExecutableArchitecture { get; set; }
+
+        internal override PlatformArchitecture? GetExecutableArchitecture(string executablePath)
+            => OverrideExecutableArchitecture ? ExecutableArchitecture : base.GetExecutableArchitecture(executablePath);
 
         /// <summary>
         /// When set, overrides native-module detection so tests can simulate native vs managed sources without

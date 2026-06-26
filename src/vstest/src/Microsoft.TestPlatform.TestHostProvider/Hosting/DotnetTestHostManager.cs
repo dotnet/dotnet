@@ -243,15 +243,50 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         string? dotnetRootPath = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_PATH");
         string? dotnetRootArchitecture = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_ARCHITECTURE");
 
+        // The SDK (dotnet test) is the primary source: it computes the architecture specific dotnet root and passes it
+        // via VSTEST_DOTNET_ROOT_PATH / VSTEST_DOTNET_ROOT_ARCHITECTURE. Only when the SDK did not provide it (direct
+        // invocation of vstest.console, e.g. under Visual Studio or by hand) do we fall back to the architecture-less
+        // DOTNET_ROOT from the surrounding environment or the caller (runsettings <EnvironmentVariables>).
+        //
+        // An apphost honors that architecture-less DOTNET_ROOT regardless of its own architecture, so if it points at a
+        // different architecture (commonly an x64 install) an x86 apphost picks it up and tries to load the x64
+        // hostfxr.dll into the 32-bit process, failing with 0x800700C1 (ERROR_BAD_EXE_FORMAT). See
+        // https://github.com/microsoft/vstest/issues/16151. We derive the architecture the install actually is (from the
+        // dotnet muxer's PE header) so the resolution below can set the architecture specific DOTNET_ROOT_<ARCH>, and we
+        // clear the ambiguous DOTNET_ROOT so the apphost does not pick it up and fail.
+        if (StringUtilities.IsNullOrWhiteSpace(dotnetRootPath))
+        {
+            var dotnetRoot = TryGetTestHostEnvironmentVariable(startInfo, "DOTNET_ROOT", out var callerProvidedDotnetRoot)
+                ? callerProvidedDotnetRoot
+                : _environmentVariableHelper.GetEnvironmentVariable("DOTNET_ROOT");
+
+            if (!StringUtilities.IsNullOrWhiteSpace(dotnetRoot))
+            {
+                // The architecture specific apphosts affected by this ambiguity only exist on Windows, and the PE based
+                // architecture probe is Windows only, so GetExecutableArchitecture returns null elsewhere and we skip.
+                var dotnetExeArchitecture = GetExecutableArchitecture(Path.Combine(dotnetRoot, "dotnet.exe"));
+                if (dotnetExeArchitecture is not null)
+                {
+                    dotnetRootPath = dotnetRoot;
+                    dotnetRootArchitecture = dotnetExeArchitecture.ToString();
+
+                    EqtTrace.Verbose($"DotnetTestHostmanager.GetTestHostProcessStartInfo: Derived dotnet root '{dotnetRootPath}' (architecture '{dotnetRootArchitecture}') from the architecture-less DOTNET_ROOT.");
+
+                    startInfo.EnvironmentVariables["DOTNET_ROOT"] = string.Empty;
+                    EqtTrace.Verbose($"DotnetTestHostmanager.GetTestHostProcessStartInfo: clearing the ambiguous DOTNET_ROOT to avoid an architecture mismatch.");
+                }
+            }
+        }
+
         if (!StringUtilities.IsNullOrWhiteSpace(dotnetRootPath))
         {
             if (StringUtils.IsNullOrWhiteSpace(dotnetRootArchitecture))
             {
-                throw new InvalidOperationException("'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE' must be both always set. If you are seeing this error, this is a bug in dotnet SDK that sets those variables.");
+                throw new InvalidOperationException("Either 'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE', or 'DOTNET_ROOT' and autodetected architecture from dotnet.exe in that path must be both always set.");
             }
 
-            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH={dotnetRootPath}");
-            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE={dotnetRootArchitecture}");
+            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH or DOTNET_ROOT={dotnetRootPath}");
+            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE or autodetected architecture from dotnet.exe={dotnetRootArchitecture}");
 
             if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS))
             {
@@ -613,11 +648,10 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                         }
                         else
                         {
-                            const string dotnetRoot = "DOTNET_ROOT";
-                            if (StringUtils.IsNullOrWhiteSpace(_environmentVariableHelper.GetEnvironmentVariable(dotnetRoot)))
-                            {
-                                startInfo.EnvironmentVariables.Add(dotnetRoot, dotnetRootPath);
-                            }
+                            // If the architecture is not x86 and the testhost does not understand the architecture
+                            // specific DOTNET_ROOT_<ARCH>, we have to re-insert the more generic DOTNET_ROOT. Use the
+                            // indexer (not Add) because the architecture-less DOTNET_ROOT was cleared to empty above.
+                            startInfo.EnvironmentVariables["DOTNET_ROOT"] = dotnetRootPath;
                         }
                     }
                 }
@@ -740,6 +774,71 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Looks up an environment variable that the caller explicitly set for the testhost (i.e. one present in
+    /// <paramref name="startInfo"/>'s <see cref="TestProcessStartInfo.EnvironmentVariables"/>, typically coming from
+    /// runsettings <c>&lt;EnvironmentVariables&gt;</c>). The lookup is case-insensitive to match how environment
+    /// variables are resolved on Windows, which is the only platform where the architecture specific apphosts handled
+    /// here exist. Returns <see langword="true"/> when the variable was provided (even when its value is
+    /// <see langword="null"/> or empty, i.e. explicitly cleared).
+    /// </summary>
+    private static bool TryGetTestHostEnvironmentVariable(TestProcessStartInfo startInfo, string name, out string? value)
+    {
+        value = null;
+        if (startInfo.EnvironmentVariables is null)
+        {
+            return false;
+        }
+
+        foreach (var environmentVariable in startInfo.EnvironmentVariables)
+        {
+            if (string.Equals(environmentVariable.Key, name, StringComparison.OrdinalIgnoreCase))
+            {
+                value = environmentVariable.Value;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the architecture of a Windows PE executable (e.g. the dotnet muxer) by reading its COFF header, or
+    /// <see langword="null"/> when the architecture cannot be determined (e.g. file missing or not a Windows PE).
+    /// </summary>
+    internal virtual PlatformArchitecture? GetExecutableArchitecture(string executablePath)
+    {
+        // The architecture specific apphosts we handle here only exist on Windows, so we only need to read the
+        // Windows PE header.
+        if (_platformEnvironment.OperatingSystem != PlatformOperatingSystem.Windows
+            || !_fileHelper.Exists(executablePath))
+        {
+            return null;
+        }
+
+        try
+        {
+            // Open with FileShare.Read so the probe is resilient when the muxer (dotnet.exe) is currently running,
+            // which is common on dev boxes and CI. The default FileShare.None overload would fail to open a file in
+            // use and silently skip normalization, leaving the original architecture mismatch in place.
+            using var stream = _fileHelper.GetStream(executablePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var peReader = new PEReader(stream);
+            return peReader.PEHeaders.CoffHeader.Machine switch
+            {
+                Machine.Amd64 => PlatformArchitecture.X64,
+                Machine.Arm64 => PlatformArchitecture.ARM64,
+                Machine.Arm => PlatformArchitecture.ARM,
+                Machine.I386 => PlatformArchitecture.X86,
+                _ => (PlatformArchitecture?)null,
+            };
+        }
+        catch (Exception ex)
+        {
+            EqtTrace.Verbose($"DotnetTestHostManager.GetExecutableArchitecture: Failed to read architecture from '{executablePath}': {ex.Message}");
+            return null;
+        }
     }
 
     private void SetDotnetRootForArchitecture(TestProcessStartInfo startInfo, string dotnetRootPath, string dotnetRootArchitecture)
