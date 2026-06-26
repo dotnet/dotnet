@@ -1190,4 +1190,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
   <data name="Log_AliasContainsDisallowedCharacters" xml:space="preserve">
     <value>The project {0} contains a TargetFramework '{1}' with disallowed characters. TargetFramework names must contain only ASCII characters and must not contain path separators.</value>
   </data>
+  <data name="RestrictedPackageIdWarning" xml:space="preserve">
+    <value>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</value>
+  </data>
 </root>

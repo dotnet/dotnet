@@ -263,13 +263,17 @@ using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCor
 
 ## Style rules
 
+Follow the repo-wide coding guidelines first — they apply to all code, not just migrations:
+[`docs/coding-guidelines.md`](../../../docs/coding-guidelines.md) (e.g. no `#region` blocks, no
+reflection, `var` usage, nullable enabled). Don't restate or duplicate those rules here; this section
+only lists conventions **specific to test migration** that supplement the common guidelines:
+
 - Use `using var` (inline using declaration), not `using (var ...) { }`.
 - Place migrated tests before the static helper methods (`GetNetCoreTemplates`, etc.) in the file.
 - Method names: `{Action}FromPMC{Scenario}[_Fails|Async]`. Suffix with `_Fails` for error tests,
   `Async` for async tests.
 - Always include `[Timeout(DefaultTimeout)]`.
 - Always include `nugetConsole.GetText()` in assertion failure messages for diagnostics.
-- Use `var` for local variables except value tuples (use decomposed names).
 - The test class inherits `SharedVisualStudioHostTestClass` which provides `VisualStudio` and `Logger`.
 - Get PMC console via `GetConsole(testContext.Project)` helper method in the test class.
 - Don't use the method-delegates-to-async-helper pattern unless the helper is actually called from

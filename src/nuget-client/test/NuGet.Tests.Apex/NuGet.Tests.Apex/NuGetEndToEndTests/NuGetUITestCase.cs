@@ -377,6 +377,7 @@ namespace NuGet.Tests.Apex
         public async Task VerifyDeletedAssetsFileIsBackByReloadingProject()
         {
             // Arrange
+            using var suppressNuGetUI = NuGetUISuppression.Suppress();
             await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
             NuGetApexTestService nugetTestService = GetNuGetTestService();

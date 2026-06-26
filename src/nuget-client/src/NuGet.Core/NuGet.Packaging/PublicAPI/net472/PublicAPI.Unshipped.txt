@@ -1,2 +1,3 @@
 #nullable enable
 NuGet.Packaging.PackageBuilder.DeterministicTimestamp.init -> void
+static NuGet.Packaging.PackageIdValidator.IsValidPackageId(string! packageId, bool useRestrictedCharacterSet) -> bool
