@@ -67,10 +67,6 @@ steps:
       downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 - ${{ if eq(parameters.OS, 'Linux') }}:
-  # Enable validation of the source artifact after the following issues have been addressed:
-  # 1. https://github.com/dotnet/release/issues/1416
-  # 2. https://github.com/dotnet/arcade/issues/16249
-  # **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*
   - task: DownloadPipelineArtifact@2
     displayName: Download Linux Vertical Build Artifacts
     continueOnError: ${{ parameters.continueOnError }}
@@ -80,6 +76,7 @@ steps:
         **Linux_*_Artifacts/**
         **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-sdk-*.tar.gz
         **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/Private.SourceBuilt.Artifacts.*.tar.gz
+        **SB_CentOSStream*_Offline_MsftSdk_x64_Artifacts/**/Release/source-build/dotnet-source-*
       downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 - task: DownloadPipelineArtifact@2
