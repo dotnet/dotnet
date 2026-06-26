@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -16,19 +17,19 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
     /// <see cref="JobMonitor.AzureDevOpsService"/>.
     ///
     /// <para>
-    /// IMPORTANT: this fake intentionally mimics one production quirk that took
-    /// considerable empirical work to pin down — Azure DevOps SILENTLY DROPS the
-    /// <c>tags</c> property on <c>POST /_apis/test/runs</c> and
-    /// <c>PATCH /_apis/test/runs/{id}</c>. The synchronous POST/PATCH response
-    /// echoes the posted tags back, but a subsequent GET of the run — whether by id
-    /// or via the runs list — always returns <c>tags: []</c>. This was verified
-    /// across api-versions 5.1, 6.0, 7.1, 7.1-preview.3 and 7.2-preview.3; the
-    /// dedicated <c>/_apis/test/Runs/{id}/tags</c> endpoint 404s on every method
-    /// and version. The Helix job monitor therefore round-trips the Helix job name
-    /// through the run <c>name</c> field instead. If a regression ever reintroduces
-    /// tag-based dedup, tests that use this handler should catch it because the
-    /// stored runs never carry tags forward.
+    /// This fake mimics several empirically-verified production quirks of the test
+    /// runs tags API:
     /// </para>
+    /// <list type="bullet">
+    /// <item>Tags persist only when posted as objects (<c>"tags": [{ "name": "..." }]</c>).
+    /// The legacy string form (<c>"tags": ["..."]</c>) is silently dropped — this was
+    /// the original bug the monitor used to work around.</item>
+    /// <item>Tags are never returned inline on a run: <c>GET /_apis/test/runs</c> (by id
+    /// or list) omits them entirely.</item>
+    /// <item>Tags are only retrievable via the build-scoped test results tags endpoint
+    /// <c>GET /_apis/testresults/tags?buildId=...</c>, which returns the union of tag
+    /// names across the whole build regardless of run state.</item>
+    /// </list>
     /// </summary>
     internal sealed class FakeAzureDevOpsTestRunsHandler : HttpMessageHandler
     {
@@ -51,11 +52,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         }
 
         /// <summary>
-        /// Server-side representation of a test run. Note the deliberate absence of
-        /// a Tags property: real Azure DevOps does not persist tags, so the fake
-        /// must not either.
+        /// Server-side representation of a test run. Tags are stored here but, matching real
+        /// Azure DevOps, are never echoed back on the run object — only via the build tags
+        /// endpoint.
         /// </summary>
-        internal sealed record StoredRun(string Name, string State);
+        internal sealed record StoredRun(string Name, string State, IReadOnlyList<string> Tags);
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -70,14 +71,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
 
             string path = request.RequestUri.AbsolutePath;
 
+            if (request.Method == HttpMethod.Get && path.EndsWith("/_apis/testresults/tags", StringComparison.OrdinalIgnoreCase))
+            {
+                return GetBuildTags();
+            }
+
             if (request.Method == HttpMethod.Post && path.EndsWith("/_apis/test/runs", StringComparison.OrdinalIgnoreCase))
             {
                 return CreateRun(body);
-            }
-
-            if (request.Method == HttpMethod.Get && path.EndsWith("/_apis/test/runs", StringComparison.OrdinalIgnoreCase))
-            {
-                return ListRuns();
             }
 
             if (request.Method.Method.Equals("PATCH", StringComparison.OrdinalIgnoreCase)
@@ -89,6 +90,20 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         }
 
+        // Only object-form tags ([{ "name": "..." }]) are persisted; string-form tags are dropped,
+        // matching the historical Azure DevOps behavior.
+        private static IReadOnlyList<string> ParseTags(JObject json)
+        {
+            if (json["tags"] is not JArray tags)
+            {
+                return [];
+            }
+
+            return [.. tags.OfType<JObject>()
+                .Select(t => t.Value<string>("name"))
+                .Where(name => !string.IsNullOrEmpty(name))];
+        }
+
         private HttpResponseMessage CreateRun(string body)
         {
             JObject json = JObject.Parse(body);
@@ -96,35 +111,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             lock (_sync)
             {
                 id = ++_nextId;
-                // Tags from the request are intentionally discarded — see the
-                // class-level note for the empirical justification.
                 _runs[id] = new StoredRun(
                     Name: json.Value<string>("name"),
-                    State: json.Value<string>("state"));
+                    State: json.Value<string>("state"),
+                    Tags: ParseTags(json));
             }
 
             return JsonResponse(new JObject { ["id"] = id });
-        }
-
-        private HttpResponseMessage ListRuns()
-        {
-            var array = new JArray();
-            lock (_sync)
-            {
-                foreach (var (id, run) in _runs)
-                {
-                    array.Add(new JObject
-                    {
-                        ["id"] = id,
-                        ["name"] = run.Name,
-                        ["state"] = run.State,
-                        // No "tags" field is ever emitted — the real list response
-                        // does not include it.
-                    });
-                }
-            }
-
-            return JsonResponse(new JObject { ["value"] = array });
         }
 
         private HttpResponseMessage UpdateRun(string path, string body)
@@ -143,11 +136,29 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
                     return new HttpResponseMessage(HttpStatusCode.NotFound);
                 }
 
-                // As with POST, tags in PATCH bodies are silently dropped server-side.
-                _runs[id] = existing with { State = json.Value<string>("state") ?? existing.State };
+                IReadOnlyList<string> tags = json["tags"] is JArray ? ParseTags(json) : existing.Tags;
+                _runs[id] = existing with
+                {
+                    State = json.Value<string>("state") ?? existing.State,
+                    Tags = tags,
+                };
             }
 
             return JsonResponse(new JObject { ["id"] = id });
+        }
+
+        private HttpResponseMessage GetBuildTags()
+        {
+            var array = new JArray();
+            lock (_sync)
+            {
+                foreach (string tag in _runs.Values.SelectMany(r => r.Tags).Distinct(StringComparer.Ordinal))
+                {
+                    array.Add(new JObject { ["name"] = tag });
+                }
+            }
+
+            return JsonResponse(new JObject { ["count"] = array.Count, ["value"] = array });
         }
 
         private static HttpResponseMessage JsonResponse(JObject obj)

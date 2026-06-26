@@ -33,7 +33,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         /// <summary>
         /// Helix jobs whose results have been uploaded to Azure DevOps in this or a prior
-        /// monitor invocation. Seeded on entry from the AzDO test-run name markers.
+        /// monitor invocation. Seeded on entry from the AzDO test-run tags.
         /// </summary>
         public HashSet<string> ProcessedHelixJobs { get; } = new(StringComparer.OrdinalIgnoreCase);
 
