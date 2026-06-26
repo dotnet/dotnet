@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 #if NET
@@ -26,6 +27,8 @@ using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
+
+using HostProviderResources = Microsoft.TestPlatform.TestHostProvider.Resources.Resources;
 
 namespace TestPlatform.TestHostProvider.UnitTests.Hosting;
 
@@ -544,10 +547,15 @@ public class DotnetTestHostManagerTests
     }
 
     [TestMethod]
-    public void GetTestHostProcessStartInfoShouldIncludeSourcePathInExceptionMessageWhenTesthostNotFound()
+    public void GetTestHostProcessStartInfoShouldIncludeSourcePathInExceptionMessageWhenTesthostNotFoundForNativeSource()
     {
         var sourcePath = Path.Combine(_temp, "mytest.dll");
         var sourceDirectory = Path.GetDirectoryName(sourcePath)!;
+
+        // Native source with no testhost anywhere falls through to the final throw. It gets the same generic
+        // CouldNotFindTesthost message as any other source (which lists referencing Microsoft.NET.Test.Sdk among the
+        // possible causes); the managed-only rejection is exercised in the test below.
+        _dotnetHostManager.IsNativeModuleResult = true;
 
         // Ensure no testhost.dll exists anywhere
         _mockFileHelper.Setup(fh => fh.Exists(It.IsAny<string>())).Returns(false);
@@ -555,8 +563,33 @@ public class DotnetTestHostManagerTests
         Action action = () => _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
         var exception = Assert.ThrowsExactly<TestPlatformException>(action);
-        Assert.Contains(sourcePath, exception.Message);
-        Assert.Contains(sourceDirectory, exception.Message);
+        var expectedMessage = string.Format(CultureInfo.CurrentCulture, HostProviderResources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+        Assert.AreEqual(expectedMessage, exception.Message);
+    }
+
+    [TestMethod]
+    public void GetTestHostProcessStartInfoShouldThrowTestSdkGuidanceWhenManagedSourceFallsBackToBuiltInTesthost()
+    {
+        // A managed .NET source whose own testhost cannot be resolved (the test project does not reference
+        // Microsoft.NET.Test.Sdk) would otherwise silently fall back to the testhost shipped next to the runner.
+        // That fallback is for native (C++) runners only, so for a managed source we throw and point the user at
+        // the missing Microsoft.NET.Test.Sdk reference.
+        var sourcePath = Path.Combine(_temp, "test.dll");
+        _dotnetHostManager.IsNativeModuleResult = false;
+
+        // No testhost next to the test dll, so resolution from the project fails...
+        _mockFileHelper.Setup(ph => ph.Exists(Path.Combine(_temp, "testhost.dll"))).Returns(false);
+        // ...but the built-in testhost exists next to the runner (the C++ fallback).
+        var here = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()!.Location)!;
+        _mockFileHelper.Setup(ph => ph.Exists(Path.Combine(here, "testhost.dll"))).Returns(true);
+
+        Action action = () => _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
+
+        // A managed source must be rejected (not run on the built-in testhost) with the CouldNotFindTesthost message,
+        // which tells the user to reference Microsoft.NET.Test.Sdk.
+        var exception = Assert.ThrowsExactly<TestPlatformException>(action);
+        var expectedMessage = string.Format(CultureInfo.CurrentCulture, HostProviderResources.CouldNotFindTesthost, sourcePath, Path.GetDirectoryName(sourcePath));
+        Assert.AreEqual(expectedMessage, exception.Message);
     }
 
 
@@ -667,6 +700,10 @@ public class DotnetTestHostManagerTests
     {
         // Absolute path to the source directory
         var sourcePath = Path.Combine(_temp, "test.dll");
+
+        // The testhost-next-to-runner fallback is the native (C++) runner path; a managed source would instead be told to reference Microsoft.NET.Test.Sdk.
+        _dotnetHostManager.IsNativeModuleResult = true;
+
         string testhostNextToTestDll = Path.Combine(_temp, "testhost.dll");
         _mockFileHelper.Setup(ph => ph.Exists(testhostNextToTestDll)).Returns(false);
 
@@ -707,6 +744,10 @@ public class DotnetTestHostManagerTests
     {
         // Absolute path to the source directory
         var sourcePath = Path.Combine(_temp, "test.dll");
+
+        // The testhost-next-to-runner fallback is the native (C++) runner path; a managed source would instead be told to reference Microsoft.NET.Test.Sdk.
+        _dotnetHostManager.IsNativeModuleResult = true;
+
         string testhostNextToTestDll = Path.Combine(_temp, "testhost.dll");
         _mockFileHelper.Setup(ph => ph.Exists(testhostNextToTestDll)).Returns(false);
 
@@ -1140,5 +1181,14 @@ public class DotnetTestHostManagerTests
             : base(processHelper, fileHelper, dotnetTestHostHelper, environment, runsettingsHelper, windowsRegistryHelper, environmentVariableHelper)
         {
         }
+
+        /// <summary>
+        /// When set, overrides native-module detection so tests can simulate native vs managed sources without
+        /// providing real PE bytes. When null, the real <see cref="DotnetTestHostManager.IsNativeModule"/> runs.
+        /// </summary>
+        public bool? IsNativeModuleResult { get; set; }
+
+        internal override bool IsNativeModule(string modulePath)
+            => IsNativeModuleResult ?? base.IsNativeModule(modulePath);
     }
 }

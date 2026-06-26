@@ -60,7 +60,7 @@ internal class DiscoveryResultCache
         _lastUpdate = DateTime.UtcNow;
         _cacheTimeout = discoveredTestEventTimeout;
 
-        _tests = new List<TestCase>();
+        _tests = new List<TestCase>(InitialCapacity(cacheSize));
         TotalDiscoveredTests = 0;
     }
 
@@ -112,11 +112,13 @@ internal class DiscoveryResultCache
             {
                 // Pass on the buffer to the listener and clear the old one
                 _onReportTestCases(_tests);
-                _tests = new List<TestCase>();
+                _tests = new List<TestCase>(InitialCapacity(_cacheSize));
                 _lastUpdate = DateTime.UtcNow;
 
                 EqtTrace.Verbose("DiscoveryResultCache.AddTest: Notified the onReportTestCases callback.");
             }
         }
     }
+
+    private static int InitialCapacity(long cacheSize) => (int)Math.Min(cacheSize, 512);
 }

@@ -383,6 +383,17 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 #endif
                 if (_fileHelper.Exists(testHostNextToRunner))
                 {
+                    // The testhost shipped next to the runner (together with the package's testhost.deps.json and a
+                    // synthesized runtimeconfig) is the fallback for native (C++) runners that bring no managed testhost.
+                    // A managed (.NET) source reaching here did not resolve a testhost from its own deps.json, which means
+                    // the test project is missing the Microsoft.NET.Test.Sdk reference. Don't silently run it on the
+                    // built-in testhost (it would just discover no tests) - throw and point the user at Microsoft.NET.Test.Sdk.
+                    if (!IsNativeModule(sourcePath))
+                    {
+                        string message = string.Format(CultureInfo.CurrentCulture, Resources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+                        throw new TestPlatformException(message);
+                    }
+
                     EqtTrace.Verbose("DotnetTestHostManager: Found testhost.dll next to runner executable: {0}.", testHostNextToRunner);
                     testHostPath = testHostNextToRunner;
 
@@ -700,23 +711,35 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                    new Version(_targetFramework.Version).Major < 5 &&
                    !IsNativeModule(sourcePath);
         }
+    }
 
-        bool IsNativeModule(string modulePath)
+    /// <summary>
+    /// Determines whether the given module is a native (unmanaged) binary, such as a C++ CppUnitTestFramework test dll.
+    /// </summary>
+    /// <remarks>
+    /// Native sources have no managed (CLI) metadata, or are not IL-only (mixed mode). They legitimately have no
+    /// deps.json and rely on the testhost shipped next to the runner, so callers treat them leniently. If the module
+    /// cannot be read we cannot prove it is native, so we assume managed.
+    /// </remarks>
+    internal virtual bool IsNativeModule(string modulePath)
+    {
+        // Scenario: dotnet test nativeArm64.dll for CppUnitTestFramework
+        try
         {
-            // Scenario: dotnet test nativeArm64.dll for CppUnitTestFramework
-            // If the dll is native and we're not running in process(vstest.console.exe)
-            // the expected target framework is ".NETCoreApp,Version=v1.0".
-            // In this case we don't want to force x64 architecture
-            using var assemblyStream = _fileHelper.GetStream(sourcePath, FileMode.Open, FileAccess.Read);
+            using var assemblyStream = _fileHelper.GetStream(modulePath, FileMode.Open, FileAccess.Read);
             using var peReader = new PEReader(assemblyStream);
             if (!peReader.HasMetadata || (peReader.PEHeaders.CorHeader?.Flags & CorFlags.ILOnly) == 0)
             {
-                EqtTrace.Verbose($"DotnetTestHostmanager.IsNativeModule: Source '{sourcePath}' is native.");
+                EqtTrace.Verbose($"DotnetTestHostManager.IsNativeModule: Source '{modulePath}' is native.");
                 return true;
             }
-
-            return false;
         }
+        catch (Exception ex)
+        {
+            EqtTrace.Verbose($"DotnetTestHostManager.IsNativeModule: Failed to read '{modulePath}', assuming managed. {ex}");
+        }
+
+        return false;
     }
 
     private void SetDotnetRootForArchitecture(TestProcessStartInfo startInfo, string dotnetRootPath, string dotnetRootArchitecture)
