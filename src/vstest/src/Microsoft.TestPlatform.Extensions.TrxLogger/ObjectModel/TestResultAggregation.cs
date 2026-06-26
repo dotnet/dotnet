@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.Utility;
 
@@ -16,6 +17,7 @@ namespace Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
 internal class TestResultAggregation : TestResult, ITestResultAggregation
 {
     protected List<ITestResult>? _innerResults;
+    private long _innerResultCount;
 
     public TestResultAggregation(
         Guid runId,
@@ -40,6 +42,21 @@ internal class TestResultAggregation : TestResult, ITestResultAggregation
             _innerResults ??= new List<ITestResult>();
             return _innerResults;
         }
+    }
+
+    /// <summary>
+    /// Atomically adds an inner result and returns the new count.
+    /// Use the returned count (== 1) to detect the first inner result in a thread-safe way.
+    /// </summary>
+    public long AddInnerResult(ITestResult result)
+    {
+        lock (this)
+        {
+            _innerResults ??= new List<ITestResult>();
+            _innerResults.Add(result);
+        }
+
+        return Interlocked.Increment(ref _innerResultCount);
     }
 
     public override void Save(System.Xml.XmlElement element, XmlTestStoreParameters? parameters)

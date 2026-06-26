@@ -122,6 +122,21 @@
         <target state="translated">Nie można znaleźć modułu zbierającego dane „{0}”</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataCollectionContextNotInitialized">
+        <source>The data collection environment context has not been initialized. Ensure that session started before processing test case events.</source>
+        <target state="translated">Kontekst środowiska zbierania danych nie został zainicjowany. Upewnij się, że sesja została uruchomiona przed przetwarzaniem zdarzeń przypadku testowego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseEndMissingTestElement">
+        <source>TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.</source>
+        <target state="translated">Element TestCaseEndEventArgs.TestElement ma wartość null. Moduł zbierający dane nie może zakończyć przypadku testowego bez elementu testowego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseStartMissingTestElement">
+        <source>TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.</source>
+        <target state="translated">Element TestCaseStartEventArgs.TestElement ma wartość null. Moduł zbierający dane nie może uruchomić przypadku testowego bez elementu testowego.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
         <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
         <target state="translated">Moduł zbierający dane „{0}” zażądał ustawienia zmiennej środowiskowej „{1}” o wartości „{2}” w środowisku wykonywania testu, ale inny moduł zbierający dane „{3}” już zażądał ustawienia tej zmiennej środowiskowej na wartość „{4}”.</target>

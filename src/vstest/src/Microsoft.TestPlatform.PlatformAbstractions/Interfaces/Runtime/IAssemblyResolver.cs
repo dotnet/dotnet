@@ -43,7 +43,29 @@ public class AssemblyResolveEventArgs : EventArgs
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="AssemblyResolveEventArgs"/> class.
+    /// </summary>
+    /// <param name="name">The full name of an assembly to resolve.</param>
+    /// <param name="requestingAssembly">The assembly whose dependency is being resolved, or <see langword="null"/> if the requesting assembly is not known.</param>
+    public AssemblyResolveEventArgs(string? name, Assembly? requestingAssembly)
+    {
+        Name = name;
+        RequestingAssembly = requestingAssembly;
+    }
+
+    /// <summary>
     /// Gets or sets the name of the item to resolve.
     /// </summary>
     public string? Name { get; set; }
+
+    /// <summary>
+    /// Gets the assembly whose dependency is being resolved.
+    /// </summary>
+    /// <remarks>
+    /// This property is populated on .NET Framework (net462+) where <c>AppDomain.AssemblyResolve</c>
+    /// exposes the requesting assembly via <see cref="ResolveEventArgs.RequestingAssembly"/>.
+    /// On .NET (Core), <c>AssemblyLoadContext.Resolving</c> does not expose the requesting assembly,
+    /// so this property is always <see langword="null"/> in that environment.
+    /// </remarks>
+    public Assembly? RequestingAssembly { get; }
 }

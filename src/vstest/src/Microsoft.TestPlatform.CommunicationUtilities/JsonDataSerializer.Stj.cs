@@ -4,25 +4,24 @@
 #if NETCOREAPP
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 public partial class JsonDataSerializer
 {
-    private static readonly bool DisableFastJson = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_FASTER_JSON_SERIALIZATION);
-
     private static readonly JsonSerializerOptions PayloadOptionsV1; // payload options for version <= 1
     private static readonly JsonSerializerOptions PayloadOptionsV2; // payload options for version >= 2
-    private static readonly JsonSerializerOptions FastOptions; // options for faster json
+    private static readonly JsonSerializerOptions FastOptions; // options for fast deserialization
     private static readonly JsonSerializerOptions DefaultOptions; // generic options
 
     static JsonDataSerializer()
@@ -41,6 +40,7 @@ public partial class JsonDataSerializer
         DefaultOptions.Converters.Add(new TestProcessAttachDebuggerPayloadConverter());
         DefaultOptions.Converters.Add(new TestSessionInfoConverter());
         DefaultOptions.Converters.Add(new DiscoveryCriteriaConverter());
+        DefaultOptions.Converters.Add(new ExceptionConverter());
 
         // V2 options: clone DefaultOptions and add V2-specific converters
         PayloadOptionsV2 = new JsonSerializerOptions(DefaultOptions);
@@ -62,6 +62,7 @@ public partial class JsonDataSerializer
         FastOptions = new JsonSerializerOptions(PayloadOptionsV2);
     }
 
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "DefaultJsonTypeInfoResolver is only used as a fallback for non-AoT builds.")]
     private static JsonSerializerOptions CreateBaseOptions() => new()
     {
         PropertyNameCaseInsensitive = true,
@@ -74,6 +75,11 @@ public partial class JsonDataSerializer
         NumberHandling = JsonNumberHandling.AllowReadingFromString,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         ReferenceHandler = ReferenceHandler.IgnoreCycles,
+        // Chain the source-generated context (for NativeAOT where reflection is
+        // disabled) with the default reflection-based resolver (for types not
+        // covered by the source-gen context in non-AoT builds). Under NativeAOT,
+        // DefaultJsonTypeInfoResolver is a no-op for trimmed types.
+        TypeInfoResolver = JsonTypeInfoResolver.Combine(TestPlatformJsonContext.Default, new DefaultJsonTypeInfoResolver()),
     };
 
     private static partial (int version, string? messageType) ParseHeaderFromJson(string rawMessage)
@@ -105,7 +111,7 @@ public partial class JsonDataSerializer
             using var doc = JsonDocument.Parse(message.RawMessage!);
             if (doc.RootElement.TryGetProperty("Payload", out var payloadElement))
             {
-                result = JsonSerializer.Deserialize<T>(payloadElement, payloadOptions);
+                result = StjSafe.Deserialize<T>(payloadElement, payloadOptions);
             }
             else
             {
@@ -180,24 +186,20 @@ public partial class JsonDataSerializer
 
     private static partial string SerializePayloadCore(string? messageType, object? payload, int version)
     {
+        if (payload is null)
+            return string.Empty;
+
         var payloadOptions = GetPayloadOptions(version);
-        // Fast json is only equivalent to the serialization that is used for protocol version 2 and upwards (or more precisely for the paths that use PayloadOptionsV2)
-        // so when we resolved the old options we should use non-fast path.
-        if (DisableFastJson || payloadOptions == PayloadOptionsV1)
-        {
-            if (payload is null)
-                return string.Empty;
 
-            var serializedPayload = JsonSerializer.SerializeToElement(payload, payloadOptions);
+        // Serialize payload to JsonElement first using the versioned options (which have the
+        // custom converters), then embed in the envelope. This two-step approach is required
+        // for NativeAOT: serializing object? Payload directly would require STJ to resolve
+        // the runtime type polymorphically via reflection.
+        var serializedPayload = StjSafe.SerializeToElement(payload, payload.GetType(), payloadOptions);
 
-            return version > 1 ?
-                Serialize(DefaultOptions, new VersionedMessageEnvelope { MessageType = messageType, Version = version, Payload = serializedPayload }) :
-                Serialize(DefaultOptions, new MessageEnvelope { MessageType = messageType, Payload = serializedPayload });
-        }
-        else
-        {
-            return Serialize(FastOptions, new VersionedMessageForSerialization { MessageType = messageType, Version = version, Payload = payload });
-        }
+        return version > 1 ?
+            Serialize(DefaultOptions, new VersionedMessageEnvelope { MessageType = messageType, Version = version, Payload = serializedPayload }) :
+            Serialize(DefaultOptions, new MessageEnvelope { MessageType = messageType, Payload = serializedPayload });
     }
 
     private static partial string SerializeCore<T>(T data, int version)
@@ -208,7 +210,7 @@ public partial class JsonDataSerializer
 
     private static T? DeserializeObjectFast<T>(string value)
     {
-        return JsonSerializer.Deserialize<T>(value, FastOptions);
+        return StjSafe.Deserialize<T>(value, FastOptions);
     }
 
     /// <summary>
@@ -220,7 +222,7 @@ public partial class JsonDataSerializer
     /// <returns>Serialized data.</returns>
     private static string Serialize<T>(JsonSerializerOptions options, T data)
     {
-        return JsonSerializer.Serialize(data, options);
+        return StjSafe.Serialize(data, options);
     }
 
     /// <summary>
@@ -232,7 +234,7 @@ public partial class JsonDataSerializer
     /// <returns>Deserialized data.</returns>
     private static T? Deserialize<T>(JsonSerializerOptions options, string data)
     {
-        return JsonSerializer.Deserialize<T>(data, options);
+        return StjSafe.Deserialize<T>(data, options);
     }
 
     private static JsonSerializerOptions GetPayloadOptions(int? version)
@@ -258,7 +260,7 @@ public partial class JsonDataSerializer
     /// This grabs payload from the message, we already know version and message type.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    private class PayloadedMessage<T>
+    internal class PayloadedMessage<T>
     {
         public T? Payload { get; set; }
     }
@@ -267,31 +269,31 @@ public partial class JsonDataSerializer
     /// Serialization-only DTO for building the JSON wire format (without Version).
     /// NOT a Message — this is never returned to callers.
     /// </summary>
-    private class MessageEnvelope
+    internal class MessageEnvelope
     {
         public string? MessageType { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public object? Payload { get; set; }
+        public JsonElement? Payload { get; set; }
     }
 
     /// <summary>
     /// Serialization-only DTO for building the JSON wire format (with Version).
     /// NOT a Message — this is never returned to callers.
     /// </summary>
-    private class VersionedMessageEnvelope
+    internal class VersionedMessageEnvelope
     {
         public int Version { get; set; }
         public string? MessageType { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public object? Payload { get; set; }
+        public JsonElement? Payload { get; set; }
     }
 
     /// <summary>
     /// For serialization directly into string, without first converting to JsonElement, and then from JsonElement to string.
     /// </summary>
-    private class VersionedMessageForSerialization
+    internal class VersionedMessageForSerialization
     {
         /// <summary>
         /// Gets or sets the version of the message

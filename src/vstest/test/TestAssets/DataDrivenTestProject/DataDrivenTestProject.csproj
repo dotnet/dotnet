@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>DataDrivenTestProject</AssemblyName>
+    <TargetFrameworks>$(TestProjectTargetFrameworks)</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestFramework">
+      <Version>$(MSTestTestFrameworkVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="MSTest.TestAdapter">
+      <Version>$(MSTestTestAdapterVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk">
+      <Version>$(PackageVersion)</Version>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
