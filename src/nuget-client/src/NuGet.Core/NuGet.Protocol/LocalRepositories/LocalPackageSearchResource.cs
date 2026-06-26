@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
@@ -30,7 +31,7 @@ namespace NuGet.Protocol
             _localResource = localResource;
         }
 
-        public override bool SupportsPackageTypeFiltering => false;
+        public override bool SupportsPackageTypeFiltering => true;
 
         public async override Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(
             string searchTerm,
@@ -61,6 +62,12 @@ namespace NuGet.Protocol
                 {
                     var terms = searchTerm.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     query = query.Where(package => ContainsAnyTerm(terms, package));
+                }
+
+                // Filter on package type
+                if (!string.IsNullOrEmpty(filters?.PackageType))
+                {
+                    query = query.Where(package => MatchesPackageType(package, filters.PackageType));
                 }
 
                 // Collapse to the highest version per id, if necessary
@@ -95,6 +102,27 @@ namespace NuGet.Protocol
                 if (ContainsTerm(term, id)
                     || ContainsTerm(term, tags)
                     || ContainsTerm(term, description))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool MatchesPackageType(LocalPackageInfo package, string packageType)
+        {
+            IReadOnlyList<PackageType> packageTypes = package.Nuspec.GetPackageTypes();
+
+            // A package that does not declare any package type is implicitly a "Dependency" package.
+            if (packageTypes.Count == 0)
+            {
+                return PackageType.PackageTypeNameComparer.Equals(packageType, PackageType.Dependency.Name);
+            }
+
+            foreach (PackageType type in packageTypes.NoAllocEnumerate())
+            {
+                if (PackageType.PackageTypeNameComparer.Equals(type.Name, packageType))
                 {
                     return true;
                 }
