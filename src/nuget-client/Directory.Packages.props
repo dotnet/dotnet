@@ -14,7 +14,7 @@
 
   <PropertyGroup>
     <!-- Read docs/updating-packages.md before updating MSBuild's version -->
-    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">18.0.2</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">18.6.3</MicrosoftBuildVersion>
   </PropertyGroup>
 
     <!-- Overridden by source build to ensure the same version is used across products, do not remove these properties -->
@@ -27,7 +27,7 @@
     <SystemMemoryPackageVersion Condition="'$(SystemMemoryPackageVersion)' == ''">4.6.3</SystemMemoryPackageVersion>
     <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">8.0.1</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">8.0.0</SystemSecurityCryptographyProtectedDataVersion>
-    <SystemSecurityCryptographyXmlPackageVersion Condition="'$(SystemSecurityCryptographyXmlPackageVersion)' == ''">9.0.16</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion Condition="'$(SystemSecurityCryptographyXmlPackageVersion)' == ''">10.0.8</SystemSecurityCryptographyXmlPackageVersion>
     <MicrosoftDotNetXliffTasksVersion Condition="'$(MicrosoftDotNetXliffTasksVersion)' == ''">10.0.0-beta.25260.104</MicrosoftDotNetXliffTasksVersion>
   </PropertyGroup>
 
