@@ -130,13 +130,13 @@
     <value>[option] on '{0}' is invalid without a setter.</value>
   </data>
   <data name="PackageCommandSpecifyInputFileError" xml:space="preserve">
-    <value>Please specify a nuspec or project file to use.</value>
+    <value>Specify a nuspec or project file to use.</value>
   </data>
   <data name="PackageCommandSuccess" xml:space="preserve">
     <value>Successfully created package '{0}'.</value>
   </data>
   <data name="PushCommandNoSourceError" xml:space="preserve">
-    <value>There is no default source, please specify a source.</value>
+    <value>There is no default source, specify a source.</value>
   </data>
   <data name="ResourcePropertyIncorrectType" xml:space="preserve">
     <value>The property '{0}' on resource type '{1}' is not a type of ResourceManager.</value>
@@ -241,7 +241,7 @@
     <value>Using '{0}' for metadata.</value>
   </data>
   <data name="InvalidSource" xml:space="preserve">
-    <value>The specified source '{0}' is invalid. Please provide a valid source.</value>
+    <value>The specified source '{0}' is invalid. Provide a valid source.</value>
   </data>
   <data name="SetApiKeyCommandDefaultApiKeysSaved" xml:space="preserve">
     <value>The API Key '{0}' was saved for {1} and {2}.</value>
@@ -298,7 +298,7 @@
     <value>UserName: </value>
   </data>
   <data name="Credentials_RequestCredentials" xml:space="preserve">
-    <value>Please provide credentials for: {0}</value>
+    <value>Provide credentials for: {0}</value>
   </data>
   <data name="InstallCommandPackageAlreadyExists" xml:space="preserve">
     <value>Package "{0}" is already installed.</value>
@@ -340,7 +340,7 @@
     <value>Remove sample nuspec values.</value>
   </data>
   <data name="Credentials_ProxyCredentials" xml:space="preserve">
-    <value>Please provide proxy credentials:</value>
+    <value>Provide proxy credentials:</value>
   </data>
   <data name="Warning_SemanticVersion" xml:space="preserve">
     <value>Version "{0}" does not follow semantic versioning guidelines.</value>
@@ -437,7 +437,7 @@
     <value>Restoring NuGet packages listed in file {0}.</value>
   </data>
   <data name="RestoreCommandCannotDeterminePackagesFolder" xml:space="preserve">
-    <value>Cannot determine the packages folder to restore NuGet packages. Please specify either -PackagesDirectory or -SolutionDirectory.</value>
+    <value>Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</value>
   </data>
   <data name="RestoreCommandFileNotFound" xml:space="preserve">
     <value>Input file does not exist: {0}.</value>
@@ -496,7 +496,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <value>MsBuild.exe does not exist at '{0}'.</value>
   </data>
   <data name="RestoreCommandCannotDetermineGlobalPackagesFolder" xml:space="preserve">
-    <value>'globalPackagesFolder' setting is a relative path. To determine full path, please specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</value>
+    <value>'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</value>
     <comment>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</comment>
   </data>
   <data name="Error_PackagesConfigParseError" xml:space="preserve">
@@ -527,7 +527,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <value>MSBuild is not installed.</value>
   </data>
   <data name="FailedToLoadExtension" xml:space="preserve">
-    <value>Failed to load {0}, if this extension was downloaded from the internet please make sure it got unblocked (right click, properties, unblock).</value>
+    <value>Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</value>
   </data>
   <data name="FailedToLoadExtensionDuringMefComposition" xml:space="preserve">
     <value>Failed to load {0}{1}</value>
@@ -578,7 +578,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <value>Clearing local resources failed: one or more errors occured.</value>
   </data>
   <data name="LocalsCommand_InvalidLocalResourceName" xml:space="preserve">
-    <value>An invalid local resource name was provided. Please provide one of the following values: http-cache, packages-cache, global-packages, all.</value>
+    <value>An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</value>
   </data>
   <data name="LocalsCommand_LocalResourcePathNotSet" xml:space="preserve">
     <value>The location of local resource '{0}' is undefined.</value>
@@ -615,7 +615,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <value>Invalid AssemblyInformationalVersion '{0}' on assembly '{1}'; falling back to AssemblyVersion '{2}'.</value>
   </data>
   <data name="Credentials_ForbiddenCredentials" xml:space="preserve">
-    <value>The remote server indicated that the previous request was forbidden. Please provide credentials for: {0}</value>
+    <value>The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</value>
     <comment>{0} will be replaced with the URL that needs credentials.</comment>
   </data>
   <data name="OutputNuGetVersion" xml:space="preserve">
@@ -667,20 +667,20 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <value>Response file '{0}' cannot be larger than {1}mb</value>
   </data>
   <data name="ConsolePasswordProvider_DisplayFile" xml:space="preserve">
-    <value>Please provide password for: {0}</value>
+    <value>Provide password for: {0}</value>
     <comment>0 - file that requires password</comment>
   </data>
   <data name="ConsolePasswordProvider_PromptForPassword" xml:space="preserve">
     <value>Password: </value>
   </data>
   <data name="Warning_LongPath_DisabledPolicy" xml:space="preserve">
-    <value>Please enbale long file path support in local group policy. Fore more details, please refer to https://aka.ms/nuget-long-path.</value>
+    <value>Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</value>
   </data>
   <data name="Warning_LongPath_UnsupportedNetFramework" xml:space="preserve">
-    <value>Please install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, please refer to https://aka.ms/nuget-long-path.</value>
+    <value>Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</value>
   </data>
   <data name="Warning_LongPath_UnsupportedOS" xml:space="preserve">
-    <value>Long file path is currently only supported on Windows 10. Fore more details, please refer to https://aka.ms/nuget-long-path.</value>
+    <value>Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</value>
   </data>
   <data name="Error_UnknownAction" xml:space="preserve">
     <value>The action '{0}' is not recognized.</value>
@@ -691,7 +691,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
     <comment>0 - argument name</comment>
   </data>
   <data name="ProjectJsonPack_Deprecated" xml:space="preserve">
-    <value>`project.json` pack is deprecated. Please consider migrating '{0}' to `PackageReference` and using the pack targets.</value>
+    <value>`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</value>
     <comment>Do not localize project.json and `PackageReference` 
 0 - project path (project.json file path)</comment>
   </data>
@@ -707,7 +707,7 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
   </data>
   <data name="Error_ProjectJson_Deprecated_And_Removed" xml:space="preserve">
     <value>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
-Please consider migrating '{0}' to `PackageReference` and using the pack targets.
+Consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</value>
     <comment>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</comment>
   </data>
@@ -724,10 +724,10 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
 Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</comment>
   </data>
   <data name="Error_UnsupportedMsBuildForSolutionFilter" xml:space="preserve">
-    <value>This version of MSBuild not support Solution filter: '{0}'. Please use a MSBuild version greater or equal to 16.7 to use this feature.</value>
+    <value>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</value>
   </data>
   <data name="Error_UnsupportedMsBuildForSlnx" xml:space="preserve">
-    <value>This version of MSBuild not support the slnx format: '{0}'. Please use a MSBuild version greater or equal to 17.13 to use this feature.</value>
+    <value>This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</value>
   </data>
   <data name="Error_InvalidCultureInfo" xml:space="preserve">
     <value>Invalid culture identifier in {0} environment variable. Value read is '{1}'</value>

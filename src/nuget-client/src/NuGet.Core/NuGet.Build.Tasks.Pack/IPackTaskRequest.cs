@@ -78,5 +78,7 @@ namespace NuGet.Build.Tasks.Pack
         bool Deterministic { get; }
         string DeterministicTimestamp { get; }
         string PackageIcon { get; }
+        string SdkAnalysisLevel { get; }
+        string UsingMicrosoftNETSdk { get; }
     }
 }

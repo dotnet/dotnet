@@ -13,6 +13,8 @@ using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.Protocol
@@ -24,6 +26,32 @@ namespace NuGet.Protocol
         /// </summary>
         /// <returns>Returns an empty sequence if the package does not exist.</returns>
         public static async Task<IEnumerable<RemoteSourceDependencyInfo>> GetDependencies(
+            HttpSource httpClient,
+            Uri registrationUri,
+            string packageId,
+            VersionRange range,
+            SourceCacheContext cacheContext,
+            ILogger log,
+            CancellationToken token,
+            IEnvironmentVariableReader? env)
+        {
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await GetDependenciesFromItemsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+            }
+
+            if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(env))
+            {
+                return await GetDependenciesFromItemsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+            }
+
+            return await GetDependenciesFromJObjectsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+        }
+
+        /// <summary>
+        /// Newtonsoft.Json (JObject) based registration walk.
+        /// </summary>
+        private static async Task<HashSet<RemoteSourceDependencyInfo>> GetDependenciesFromJObjectsAsync(
             HttpSource httpClient,
             Uri registrationUri,
             string packageId,
@@ -55,6 +83,80 @@ namespace NuGet.Protocol
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// System.Text.Json based registration walk.
+        /// </summary>
+        private static async Task<HashSet<RemoteSourceDependencyInfo>> GetDependenciesFromItemsAsync(
+            HttpSource httpClient,
+            Uri registrationUri,
+            string packageId,
+            VersionRange range,
+            SourceCacheContext cacheContext,
+            ILogger log,
+            CancellationToken token)
+        {
+            var results = new HashSet<RemoteSourceDependencyInfo>();
+
+            IReadOnlyList<RegistrationPage?> pages = await RegistrationUtility.LoadRangesAsItemsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+
+            // NoAllocEnumerate can't be used on nullable types, so avoid allocating an enumerator by using a for loop.
+            for (int i = 0; i < pages.Count; i++)
+            {
+                RegistrationPage? page = pages[i];
+
+                if (page == null)
+                {
+                    throw new InvalidDataException(registrationUri.AbsoluteUri);
+                }
+
+                if (page.Items is null)
+                {
+                    throw new InvalidDataException(registrationUri.AbsoluteUri);
+                }
+
+                foreach (RegistrationLeafItem leaf in page.Items)
+                {
+                    if (leaf is null || leaf.CatalogEntry is null)
+                    {
+                        throw new InvalidDataException(registrationUri.AbsoluteUri);
+                    }
+
+                    PackageSearchMetadataRegistration catalogEntry = leaf.CatalogEntry;
+                    NuGetVersion version = catalogEntry.Version;
+
+                    if (range.Satisfies(version))
+                    {
+                        results.Add(ProcessPackageVersion(leaf, version, registrationUri));
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Process an individual package version entry from a strongly typed registration leaf.
+        /// </summary>
+        /// <returns>Returns the RemoteSourceDependencyInfo object corresponding to this package version</returns>
+        private static RemoteSourceDependencyInfo ProcessPackageVersion(RegistrationLeafItem leaf, NuGetVersion version, Uri registrationUri)
+        {
+            PackageSearchMetadataRegistration catalogEntry = leaf.CatalogEntry!;
+
+            bool listed = catalogEntry.IsListed;
+            string id = catalogEntry.PackageId!;
+
+            var identity = new PackageIdentity(id, version);
+
+            if (leaf.PackageContent is null)
+            {
+                throw new InvalidDataException(registrationUri.AbsoluteUri);
+            }
+
+            string contentUri = leaf.PackageContent.OriginalString;
+
+            return new RemoteSourceDependencyInfo(identity, listed, catalogEntry.DependencySets, contentUri);
         }
 
         /// <summary>
@@ -122,11 +224,12 @@ namespace NuGet.Protocol
             SourceCacheContext cacheContext,
             NuGetFramework projectTargetFramework,
             ILogger log,
-            CancellationToken token)
+            CancellationToken token,
+            IEnvironmentVariableReader? env)
         {
             var frameworkComparer = NuGetFrameworkFullComparer.Instance;
             var frameworkReducer = new FrameworkReducer();
-            var dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+            IEnumerable<RemoteSourceDependencyInfo> dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token, env);
 
             if (!dependencies.Any())
             {

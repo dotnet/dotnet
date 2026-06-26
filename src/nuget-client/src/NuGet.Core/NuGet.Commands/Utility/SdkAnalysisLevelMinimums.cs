@@ -39,6 +39,7 @@ namespace NuGet.Commands
         /// <list type="bullet">
         /// <item>warning when packages use the deprecated MonoAndroid framework</item>
         /// <item>error when TargetFramework alias contains non-ASCII characters</item>
+        /// <item>warning when package ID does not adhere to the restricted character set (NU5052)</item>
         /// </list>
         /// </summary>
         internal static readonly NuGetVersion V11_0_100 = new("11.0.100");

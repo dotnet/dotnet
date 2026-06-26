@@ -348,7 +348,7 @@ namespace NuGet.XPlat.FuncTest
             var output = logger.Lines;
 
             Assert.Equal(ExitCodes.Success, result);
-            Assert.Contains($"No assets file was found for `{project.ProjectPath}`. Please run restore before running this command.", output);
+            Assert.Contains($"No assets file was found for `{project.ProjectPath}`. Run restore before running this command.", output);
         }
 
         [Theory]
@@ -449,7 +449,7 @@ namespace NuGet.XPlat.FuncTest
             var errorOutput = logger.Lines;
 
             Assert.Equal(ExitCodes.InvalidArguments, result);
-            Assert.Contains($"Unable to run 'dotnet nuget why'. Missing or invalid path '{fakeProjectPath}'. Please provide a path to a project, solution file, file-based app, or project directory.", errorOutput);
+            Assert.Contains($"Unable to run 'dotnet nuget why'. Missing or invalid path '{fakeProjectPath}'. Provide a path to a project, solution file, file-based app, or project directory.", errorOutput);
         }
 
         [Theory]

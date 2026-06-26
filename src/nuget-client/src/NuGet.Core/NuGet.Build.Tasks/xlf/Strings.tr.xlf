@@ -117,8 +117,8 @@
 1 - list of projects</note>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
-        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
-        <target state="translated">RestoreNoCache kullanım dışı bırakıldı ve RestoreNoHttpCache olarak yeniden adlandırıldı. Lütfen bunun yerine RestoreNoHttpCache kullanın.</target>
+        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
+        <target state="new">RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">

@@ -8,23 +8,6 @@ function Test-GetPackageRetunsMoreThanServerPagingLimit {
 }
 
 
-function Test-GetPackageWithoutOpenSolutionThrows {
-    Assert-Throws { Get-Package } "The current environment doesn't have a solution open."
-}
-
-function Test-GetPackageWithUpdatesListsUpdates {
-    # Arrange
-    $p = New-ConsoleApplication
-
-    # Act
-    Install-Package NuGet.Core -Version 1.6.0 -Project $p.Name
-    Install-Package NuGet.CommandLine -Version 1.6.0 -Project $p.Name
-    $packages = Get-Package -Updates
-
-    # Assert
-    Assert-AreEqual 2 $packages.Count
-}
-
 function Test-GetPackageCollapsesPackageVersionsForListAvailable {
     [SkipTest('https://github.com/NuGet/Home/issues/8849')]
     param()
@@ -66,25 +49,6 @@ function GetPackageAcceptsAllAsSourceName {
 
     # Assert
     Assert-True (1 -le $p.Count)
-}
-
-function Test-GetPackagesWithNoUpdatesReturnPackagesWithIsUpdateNotSet {
-    # Arrange & Act
-    $package = Get-Package -ListAvailable -First 1
-
-    # Assert
-    Assert-NotNull $package
-    Assert-False $package.IsUpdate
-}
-
-function Test-GetPackageDoesNotThrowIfSolutionIsTemporary {
-    param($context)
-
-    # Arrange
-    New-TextFile
-
-    # Act and Assert
-    Assert-Throws { Get-Package } "Solution is not saved. Please save your solution before managing NuGet packages."
 }
 
 function Test-GetPackageUpdatesAfterSwitchToSourceThatDoesNotContainInstalledPackageId
