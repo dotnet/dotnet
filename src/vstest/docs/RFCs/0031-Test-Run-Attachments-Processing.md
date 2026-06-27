@@ -6,7 +6,7 @@ This document details a data collector extensibility point to reprocess (combine
 # Motivation
 Today when Test Platform executes tests in parallel only code coverage reports are merged (data collector attachments with uri: `datacollector://microsoft/CodeCoverage/2.0`). For other data collector attachments reprocessing is skipped and all of them are returned by Test Platform.
 
-The [dotnet test](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command is used to execute unit tests in a given solution. The `dotnet test` command builds the solution and runs a test host application for each test project in the solution. However, currently there is no way to reprocess(combine/merge) data collector attachments associated with each project execution. Code coverage reports are not merged.
+The [dotnet test](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command is used to execute unit tests in a given solution. The `dotnet test` command builds the solution and runs a test host application for each test project in the solution. However, currently there is no way to reprocess(combine/merge) data collector attachments associated with each project execution. Code coverage reports are not merged.
 
 When `Run All Tests` is performed in VS, tests for projects can be executed separately based on target platform/target framework amongst other criteria. In this case also combining/merging of data collector attachments is not performed (e.g. code overage reports are not merged). `Analyze Code Coverage for All Tests` is showing coverage report for only some test projects in the run.
 
@@ -62,7 +62,7 @@ If `SupportsIncrementalProcessing` is `False` then Test Platform will wait for a
 
 
 
-2. Introduce a new `ProcessTestRunAttachmentsAsync` method in [IVsTestConsoleWrapper](./src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Interfaces/IVsTestConsoleWrapper.cs) interface:
+2. Introduce a new `ProcessTestRunAttachmentsAsync` method in [IVsTestConsoleWrapper](../../src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Interfaces/IVsTestConsoleWrapper.cs) interface:
 
 ```cs
 /// <summary>
@@ -125,7 +125,7 @@ Interface provides callbacks from test run attachments processing. For every suc
 
 4. Use above logic to reprocess data collector attachments for parallel test executions and VS scenarios (e.g. `Run All Tests`, `Analyze Code Coverage for All Tests`). In case of `Analyze Code Coverage for All Tests` VS will use `vstest.console` in a variation of design mode and merge all code coverage reports. VS will show full code coverage report for all test projects.
 
-5. When [dotnet test](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command is used to execute unit tests in a given solution, attachments will also be reprocessed. Details regarding this process will be provided in separate RFC.
+5. When [dotnet test](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command is used to execute unit tests in a given solution, attachments will also be reprocessed. Details regarding this process will be provided in separate RFC.
 
 # Additional classes
 

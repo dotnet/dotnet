@@ -25,8 +25,8 @@ namespace NuGet.PackageManagement.UI
     [Export(typeof(INuGetUIFactory))]
     internal sealed class NuGetUIFactory : INuGetUIFactory
     {
-        [Import]
-        private ICommonOperations CommonOperations { get; set; }
+        private readonly ICommonOperations _commonOperations;
+        private readonly INuGetUILogger _outputConsoleLogger;
 
         [Import]
         private Lazy<IDeleteOnRestartManager> DeleteOnRestartManager { get; set; }
@@ -36,9 +36,6 @@ namespace NuGet.PackageManagement.UI
 
         [Import]
         private Lazy<IOptionsPageActivator> OptionsPageActivator { get; set; }
-
-        [Import]
-        private INuGetUILogger OutputConsoleLogger { get; set; }
 
         [Import]
         private Lazy<IPackageRestoreManager> PackageRestoreManager { get; set; }
@@ -70,6 +67,8 @@ namespace NuGet.PackageManagement.UI
             INuGetUILogger logger,
             ISourceControlManagerProvider sourceControlManagerProvider)
         {
+            _commonOperations = commonOperations;
+            _outputConsoleLogger = logger;
             ProjectContext = new NuGetUIProjectContext(
                 commonOperations,
                 logger,
@@ -98,7 +97,7 @@ namespace NuGet.PackageManagement.UI
 
             return await NuGetUI.CreateAsync(
                 serviceBroker,
-                CommonOperations,
+                _commonOperations,
                 ProjectContext,
                 SourceRepositoryProvider.Value,
                 Settings.Value,
@@ -109,7 +108,7 @@ namespace NuGet.PackageManagement.UI
                 DeleteOnRestartManager.Value,
                 SolutionUserOptions,
                 LockService.Value,
-                OutputConsoleLogger,
+                _outputConsoleLogger,
                 RestoreProgressReporter.Value,
                 NuGetTelemetryProvider,
                 CancellationToken.None,

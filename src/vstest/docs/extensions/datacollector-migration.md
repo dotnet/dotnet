@@ -7,7 +7,7 @@ Previously, `DataCollector` abstract class was present in `Microsoft.VisualStudi
 
 Now, `DataCollector`abstract class is present in Object Model. Add reference to [`Microsoft.TestPlatform.ObjectModel`](https://www.nuget.org/packages/Microsoft.TestPlatform.ObjectModel/15.5.0-preview-20170810-02)  (preview) nuget package. DataCollector APIs are present under namespace `Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection`.
 It is recommended to target your DataCollector to netstandard, so that it can also run cross-platform, i.e. on non-Windows operating systems.
-For more info, refer to this [guide](./docs/extensions/datacollector.md).
+For more info, refer to this [guide](./datacollector.md).
 
 ## Deprecated Attributes
 Currently `DataCollectorFriendlyNameAttribute` and `DataCollectorTypeUriAttribute` are the only attributes that are supported. 
@@ -43,4 +43,4 @@ Following ten events that were exposed to DataCollectors through `DataCollection
 These events are no longer supported in TestPlatform and hence, these have been removed from DataCollection infrastructure as well.
 
 ## DataCollector RunSettings
-DataCollector RunSettings are highly compatible in all the versions of TestPlatform and old settings should continue to work with TestPlatform. For more info on runsettings, refer to [Configure DataCollectors](./docs/analyze.md#configure-datacollectors).
+DataCollector RunSettings are highly compatible in all the versions of TestPlatform and old settings should continue to work with TestPlatform. For more info on runsettings, refer to [Configure DataCollectors](../analyze.md#configure-datacollectors).

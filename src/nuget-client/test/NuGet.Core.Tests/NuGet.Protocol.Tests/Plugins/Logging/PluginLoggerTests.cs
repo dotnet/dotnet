@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json.Nodes;
 using System.Threading;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -189,7 +190,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             public override string ToString()
             {
-                var message = new JObject(new JProperty("message", Message));
+                var message = new JsonObject { ["message"] = Message };
 
                 return ToString("random", message);
             }

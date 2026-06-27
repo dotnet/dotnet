@@ -10,12 +10,13 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">無法為測試來源 '{0}' 找到 testhost。
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+請確認:
+ 
+  - 測試專案參考 'Microsoft.NET.Test.Sdk' NuGet 套件。
+  - 專案已建置，且輸出位於 '{1}'。
+  - 專案的目標 Framework 與已安裝的 .NET 執行階段相符。
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>

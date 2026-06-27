@@ -205,7 +205,7 @@
 1 - The command-line arguments</comment>
   </data>
   <data name="Log_RestoreNoCacheInformation" xml:space="preserve">
-    <value>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</value>
+    <value>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</value>
     <comment>Do not translate RestoreNoCache and RestoreNoHttpCache</comment>
   </data>
   <data name="Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments" xml:space="preserve">

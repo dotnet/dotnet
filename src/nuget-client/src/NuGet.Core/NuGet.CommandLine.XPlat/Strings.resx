@@ -133,7 +133,7 @@
     <value>Deletes a package from the server.</value>
   </data>
   <data name="Delete_MissingArguments" xml:space="preserve">
-    <value>Please provide arguments for package id and package version.</value>
+    <value>Provide arguments for package id and package version.</value>
   </data>
   <data name="Delete_PackageIdAndVersion_Description" xml:space="preserve">
     <value>The Package Id and version.</value>
@@ -151,7 +151,7 @@
     <value>Pushes a package to the server and publishes it.</value>
   </data>
   <data name="Push_MissingArguments" xml:space="preserve">
-    <value>Please specify the path to the package.</value>
+    <value>Specify the path to the package.</value>
   </data>
   <data name="Push_Package_ApiKey_Description" xml:space="preserve">
     <value>Specify the path to the package and your API key to push the package to the server.</value>
@@ -196,7 +196,7 @@
     <value>Clears or lists local NuGet resources such as http requests cache, packages folder, plugin operations cache  or machine-wide global packages folder.</value>
   </data>
   <data name="LocalsCommand_MultipleOperations" xml:space="preserve">
-    <value>Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.
+    <value>Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
@@ -206,7 +206,7 @@ usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cach
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="LocalsCommand_NoOperation" xml:space="preserve">
-    <value>Please specify an operation i.e. --list or --clear.
+    <value>Specify an operation i.e. --list or --clear.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
@@ -362,7 +362,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>A path to a project, solution file or directory.</value>
   </data>
   <data name="Error_AssetsFileNotFound" xml:space="preserve">
-    <value>No assets file was found for `{0}`. Please run restore before running this command.</value>
+    <value>No assets file was found for `{0}`. Run restore before running this command.</value>
   </data>
   <data name="ListPkg_ProjectHeaderLog" xml:space="preserve">
     <value>Project '{0}' has the following package references</value>
@@ -395,10 +395,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</value>
   </data>
   <data name="ListPkg_ErrorReadingAssetsFile" xml:space="preserve">
-    <value>Unable to read the assets file `{0}`. Please make sure the file has the write format.</value>
+    <value>Unable to read the assets file `{0}`. Make sure the file has the correct format.</value>
   </data>
   <data name="ListPkg_ErrorReadingReferenceFromProject" xml:space="preserve">
-    <value>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</value>
+    <value>Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</value>
   </data>
   <data name="ListPkg_InvalidFramework" xml:space="preserve">
     <value>The specified TargetFramework '{0}' is not found in the project '{1}'.</value>
@@ -679,7 +679,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
     <comment>Please don't localize '&lt;package-paths&gt;'</comment>
   </data>
   <data name="SignCommandNoTimestamperWarning" xml:space="preserve">
-    <value>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.microsoft.com/dotnet/core/tools</value>
+    <value>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</value>
     <comment>Please don't localize '--timestamper'</comment>
   </data>
   <data name="Err_InvalidValue" xml:space="preserve">
@@ -871,7 +871,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <value>No package sources found.</value>
   </data>
   <data name="Error_MultipleProjectOrSolutionFilesInDirectory" xml:space="preserve">
-    <value>The directory '{0}' contains multiple project or solution files. Please specify which project or solution file to use.</value>
+    <value>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</value>
     <comment>{0} - Directory</comment>
   </data>
   <data name="Error_NoProjectOrSolutionFilesInDirectory" xml:space="preserve">
@@ -938,7 +938,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <comment>{0} - Argument that was not provided</comment>
   </data>
   <data name="Error_PathIsMissingOrInvalid" xml:space="preserve">
-    <value>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</value>
+    <value>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</value>
     <comment>{0} - Input path argument</comment>
   </data>
   <data name="WhyCommand_Error_ArgumentExceptionThrown" xml:space="preserve">
@@ -953,7 +953,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <comment>{0} - Assets file path</comment>
   </data>
   <data name="WhyCommand_Error_InvalidAssetsFile_WithProject" xml:space="preserve">
-    <value>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</value>
+    <value>The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</value>
     <comment>{0} - Assets file path, {1} - Project name</comment>
   </data>
   <data name="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget" xml:space="preserve">
@@ -998,7 +998,7 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
 Do not translate "PackageVersion"</comment>
   </data>
   <data name="Unsupported_UpdatePackageWithDifferentPerTfmVersions" xml:space="preserve">
-    <value>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1})</value>
+    <value>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</value>
     <comment>0 - The package id
 1 - The project path</comment>
   </data>

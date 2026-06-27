@@ -141,7 +141,7 @@ namespace NuGet.Protocol
                                 "service_index",
                                 cacheContext)
                             {
-                                EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(url, stream),
+                                EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(url, stream, _environmentVariableReader),
                                 MaxTries = 1,
                                 IsRetry = retry > 1,
                                 IsLastAttempt = retry == maxRetries

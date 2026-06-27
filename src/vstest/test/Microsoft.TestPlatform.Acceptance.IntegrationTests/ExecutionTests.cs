@@ -116,7 +116,6 @@ public class ExecutionTests : AcceptanceTestBase
         var arguments = PrepareArguments(assemblyPaths, testAdapterPath: null, runSettings: null, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, " /Parallel");
         arguments = string.Concat(arguments, " /Platform:x86");
-        arguments += GetDiagArg(TempDirectory.Path);
 
         // for the desktop we will run testhost.x86 in two copies, but for core
         // we will run a combination of testhost.x86 and dotnet, where the dotnet will be
@@ -129,7 +128,7 @@ public class ExecutionTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, TempDirectory.Path, testHostProcessNames);
+        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, DiagLogsDirectory, testHostProcessNames);
         ValidateSummaryStatus(2, 2, 2);
         ExitCodeEquals(1); // failing tests
     }
@@ -180,26 +179,22 @@ public class ExecutionTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var diagLogFilePath = Path.Combine(TempDirectory.Path, $"std_error_log_{Guid.NewGuid()}.txt");
-        File.Delete(diagLogFilePath);
-
         var assemblyPaths = GetAssetFullPath("SimpleTestProject3.dll");
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, " /testcasefilter:ExitWithStackoverFlow");
-        arguments = string.Concat(arguments, $" /diag:{diagLogFilePath}");
 
         InvokeVsTest(arguments);
 
         var errorMessage = "Process is terminated due to StackOverflowException.";
         if (runnerInfo.IsNetTarget)
         {
-            errorMessage = "Test host process crashed : Stack overflow.";
+            errorMessage = "Stack overflow.";
         }
 
         ExitCodeEquals(1);
-        FileAssert.Contains(diagLogFilePath, errorMessage);
+        Assert.Contains(errorMessage, GetDiagLogContents(),
+            $"Expected '{errorMessage}' in diag logs but not found.");
         StdErrorContains(errorMessage);
-        File.Delete(diagLogFilePath);
     }
 
     [TestMethod]
@@ -209,14 +204,10 @@ public class ExecutionTests : AcceptanceTestBase
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
-        var diagLogFilePath = Path.Combine(TempDirectory.Path, $"std_error_log_{Guid.NewGuid()}.txt");
-        File.Delete(diagLogFilePath);
-
         var assemblyPaths =
             GetAssetFullPath("SimpleTestProject3.dll");
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, " /testcasefilter:ExitwithUnhandleException");
-        arguments = string.Concat(arguments, $" /diag:{diagLogFilePath}");
 
         InvokeVsTest(arguments);
 
@@ -224,8 +215,8 @@ public class ExecutionTests : AcceptanceTestBase
             runnerInfo.IsNetTarget
             ? "Test host standard error line: Unhandled exception. System.InvalidOperationException: Operation is not valid due to the current state of the object."
             : "Test host standard error line: Unhandled Exception: System.InvalidOperationException: Operation is not valid due to the current state of the object.";
-        FileAssert.Contains(diagLogFilePath, errorFirstLine);
-        File.Delete(diagLogFilePath);
+        Assert.Contains(errorFirstLine, GetDiagLogContents(),
+            $"Expected '{errorFirstLine}' in diag logs but not found.");
     }
 
     [TestMethod]
@@ -262,7 +253,7 @@ public class ExecutionTests : AcceptanceTestBase
             GetAssetFullPath("SimpleTestProjectx86.dll");
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
 
-        InvokeVsTest(arguments + " /diag:logs\\");
+        InvokeVsTest(arguments);
 
         ValidateSummaryStatus(1, 0, 0);
         ExitCodeEquals(0);
