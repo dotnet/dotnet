@@ -122,6 +122,21 @@
         <target state="translated">'{0}' veri toplayıcısı bulunamadı</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataCollectionContextNotInitialized">
+        <source>The data collection environment context has not been initialized. Ensure that session started before processing test case events.</source>
+        <target state="translated">Veri toplama ortamı bağlamı başlatılmadı. Test çalışması olaylarını işlemeye başlamadan önce oturumun başlatıldığından emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseEndMissingTestElement">
+        <source>TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.</source>
+        <target state="translated">TestCaseEndEventArgs.TestElement değeri null. Veri toplayıcı, test öğesi olmadan bir test çalışmasını bitiremez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseStartMissingTestElement">
+        <source>TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.</source>
+        <target state="translated">TestCaseStartEventArgs.TestElement değeri null. Veri toplayıcı, test öğesi olmadan bir test çalışması başlatamaz.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
         <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
         <target state="translated">'{0}' veri toplayıcısı, test yürütme ortamında değeri '{2}' olan '{1}' ortam değişkeninin ayarlanması için istekte bulundu, ancak başka bir veri toplayıcısı ('{3}') zaten farklı bir değerle ('{4}') aynı ortam değişkeni için istekte bulunmuştu.</target>

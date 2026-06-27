@@ -5,6 +5,16 @@
     <TargetFrameworks>$(NetFrameworkMinimum);$(ExtensionTargetFrameworks);$(NetCoreAppMinimum)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
+
+  <!-- NativeAOT / trimming compatibility analysis (net8.0+ only) -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <!-- Downgrade pre-existing AOT/trim warnings from errors to warnings.
+         Our new code is AOT-clean; these are from Jsonite and legacy converters. -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2057;IL2067;IL3050</WarningsNotAsErrors>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />

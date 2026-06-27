@@ -23,6 +23,7 @@ public static class Program
 
     internal static int Run(string[]? args, UiLanguageOverride uiLanguageOverride)
     {
+        // Console output is switched to UTF-8 unless the feature flag opts out.
         if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_UTF8_CONSOLE_ENCODING))
         {
             Console.OutputEncoding = Encoding.UTF8;

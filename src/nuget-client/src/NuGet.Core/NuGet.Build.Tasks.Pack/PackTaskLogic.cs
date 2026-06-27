@@ -45,6 +45,8 @@ namespace NuGet.Build.Tasks.Pack
                 Deterministic = request.Deterministic,
                 DeterministicTimestamp = request.DeterministicTimestamp,
                 WarningProperties = WarningProperties.GetWarningProperties(request.TreatWarningsAsErrors, request.WarningsAsErrors, request.NoWarn, request.WarningsNotAsErrors),
+                SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(request.SdkAnalysisLevel),
+                UsingMicrosoftNETSdk = MSBuildRestoreUtility.GetUsingMicrosoftNETSdk(request.UsingMicrosoftNETSdk),
                 PackTargetArgs = new MSBuildPackTargetArgs()
             };
 

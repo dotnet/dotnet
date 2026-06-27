@@ -10,12 +10,12 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">‘{0}’ test kaynağı için testhost bulunamadı.
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+Şunları doğrulayın: 
+  - Test projesi, ‘Microsoft.NET.Test.Sdk’ NuGet paketini referans almaktadır.
+  - Proje oluşturuldu ve çıktı ‘{1}’ içinde yer alıyor.
+  - Projenin hedef çerçevesi, yüklü .NET çalışma zamanı ile uyumludur.
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>

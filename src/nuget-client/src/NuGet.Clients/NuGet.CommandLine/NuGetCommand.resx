@@ -254,7 +254,7 @@ nuget list -verbose -allversions</value>
     <value>Displays a detailed list of information for each package.</value>
   </data>
   <data name="Log_RestoreNoCacheInformation" xml:space="preserve">
-    <value>NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead.</value>
+    <value>NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</value>
     <comment>Do not translate NoCache and NoHttpCache</comment>
   </data>
   <data name="Option_NonInteractive" xml:space="preserve">
@@ -739,29 +739,29 @@ This option should be used when specifying the certificate via -CertificateSubje
     <value>URL to an RFC 3161 timestamping server.</value>
   </data>
   <data name="CommandInvalidArgumentException" xml:space="preserve">
-    <value>Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
     <comment>{0} - argument name</comment>
   </data>
   <data name="SignCommandMultipleCertificateException" xml:space="preserve">
-    <value>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="SignCommandNoArgumentException" xml:space="preserve">
-    <value>No value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
     <comment>{0} - argument name</comment>
   </data>
   <data name="SignCommandNoCertificateException" xml:space="preserve">
-    <value>No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="SignCommandNoPackageException" xml:space="preserve">
-    <value>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="SignCommandMissingArgumentException" xml:space="preserve">
-    <value>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
     <comment>0 - primary param name
 1 - other param name</comment>
   </data>
   <data name="SignCommandNoTimestamperWarning" xml:space="preserve">
-    <value>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="VerifyCommandAllDescription" xml:space="preserve">
     <value>Specifies that all verifications possible should be performed to the package(s).</value>

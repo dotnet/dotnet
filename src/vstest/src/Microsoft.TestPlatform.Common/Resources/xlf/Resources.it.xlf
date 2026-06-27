@@ -122,6 +122,21 @@
         <target state="translated">L'agente di raccolta dati '{0}' non è stato trovato</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataCollectionContextNotInitialized">
+        <source>The data collection environment context has not been initialized. Ensure that session started before processing test case events.</source>
+        <target state="translated">Il contesto dell'ambiente di raccolta dati non è stato inizializzato. Assicurarsi che la sessione sia stata avviata prima di elaborare gli eventi del test case.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseEndMissingTestElement">
+        <source>TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.</source>
+        <target state="translated">TestCaseEndEventArgs.TestElement is null. L'agente di raccolta dati non può terminare un test case senza un elemento di test.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseStartMissingTestElement">
+        <source>TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.</source>
+        <target state="translated">TestCaseStartEventArgs.TestElement is null. L'agente di raccolta dati non può avviare un test case senza un elemento di test.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
         <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
         <target state="translated">L'agente di raccolta dati '{0}' ha richiesto che la variabile di ambiente '{1}' con valore '{2}' fosse impostata nell'ambiente di esecuzione dei test, ma un altro agente di raccolta dati '{3}' ha già richiesto la stessa variabile di ambiente con un valore diverso '{4}'.</target>

@@ -38,8 +38,48 @@ Param(
   [switch] $excludePrereleaseVS,
   [switch] $nativeToolsOnMachine,
   [switch] $help,
+  [switch] $vs,
+  [switch] $vscode,
   [Parameter(ValueFromRemainingArguments = $true)][String[]]$properties
 )
+
+if ($vs -or $vscode) {
+  . $PSScriptRoot\common\tools.ps1
+
+  # This tells .NET Core to use the bootstrapped runtime
+  $env:DOTNET_ROOT = InitializeDotNetCli -install:$true -createSdkLocationFile:$true
+
+  # This tells MSBuild to load the SDK from the directory of the bootstrapped SDK
+  $env:DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR = $env:DOTNET_ROOT
+
+  # This tells .NET Core not to go looking for .NET Core in other places
+  $env:DOTNET_MULTILEVEL_LOOKUP = 0
+
+  # Put our local dotnet.exe on PATH first so Visual Studio knows which one to use
+  $env:PATH = ($env:DOTNET_ROOT + ";" + $env:PATH)
+
+  # Disable .NET runtime signature validation errors which errors for local builds
+  $env:VSDebugger_ValidateDotnetDebugLibSignatures = 0
+
+  if ($vs) {
+    # Launch Visual Studio with the locally defined environment variables
+    & "$PSScriptRoot\..\TestPlatform.slnx"
+  }
+  else {
+    if (Get-Command code -ErrorAction Ignore) {
+      & code "$PSScriptRoot\.."
+    }
+    elseif (Get-Command code-insiders -ErrorAction Ignore) {
+      & code-insiders "$PSScriptRoot\.."
+    }
+    else {
+      Write-Error "VS Code not found. Please install it from https://code.visualstudio.com/"
+      return
+    }
+  }
+
+  return
+}
 
 # Add steps that need to happen before build here
 

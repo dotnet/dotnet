@@ -932,13 +932,13 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">指定的名稱已加入至可用套件來源清單中。請提供唯一名稱。</target>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">指定的來源已加入至可用套件來源清單中。請提供唯一來源。</target>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -1047,8 +1047,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">所選套件版本沒有可用的 README。如需詳細資訊，請瀏覽 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)。</target>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1282,8 +1282,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">請遵循簡單的指示，從 {0} 回復到先前的狀態。</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

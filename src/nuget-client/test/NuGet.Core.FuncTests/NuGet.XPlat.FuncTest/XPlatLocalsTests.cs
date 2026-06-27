@@ -271,7 +271,7 @@ namespace NuGet.XPlat.FuncTest
             // Arrange
             // System.CommandLine treats "--l" and "--c" as the cache location argument (not as option prefixes),
             // so neither --list nor --clear is set, triggering the "no operation" error.
-            var expectedResult = "Please specify an operation i.e. --list or --clear.";
+            var expectedResult = "Specify an operation i.e. --list or --clear.";
 
             // Act
             var result = CommandRunner.Run(
@@ -336,7 +336,7 @@ namespace NuGet.XPlat.FuncTest
             XplatDll.Should().NotBeNull(because: "Could not locate the Xplat dll");
 
             // Arrange
-            var expectedResult = "Please specify an operation i.e. --list or --clear.";
+            var expectedResult = "Specify an operation i.e. --list or --clear.";
 
             // Act
             var result = CommandRunner.Run(
@@ -367,7 +367,7 @@ namespace NuGet.XPlat.FuncTest
             XplatDll.Should().NotBeNull(because: "Could not locate the Xplat dll");
 
             // Arrange
-            var expectedResult = "Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.";
+            var expectedResult = "Both operations, --list and --clear, are not supported in the same command. Specify only one operation.";
 
             // Act
             var result = CommandRunner.Run(

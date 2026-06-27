@@ -16,6 +16,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.Styles" />
+    <!-- Microsoft.VisualStudio.Shell.15.0 has a dependency on a vulnerable version of MessagePack. Once it no longer has a transitive dependency on a vulnerable version, this can be removed -->
+    <PackageReference Include="MessagePack" />
     <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" />
   </ItemGroup>
 

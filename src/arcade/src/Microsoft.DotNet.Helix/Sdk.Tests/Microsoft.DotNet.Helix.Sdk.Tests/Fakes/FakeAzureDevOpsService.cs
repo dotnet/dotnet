@@ -19,7 +19,6 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         private readonly object _sync = new();
         private readonly List<AzureDevOpsTimelineRecord[]> _timelineResponses = [];
         private readonly HashSet<string> _previouslyProcessedJobs = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, int> _inProgressRunsByJobName = new(StringComparer.OrdinalIgnoreCase);
         private readonly Queue<Exception> _uploadFailures = [];
         private int _timelineCallCount;
         private int _nextTestRunId;
@@ -103,38 +102,27 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             }
         }
 
-        public Task<int> CreateTestRunAsync(string name, string helixJobName, CancellationToken cancellationToken)
+        public Task<int> CreateTestRunAsync(string name, CancellationToken cancellationToken)
         {
             lock (_sync)
             {
                 CreateTestRunCallCount++;
 
-                // Idempotent: if a run for this helix job is in-progress, reuse it
-                if (_inProgressRunsByJobName.TryGetValue(helixJobName, out int existingId))
-                {
-                    return Task.FromResult(existingId);
-                }
-
+                // Matches the real AzureDevOpsService: every call creates a brand new in-progress
+                // run. The service never reuses an existing run, so a transient upload failure that
+                // re-enters the retry loop leaves an orphaned (untagged) run behind — exactly the
+                // crash-resilience behavior described in the design.
                 int id = Interlocked.Increment(ref _nextTestRunId);
                 CreatedTestRuns.Add(name);
-                _inProgressRunsByJobName[helixJobName] = id;
                 return Task.FromResult(id);
             }
         }
 
-        public Task CompleteTestRunAsync(int testRunId, CancellationToken cancellationToken)
+        public Task CompleteTestRunAsync(int testRunId, string helixJobName, CancellationToken cancellationToken)
         {
             lock (_sync)
             {
                 CompletedTestRunIds.Add(testRunId);
-
-                string keyToRemove = null;
-                foreach (var kvp in _inProgressRunsByJobName)
-                {
-                    if (kvp.Value == testRunId) { keyToRemove = kvp.Key; break; }
-                }
-
-                if (keyToRemove != null) _inProgressRunsByJobName.Remove(keyToRemove);
                 return Task.CompletedTask;
             }
         }

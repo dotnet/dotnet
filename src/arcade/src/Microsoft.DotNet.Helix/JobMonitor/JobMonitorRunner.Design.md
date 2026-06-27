@@ -38,12 +38,16 @@ to fail this invocation.
 The runner may crash, time out, or be retried at any point. Any behavior that
 must survive a restart can only be reconstructed from durable external state:
 
-- **Azure DevOps test-run name markers** — the monitor appends
-  `[HelixJob:<helix-job-name>]` to each test-run name it creates. The
-  presence of that marker on a completed test run is the durable signal
-  that the corresponding Helix job's results have already been uploaded.
-  (Markers are used instead of test-run tags because the AzDO test-runs API
-  silently drops tags created with the run.)
+- **Azure DevOps test-run tags** — when the monitor completes a test run it
+  tags it with the Helix job name, encoded as `helixjob<guid-without-dashes>`
+  (AzDO test-run tags must be alphanumeric and at most 50 characters). The
+  presence of that tag on a completed test run is the durable signal that the
+  corresponding Helix job's results have already been uploaded. Tags must be
+  posted as objects (`{ "name": "..." }`); the string form is silently dropped.
+  Tags are not returned inline on a run and are read back via the build-scoped
+  test results tags endpoint on the `vstmr` host. The tag is applied at
+  completion (not creation) so it exists if and only if the run completed and
+  results finished uploading.
 - **Helix job properties** — every resubmitted Helix job preserves the
   original submitter's properties and adds `PreviousHelixJobName`, linking
   to the job that was resubmitted. The chain of `PreviousHelixJobName`
@@ -76,8 +80,7 @@ newer incarnations succeed.
 Upload is restart-resilient but logically independent from retry.
 
 1. The same Helix job's test results are never uploaded twice. The durable
-   deduplication signal is the `[HelixJob:<name>]` marker on completed AzDO
-   test runs.
+   deduplication signal is the Helix-job-name tag on completed AzDO test runs.
 2. For every completed Helix job not already uploaded, all available test
    results are uploaded.
 3. Uploads happen in lineage order — oldest incarnation first. If both an
@@ -165,9 +168,9 @@ behaviorally; method names are illustrative.
 
 - **Get timeline records** — return the build's timeline.
 - **Get processed Helix job names** — extract Helix job names from
-  `[HelixJob:<name>]` markers on completed test runs. This is the durable
-  upload-dedup signal.
-- **Create test run / upload results / complete test run** — the standard three-call sequence. Creation always creates a new in-progress test run; durable deduplication is based on the completed-run name marker (§2.2).
+  `helixjob<guid>` tags on completed test runs (read via the build-scoped
+  test results tags endpoint). This is the durable upload-dedup signal.
+- **Create test run / upload results / complete test run** — the standard three-call sequence. Creation always creates a new in-progress test run with a plain name; completion tags the run with the Helix job name. Durable deduplication is based on that completion-time tag (§2.2).
 
 ## 5. Behavior
 
@@ -306,9 +309,9 @@ Uploads are fire-and-forget tasks tracked for later draining:
   cancellation budget so uploads in progress when the runner token fires
   are not abandoned.
 
-The upload sequence per job is: create (or reuse) a test run named
-`{TestRunName} [HelixJob:<name>]`, download results, upload them, complete
-the test run.
+The upload sequence per job is: create (or reuse) a test run with the plain
+`{TestRunName}`, download results, upload them, complete the test run and tag
+it with the Helix job name (`helixjob<guid>`).
 
 ### 5.10 Status logging
 
@@ -326,14 +329,14 @@ least one work item), or `Waiting` (no work items observed yet).
 These shapes are observed by other tools, downstream parsers, or tests and
 must be preserved:
 
-- AzDO test-run name marker: `[HelixJob:<helix-job-name>]`, appended to a
-  caller-supplied test-run name with a single space separator.
+- AzDO test-run tag: `helixjob<guid-without-dashes>`, applied to a completed
+  test run as an object-form tag (`{ "name": "..." }`).
 - AzDO log decorations: `##vso[task.logissue type=warning]` for warnings,
   `##vso[task.logissue type=error]` for errors. Informational lines use
   plain logger output (no `##vso` prefix).
 - Test-results URL: the standard AzDO build-test-results-tab URL for the
   build, used as the link in the final failure block.
 - A Helix work item is considered failed if its exit code is non-zero or
-  its state is not the terminal success state. A work item is considered
-  failed-and-terminal (worth reporting eagerly) when it is failed and not
-  still in flight.
+its state is not the terminal success state. A work item is considered
+failed-and-terminal (worth reporting eagerly) when it is failed and not
+still in flight.
