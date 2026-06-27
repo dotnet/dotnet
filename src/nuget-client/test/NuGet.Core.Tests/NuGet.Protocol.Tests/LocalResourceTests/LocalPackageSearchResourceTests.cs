@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using NuGet.Common;
+using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Tests.Plugins.Helpers;
 using NuGet.Test.Utility;
@@ -730,6 +731,78 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(expected, matchingPackages.Select(p => p.Identity.Version.ToFullString()).ToArray());
                 Assert.Equal(0, testLogger.Warnings);
                 Assert.Equal(0, testLogger.Errors);
+            }
+        }
+
+        [Fact]
+        public void LocalPackageSearchResource_SupportsPackageTypeFiltering()
+        {
+            // Arrange
+            var localResource = new FindLocalPackagesResourceV2(root: ".");
+            var resource = new LocalPackageSearchResource(localResource);
+
+            // Act & Assert
+            Assert.True(resource.SupportsPackageTypeFiltering);
+        }
+
+        [Theory]
+        [InlineData("Dependency")]
+        [InlineData("dependency")]
+        public async Task LocalPackageSearchResource_FilterOnPackageType_MatchesExplicitTypeAndImplicitDependencyAsync(string packageTypeFilter)
+        {
+            using (var root = TestDirectory.Create())
+            {
+                // Arrange
+                var testLogger = new TestLogger();
+
+                // Package that explicitly declares the Dependency package type.
+                var dependencyPackage = new SimpleTestPackageContext()
+                {
+                    Id = "dependencyPackage",
+                    Version = "1.0.0",
+                    PackageTypes = { PackageType.Dependency }
+                };
+
+                // Package that does not declare any package type (implicitly Dependency).
+                var implicitPackage = new SimpleTestPackageContext()
+                {
+                    Id = "implicitPackage",
+                    Version = "1.0.0"
+                };
+
+                // Package with a different package type that should be filtered out.
+                var toolPackage = new SimpleTestPackageContext()
+                {
+                    Id = "toolPackage",
+                    Version = "1.0.0",
+                    PackageTypes = { PackageType.DotnetTool }
+                };
+
+                await SimpleTestPackageUtility.CreatePackagesAsync(root, dependencyPackage, implicitPackage, toolPackage);
+
+                var localResource = new FindLocalPackagesResourceV2(root);
+                var resource = new LocalPackageSearchResource(localResource);
+
+                var filter = new SearchFilter(includePrerelease: true)
+                {
+                    PackageType = packageTypeFilter
+                };
+
+                // Act
+                var packages = (await resource.SearchAsync(
+                        searchTerm: "",
+                        filter,
+                        skip: 0,
+                        take: 30,
+                        log: testLogger,
+                        token: CancellationToken.None))
+                        .OrderBy(p => p.Identity.Id)
+                        .ToList();
+
+                // Assert
+                Assert.Equal(2, packages.Count);
+                Assert.Equal("dependencyPackage", packages[0].Identity.Id);
+                Assert.Equal("implicitPackage", packages[1].Identity.Id);
             }
         }
     }
