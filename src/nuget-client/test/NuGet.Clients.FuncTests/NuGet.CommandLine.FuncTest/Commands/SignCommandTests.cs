@@ -25,7 +25,7 @@ namespace NuGet.CommandLine.FuncTest.Commands
     [Collection(SignCommandTestCollection.Name)]
     public class SignCommandTests
     {
-        private const string _packageAlreadySignedError = "NU3001: The package already contains a signature. Please remove the existing signature before adding a new signature.";
+        private const string _packageAlreadySignedError = "NU3001: The package already contains a signature. Remove the existing signature before adding a new signature.";
         private readonly string _invalidPasswordErrorCode = NuGetLogCode.NU3001.ToString();
         private readonly string _chainBuildFailureErrorCode = NuGetLogCode.NU3018.ToString();
         private readonly string _noCertFoundErrorCode = NuGetLogCode.NU3001.ToString();

@@ -567,10 +567,10 @@ Error: {1}</value>
     <value>Package Manager Options</value>
   </data>
   <data name="ShowWarning_UniqueName" xml:space="preserve">
-    <value>The name specified has already been added to the list of available package sources. Please provide a unique name.</value>
+    <value>The name specified has already been added to the list of available package sources. Provide a unique name.</value>
   </data>
   <data name="ShowWarning_UniqueSource" xml:space="preserve">
-    <value>The source specified has already been added to the list of available package sources. Please provide a unique source.</value>
+    <value>The source specified has already been added to the list of available package sources. Provide a unique source.</value>
   </data>
   <data name="ColumnHeader_Selected" xml:space="preserve">
     <value>Selected</value>
@@ -622,7 +622,7 @@ Error: {1}</value>
     <value>NuGet migrate failed to install packages as PackageReference. Changed files are backed up at {0}</value>
   </data>
   <data name="Upgrade_RevertSteps" xml:space="preserve">
-    <value>Please follow simple instructions from {0} to go back to previous state.</value>
+    <value>Follow the instructions at {0} to return to the previous state.</value>
   </data>
   <data name="Upgrade_UninstallFailed" xml:space="preserve">
     <value>NuGet upgrade failed to uninstall packages from packages.config so rolled back to previous state.</value>
@@ -994,7 +994,7 @@ Error: {1}</value>
     <value>README</value>
   </data>
   <data name="Text_NoReadme" xml:space="preserve">
-    <value>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</value>
+    <value>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</value>
     <comment>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</comment>
   </data>
   <data name="VSOptions_Text_ClearLocalResourcesTitle" xml:space="preserve">

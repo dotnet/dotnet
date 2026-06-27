@@ -66,7 +66,7 @@ internal class TestRunCompleteEventArgsConverter : JsonConverter<TestRunComplete
     {
         if (element.TryGetProperty(name, out var prop) && prop.ValueKind != JsonValueKind.Null)
         {
-            return JsonSerializer.Deserialize<T>(prop.GetRawText(), options);
+            return StjSafe.Deserialize<T>(prop.GetRawText(), options);
         }
 
         return default;
@@ -75,7 +75,7 @@ internal class TestRunCompleteEventArgsConverter : JsonConverter<TestRunComplete
     private static void WriteProperty<T>(Utf8JsonWriter writer, string name, T value, JsonSerializerOptions options)
     {
         writer.WritePropertyName(name);
-        JsonSerializer.Serialize(writer, value, options);
+        StjSafe.Serialize(writer, value, options);
     }
 }
 

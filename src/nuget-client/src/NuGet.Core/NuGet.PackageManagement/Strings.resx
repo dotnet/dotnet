@@ -160,7 +160,7 @@
     <value>Restoring NuGet package {0}.</value>
   </data>
   <data name="SolutionDirectoryNotAvailable" xml:space="preserve">
-    <value>Solution is not opened or not saved. Please ensure you have an open and saved solution.</value>
+    <value>Solution is not opened or not saved. Ensure you have an open and saved solution.</value>
   </data>
   <data name="SolutionManagerNotAvailableForUninstall" xml:space="preserve">
     <value>Uninstall is not supported when SolutionManager is not available</value>
@@ -226,13 +226,13 @@
     <value>Resolution was successful but resulted in no action</value>
   </data>
   <data name="ExceptionWhenTryingToAddSource" xml:space="preserve">
-    <value>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</value>
+    <value>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</value>
   </data>
   <data name="PackageNotFoundInPrimarySources" xml:space="preserve">
-    <value>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</value>
+    <value>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</value>
   </data>
   <data name="UnableToGatherPackageFromSource" xml:space="preserve">
-    <value>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </value>
+    <value>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</value>
   </data>
   <data name="NoUpdatesAvailable" xml:space="preserve">
     <value>There are no new updates available.</value>

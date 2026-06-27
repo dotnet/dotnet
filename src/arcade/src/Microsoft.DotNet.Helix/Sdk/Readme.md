@@ -131,7 +131,7 @@ What this means in practice:
     naturally converge — each rerun should resubmit fewer work items than the previous one.
 - **Test result uploads are deduplicated.** Each Helix job's test results are uploaded at most
   once per build, even across monitor reruns. The monitor identifies already-uploaded jobs from
-  Azure DevOps test-run name markers, so it's always safe to re-run the monitor job.
+  Azure DevOps test-run tags, so it's always safe to re-run the monitor job.
 
 💡 The recommended workflow when something fails is therefore:
 

@@ -200,7 +200,8 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
         if (_collectProcessDumpOnHang)
         {
             _inactivityTimer ??= new InactivityTimer(CollectDumpAndAbortTesthost);
-            ResetInactivityTimer();
+            // Don't start the timer here — wait until TestHostLaunched so we know
+            // which process to dump. ResetInactivityTimer is called from TestHostLaunchedHandler.
         }
     }
 
@@ -243,6 +244,10 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
         {
             EqtTrace.Verbose("Inactivity timer is already disposed.");
         }
+
+        // If testhost has not launched yet, the timer should not have been started,
+        // so this callback should not fire. Assert to catch unexpected paths.
+        TPDebug.Assert(_testHostProcessId != 0, "CollectDumpAndAbortTesthost called but testhost has not launched yet.");
 
         if (_collectProcessDumpOnCrash)
         {
@@ -630,9 +635,9 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
     /// <param name="args">TestHostLaunchedEventArgs</param>
     private void TestHostLaunchedHandler(object? sender, TestHostLaunchedEventArgs args)
     {
-        ResetInactivityTimer();
-        _testHostProcessId = args.TestHostProcessId;
+        Interlocked.Exchange(ref _testHostProcessId, args.TestHostProcessId);
         _testHostProcessName = _processHelper.GetProcessName(args.TestHostProcessId);
+        ResetInactivityTimer();
 
         if (!_collectProcessDumpOnCrash)
         {
@@ -664,7 +669,10 @@ public class BlameCollector : DataCollector, ITestExecutionEnvironmentSpecifier
     /// </summary>
     private void ResetInactivityTimer()
     {
-        if (!_collectProcessDumpOnHang || _inactivityTimerAlreadyFired)
+        // Don't start or reset the timer until testhost has launched.
+        // _testHostProcessId is set in TestHostLaunchedHandler; if it is still 0, testhost
+        // hasn't started yet and there is no process to dump.
+        if (!_collectProcessDumpOnHang || _inactivityTimerAlreadyFired || _testHostProcessId == 0)
         {
             return;
         }
