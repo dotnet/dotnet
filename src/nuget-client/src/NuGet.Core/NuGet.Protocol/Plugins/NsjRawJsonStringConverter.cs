@@ -26,14 +26,18 @@ namespace NuGet.Protocol.Plugins
             }
 
             var obj = JObject.Load(reader);
-            return obj.ToString(Formatting.None);
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+            return obj.ToString(Formatting.None, Array.Empty<JsonConverter>());
+#pragma warning restore IL2026, IL3050
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             if (value is string s)
             {
-                JObject.Parse(s).WriteTo(writer);
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+                JObject.Parse(s).WriteTo(writer, Array.Empty<JsonConverter>());
+#pragma warning restore IL2026, IL3050
             }
             else
             {
