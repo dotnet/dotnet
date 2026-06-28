@@ -60,6 +60,7 @@
   <Project Path="ParametrizedTestProject/ParametrizedTestProject.csproj" />
   <Project Path="problematic-child/problematic-child.csproj" />
   <Project Path="ProjectFileRunSettingsTestProject/ProjectFileRunSettingsTestProject.csproj" />
+  <Project Path="ProjectWithoutTestSdk/ProjectWithoutTestSdk.csproj" />
   <Project Path="RecursiveResourceLookupCrash/RecursiveResourceLookupCrash.csproj" />
   <Project Path="SelfContainedAppTestProject/SelfContainedAppTestProject.csproj" />
   <Project Path="SerializeTestRunTestProject/SerializeTestRunTestProject.csproj" />
