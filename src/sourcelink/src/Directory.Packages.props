@@ -23,7 +23,10 @@
     <!-- Runtime dependencies -->
     <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
     <PackageVersion Include="System.IO.Hashing" Version="$(SystemIOHashingVersion)" />
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
+    <!-- Pinned only outside source-build: the 8.0.3 pin exists to fix the net472 NU1903 audit error.
+         Source-build doesn't build net472 and disables NuGet audit, so the pin is unnecessary there and
+         would pull 8.0.3 (and transitive System.Security.Cryptography.Pkcs) in as prebuilts. -->
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
   <!-- External dependencies -->
