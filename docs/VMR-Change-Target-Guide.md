@@ -6,6 +6,7 @@ This guide helps you answer “What branch can I check into for my change?” us
 
 See also:
 - [Servicing Workflow Details](VMR-Servicing-Workflows.md)
+- [Feature Band Constraints for Tooling Repo Devs](VMR-Feature-Band-Tooling-Constraints.md) — additional constraints (SDK version, source availability, etc.) when working in a non-1xx band branch.
 
 ---
 
