@@ -16,7 +16,6 @@
 # 'folder/*' matches all files and directories in 'folder/'. It will not match 'folder/abc/def'
 # 'folder/' is equivalent to 'folder/**. It matches 'folder/', 'folder/abc', and 'folder/abc/def/'
 
-# Intentional - MSFT build includes test-host that targets netcoreapp3.1
 # Intentional - netfx excluded from source-build
 ./sdk/x.y.z/Sdks/Microsoft.NET.Sdk.WindowsDesktop/tools/net472/|msft
 
