@@ -21,6 +21,7 @@
     <NuGetVersioningVersion>6.12.1</NuGetVersioningVersion>
     <!-- runtime -->
     <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
+    <SystemSecurityCryptographyXmlVersion>8.0.3</SystemSecurityCryptographyXmlVersion>
   </PropertyGroup>
 
 </Project>
