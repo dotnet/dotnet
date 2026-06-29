@@ -932,13 +932,13 @@ Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">Belirtilen ad zaten kullanılabilir paket kaynakları listesine eklendi. Lütfen benzersiz bir ad sağlayın.</target>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">Belirtilen kaynak zaten kullanılabilir paket kaynakları listesine eklendi. Lütfen benzersiz bir kaynak sağlayın.</target>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -1047,8 +1047,8 @@ Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Seçili paket sürümü için kullanılabilir bir BENİOKU dosyası yok. Daha fazla bilgi için lütfen [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme) adresini ziyaret edin.</target>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1282,8 +1282,8 @@ Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">Lütfen önceki duruma geri dönmek için {0} konumundaki basit yönergeleri izleyin.</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

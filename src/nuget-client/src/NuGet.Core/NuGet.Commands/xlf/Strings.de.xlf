@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="de" original="../Strings.resx">
     <body>
@@ -1113,6 +1113,11 @@ Aktualisieren Sie Ihr .NET SDK oder entfernen Sie RestoreUseLegacyDependencyReso
         <target state="translated">Das Paket „{0}“ wird als Abhängigkeit von „{1}“ gekürzt. Die maximal kürzbare Version ist „{2}“.</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">Die Zertifikatdatei "{0}" wurde nicht gefunden. Eine Liste der anerkannten Methoden zur Bereitstellung eines Zertifikats finden Sie unter https://docs.nuget.org/docs/reference/command-line-reference.</target>
@@ -1458,8 +1463,8 @@ Aktualisieren Sie Ihr .NET SDK oder entfernen Sie RestoreUseLegacyDependencyReso
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="translated">Es sind {0} Paketquellen in Ihrer Konfiguration definiert. Wenn Sie die zentrale Paketverwaltung verwenden, ordnen Sie Ihre Paketquellen mit der Paketquellenzuordnung (https://aka.ms/nuget-package-source-mapping) zu oder geben Sie eine einzelne Paketquelle an. Die folgenden Quellen sind definiert: {1}</target>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1527,7 +1532,7 @@ NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter https://ak
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate überschreibt RestoreLockedMode. Die Paketsperrdatei wird erneut ausgewertet und neu generiert, und der gesperrte Modus wird ignoriert.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

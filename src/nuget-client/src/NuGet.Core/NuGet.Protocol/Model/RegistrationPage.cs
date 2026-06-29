@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
@@ -16,9 +14,11 @@ namespace NuGet.Protocol.Model
     /// </summary>
     internal class RegistrationPage
     {
+        // NULL_INC: Annotated as non-null per protocol spec (link above). JSON deserialization may leave these
+        // as null if the server sends malformed data, but existing code assumes non-null without checks.
         [JsonProperty("@id")]
         [JsonPropertyName("@id")]
-        public string Url { get; set; }
+        public string Url { get; set; } = null!;
 
         /// <summary>
         /// This property can be null when this model is used as an item in <see cref="RegistrationIndex.Items"/> when
@@ -27,14 +27,18 @@ namespace NuGet.Protocol.Model
         /// </summary>
         [JsonProperty("items")]
         [JsonPropertyName("items")]
-        public List<RegistrationLeafItem> Items { get; set; }
+        public List<RegistrationLeafItem>? Items { get; set; }
 
+        // NULL_INC: Annotated as non-null per protocol spec (link above). JSON deserialization may leave these
+        // as null if the server sends malformed data, but existing code assumes non-null without checks.
         [JsonProperty("lower")]
         [JsonPropertyName("lower")]
-        public string Lower { get; set; }
+        public string Lower { get; set; } = null!;
 
+        // NULL_INC: Annotated as non-null per protocol spec (link above). JSON deserialization may leave these
+        // as null if the server sends malformed data, but existing code assumes non-null without checks.
         [JsonProperty("upper")]
         [JsonPropertyName("upper")]
-        public string Upper { get; set; }
+        public string Upper { get; set; } = null!;
     }
 }

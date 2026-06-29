@@ -5,17 +5,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 {
-    internal abstract class MsiBase
+    /// <summary>
+    /// Base class for workload MSIs templates.
+    /// </summary>
+    internal abstract class MsiBase : WorkloadTemplateBase
     {
+        /// <summary>
+        /// MSBuild tool task for running the WiX CLI.
+        /// </summary>
+        private WixToolTask _wixToolTask;
+
+        /// <summary>
+        /// The base registry key where all workload records are written.
+        /// </summary>
+        protected const string InstallRecordBaseKey = @"SOFTWARE\Microsoft\dotnet";
+
         /// <summary>
         /// Replacement token for license URLs in the generated EULA.
         /// </summary>
@@ -40,7 +55,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// Metadata for the MSI such as package ID, version, author information, etc.
         /// </summary>
-        public MsiMetadata Metadata
+        public IWorkloadPackageMetadata Metadata
         {
             get;
         }
@@ -59,9 +74,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         /// <summary>
-        /// The directory where the compiler output (.wixobj files) will be generated.
+        /// When <see langword="true"/>, a wixpack archive will be generated that can be used to sign the MSI.
         /// </summary>
-        protected string CompilerOutputPath
+        protected bool CreateWixPack
         {
             get;
         }
@@ -75,12 +90,39 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         /// <summary>
+        /// The registry key for tracking installation records used by the CLI and
+        /// and finalizer. 
+        /// </summary>
+        protected string InstallationRecordKey
+        {
+            get;
+            init;
+        }
+
+        /// <summary>
         /// Gets the value to use for the manufacturer. 
         /// </summary>
         protected string Manufacturer =>
             (!string.IsNullOrWhiteSpace(Metadata.Authors) && (Metadata.Authors.IndexOf("Microsoft", StringComparison.OrdinalIgnoreCase) < 0)) ?
             Metadata.Authors :
             DefaultValues.Manufacturer;
+
+        /// <summary>
+        /// The package type represented by the MSI.
+        /// </summary>
+        protected abstract string? MsiPackageType
+        {
+            get;
+        }
+
+        /// <summary>
+        /// The provider key name used to manage MSI dependents.
+        /// </summary>
+        protected string ProviderKeyName
+        {
+            get;
+            init;
+        }
 
         /// <summary>
         /// The platform of the MSI.
@@ -91,24 +133,35 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         /// <summary>
-        /// The filename of the MSI file to generate.
+        /// The ProductCode of the MSI.
         /// </summary>
-        protected string OutputName => $"{Utils.GetTruncatedHash(BaseOutputName, HashAlgorithmName.SHA256)}-{Platform}.msi";
+        protected Guid ProductCode
+        {
+            get;
+            init;
+        }
 
         /// <summary>
-        /// The directory where the WiX source code will be generated.
+        /// The filename of the MSI file to generate.
         /// </summary>
-        protected string WixSourceDirectory
+        protected string OutputName =>
+            $"{Utils.GetTruncatedHash(BaseOutputName, HashAlgorithmName.SHA256)}-{Platform}.msi";
+
+        /// <summary>
+        /// Toolset configuration to use to invoke the WiX CLI and related tools.
+        /// </summary>
+        protected WixToolsetConfiguration WixToolsetConfig
         {
             get;
         }
 
         /// <summary>
-        /// The directory containing the WiX toolset binaries.
+        /// The UpgradeCode of the MSI.
         /// </summary>
-        protected string WixToolsetPath
+        protected Guid UpgradeCode
         {
             get;
+            init;
         }
 
         /// <summary>
@@ -117,27 +170,126 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// </summary>
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
-        public MsiBase(MsiMetadata metadata, IBuildEngine buildEngine, string wixToolsetPath,
-            string platform, string baseIntermediateOutputPath)
+        public MsiBase(IWorkloadPackageMetadata metadata, IBuildEngine buildEngine, WixToolsetConfiguration wixToolsetConfig,
+            string platform, string baseIntermediateOutputPath, bool createWixPack = true) : base(baseIntermediateOutputPath)
         {
             BuildEngine = buildEngine;
-            WixToolsetPath = wixToolsetPath;
+            Metadata = metadata;
+            WixToolsetConfig = wixToolsetConfig;
+            CreateWixPack = createWixPack;
+
+            InstallationRecordKey = InstallRecordBaseKey;
             Platform = platform;
             BaseIntermediateOutputPath = baseIntermediateOutputPath;
+            ProviderKeyName = "";
 
-            // Candle expects the output path to be terminated with a single '\'.
-            CompilerOutputPath = Utils.EnsureTrailingSlash(Path.Combine(baseIntermediateOutputPath, "wixobj", metadata.Id, $"{metadata.PackageVersion}", platform));
-            WixSourceDirectory = Path.Combine(baseIntermediateOutputPath, "src", "wix", metadata.Id, $"{metadata.PackageVersion}", platform);
-            Metadata = metadata;
+            ProductCode = Guid.NewGuid();
+            ReplacementTokens[MsiTokens.__MANUFACTURER__] = Manufacturer;
+            ReplacementTokens[MsiTokens.__NAME__] = GetProductName(Platform);
+            ReplacementTokens[MsiTokens.__PACKAGE_ID__] = metadata.Id;
+            ReplacementTokens[MsiTokens.__PACKAGE_VERSION__] = metadata.PackageVersion.ToString();
+            ReplacementTokens[MsiTokens.__PRODUCTCODE__] = ProductCode.ToString("B");
+            ReplacementTokens[MsiTokens.__VERSION__] = metadata.MsiVersion.ToString();
+
+            SourcePath = Path.Combine(SourcePath, "wix", metadata.Id, $"{metadata.PackageVersion}", platform);
+
+            _wixToolTask = new WixToolTask(buildEngine, wixToolsetConfig);
         }
+
+        /// <summary>
+        /// Create the initial set of source files required to build the MSI. 
+        /// </summary>
+        /// <remarks>
+        /// Derived classes should call this method inside their own Create method to ensure the base product source file is generated. 
+        /// </remarks>
+        /// <returns>A WixDocument representing the Product.wxs source file.</returns>
+        protected WixDocument CreateProduct()
+        {
+            // Generate the EULA on disk and include its path as a replacement token before
+            // the primary .wxs template is created since AddFile always applies the replacement tokens.
+            ReplacementTokens[MsiTokens.__EULA_RTF__] = GenerateEula();
+            var productDoc = new WixDocument(AddFile("Product.wxs"));
+
+            // Add additional authoring to set DOTNETHOME property based on the native machine
+            // type. This is needed to support non-native installs like x64 on arm64.
+            if (Platform == "x64")
+            {
+                AddFile("dotnethome_x64.wxs");
+                productDoc.AddCustomActionRef("Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE");
+            }
+
+            return productDoc;
+        }
+
+        /// <summary>
+        /// Creates a RegistryKey for the workload installation record.
+        /// </summary>
+        /// <returns>The RegistryKey element for the workload installation record.</returns>
+        protected virtual XElement CreateInstallationRecord() =>
+            WixDocument.CreateRegistryKey(InstallationRecordKey, "HKLM")
+                .AddRegistryValue("DependencyProviderKey", ProviderKeyName, keyPath: true)
+                .AddRegistryValue("ProductCode", $"{ProductCode:B}")
+                .AddRegistryValue("UpgradeCode", $"{UpgradeCode:B}")
+                .AddRegistryValue("ProductVersion", Metadata.MsiVersion.ToString())
+                .AddRegistryValue("ProductLanguage", DefaultValues.Wix.Language, type: "integer");
 
         /// <summary>
         /// Produces an MSI and returns a task item with metadata about the MSI.
         /// </summary>
         /// <param name="outputPath">The directory where the MSI will be generated.</param>
-        /// <param name="iceSuppressions">A set of internal consistency evaluators to suppress or <see langword="null"/>.</param>
         /// <returns>An item representing the built MSI.</returns>
-        public abstract ITaskItem Build(string outputPath, ITaskItem[]? iceSuppressions);
+        public ITaskItem Build(string outputPath)
+        {
+            // Ensure that all the sources are generated before building the MSI.
+            Create();
+
+            _wixToolTask.Architecture = Platform;
+            _wixToolTask.OutputPath = Path.Combine(outputPath, OutputName);
+            _wixToolTask.AddPreprocessorDefinition(PreprocessorDefinitionNames.InstallerPlatform, Platform);
+            _wixToolTask.AddSourceFiles(Files);
+
+            if (!_wixToolTask.Execute())
+            {
+                throw new Exception(string.Format(Strings.FailedToCompileMsi, _wixToolTask.GetWixCommandLine()));
+            }
+
+            TaskItem msiItem = new TaskItem(_wixToolTask.OutputPath);
+            msiItem.SetMetadata(Workloads.Metadata.Platform, Platform);
+            msiItem.SetMetadata(Workloads.Metadata.Version, $"{Metadata.MsiVersion}");
+            msiItem.SetMetadata(Workloads.Metadata.SwixPackageId, Metadata.SwixPackageId);
+            msiItem.SetMetadata(Workloads.Metadata.PackageType, MsiPackageType);
+            msiItem.SetMetadata(Workloads.Metadata.SourcePath, SourcePath);
+
+            // NuGet limits package sizes to 250MB and Visual Studio has seen degraded performance for online installs
+            // when files exceed this. The actual limit is capped below 250MB to account for additional metadata and files
+            // we may include in the NuGet package that will wrap the workload MSI.
+            var fi = new FileInfo(msiItem.ItemSpec);
+            if (fi.Length > DefaultValues.MaxMsiSize)
+            {
+                throw new Exception($"The generated MSI, {msiItem.ItemSpec}, exceeded the maximum allowed size ({DefaultValues.MaxMsiSize} bytes).");
+            }
+
+            // Create the JSON manifest for CLI based installations.
+            string msiJsonPath = MsiProperties.Create(msiItem.ItemSpec);
+            NuGetPackageFiles[Path.GetFullPath(msiJsonPath)] = @"\data\msi.json";
+            NuGetPackageFiles[msiItem.GetMetadata(Workloads.Metadata.FullPath)] = @"\data";
+            NuGetPackageFiles["LICENSE.TXT"] = @"\";
+
+            if (CreateWixPack)
+            {
+                var createWixPackTask = _wixToolTask.GetCreateWixBuildWixpackTask(BuildEngine, IntermediateOutputPath,
+                    OutputPath, _wixToolTask.OutputPath, Path.Combine(SourcePath, "wixpack"));
+
+                if (!createWixPackTask.Execute())
+                {
+                    throw new Exception("Failed to generate wixpack.");
+                }
+
+                msiItem.SetMetadata(Workloads.Metadata.WixPack, createWixPackTask.OutputFile);
+            }
+
+            return msiItem;
+        }
 
         /// <summary>
         /// Gets the platform specific ProductName MSI property.  
@@ -152,101 +304,54 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// </summary>
         protected string GenerateEula()
         {
-            string eulaRtf = Path.Combine(WixSourceDirectory, "eula.rtf");
+            string eulaRtf = Path.Combine(SourcePath, "eula.rtf");
+            Directory.CreateDirectory(SourcePath);
             File.WriteAllText(eulaRtf, s_eula.Replace(__LICENSE_URL__, Metadata.LicenseUrl));
 
             return eulaRtf;
         }
 
         /// <summary>
-        /// Creates a new compiler tool task and configures some common extensions and preprocessor
-        /// variables.
+        /// Invokes Heat to harvest a directory and creates a ComponentGroupRef element that can be inserted into
+        /// the generated source.
         /// </summary>
-        /// <returns></returns>
-        protected CompilerToolTask CreateDefaultCompiler()
+        /// <param name="sourcePath">The file system of the directory to harvest.</param>
+        /// <param name="directoryReference">The directory reference to use for root directories.</param>
+        /// <param name="sourceVariableName">The preprocessor variable to use for substituting File@Source.</param>
+        /// <returns>A string containing the component group ID associated with the harvested files.</returns>
+        /// <exception cref="Exception">If Heat failed to execute.</exception>
+        /// <remarks>Starting with v5, WiX supports a Files element that can be used to perform simple harvesting using
+        /// globs. The authoring is generated in memory instead of a separate source file, making it incompatible with 
+        /// wixpacks Arcade uses for signing.
+        /// </remarks>
+        protected string HarvestDirectory(string sourcePath, string directoryReference,
+            string sourceVariableName = DefaultValues.Wix.SourceVariableName)
         {
-            CompilerToolTask candle = new(BuildEngine, WixToolsetPath, CompilerOutputPath, Platform);
+            // Generate a random component group ID. The generated ComponentGroupRef XML element will have the same ID
+            // and can then be inserted into any element that supports havinge a ComponentGroupRef as a child, for example,
+            // a Feature element.
+            string componentGroupId = $"cg{Guid.NewGuid():N}";
+            string outputFile = Path.Combine(SourcePath, componentGroupId + ".wxs");
 
-            // Required extension to parse the dependency provider authoring.
-            candle.AddExtension(WixExtensions.WixDependencyExtension);
-
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.EulaRtf, GenerateEula());
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.Manufacturer, Manufacturer);
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.PackageId, Metadata.Id);
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.PackageVersion, $"{Metadata.PackageVersion}");
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.Platform, Platform);
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.ProductCode, $"{Guid.NewGuid():B}");
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.ProductName, GetProductName(Platform));
-            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.ProductVersion, $"{Metadata.MsiVersion}");
-
-            return candle;
-        }
-
-        /// <summary>
-        /// Links the MSI using the output from the WiX compiler using a default set of WiX extensions.
-        /// </summary>
-        /// <param name="compilerOutputPath">The path where the output of the compiler (.wixobj files) will be generated.</param>
-        /// <param name="outputFile">The full path of the MSI to create during linking.</param>
-        /// <param name="iceSuppressions">A set of internal consistency evaluators to suppress. May be <see langword="null"/>.</param>
-        /// <returns>An <see cref="ITaskItem"/> for the MSI that was created.</returns>
-        /// <exception cref="Exception"></exception>
-        protected ITaskItem Link(string compilerOutputPath, string outputFile, ITaskItem[]? iceSuppressions = null)
-        {
-            return Link(compilerOutputPath, outputFile, iceSuppressions, WixExtensions.WixDependencyExtension,
-                WixExtensions.WixUIExtension, WixExtensions.WixUtilExtension);
-        }
-
-        /// <summary>
-        /// Links the MSI using the output from the WiX compiler and a set of WiX extensions.
-        /// </summary>
-        /// <param name="compilerOutputPath">The path where the output of the compiler (.wixobj files) can be found.</param>
-        /// <param name="outputFile">The full path of the MSI to create during linking.</param>
-        /// <param name="iceSuppressions">A set of internal consistency evaluators to suppress. May be <see langword="null"/>.</param>
-        /// <param name="wixExtensions">A list of WiX extensions to include when linking the MSI.</param>
-        /// <returns>An <see cref="ITaskItem"/> for the MSI that was created.</returns>
-        /// <exception cref="Exception"></exception>
-        protected ITaskItem Link(string compilerOutputPath, string outputFile, ITaskItem[]? iceSuppressions, params string[] wixExtensions)
-        {
-            // Link the MSI. The generated filename contains the semantic version (excluding build metadata) and platform. 
-            // If the source package already contains a platform, e.g. an aliased package that has a RID, then we don't add
-            // the platform again.
-            LinkerToolTask light = new(BuildEngine, WixToolsetPath)
+            HarvesterToolTask heat = new(BuildEngine, WixToolsetConfig)
             {
+                ComponentGroupName = componentGroupId,
+                DirectoryReference = directoryReference,
                 OutputFile = outputFile,
-                SourceFiles = Directory.EnumerateFiles(compilerOutputPath, "*.wixobj"),
-                SuppressIces = iceSuppressions == null ? null : string.Join(";", iceSuppressions.Select(i => i.ItemSpec))
+                Platform = this.Platform,
+                SourceDirectory = sourcePath,
+                SourceVariableName = sourceVariableName
             };
 
-            foreach (string wixExtension in wixExtensions)
+            if (!heat.Execute())
             {
-                light.AddExtension(wixExtension);
+                throw new Exception(Strings.HeatFailedToHarvest);
             }
 
-            if (!light.Execute())
-            {
-                throw new Exception(Strings.FailedToLinkMsi);
-            }
+            AddSourceFile(outputFile);
+            _wixToolTask.AddPreprocessorDefinition(sourceVariableName, sourcePath);
 
-            TaskItem msiItem = new TaskItem(light.OutputFile);
-
-            // Return a task item that contains all the information about the generated MSI.            
-            msiItem.SetMetadata(Workloads.Metadata.Platform, Platform);
-            msiItem.SetMetadata(Workloads.Metadata.WixObj, compilerOutputPath);
-            msiItem.SetMetadata(Workloads.Metadata.Version, $"{Metadata.MsiVersion}");
-            msiItem.SetMetadata(Workloads.Metadata.SwixPackageId, Metadata.SwixPackageId);
-
-            return msiItem;
-        }
-
-        protected void AddDefaultPackageFiles(ITaskItem msi)
-        {
-            NuGetPackageFiles[msi.GetMetadata(Workloads.Metadata.FullPath)] = @"\data";
-
-            // Create the JSON manifest for CLI based installations.
-            string msiJsonPath = MsiProperties.Create(msi.ItemSpec);
-            NuGetPackageFiles[Path.GetFullPath(msiJsonPath)] = "\\data\\msi.json";
-
-            NuGetPackageFiles["LICENSE.TXT"] = @"\";
+            return componentGroupId;
         }
     }
 }

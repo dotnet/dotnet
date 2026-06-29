@@ -451,7 +451,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             exitCode.Should().Be(0);
             azdo.UploadTestResultsCallCount.Should().Be(2);
             delayCount.Should().Be(1);
-            azdo.CreatedTestRuns.Should().ContainSingle();
+            // The first attempt creates a run then fails mid-upload, orphaning it (untagged,
+            // never completed). The retry creates a second run that uploads and completes.
+            azdo.CreatedTestRuns.Should().HaveCount(2);
             azdo.CompletedTestRunIds.Should().ContainSingle();
             azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         }
@@ -1266,6 +1268,66 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             logger.Messages.Should().Contain(message =>
                 message.Contains("non-monitor Azure DevOps pipeline job(s) were still in progress or queued", StringComparison.Ordinal)
                 && message.Contains("Test Linux [state=inProgress, result=none]", StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        /// Regression: on cancellation the monitor must cancel in-flight Helix jobs immediately and
+        /// must not gate that on the test-result upload queue draining. An upload that is stuck in a
+        /// non-cancellable operation when the timeout fires must neither delay nor prevent Helix job
+        /// cancellation; its unfinished results are re-uploaded by a later monitor invocation.
+        /// </summary>
+        [Fact]
+        public async Task MonitorTimesOut_DoesNotWaitForUploadDrainBeforeCancellingHelixJobs()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+
+            // The upload of helix-finished starts but never completes and ignores cancellation,
+            // simulating an upload stuck in a non-cancellable network call when the timeout fires.
+            var uploadGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            azdo.UploadBlocker = uploadGate.Task;
+            azdo.UploadBlockerIgnoresCancellation = true;
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "inProgress"));
+
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-finished", "finished"),
+                    HelixJob("helix-running", "running"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-finished"] = PassFail(passed: ["finished-work-item"]),
+                });
+
+            using var cts = new CancellationTokenSource();
+            var runner = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo, helix,
+                async (_, _) =>
+                {
+                    // Cancel once the (stuck) upload is genuinely in flight.
+                    Task started = await Task.WhenAny(azdo.UploadStarted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+                    started.Should().BeSameAs(azdo.UploadStarted.Task);
+                    cts.Cancel();
+                });
+
+            // RunAsync must return promptly even though an upload is stuck: it must not block on the
+            // drain. The WaitAsync guard fails the test (instead of hanging) if the drain is
+            // reintroduced ahead of cancellation.
+            int exitCode = await runner.RunAsync(cts.Token).WaitAsync(TimeSpan.FromSeconds(10));
+
+            exitCode.Should().Be(1);
+            // The still-running Helix job was cancelled despite the stuck in-flight upload.
+            helix.CanceledJobs.Should().BeEquivalentTo(["helix-running"]);
+            // The stuck upload never completed, so its job was not recorded as uploaded; a later
+            // monitor invocation re-uploads it.
+            azdo.UploadedJobNames.Should().BeEmpty();
+            azdo.UploadCompleted.Task.IsCompleted.Should().BeFalse();
+
+            // Release the stuck upload so the abandoned task can finish.
+            uploadGate.TrySetResult();
         }
 
         /// <summary>
@@ -2449,6 +2511,72 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             helix.Resubmissions.Should().ContainSingle();
             helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
             azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux-resub"]);
+        }
+
+        /// <summary>
+        /// On a second monitor attempt within the same build, jobs that already have an
+        /// uploaded test run (tracked via ProcessedHelixJobs, seeded from AzDO test-run name
+        /// markers) must not be re-logged as completed and must not have their failed
+        /// work-item console links re-emitted, nor must their results be re-uploaded.
+        /// </summary>
+        [Fact]
+        public async Task PreviouslyProcessedJob_DoesNotReLogCompletionOrReUpload()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            azdo.WithPreviouslyProcessedJob("helix-linux");
+            azdo.WithPreviouslyProcessedJob("helix-windows");
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "completed", "succeeded"),
+                PipelineJob("Test Windows", "completed", "succeeded"));
+
+            // Both jobs are completed and present in the Helix snapshot. helix-linux had a
+            // failed work item in the prior attempt; helix-windows passed. Neither should be
+            // resubmitted in this attempt (the failure was already resolved upstream — for
+            // this test we just need them to remain terminal in their previously-processed
+            // state, so we configure no resubmission).
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-linux", "finished"),
+                    HelixJob("helix-windows", "finished"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["wi-linux-pass"]),
+                    ["helix-windows"] = PassFail(passed: ["wi-win-pass"]),
+                });
+
+            var runner = CreateRunner(azdo, helix, logger: logger);
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(0);
+
+            // Neither job is re-uploaded (no CreateTestRun/UploadTestResults/CompleteTestRun
+            // calls for these helix job names).
+            azdo.UploadedJobNames.Should().BeEmpty();
+            azdo.CreatedTestRuns.Should().BeEmpty();
+
+            // Neither job triggers the "Job X completed. Processing test results..." log
+            // line nor the "✅ Job 'X' succeeded" / "❌ Job 'X' failed" completion line that
+            // ReconcileCompletedJobAsync emits for jobs it actually processes.
+            logger.Messages.Should().NotContain(message =>
+                message.Contains("helix-linux", StringComparison.Ordinal)
+                && message.Contains("Processing test results", StringComparison.Ordinal));
+            logger.Messages.Should().NotContain(message =>
+                message.Contains("helix-windows", StringComparison.Ordinal)
+                && message.Contains("Processing test results", StringComparison.Ordinal));
+            logger.Messages.Should().NotContain(message =>
+                message.Contains("helix-linux", StringComparison.Ordinal)
+                && (message.Contains("succeeded", StringComparison.Ordinal)
+                    || message.Contains("failed (", StringComparison.Ordinal)));
+            logger.Messages.Should().NotContain(message =>
+                message.Contains("helix-windows", StringComparison.Ordinal)
+                && (message.Contains("succeeded", StringComparison.Ordinal)
+                    || message.Contains("failed (", StringComparison.Ordinal)));
         }
 
         /// <summary>

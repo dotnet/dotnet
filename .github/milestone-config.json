@@ -12,5 +12,8 @@
     "dotnet/xdt",
     "microsoft/vstest",
     "nuget/nuget.client"
+  ],
+  "closedMilestoneRepos": [
+    "dotnet/runtime"
   ]
 }

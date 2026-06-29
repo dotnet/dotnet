@@ -106,7 +106,7 @@ namespace NuGet.MSSigning.Extensions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid value provided for &apos;{0}&apos;. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign.
+        ///   Looks up a localized string similar to Invalid value provided for &apos;{0}&apos;. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign.
         /// </summary>
         internal static string MSSignCommandInvalidArgumentException {
             get {
@@ -160,7 +160,7 @@ namespace NuGet.MSSigning.Extensions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string MSSignCommandNoPackageException {
             get {
@@ -169,7 +169,7 @@ namespace NuGet.MSSigning.Extensions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No &apos;-Timestamper&apos; option was provided the signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to No &apos;-Timestamper&apos; option was provided the signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string MSSignCommandNoTimestamperWarning {
             get {

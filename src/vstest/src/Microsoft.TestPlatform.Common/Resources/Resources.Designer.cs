@@ -133,6 +133,33 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The data collection environment context has not been initialized. Ensure that session started before processing test case events.
+        /// </summary>
+        internal static string DataCollectionContextNotInitialized {
+            get {
+                return ResourceManager.GetString("DataCollectionContextNotInitialized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.
+        /// </summary>
+        internal static string DataCollectionTestCaseStartMissingTestElement {
+            get {
+                return ResourceManager.GetString("DataCollectionTestCaseStartMissingTestElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.
+        /// </summary>
+        internal static string DataCollectionTestCaseEndMissingTestElement {
+            get {
+                return ResourceManager.GetString("DataCollectionTestCaseEndMissingTestElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate test extension URI &apos;{0}&apos;.  Ignoring the duplicate extension..
         /// </summary>
         internal static string DuplicateExtensionUri {

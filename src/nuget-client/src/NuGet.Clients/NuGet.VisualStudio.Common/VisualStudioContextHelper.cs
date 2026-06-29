@@ -14,10 +14,12 @@ namespace NuGet.VisualStudio
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(token);
             IVsShell shell = await ServiceLocator.GetGlobalServiceAsync<SVsShell, IVsShell>();
+#pragma warning disable CS0618 // Type or member is obsolete
             return shell != null &&
                 shell.GetProperty((int)__VSSPROPID11.VSSPROPID_ShellMode, out object value) == VSConstants.S_OK &&
                 value is int shellMode &&
                 shellMode == (int)__VSShellMode.VSSM_Server;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

@@ -48,10 +48,10 @@ public class PlatformTests : AcceptanceTestBase
             string.Empty, FrameworkArgValue,
             _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
 
-        arguments = string.Concat(arguments, platformArg, GetDiagArg(TempDirectory.Path));
+        arguments = string.Concat(arguments, platformArg);
         InvokeVsTest(arguments);
 
-        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, TempDirectory.Path, new[] { testhostProcessName }, arguments, GetConsoleRunnerPath());
+        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, DiagLogsDirectory, new[] { testhostProcessName }, arguments, GetConsoleRunnerPath());
         ValidateSummaryStatus(1, 1, 1);
     }
 }

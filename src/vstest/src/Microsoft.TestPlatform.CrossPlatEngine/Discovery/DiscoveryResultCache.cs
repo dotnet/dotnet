@@ -57,10 +57,10 @@ internal class DiscoveryResultCache
 
         _cacheSize = cacheSize;
         _onReportTestCases = onReportTestCases;
-        _lastUpdate = DateTime.Now;
+        _lastUpdate = DateTime.UtcNow;
         _cacheTimeout = discoveredTestEventTimeout;
 
-        _tests = new List<TestCase>();
+        _tests = new List<TestCase>(InitialCapacity(cacheSize));
         TotalDiscoveredTests = 0;
     }
 
@@ -107,16 +107,18 @@ internal class DiscoveryResultCache
 
             // Send test cases when the specified cache size has been reached or
             // after the specified cache timeout has been hit.
-            var timeDelta = DateTime.Now - _lastUpdate;
+            var timeDelta = DateTime.UtcNow - _lastUpdate;
             if (_tests.Count >= _cacheSize || (timeDelta > _cacheTimeout && _tests.Count > 0))
             {
                 // Pass on the buffer to the listener and clear the old one
                 _onReportTestCases(_tests);
-                _tests = new List<TestCase>();
-                _lastUpdate = DateTime.Now;
+                _tests = new List<TestCase>(InitialCapacity(_cacheSize));
+                _lastUpdate = DateTime.UtcNow;
 
                 EqtTrace.Verbose("DiscoveryResultCache.AddTest: Notified the onReportTestCases callback.");
             }
         }
     }
+
+    private static int InitialCapacity(long cacheSize) => (int)Math.Min(cacheSize, 512);
 }

@@ -122,6 +122,21 @@
         <target state="translated">Não foi possível encontrar o coletor de dados '{0}'</target>
         <note />
       </trans-unit>
+      <trans-unit id="DataCollectionContextNotInitialized">
+        <source>The data collection environment context has not been initialized. Ensure that session started before processing test case events.</source>
+        <target state="translated">O contexto do ambiente de coleta de dados não foi inicializado. Verifique se a sessão foi iniciada antes de processar os eventos do caso de teste.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseEndMissingTestElement">
+        <source>TestCaseEndEventArgs.TestElement is null. The data collector cannot end a test case without a test element.</source>
+        <target state="translated">TestCaseEndEventArgs.TestElement está nulo. O coletor de dados não pode encerrar um caso de teste sem um elemento de teste.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DataCollectionTestCaseStartMissingTestElement">
+        <source>TestCaseStartEventArgs.TestElement is null. The data collector cannot start a test case without a test element.</source>
+        <target state="translated">TestCaseStartEventArgs.TestElement está nulo. O coletor de dados não pode iniciar um caso de teste sem um elemento de teste.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DataCollectorRequestedDuplicateEnvironmentVariable">
         <source>The data collector '{0}' requested environment variable '{1}' with value '{2}' to be set in test execution environment, but another data collector '{3}' has already requested same environment variable with different value '{4}'.</source>
         <target state="translated">O coletor de dados '{0}' solicitou a variável de ambiente '{1}' com valor '{2}' para ser definida no ambiente de execução de teste, mas outro coletor de dados '{3}' já solicitou a mesma variável de ambiente com um valor diferente '{4}'.</target>

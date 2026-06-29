@@ -20,8 +20,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         /// <summary>
         /// Returns the set of Helix job names that have already been processed
-        /// by a prior monitor invocation (identified via completed AzDO test run names
-        /// containing the [HelixJob:...] marker).
+        /// by a prior monitor invocation. A job is considered processed once its Azure DevOps
+        /// test run has been completed and tagged with the Helix job name.
         /// </summary>
         Task<IReadOnlySet<string>> GetProcessedHelixJobNamesAsync(CancellationToken cancellationToken);
 
@@ -30,12 +30,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// If a test run with this name already exists in-progress (orphaned from a prior crash),
         /// the implementation may reuse it.
         /// </summary>
-        Task<int> CreateTestRunAsync(string name, string helixJobName, CancellationToken cancellationToken);
+        Task<int> CreateTestRunAsync(string name, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Marks a test run as completed.
+        /// Marks a test run as completed and tags it with the Helix job name so a subsequent
+        /// monitor invocation can tell the job's results have already been uploaded.
         /// </summary>
-        Task CompleteTestRunAsync(int testRunId, CancellationToken cancellationToken);
+        Task CompleteTestRunAsync(int testRunId, string helixJobName, CancellationToken cancellationToken);
 
         /// <summary>
         /// Uploads test results for the specified work items into an existing test run.

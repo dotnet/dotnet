@@ -119,9 +119,11 @@ The list of available Helix queues can be found on the [Helix homepage](https://
       # condition: succeeded() - defaults to succeeded()
 ```
 
-### XUnit v3
+### Microsoft.Testing.Platform (MTP)
 
-XUnit v3 test projects are self-hosting executables and do not need an external console runner. Instead of `XUnitProjects`, use `XUnitV3Project` items directly in your Helix MSBuild project file (see [the SDK's readme](/src/Microsoft.DotNet.Helix/Sdk/Readme.md) for details). The `XUnitPublishTargetFramework`, `XUnitRuntimeTargetFramework`, and `XUnitRunnerVersion` parameters are not needed for v3 projects.
+Test projects that target [Microsoft.Testing.Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro) (MTP) are self-hosting executables and do not need an external console runner. This covers MSTest 4.x with the MTP runner, xUnit v3 with MTP (the default for v3), NUnit with the MTP runner, TUnit, and any custom MTP-based framework.
+
+Instead of `XUnitProjects`, use `MTPProject` items directly in your Helix MSBuild project file (see [the SDK's readme](/src/Microsoft.DotNet.Helix/Sdk/Readme.md) for details). Each project must reference `Microsoft.Testing.Extensions.TrxReport`; this is implicit for `MSTest.Sdk` projects and for xUnit v3 projects built with `Microsoft.DotNet.Arcade.Sdk`'s XUnitV3 targets. The `XUnitPublishTargetFramework`, `XUnitRuntimeTargetFramework`, and `XUnitRunnerVersion` parameters are not needed for MTP projects.
 
 ## The More Complex Case
 

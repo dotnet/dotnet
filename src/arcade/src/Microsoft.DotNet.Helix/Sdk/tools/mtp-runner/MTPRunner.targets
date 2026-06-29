@@ -1,0 +1,73 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Microsoft.Testing.Platform (MTP) test projects are self-hosting executables produced via
+    Microsoft.Testing.Platform.MSBuild. The Helix Sdk publishes them and runs the resulting
+    assembly directly with 'dotnet exec'. The publish helper is the generic
+    xunit-runner/XUnitPublish.targets file (it only defines a 'PublishWithOutput' helper
+    target and is intentionally framework-agnostic).
+
+    Use <MTPProject Include="...csproj" /> for any MTP-based test project (MSTest 4.x,
+    xUnit v3 with MTP, NUnit with MTP, TUnit, custom MTP).
+
+    Test projects must reference 'Microsoft.Testing.Extensions.TrxReport' so that the work
+    item produces a TRX file that arcade's Helix infrastructure can ingest. Projects using
+    'MSTest.Sdk' include it by default; xUnit v3 projects built with
+    Microsoft.DotNet.Arcade.Sdk's XUnitV3 targets pick it up implicitly as well. Other
+    MTP-based frameworks must add the package manually.
+
+    Pass extra MTP command-line flags (e.g. to override the TRX filename, disable xUnit
+    v3's auto-reporters, etc.) via the MTPAdditionalArguments MSBuild property. See the
+    Helix Sdk Readme for full usage examples.
+  -->
+
+  <PropertyGroup>
+    <_MTPPublishTargetsPath>$(MSBuildThisFileDirectory)../xunit-runner/XUnitPublish.targets</_MTPPublishTargetsPath>
+  </PropertyGroup>
+
+  <Target Name="RestoreMTPProjects"
+          Condition="'@(MTPProject)' != ''"
+          BeforeTargets="Restore"
+          Outputs="%(MTPProject.Identity)%(MTPProject.AdditionalProperties)">
+    <MSBuild Projects="%(MTPProject.Identity)"
+             Targets="Restore"
+             Properties="CustomAfterMicrosoftCommonTargets=$(_MTPPublishTargetsPath);%(MTPProject.AdditionalProperties)">
+    </MSBuild>
+  </Target>
+
+  <Target Name="BuildMTPProjects"
+          Condition="'@(MTPProject)' != ''"
+          BeforeTargets="CoreBuild"
+          Outputs="%(MTPProject.Identity)%(MTPProject.AdditionalProperties)">
+    <PropertyGroup>
+      <_CurrentMTPProject>%(MTPProject.Identity)</_CurrentMTPProject>
+      <_CurrentMTPAdditionalProperties>%(MTPProject.AdditionalProperties)</_CurrentMTPAdditionalProperties>
+    </PropertyGroup>
+    <MSBuild Projects="$(_CurrentMTPProject)" Targets="PublishWithOutput" Properties="CustomAfterMicrosoftCommonTargets=$(_MTPPublishTargetsPath);$(_CurrentMTPAdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_MTPPublishOutputDir" />
+    </MSBuild>
+    <MSBuild Projects="$(_CurrentMTPProject)" Targets="GetTargetPath" Properties="CustomAfterMicrosoftCommonTargets=$(_MTPPublishTargetsPath);$(_CurrentMTPAdditionalProperties)">
+      <Output TaskParameter="TargetOutputs" PropertyName="_MTPTargetPath" />
+    </MSBuild>
+
+    <ItemGroup>
+      <MTPProject Condition="'%(Identity)' == '$(_CurrentMTPProject)'">
+        <PublishDirectory>$(_MTPPublishOutputDir)</PublishDirectory>
+        <TargetPath>$(_MTPTargetPath)</TargetPath>
+      </MTPProject>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CreateMTPWorkItems"
+          Condition="'@(MTPProject)' != ''"
+          BeforeTargets="CoreTest">
+    <CreateMTPWorkItems MTPProjects="@(MTPProject)"
+                        IsPosixShell="$(IsPosixShell)"
+                        MTPWorkItemTimeout="$(MTPWorkItemTimeout)"
+                        MTPAdditionalArguments="$(MTPAdditionalArguments)">
+      <Output TaskParameter="MTPWorkItems" ItemName="HelixWorkItem"/>
+    </CreateMTPWorkItems>
+  </Target>
+
+</Project>

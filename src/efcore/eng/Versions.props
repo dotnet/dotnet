@@ -5,7 +5,7 @@
   <PropertyGroup Label="Version settings">
     <VersionPrefix>11.0.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration>6</PreReleaseVersionIteration>
+    <PreReleaseVersionIteration>7</PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
     <DotNetFinalVersionKind></DotNetFinalVersionKind>
 
@@ -49,12 +49,13 @@
     <MicrosoftCodeAnalysisCSharpTestingVersion>1.1.4</MicrosoftCodeAnalysisCSharpTestingVersion>
     <AzureIdentityVersion>1.21.0</AzureIdentityVersion>
     <AzureResourceManagerCosmosDBVersion>1.4.1</AzureResourceManagerCosmosDBVersion>
-    <OpenTelemetryExporterInMemoryVersion>1.15.1</OpenTelemetryExporterInMemoryVersion>
+    <OpenTelemetryExporterInMemoryVersion>1.16.0</OpenTelemetryExporterInMemoryVersion>
     <SQLitePCLRawVersion>3.0.3</SQLitePCLRawVersion>
-    <SQLite3MCPCLRawBundleVersion>2.3.2</SQLite3MCPCLRawBundleVersion>
+    <SQLite3MCPCLRawBundleVersion>2.3.5</SQLite3MCPCLRawBundleVersion>
     <XUnitV3Version>4.0.0-pre.108</XUnitV3Version>
-    <MicrosoftDotNetXUnitV3ExtensionsVersion>11.0.0-beta.26263.112</MicrosoftDotNetXUnitV3ExtensionsVersion>
-    <MicrosoftTestingPlatformVersion>2.2.2</MicrosoftTestingPlatformVersion>
+    <MicrosoftDotNetXUnitV3ExtensionsVersion>11.0.0-beta.26319.1</MicrosoftDotNetXUnitV3ExtensionsVersion>
+    <MicrosoftTestingPlatformVersion>2.2.3</MicrosoftTestingPlatformVersion>
+    <MicrosoftTestingExtensionsCodeCoverageVersion>18.8.0</MicrosoftTestingExtensionsCodeCoverageVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Analyzers">
@@ -64,7 +65,7 @@
 
   <PropertyGroup Label="Tooling dependencies">
     <ICSharpCodeDecompilerVersion>10.1.0.8386</ICSharpCodeDecompilerVersion>
-    <SystemCommandLineVersion>2.0.5</SystemCommandLineVersion>
+    <SystemCommandLineVersion>2.0.9</SystemCommandLineVersion>
   </PropertyGroup>
 
 </Project>

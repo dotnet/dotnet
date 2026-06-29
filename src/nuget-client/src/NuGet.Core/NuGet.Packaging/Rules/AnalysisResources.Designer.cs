@@ -151,7 +151,7 @@ namespace NuGet.Packaging.Rules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file &apos;{0}&apos; path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name..
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; path, name, or both are too long. Your package might not work without long file path support. Shorten the file path or file name..
         /// </summary>
         public static string FilePathTooLongWarning {
             get {
@@ -178,7 +178,7 @@ namespace NuGet.Packaging.Rules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file at &apos;{0}&apos; uses the symbol for empty directory &apos;_._&apos;, but it is present in a directory that contains other files. Please remove this file from directories that contain other files..
+        ///   Looks up a localized string similar to The file at &apos;{0}&apos; uses the symbol for empty directory &apos;_._&apos;, but it is present in a directory that contains other files. Remove this file from directories that contain other files..
         /// </summary>
         public static string InvalidPlaceholderFileWarning {
             get {
@@ -232,7 +232,7 @@ namespace NuGet.Packaging.Rules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. &apos;net50&apos; to &apos;net5.0&apos;)..
+        ///   Looks up a localized string similar to One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Rename them to include dots as needed (e.g. &apos;net50&apos; to &apos;net5.0&apos;)..
         /// </summary>
         public static string InvalidUndottedFrameworkWarning {
             get {

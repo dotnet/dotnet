@@ -10,12 +10,12 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">Nepodařilo se najít testhost pro zdroj testů {0}.
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+Ověřte, že:
+  - Testovací projekt odkazuje na balíček NuGet Microsoft.NET.Test.Sdk.
+  - Projekt byl sestaven a výstup je v {1}.
+  - Cílová architektura projektu odpovídá nainstalovanému modulu runtime .NET.
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>

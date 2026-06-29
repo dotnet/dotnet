@@ -1450,6 +1450,16 @@ ALTER TABLE [People] ALTER COLUMN [Name] nvarchar(max) NULL;
 """);
     }
 
+    public override async Task Convert_owned_entity_with_no_schema_to_regular_entity()
+    {
+        await base.Convert_owned_entity_with_no_schema_to_regular_entity();
+
+        AssertSql(
+            """
+ALTER TABLE [Owned] DROP CONSTRAINT [FK_Owned_Entity_EntityId];
+""");
+    }
+
     public override async Task Convert_json_entities_to_regular_owned()
     {
         await base.Convert_json_entities_to_regular_owned();
@@ -1587,6 +1597,74 @@ ALTER TABLE [Entity] ADD DEFAULT N'{}' FOR [Name];
         await base.Convert_string_column_to_a_json_column_containing_collection();
 
         AssertSql();
+    }
+
+    [ConditionalFact(typeof(SqlServerTestEnvironment), nameof(SqlServerTestEnvironment.IsJsonTypeSupported))]
+    public virtual async Task Convert_json_column_back_to_string_column()
+    {
+        // Use explicit operation rather than model diffing: the snapshot round-trip of a source model
+        // with HasColumnType("json") does not reliably preserve identity annotations, causing the
+        // model differ to emit a spurious AlterColumnOperation for the PK that hits the identity check.
+        await Test(
+            builder =>
+            {
+                builder.Entity(
+                    "Entity", e =>
+                    {
+                        e.Property<int>("Id").ValueGeneratedNever();
+                        e.HasKey("Id");
+                        e.Property<string>("Name").HasColumnType("json");
+                    });
+            },
+            new MigrationOperation[]
+            {
+                new AlterColumnOperation
+                {
+                    Table = "Entity",
+                    Name = "Name",
+                    ClrType = typeof(string),
+                    ColumnType = "nvarchar(450)",
+                    IsNullable = true,
+                    OldColumn = new AddColumnOperation
+                    {
+                        ClrType = typeof(string),
+                        ColumnType = "json",
+                        IsNullable = true
+                    }
+                },
+                new CreateIndexOperation
+                {
+                    Table = "Entity",
+                    Name = "IX_Entity_Name",
+                    Columns = new[] { "Name" }
+                }
+            },
+            model =>
+            {
+                var table = Assert.Single(model.Tables);
+                var column = Assert.Single(table.Columns, c => c.Name == "Name");
+                Assert.Equal("nvarchar(450)", column.StoreType);
+                Assert.True(column.IsNullable);
+                var index = Assert.Single(table.Indexes);
+                Assert.Contains(column, index.Columns);
+            });
+
+        AssertSql(
+            """
+DECLARE @var nvarchar(max);
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[Entity]') AND [c].[name] = N'Name';
+IF @var IS NOT NULL EXEC(N'ALTER TABLE [Entity] DROP CONSTRAINT ' + @var + ';');
+EXEC sp_rename N'[Entity].[Name]', N'ef_temp_Name', 'COLUMN';
+ALTER TABLE [Entity] ADD [Name] nvarchar(450) NULL;
+EXEC(N'UPDATE [Entity] SET [Name] = CONVERT(nvarchar(450), [ef_temp_Name])');
+ALTER TABLE [Entity] DROP COLUMN [ef_temp_Name];
+""",
+            //
+            """
+CREATE INDEX [IX_Entity_Name] ON [Entity] ([Name]);
+""");
     }
 
     [Fact]
@@ -2354,6 +2432,49 @@ ALTER TABLE [People] ALTER COLUMN [Name] nvarchar(450) NULL;
             //
             """
 CREATE INDEX [IX_People_Name] ON [People] ([Name]) INCLUDE ([FirstName], [LastName]);
+""");
+    }
+
+    [Fact]
+    public virtual async Task Create_index_with_include_on_complex_property()
+    {
+        await Test(
+            builder => builder.Entity(
+                "People", e =>
+                {
+                    e.Property<int>("Id");
+                    e.HasKey("Id");
+                    e.Property<string>("Name");
+                    e.ComplexProperty<JsonIndexItem>(
+                        "Details", cb =>
+                        {
+                            cb.Property(i => i.Value);
+                            cb.Property(i => i.Other);
+                        });
+                }),
+            builder => { },
+            builder => builder.Entity("People").HasIndex("Name")
+                .IncludeProperties("Details.Value"),
+            model =>
+            {
+                var table = Assert.Single(model.Tables);
+                var index = Assert.Single(table.Indexes);
+                Assert.Equal(1, index.Columns.Count);
+                Assert.Contains(table.Columns.Single(c => c.Name == "Name"), index.Columns);
+            });
+
+        AssertSql(
+            """
+DECLARE @var nvarchar(max);
+SELECT @var = QUOTENAME(OBJECT_NAME([c].[default_object_id]))
+FROM [sys].[columns] [c]
+WHERE [c].[object_id] = OBJECT_ID(N'[People]') AND [c].[name] = N'Name';
+IF @var IS NOT NULL EXEC(N'ALTER TABLE [People] DROP CONSTRAINT ' + @var + ';');
+ALTER TABLE [People] ALTER COLUMN [Name] nvarchar(450) NULL;
+""",
+            //
+            """
+CREATE INDEX [IX_People_Name] ON [People] ([Name]) INCLUDE ([Details_Value]);
 """);
     }
 

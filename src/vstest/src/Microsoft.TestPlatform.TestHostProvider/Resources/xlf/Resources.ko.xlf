@@ -10,12 +10,12 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">테스트 소스 '{0}'에 대한 testhost를 찾을 수 없습니다.
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+확인:
+  - 테스트 프로젝트가 'Microsoft.NET.Test.Sdk' NuGet 패키지를 참조하는지 확인하세요.
+  - 프로젝트가 빌드되었고 출력이 '{1}'에 있는지 확인하세요.
+  - 프로젝트의 대상 프레임워크가 설치된 .NET 런타임과 일치하는지 확인하세요.
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>

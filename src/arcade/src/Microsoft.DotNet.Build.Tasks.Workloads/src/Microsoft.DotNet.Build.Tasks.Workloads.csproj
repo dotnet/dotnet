@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(NetMinimum)</TargetFramework>
@@ -32,12 +32,8 @@
 
   <ItemGroup Condition="'$(IncludeWiX)' == 'true'">
     <PackageReference Include="Microsoft.Signed.Wix" />
-
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Resources.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.Cab.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.dll" />
-    <Reference Include="$(WixInstallPath)\Microsoft.Deployment.WindowsInstaller.Package.dll" />
+    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
+    <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller.Package" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,26 +42,22 @@
 
   <ItemGroup>
     <None Include="build\**\*" Pack="true" PackagePath="%(Identity)" />
+    <None Include="workloads.md" Pack="true" PackagePath="docs\" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Misc\*.*" />
     <EmbeddedResource Include="MsiTemplate\*.wxs" />
-    <EmbeddedResource Include="MsiTemplate\*.wxi" />
     <EmbeddedResource Include="SwixTemplate\*.swr" />
     <EmbeddedResource Include="SwixTemplate\*.swixproj" />
-    <EmbeddedResource Include="..\..\Common\wix\dotnethome_x64.wxs" Link="MsiTemplate\dotnethome_x64.wxs" />
-    <EmbeddedResource Update="Strings.resx"
-                      Generator="ResXFileCodeGenerator"
-                      LastGenOutput="Strings.Designer.cs" />
+    <EmbeddedResource Include="..\..\Common\wix5\dotnethome_x64.wxs" Link="MsiTemplate\dotnethome_x64.wxs" />
+    <EmbeddedResource Update="Strings.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Strings.Designer.cs" />
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\..\Common\Internal\BuildTask.cs" />
-    <Compile Update="Strings.Designer.cs"
-             DesignTime="True"
-             AutoGen="True"
-             DependentUpon="Strings.resx" />
+    <!--<Compile Include="..\..\Common\Internal\BuildTask.cs" />-->
+    <ProjectReference Include="..\..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
+    <Compile Update="Strings.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Strings.resx" />
   </ItemGroup>
 
 </Project>

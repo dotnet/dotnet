@@ -99,10 +99,16 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
             catch (OperationCanceledException)
             {
-                // Drain in-flight uploads before exiting. Uploads are started via Task.Run and are
-                // not awaited as part of the poll loop, so we need to await them here to avoid
-                // dropping results that were already in progress when the runner was cancelled.
-                await _uploads.DrainAsync(CancellationToken.None);
+                // On cancellation (AzDO job timeout or build cancellation) the agent grants only a
+                // few seconds before force-killing the process, so cancelling the in-flight Helix
+                // jobs is the priority: do it immediately rather than waiting for the test-result
+                // upload queue to drain.
+                //
+                // Any in-flight uploads are intentionally abandoned. A Helix job's results are only
+                // treated as "processed" once their Azure DevOps test run reaches the Completed
+                // state (the final upload step), so a job whose upload did not finish here is
+                // re-uploaded in full by a subsequent monitor invocation. See
+                // JobMonitorRunner.Design.md ("Crash and timeout resilience").
                 _reporter.ReportTimeout();
 
                 // Proactively cancel any Helix jobs we know about that haven't finished yet so
@@ -291,7 +297,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             bool queueUpload,
             CancellationToken cancellationToken)
         {
-            if (!queueUpload && _state.WorkItemOutcomeJobs.Contains(helixJob.JobName))
+            // Skip jobs whose results have already been uploaded — either earlier in this
+            // invocation (tracked via WorkItemOutcomeJobs) or by a previous monitor attempt
+            // for the same build (tracked via ProcessedHelixJobs, seeded on entry from the
+            // AzDO test-run name markers). Without this, a retried monitor invocation
+            // re-logs "Job X completed" and re-reports failed work-item console links for
+            // every job the prior attempt already finished, which is noisy and misleading.
+            if (_state.WorkItemOutcomeJobs.Contains(helixJob.JobName)
+                || _state.ProcessedHelixJobs.Contains(helixJob.JobName))
             {
                 return;
             }

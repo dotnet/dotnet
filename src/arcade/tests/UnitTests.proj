@@ -52,12 +52,12 @@
   <ItemGroup>
     <XUnitProject Include="..\src\**\*.Tests.csproj"/>
 
-    <!-- XUnit v3 tests are self-hosting executables and use XUnitV3Project instead -->
+    <!-- xUnit v3 tests are self-hosting MTP executables and use MTPProject instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    <MTPProject Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

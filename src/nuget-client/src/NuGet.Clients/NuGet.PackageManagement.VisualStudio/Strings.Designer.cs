@@ -439,7 +439,7 @@ namespace NuGet.PackageManagement.VisualStudio {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution is not saved. Please save your solution before managing NuGet packages..
+        ///   Looks up a localized string similar to Solution is not saved. Save your solution before managing NuGet packages..
         /// </summary>
         public static string SolutionIsNotSaved {
             get {
@@ -466,7 +466,7 @@ namespace NuGet.PackageManagement.VisualStudio {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The NuGet operation failed due to one or more packages being incompatible with your project. The &apos;{0}&apos; (&apos;{1}&apos;) project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the.
+        ///   Looks up a localized string similar to The NuGet operation failed due to one or more packages being incompatible with your project. The &apos;{0}&apos; (&apos;{1}&apos;) project framework is deprecated. For more information about how to migrate your projects to a supported framework, refer to the.
         /// </summary>
         public static string Text_DeprecatedFramework_DocumentLink_Before {
             get {

@@ -260,10 +260,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
-        public async Task ResubmitWorkItemsAsync_PreservesDockerTagAndQueueAliasFromOperatingSystemProperty()
+        public async Task ResubmitWorkItemsAsync_PreservesQueueIdQueueAliasAndDockerTag()
         {
             JobCreationRequest request = await ResubmitAndCaptureRequestAsync(
-                "(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64");
+                queueId: "Ubuntu.2204.Amd64.Open",
+                queueAlias: "AlmaLinux.9.Amd64.Open",
+                dockerTag: "mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64");
 
             Assert.Equal("Ubuntu.2204.Amd64.Open", request.QueueId);
             Assert.Equal("AlmaLinux.9.Amd64.Open", request.QueueAlias);
@@ -271,37 +273,22 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
-        public async Task ResubmitWorkItemsAsync_DockerQueueWithoutAliasPreservesDockerTag()
+        public async Task ResubmitWorkItemsAsync_PreservesQueueWithoutAliasOrDockerTag()
         {
             JobCreationRequest request = await ResubmitAndCaptureRequestAsync(
-                "ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64");
+                queueId: "ubuntu.2204.amd64.open",
+                queueAlias: null,
+                dockerTag: null);
 
             Assert.Equal("ubuntu.2204.amd64.open", request.QueueId);
-            Assert.Equal("ubuntu.2204.amd64.open", request.QueueAlias);
-            Assert.Equal("mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64", request.DockerTag);
-        }
-
-        [Fact]
-        public async Task ResubmitWorkItemsAsync_NonDockerOperatingSystemSetsQueueAliasAndEmptyDockerTag()
-        {
-            JobCreationRequest request = await ResubmitAndCaptureRequestAsync("Ubuntu.2204.Amd64.Open");
-
-            Assert.Equal("Ubuntu.2204.Amd64.Open", request.QueueId);
-            Assert.Equal("Ubuntu.2204.Amd64.Open", request.QueueAlias);
-            Assert.Equal(string.Empty, request.DockerTag);
-        }
-
-        [Fact]
-        public async Task ResubmitWorkItemsAsync_FallsBackToResolvedQueueWhenOperatingSystemUnparseable()
-        {
-            JobCreationRequest request = await ResubmitAndCaptureRequestAsync("@mcr.microsoft.com/only-a-docker-tag");
-
-            Assert.Equal("queue-id", request.QueueId);
-            Assert.Null(request.DockerTag);
             Assert.Null(request.QueueAlias);
+            Assert.Null(request.DockerTag);
         }
 
-        private static async Task<JobCreationRequest> ResubmitAndCaptureRequestAsync(string operatingSystem)
+        private static async Task<JobCreationRequest> ResubmitAndCaptureRequestAsync(
+            string queueId,
+            string queueAlias,
+            string dockerTag)
         {
             var api = CreateApi();
             var properties = new JObject
@@ -310,17 +297,15 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 ["TestRunName"] = "custom run",
                 ["System.StageName"] = "test stage",
             };
-            if (operatingSystem != null)
-            {
-                properties["operatingSystem"] = operatingSystem;
-            }
 
             api.Job
                 .Setup(j => j.DetailsAsync("original-job", It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new JobDetails("https://storage/job-list.json", null, "original-job", "wait", "source", "helix-type", "build")
                 {
                     Creator = "creator",
-                    QueueId = "queue-id",
+                    QueueId = queueId,
+                    QueueAlias = queueAlias,
+                    DockerTag = dockerTag,
                     Properties = properties,
                 });
             api.Storage

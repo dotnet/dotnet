@@ -41,6 +41,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Contracts\NuGet.VisualStudio.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
     <ProjectReference Include="..\NuGet.Console.TestContract\NuGet.Console.TestContract.csproj" />
     <ProjectReference Include="..\NuGet.PackageManagement.UI.TestContract\NuGet.PackageManagement.UI.TestContract.csproj" />
