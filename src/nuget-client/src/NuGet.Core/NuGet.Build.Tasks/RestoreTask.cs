@@ -145,6 +145,11 @@ namespace NuGet.Build.Tasks
 
             NuGet.Common.Migrations.MigrationRunner.Run();
 
+            // Re-read environment-derived caches at the start of this restore so a reused process observes the current
+            // environment. This normally happens in the first restore task on each node (GetRestoreProjectStyleTask);
+            // the call here is a guarded backstop that no-ops if that task already reset this node for this build.
+            BuildTasksUtility.ResetProcessStateOncePerBuild(BuildEngine);
+
             try
             {
                 return ExecuteAsync(log).Result;
@@ -159,6 +164,12 @@ namespace NuGet.Build.Tasks
             {
                 ExceptionUtilities.LogException(e, log);
                 return false;
+            }
+            finally
+            {
+                // End of restore on the entry node: tear down plugin processes that the per-build process exit used to
+                // reclaim. RestoreTask runs once per restore, so this needs no parallel-invocation guard.
+                NuGet.Common.NuGetProcessState.Reset(NuGet.Common.NuGetProcessState.ResetKey.EndRestore);
             }
         }
 

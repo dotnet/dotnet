@@ -36,6 +36,44 @@ namespace NuGet.Build.Tasks
 {
     public static class BuildTasksUtility
     {
+        private static readonly object ProcessStateResetGate = new object();
+
+        private static readonly object ProcessStateResetSentinelKey = new object();
+
+        /// <summary>
+        /// Re-reads NuGet's environment-derived process state (<see cref="NuGetProcessState.ResetKey.StartRestore" />)
+        /// at most once per build on each MSBuild node.
+        /// </summary>
+        /// <remarks>
+        /// Restore runs many tasks per project, in parallel and across worker nodes, so the start-of-restore reset
+        /// must run exactly once on a given node rather than once per task. The guard is scoped to the current build
+        /// via the MSBuild registered-task-object registry: the first task to reach it performs the reset and records
+        /// a build-lifetime sentinel; later tasks on the same node observe the sentinel and skip. When a node is
+        /// reused for a subsequent build the sentinel is gone, so the environment is re-read again. The reset itself
+        /// is idempotent, so the rare engine without <see cref="IBuildEngine4" /> simply resets unconditionally.
+        /// </remarks>
+        internal static void ResetProcessStateOncePerBuild(IBuildEngine buildEngine)
+        {
+            if (buildEngine is IBuildEngine4 buildEngine4)
+            {
+                lock (ProcessStateResetGate)
+                {
+                    if (buildEngine4.GetRegisteredTaskObject(ProcessStateResetSentinelKey, RegisteredTaskObjectLifetime.Build) != null)
+                    {
+                        return;
+                    }
+
+                    NuGetProcessState.Reset(NuGetProcessState.ResetKey.StartRestore);
+
+                    buildEngine4.RegisterTaskObject(ProcessStateResetSentinelKey, ProcessStateResetSentinelKey, RegisteredTaskObjectLifetime.Build, allowEarlyCollection: false);
+                }
+            }
+            else
+            {
+                NuGetProcessState.Reset(NuGetProcessState.ResetKey.StartRestore);
+            }
+        }
+
         /// <summary>
         /// Add all restorable projects to the restore list.
         /// This is the behavior for --recursive

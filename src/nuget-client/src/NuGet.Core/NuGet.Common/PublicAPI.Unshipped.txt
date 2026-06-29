@@ -2,3 +2,9 @@
 NuGet.Common.NuGetLogCode.NU1512 = 1512 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5052 = 5052 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5502 = 5502 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetProcessState
+NuGet.Common.NuGetProcessState.ResetKey
+NuGet.Common.NuGetProcessState.ResetKey.EndRestore = 1 -> NuGet.Common.NuGetProcessState.ResetKey
+NuGet.Common.NuGetProcessState.ResetKey.StartRestore = 0 -> NuGet.Common.NuGetProcessState.ResetKey
+static NuGet.Common.NuGetProcessState.RegisterResetAction(NuGet.Common.NuGetProcessState.ResetKey key, System.Action! resetAction) -> void
+static NuGet.Common.NuGetProcessState.Reset(NuGet.Common.NuGetProcessState.ResetKey key) -> void

@@ -60,6 +60,11 @@ namespace NuGet.Build.Tasks.Console
 
                 NuGet.Common.Migrations.MigrationRunner.Run();
 
+                // This out-of-proc static-graph restore process is spawned fresh per restore (it is one-shot), so
+                // there is no stale state to clear today; this is the correct place for the start-of-restore reset
+                // and keeps it symmetric with the in-proc restore tasks should the process ever be reused.
+                NuGet.Common.NuGetProcessState.Reset(NuGet.Common.NuGetProcessState.ResetKey.StartRestore);
+
                 // Parse command-line arguments
                 if (!TryParseArguments(args, () => System.Console.OpenStandardInput(), System.Console.Error, out (Dictionary<string, string> Options, FileInfo MSBuildExeFilePath, string EntryProjectFilePath, Dictionary<string, string> MSBuildGlobalProperties) arguments))
                 {

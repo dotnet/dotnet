@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.Build.Framework;
 using NuGet.Common;
 using NuGet.Test.Utility;
@@ -23,6 +24,14 @@ namespace NuGet.Build.Tasks.Test
         public TestLogger TestLogger = new TestLogger();
 
         private readonly IReadOnlyDictionary<string, string> _globalProperties;
+
+        private readonly Dictionary<object, object> _registeredTaskObjects = new Dictionary<object, object>();
+
+        /// <summary>
+        /// Number of times <see cref="RegisterTaskObject" /> was called on this engine. The reset guard registers its
+        /// build-lifetime sentinel exactly when it performs a reset, so this counts how many resets actually ran.
+        /// </summary>
+        public int RegisterTaskObjectCount;
 
         public TestBuildEngine()
         {
@@ -53,7 +62,13 @@ namespace NuGet.Build.Tasks.Test
 
         public IReadOnlyDictionary<string, string> GetGlobalProperties() => _globalProperties;
 
-        public object GetRegisteredTaskObject(object key, RegisteredTaskObjectLifetime lifetime) => throw new NotImplementedException();
+        public object GetRegisteredTaskObject(object key, RegisteredTaskObjectLifetime lifetime)
+        {
+            lock (_registeredTaskObjects)
+            {
+                return _registeredTaskObjects.TryGetValue(key, out object value) ? value : null;
+            }
+        }
 
         public void LogCustomEvent(CustomBuildEventArgs e)
         {
@@ -119,9 +134,28 @@ namespace NuGet.Build.Tasks.Test
 
         public void Reacquire() => throw new NotImplementedException();
 
-        public void RegisterTaskObject(object key, object obj, RegisteredTaskObjectLifetime lifetime, bool allowEarlyCollection) => throw new NotImplementedException();
+        public void RegisterTaskObject(object key, object obj, RegisteredTaskObjectLifetime lifetime, bool allowEarlyCollection)
+        {
+            lock (_registeredTaskObjects)
+            {
+                Interlocked.Increment(ref RegisterTaskObjectCount);
+                _registeredTaskObjects[key] = obj;
+            }
+        }
 
-        public object UnregisterTaskObject(object key, RegisteredTaskObjectLifetime lifetime) => throw new NotImplementedException();
+        public object UnregisterTaskObject(object key, RegisteredTaskObjectLifetime lifetime)
+        {
+            lock (_registeredTaskObjects)
+            {
+                if (_registeredTaskObjects.TryGetValue(key, out object value))
+                {
+                    _registeredTaskObjects.Remove(key);
+                    return value;
+                }
+
+                return null;
+            }
+        }
 
         public void Yield() => throw new NotImplementedException();
     }
