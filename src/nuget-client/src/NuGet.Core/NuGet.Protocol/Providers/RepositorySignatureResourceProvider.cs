@@ -82,7 +82,7 @@ namespace NuGet.Protocol
                                     cacheKey,
                                     cacheContext)
                                 {
-                                    EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream),
+                                    EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream, _environmentVariableReader),
                                     MaxTries = 1,
                                     IsRetry = retry > 1,
                                     IsLastAttempt = retry == maxRetries
@@ -107,7 +107,7 @@ namespace NuGet.Protocol
                                     cacheKey,
                                     cacheContext)
                                 {
-                                    EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream),
+                                    EnsureValidContents = stream => HttpStreamValidation.ValidateJObject(repositorySignaturesResourceUri.AbsoluteUri, stream, _environmentVariableReader),
                                     MaxTries = 1,
                                     IsRetry = retry > 1,
                                     IsLastAttempt = retry == maxRetries

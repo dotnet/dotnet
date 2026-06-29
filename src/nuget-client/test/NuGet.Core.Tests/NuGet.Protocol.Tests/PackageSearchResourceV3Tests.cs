@@ -563,7 +563,7 @@ namespace NuGet.Protocol.Tests
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
-                PackageTypes = new[] { "Dependency" }
+                PackageType = "Dependency"
             };
 
             // Act
@@ -594,7 +594,7 @@ namespace NuGet.Protocol.Tests
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
-                PackageTypes = new[] { "Dependency" }
+                PackageType = "Dependency"
             };
 
             // Act & Assert
@@ -635,32 +635,6 @@ namespace NuGet.Protocol.Tests
 
             // Assert
             packages.ToArray().Length.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
-        public async Task PackageSearchResourceV3_PackageTypeFilter_WithMultipleValues_ThrowsArgumentException()
-        {
-            // Arrange
-            var serviceAddress = ProtocolUtility.CreateHttpsServiceAddress();
-            var httpSource = new TestHttpSource(new PackageSource(serviceAddress), new Dictionary<string, string>());
-            var endpoint = new Uri(serviceAddress);
-
-            // Endpoint is package-type capable, so the failure must come from the multi-value check.
-            var packageSearchResourceV3 = new PackageSearchResourceV3(httpSource, new[] { endpoint }, new[] { endpoint });
-
-            var searchFilter = new SearchFilter(includePrerelease: false)
-            {
-                PackageTypes = new[] { "Dependency", "DotnetTool" }
-            };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => packageSearchResourceV3.Search(
-                "any",
-                searchFilter,
-                skip: 0,
-                take: 1,
-                NullLogger.Instance,
-                CancellationToken.None));
         }
     }
 }

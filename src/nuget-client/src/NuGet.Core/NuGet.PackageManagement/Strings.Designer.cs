@@ -331,7 +331,7 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exception &apos;{0}&apos; thrown when trying to add source &apos;{1}&apos;. Please verify all your online package sources are available..
+        ///   Looks up a localized string similar to Exception &apos;{0}&apos; thrown when trying to add source &apos;{1}&apos;. Verify all your online package sources are available..
         /// </summary>
         internal static string ExceptionWhenTryingToAddSource {
             get {
@@ -547,7 +547,7 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Package &apos;{0}&apos; is not found in the following primary source(s): &apos;{1}&apos;. Please verify all your online package sources are available (OR) package id, version are specified correctly..
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; is not found in the following primary source(s): &apos;{1}&apos;. Verify all your online package sources are available (OR) package id, version are specified correctly..
         /// </summary>
         internal static string PackageNotFoundInPrimarySources {
             get {
@@ -772,7 +772,7 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution is not opened or not saved. Please ensure you have an open and saved solution..
+        ///   Looks up a localized string similar to Solution is not opened or not saved. Ensure you have an open and saved solution..
         /// </summary>
         internal static string SolutionDirectoryNotAvailable {
             get {
@@ -844,7 +844,7 @@ namespace NuGet.PackageManagement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to gather package &apos;{0}&apos; from source &apos;{1}&apos;. Please verify all your online package sources are available. .
+        ///   Looks up a localized string similar to Unable to gather package &apos;{0}&apos; from source &apos;{1}&apos;. Verify all your online package sources are available. .
         /// </summary>
         internal static string UnableToGatherPackageFromSource {
             get {

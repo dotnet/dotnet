@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,7 +16,7 @@ namespace NuGet.Protocol
     {
         public FindLocalPackagesResourceV3(string root)
         {
-            Root = root;
+            Root = root ?? throw new ArgumentNullException(nameof(root));
         }
 
         public override IEnumerable<LocalPackageInfo> FindPackagesById(string id, ILogger logger, CancellationToken token)
@@ -28,14 +26,14 @@ namespace NuGet.Protocol
             return LocalFolderUtility.GetPackagesV3(Root, id, logger, token);
         }
 
-        public override LocalPackageInfo GetPackage(Uri path, ILogger logger, CancellationToken token)
+        public override LocalPackageInfo? GetPackage(Uri path, ILogger logger, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
             return LocalFolderUtility.GetPackage(path, logger);
         }
 
-        public override LocalPackageInfo GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token)
+        public override LocalPackageInfo? GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
