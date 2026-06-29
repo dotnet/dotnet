@@ -52,6 +52,7 @@
     <!-- nuget dependencies -->
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
     <NuGetProjectModelVersion>7.0.3</NuGetProjectModelVersion>
+    <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <!-- runtime dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.1</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.1</MicrosoftExtensionsLoggingConsoleVersion>
