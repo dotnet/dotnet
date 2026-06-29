@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
 
@@ -33,7 +34,7 @@ public static class StringUtilities
     /// </summary>
     /// <param name="input">string to check</param>
     /// <returns>True if string is null or a whitespace, false otherwise</returns>
-    public static bool IsNullOrWhiteSpace(string? input)
+    public static bool IsNullOrWhiteSpace([NotNullWhen(false)] string? input)
     {
         if (input != null)
         {
