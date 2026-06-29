@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionDecorators;
@@ -218,7 +219,14 @@ internal abstract class BaseRunTests
             {
                 EqtTrace.Error("BaseRunTests.RunTests: Failed to run the tests. Reason: {0}.", ex);
 
-                exception = new Exception(ex.Message, ex.InnerException);
+                // RunTestsInternal can surface a TargetInvocationException when a test extension is
+                // instantiated via reflection and its constructor throws. Unwrap that wrapper to the
+                // real exception so callers don't see the reflection noise. Any other exception is
+                // preserved as-is so its concrete type and stack trace are not lost on the way out.
+                Exception realException = ex is TargetInvocationException tie && tie.InnerException is not null
+                    ? tie.InnerException
+                    : ex;
+                exception = new Exception(realException.Message, realException);
                 isAborted = true;
             }
             finally
