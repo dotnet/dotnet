@@ -37,7 +37,6 @@ public class DefaultTestHostManagerTests
     private readonly Mock<IMessageLogger> _mockMessageLogger;
     private readonly Mock<IProcessHelper> _mockProcessHelper;
     private readonly Mock<IFileHelper> _mockFileHelper;
-    private readonly Mock<IDotnetHostHelper> _mockDotnetHostHelper;
     private readonly Mock<IEnvironment> _mockEnvironment;
     private readonly Mock<IEnvironmentVariableHelper> _mockEnvironmentVariable;
     private readonly DefaultTestHostManager _testHostManager;
@@ -54,13 +53,12 @@ public class DefaultTestHostManagerTests
         _mockProcessHelper = new Mock<IProcessHelper>();
         _mockFileHelper = new Mock<IFileHelper>();
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessFileName()).Returns("vstest.console.exe");
-        _mockDotnetHostHelper = new Mock<IDotnetHostHelper>();
         _mockEnvironment = new Mock<IEnvironment>();
         _mockEnvironmentVariable = new Mock<IEnvironmentVariableHelper>();
 
         _mockMessageLogger = new Mock<IMessageLogger>();
 
-        _testHostManager = new DefaultTestHostManager(_mockProcessHelper.Object, _mockFileHelper.Object, _mockDotnetHostHelper.Object, _mockEnvironment.Object, _mockEnvironmentVariable.Object);
+        _testHostManager = new DefaultTestHostManager(_mockProcessHelper.Object, _mockFileHelper.Object, _mockEnvironment.Object, _mockEnvironmentVariable.Object);
         _testHostManager.Initialize(_mockMessageLogger.Object, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration> <TargetPlatform>{Architecture.X64}</TargetPlatform> <TargetFrameworkVersion>{Framework.DefaultFramework}</TargetFrameworkVersion> <DisableAppDomain>{false}</DisableAppDomain> </RunConfiguration> </RunSettings>");
         _startInfo = _testHostManager.GetTestHostProcessStartInfo([], null, default);
     }
@@ -177,38 +175,22 @@ public class DefaultTestHostManagerTests
     }
 
     [TestMethod]
-    public void GetTestHostProcessStartInfoShouldUseMonoAsHostOnNonWindowsIfNotStartedWithMono()
+    [DataRow(PlatformOperatingSystem.Unix, "/usr/bin/dotnet")]
+    [DataRow(PlatformOperatingSystem.Unix, "/usr/bin/mono")]
+    [DataRow(PlatformOperatingSystem.OSX, "/usr/local/share/dotnet/dotnet")]
+    [DataRow(PlatformOperatingSystem.OSX, "/usr/local/bin/mono")]
+    public void GetTestHostProcessStartInfoShouldThrowWhenRunningNetFrameworkTestsOnNonWindows(PlatformOperatingSystem operatingSystem, string currentProcessFileName)
     {
-        _mockProcessHelper.Setup(p => p.GetCurrentProcessFileName()).Returns("/usr/bin/dotnet");
-        _mockEnvironment.Setup(e => e.OperatingSystem).Returns(PlatformOperatingSystem.Unix);
-        _mockDotnetHostHelper.Setup(d => d.GetMonoPath()).Returns("/usr/bin/mono");
-        var source = @"C:\temp\a.dll";
+        // .NET Framework tests can only run on Windows. On other operating systems we no longer
+        // fall back to Mono and instead fail with a clear, actionable message.
+        _mockProcessHelper.Setup(p => p.GetCurrentProcessFileName()).Returns(currentProcessFileName);
+        _mockEnvironment.Setup(e => e.OperatingSystem).Returns(operatingSystem);
+        var source = "/tmp/a.dll";
 
-        var info = _testHostManager.GetTestHostProcessStartInfo(
-            new List<string>() { source },
-            null,
-            default);
+        var exception = Assert.ThrowsExactly<TestPlatformException>(
+            () => _testHostManager.GetTestHostProcessStartInfo(new List<string>() { source }, null, default));
 
-        Assert.AreEqual("/usr/bin/mono", info.FileName);
-        Assert.Contains(Path.Combine("TestHostNetFramework", "testhost.exe"), info.Arguments!);
-    }
-
-    [TestMethod]
-    public void GetTestHostProcessStartInfoShouldNotUseMonoAsHostOnNonWindowsIfStartedWithMono()
-    {
-        _mockProcessHelper.Setup(p => p.GetCurrentProcessFileName()).Returns("/usr/bin/mono");
-        _mockEnvironment.Setup(e => e.OperatingSystem).Returns(PlatformOperatingSystem.Unix);
-        _mockDotnetHostHelper.Setup(d => d.GetMonoPath()).Returns("/usr/bin/mono");
-        var source = @"C:\temp\a.dll";
-
-        var info = _testHostManager.GetTestHostProcessStartInfo(
-            new List<string>() { source },
-            null,
-            default);
-
-        var testHostPath = Path.Combine("TestHostNetFramework", "testhost.exe");
-        Assert.EndsWith(testHostPath, info.FileName);
-        Assert.DoesNotContain(testHostPath, info.Arguments!);
+        Assert.Contains("Running .NET Framework tests is supported on Windows only", exception.Message);
     }
 
     [TestMethod]
@@ -656,7 +638,7 @@ public class DefaultTestHostManagerTests
             IProcessHelper processHelper,
             bool shared,
             IMessageLogger logger)
-            : base(processHelper, new FileHelper(), new DotnetHostHelper(), new PlatformEnvironment(), new EnvironmentVariableHelper())
+            : base(processHelper, new FileHelper(), new PlatformEnvironment(), new EnvironmentVariableHelper())
         {
             Initialize(logger, $"<?xml version=\"1.0\" encoding=\"utf-8\"?><RunSettings> <RunConfiguration> <TargetPlatform>{architecture}</TargetPlatform> <TargetFrameworkVersion>{framework}</TargetFrameworkVersion> <DisableAppDomain>{!shared}</DisableAppDomain> </RunConfiguration> </RunSettings>");
         }
