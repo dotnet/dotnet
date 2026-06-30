@@ -47,12 +47,9 @@ extends:
         compiled:
           enabled: false
         runSourceLanguagesInSourceAnalysis: false
-        tsaEnabled: false
       binskim:
         enabled: false
       policheck:
-        enabled: false
-      tsa:
         enabled: false
 
     containers:

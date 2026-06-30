@@ -65,8 +65,6 @@ extends:
         enabled: true
       policheck:
         enabled: true
-      tsa:
-        enabled: true
     stages:
     - template: /eng/pipelines/templates/stages/vmr-compare.yml@self
       parameters:
