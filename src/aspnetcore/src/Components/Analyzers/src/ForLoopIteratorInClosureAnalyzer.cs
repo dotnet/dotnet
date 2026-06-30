@@ -108,7 +108,7 @@ public sealed class ForLoopIteratorInClosureAnalyzer : DiagnosticAnalyzer
         else
         {
             // Expression statements, blocks, switch, cases etc. that have children.
-            foreach (var childOperation in operation.Children)
+            foreach (var childOperation in operation.ChildOperations)
             {
                 AnalyzeOperationsTree(childOperation, availableTypes, analyzerState);
             }
@@ -243,7 +243,7 @@ public sealed class ForLoopIteratorInClosureAnalyzer : DiagnosticAnalyzer
             || currentOperation is IConversionOperation 
             || currentOperation is IInvocationOperation)
         {
-            foreach (var child in currentOperation.Children)
+            foreach (var child in currentOperation.ChildOperations)
             {
                 var result = FindFirstDelegateChild(child);
                 if (result is not null)
