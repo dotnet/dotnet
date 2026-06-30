@@ -1,9 +1,1 @@
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/Sdk/Sdk.props
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/Sdk/Sdk.targets
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/Sdk/TargetFrameworks.props
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/net10.0/Microsoft.DotNet.HotReload.WebAssembly.Browser.dll
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/hotreload/net10.0/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/tools/net11.0/Microsoft.NET.Sdk.WebAssembly.Tasks.dll
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/tools/net11.0/wwwroot/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/tools/net472/Microsoft.NET.Sdk.WebAssembly.Tasks.dll
-[only in first] sdk/11.0.100-preview.6.26330.102/Sdks/Microsoft.NET.Sdk.WebAssembly/tools/net472/wwwroot/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js
+
