@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="e6542746cf944ff2a1a595edf2af006ef3046784" BarId="316522" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="vstest" Sha="7c528f6e19c5245206de3dc561eb8a110bf9f746" BarId="320578" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.9.0-preview.26319.2">
+    <Dependency Name="Microsoft.Internal.CodeCoverage" Version="18.9.0-preview.26326.3">
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
-      <Sha>42b0aaaa4ba69dd89c33eec653184f97a5c52340</Sha>
+      <Sha>721d283a3c2f250c9d24decdc733f8dd9a2cfc48</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26281.102">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.26328.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>e6542746cf944ff2a1a595edf2af006ef3046784</Sha>
+      <Sha>7c528f6e19c5245206de3dc561eb8a110bf9f746</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.2">
@@ -26,9 +26,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26310.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26325.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>0a80b038bcc0d76b2f26c7f22062942de75779e6</Sha>
+      <Sha>b076228a542025c4f879f254d38adb5cf34a2475</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DiaSymReader.Pdb2Pdb" Version="1.1.0-beta2-19575-01">
       <Uri>https://github.com/dotnet/symreader-converter</Uri>
