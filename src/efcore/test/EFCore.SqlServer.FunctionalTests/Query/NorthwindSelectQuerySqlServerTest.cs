@@ -418,8 +418,8 @@ ORDER BY [c].[CustomerID]
 
         AssertSql(
             """
-SELECT COALESCE((
-    SELECT TOP(1) COALESCE((
+SELECT ISNULL((
+    SELECT TOP(1) ISNULL((
         SELECT TOP(1) [o0].[ProductID]
         FROM [Order Details] AS [o0]
         WHERE [o].[OrderID] = [o0].[OrderID] AND ([o0].[OrderID] <> (
@@ -445,8 +445,8 @@ ORDER BY [c].[CustomerID]
 
         AssertSql(
             """
-SELECT COALESCE((
-    SELECT TOP(1) COALESCE((
+SELECT ISNULL((
+    SELECT TOP(1) ISNULL((
         SELECT TOP(1) [o0].[ProductID]
         FROM [Order Details] AS [o0]
         WHERE [o].[OrderID] = [o0].[OrderID] AND [o0].[OrderID] <> CAST(LEN([c].[CustomerID]) AS int)
@@ -945,7 +945,7 @@ FROM [Customers] AS [c]
 
         AssertSql(
             """
-SELECT COALESCE((
+SELECT ISNULL((
     SELECT TOP(1) [o0].[OrderID]
     FROM [Order Details] AS [o0]
     INNER JOIN [Products] AS [p] ON [o0].[ProductID] = [p].[ProductID]
@@ -1435,7 +1435,7 @@ ORDER BY [c0].[CustomerID]
 
         AssertSql(
             """
-SELECT [c].[CustomerID], COALESCE((
+SELECT [c].[CustomerID], ISNULL((
     SELECT TOP(1) [o].[OrderID]
     FROM [Orders] AS [o]
     WHERE [c].[CustomerID] = [o].[CustomerID]
@@ -1972,7 +1972,7 @@ ORDER BY [c].[CustomerID]
 
         AssertSql(
             """
-SELECT COALESCE((
+SELECT ISNULL((
     SELECT TOP(1) [o].[OrderID]
     FROM [Orders] AS [o]
     ORDER BY [o].[OrderDate] DESC, [o].[OrderID]), 0)
@@ -2909,6 +2909,61 @@ OUTER APPLY (
 ) AS [u]
 ORDER BY [c0].[CustomerID]
 """);
+    }
+
+    public override async Task Multiple_members_of_correlated_single_result_subquery_lift_to_single_join(bool async, string method)
+    {
+        await base.Multiple_members_of_correlated_single_result_subquery_lift_to_single_join(async, method);
+
+        AssertSql(
+            method switch
+            {
+                nameof(Queryable.First) or
+                nameof(Queryable.FirstOrDefault) or
+                nameof(Queryable.Single) or
+                nameof(Queryable.SingleOrDefault) => """
+SELECT [o].[OrderID], [c1].[City], [c1].[Country], [c1].[ContactName]
+FROM [Orders] AS [o]
+LEFT JOIN (
+    SELECT [c0].[City], [c0].[ContactName], [c0].[Country], [c0].[CustomerID0]
+    FROM (
+        SELECT [c].[City], [c].[ContactName], [c].[Country], [c].[CustomerID] AS [CustomerID0], ROW_NUMBER() OVER(PARTITION BY [c].[CustomerID] ORDER BY [c].[CustomerID]) AS [row]
+        FROM [Customers] AS [c]
+    ) AS [c0]
+    WHERE [c0].[row] <= 1
+) AS [c1] ON [o].[CustomerID] = [c1].[CustomerID0]
+WHERE [o].[CustomerID] IS NOT NULL
+""",
+                nameof(Queryable.Last) or
+                nameof(Queryable.LastOrDefault) => """
+SELECT [o].[OrderID], [c1].[City], [c1].[Country], [c1].[ContactName]
+FROM [Orders] AS [o]
+LEFT JOIN (
+    SELECT [c0].[City], [c0].[ContactName], [c0].[Country], [c0].[CustomerID0]
+    FROM (
+        SELECT [c].[City], [c].[ContactName], [c].[Country], [c].[CustomerID] AS [CustomerID0], ROW_NUMBER() OVER(PARTITION BY [c].[CustomerID] ORDER BY [c].[CustomerID] DESC) AS [row]
+        FROM [Customers] AS [c]
+    ) AS [c0]
+    WHERE [c0].[row] <= 1
+) AS [c1] ON [o].[CustomerID] = [c1].[CustomerID0]
+WHERE [o].[CustomerID] IS NOT NULL
+""",
+                nameof(Queryable.ElementAt) or
+                nameof(Queryable.ElementAtOrDefault) => """
+SELECT [o].[OrderID], [c1].[City], [c1].[Country], [c1].[ContactName]
+FROM [Orders] AS [o]
+LEFT JOIN (
+    SELECT [c0].[City], [c0].[ContactName], [c0].[Country], [c0].[CustomerID0]
+    FROM (
+        SELECT [c].[City], [c].[ContactName], [c].[Country], [c].[CustomerID] AS [CustomerID0], ROW_NUMBER() OVER(PARTITION BY [c].[CustomerID] ORDER BY [c].[CustomerID]) AS [row]
+        FROM [Customers] AS [c]
+    ) AS [c0]
+    WHERE 0 < [c0].[row] AND [c0].[row] <= 1
+) AS [c1] ON [o].[CustomerID] = [c1].[CustomerID0]
+WHERE [o].[CustomerID] IS NOT NULL
+""",
+                _ => throw new InvalidOperationException(method)
+            });
     }
 
     private void AssertSql(params string[] expected)

@@ -61,7 +61,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = "{\"PackageSourceRepository\":\"a\",\"StatusCode\":\"Unauthorized\"}";
-            var request = JsonSerializationUtilities.Deserialize<GetCredentialsRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<GetCredentialsRequest>(json)!;
 
             Assert.Equal("a", request.PackageSourceRepository);
             Assert.Equal(HttpStatusCode.Unauthorized, request.StatusCode);

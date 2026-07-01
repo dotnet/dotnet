@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 #if NET5_0_OR_GREATER
@@ -26,8 +24,8 @@ namespace NuGet.Protocol
     /// </summary>
     public class ServiceIndexResourceV3 : INuGetResource
     {
-        private string _json;
-        private readonly ServiceIndexModel _model;
+        private string? _json;
+        private readonly ServiceIndexModel? _model;
         private readonly IDictionary<string, List<ServiceIndexEntry>> _index;
         private readonly DateTime _requestTime;
         private static readonly IReadOnlyList<ServiceIndexEntry> _emptyEntries = new List<ServiceIndexEntry>();
@@ -37,8 +35,9 @@ namespace NuGet.Protocol
         [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
         [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
 #endif
-        internal ServiceIndexResourceV3(JObject index, DateTime requestTime, PackageSource packageSource)
+        internal ServiceIndexResourceV3(JObject index, DateTime requestTime, PackageSource? packageSource)
         {
+            _ = index ?? throw new ArgumentNullException(nameof(index));
             _json = index.ToString();
             _index = MakeLookup(index, packageSource);
             _requestTime = requestTime;
@@ -48,10 +47,11 @@ namespace NuGet.Protocol
         [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
         [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
 #endif
-        public ServiceIndexResourceV3(JObject index, DateTime requestTime) : this(index, requestTime, null) { }
+        public ServiceIndexResourceV3(JObject index, DateTime requestTime) : this(index, requestTime, packageSource: null) { }
 
-        internal ServiceIndexResourceV3(ServiceIndexModel model, DateTime requestTime, PackageSource packageSource)
+        internal ServiceIndexResourceV3(ServiceIndexModel model, DateTime requestTime, PackageSource? packageSource)
         {
+            _ = model ?? throw new ArgumentNullException(nameof(model));
             _model = model;
             _index = MakeLookup(model, packageSource);
             _requestTime = requestTime;
@@ -78,7 +78,7 @@ namespace NuGet.Protocol
 
         public virtual string Json
         {
-            get { return _json ??= JsonSerializer.Serialize(_model, JsonContext.Default.ServiceIndexModel); }
+            get { return _json ??= JsonSerializer.Serialize(_model!, JsonContext.Default.ServiceIndexModel); }
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace NuGet.Protocol
 
             foreach (var type in orderedTypes)
             {
-                List<ServiceIndexEntry> entries;
+                List<ServiceIndexEntry>? entries;
                 if (_index.TryGetValue(type, out entries))
                 {
                     var compatible = GetBestVersionMatchForType(clientVersion, entries);
@@ -137,7 +137,7 @@ namespace NuGet.Protocol
         /// <summary>
         /// Get the best match service URI.
         /// </summary>
-        public virtual Uri GetServiceEntryUri(params string[] orderedTypes)
+        public virtual Uri? GetServiceEntryUri(params string[] orderedTypes)
         {
             var clientVersion = MinClientVersionUtility.GetNuGetClientVersion();
 
@@ -167,8 +167,7 @@ namespace NuGet.Protocol
             return GetServiceEntries(clientVersion, orderedTypes).Select(e => e.Uri).ToList();
         }
 
-#nullable enable
-        private static IDictionary<string, List<ServiceIndexEntry>> MakeLookup(ServiceIndexModel index, PackageSource packageSource)
+        private static IDictionary<string, List<ServiceIndexEntry>> MakeLookup(ServiceIndexModel index, PackageSource? packageSource)
         {
             var result = new Dictionary<string, List<ServiceIndexEntry>>(StringComparer.Ordinal);
 
@@ -233,20 +232,18 @@ namespace NuGet.Protocol
             return result;
         }
 
-#nullable disable
-
-        private static IDictionary<string, List<ServiceIndexEntry>> MakeLookup(JObject index, PackageSource packageSource)
+        private static IDictionary<string, List<ServiceIndexEntry>> MakeLookup(JObject index, PackageSource? packageSource)
         {
             var result = new Dictionary<string, List<ServiceIndexEntry>>(StringComparer.Ordinal);
 
-            JToken resources;
+            JToken? resources;
             if (index.TryGetValue("resources", out resources))
             {
                 foreach (var resource in resources)
                 {
                     var id = GetValues(resource["@id"]).SingleOrDefault();
 
-                    Uri uri;
+                    Uri? uri;
                     if (string.IsNullOrEmpty(id) || !Uri.TryCreate(id, UriKind.Absolute, out uri))
                     {
                         // Skip invalid or missing @ids
@@ -274,7 +271,7 @@ namespace NuGet.Protocol
                         // Parse supported versions
                         foreach (var versionString in GetValues(clientVersionToken))
                         {
-                            SemanticVersion version;
+                            SemanticVersion? version;
                             if (SemanticVersion.TryParse(versionString, out version))
                             {
                                 clientVersions.Add(version);
@@ -287,7 +284,7 @@ namespace NuGet.Protocol
                     {
                         foreach (var version in clientVersions)
                         {
-                            List<ServiceIndexEntry> entries;
+                            List<ServiceIndexEntry>? entries;
                             if (!result.TryGetValue(type, out entries))
                             {
                                 entries = new List<ServiceIndexEntry>();
@@ -317,7 +314,7 @@ namespace NuGet.Protocol
         [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Only called from JObject constructor which is annotated with [RUC]/[RDC].")]
         [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Only called from JObject constructor which is annotated with [RUC]/[RDC].")]
 #endif
-        private static IEnumerable<string> GetValues(JToken token)
+        private static IEnumerable<string> GetValues(JToken? token)
         {
             if (token?.Type == JTokenType.Array)
             {
@@ -325,13 +322,13 @@ namespace NuGet.Protocol
                 {
                     if (entry.Type == JTokenType.String)
                     {
-                        yield return entry.ToObject<string>();
+                        yield return entry.ToObject<string>()!;
                     }
                 }
             }
             else if (token?.Type == JTokenType.String)
             {
-                yield return token.ToObject<string>();
+                yield return token.ToObject<string>()!;
             }
         }
     }

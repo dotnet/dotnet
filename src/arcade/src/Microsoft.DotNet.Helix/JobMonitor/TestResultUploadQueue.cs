@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.Client.Models;
 using Microsoft.DotNet.Helix.JobMonitor.Models;
 using Microsoft.Extensions.Logging;
@@ -14,9 +15,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     /// <summary>
     /// Fire-and-forget queue for AzDO test-result uploads. Each queued upload runs as an
-    /// independent task with indefinite retry on transient errors. Both normal completion
-    /// and cancellation paths must drain the queue before exiting so that results in
-    /// flight when the runner exits are not abandoned.
+    /// independent task with indefinite retry on transient errors. On normal completion the
+    /// queue is drained so results in flight when the runner exits are not lost. On
+    /// cancellation the queue is intentionally NOT drained: cancelling the in-flight Helix jobs
+    /// takes priority, and any unfinished upload is re-uploaded in full by a later monitor
+    /// invocation (a Helix job is only "processed" once its test run reaches the Completed state).
     /// </summary>
     internal sealed class TestResultUploadQueue
     {
@@ -24,6 +27,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private readonly JobMonitorOptions _options;
         private readonly IAzureDevOpsService _azdo;
         private readonly IHelixService _helix;
+        private readonly MonitorState _monitorState;
         private readonly Func<CancellationToken, Task> _delay;
         private readonly List<Task> _pending = [];
 
@@ -32,20 +36,23 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             JobMonitorOptions options,
             IAzureDevOpsService azdo,
             IHelixService helix,
+            MonitorState monitorState,
             Func<CancellationToken, Task> delay)
         {
             _logger = logger;
             _options = options;
             _azdo = azdo;
             _helix = helix;
+            _monitorState = monitorState;
             _delay = delay;
         }
 
         public void Enqueue(HelixJobInfo helixJob, IReadOnlyCollection<WorkItemSummary> workItems, CancellationToken cancellationToken)
         {
             IReadOnlyList<string> workItemNames = [.. workItems.Select(w => w.Name)];
-            // Detached from the runner's cancellation token so that the drain path can finish
-            // in-flight uploads on its own cancellation budget when the runner is canceled.
+            // Scheduling uses CancellationToken.None so the upload task is always allowed to start.
+            // The upload body still observes the runner's token, so when the runner is cancelled the
+            // upload stops promptly and the job's results are re-uploaded by a later invocation.
             Task uploadTask = Task.Run(() => UploadAsync(helixJob, workItemNames, cancellationToken), CancellationToken.None);
             _pending.Add(uploadTask);
         }
@@ -87,16 +94,32 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
                 try
                 {
-                    testRunId = await _azdo.CreateTestRunAsync(helixJob.TestRunName, helixJob.JobName, cancellationToken);
+                    testRunId = await _azdo.CreateTestRunAsync(helixJob.TestRunName, cancellationToken);
                     IReadOnlyList<WorkItemTestResults> downloaded = await _helix.DownloadTestResultsAsync(
                         helixJob.JobName,
                         workItemNames,
                         _options.WorkingDirectory,
                         cancellationToken);
 
-                    int uploadedCount = await _azdo.UploadTestResultsAsync(testRunId, downloaded, cancellationToken);
-                    await CompleteTestRunAsync(testRunId, helixJob, cancellationToken);
+                    IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary> testResults = await _azdo.UploadTestResultsAsync(testRunId, downloaded, cancellationToken);
+                    if (_options.FailWorkItemsWithFailedTests)
+                    {
+                        _monitorState.ObserveTestResults(testResults);
+                    }
 
+                    // Persist the list of work items whose tests failed as an attachment on the
+                    // test run, so a subsequent monitor invocation can recover the resubmission
+                    // set in a small fixed number of REST calls per run (see
+                    // AzureDevOpsService.GetFailedTestWorkItemsAsync).
+                    IReadOnlyCollection<string> failedWorkItems =
+                    [
+                        .. testResults
+                            .Where(kv => !kv.Value.AllPassed)
+                            .Select(kv => kv.Key.WorkItemName)
+                    ];
+                    await CompleteTestRunAsync(testRunId, helixJob, failedWorkItems, cancellationToken);
+
+                    long uploadedCount = testResults.Values.Sum(r => r.UploadedCount);
                     _logger.LogInformation("{UploadedCount} test results for job '{JobName}' processed.",
                         uploadedCount,
                         helixJob.DisplayName);
@@ -117,13 +140,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
         }
 
-        private async Task CompleteTestRunAsync(int testRunId, HelixJobInfo helixJob, CancellationToken cancellationToken)
+        private async Task CompleteTestRunAsync(int testRunId, HelixJobInfo helixJob, IReadOnlyCollection<string> failedWorkItems, CancellationToken cancellationToken)
         {
             while (true)
             {
                 try
                 {
-                    await _azdo.CompleteTestRunAsync(testRunId, cancellationToken);
+                    await _azdo.CompleteTestRunAsync(testRunId, helixJob.JobName, failedWorkItems, cancellationToken);
                     return;
                 }
                 catch (OperationCanceledException)

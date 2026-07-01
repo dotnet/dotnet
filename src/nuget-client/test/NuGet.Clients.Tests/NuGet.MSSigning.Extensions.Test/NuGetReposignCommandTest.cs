@@ -16,8 +16,8 @@ namespace NuGet.CommandLine.MSSigning.Extensions.Test
 {
     public class NuGetReposignCommandTest
     {
-        private const string NoPackageException = "No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference";
-        private const string InvalidArgException = "Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign";
+        private const string NoPackageException = "No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference";
+        private const string InvalidArgException = "Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign";
         private const string NoCertificateException = "No {0} provided or provided file is not a p7b file.";
         private const string InvalidCertificateFingerprint = "NU3043: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).";
         private const string Sha256Hash = "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b55b046cbb7f506fb";

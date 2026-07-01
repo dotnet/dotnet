@@ -3,8 +3,10 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
 {
@@ -14,6 +16,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     /// </summary>
     public abstract class VisualStudioWorkloadTaskBase : Task
     {
+        private WixToolsetConfiguration _wixToolsetConfiguration;
+
         /// <summary>
         /// A set of all supported MSI platforms.
         /// </summary>
@@ -41,13 +45,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
-        /// A set of Internal Consistency Evaluators (ICEs) to suppress.
+        /// Determines whether wixpack archives should be generated for each workload MSI.
         /// </summary>
-        public ITaskItem[] IceSuppressions
+        public bool CreateWixPacks
         {
             get;
             set;
-        }
+        } = true;
 
         /// <summary>
         /// A set of items containing all the MSIs that were generated. Additional metadata
@@ -83,13 +87,49 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
-        /// The directory containing the WiX toolset binaries.
+        /// The path to the WiX CLI (wix.exe).
         /// </summary>
         [Required]
-        public string WixToolsetPath
+        public string WixExe
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// The path to the harvesting tool (heat.exe).
+        /// </summary>
+        [Required]
+        public string HeatExe
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Set of all the extensions needed to build MSIs. Items must specify the full path to the extension assemblies.
+        /// </summary>
+        [Required]
+        public ITaskItem[] WixExtensions
+        {
+            get;
+            set;
+        }        
+
+        /// <summary>
+        /// Gets the WiX toolset configuration (CLI, tools, extensions, etc.) to use.
+        /// </summary>
+        protected WixToolsetConfiguration WixToolsetConfig
+        {
+            get
+            {
+                if (_wixToolsetConfiguration is null)
+                {
+                    _wixToolsetConfiguration = WixToolsetConfiguration.Create(WixExe, HeatExe, [.. WixExtensions.Select(e => e.ItemSpec)]);
+                }
+
+                return _wixToolsetConfiguration;
+            }
         }
 
         /// <summary>

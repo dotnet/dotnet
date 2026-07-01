@@ -285,6 +285,8 @@ Copyright (c) .NET Foundation. All rights reserved.
               Deterministic="$(Deterministic)"
               DeterministicTimestamp="$(DeterministicTimestamp)"
               PackageIcon="$(PackageIcon)"
+              SdkAnalysisLevel="$(SdkAnalysisLevel)"
+              UsingMicrosoftNETSdk="$(UsingMicrosoftNETSdk)"
               />
   </Target>
 

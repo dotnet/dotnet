@@ -75,3 +75,9 @@ compat text eol=lf
 #   treat as JSONC (JSON with Comments) for GitHub syntax highlighting
 ###############################################################################
 *.json linguist-language=JSONC
+
+###############################################################################
+# Set file behavior to:
+#   treat compiled agentic workflow lock files as generated
+###############################################################################
+.github/workflows/*.lock.yml linguist-generated=true

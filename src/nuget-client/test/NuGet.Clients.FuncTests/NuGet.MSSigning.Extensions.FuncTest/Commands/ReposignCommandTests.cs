@@ -369,7 +369,7 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
 
                 result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
-                result.Errors.Should().Contain("NU3032: The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature.");
+                result.Errors.Should().Contain("NU3032: The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.");
             }
         }
 

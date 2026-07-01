@@ -14,12 +14,6 @@ namespace NuGet.Common
 
         private static Lazy<bool> _isMono = new Lazy<bool>(() => Type.GetType("Mono.Runtime") != null);
 
-        private static Lazy<bool> _isWindows = new Lazy<bool>(() => GetIsWindows());
-
-        private static Lazy<bool> _IsMacOSX = new Lazy<bool>(() => GetIsMacOSX());
-
-        private static Lazy<bool> _IsLinux = new Lazy<bool>(() => GetIsLinux());
-
         private static Lazy<bool> _isRunningInVisualStudio = new Lazy<bool>(() =>
         {
             if (!IsWindows)
@@ -34,19 +28,17 @@ namespace NuGet.Common
         });
 
         public static bool IsWindows
-        {
-            get => _isWindows.Value;
-        }
-
-        private static bool GetIsWindows()
-        {
-            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
-        }
+            => System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
 
         public static bool IsMono
         {
             get
             {
+                if (IsWindows)
+                {
+                    return false;
+                }
+
                 if (IsRunningInVisualStudio)
                 {
                     // skip Mono type check if current process is Devenv
@@ -74,36 +66,28 @@ namespace NuGet.Common
         }
 
         public static bool IsMacOSX
-        {
-            get => _IsMacOSX.Value;
-        }
-
-        private static bool GetIsMacOSX()
-        {
-            return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX);
-        }
+            => System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX);
 
         public static bool IsLinux
         {
-            get => _IsLinux.Value;
-        }
-
-        private static bool GetIsLinux()
-        {
-            // This API does work on full framework but it requires a newer nuget client (RID aware)
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            get
             {
-                return true;
-            }
 
-            // The OSPlatform.FreeBSD property only exists in .NET Core 3.1 and higher, whereas this project is also
-            // compiled for .NET Standard and .NET Framework, where an OSPlatform for FreeBSD must be created manually
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Create("FREEBSD")))
-            {
-                return true;
-            }
+                // This API does work on full framework but it requires a newer nuget client (RID aware)
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+                {
+                    return true;
+                }
 
-            return false;
+                // The OSPlatform.FreeBSD property only exists in .NET Core 3.1 and higher, whereas this project is also
+                // compiled for .NET Standard and .NET Framework, where an OSPlatform for FreeBSD must be created manually
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Create("FREEBSD")))
+                {
+                    return true;
+                }
+
+                return false;
+            }
         }
     }
 }

@@ -8,3 +8,11 @@ NuGet.Protocol.Plugins.GetOperationClaimsRequest.ServiceIndexJson.get -> string?
 NuGet.Protocol.Plugins.GetServiceIndexResponse.GetServiceIndexResponse(NuGet.Protocol.Plugins.MessageResponseCode responseCode, string? serviceIndexJson) -> void
 NuGet.Protocol.Plugins.GetServiceIndexResponse.ServiceIndexJson.get -> string?
 static NuGet.Protocol.Plugins.MessageUtilities.SerializePayload(NuGet.Protocol.Plugins.Message! message) -> string?
+*REMOVED*NuGet.Protocol.Core.Types.SearchFilter.PackageTypes.get -> System.Collections.Generic.IEnumerable<string!>!
+*REMOVED*NuGet.Protocol.Core.Types.SearchFilter.PackageTypes.set -> void
+NuGet.Protocol.Core.Types.SearchFilter.PackageType.get -> string?
+NuGet.Protocol.Core.Types.SearchFilter.PackageType.set -> void
+abstract NuGet.Protocol.Core.Types.PackageSearchResource.SupportsPackageTypeFiltering.get -> bool
+override NuGet.Protocol.PackageSearchResourceV3.SupportsPackageTypeFiltering.get -> bool
+override NuGet.Protocol.PackageSearchResourceV2Feed.SupportsPackageTypeFiltering.get -> bool
+override NuGet.Protocol.LocalPackageSearchResource.SupportsPackageTypeFiltering.get -> bool

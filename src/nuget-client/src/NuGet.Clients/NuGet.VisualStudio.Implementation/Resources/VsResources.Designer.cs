@@ -205,7 +205,7 @@ namespace NuGet.VisualStudio.Implementation.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified source &apos;{0}&apos; is invalid. Please provide a valid source..
+        ///   Looks up a localized string similar to The specified source &apos;{0}&apos; is invalid. Provide a valid source..
         /// </summary>
         internal static string InvalidSource {
             get {

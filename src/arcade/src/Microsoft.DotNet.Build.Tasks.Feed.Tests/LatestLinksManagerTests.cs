@@ -263,5 +263,55 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.sh.sha512"),
             });
         }
+
+        [Fact]
+        public void GetLatestLinksToCreate_DotnetupPatternIncludesBinariesAndGetDotnetupScripts()
+        {
+            var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
+            var assetsToPublish = new HashSet<string>
+            {
+                "dotnetup/1.2.3/dotnetup-win-x64.exe",
+                "dotnetup/1.2.3/dotnetup-win-x64.exe.sha512",
+                "dotnetup/1.2.3/dotnetup-linux-x64",
+                "dotnetup/1.2.3/dotnetup-linux-x64.sha512",
+                "dotnetup/1.2.3/get-dotnetup.ps1",
+                "dotnetup/1.2.3/get-dotnetup.ps1.sha512",
+                "dotnetup/1.2.3/get-dotnetup.sh",
+                "dotnetup/1.2.3/get-dotnetup.sh.sha512",
+                "dotnetup/1.2.3/install-other-tool.ps1",
+                "dotnetup/1.2.3/install-other-tool.sh",
+            };
+            var feedConfig = new TargetFeedConfig(
+                contentType: TargetFeedContentType.Other,
+                targetURL: "https://example.com/feed",
+                type: FeedType.AzureStorageContainer,
+                token: "",
+                latestLinkShortUrlPrefixes: ImmutableList.Create("dotnet/dotnetup/daily"),
+                akaMSCreateLinkPatterns: PublishingConstants.DotnetupAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: [],
+                assetSelection: AssetSelection.All,
+                isolated: false,
+                @internal: false,
+                allowOverwrite: false,
+                symbolPublishVisibility: SymbolPublishVisibility.None,
+                flatten: true
+            );
+
+            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+
+            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+            links.Should().BeEquivalentTo(new List<AkaMSLink>
+            {
+                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-win-x64.exe", "https://example.com/feed/dotnetup/1.2.3/dotnetup-win-x64.exe"),
+                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-win-x64.exe.sha512", "https://example.com/feed/dotnetup/1.2.3/dotnetup-win-x64.exe.sha512"),
+                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-linux-x64", "https://example.com/feed/dotnetup/1.2.3/dotnetup-linux-x64"),
+                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-linux-x64.sha512", "https://example.com/feed/dotnetup/1.2.3/dotnetup-linux-x64.sha512"),
+                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.ps1", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.ps1"),
+                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.ps1.sha512", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.ps1.sha512"),
+                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.sh", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.sh"),
+                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.sh.sha512", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.sh.sha512"),
+            });
+        }
     }
 }

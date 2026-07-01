@@ -140,7 +140,7 @@
     <value>The package ID '{0}' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.</value>
   </data>
   <data name="IncompatibleSchema" xml:space="preserve">
-    <value>The schema version of '{0}' is incompatible with version {1} of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</value>
+    <value>The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</value>
   </data>
   <data name="Manifest_SourceContainsInvalidCharacters" xml:space="preserve">
     <value>Source path '{0}' contains invalid characters.</value>

@@ -568,7 +568,7 @@ ORDER BY c["OrderID"]
 
                 AssertSql(
                     """
-SELECT VALUE c["OrderID"]
+SELECT VALUE (c["OrderID"] + c["OrderID"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 ORDER BY c["OrderID"]
@@ -598,7 +598,7 @@ ORDER BY c["OrderID"]
 
                 AssertSql(
                     """
-SELECT VALUE c["OrderID"]
+SELECT VALUE -(c["OrderID"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 ORDER BY c["OrderID"]
@@ -643,7 +643,12 @@ ORDER BY c["OrderID"]
 
                 AssertSql(
                     """
-SELECT VALUE c["OrderID"]
+SELECT VALUE
+{
+    "LongOrder" : c["OrderID"],
+    "ShortOrder" : c["OrderID"],
+    "Order" : c["OrderID"]
+}
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 ORDER BY c["OrderID"]
@@ -689,6 +694,13 @@ WHERE ((c["$type"] = "Order") AND (c["CustomerID"] = "ALFKI"))
 
     public override Task Projection_containing_DateTime_subtraction(bool async)
         => Assert.ThrowsAsync<InvalidOperationException>(() => base.Projection_containing_DateTime_subtraction(async));
+
+    public override async Task Multiple_members_of_correlated_single_result_subquery_lift_to_single_join(bool async, string method)
+    {
+        await AssertTranslationFailed(() => base.Multiple_members_of_correlated_single_result_subquery_lift_to_single_join(async, method));
+
+        AssertSql();
+    }
 
     public override async Task Project_single_element_from_collection_with_OrderBy_Take_and_FirstOrDefault(bool async)
     {
@@ -1208,11 +1220,7 @@ WHERE STARTSWITH(c["id"], "A")
 
                 AssertSql(
                     """
-SELECT VALUE
-{
-    "OrderID" : c["OrderID"],
-    "c" : (c["OrderID"] + 1000)
-}
+SELECT VALUE (c["OrderID"] / (c["OrderID"] + 1000))
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] = 10250))
 """);

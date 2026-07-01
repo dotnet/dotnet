@@ -384,6 +384,14 @@ internal sealed class FilterExpression
         ValidateArg.NotNull(propertyValueProvider, nameof(propertyValueProvider));
 #endif
 
+        // Fast path: leaf node (single condition, no sub-expressions).
+        // Avoids allocating two Stack<T> objects and a lambda for the common
+        // single-condition filter case (e.g. "FullyQualifiedName~Test").
+        if (_condition is not null)
+        {
+            return _condition.Evaluate(propertyValueProvider);
+        }
+
         return IterateFilterExpression<bool>((current, result) =>
         {
             // Only the leaves have a condition value.

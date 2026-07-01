@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Framework" />
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost" />
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
   </ItemGroup>
@@ -36,9 +37,11 @@
   </ItemGroup>
 
   <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\AotCompatibilityAttributes.cs" />
     <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
     <Compile Include="$(SharedDirectory)\HashCodeCombiner.cs" />
     <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NuGetFeatureFlags.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -313,8 +313,6 @@ public class RunsettingsTests : AcceptanceTestBase
     /// </summary>
     /// <param name="runnerInfo"></param>
     [TestMethod]
-    // patched dotnet is not published on non-windows systems
-    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSourceAttribute(useDesktopRunner: false)]
     [NetCoreTargetFrameworkDataSourceAttribute(useDesktopRunner: false)]
     public void RunSettingsAreLoadedFromProject(RunnerInfo runnerInfo)
@@ -362,7 +360,6 @@ public class RunsettingsTests : AcceptanceTestBase
         }
 
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), runsettingsPath, FrameworkArgValue, _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments += GetDiagArg(TempDirectory.Path);
 
         if (!string.IsNullOrWhiteSpace(additionalArgs))
         {
@@ -377,7 +374,7 @@ public class RunsettingsTests : AcceptanceTestBase
         InvokeVsTest(arguments);
 
         // assert
-        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, TempDirectory.Path, testhostProcessNames, arguments, GetConsoleRunnerPath());
+        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, DiagLogsDirectory, testhostProcessNames, arguments, GetConsoleRunnerPath());
         ValidateSummaryStatus(2, 2, 2);
 
         //cleanup

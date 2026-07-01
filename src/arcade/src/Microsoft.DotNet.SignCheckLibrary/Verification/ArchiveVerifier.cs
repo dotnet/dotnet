@@ -23,12 +23,49 @@ namespace Microsoft.SignCheck.Verification
         protected abstract IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath);
 
         /// <summary>
+        /// Whether this verifier can recurse into the archive's contents on the current
+        /// platform. Subclasses override to false when extraction is platform-gated (e.g.
+        /// PkgVerifier requires macOS, RpmVerifier requires Linux). When false, the skip
+        /// detail reports that contents weren't verified, and <see cref="VerifyContent"/>
+        /// will throw <see cref="PlatformNotSupportedException"/> from
+        /// <see cref="ReadArchiveEntries"/> which is handled by the caller.
+        /// </summary>
+        protected virtual bool ContentVerificationSupported => true;
+
+        /// <summary>
+        /// Builds a "Skipped (&lt;reason&gt;; &lt;contents&gt;)" detail string from
+        /// <paramref name="reason"/>, the current <see cref="VerifyRecursive"/> option,
+        /// and <see cref="ContentVerificationSupported"/>.
+        /// </summary>
+        private string BuildSkipDetail(string reason)
+        {
+            string contents;
+            if (!ContentVerificationSupported)
+            {
+                // Platform-unsupported wins over !VerifyRecursive: even with --recursive, this
+                // platform can't unpack the archive.
+                contents = SignCheckResources.SkipContentsPlatformUnsupported;
+            }
+            else if (!VerifyRecursive)
+            {
+                contents = SignCheckResources.SkipContentsNoRecursive;
+            }
+            else
+            {
+                contents = SignCheckResources.SkipContentsVerified;
+            }
+
+            return string.Format(SignCheckResources.DetailSkippedFormat,
+                string.Format(SignCheckResources.SkipDetailArchiveInnerFormat, reason, contents));
+        }
+
+        /// <summary>
         /// Verifies the signature of a supported file type.
         /// </summary>
         /// <param name="path">The path of the file to verify.</param>
         /// <param name="parent">The parent directory of the file.</param>
         /// <param name="virtualPath">The virtual path of the file.</param>
-        protected SignatureVerificationResult VerifySupportedFileType(string path, string parent, string virtualPath) 
+        protected SignatureVerificationResult VerifySupportedFileType(string path, string parent, string virtualPath)
         {
             try
             {
@@ -41,20 +78,24 @@ namespace Microsoft.SignCheck.Verification
                 VerifyContent(svr);
                 return svr;
             }
-            catch (PlatformNotSupportedException)
+            catch (PlatformNotSupportedException ex)
             {
-                // Verification is not supported on all platforms for all file types
-                return VerifyUnsupportedFileType(path, parent, virtualPath);
+                // The platform can't run this verifier's signature check (e.g. PGP off-Linux
+                // via gpg, .pkg off-macOS via MacOsPkg). Report the exception message as the
+                // reason in the composite skip detail — PNSEs thrown by verifiers here are
+                // already worded as user-facing fragments.
+                return VerifySkipped(path, parent, virtualPath, ex.Message);
             }
         }
 
         /// <summary>
-        /// Verifies the signature of an unsupported file type.
+        /// Reports an archive whose own signature wasn't verified. The composite skip detail
+        /// is built from <paramref name="reason"/> and the contents disposition (recursive
+        /// vs. not), and the archive's contents are still recursed into when possible.
         /// </summary>
-        protected SignatureVerificationResult VerifyUnsupportedFileType(string path, string parent, string virtualPath)
+        protected SignatureVerificationResult VerifySkipped(string path, string parent, string virtualPath, string reason)
         {
-            var svr = SignatureVerificationResult.UnsupportedFileTypeResult(path, parent, virtualPath);
-            string fullPath = svr.FullPath;
+            var svr = SignatureVerificationResult.UnsupportedFileTypeResult(path, parent, virtualPath, BuildSkipDetail(reason));
             svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, SignCheckResources.NA);
 
             VerifyContent(svr);
@@ -77,87 +118,89 @@ namespace Microsoft.SignCheck.Verification
         /// <param name="svr">The container result</param>
         protected void VerifyContent(SignatureVerificationResult svr)
         {
-            if (VerifyRecursive)
+            if (!VerifyRecursive)
             {
-                svr.IsDoNotUnpack = Exclusions.IsDoNotUnpack(
-                    svr.FullPath,
-                    Path.GetDirectoryName(svr.FullPath) ?? SignCheckResources.NA,
-                    svr.VirtualPath,
-                    svr.VirtualPath);
+                return;
+            }
 
-                if (svr.IsDoNotUnpack)
+            svr.IsDoNotUnpack = Exclusions.IsDoNotUnpack(
+                svr.FullPath,
+                Path.GetDirectoryName(svr.FullPath) ?? SignCheckResources.NA,
+                svr.VirtualPath,
+                svr.VirtualPath);
+
+            if (svr.IsDoNotUnpack)
+            {
+                Log.WriteMessage(LogVerbosity.Detailed, SignCheckResources.DiagSkippingArchiveExtraction, svr.FullPath);
+                return;
+            }
+
+            string tempPath = svr.TempPath;
+            CreateDirectory(tempPath);
+            Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, tempPath);
+            Dictionary<string, string> archiveMap = new Dictionary<string, string>();
+
+            try
+            {
+                foreach (ArchiveEntry archiveEntry in ReadArchiveEntries(svr.FullPath))
                 {
-                    Log.WriteMessage(LogVerbosity.Detailed, SignCheckResources.DiagSkippingArchiveExtraction, svr.FullPath);
-                    return;
-                }
-
-                string tempPath = svr.TempPath;
-                CreateDirectory(tempPath);
-                Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, tempPath);
-                Dictionary<string, string> archiveMap = new Dictionary<string, string>();
-
-                try
-                {
-                    foreach (ArchiveEntry archiveEntry in ReadArchiveEntries(svr.FullPath))
+                    if (archiveEntry.IsEmptyOrInvalid())
                     {
-                        if (archiveEntry.IsEmptyOrInvalid())
-                        {
-                            var result = SignatureVerificationResult.UnsupportedFileTypeResult(
-                                archiveEntry.RelativePath,
-                                svr.VirtualPath,
-                                Path.Combine(svr.VirtualPath, archiveEntry.RelativePath));
+                        var result = SignatureVerificationResult.UnsupportedFileTypeResult(
+                            archiveEntry.RelativePath,
+                            svr.VirtualPath,
+                            Path.Combine(svr.VirtualPath, archiveEntry.RelativePath));
 
-                            result.AddDetail(DetailKeys.Misc, "Empty or invalid archive entry");
-                            svr.NestedResults.Add(result);
-                            continue;
-                        }
-
-                        string aliasFullName = GenerateArchiveEntryAlias(archiveEntry, tempPath);
-                        if (File.Exists(aliasFullName))
-                        {
-                            Log.WriteMessage(LogVerbosity.Normal, SignCheckResources.FileAlreadyExists, aliasFullName);
-                        }
-                        else
-                        {
-                            CreateDirectory(Path.GetDirectoryName(aliasFullName));
-                            WriteArchiveEntry(archiveEntry, aliasFullName);
-                            archiveMap[archiveEntry.RelativePath] = aliasFullName;
-                        }
-                    }
-
-                    // We can only verify once everything is extracted. This is mainly because MSIs can have mutliple external CAB files
-                    // and we need to ensure they are extracted before we verify the MSIs.
-                    foreach (string fullName in archiveMap.Keys)
-                    {
-                        SignatureVerificationResult result;
-                        try
-                        {
-                            result = VerifyFile(archiveMap[fullName], svr.VirtualPath,
-                                Path.Combine(svr.VirtualPath, fullName), fullName);
-                        }
-                        catch (Exception e) when (e is not PlatformNotSupportedException)
-                        {
-                            result = SignatureVerificationResult.ErrorResult(
-                                archiveMap[fullName], svr.VirtualPath, Path.Combine(svr.VirtualPath, fullName), e);
-                        }
-
-                        // Tag the full path into the result detail
-                        result.AddDetail(DetailKeys.File, SignCheckResources.DetailFullName, fullName);
+                        result.AddDetail(DetailKeys.Misc, "Empty or invalid archive entry");
                         svr.NestedResults.Add(result);
+                        continue;
+                    }
+
+                    string aliasFullName = GenerateArchiveEntryAlias(archiveEntry, tempPath);
+                    if (File.Exists(aliasFullName))
+                    {
+                        Log.WriteMessage(LogVerbosity.Normal, SignCheckResources.FileAlreadyExists, aliasFullName);
+                    }
+                    else
+                    {
+                        CreateDirectory(Path.GetDirectoryName(aliasFullName));
+                        WriteArchiveEntry(archiveEntry, aliasFullName);
+                        archiveMap[archiveEntry.RelativePath] = aliasFullName;
                     }
                 }
-                catch (PlatformNotSupportedException)
+
+                // We can only verify once everything is extracted. This is mainly because MSIs can have mutliple external CAB files
+                // and we need to ensure they are extracted before we verify the MSIs.
+                foreach (string fullName in archiveMap.Keys)
                 {
-                    // Log the error and return an unsupported file type result
-                    // because some archive types are not supported on all platforms
-                    string parent = Path.GetDirectoryName(svr.FullPath) ?? SignCheckResources.NA;
-                    svr = SignatureVerificationResult.UnsupportedFileTypeResult(svr.FullPath, parent, svr.VirtualPath);
-                    svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, SignCheckResources.NA);
+                    SignatureVerificationResult result;
+                    try
+                    {
+                        result = VerifyFile(archiveMap[fullName], svr.VirtualPath,
+                            Path.Combine(svr.VirtualPath, fullName), fullName);
+                    }
+                    catch (Exception e) when (e is not PlatformNotSupportedException)
+                    {
+                        result = SignatureVerificationResult.ErrorResult(
+                            archiveMap[fullName], svr.VirtualPath, Path.Combine(svr.VirtualPath, fullName), e);
+                    }
+
+                    // Tag the full path into the result detail
+                    result.AddDetail(DetailKeys.File, SignCheckResources.DetailFullName, fullName);
+                    svr.NestedResults.Add(result);
                 }
-                finally
-                {
-                    DeleteDirectory(tempPath);
-                }
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // Log the error and return an unsupported file type result
+                // because some archive types are not supported on all platforms
+                string parent = Path.GetDirectoryName(svr.FullPath) ?? SignCheckResources.NA;
+                svr = SignatureVerificationResult.UnsupportedFileTypeResult(svr.FullPath, parent, svr.VirtualPath);
+                svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, SignCheckResources.NA);
+            }
+            finally
+            {
+                DeleteDirectory(tempPath);
             }
         }
 

@@ -579,6 +579,15 @@ public class CSharpSnapshotGenerator : ICSharpSnapshotGenerator
                 property.GetColumnName());
         }
 
+        if (!annotations.ContainsKey(RelationalAnnotationNames.JsonPropertyName)
+            && property.GetJsonPropertyName() is { } jsonPropertyName
+            && property.Name != jsonPropertyName)
+        {
+            annotations[RelationalAnnotationNames.JsonPropertyName] = new Annotation(
+                RelationalAnnotationNames.JsonPropertyName,
+                jsonPropertyName);
+        }
+
         return Dependencies.AnnotationCodeGenerator
             .FilterIgnoredAnnotations(annotations.Values)
             .ToDictionary(a => a.Name, a => a);
@@ -1204,7 +1213,9 @@ public class CSharpSnapshotGenerator : ICSharpSnapshotGenerator
             }
 
             if (schema != null
-                || (schemaAnnotation != null && tableName != null))
+                || (schemaAnnotation != null
+                    && tableName != null
+                    && entityType.GetDefaultSchema() != null))
             {
                 stringBuilder
                     .Append(", ");

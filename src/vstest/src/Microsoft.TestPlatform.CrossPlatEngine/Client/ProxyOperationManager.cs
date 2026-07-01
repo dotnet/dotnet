@@ -51,6 +51,7 @@ public class ProxyOperationManager
     private bool _testHostLaunched;
     private int _testHostProcessId;
     private string? _testHostProcessStdError;
+    private string? _testHostProcessFileName;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProxyOperationManager"/> class.
@@ -231,6 +232,7 @@ public class ProxyOperationManager
                 sources,
                 envVars,
                 connectionInfo));
+        _testHostProcessFileName = testHostStartInfo.FileName;
         try
         {
             // Launch the test host.
@@ -512,7 +514,7 @@ public class ProxyOperationManager
         // If not it reports timeout, if we don't set this before OnClientProcessExit we will
         // report timeout even though we exited the test host before even attempting the connect.
         _testHostExited.Set();
-        RequestSender.OnClientProcessExit(_testHostProcessStdError);
+        RequestSender.OnClientProcessExit(BuildCrashErrorContext(_testHostProcessFileName, _testHostProcessStdError));
     }
 
     private void ThrowOnTestHostExited(IEnumerable<string> sources, bool testHostExited)
@@ -521,7 +523,7 @@ public class ProxyOperationManager
         {
             // We might consider passing standard output here in case standard error is not
             // available because some errors don't end up in the standard error output.
-            throw new TestPlatformException(string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.TestHostExitedWithError, string.Join("', '", sources), _testHostProcessStdError));
+            throw new TestPlatformException(string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.TestHostExitedWithError, string.Join("', '", sources), BuildCrashErrorContext(_testHostProcessFileName, _testHostProcessStdError)));
         }
     }
 
@@ -551,13 +553,31 @@ public class ProxyOperationManager
             }
         }
 
-        // After testhost process launched failed with error.
+        // After testhost process crashed (stderr present), replace the message with a diagnostic one.
         if (!StringUtils.IsNullOrWhiteSpace(_testHostProcessStdError))
         {
-            // Testhost failed with error.
-            errorMsg = string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.TestHostExitedWithError, string.Join("', '", sources), _testHostProcessStdError);
+            errorMsg = string.Format(CultureInfo.CurrentCulture, CrossPlatEngineResources.TestHostExitedWithError, string.Join("', '", sources), BuildCrashErrorContext(_testHostProcessFileName, _testHostProcessStdError));
+        }
+        else if (!StringUtils.IsNullOrWhiteSpace(_testHostProcessFileName))
+        {
+            // Process launched but no stderr — append path as a diagnostic addendum without overwriting the timeout message.
+            errorMsg += $" {BuildCrashErrorContext(_testHostProcessFileName, null)}";
         }
 
         throw new TestPlatformException(errorMsg);
+    }
+
+    private static string BuildCrashErrorContext(string? processFileName, string? stdError)
+    {
+        var hasPath = !StringUtils.IsNullOrWhiteSpace(processFileName);
+        var hasError = !StringUtils.IsNullOrWhiteSpace(stdError);
+
+        return (hasPath, hasError) switch
+        {
+            (true, true) => $"Process path: {processFileName}{Environment.NewLine}{stdError}",
+            (true, false) => $"Process path: {processFileName}",
+            (false, true) => stdError!,
+            _ => string.Empty,
+        };
     }
 }

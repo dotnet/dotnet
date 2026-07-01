@@ -58,4 +58,17 @@
     <Copyright>$(CopyrightMicrosoft)</Copyright>
   </PropertyGroup>
 
+  <!--
+    Source-build does not strip symbols from native binaries during the build; the binaries are
+    produced with embedded symbols and the distro packaging process is responsible for stripping
+    the symbols out of the shipping binaries and archiving those symbols separately. Native AOT
+    defaults StripSymbols to true on non-Windows, which would strip its output during the build;
+    align StripSymbols with KeepNativeSymbols so AOT-published binaries keep their symbols like
+    other native (CMake-built) binaries in source-build.
+  -->
+  <PropertyGroup>
+    <KeepNativeSymbols Condition="'$(KeepNativeSymbols)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">true</KeepNativeSymbols>
+    <StripSymbols Condition="'$(KeepNativeSymbols)' == 'true'">false</StripSymbols>
+  </PropertyGroup>
+
 </Project>

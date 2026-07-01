@@ -343,7 +343,7 @@ namespace NuGet.Packaging
 
             using (var package = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
             {
-                string psmdcpPath = $"package/services/metadata/core-properties/{CalcPsmdcpName()}.psmdcp";
+                string psmdcpPath = "package/services/metadata/core-properties/nuget.psmdcp";
 
                 // Validate and write the manifest
                 WriteManifest(package, DetermineMinimumSchemaVersion(Files, DependencyGroups), psmdcpPath);
@@ -357,35 +357,6 @@ namespace NuGet.Packaging
                 WriteOpcContentTypes(package, extensions, filesWithoutExtensions);
 
                 WriteOpcPackageProperties(package, psmdcpPath);
-            }
-        }
-
-        private static byte[] ReadAllBytes(Stream stream)
-        {
-            using (var ms = new MemoryStream())
-            {
-                stream.CopyTo(ms);
-                return ms.ToArray();
-            }
-        }
-
-        internal string CalcPsmdcpName()
-        {
-            if (_deterministic)
-            {
-                using (var hashFunc = new Sha512HashFunction())
-                {
-                    foreach (var file in Files.OrderBy(f => f, new NormalizedPathComparer()))
-                    {
-                        var data = ReadAllBytes(file.GetStream());
-                        hashFunc.Update(data, 0, data.Length);
-                    }
-                    return EncodeHexString(hashFunc.GetHashBytes())!.Substring(0, 32);
-                }
-            }
-            else
-            {
-                return Guid.NewGuid().ToString("N", provider: null);
             }
         }
 

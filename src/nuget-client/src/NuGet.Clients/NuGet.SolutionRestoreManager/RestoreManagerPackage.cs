@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using NuGet.VisualStudio.Telemetry;
 using IBrokeredServiceContainer = Microsoft.VisualStudio.Shell.ServiceBroker.IBrokeredServiceContainer;
@@ -47,7 +48,11 @@ namespace NuGet.SolutionRestoreManager
         {
             NuGetVSTelemetryService.Initialize();
 
-            _handler = await SolutionRestoreBuildHandler.InitializeAsync(this);
+            IComponentModel componentModel = await this.GetServiceAsync<SComponentModel, IComponentModel>();
+
+            SolutionRestoreBuildHandler restoreHandler = componentModel.GetService<SolutionRestoreBuildHandler>();
+            await restoreHandler.InitializeAsync(this);
+            _handler = restoreHandler;
 
             await SolutionRestoreCommand.InitializeAsync(this);
 

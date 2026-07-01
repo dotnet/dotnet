@@ -66,7 +66,6 @@ _ = context.JsonEntities.Where(b => b.JsonThing.StringProperty == "foo").ToList(
             options);
     }
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     public class JsonContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<JsonEntity> JsonEntities { get; set; } = null!;
@@ -74,7 +73,6 @@ _ = context.JsonEntities.Where(b => b.JsonThing.StringProperty == "foo").ToList(
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             => modelBuilder.Entity<JsonEntity>().OwnsOne(j => j.JsonThing, n => n.ToJson());
     }
-#pragma warning restore EF8001
 
     public class JsonEntity
     {
@@ -340,6 +338,86 @@ var books = await context.Books.ToListAsync();
                 => dateTime.Date;
         }
     }
+
+    #region Invalid runtime constant name
+
+    [Fact]
+    public virtual async Task Invalid_identifier_json_property_name()
+    {
+        var contextFactory = await InitializeNonSharedTest<InvalidNameContext>();
+        var options = contextFactory.GetOptions();
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.InvalidNameContext(dbContextOptions);
+var books = await context.Entities.ToListAsync();
+""",
+            typeof(InvalidNameContext),
+            options,
+            interceptorCodeAsserter: (code) =>
+            {
+                Assert.Contains("_1_NOT_VALID_Bytes = ", code);
+                Assert.Contains("_1_NOT_VALID_Bytes0 = ", code);
+            });
+    }
+
+    public class InvalidNameContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<InvalidNameEntity> Entities { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+            => modelBuilder.Entity<InvalidNameEntity>().ComplexProperty(x => x.Nested, b =>
+            {
+                b.ToJson();
+                b.Property(x => x.Name).HasJsonPropertyName("1!NOT VALID;");
+                b.Property(x => x.Name2).HasJsonPropertyName("1-NOT VALID!");
+            });
+    }
+
+    public class InvalidNameEntity
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        public InvalidNameNestedEntity Nested { get; set; } = new();
+    }
+
+    public class InvalidNameNestedEntity
+    {
+        public string Name { get; set; } = "";
+        public string Name2 { get; set; } = "";
+    }
+
+    [Fact]
+    public virtual async Task Invalid_identifier_shadow_property_name()
+    {
+        var contextFactory = await InitializeNonSharedTest<InvalidShadowNameContext>(
+            onConfiguring: o => o.ConfigureWarnings(w => w.Ignore(CoreEventId.ShadowPropertyNameNotValidIdentifierWarning)));
+        var options = contextFactory.GetOptions();
+
+        await Test(
+            """
+await using var context = new AdHocPrecompiledQueryRelationalTestBase.InvalidShadowNameContext(dbContextOptions);
+var entities = await context.Entities.ToListAsync();
+""",
+            typeof(InvalidShadowNameContext),
+            options);
+    }
+
+    public class InvalidShadowNameContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<InvalidShadowNameEntity> Entities { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+            => modelBuilder.Entity<InvalidShadowNameEntity>()
+                .Property<string>("NOT VALID !!!1").HasConversion<int>(x => 0, x => "");
+    }
+
+    public class InvalidShadowNameEntity
+    {
+        public Guid Id { get; set; }
+    }
+
+    #endregion
 
     protected TestSqlLoggerFactory TestSqlLoggerFactory
         => (TestSqlLoggerFactory)ListLoggerFactory;

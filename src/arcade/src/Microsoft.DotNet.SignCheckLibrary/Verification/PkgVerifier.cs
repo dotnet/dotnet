@@ -25,12 +25,18 @@ namespace Microsoft.SignCheck.Verification
 
         public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath) 
             => VerifySupportedFileType(path, parent, virtualPath);
+
+        // .pkg unpacking goes through the macOS-only MacOsPkg tooling — see ReadArchiveEntries
+        // and IsSigned, both of which throw PlatformNotSupportedException off macOS. So when
+        // the file's own signature isn't verifiable on the current platform, the contents
+        // can't be either.
+        protected override bool ContentVerificationSupported => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         
         protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                throw new PlatformNotSupportedException("The MacOsPkg tooling is only supported on macOS.");
+                throw new PlatformNotSupportedException(".pkg signature verification is only supported on macOS");
             }
 
             string extractionPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -67,7 +73,7 @@ namespace Microsoft.SignCheck.Verification
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                throw new PlatformNotSupportedException("The MacOsPkg tooling is only supported on macOS.");
+                throw new PlatformNotSupportedException(".pkg signature verification is only supported on macOS");
             }
 
             (bool result, string output, string error) = Utils.CaptureConsoleOutput(() =>

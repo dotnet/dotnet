@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -99,9 +97,10 @@ namespace NuGet.Protocol.Plugins
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var monitorRequest = MessageUtilities.DeserializePayload<MonitorNuGetProcessExitRequest>(request);
+            // Deserialized payload is non-null for well-formed handler requests.
+            var monitorRequest = MessageUtilities.DeserializePayload<MonitorNuGetProcessExitRequest>(request)!;
 
-            Process process = null;
+            Process? process = null;
 
             try
             {
@@ -131,7 +130,7 @@ namespace NuGet.Protocol.Plugins
             await responseHandler.SendResponseAsync(request, response, cancellationToken);
         }
 
-        private void OnProcessExited(object sender, EventArgs e)
+        private void OnProcessExited(object? sender, EventArgs e)
         {
             _plugin.Close();
         }

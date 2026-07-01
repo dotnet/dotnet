@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 #if NET5_0_OR_GREATER
@@ -25,10 +23,10 @@ namespace NuGet.Protocol.Plugins
     {
         private const string _basicAuthenticationType = "Basic";
 
-        private readonly ICredentialService _credentialService;
+        private readonly ICredentialService? _credentialService;
         private bool _isDisposed;
         private readonly IPlugin _plugin;
-        private readonly IWebProxy _proxy;
+        private readonly IWebProxy? _proxy;
         private readonly ConcurrentDictionary<string, SourceRepository> _repositories;
 
         /// <summary>
@@ -46,8 +44,8 @@ namespace NuGet.Protocol.Plugins
         /// is <see langword="null" />.</exception>
         public GetCredentialsRequestHandler(
             IPlugin plugin,
-            IWebProxy proxy,
-            ICredentialService credentialService)
+            IWebProxy? proxy,
+            ICredentialService? credentialService)
         {
             if (plugin == null)
             {
@@ -139,10 +137,11 @@ namespace NuGet.Protocol.Plugins
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var requestPayload = MessageUtilities.DeserializePayload<GetCredentialsRequest>(request);
+            // Deserialized payload is non-null for well-formed handler requests.
+            var requestPayload = MessageUtilities.DeserializePayload<GetCredentialsRequest>(request)!;
             var packageSource = GetPackageSource(requestPayload.PackageSourceRepository);
 
-            GetCredentialsResponse responsePayload = null;
+            GetCredentialsResponse responsePayload;
 
             if (packageSource.IsHttp &&
                 string.Equals(
@@ -150,7 +149,7 @@ namespace NuGet.Protocol.Plugins
                     packageSource.Source,
                     StringComparison.OrdinalIgnoreCase))
             {
-                ICredentials credential = null;
+                ICredentials? credential;
 
                 using (var progressReporter = AutomaticProgressReporter.Create(
                     _plugin.Connection,
@@ -181,12 +180,13 @@ namespace NuGet.Protocol.Plugins
                 }
                 else
                 {
-                    networkCredential = credential?.GetCredential(packageSource.SourceUri, null);
+                    // authType is documented as nullable in implementations even though BCL types it as non-null.
+                    var resolvedCredential = credential?.GetCredential(packageSource.SourceUri, authType: null!);
 
                     responsePayload = new GetCredentialsResponse(
-                        networkCredential != null ? MessageResponseCode.Success : MessageResponseCode.NotFound,
-                        networkCredential?.UserName,
-                        networkCredential?.Password);
+                        resolvedCredential != null ? MessageResponseCode.Success : MessageResponseCode.NotFound,
+                        resolvedCredential?.UserName,
+                        resolvedCredential?.Password);
                 }
             }
             else
@@ -200,7 +200,7 @@ namespace NuGet.Protocol.Plugins
             await responseHandler.SendResponseAsync(request, responsePayload, cancellationToken);
         }
 
-        private async Task<ICredentials> GetCredentialAsync(
+        private async Task<ICredentials?> GetCredentialAsync(
             PackageSource packageSource,
             HttpStatusCode statusCode,
             CancellationToken cancellationToken)
@@ -215,7 +215,7 @@ namespace NuGet.Protocol.Plugins
             return await GetPackageSourceCredential(requestType, packageSource, cancellationToken);
         }
 
-        private async Task<ICredentials> GetPackageSourceCredential(
+        private async Task<ICredentials?> GetPackageSourceCredential(
             CredentialRequestType requestType,
             PackageSource packageSource,
             CancellationToken cancellationToken)
@@ -257,7 +257,7 @@ namespace NuGet.Protocol.Plugins
             return credentials;
         }
 
-        private async Task<ICredentials> GetProxyCredentialAsync(
+        private async Task<ICredentials?> GetProxyCredentialAsync(
             PackageSource packageSource,
             CancellationToken cancellationToken)
         {
@@ -276,7 +276,8 @@ namespace NuGet.Protocol.Plugins
                     message,
                     cancellationToken);
 
-                return proxyCredentials?.GetCredential(proxyUri, _basicAuthenticationType);
+                // IWebProxy.GetProxy returns non-null in practice when proxy resolution succeeds.
+                return proxyCredentials?.GetCredential(proxyUri!, _basicAuthenticationType);
             }
 
             return null;
@@ -300,9 +301,7 @@ namespace NuGet.Protocol.Plugins
 
         private PackageSource GetPackageSource(string packageSourceRepository)
         {
-            SourceRepository sourceRepository;
-
-            if (_repositories.TryGetValue(packageSourceRepository, out sourceRepository))
+            if (_repositories.TryGetValue(packageSourceRepository, out var sourceRepository))
             {
                 return sourceRepository.PackageSource;
             }

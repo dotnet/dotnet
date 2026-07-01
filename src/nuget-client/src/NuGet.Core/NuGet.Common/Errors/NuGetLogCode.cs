@@ -909,6 +909,11 @@ namespace NuGet.Common
         NU5051 = 5051,
 
         /// <summary>
+        /// Package ID does not adhere to the restricted set of characters
+        /// </summary>
+        NU5052 = 5052,
+
+        /// <summary>
         /// AssemblyOutsideLibWarning
         /// </summary>
         NU5100 = 5100,

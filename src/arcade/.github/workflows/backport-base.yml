@@ -146,6 +146,22 @@ jobs:
               throw new Error(`Error: @${comment_user} does not have write access to this repo, backporting is not allowed. Required permissions: write or admin.`);
             }
 
+            // require the source PR to be merged before backporting
+            const { data: source_pr } = await github.rest.pulls.get({
+              owner: repo_owner,
+              repo: repo_name,
+              pull_number: pr_number
+            });
+
+            if (source_pr.state !== 'closed' || !source_pr.merged) {
+              const not_merged_body = `@${comment_user} backporting to \`${target_branch}\` was not run because the source pull request has not been merged. Please merge this pull request before requesting a backport.`;
+              postComment(not_merged_body);
+              core.setFailed("Source pull request is not merged; backport requires a merged PR.");
+              return;
+            }
+
+            console.log("Source pull request is merged; proceeding with backport.");
+
             try { await exec.exec(`git ls-remote --exit-code --heads origin ${target_branch}`) } catch { throw new Error(`Error: The specified backport target branch "${target_branch}" wasn't found in the repo.`); }
             console.log(`Backport target branch: ${target_branch}`);
 
