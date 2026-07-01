@@ -46,6 +46,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
     [WrapperCompatibilityDataSource]
     public void RunAllTests(RunnerInfo runnerInfo)
@@ -65,7 +66,6 @@ public class RunTests : AcceptanceTestBase
 
     [TestMethod]
     [NetCoreTargetFrameworkDataSource]
-    [NetFullTargetFrameworkDataSource(useVsixRunner: true)]
     [TestCategory("Smoke")]
     public void RunAllTestsFromDlls(RunnerInfo runnerInfo)
     {
@@ -83,6 +83,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
     [WrapperCompatibilityDataSource()]
     public void RunAllTestsWithMixedTFMsWillRunTestsFromAllProvidedDllEvenWhenTheyMixTFMs(RunnerInfo runnerInfo)
@@ -171,6 +172,9 @@ public class RunTests : AcceptanceTestBase
 
     [TestMethod]
     // This is testing the behavior of crash in testhost, run on different testhost, and just .NET runner.
+    // The assertion below branches on the .NET Framework-specific stack overflow message, and the
+    // .NET Framework testhost is only available on Windows, so this runs as Windows-Review.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
     public void RunTestsShouldThrowOnStackOverflowException(RunnerInfo runnerInfo)
@@ -195,8 +199,6 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
     public void RunTestsShouldShowProperWarningOnNoTestsForTestCaseFilter(RunnerInfo runnerInfo)
     {
