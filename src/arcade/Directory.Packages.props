@@ -9,7 +9,7 @@
   <PropertyGroup>
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
     <MicrosoftSignedWixVersion>3.14.1-11131.2940454</MicrosoftSignedWixVersion>
-    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.4</MicrosoftWixToolsetSdkVersion>
+    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.6</MicrosoftWixToolsetSdkVersion>
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion/MicrosoftTestingPlatformVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.3</XUnitVersion>
