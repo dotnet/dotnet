@@ -74,8 +74,6 @@ extends:
         enabled: true
       policheck:
         enabled: true
-      tsa:
-        enabled: true
     stages:
     - template: /eng/pipelines/templates/stages/source-build-sdk-diff-tests.yml@self
       parameters:
