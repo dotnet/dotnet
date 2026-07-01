@@ -111,5 +111,14 @@ namespace Microsoft.TestPlatform.TestHostProvider.Resources {
             }
         }
 
+        /// <summary>
+        ///   Looks up a localized string similar to Running .NET Framework tests is supported on Windows only..
+        /// </summary>
+        internal static string NetFrameworkTestsNotSupportedOnNonWindows {
+            get {
+                return ResourceManager.GetString("NetFrameworkTestsNotSupportedOnNonWindows", resourceCulture);
+            }
+        }
+
     }
 }

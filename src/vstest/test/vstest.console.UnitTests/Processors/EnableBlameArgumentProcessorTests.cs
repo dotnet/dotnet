@@ -393,7 +393,6 @@ public class EnableBlameArgumentProcessorTests
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     public void InitializeMonitorPostmortemDebuggerShouldGenerateCorrectConfiguration()
     {
         var runsettingsString = string.Format(CultureInfo.CurrentCulture, _defaultRunSettings, "");
@@ -434,7 +433,6 @@ public class EnableBlameArgumentProcessorTests
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     public void InitializeMonitorPostmortemDebuggerShouldGenerateCorrectConfigurationAlsoIfIncomplete()
     {
         var runsettingsString = string.Format(CultureInfo.CurrentCulture, _defaultRunSettings, "");
