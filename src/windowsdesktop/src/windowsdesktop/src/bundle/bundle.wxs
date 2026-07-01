@@ -3,7 +3,6 @@
           Manufacturer="$(Manufacturer)" 
           Version="$(BundleVersion)" 
           UpgradeCode="$(UpgradeCode)"
-          ProviderKey="$(ProviderKey)"
           AboutUrl="https://aka.ms/dotnet-windows-desktop"
           Compressed="yes">
 

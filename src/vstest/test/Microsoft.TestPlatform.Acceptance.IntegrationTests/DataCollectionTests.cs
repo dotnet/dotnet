@@ -20,7 +20,6 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class DataCollectionTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void ExecuteTestsWithDataCollection(RunnerInfo runnerInfo)
     {
@@ -44,7 +43,6 @@ public class DataCollectionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void ExecuteTestsWithDataCollectionUsingCollectArgument(RunnerInfo runnerInfo)
     {
@@ -80,6 +78,7 @@ public class DataCollectionTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // .NET Framework testhost-specific assembly loading; not applicable to the netcore testhost.
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource]
     public void DataCollectorAssemblyLoadingShouldNotThrowErrorForFullFramework(RunnerInfo runnerInfo)
@@ -93,7 +92,6 @@ public class DataCollectionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void DataCollectorAttachmentProcessor(RunnerInfo runnerInfo)
     {

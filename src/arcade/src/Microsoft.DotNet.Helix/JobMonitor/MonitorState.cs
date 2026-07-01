@@ -4,101 +4,341 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.Client.Models;
 using Microsoft.DotNet.Helix.JobMonitor.Models;
 
 namespace Microsoft.DotNet.Helix.JobMonitor
 {
     /// <summary>
-    /// Mutable container for every piece of runtime state the monitor accumulates while
-    /// observing a single invocation. Helpers (status reporter, upload queue, timeout
-    /// reporter) receive this by reference and read/update its fields directly so that the
-    /// runner's main loop is the only place that drives the lifecycle.
+    /// Thread-safe container for every piece of runtime state the monitor accumulates while
+    /// observing a single invocation. Mutations from the main poll loop and from background
+    /// test-result upload tasks (via <see cref="ObserveTestResults"/>) are serialized through
+    /// an internal lock; collections are never exposed directly so callers cannot enumerate
+    /// or mutate them outside the lock.
     /// </summary>
     internal sealed class MonitorState
     {
-        /// <summary>
-        /// All Helix jobs the monitor has observed for this build, keyed by Helix job name.
-        /// Overwritten per poll so the cached entry reflects the latest Helix-side state
-        /// (in particular the <c>Finished</c> timestamp transitioning from null to a value).
-        /// </summary>
-        public Dictionary<string, HelixJobInfo> AssociatedJobs { get; } = new(StringComparer.OrdinalIgnoreCase);
+        private readonly object _sync = new();
 
-        /// <summary>
-        /// Cache of every Helix job we have seen this run, indexed by job name, so that
-        /// <see cref="GetSubmitterChainKey"/> can walk back through <c>PreviousHelixJobName</c>
-        /// links across polls.
-        /// </summary>
-        public Dictionary<string, HelixJobInfo> KnownJobsByName { get; } = new(StringComparer.OrdinalIgnoreCase);
+        // All Helix jobs the monitor has observed for this build, keyed by Helix job name.
+        // Overwritten per poll so the cached entry reflects the latest Helix-side state
+        // (in particular the Finished timestamp transitioning from null to a value). Also used
+        // by GetSubmitterChainKey to walk back through PreviousHelixJobName links across polls.
+        private readonly Dictionary<string, HelixJobInfo> _associatedJobs = new(StringComparer.OrdinalIgnoreCase);
 
-        /// <summary>
-        /// Helix jobs whose results have been uploaded to Azure DevOps in this or a prior
-        /// monitor invocation. Seeded on entry from the AzDO test-run tags.
-        /// </summary>
-        public HashSet<string> ProcessedHelixJobs { get; } = new(StringComparer.OrdinalIgnoreCase);
+        // Helix jobs whose results have been uploaded to Azure DevOps in this or a prior
+        // monitor invocation. Seeded on entry from the AzDO test-run tags.
+        private readonly HashSet<string> _processedHelixJobs = new(StringComparer.OrdinalIgnoreCase);
 
-        /// <summary>
-        /// Tracks the latest outcome for each logical work item, keyed by
-        /// (SubmitterChainKey, WorkItemName). The chain key (not just the work-item name)
-        /// is used so that two AzDO jobs which happen to run identically-named Helix work
-        /// items do not overwrite each other's outcomes. Within a single AzDO submitter
-        /// chain, a resubmission still overwrites a prior failure for the same work-item
-        /// name because resubmitted Helix jobs inherit <c>System.JobName</c>.
-        /// </summary>
-        public Dictionary<(string ChainKey, string WorkItemName), bool> WorkItemOutcomes { get; }
+        // Tracks the latest outcome for each logical work item, keyed by
+        // (SubmitterChainKey, WorkItemName). See GetSubmitterChainKey for the keying rationale.
+        private readonly Dictionary<(string ChainKey, string WorkItemName), bool> _workItemOutcomes
             = new(WorkItemOutcomeKeyComparer.Instance);
 
-        /// <summary>
-        /// Helix job names whose per-work-item outcomes have already been reconciled into
-        /// <see cref="WorkItemOutcomes"/>. Prevents the second reconciliation pass from
-        /// re-processing jobs that were observed in an earlier poll.
-        /// </summary>
-        public HashSet<string> WorkItemOutcomeJobs { get; } = new(StringComparer.OrdinalIgnoreCase);
+        // Helix job names whose per-work-item outcomes have already been reconciled into
+        // _workItemOutcomes. Prevents the second reconciliation pass from re-processing
+        // jobs that were observed in an earlier poll.
+        private readonly HashSet<string> _workItemOutcomeJobs = new(StringComparer.OrdinalIgnoreCase);
 
-        /// <summary>
-        /// Latest known console-link information for every failed work item, keyed the same
-        /// way as <see cref="WorkItemOutcomes"/>. Cleared per key when a later incarnation
-        /// passes. Used to build the final aggregated failure report.
-        /// </summary>
-        public Dictionary<(string ChainKey, string WorkItemName), FailedWorkItemConsoleInfo> FailedWorkItemConsoleInfo { get; }
+        // Latest known console-link information for every failed work item, keyed the same
+        // way as _workItemOutcomes. Cleared per key when a later incarnation passes.
+        private readonly Dictionary<(string ChainKey, string WorkItemName), FailedWorkItemConsoleInfo> _failedWorkItemConsoleInfo
             = new(WorkItemOutcomeKeyComparer.Instance);
 
-        /// <summary>
-        /// Deduplication set for the per-failure console-link warnings emitted during
-        /// status logs and upload, so we don't spam the same link.
-        /// </summary>
-        public HashSet<string> ReportedFailedWorkItemConsoleLinks { get; } = new(StringComparer.OrdinalIgnoreCase);
+        // Deduplication set for per-failure console-link warnings.
+        private readonly HashSet<string> _reportedFailedWorkItemConsoleLinks = new(StringComparer.OrdinalIgnoreCase);
 
-        /// <summary>
-        /// Last observed AzDO timeline records (scoped to the monitor's stage). Refreshed
-        /// every poll and consumed by the timeout report.
-        /// </summary>
-        public List<AzureDevOpsTimelineRecord> LatestTimelineRecords { get; } = [];
+        // Last observed AzDO timeline records (scoped to the monitor's stage).
+        private readonly List<AzureDevOpsTimelineRecord> _latestTimelineRecords = [];
 
-        /// <summary>
-        /// AzDO submitter job names whose Helix work was resubmitted during the one-shot
-        /// retry pass. These jobs are excluded from the AzDO non-monitor failure check while
-        /// the current invocation runs (the failure is represented by the resubmitted work).
-        /// </summary>
-        public HashSet<string> RetryingHelixSubmitterJobs { get; } = new(StringComparer.OrdinalIgnoreCase);
+        // AzDO submitter job names whose Helix work was resubmitted during the retry pass.
+        private readonly HashSet<string> _retryingHelixSubmitterJobs = new(StringComparer.OrdinalIgnoreCase);
 
-        public int ResubmittedJobCount { get; set; }
-        public int ResubmittedWorkItemCount { get; set; }
-        public int ProcessedJobCount { get; set; }
+        private int _resubmittedJobCount;
+        private int _resubmittedWorkItemCount;
+        private int _processedJobCount;
 
-        public int FailedWorkItemCount => WorkItemOutcomes.Values.Count(passed => !passed);
+        public int ResubmittedJobCount => Volatile.Read(ref _resubmittedJobCount);
 
-        public bool HasFailedWorkItem => WorkItemOutcomes.Values.Any(passed => !passed);
+        public int ResubmittedWorkItemCount => Volatile.Read(ref _resubmittedWorkItemCount);
+
+        public int ProcessedJobCount => Volatile.Read(ref _processedJobCount);
+
+        public int AssociatedJobsCount
+        {
+            get { lock (_sync) { return _associatedJobs.Count; } }
+        }
+
+        public int WorkItemOutcomeCount
+        {
+            get { lock (_sync) { return _workItemOutcomes.Count; } }
+        }
+
+        public int FailedWorkItemConsoleInfoCount
+        {
+            get { lock (_sync) { return _failedWorkItemConsoleInfo.Count; } }
+        }
+
+        public int FailedWorkItemCount
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    int count = 0;
+                    foreach (bool passed in _workItemOutcomes.Values)
+                    {
+                        if (!passed)
+                        {
+                            count++;
+                        }
+                    }
+
+                    return count;
+                }
+            }
+        }
+
+        public bool HasFailedWorkItem
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    foreach (bool passed in _workItemOutcomes.Values)
+                    {
+                        if (!passed)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+        }
 
         /// <summary>
         /// Record a freshly-seen set of jobs into the per-poll and cross-poll caches.
         /// </summary>
         public void ObserveJobs(IEnumerable<HelixJobInfo> jobs)
         {
-            foreach (HelixJobInfo job in jobs)
+            lock (_sync)
             {
-                AssociatedJobs[job.JobName] = job;
-                KnownJobsByName[job.JobName] = job;
+                foreach (HelixJobInfo job in jobs)
+                {
+                    _associatedJobs[job.JobName] = job;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a stable snapshot of every job observed so far. Safe to enumerate from any
+        /// thread (the underlying dictionary will not mutate during iteration).
+        /// </summary>
+        public IReadOnlyList<HelixJobInfo> SnapshotAssociatedJobs()
+        {
+            lock (_sync)
+            {
+                return [.._associatedJobs.Values];
+            }
+        }
+
+        /// <summary>
+        /// Seeds the set of Helix jobs whose results were already uploaded in a prior monitor
+        /// invocation. Called once at startup before any background work begins.
+        /// </summary>
+        public void AddProcessedHelixJobs(IEnumerable<string> jobNames)
+        {
+            lock (_sync)
+            {
+                foreach (string jobName in jobNames)
+                {
+                    _processedHelixJobs.Add(jobName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Marks the given Helix job as processed and increments <see cref="ProcessedJobCount"/>.
+        /// Returns true if this is the first time the job was marked.
+        /// </summary>
+        public bool TryMarkHelixJobProcessed(string jobName)
+        {
+            lock (_sync)
+            {
+                if (_processedHelixJobs.Add(jobName))
+                {
+                    _processedJobCount++;
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public bool IsHelixJobProcessed(string jobName)
+        {
+            lock (_sync)
+            {
+                return _processedHelixJobs.Contains(jobName);
+            }
+        }
+
+        public bool IsWorkItemOutcomesRecorded(string jobName)
+        {
+            lock (_sync)
+            {
+                return _workItemOutcomeJobs.Contains(jobName);
+            }
+        }
+
+        /// <summary>
+        /// Atomically records all per-work-item outcomes for one completed Helix job:
+        /// updates <see cref="WorkItemOutcomeCount"/>, the failure map, and the failed-work-item
+        /// console-info map. Returns true the first time it is called for a given job; subsequent
+        /// calls with the same job no-op so the reconciliation pass is idempotent.
+        /// </summary>
+        public bool TryRecordWorkItemOutcomes(HelixJobInfo helixJob, IReadOnlyCollection<WorkItemSummary> workItems)
+        {
+            lock (_sync)
+            {
+                if (!_workItemOutcomeJobs.Add(helixJob.JobName))
+                {
+                    return false;
+                }
+
+                string chainKey = GetSubmitterChainKeyLocked(helixJob);
+                foreach (WorkItemSummary wi in workItems)
+                {
+                    // Within the same AzDO submitter chain (i.e. resubmissions of the same
+                    // logical AzDO job), the latest result overwrites the prior one for the
+                    // same work item name. Across different submitter chains the key differs,
+                    // so identically-named work items in different AzDO jobs are tracked
+                    // independently.
+                    _workItemOutcomes[(chainKey, wi.Name)] = !wi.IsFailed;
+                    TrackFailedWorkItemConsoleInfoLocked(helixJob, chainKey, wi);
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Marks work items whose uploaded test results contained any failure as failed in
+        /// the outcome map. Work items whose tests all passed are left alone so the Helix-side
+        /// outcome (recorded by the reconciliation pass) is preserved — a work item that the
+        /// Helix runner reported as failed must stay failed even if it produced no failed
+        /// test results.
+        /// </summary>
+        public void ObserveTestResults(
+            IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary> testResults)
+        {
+            lock (_sync)
+            {
+                foreach (KeyValuePair<(string JobName, string WorkItemName), TestResultUploadSummary> entry in testResults)
+                {
+                    if (entry.Value.AllPassed)
+                    {
+                        continue;
+                    }
+
+                    if (!_associatedJobs.TryGetValue(entry.Key.JobName, out HelixJobInfo job))
+                    {
+                        continue;
+                    }
+
+                    // If this job has been superseded by a later attempt whose outcomes were
+                    // already reconciled, ignore late-arriving summaries from the older attempt
+                    // so they cannot overwrite the newer outcome.
+                    bool supersededByReconciledAttempt = _associatedJobs.Values.Any(j =>
+                        !string.IsNullOrEmpty(j.PreviousHelixJobName)
+                        && StringComparer.OrdinalIgnoreCase.Equals(j.PreviousHelixJobName, job.JobName)
+                        && _workItemOutcomeJobs.Contains(j.JobName));
+                    if (supersededByReconciledAttempt)
+                    {
+                        continue;
+                    }
+
+                    string chainKey = GetSubmitterChainKeyLocked(job);
+                    var key = (chainKey, entry.Key.WorkItemName);
+                    _workItemOutcomes[key] = false;
+
+                    // Ensure the final failure report includes test-only failures too.
+                    if (!_failedWorkItemConsoleInfo.ContainsKey(key))
+                    {
+                        _failedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
+                            job.DisplayName,
+                            entry.Key.WorkItemName,
+                            "Failed (AzDO tests)",
+                            "see Azure DevOps test run results");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns true if this is the first time a console-link warning is being emitted for
+        /// the given (jobName, workItemName) key. Used to deduplicate console-link logging.
+        /// </summary>
+        public bool TryReportFailedWorkItemConsoleLink(string deduplicationKey)
+        {
+            lock (_sync)
+            {
+                return _reportedFailedWorkItemConsoleLinks.Add(deduplicationKey);
+            }
+        }
+
+        public void SetTimelineRecords(IEnumerable<AzureDevOpsTimelineRecord> records)
+        {
+            lock (_sync)
+            {
+                _latestTimelineRecords.Clear();
+                _latestTimelineRecords.AddRange(records);
+            }
+        }
+
+        public IReadOnlyList<AzureDevOpsTimelineRecord> SnapshotTimelineRecords()
+        {
+            lock (_sync)
+            {
+                return [.._latestTimelineRecords];
+            }
+        }
+
+        /// <summary>
+        /// Records a single successful resubmission: bumps the resubmitted job/work-item
+        /// counters and (when non-empty) adds the AzDO submitter job name to the set excluded
+        /// from the non-monitor failure check.
+        /// </summary>
+        public void RecordResubmission(string submitterJobName, int resubmittedWorkItemCount)
+        {
+            lock (_sync)
+            {
+                _resubmittedJobCount++;
+                _resubmittedWorkItemCount += resubmittedWorkItemCount;
+                if (!string.IsNullOrEmpty(submitterJobName))
+                {
+                    _retryingHelixSubmitterJobs.Add(submitterJobName);
+                }
+            }
+        }
+
+        public IReadOnlySet<string> SnapshotRetryingHelixSubmitterJobs()
+        {
+            lock (_sync)
+            {
+                return new HashSet<string>(_retryingHelixSubmitterJobs, StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        public IReadOnlyList<FailedWorkItemConsoleInfo> SnapshotFailedWorkItemConsoleInfo()
+        {
+            lock (_sync)
+            {
+                return [.._failedWorkItemConsoleInfo.Values];
             }
         }
 
@@ -116,6 +356,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// </summary>
         public string GetSubmitterChainKey(HelixJobInfo job)
         {
+            lock (_sync)
+            {
+                return GetSubmitterChainKeyLocked(job);
+            }
+        }
+
+        private string GetSubmitterChainKeyLocked(HelixJobInfo job)
+        {
             if (!string.IsNullOrEmpty(job.SubmitterJobName))
             {
                 return FormatSubmitterChainKey(job.SubmitterJobName, job.QueueId);
@@ -127,7 +375,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 && !string.IsNullOrEmpty(current.PreviousHelixJobName)
                 && visited.Add(current.JobName))
             {
-                if (!KnownJobsByName.TryGetValue(current.PreviousHelixJobName, out HelixJobInfo previous))
+                if (!_associatedJobs.TryGetValue(current.PreviousHelixJobName, out HelixJobInfo previous))
                 {
                     return $"helix:{current.PreviousHelixJobName}";
                 }
@@ -194,16 +442,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             return depth;
         }
 
-        /// <summary>
-        /// Tracks (or removes) the per-failure console-info record for a single observed
-        /// work item. Removal happens when a later incarnation passes.
-        /// </summary>
-        public void TrackFailedWorkItemConsoleInfo(HelixJobInfo helixJob, string chainKey, WorkItemSummary workItem)
+        private void TrackFailedWorkItemConsoleInfoLocked(HelixJobInfo helixJob, string chainKey, WorkItemSummary workItem)
         {
             var key = (chainKey, workItem.Name);
             if (workItem.IsFailed)
             {
-                FailedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
+                _failedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
                     helixJob.DisplayName,
                     workItem.Name,
                     workItem.FormattedState,
@@ -211,7 +455,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
             else
             {
-                FailedWorkItemConsoleInfo.Remove(key);
+                _failedWorkItemConsoleInfo.Remove(key);
             }
         }
 

@@ -75,8 +75,6 @@ extends:
         enabled: true
       policheck:
         enabled: true
-      tsa:
-        enabled: true
     stages:
     - template: /eng/pipelines/templates/stages/vmr-license-scan.yml@self
       parameters:

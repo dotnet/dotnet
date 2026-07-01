@@ -80,17 +80,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _options.SourceBranch);
 
             _reporter = new StatusReporter(_logger, _options, _helix, _state);
-            _uploads = new TestResultUploadQueue(_logger, _options, _azdo, _helix, Delay);
+            _uploads = new TestResultUploadQueue(_logger, _options, _azdo, _helix, _state, Delay);
         }
 
         public async Task<int> RunAsync(CancellationToken cancellationToken)
         {
             _reporter.LogMonitorStart();
 
-            foreach (string job in await _azdo.GetProcessedHelixJobNamesAsync(cancellationToken))
-            {
-                _state.ProcessedHelixJobs.Add(job);
-            }
+            _state.AddProcessedHelixJobs(await _azdo.GetProcessedHelixJobNamesAsync(cancellationToken));
 
             try
             {
@@ -138,21 +135,52 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     .Where(IsInScope)
             ];
 
+            // Surfacing work items that passed by exit code but whose AzDO test results contain
+            // failures: a prior monitor invocation may have uploaded failed tests for a job
+            // before being cancelled / crashing. Without this, the retry pass would only
+            // resubmit work items whose Helix exit code was non-zero and would silently leave
+            // test-only failures in place. The lookup is skipped (and a noop dictionary used)
+            // when --fail-on-failed-tests is disabled so AzDO test results no longer influence
+            // retry decisions.
+            IReadOnlyDictionary<string, IReadOnlySet<string>> failedTestWorkItemsByJob =
+                _options.FailWorkItemsWithFailedTests
+                    ? await _azdo.GetFailedTestWorkItemsAsync(cancellationToken)
+                    : new Dictionary<string, IReadOnlySet<string>>(StringComparer.OrdinalIgnoreCase);
+
             var resubmittedJobs = new List<HelixJobInfo>();
 
             foreach (HelixJobInfo completedJob in MonitorState.GetLatestHelixJobAttempts(scopedJobs)
                                                               .Where(j => j.IsCompleted))
             {
-                IReadOnlyCollection<WorkItemSummary> failedWorkItems =
+                IReadOnlyCollection<WorkItemSummary> jobWorkItems =
+                    await _helix.ListWorkItemsAsync(completedJob.JobName, cancellationToken);
+
+                failedTestWorkItemsByJob.TryGetValue(completedJob.JobName, out IReadOnlySet<string> testFailedNames);
+
+                IReadOnlyList<WorkItemSummary> exitCodeFailures = [..jobWorkItems.Where(wi => wi.IsFailed)];
+                IReadOnlyList<WorkItemSummary> testOnlyFailures =
                 [
-                    ..(await _helix.ListWorkItemsAsync(completedJob.JobName, cancellationToken))
-                        .Where(wi => wi.IsFailed)
+                    ..jobWorkItems.Where(wi => !wi.IsFailed
+                        && testFailedNames is not null
+                        && testFailedNames.Contains(wi.Name))
                 ];
 
-                if (failedWorkItems.Count == 0)
+                if (exitCodeFailures.Count + testOnlyFailures.Count == 0)
                 {
                     continue;
                 }
+
+                _reporter.LogRetryPassResubmission(completedJob, exitCodeFailures, testOnlyFailures);
+
+                // exitCodeFailures and testOnlyFailures are disjoint by construction (one
+                // requires IsFailed, the other !IsFailed), but guard against duplicate work
+                // item names within a job so each item is only resubmitted once.
+                IReadOnlyCollection<WorkItemSummary> failedWorkItems =
+                [
+                    ..exitCodeFailures
+                        .Concat(testOnlyFailures)
+                        .DistinctBy(wi => wi.Name, StringComparer.OrdinalIgnoreCase)
+                ];
 
                 HelixJobInfo resubmitted = await _helix.ResubmitWorkItemsAsync(completedJob, failedWorkItems, cancellationToken);
                 if (resubmitted is null)
@@ -161,12 +189,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 }
 
                 resubmittedJobs.Add(resubmitted);
-                _state.ResubmittedJobCount++;
-                _state.ResubmittedWorkItemCount += failedWorkItems.Count;
-                if (!string.IsNullOrEmpty(completedJob.SubmitterJobName))
-                {
-                    _state.RetryingHelixSubmitterJobs.Add(completedJob.SubmitterJobName);
-                }
+                _state.RecordResubmission(completedJob.SubmitterJobName, failedWorkItems.Count);
             }
 
             if (resubmittedJobs.Count == 0)
@@ -218,8 +241,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     .Where(IsInScope)
             ];
 
-            _state.LatestTimelineRecords.Clear();
-            _state.LatestTimelineRecords.AddRange(timelineRecords);
+            _state.SetTimelineRecords(timelineRecords);
             _state.ObserveJobs(scopedJobs);
 
             // Helix job summaries can omit Finished for failed jobs even after all work
@@ -230,11 +252,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 StringComparer.OrdinalIgnoreCase);
 
             // First pass: upload + reconcile for any newly-completed jobs.
-            foreach (HelixJobInfo job in completedJobs.Where(j => !_state.ProcessedHelixJobs.Contains(j.JobName)))
+            foreach (HelixJobInfo job in completedJobs.Where(j => !_state.IsHelixJobProcessed(j.JobName)))
             {
                 await ReconcileCompletedJobAsync(job, queueUpload: true, cancellationToken);
-                _state.ProcessedHelixJobs.Add(job.JobName);
-                _state.ProcessedJobCount++;
+                _state.TryMarkHelixJobProcessed(job.JobName);
             }
 
             // Second pass: ensure outcomes for every completed scoped job are reflected in
@@ -265,7 +286,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             bool anyNonMonitorFailure = HelixJobMonitorUtilities.HasFailedNonMonitorJobs(
                 timelineRecords,
                 _options.JobMonitorName,
-                _state.RetryingHelixSubmitterJobs);
+                _state.SnapshotRetryingHelixSubmitterJobs());
             bool allPipelineJobsComplete = HelixJobMonitorUtilities.AreNonMonitorJobsComplete(timelineRecords, _options.JobMonitorName);
             bool allHelixJobsComplete = scopedJobs.Count == 0 || scopedJobs.All(j => completedJobNames.Contains(j.JobName));
 
@@ -276,7 +297,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             await _uploads.DrainAsync(cancellationToken);
             _reporter.LogFinalFailedWorkItems();
-            _reporter.LogFinalSummary(_state.AssociatedJobs.Count);
+            _reporter.LogFinalSummary(_state.AssociatedJobsCount);
 
             if (anyNonMonitorFailure)
             {
@@ -297,47 +318,40 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             bool queueUpload,
             CancellationToken cancellationToken)
         {
-            // Skip jobs whose results have already been uploaded — either earlier in this
-            // invocation (tracked via WorkItemOutcomeJobs) or by a previous monitor attempt
-            // for the same build (tracked via ProcessedHelixJobs, seeded on entry from the
-            // AzDO test-run name markers). Without this, a retried monitor invocation
-            // re-logs "Job X completed" and re-reports failed work-item console links for
-            // every job the prior attempt already finished, which is noisy and misleading.
-            if (_state.WorkItemOutcomeJobs.Contains(helixJob.JobName)
-                || _state.ProcessedHelixJobs.Contains(helixJob.JobName))
+            // Already reconciled earlier in this invocation — nothing more to do (idempotent).
+            if (_state.IsWorkItemOutcomesRecorded(helixJob.JobName))
             {
                 return;
             }
 
-            _reporter.LogJobProcessingStart(helixJob);
-
             IReadOnlyCollection<WorkItemSummary> workItems =
                 await _helix.ListWorkItemsAsync(helixJob.JobName, cancellationToken);
-            _reporter.LogFailedWorkItemConsoleLinks(helixJob, workItems.Where(wi => wi.IsFailed));
 
-            if (_state.WorkItemOutcomeJobs.Add(helixJob.JobName))
+            // A previous monitor attempt for the same build already uploaded this job's results
+            // (tracked via IsHelixJobProcessed, seeded on entry from the AzDO test-run tags). Its
+            // work-item outcomes must still be reconciled so the final exit code accounts for
+            // previously-uploaded failures that were never resubmitted — otherwise the monitor
+            // could exit 0 despite a prior failed job. Only the re-upload and the noisy
+            // completion / console-link logs are suppressed for such jobs.
+            bool alreadyUploadedByPriorAttempt = _state.IsHelixJobProcessed(helixJob.JobName);
+
+            if (!alreadyUploadedByPriorAttempt)
             {
-                string chainKey = _state.GetSubmitterChainKey(helixJob);
-                var jobWorkItems = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (WorkItemSummary wi in workItems)
-                {
-                    // Within the same AzDO submitter chain (i.e. resubmissions of the same
-                    // logical AzDO job), the latest result overwrites the prior one for the
-                    // same work item name. Across different submitter chains the key differs,
-                    // so identically-named work items in different AzDO jobs are tracked
-                    // independently.
-                    _state.WorkItemOutcomes[(chainKey, wi.Name)] = !wi.IsFailed;
-                    _state.TrackFailedWorkItemConsoleInfo(helixJob, chainKey, wi);
-                    jobWorkItems.Add(wi.Name);
-                }
+                _reporter.LogJobProcessingStart(helixJob);
+                _reporter.LogFailedWorkItemConsoleLinks(helixJob, workItems.Where(wi => wi.IsFailed));
             }
 
-            if (queueUpload)
+            _state.TryRecordWorkItemOutcomes(helixJob, workItems);
+
+            if (queueUpload && !alreadyUploadedByPriorAttempt)
             {
                 _uploads.Enqueue(helixJob, workItems, cancellationToken);
             }
 
-            _reporter.LogJobCompleted(helixJob, workItems);
+            if (!alreadyUploadedByPriorAttempt)
+            {
+                _reporter.LogJobCompleted(helixJob, workItems);
+            }
         }
 
         private async Task<IReadOnlyCollection<HelixJobInfo>> GetCompletedJobsAsync(
@@ -372,8 +386,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             List<HelixJobInfo> inFlightJobs =
             [
-                ..MonitorState.GetLatestHelixJobAttempts(_state.AssociatedJobs.Values)
-                    .Where(j => !j.IsCompleted && !_state.ProcessedHelixJobs.Contains(j.JobName))
+                ..MonitorState.GetLatestHelixJobAttempts(_state.SnapshotAssociatedJobs())
+                    .Where(j => !j.IsCompleted && !_state.IsHelixJobProcessed(j.JobName))
                     .OrderBy(j => j.JobName, StringComparer.OrdinalIgnoreCase)
             ];
 

@@ -67,8 +67,8 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
 
         long uploadedCount = await UploadTestResultsWithCountAsync(aggregatedResults, resultMetadata, cancellationToken);
         return new TestResultUploadSummary(
-            aggregatedResults.All(result => result.Result != "Failed"), // TODO: maybe there's a better way to find out if a test failed? Is this extensive enough?
-            uploadedCount);
+            AllPassed: aggregatedResults.All(result => result.Result != "Failed" && result.Result != "None" && result.Result != "Inconclusive"),
+            UploadedCount: uploadedCount);
     }
 
     public async Task<long> UploadTestResultsWithCountAsync(IEnumerable<AggregatedResult> results, object resultMetadata, CancellationToken cancellationToken = default)
