@@ -160,7 +160,7 @@ stages:
 
   - job: Publish_Test_Results_PR
     dependsOn: LicenseScan
-    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'))
     variables:
     - template: /eng/pipelines/templates/variables/pipelines.yml@self
       # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
@@ -189,7 +189,6 @@ stages:
       parameters:
         dotnetPath: $(DotNetPath)
         pipeline: license
-        repo: dotnet/dotnet
         originalFilesDirectory: test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
         updatedFilesDirectory: $(Pipeline.Workspace)/Artifacts
         pullRequestTitle: Update Source-Build License Scan Baselines and Exclusions
