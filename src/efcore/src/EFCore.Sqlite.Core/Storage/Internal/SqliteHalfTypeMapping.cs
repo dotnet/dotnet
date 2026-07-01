@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Globalization;
+using Microsoft.EntityFrameworkCore.Sqlite.Storage.Json.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Sqlite.Storage.Internal;
 
@@ -30,7 +31,9 @@ public class SqliteHalfTypeMapping : RelationalTypeMapping
     public SqliteHalfTypeMapping(string storeType)
         : base(
             new RelationalTypeMappingParameters(
-                new CoreTypeMappingParameters(typeof(Half)),
+                new CoreTypeMappingParameters(
+                    typeof(Half),
+                    jsonValueReaderWriter: SqliteJsonHalfReaderWriter.Instance),
                 storeType))
     {
     }
