@@ -384,10 +384,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         // they don't match DefaultAkaMSCreateLinkPatterns (which is extension-based).
         // This pattern matches dotnetup-{linux,osx}* binaries and their .sha512 checksums.
         // Windows .exe binaries already match DefaultAkaMSCreateLinkPatterns.
+        // The get-dotnetup.{ps1,sh} bootstrap scripts are also published to hold a signed and versioned file.
+        // .ps1/.sh are not extension-matched by DefaultAkaMSCreateLinkPatterns either.
         public static readonly ImmutableList<Regex> DotnetupAkaMSCreateLinkPatterns =
         [
             ..DefaultAkaMSCreateLinkPatterns,
-            new Regex(@"(^|[\\/])dotnetup-(linux|osx)[a-z0-9-]*(\.sha512)?$", RegexOptions.IgnoreCase)
+            new Regex(@"(^|[\\/])dotnetup-(linux|osx)[a-z0-9-]*(\.sha512)?$", RegexOptions.IgnoreCase),
+            new Regex(@"(^|[\\/])get-dotnetup\.(ps1|sh)(\.sha512)?$", RegexOptions.IgnoreCase)
         ];
 
         public static readonly ImmutableList<Regex> DefaultAkaMSDoNotCreateLinkPatterns =
@@ -1591,7 +1594,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetLibrariesInternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal,
                 flatten: false),
-            
+
             // .NET AP 1,
             new TargetChannelConfig(
                 id: 4122,
@@ -1603,7 +1606,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsInternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal,
                 flatten: false),
-            
+
             // .NET AP 2,
             new TargetChannelConfig(
                 id: 4123,
@@ -1809,7 +1812,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.3,
             new TargetChannelConfig(
                 id: 2692,
@@ -1821,7 +1824,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.4,
             new TargetChannelConfig(
                 id: 2914,
@@ -1857,7 +1860,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.7,
             new TargetChannelConfig(
                 id: 3581,
@@ -1869,7 +1872,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.8,
             new TargetChannelConfig(
                 id: 3582,
@@ -1881,7 +1884,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.9,
             new TargetChannelConfig(
                 id: 4015,
@@ -1893,7 +1896,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.10
             new TargetChannelConfig(
                 id: 4165,
@@ -1905,7 +1908,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.11
             new TargetChannelConfig(
                 id: 4544,
@@ -1917,7 +1920,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.12
             new TargetChannelConfig(
                 id: 4906,
@@ -1929,7 +1932,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.13
             new TargetChannelConfig(
                 id: 5288,
@@ -1941,7 +1944,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.14
             new TargetChannelConfig(
                 id: 6136,
@@ -1953,7 +1956,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // VS 17.15
             new TargetChannelConfig(
                 id: 6989,
@@ -1976,7 +1979,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.1
             new TargetChannelConfig(
                 id: 8703,
@@ -1988,7 +1991,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.2
             new TargetChannelConfig(
                 id: 8704,
@@ -2000,7 +2003,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.3
             new TargetChannelConfig(
                 id: 8705,
@@ -2012,7 +2015,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.4
             new TargetChannelConfig(
                 id: 8706,
@@ -2024,7 +2027,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.5
             new TargetChannelConfig(
                 id: 8707,
@@ -2036,7 +2039,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.6
             new TargetChannelConfig(
                 id: 8708,
@@ -2048,7 +2051,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.7
             new TargetChannelConfig(
                 id: 10189,
@@ -2060,7 +2063,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.8
             new TargetChannelConfig(
                 id: 10188,
@@ -2072,7 +2075,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.9
             new TargetChannelConfig(
                 id: 10190,
@@ -2084,7 +2087,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-            
+
             // 18.10
             new TargetChannelConfig(
                 id: 10191,

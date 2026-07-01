@@ -58,7 +58,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 });
             using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
 
-            await service.CompleteTestRunAsync(123, HelixJobGuid, CancellationToken.None);
+            await service.CompleteTestRunAsync(123, HelixJobGuid, [], CancellationToken.None);
 
             HttpRequestMessage request = handler.Requests.Should().ContainSingle().Subject;
             request.Method.Should().Be(new HttpMethod("PATCH"));
@@ -71,6 +71,189 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var tags = body["tags"].Should().BeOfType<JArray>().Subject;
             tags.Should().ContainSingle();
             tags[0].Value<string>("name").Should().Be(HelixJobTag);
+        }
+
+        [Fact]
+        public async Task CompleteTestRunAsync_UploadsFailedWorkItemsAttachmentBeforePatch()
+        {
+            // The attachment MUST be uploaded before the PATCH that marks the run Completed
+            // and applies the helix-job tag. The tag is the canonical "this run is fully
+            // processed" marker — if the order were reversed, a crash between the PATCH and
+            // the attachment upload would leave a tagged-but-attachment-less run and a later
+            // monitor invocation would silently drop the failed work items needing
+            // resubmission.
+            var handler = new RecordingHttpMessageHandler(_ =>
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("{}")
+                });
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            await service.CompleteTestRunAsync(123, HelixJobGuid, new[] { "wi-1", "wi-2" }, CancellationToken.None);
+
+            handler.Requests.Should().HaveCount(2);
+            HttpRequestMessage attachmentRequest = handler.Requests[0];
+            HttpRequestMessage patchRequest = handler.Requests[1];
+
+            attachmentRequest.Method.Should().Be(HttpMethod.Post);
+            attachmentRequest.RequestUri.ToString().Should().Be("https://dev.azure.com/dnceng-public/public/_apis/test/Runs/123/attachments?api-version=7.1");
+
+            JObject attachmentBody = JObject.Parse(handler.Bodies[0]);
+            attachmentBody.Value<string>("fileName").Should().Be("helix-failed-workitems.json");
+            attachmentBody.Value<string>("attachmentType").Should().Be("GeneralAttachment");
+            // The "stream" field carries the file content as base64-encoded UTF-8 JSON.
+            string decodedJson = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(attachmentBody.Value<string>("stream")));
+            JObject payload = JObject.Parse(decodedJson);
+            payload["failedWorkItems"].Should().BeOfType<JArray>()
+                .Which.Select(t => t.Value<string>()).Should().Equal("wi-1", "wi-2");
+
+            patchRequest.Method.Should().Be(new HttpMethod("PATCH"));
+            patchRequest.RequestUri.ToString().Should().Be("https://dev.azure.com/dnceng-public/public/_apis/test/runs/123?api-version=7.1");
+        }
+
+        [Fact]
+        public async Task CompleteTestRunAsync_SkipsAttachment_WhenNoFailedWorkItems()
+        {
+            // When there are no failed work items, the attachment upload is skipped entirely:
+            // the absence of the attachment on a completed run is equivalent (for retry-pass
+            // purposes) to an attachment containing an empty list, but skipping saves a REST
+            // call on the common happy path where most jobs have no test failures.
+            var handler = new RecordingHttpMessageHandler(_ =>
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("{}")
+                });
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            await service.CompleteTestRunAsync(123, HelixJobGuid, Array.Empty<string>(), CancellationToken.None);
+
+            handler.Requests.Should().ContainSingle().Which.Method.Should().Be(new HttpMethod("PATCH"));
+        }
+
+        [Fact]
+        public async Task GetFailedTestWorkItemsAsync_ReadsHelixJobNameFromTagsAndFailuresFromAttachment()
+        {
+            // The retry pass consults two sources per completed run: the vstmr per-run tags
+            // endpoint (for the Helix job name) and the failed-work-items JSON attachment
+            // (for the work item names). This test verifies the wiring end-to-end without
+            // touching the previous paginated /test/runs/{id}/results path.
+            const int testRunId = 42;
+            const int attachmentId = 9001;
+            const string attachmentJson = @"{""failedWorkItems"":[""wi-a"",""wi-b""]}";
+            string attachmentBase64 = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(attachmentJson));
+
+            var handler = new RecordingHttpMessageHandler(request =>
+            {
+                string path = request.RequestUri.AbsolutePath;
+                string query = request.RequestUri.Query;
+
+                // 1. List test runs for the build.
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith("/_apis/test/runs", StringComparison.OrdinalIgnoreCase)
+                    && query.Contains("buildUri=", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(@"{""value"":[{""id"":" + testRunId + @",""state"":""Completed""}]}")
+                    };
+                }
+
+                // 2. Per-run Get-Run lookup on the vstmr host (with includeTags=true). The
+                // dedicated /tags sub-resource is PATCH/DELETE only, so tags are read inline
+                // from the TestRun payload.
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith($"/_apis/testresults/runs/{testRunId}", StringComparison.OrdinalIgnoreCase)
+                    && query.Contains("includeTags=true", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(@"{""id"":" + testRunId + @",""tags"":[{""name"":""" + HelixJobTag + @"""}]}")
+                    };
+                }
+
+                // 3. List attachments for the run.
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith($"/_apis/test/Runs/{testRunId}/attachments", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(
+                            @"{""value"":[{""id"":" + attachmentId + @",""fileName"":""helix-failed-workitems.json""}]}")
+                    };
+                }
+
+                // 4. Download the attachment body.
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith($"/_apis/test/Runs/{testRunId}/attachments/{attachmentId}", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(attachmentJson)
+                    };
+                }
+
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            });
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            IReadOnlyDictionary<string, IReadOnlySet<string>> failed = await service.GetFailedTestWorkItemsAsync(CancellationToken.None);
+
+            failed.Should().ContainKey(HelixJobGuid);
+            failed[HelixJobGuid].Should().BeEquivalentTo("wi-a", "wi-b");
+
+            // Sanity check that no /results pagination calls were issued.
+            handler.Requests.Should().NotContain(r => r.RequestUri.AbsolutePath.Contains("/results", StringComparison.OrdinalIgnoreCase));
+        }
+
+        [Fact]
+        public async Task GetFailedTestWorkItemsAsync_SkipsRun_WhenAttachmentAbsent()
+        {
+            // A completed run with a helix-job tag but no failed-work-items attachment is
+            // treated as having no failures. This is the common case for jobs whose tests
+            // all passed.
+            const int testRunId = 7;
+
+            var handler = new RecordingHttpMessageHandler(request =>
+            {
+                string path = request.RequestUri.AbsolutePath;
+                string query = request.RequestUri.Query;
+
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith("/_apis/test/runs", StringComparison.OrdinalIgnoreCase)
+                    && query.Contains("buildUri=", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(@"{""value"":[{""id"":" + testRunId + @",""state"":""Completed""}]}")
+                    };
+                }
+
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith($"/_apis/testresults/runs/{testRunId}", StringComparison.OrdinalIgnoreCase)
+                    && query.Contains("includeTags=true", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(@"{""id"":" + testRunId + @",""tags"":[{""name"":""" + HelixJobTag + @"""}]}")
+                    };
+                }
+
+                if (request.Method == HttpMethod.Get
+                    && path.EndsWith($"/_apis/test/Runs/{testRunId}/attachments", StringComparison.OrdinalIgnoreCase))
+                {
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(@"{""value"":[]}")
+                    };
+                }
+
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            });
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            IReadOnlyDictionary<string, IReadOnlySet<string>> failed = await service.GetFailedTestWorkItemsAsync(CancellationToken.None);
+
+            failed.Should().BeEmpty();
         }
 
         [Fact]
@@ -111,7 +294,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
 
             int runId = await service.CreateTestRunAsync("Test Run", CancellationToken.None);
-            await service.CompleteTestRunAsync(runId, HelixJobGuid, CancellationToken.None);
+            await service.CompleteTestRunAsync(runId, HelixJobGuid, [], CancellationToken.None);
 
             IReadOnlySet<string> processed = await service.GetProcessedHelixJobNamesAsync(CancellationToken.None);
 
