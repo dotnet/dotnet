@@ -24,22 +24,16 @@
       <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))" Condition="'$(_PatchNumber)' != ''" />
     </ItemGroup>
 
-    <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
-         NuGet.client uses package source mapping. If this repo onboards to arcade, this would no longer be needed. -->
-    <MSBuild Projects="$(ArcadeDir)/Build.proj"
-             Properties="@(_CommonProperties);Projects=$(MSBuildThisFileDirectory)Noop.proj;_ImportOrUseTooling=false;Restore=true;Build=false;Pack=false;Publish=false;Rebuild=false;Test=false;IntegrationTest=false;PerformanceTest=false;RestoreBuildTaskFeed=true"
-             Targets="Execute" />
-
     <MSBuild Projects="$(ProjectRoot)build/build.proj"
-             Properties="_NETCORE_ENGINEERING_TELEMETRY=Restore;@(_CommonProperties)"
+             Properties="@(_CommonProperties)"
              Targets="RestoreXPlat" />
 
     <MSBuild Projects="$(ProjectRoot)build/build.proj"
-             Properties="_NETCORE_ENGINEERING_TELEMETRY=Build;@(_CommonProperties)"
+             Properties="@(_CommonProperties)"
              Targets="BuildXPlat" />
 
     <MSBuild Projects="$(ProjectRoot)build/build.proj"
-             Properties="_NETCORE_ENGINEERING_TELEMETRY=Pack;@(_CommonProperties)"
+             Properties="@(_CommonProperties)"
              Targets="PackXPlat" />
 
     <ItemGroup>
@@ -51,7 +45,12 @@
     </ItemGroup>
 
     <MSBuild Projects="$(ArcadeDir)Publish.proj"
-             Properties="_NETCORE_ENGINEERING_TELEMETRY=Publish;@(_CommonProperties);@(_PublishProperties)"
+             Properties="@(_CommonProperties);@(_PublishProperties);MSBuildRestoreSessionId=$([System.Guid]::NewGuid())"
+             Targets="Restore"
+             Condition="'$(DotNetBuildFromVMR)' == 'true'" />
+
+    <MSBuild Projects="$(ArcadeDir)Publish.proj"
+             Properties="@(_CommonProperties);@(_PublishProperties)"
              Targets="Execute"
              Condition="'$(DotNetBuildFromVMR)' == 'true'" />
   </Target>
