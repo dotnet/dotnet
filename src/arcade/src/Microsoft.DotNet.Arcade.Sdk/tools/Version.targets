@@ -138,4 +138,27 @@ static char sccsid[] __attribute__((used)) = "@(#)Version $(FileVersion)$(_Sourc
     </ItemGroup>
   </Target>
 
+  <!--
+    In VMR (dotnet/dotnet) builds the SDK's AddSourceRevisionToInformationalVersion target embeds the VMR
+    commit (the SourceRevisionId of the dotnet/dotnet repo) into AssemblyInformationalVersion. That commit
+    cannot be traced back to the individual product repo. The VMR passes the original product-repo commit via
+    the RepoOriginalSourceRevisionId global property; append it as an additional SemVer 2.0 build-metadata
+    identifier so the product source commit is recoverable from AssemblyInformationalVersion (e.g. the
+    "Product version" field shown in the Windows file properties dialog). The VMR commit remains the primary
+    SHA, and standalone (non-VMR) builds, where RepoOriginalSourceRevisionId is empty, are unaffected.
+  -->
+  <Target Name="AddRepoOriginalSourceRevisionToInformationalVersion"
+          AfterTargets="AddSourceRevisionToInformationalVersion"
+          BeforeTargets="GetAssemblyAttributes"
+          Condition="'$(GenerateAssemblyInfo)' == 'true' and
+                     '$(IncludeSourceRevisionInInformationalVersion)' == 'true' and
+                     '$(RepoOriginalSourceRevisionId)' != '' and
+                     '$(RepoOriginalSourceRevisionId)' != '$(SourceRevisionId)'">
+    <PropertyGroup>
+      <!-- Follow SemVer 2.0 rules: the first build-metadata identifier uses '+', subsequent ones use '.'. -->
+      <InformationalVersion Condition="!$(InformationalVersion.Contains('+'))">$(InformationalVersion)+$(RepoOriginalSourceRevisionId)</InformationalVersion>
+      <InformationalVersion Condition="$(InformationalVersion.Contains('+'))">$(InformationalVersion).$(RepoOriginalSourceRevisionId)</InformationalVersion>
+    </PropertyGroup>
+  </Target>
+
 </Project>
