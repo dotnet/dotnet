@@ -50,9 +50,6 @@
 
 # Native AOT bundled tools - msft uses RID-specific native AOT, source-build uses framework-dependent
 # https://github.com/dotnet/source-build/issues/5567
-./sdk/x.y.z/DotnetTools/dotnet-dev-certs/
-./sdk/x.y.z/DotnetTools/dotnet-user-jwts/
-./sdk/x.y.z/DotnetTools/dotnet-user-secrets/
 ./sdk/x.y.z/DotnetTools/aspnetcoretools/|msft
 
 # Exclude bincore directory due to too much noise - https://github.com/dotnet/source-build/issues/4534
