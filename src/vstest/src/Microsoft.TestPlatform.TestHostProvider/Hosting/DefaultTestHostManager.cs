@@ -56,7 +56,6 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     private readonly IProcessHelper _processHelper;
     private readonly IFileHelper _fileHelper;
     private readonly IEnvironment _environment;
-    private readonly IDotnetHostHelper _dotnetHostHelper;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
     private bool _disableAppDomain;
     private Architecture _architecture;
@@ -78,7 +77,6 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         : this(
             new ProcessHelper(),
             new FileHelper(),
-            new DotnetHostHelper(),
             new PlatformEnvironment(),
             new EnvironmentVariableHelper())
     {
@@ -91,17 +89,14 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
     /// <param name="fileHelper">File helper instance.</param>
     /// <param name="environment">Instance of platform environment.</param>
     /// <param name="environmentVariableHelper">The environment helper.</param>
-    /// <param name="dotnetHostHelper">Instance of dotnet host helper.</param>
     internal DefaultTestHostManager(
         IProcessHelper processHelper,
         IFileHelper fileHelper,
-        IDotnetHostHelper dotnetHostHelper,
         IEnvironment environment,
         IEnvironmentVariableHelper environmentVariableHelper)
     {
         _processHelper = processHelper;
         _fileHelper = fileHelper;
-        _dotnetHostHelper = dotnetHostHelper;
         _environment = environment;
         _environmentVariableHelper = environmentVariableHelper;
     }
@@ -210,28 +205,26 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
 
         EqtTrace.Verbose("DefaultTestHostmanager.GetTestHostProcessStartInfo: Trying to use {0} from {1}", originalTestHostProcessName, testhostProcessPath);
 
+        // .NET Framework tests run through testhost.exe, which can only run on Windows.
+        // Running them on other operating systems previously relied on Mono, which is no
+        // longer supported. Fail with a clear message instead of launching Mono.
+        if (!_environment.OperatingSystem.Equals(PlatformOperatingSystem.Windows))
+        {
+            throw new TestPlatformException(Resources.NetFrameworkTestsNotSupportedOnNonWindows);
+        }
+
         var launcherPath = testhostProcessPath;
         var processName = _processHelper.GetCurrentProcessFileName();
         if (processName is not null)
         {
-            if (!_environment.OperatingSystem.Equals(PlatformOperatingSystem.Windows)
-                && !processName.EndsWith(DotnetHostHelper.MONOEXENAME, StringComparison.OrdinalIgnoreCase))
+            // Patching the relative path for IDE scenarios.
+            if (!(processName.EndsWith("dotnet", StringComparison.OrdinalIgnoreCase)
+                    || processName.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase))
+                && !File.Exists(testhostProcessPath))
             {
-                launcherPath = _dotnetHostHelper.GetMonoPath();
-                argumentsString = testhostProcessPath.AddDoubleQuote() + " " + argumentsString;
-            }
-            else
-            {
-                // Patching the relative path for IDE scenarios.
-                if (_environment.OperatingSystem.Equals(PlatformOperatingSystem.Windows)
-                    && !(processName.EndsWith("dotnet", StringComparison.OrdinalIgnoreCase)
-                        || processName.EndsWith("dotnet.exe", StringComparison.OrdinalIgnoreCase))
-                    && !File.Exists(testhostProcessPath))
-                {
-                    testhostProcessPath = Path.Combine(currentWorkingDirectory, "..", originalTestHostProcessName);
-                    EqtTrace.Verbose("DefaultTestHostmanager.GetTestHostProcessStartInfo: Could not find {0} in previous location, now using {1}", originalTestHostProcessName, testhostProcessPath);
-                    launcherPath = testhostProcessPath;
-                }
+                testhostProcessPath = Path.Combine(currentWorkingDirectory, "..", originalTestHostProcessName);
+                EqtTrace.Verbose("DefaultTestHostmanager.GetTestHostProcessStartInfo: Could not find {0} in previous location, now using {1}", originalTestHostProcessName, testhostProcessPath);
+                launcherPath = testhostProcessPath;
             }
         }
 

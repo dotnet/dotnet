@@ -22,6 +22,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.TestPlatform.Library.IntegrationTests.TranslationLayerTests;
 
 [TestClass]
+// This test runs the packaged .NET Framework vstest.console.exe, which cannot start on Linux/macOS.
 [TestCategory("Windows-Review")]
 public class DataCollectorAttachmentProcessor : AcceptanceTestBase
 {
