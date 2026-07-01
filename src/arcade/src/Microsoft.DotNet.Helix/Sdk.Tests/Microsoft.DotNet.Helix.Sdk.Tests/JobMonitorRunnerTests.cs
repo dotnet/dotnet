@@ -2514,9 +2514,45 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         /// <summary>
+        /// A previously-uploaded failed Helix job that cannot be resubmitted must still have its
+        /// work-item outcomes reconciled so it contributes to a non-zero final exit code. The
+        /// processed/uploaded state only suppresses the duplicate upload and the noisy
+        /// completion/console-link logs — it must never omit the job from pass/fail.
+        /// </summary>
+        [Fact]
+        public async Task PreviouslyProcessedFailedJob_WithoutResubmission_StillFailsBuild()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            azdo.WithPreviouslyProcessedJob("helix-linux");
+            var helix = new FakeHelixService();
+
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(failed: ["wi-fail"]),
+                });
+            // The failed work item cannot be resubmitted (e.g. resubmission limit reached).
+            helix.ConfigureNullResubmission("helix-linux");
+
+            var runner = CreateRunner(azdo, helix);
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(1);
+            // The resubmission was attempted but produced no new job, so nothing was retried.
+            helix.Resubmissions.Should().ContainSingle()
+                .Which.NewJob.Should().BeNull();
+            // The job was already uploaded by the prior attempt, so it is not re-uploaded.
+            azdo.UploadedJobNames.Should().BeEmpty();
+        }
+
+        /// <summary>
         /// On a second monitor attempt within the same build, jobs that already have an
-        /// uploaded test run (tracked via ProcessedHelixJobs, seeded from AzDO test-run name
-        /// markers) must not be re-logged as completed and must not have their failed
+        /// uploaded test run (tracked via ProcessedHelixJobs, seeded from AzDO test-run
+        /// tags) must not be re-logged as completed and must not have their failed
         /// work-item console links re-emitted, nor must their results be re-uploaded.
         /// </summary>
         [Fact]
@@ -2908,6 +2944,214 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 message.Contains("0 processed / 0 completed / 0 running / 2 waiting work items", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
                 message.Contains("└─ 🧪 Helix job helix-linux [Running]", StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        /// A Helix work item passes by exit code (0) but the AzDO upload reports that its test
+        /// results contained failures. <see cref="MonitorState.ObserveTestResults"/> should mark
+        /// the work item as failed so the monitor exits 1.
+        /// </summary>
+        [Fact]
+        public async Task HelixWorkItemPassesByExitCode_TestUploadReportsFailure_ExitOne()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+
+            // Configure the fake upload to report AllPassed=false for this work item, simulating
+            // an uploaded TRX that contained at least one failing test even though the work
+            // item exited 0 on the Helix side.
+            azdo.WithFailedUpload("helix-linux", "workitem-1");
+
+            // Poll 1: pipeline + helix still in flight (job "running" so the retry pass does
+            // not act on it). Poll 2: everything completes and the upload runs.
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "inProgress"));
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.AddResponse(jobs: [HelixJob("helix-linux", "running")]);
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                },
+                testResultsByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] =
+                    [
+                        new WorkItemTestResults("helix-linux", "workitem-1", ["results.trx"])
+                    ],
+                });
+
+            var runner = CreateRunner(azdo, helix);
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(1);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
+            azdo.CompletedTestRunIds.Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// On entry the monitor finds a completed Helix job with two failed work items: one
+        /// that passed by Helix exit code but has prior failed AzDO test results, and one that
+        /// failed by Helix exit code AND also has prior failed AzDO test results. The retry
+        /// pass must resubmit both. The work item that qualifies as a failure under both
+        /// reasons must only be resubmitted once, not twice.
+        /// </summary>
+        [Fact]
+        public async Task RetryPass_ResubmitsWorkItemThatPassedExitCodeButHasPriorFailedTests()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            // workitem-1 exit code is 0, but AzDO already has a failed test recorded for it
+            // from a prior monitor invocation (a test-only failure).
+            azdo.WithRecordedFailedTest("helix-linux", "workitem-1");
+            // workitem-2 fails by Helix exit code AND also has a failed AzDO test recorded.
+            // It must not be resubmitted twice (once per failure reason).
+            azdo.WithRecordedFailedTest("helix-linux", "workitem-2");
+
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+
+            // Snapshot 1 (retry pass): only the original Helix job exists, finished, with
+            // workitem-1 passing by exit code and workitem-2 failing by exit code. Without the
+            // AzDO test-failure lookup the retry pass would only resubmit workitem-2.
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"], failed: ["workitem-2"]),
+                });
+
+            // Snapshot 2 (next poll): the resub has finished too with both items passing.
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-linux", "finished"),
+                    HelixJob("helix-linux-resub", "finished", previousHelixJobName: "helix-linux"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"], failed: ["workitem-2"]),
+                    ["helix-linux-resub"] = PassFail(passed: ["workitem-1", "workitem-2"]),
+                });
+            helix.ConfigureResubmission("helix-linux", "helix-linux-resub");
+
+            var runner = CreateRunner(azdo, helix, logger: logger);
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].OriginalJob.Should().Be("helix-linux");
+            // workitem-2 fails by both exit code and failed tests but is only resubmitted once.
+            helix.Resubmissions[0].FailedItems.Should().OnlyHaveUniqueItems();
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["workitem-1", "workitem-2"]);
+
+            // Both the original and the resub uploaded results, and the resub's tests all
+            // passed so the monitor exits 0.
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux", "helix-linux-resub"]);
+            exitCode.Should().Be(0);
+
+            // The retry log distinguishes the resubmission reason and counts each work item once.
+            logger.Messages.Should().Contain(message =>
+                message.Contains("Resubmitting 2 work item(s)", StringComparison.Ordinal)
+                && message.Contains("1 by Helix exit code, 1 by failed AzDO tests", StringComparison.Ordinal)
+                && message.Contains("workitem-2 (Helix exit code 1)", StringComparison.Ordinal)
+                && message.Contains("workitem-1 (exit code 0, failed AzDO tests)", StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        /// One completed Helix job has two failed work items for different reasons: one with a
+        /// non-zero Helix exit code and another that exited 0 but whose AzDO test results were
+        /// previously recorded as failed. The retry-pass log should distinguish each reason.
+        /// </summary>
+        [Fact]
+        public async Task RetryPass_LogDistinguishesExitCodeAndTestFailureReasons()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            azdo.WithRecordedFailedTest("helix-linux", "wi-test-only");
+
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["wi-test-only"], failed: ["wi-exit-fail"]),
+                });
+
+            helix.AddResponse(
+                jobs:
+                [
+                    HelixJob("helix-linux", "finished"),
+                    HelixJob("helix-linux-resub", "finished", previousHelixJobName: "helix-linux"),
+                ],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["wi-test-only"], failed: ["wi-exit-fail"]),
+                    ["helix-linux-resub"] = PassFail(passed: ["wi-test-only", "wi-exit-fail"]),
+                });
+            helix.ConfigureResubmission("helix-linux", "helix-linux-resub");
+
+            var runner = CreateRunner(azdo, helix, logger: logger);
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().ContainSingle();
+            helix.Resubmissions[0].FailedItems.Should().BeEquivalentTo(["wi-exit-fail", "wi-test-only"]);
+
+            logger.Messages.Should().Contain(message =>
+                message.Contains("Resubmitting 2 work item(s)", StringComparison.Ordinal)
+                && message.Contains("1 by Helix exit code, 1 by failed AzDO tests", StringComparison.Ordinal)
+                && message.Contains("wi-exit-fail (Helix exit code 1)", StringComparison.Ordinal)
+                && message.Contains("wi-test-only (exit code 0, failed AzDO tests)", StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        /// When <see cref="JobMonitorOptions.FailWorkItemsWithFailedTests"/> is false, neither
+        /// the retry pass nor <see cref="MonitorState.ObserveTestResults"/> should promote
+        /// test failures to work-item failures. The monitor exits 0 even though the upload
+        /// reports failed tests and AzDO has prior failed tests recorded for the same item.
+        /// </summary>
+        [Fact]
+        public async Task FailOnFailedTestsDisabled_TestFailuresIgnoredForOutcomeAndRetry()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+
+            azdo.WithRecordedFailedTest("helix-linux", "workitem-1");
+            azdo.WithFailedUpload("helix-linux", "workitem-1");
+
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                },
+                testResultsByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] =
+                    [
+                        new WorkItemTestResults("helix-linux", "workitem-1", ["results.trx"])
+                    ],
+                });
+
+            JobMonitorOptions options = DefaultOptions();
+            options.FailWorkItemsWithFailedTests = false;
+            var runner = new JobMonitorRunner(options, NullLogger.Instance, azdo, helix, NoDelay);
+
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(0);
+            helix.Resubmissions.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         }
 
         // -----------------------------------------------------------------------

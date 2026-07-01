@@ -54,6 +54,28 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("assets/installers/install-other-tool.sh")).Should().BeFalse();
         }
 
+        [Fact]
+        public void DotnetupChannelAllowsBinariesAndGetDotnetupScripts()
+        {
+            // dotnetup Daily channel.
+            var channelConfig = PublishingConstants.ChannelInfos.Single(c => c.Id == 10506);
+
+            // Windows .exe binaries are matched by the default extension-based patterns.
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/dotnetup-win-x64.exe")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/dotnetup-win-x64.exe.sha512")).Should().BeTrue();
+            // Extensionless Linux/macOS binaries are matched by the dotnetup-specific pattern.
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/dotnetup-linux-x64")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/dotnetup-osx-arm64.sha512")).Should().BeTrue();
+            // The get-dotnetup bootstrap scripts are matched so their aka.ms links serve the signed copy.
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/get-dotnetup.ps1")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/get-dotnetup.ps1.sha512")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/get-dotnetup.sh")).Should().BeTrue();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/get-dotnetup.sh.sha512")).Should().BeTrue();
+            // Unrelated scripts must not get links.
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/install-other-tool.ps1")).Should().BeFalse();
+            channelConfig.AkaMSCreateLinkPatterns.Any(pattern => pattern.IsMatch("dotnetup/1.2.3/install-other-tool.sh")).Should().BeFalse();
+        }
+
         [Theory]
         [InlineData("foo/bar/baz/bop.symbols.nupkg", true)]
         [InlineData("foo/bar/baz/bop.symbols.nupkg.sha512", false)]

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -451,6 +452,28 @@ namespace Microsoft.DotNet.RemoteExecutor
                 psi.Environment.Remove("Cor_Enable_Profiling");
                 psi.Environment.Remove("CoreClr_Profiler");
                 psi.Environment.Remove("CoreClr_Enable_Profiling");
+            }
+
+            if (options.CrashDumpCollectionType is CrashDumpCollectionType.None)
+            {
+                psi.Environment.Remove("DOTNET_DbgEnableMiniDump");
+                psi.Environment.Remove("DOTNET_DbgMiniDumpType");
+                psi.Environment.Remove("DOTNET_DbgMiniDumpName");
+            }
+            else if (options.CrashDumpCollectionType.HasValue)
+            {
+                psi.Environment["DOTNET_DbgEnableMiniDump"] = "1";
+                psi.Environment["DOTNET_DbgMiniDumpType"] = ((int)options.CrashDumpCollectionType.Value).ToString(CultureInfo.InvariantCulture);
+                if (!string.IsNullOrWhiteSpace(options.CrashDumpPath))
+                {
+                    psi.Environment["DOTNET_DbgMiniDumpName"] = options.CrashDumpPath;
+                }
+                else
+                {
+                    string uploadPath = Environment.GetEnvironmentVariable("HELIX_WORKITEM_UPLOAD_ROOT");
+                    string dumpDir = !string.IsNullOrWhiteSpace(uploadPath) ? uploadPath : IOPath.GetTempPath();
+                    psi.Environment["DOTNET_DbgMiniDumpName"] = IOPath.Combine(dumpDir, "%e.%p.%t.dmp");
+                }
             }
 
             // If we need the host (if it exists), use it, otherwise target the console app directly.
