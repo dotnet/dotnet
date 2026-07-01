@@ -21,6 +21,10 @@ parameters:
     - Linux
     - Darwin
 
+- name: includedRepositories
+  type: string
+  default: 'arcade,deployment-tools,diagnostics,fsharp,msbuild,nuget-client,razor,roslyn,vstest'
+
 - name: sourceManifestCommit
   type: string
   default: ''
@@ -94,7 +98,7 @@ steps:
     
     $source_manifest_path = "$(Build.ArtifactStagingDirectory)/source-manifest.json"
     $headers = @{
-      Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$(dn-bot-all-drop-rw-code-rw-release-all)"))
+      Authorization = "Basic " + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(":$(System.AccessToken)"))
     }
     Invoke-WebRequest -Uri $url -Headers $headers -OutFile $source_manifest_path
 
@@ -131,7 +135,7 @@ steps:
       $outputPath = "$(Build.ArtifactStagingDirectory)/base-assets/"
       $darcPath = "$(InstallDarc.darcPath)"
       $githubPat = "$(BotAccount-dotnet-bot-repo-PAT)"
-      $azdevPat = "$(dn-bot-all-drop-rw-code-rw-release-all)"
+      $azdevPat = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
 
       $nonShipping = $false
       if ("${{ parameters.command }}" -eq "assets") {
@@ -147,6 +151,7 @@ steps:
           -darcPath $darcPath `
           -githubPat $githubPat `
           -azdevPat $azdevPat `
+          -includedRepositories ${{ parameters.includedRepositories }} `
           -assetFilter "`".*assets\/manifests\/.*\/MergedManifest\.xml`"" `
           -nonShipping
       }
@@ -159,6 +164,7 @@ steps:
         -darcPath $darcPath `
         -githubPat $githubPat `
         -azdevPat $azdevPat `
+        -includedRepositories ${{ parameters.includedRepositories }} `
         -assetFilter $assetFilter `
         -nonShipping:$nonShipping
 
@@ -228,20 +234,14 @@ steps:
   name: SetAdditionalArgs
   displayName: Set additional command arguments
 
-- task: PowerShell@2
-  inputs:
-    filePath: $(Build.SourcesDirectory)/eng/common/build.ps1
-    arguments: -ci -projects $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj -restore -build
-  displayName: Build BuildComparer
-
-- script: $(InstallDarc.dotnetPath)
-    $(Build.SourcesDirectory)/artifacts/bin/BuildComparer/Debug/BuildComparer.dll
+- script: $(InstallDarc.dotnetPath) run --project $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj
     ${{ parameters.command }}
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"
     -issuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonIssues.xml"
     -noIssuesReport "$(Build.SourcesDirectory)/artifacts/AssetBaselines/BaselineComparisonNoIssues.xml"
     -baseline "$(Build.SourcesDirectory)/eng/vmr-msft-comparison-baseline.json"
+    -includedRepositories "${{ parameters.includedRepositories }}"
     $(SetAdditionalArgs.additionalArgs)
   displayName: Compare ${{ parameters.command}}
 
