@@ -112,11 +112,6 @@
         <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">이 프로젝트의 NuGet 패키지 관리 형식을 'packages.config'에서 'PackageReference'로 마이그레이션해 보세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">이 솔루션에서 일부 NuGet 패키지가 누락되었습니다. 온라인 패키지 소스에서 복원하려면 클릭하십시오.</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0} 라이선스</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">다시 표시 안 함</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">설치 옵션에 대한 자세한 정보</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">제거 옵션에 대한 자세한 정보</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">마이그레이션해야 하는 이유는 무엇인가요?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">지금 마이그레이션</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">

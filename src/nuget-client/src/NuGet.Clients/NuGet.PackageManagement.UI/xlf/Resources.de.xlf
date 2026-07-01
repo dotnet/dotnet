@@ -112,11 +112,6 @@
         <target state="translated">Das Argument darf nicht NULL oder leer sein.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Erwägen Sie für dieses Projekt eine Migration des Formats für die NuGet-Paketverwaltung von "packages.config" zu "PackageReference".</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">Einige NuGet-Pakete fehlen in dieser Projektmappe. Klicken Sie, um eine Wiederherstellung aus Ihren Onlinepaketquellen auszuführen.</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0}-Lizenz</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Nicht mehr anzeigen</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Weitere Informationen zu den Installationsoptionen</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Weitere Informationen zu den Deinstallationsoptionen</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Was spricht für eine Migration?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Jetzt migrieren</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
