@@ -12,6 +12,7 @@ namespace NuGet.Build.Tasks
     /// <summary>
     /// A task that logs a message from the localized <see cref="Strings"/> resource.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public sealed class NuGetMessageTask : Task
     {
         [Required]
