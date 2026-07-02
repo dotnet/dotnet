@@ -76,7 +76,7 @@ internal class TestCaseConverterV2 : JsonConverter<TestCase>
     public override void Write(Utf8JsonWriter writer, TestCase value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteString("Id", value.Id.ToString());
+        writer.WriteString("Id", value.Id);
         writer.WriteString("FullyQualifiedName", value.FullyQualifiedName);
         writer.WriteString("DisplayName", value.DisplayName);
         writer.WriteString("ExecutorUri", value.ExecutorUri?.OriginalString);

@@ -40,7 +40,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void BlameDataCollectorShouldGiveCorrectTestCaseName(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -55,8 +55,8 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource(useCoreRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldOutputDumpFile(RunnerInfo runnerInfo)
     {
 
@@ -79,7 +79,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldNotOutputDumpFileWhenNoCrashOccurs(RunnerInfo runnerInfo)
     {
 
@@ -103,7 +103,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     // This tests .net runner and .net framework runner, together with .net framework testhost.
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
     public void BlameDataCollectorShouldOutputDumpFileWhenNoCrashOccursButCollectAlwaysIsEnabled(RunnerInfo runnerInfo)
     {
 
@@ -125,7 +125,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net481;net11.0")]
+    [TestMatrix(console: Net)]
     public void HangDumpOnTimeout(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -147,7 +147,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     // .NET testhost does not support dump on exit
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
 
     public void CrashDumpWhenThereIsNoTimeout(RunnerInfo runnerInfo)
     {
@@ -169,7 +169,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     // .NET tfms do not support dump on exit, but runner does
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
 
     public void CrashDumpOnExit(RunnerInfo runnerInfo)
     {
@@ -190,7 +190,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net481;net11.0")]
+    [TestMatrix(console: Net)]
     public void CrashDumpOnStackOverflow(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -210,7 +210,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner(NET)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CrashDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -224,7 +224,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net481;net11.0")]
+    [TestMatrix(console: Net)]
     public void HangDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -240,7 +240,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [DoNotParallelize] // Modifies the test asset's runtimeconfig.json on disk.
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void HangDumpShouldNotHangWhenTestHostFailsToStart(RunnerInfo runnerInfo)
     {
         // When testhost can't start (e.g. wrong runtime version), the inactivity timer
@@ -281,8 +281,8 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [DoNotParallelize] // Installs/uninstalls procdump as machine-wide postmortem debugger via HKLM registry.
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void BlameDataCollectorAeDebuggerShouldCollectDump(RunnerInfo runnerInfo)
     {
         // For convenience skip locally, but never skip in CI. If this cannot pass in CI we are not testing it at all.

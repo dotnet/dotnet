@@ -13,7 +13,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class ResultsDirectoryTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void TrxFileShouldBeCreatedInResultsDirectory(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -33,7 +33,7 @@ public class ResultsDirectoryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void ResultsDirectoryRelativePathShouldWork(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

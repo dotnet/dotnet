@@ -22,7 +22,7 @@ public class AppDomainTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     // AppDomains are .NET Framework only, run in .NET Framework runner and .NET runner
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
     public void RunTestExecutionWithDisableAppDomain(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
