@@ -636,15 +636,6 @@ Error: {1}</value>
   <data name="Upgrader_BackupFailed" xml:space="preserve">
     <value>The project cannot be upgraded as backing up the project file and packages.config ran into an issue.</value>
   </data>
-  <data name="AskForPRMigrator" xml:space="preserve">
-    <value>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</value>
-  </data>
-  <data name="Link_UpgradeOption" xml:space="preserve">
-    <value>Migrate Now</value>
-  </data>
-  <data name="Link_MigratorHelp" xml:space="preserve">
-    <value>Why should I migrate?</value>
-  </data>
   <data name="Text_HelpMeMigrate" xml:space="preserve">
     <value>Help me migrate to NuGet PackageReference</value>
   </data>
@@ -662,9 +653,6 @@ Error: {1}</value>
   </data>
   <data name="Migrator_PackageNotFound" xml:space="preserve">
     <value>Migration failed as packages {0} could not be uninstalled. These packages were not found in the solution packages folder. No changes were made to the project.</value>
-  </data>
-  <data name="Link_DoNotShowAgain" xml:space="preserve">
-    <value>Don't show again</value>
   </data>
   <data name="Accessibility_PackageIcon" xml:space="preserve">
     <value>Package icon</value>
