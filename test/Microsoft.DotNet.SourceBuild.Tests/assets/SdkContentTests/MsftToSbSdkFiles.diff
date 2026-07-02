@@ -44,3 +44,24 @@ index ------------
  ./packs/Microsoft.NETCore.App.Ref/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
+@@ ------------ @@
+ ./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/
+ ./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/
+ ./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/assets/
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/assets/SecretManager.targets
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/dotnet-dev-certs
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/dotnet-user-jwts
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/dotnet-user-secrets
+-./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/portable-rid/libaspnetcoretools.so
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/assets/
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/assets/SecretManager.targets
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/dotnet-dev-certs
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/dotnet-user-jwts
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/dotnet-user-secrets
++./sdk/x.y.z/DotnetTools/aspnetcoretools/x.y.z/tools/any/banana-rid/libaspnetcoretools.so
+ ./sdk/x.y.z/es/
+ ./sdk/x.y.z/es/cs/
+ ./sdk/x.y.z/es/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll
