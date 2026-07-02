@@ -223,9 +223,11 @@ internal abstract class BaseRunTests
                 // instantiated via reflection and its constructor throws. Unwrap that wrapper to the
                 // real exception so callers don't see the reflection noise. Any other exception is
                 // preserved as-is so its concrete type and stack trace are not lost on the way out.
-                Exception realException = ex is TargetInvocationException tie && tie.InnerException is not null
-                    ? tie.InnerException
-                    : ex;
+                Exception realException = ex switch
+                {
+                    TargetInvocationException { InnerException: { } inner } => inner,
+                    _ => ex,
+                };
                 exception = new Exception(realException.Message, realException);
                 isAborted = true;
             }

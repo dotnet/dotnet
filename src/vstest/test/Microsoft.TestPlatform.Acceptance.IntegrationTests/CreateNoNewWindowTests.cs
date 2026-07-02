@@ -12,6 +12,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class CreateNoNewWindowTests : AcceptanceTestBase
 {
     [TestMethod]
+    // CreateNoNewWindow maps to the Windows-only process CreateNoWindow flag and only runs on the .NET Framework testhost.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: false)]
     public void WhenCreateNoNewWindowIsFalse_DiagShowsCreateNoWindowFalse(RunnerInfo runnerInfo)
     {
@@ -34,6 +36,8 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // CreateNoNewWindow maps to the Windows-only process CreateNoWindow flag and only runs on the .NET Framework testhost.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: false)]
     public void WhenCreateNoNewWindowIsTrue_DiagShowsCreateNoWindowTrue(RunnerInfo runnerInfo)
     {
@@ -56,6 +60,8 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // CreateNoNewWindow maps to the Windows-only process CreateNoWindow flag and only runs on the .NET Framework testhost.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: false)]
     public void WhenCreateNoNewWindowIsNotSet_DefaultIsTrue(RunnerInfo runnerInfo)
     {
