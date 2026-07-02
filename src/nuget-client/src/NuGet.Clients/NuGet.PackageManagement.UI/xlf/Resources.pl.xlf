@@ -112,11 +112,6 @@
         <target state="translated">Argument nie może mieć wartości null ani być pusty.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Należy rozważyć przeprowadzenie migracji formatu zarządzania pakietami NuGet tego projektu z „packages.config” do „PackageReference”.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">W tym rozwiązaniu brakuje niektórych pakietów NuGet. Kliknij, aby przywrócić je ze źródeł pakietów online.</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0} licencja</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Nie pokazuj ponownie</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Dowiedz się więcej na temat opcji instalacji</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Dowiedz się więcej na temat opcji odinstalowywania</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Dlaczego warto przeprowadzić migrację?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Migruj teraz</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">

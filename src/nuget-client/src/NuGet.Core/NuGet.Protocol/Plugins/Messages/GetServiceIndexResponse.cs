@@ -76,7 +76,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="serviceIndex">The service index (index.json) for the package source repository.</param>
         [Obsolete("Use GetServiceIndexResponse(MessageResponseCode, string) instead.")]
         public GetServiceIndexResponse(MessageResponseCode responseCode, JObject? serviceIndex)
-            : this(responseCode, serviceIndex?.ToString(Formatting.None))
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+            : this(responseCode, serviceIndex?.ToString(Formatting.None, Array.Empty<JsonConverter>()))
+#pragma warning restore IL2026, IL3050
         {
         }
     }

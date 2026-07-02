@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">

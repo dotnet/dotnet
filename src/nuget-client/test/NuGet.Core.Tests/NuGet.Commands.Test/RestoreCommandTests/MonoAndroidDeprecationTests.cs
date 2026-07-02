@@ -119,6 +119,30 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
         #endregion
 
+        #region ShouldWarn tests
+
+        [Fact]
+        public void ShouldWarn_MonoAndroidWithOnlyEmptyFolderPlaceholders_ReturnsFalse()
+        {
+            var monoAndroid = NuGetFramework.Parse("monoandroid10.0");
+            var compileItems = new[]
+            {
+                new LockFileItem("ref/MonoAndroid10/_._")
+            };
+            var runtimeItems = new[]
+            {
+                new LockFileItem("lib/MonoAndroid10/_._")
+            };
+
+            MonoAndroidDeprecation.ShouldWarn(
+                monoAndroid,
+                compileItems,
+                monoAndroid,
+                runtimeItems).Should().BeFalse();
+        }
+
+        #endregion
+
         #region Integration tests
 
         [Fact]
