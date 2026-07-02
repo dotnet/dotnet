@@ -15,6 +15,7 @@ using NuGet.Versioning;
 
 namespace NuGet.Build.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public class GetRestoreDotnetCliToolsTask : Microsoft.Build.Utilities.Task
     {
         /// <summary>
