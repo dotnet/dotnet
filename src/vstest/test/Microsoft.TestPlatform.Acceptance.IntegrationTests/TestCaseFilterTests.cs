@@ -10,7 +10,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class TestCaseFilterTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithAndOperatorTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -26,7 +26,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithCategoryTraitInMixCase(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -42,7 +42,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithClassNameTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -58,7 +58,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithFullyQualifiedNameTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -76,7 +76,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithNameTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -92,7 +92,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithOrOperatorTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -108,7 +108,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithPriorityTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -128,7 +128,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     /// this command should provide same results as /TestCaseFilter:"FullyQualifiedName~UnitTest1".
     /// </summary>
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void TestCaseFilterShouldWorkIfOnlyPropertyValueGivenInExpression(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -150,7 +150,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     [TestCategory("Windows-Review")]
     // MSTest v1 tests from dlls are only supported in .NET Framework runner, in and outside of VS
     // via Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration.dll
-    [NetFullTargetFrameworkDataSource(useCoreRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
     public void DiscoverMstestV1TestsWithAndOperatorTrait(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -171,7 +171,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithNoneTestCategoryFilterMatchesUncategorizedTests(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -190,7 +190,7 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunSelectedTestsWithNoneTestCategoryNotEqualFilterMatchesCategorizedTests(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

@@ -19,7 +19,7 @@ public class MissingTestSdkTests : AcceptanceTestBase
     // silently run on the built-in testhost shipped next to the runner (that fallback is for native C++ runners) - the
     // run should fail and tell the user to reference Microsoft.NET.Test.Sdk.
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false, useCoreRunner: true)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void RunningManagedProjectWithoutTestSdkShouldFailAndSuggestTestSdk(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -42,7 +42,7 @@ public class MissingTestSdkTests : AcceptanceTestBase
     // build C++ locally. Windows-only (the asset is a Windows native dll).
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false, useCoreRunner: true)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void RunningNativeCppProjectWithoutTestSdkShouldUseTheBuiltInTesthostFallback(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

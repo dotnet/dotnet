@@ -14,7 +14,7 @@ public class RecursiveResourcesLookupTests : AcceptanceTestBase
     // two different runners. The NetFull data source is empty on Linux/macOS.
     [TestCategory("Windows-Review")]
     [Ignore("Temporarily ignore until solving https://github.com/microsoft/testfx/issues/2692")]
-    [NetFullTargetFrameworkDataSource(useCoreRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
     public void RunsToCompletionWhenJapaneseResourcesAreLookedUpForMSCorLib(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
