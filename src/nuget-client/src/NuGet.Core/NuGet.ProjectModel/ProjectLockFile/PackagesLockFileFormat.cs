@@ -168,7 +168,9 @@ namespace NuGet.ProjectModel
                 jsonWriter.Formatting = Formatting.Indented;
 
                 var json = WriteLockFile(lockFile);
-                json.WriteTo(jsonWriter);
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+                json.WriteTo(jsonWriter, Array.Empty<JsonConverter>());
+#pragma warning restore IL2026, IL3050
             }
         }
 
