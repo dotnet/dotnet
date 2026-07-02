@@ -17,6 +17,7 @@ using NuGet.ProjectModel;
 
 namespace NuGet.Build.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public class GetReferenceNearestTargetFrameworkTask : Task
     {
         private const string NEAREST_TARGET_FRAMEWORK = "NearestTargetFramework";
