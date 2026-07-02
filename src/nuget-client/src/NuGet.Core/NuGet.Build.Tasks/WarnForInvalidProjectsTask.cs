@@ -11,6 +11,7 @@ using NuGet.Common;
 
 namespace NuGet.Build.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public class WarnForInvalidProjectsTask : Microsoft.Build.Utilities.Task
     {
         /// <summary>
