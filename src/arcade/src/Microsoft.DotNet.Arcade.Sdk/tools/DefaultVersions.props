@@ -103,7 +103,7 @@
     <MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)' == ''">1.1.286</MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion>
     <MicrosoftSignedWixVersion Condition="'$(MicrosoftSignedWixVersion)' == ''">3.14.1-9323.2545153</MicrosoftSignedWixVersion>
     <!-- minor-patch-only: WiX major upgrades (e.g. WiX 4/5/6) require coordinated manual changes; only take minor/patch bumps. -->
-    <MicrosoftWixToolsetSdkVersion Condition="'$(MicrosoftWixToolsetSdkVersion)' == ''">6.0.3-dotnet.4</MicrosoftWixToolsetSdkVersion>
+    <MicrosoftWixToolsetSdkVersion Condition="'$(MicrosoftWixToolsetSdkVersion)' == ''">6.0.3-dotnet.6</MicrosoftWixToolsetSdkVersion>
     <MicrosoftDotNetBaselinesTasksVersion Condition="'$(MicrosoftDotNetBaselinesTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBaselinesTasksVersion>
     <MicrosoftDotNetSignCheckTaskVersion Condition="'$(MicrosoftDotNetSignCheckTaskVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignCheckTaskVersion>
   </PropertyGroup>

@@ -16,7 +16,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
 {
     [TestMethod]
-    // patched dotnet is not published on non-windows systems
+    // Special characters (~, !, |, %) don't survive the MSBuildLogger output round-trip on non-Windows terminals.
     [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
     public void MSBuildLoggerCanBeEnabledByBuildPropertyAndDoesNotEatSpecialChars(RunnerInfo runnerInfo)
@@ -54,8 +54,6 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    // patched dotnet is not published on non-windows systems
-    [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
     public void MSBuildLoggerCanBeDisabledByBuildProperty(RunnerInfo runnerInfo)
     {
@@ -74,8 +72,6 @@ public class DotnetTestMSBuildOutputTests : AcceptanceTestBase
 
 
     [TestMethod]
-    // patched dotnet is not published on non-windows systems
-    [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
     public void MSBuildLoggerCanBeDisabledByEnvironmentVariableProperty(RunnerInfo runnerInfo)
     {

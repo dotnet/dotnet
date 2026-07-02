@@ -46,6 +46,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         public int TestResultUploadParallelism { get; set; } = 4;
 
+        /// <summary>
+        /// When true (the default), a Helix work item that exited 0 but whose uploaded test
+        /// results contained failures is treated as failed: the monitor marks it failed in
+        /// the outcome map (exiting 1) and the retry pass on a subsequent monitor invocation
+        /// resubmits it. When false, work-item outcome is driven solely by the Helix exit
+        /// code and AzDO test failures do not influence retries or the final exit code.
+        /// </summary>
+        public bool FailWorkItemsWithFailedTests { get; set; } = true;
+
         public bool Verbose { get; set; }
 
         public static JobMonitorOptions Parse(string[] args)
@@ -127,6 +136,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 DefaultValueFactory = _ => 4
             };
 
+            Option<bool> failWorkItemsWithFailedTestsOption = new("--fail-on-failed-tests")
+            {
+                Description = "When true (default), Helix work items that exit 0 but have failed AzDO test results are treated as failed (counted toward the monitor's exit code and resubmitted by a later invocation's retry pass). Pass --fail-on-failed-tests false to fall back to exit-code-only outcomes.",
+                DefaultValueFactory = _ => true
+            };
+
             Option<bool> verboseOption = new("--verbose")
             {
                 Description = "Enable verbose job monitor logging."
@@ -151,6 +166,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             rootCommand.Options.Add(workingDirectoryOption);
             rootCommand.Options.Add(stageNameOption);
             rootCommand.Options.Add(testResultUploadParallelismOption);
+            rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
             rootCommand.Options.Add(verboseOption);
 
             rootCommand.SetAction(parseResult =>
@@ -171,6 +187,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     WorkingDirectory = parseResult.GetValue(workingDirectoryOption),
                     StageName = parseResult.GetValue(stageNameOption),
                     TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
+                    FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
                     Verbose = parseResult.GetValue(verboseOption),
                 };
             });
