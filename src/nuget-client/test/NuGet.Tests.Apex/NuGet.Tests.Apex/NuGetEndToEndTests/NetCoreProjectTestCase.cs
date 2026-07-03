@@ -179,6 +179,7 @@ namespace NuGet.Tests.Apex
         [TestMethod]
         [Timeout(DefaultTimeout)]
         [TestCategory("StagingGate")]
+        [TestCategory("CanaryGate")]
         public async Task InstallAndUpdatePackageFromUI_NetCoreProject_Succeeds()
         {
             // Arrange
