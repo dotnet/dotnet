@@ -112,11 +112,6 @@
         <target state="translated">Аргумент не может быть пустым или равен NULL.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Попробуйте перенести формат управления пакетами NuGet проекта из "packages.config" в "PackageReference".</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">В этом решении отсутствует несколько пакетов NuGet. Щелкните, чтобы восстановить их из источников пакетов в сети.</target>
@@ -752,11 +747,6 @@
         <target state="translated">Лицензия {0}</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Больше не показывать</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Дополнительные сведения о параметрах установки</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Дополнительные сведения о параметрах удаления</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Почему следует выполнить переход?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Перейти сейчас</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">

@@ -288,8 +288,11 @@ namespace NuGet.Commands
                         // Log NU1703 warning if the package uses the deprecated MonoAndroid framework
                         if (checkMonoAndroidDeprecation
                             && !librariesWithMonoAndroidWarnings.Contains(library)
-                            && (MonoAndroidDeprecation.IsMonoAndroidFramework(compileAssetFramework)
-                                || MonoAndroidDeprecation.IsMonoAndroidFramework(runtimeAssetFramework)))
+                            && MonoAndroidDeprecation.ShouldWarn(
+                                compileAssetFramework,
+                                targetLibrary.CompileTimeAssemblies,
+                                runtimeAssetFramework,
+                                targetLibrary.RuntimeAssemblies))
                         {
                             var message = string.Format(CultureInfo.CurrentCulture,
                                 Strings.Warning_MonoAndroidFrameworkDeprecated,

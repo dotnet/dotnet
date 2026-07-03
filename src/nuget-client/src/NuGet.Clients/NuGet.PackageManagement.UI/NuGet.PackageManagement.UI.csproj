@@ -29,6 +29,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Markdown.Platform" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.Styles" />
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 
   <ItemGroup>
