@@ -5,13 +5,13 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26324.4</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26324.4</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-command-line-api dependencies -->
     <SystemCommandLinePackageVersion>2.0.0-beta5.25208.1</SystemCommandLinePackageVersion>
     <!-- dotnet-corefx dependencies -->
     <SystemComponentModelCompositionPackageVersion>4.5.0</SystemComponentModelCompositionPackageVersion>
-    <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25565.104</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25565.104</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildPackageVersion>17.3.1</MicrosoftBuildPackageVersion>
     <!-- dotnet-runtime dependencies -->
@@ -26,13 +26,13 @@ This file should be imported by eng/Versions.props
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
+    <!-- dotnet-arcade dependencies -->
+    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksPackageVersion)</MicrosoftDotNetXliffTasksVersion>
     <!-- dotnet-command-line-api dependencies -->
     <SystemCommandLineVersion>$(SystemCommandLinePackageVersion)</SystemCommandLineVersion>
     <!-- dotnet-corefx dependencies -->
     <SystemComponentModelCompositionVersion>$(SystemComponentModelCompositionPackageVersion)</SystemComponentModelCompositionVersion>
-    <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
-    <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksPackageVersion)</MicrosoftDotNetXliffTasksVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
     <!-- dotnet-runtime dependencies -->

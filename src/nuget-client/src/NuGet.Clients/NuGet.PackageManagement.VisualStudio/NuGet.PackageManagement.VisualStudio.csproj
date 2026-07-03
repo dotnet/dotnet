@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="VsWebSite.Interop" />
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 
   <ItemGroup Label="transitive package pinning">

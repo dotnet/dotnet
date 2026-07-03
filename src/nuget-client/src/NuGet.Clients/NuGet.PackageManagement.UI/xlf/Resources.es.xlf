@@ -112,11 +112,6 @@
         <target state="translated">El argumento no puede ser nulo ni estar vacío.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Considere la posibilidad de migrar el formato de administración de paquetes NuGet del proyecto de "packages.config" a "PackageReference".</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">Faltan algunos paquetes NuGet en esta solución. Haga clic para restaurar desde los orígenes del paquete en línea.</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0} licencia</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">No volver a mostrar</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Obtener información acerca de Instalar opciones</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Obtener información acerca de Desinstalar opciones</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">¿Por qué debo migrar?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Migrar ahora</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
