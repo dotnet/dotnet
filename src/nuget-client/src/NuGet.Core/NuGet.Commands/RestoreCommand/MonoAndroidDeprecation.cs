@@ -2,7 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using NuGet.Frameworks;
+using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 
 namespace NuGet.Commands
@@ -53,6 +56,35 @@ namespace NuGet.Commands
                 && StringComparer.OrdinalIgnoreCase.Equals(
                     framework.Framework,
                     FrameworkConstants.FrameworkIdentifiers.MonoAndroid);
+        }
+
+        /// <summary>
+        /// Determines whether selected MonoAndroid assets should produce a deprecation warning.
+        /// </summary>
+        /// <param name="compileAssetFramework">The framework selected for compile assets.</param>
+        /// <param name="compileTimeAssemblies">The selected compile assets.</param>
+        /// <param name="runtimeAssetFramework">The framework selected for runtime assets.</param>
+        /// <param name="runtimeAssemblies">The selected runtime assets.</param>
+        /// <returns>True when a package contributes non-placeholder MonoAndroid compile or runtime assets.</returns>
+        internal static bool ShouldWarn(
+            NuGetFramework compileAssetFramework,
+            IEnumerable<LockFileItem> compileTimeAssemblies,
+            NuGetFramework runtimeAssetFramework,
+            IEnumerable<LockFileItem> runtimeAssemblies)
+        {
+            return HasNonEmptyMonoAndroidAssets(compileAssetFramework, compileTimeAssemblies)
+                || HasNonEmptyMonoAndroidAssets(runtimeAssetFramework, runtimeAssemblies);
+        }
+
+        private static bool HasNonEmptyMonoAndroidAssets(NuGetFramework framework, IEnumerable<LockFileItem> assets)
+        {
+            return IsMonoAndroidFramework(framework)
+                && assets.Any(asset => !IsEmptyFolder(asset.Path));
+        }
+
+        private static bool IsEmptyFolder(string path)
+        {
+            return path.EndsWith(PackagingCoreConstants.ForwardSlashEmptyFolder, StringComparison.Ordinal);
         }
     }
 }

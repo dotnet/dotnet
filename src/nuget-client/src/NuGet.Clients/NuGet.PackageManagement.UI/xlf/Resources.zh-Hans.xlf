@@ -112,11 +112,6 @@
         <target state="translated">参数不能为 null 或为空。</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">考虑将此项目的 NuGet 程序包管理格式从 "packages.config" 迁移到 "PackageReference"。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">此解决方案中缺少某些 NuGet 程序包。单击可从联机程序包源中还原。</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0} 许可证</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">不再显示</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">了解安装选项</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">了解卸载选项</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">为什么应进行迁移?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">立即迁移</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">

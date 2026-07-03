@@ -56,7 +56,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="serviceIndex">The service index (index.json).</param>
         [Obsolete("Use GetOperationClaimsRequest(string, string) instead.")]
         public GetOperationClaimsRequest(string? packageSourceRepository, JObject? serviceIndex)
-            : this(packageSourceRepository, serviceIndex?.ToString(Formatting.None))
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+            : this(packageSourceRepository, serviceIndex?.ToString(Formatting.None, Array.Empty<JsonConverter>()))
+#pragma warning restore IL2026, IL3050
         {
         }
     }

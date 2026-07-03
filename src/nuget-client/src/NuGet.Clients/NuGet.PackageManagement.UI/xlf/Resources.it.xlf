@@ -112,11 +112,6 @@
         <target state="translated">L'argomento non può essere Null o vuoto.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Provare a eseguire la migrazione del formato di gestione pacchetti NuGet di questo progetto da 'packages.config' a 'PackageReference'.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">In questa soluzione mancano alcuni pacchetti NuGet. Fare clic per ripristinarli dalle origini dei pacchetti online.</target>
@@ -752,11 +747,6 @@
         <target state="translated">Licenza di {0}</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Non visualizzare più questo messaggio</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Informazioni sulle opzioni di installazione</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Informazioni sulle opzioni di disinstallazione</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Perché eseguire la migrazione</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Esegui ora la migrazione</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
