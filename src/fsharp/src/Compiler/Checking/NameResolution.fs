@@ -1017,8 +1017,11 @@ let CheckForDirectReferenceToGeneratedType (tcref: TyconRef, genOk, m) =
 let AddEntityForProvidedType (amap: Import.ImportMap, modref: ModuleOrNamespaceRef, resolutionEnvironment, st: Tainted<ProvidedType>, m) =
     let importProvidedType t = Import.ImportProvidedType amap m t
     let isSuppressRelocate = amap.g.isInteractive || st.PUntaint((fun st -> st.IsSuppressRelocate), m)
-    let tycon = Construct.NewProvidedTycon(resolutionEnvironment, st, importProvidedType, isSuppressRelocate, m)
-    modref.ModuleOrNamespaceType.AddProvidedTypeEntity tycon
+    let providedTypeName = st.PUntaint((fun st -> st.Name), m)
+    let tycon =
+        modref.ModuleOrNamespaceType.GetOrInternProvidedEntity(
+            providedTypeName,
+            (fun () -> Construct.NewProvidedTycon(resolutionEnvironment, st, importProvidedType, isSuppressRelocate, m)))
     let tcref = modref.NestedTyconRef tycon
     System.Diagnostics.Debug.Assert(modref.TryDeref.IsSome)
     tcref
@@ -4157,7 +4160,7 @@ let ResolveNestedField sink (ncenv: NameResolver) nenv ad recdTy lid =
             match lid with
             | id :: rest ->
                 lookupField recdTy id
-                |?> List.map (fun x -> id, x, rest)
+                |?> List.map (fun x -> ResolutionInfo.Empty, None, id, x, rest)
             | _ -> NoResultsOrUsefulErrors
 
         let tyconSearch ad () =
@@ -4170,10 +4173,10 @@ let ResolveNestedField sink (ncenv: NameResolver) nenv ad recdTy lid =
                 if isNil tcrefs then
                     NoResultsOrUsefulErrors
                 else
-                    ResolveLongIdentInTyconRefs ResultCollectionSettings.AllResults ncenv nenv LookupKind.RecdField 1 tyconId.idRange ad fieldId rest typeNameResInfo fieldId.idRange tcrefs None
+                    ResolveLongIdentInTyconRefs ResultCollectionSettings.AllResults ncenv nenv LookupKind.RecdField 1 tyconId.idRange ad fieldId rest typeNameResInfo tyconId.idRange tcrefs None
                     |?> List.choose (fun x ->
                         match x with
-                        | _, (Item.RecdField _ as item), rest -> Some (fieldId, item, rest)
+                        | resInfo, (Item.RecdField _ as item), rest -> Some (resInfo, Some tyconId, fieldId, item, rest)
                         | _ -> None)
             | _ -> NoResultsOrUsefulErrors
 
@@ -4182,11 +4185,11 @@ let ResolveNestedField sink (ncenv: NameResolver) nenv ad recdTy lid =
             | [] -> NoResultsOrUsefulErrors
             | modOrNsId :: rest ->
                 ResolveLongIdentAsModuleOrNamespaceThen sink ResultCollectionSettings.AtMostOneResult ncenv.amap modOrNsId.idRange OpenQualified nenv ad modOrNsId rest false ShouldNotifySink.Yes (ResolveFieldInModuleOrNamespace ncenv nenv ad)
-                |?> List.map (fun (_, FieldResolution(rfinfo, _), restAfterField) ->
+                |?> List.map (fun (resInfo, FieldResolution(rfinfo, _), restAfterField) ->
                     let fieldId = rest.[ rest.Length - restAfterField.Length - 1 ]
-                    fieldId, Item.RecdField rfinfo, restAfterField)
+                    resInfo, None, fieldId, Item.RecdField rfinfo, restAfterField)
 
-        let fieldId, item, rest =
+        let resInfo, tyconIdOpt, fieldId, item, rest =
             let search =
                 if isAnonRecdTy then
                     fieldSearch ()
@@ -4196,6 +4199,12 @@ let ResolveNestedField sink (ncenv: NameResolver) nenv ad recdTy lid =
             search
             |> AtMostOneResult id.idRange
             |> ForceRaise
+
+        match tyconIdOpt with
+        | Some _ ->
+            // Report every type-qualifier occurrence before grouping collapses duplicates; UseInType matches ResolveField.
+            ResolutionInfo.SendEntityPathToSink(sink, ncenv, nenv, ItemOccurrence.UseInType, ad, resInfo, ResultTyparChecker(fun () -> true))
+        | None -> ()
 
         let idsBeforeField =
             if isAnonRecdTy then
