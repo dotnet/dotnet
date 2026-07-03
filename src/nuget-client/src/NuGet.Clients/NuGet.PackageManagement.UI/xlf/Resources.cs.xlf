@@ -112,11 +112,6 @@
         <target state="translated">Argument nemůže být null ani prázdný.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Zvažte migraci formátu správy balíčků NuGet tohoto projektu z packages.config na PackageReference.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">V tomhle řešení chybí některé balíčky NuGet. Kliknutím je obnovíte z online zdrojů balíčků.</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0} – licence</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Příště už nezobrazovat</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Informace o možnostech instalace</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Informace o možnostech odinstalace</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Proč mám migrovat?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Migrovat hned</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
