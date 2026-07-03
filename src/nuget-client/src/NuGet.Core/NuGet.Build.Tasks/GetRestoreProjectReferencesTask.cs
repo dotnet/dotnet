@@ -12,7 +12,9 @@ using Newtonsoft.Json;
 
 namespace NuGet.Build.Tasks
 {
+#if !NETFRAMEWORK
     [MSBuildMultiThreadableTask]
+#endif
     public class GetRestoreProjectReferencesTask : Microsoft.Build.Utilities.Task
 #if !NETFRAMEWORK
         , IMultiThreadableTask
