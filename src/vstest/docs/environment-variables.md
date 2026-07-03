@@ -212,13 +212,6 @@ This document lists all environment variables that are understood and handled by
 - **Description**: Specifies the directory where telemetry log files should be written.
 - **Example**: `VSTEST_LOGTELEMETRY_PATH=C:\TelemetryLogs`
 
-## Performance and Parallelization Variables
-
-### VSTEST_HOSTPRESTART_COUNT
-- **Description**: Sets the number of testhosts to pre-start for improved performance in parallel test execution.
-- **Format**: Integer value
-- **Example**: `VSTEST_HOSTPRESTART_COUNT=4`
-
 ## Configuration and Path Variables
 
 ### VSTEST_CONSOLE_PATH
@@ -281,13 +274,6 @@ dotnet test MyTests.dll
 set VSTEST_DIAG=C:\temp\vstest.log
 set VSTEST_DIAG_VERBOSITY=Verbose
 dotnet test MyTests.dll
-```
-
-### Performance Optimization
-```bash
-# Pre-start testhosts for better parallel performance
-set VSTEST_HOSTPRESTART_COUNT=4
-dotnet test MyTests.dll --parallel
 ```
 
 ### Crash Dump Collection
