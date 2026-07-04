@@ -7,6 +7,7 @@
   <Folder Name="/basic/">
     <Project Path="MSTestProject1/MSTestProject1.csproj" />
     <Project Path="MSTestProject2/MSTestProject2.csproj" />
+    <Project Path="MtpMSTestProject/MtpMSTestProject.csproj" />
   </Folder>
   <Folder Name="/performance/">
     <Project Path="performance/MSTest1000Passing/MSTest1000Passing.csproj" />

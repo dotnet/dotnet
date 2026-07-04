@@ -98,7 +98,7 @@ public class DiscoveryTests : AcceptanceTestBase
             {"Microsoft.TestPlatform.Extensions.BlameDataCollector.dll", ["Microsoft.TestPlatform.Extensions.BlameDataCollector.BlameLogger", "Microsoft.TestPlatform.Extensions.BlameDataCollector.BlameCollector"] },
             {"Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll", ["Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.HtmlLogger"] },
             {"Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll", ["Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.TrxLogger"] },
-            {"Microsoft.TestPlatform.TestHostRuntimeProvider.dll", ["Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager", "Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager"]
+            {"Microsoft.TestPlatform.TestHostRuntimeProvider.dll", ["Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager", "Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager", "Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.MtpTestRuntimeProvider"]
             }
         };
 

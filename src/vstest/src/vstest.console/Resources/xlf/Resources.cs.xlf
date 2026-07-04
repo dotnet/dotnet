@@ -868,7 +868,7 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       Spustí test v režimu blame. Tato možnost je užitečná při izolaci problematického testu, který způsobuje jeho chybové ukončení.
       Vytvoří výstupní soubor v aktuálním adresáři jako Sequence.xml,
       který zachytí pořadí provádění testu před chybovým ukončením.
@@ -877,6 +877,7 @@
       Toto výchozí chování můžete také přepsat pomocí určitých volitelných parametrů:
       CollectAlways – Pro shromáždění výpisu při ukončení, pokud nedojde k chybovému ukončení (true/false) 
       DumpType – Pro zadání typu výpisu (mini/full)
+      Shromažďování výpisu paměti při selhání ve Windows vyžaduje, aby byly soubory procdump.exe a procdump64.exe dostupné v proměnné PATH nebo v adresáři určeném proměnnou prostředí PROCDUMP_PATH. Nástroje si můžete stáhnout z https://docs.microsoft.com/sysinternals/downloads/procdump.
       Příklad: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

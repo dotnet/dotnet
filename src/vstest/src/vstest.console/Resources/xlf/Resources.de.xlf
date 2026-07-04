@@ -868,15 +868,16 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       Führt den Test im blame-Modus aus. Diese Option ist hilfreich zum Isolieren des problematischen Tests, der einen Absturz des Testhosts verursacht.
       Im aktuellen Verzeichnis wird eine Ausgabedatei namens "Sequence.xml" erstellt,
       in der die Reihenfolge der Testausführung vor dem Absturz erfasst wird.
       Optional können Sie eine Prozesssicherung für den Testhost erfassen.
       Wenn Sie sich zum Erfassen einer Sicherung entschließen, wird bei einem Absturz standardmäßig eine Minisicherung erfasst.
       Dieses Standardverhalten können Sie durch einige optionale Parameter außer Kraft setzen:
-      CollectAlways: Zum Erfassen einer Sicherung beim Beenden, selbst wenn kein Absturz eintritt (TRUE/FALSE). 
+      CollectAlways: Zum Erfassen einer Sicherung beim Beenden, selbst wenn kein Absturz eintritt (TRUE/FALSE).
       DumpType: Zur Angabe des Sicherungstyps (mini/full).
+      Das Erfassen einer Absturzsicherung unter Windows erfordert, dass procdump.exe und procdump64.exe im PATH verfügbar sind oder sich in einem Verzeichnis befinden, auf das die Umgebungsvariable PROCDUMP_PATH verweist. Die Tools können hier heruntergeladen werden://docs.microsoft.com/sysinternals/downloads/procdump.
       Beispiel: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

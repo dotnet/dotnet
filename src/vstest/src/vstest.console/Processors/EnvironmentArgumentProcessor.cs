@@ -28,11 +28,17 @@ internal class EnvironmentArgumentProcessor : IArgumentProcessor
     public const string CommandName = "/Environment";
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+
+    public EnvironmentArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    {
+        _runSettingsProvider = runSettingsProvider;
+    }
 
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new ArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance, ConsoleOutput.Instance));
+            new ArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider, ConsoleOutput.Instance));
 
         set => _executor = value;
     }

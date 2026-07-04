@@ -868,7 +868,7 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Valore];[DumpType]=[Valore]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Valore];[DumpType]=[Valore]
       Esegue il test in modalità di segnalazione errore. Questa opzione è utile per isolare il test problematico che causa l'arresto anomalo di Test Host.
       Crea nella directory corrente un file di output "Sequence.xml", che
       acquisisce l'ordine di esecuzione del test prima dell'arresto anomalo.
@@ -877,6 +877,7 @@
       Si può anche scegliere di eseguire l'override di questo comportamento predefinito usando alcuni parametri facoltativi:
       CollectAlways: per raccogliere il dump all'uscita anche in assenza di arresto anomalo (true/false) 
       DumpType: per specificare il tipo di dump (mini/full).
+      La raccolta di un dump di arresto anomalo in Windows richiede che procdump.exe e procdump64.exe siano disponibili nel PATH oppure in una directory indicata dalla variabile di ambiente PROCDUMP_PATH. Gli strumenti possono essere scaricati da https://docs.microsoft.com/sysinternals/downloads/procdump.
       Esempio: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

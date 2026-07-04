@@ -78,19 +78,6 @@ internal class CollectorDataEntry : IXmlTestStore
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CollectorDataEntry"/> class.
-    /// </summary>
-    /// <remarks>
-    /// For XML persistence
-    /// </remarks>
-    internal CollectorDataEntry()
-    {
-        _agentName = null!;
-        _uri = null!;
-        _collectorDisplayName = null!;
-    }
-
-    /// <summary>
     /// Gets the read-only list of data attachments
     /// </summary>
     public IList<IDataAttachment> Attachments

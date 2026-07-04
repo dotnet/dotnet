@@ -868,15 +868,16 @@ Günlükler için izleme düzeyini aşağıda gösterildiği gibi değiştirin
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       Testi blame modunda çalıştırır. Bu seçenek, test ana bilgisayarının kilitlenmesine neden olan sorunlu testin ayrı tutulmasını sağlar.
-      Geçerli dizinde, kilitlenmeden önce testin yürütülme düzenini yakalayan,
-      “Sequence.xml” adlı bir çıkış dosyası oluşturur. 
+      Geçerli dizinde “Sequence.xml” adlı bir çıktı dosyası oluşturur,
+      kilitlenmeden önce testin yürütülme düzenini yakalayan.
       İsteğe bağlı olarak test ana bilgisayarının işlem dökümünü çıkarmayı seçebilirsiniz.
       Dökümü çıkarmayı seçtiğinizde, kilitlenme durumunda varsayılan olarak bir mini döküm çıkarılır.
       Dilerseniz bazı isteğe bağlı parametrelerle bu varsayılan davranışı geçersiz kılabilirsiniz:
       CollectAlways - Kilitlenme olmasa da her çıkışta döküm çıkarma (true/false) 
       DumpType - Döküm türünü belirtme (mini/full).
+      Windows'da kilitlenme bilgi dökümü toplamak için procdump.exe ve procdump64.exe dosyalarının PATH içinde ya da PROCDUMP_PATH ortam değişkeninin işaret ettiği bir dizinde bulunması gerekir. Araçlar https://docs.microsoft.com/sysinternals/downloads/procdump adresinden indirilebilir.
       Örnek: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

@@ -868,16 +868,17 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      Exécute le test en mode blame. Cette option est utile pour isoler le test problématique qui cause le plantage de l'hôte de test.
-      Il crée un fichier de sortie dans le répertoire actif nommé "Sequence.xml",
-      qui capture l'ordre d'exécution du test avant le plantage.
-      Vous pouvez éventuellement choisir de collecter le fichier dump du processus de l'hôte de test.
-      Quand vous choisissez de collecter le fichier dump, par défaut, un mini-dump est collecté lors du plantage.
-      Vous pouvez aussi choisir de remplacer ce comportement par défaut par des paramètres facultatifs :
-      CollectAlways - Pour collecter le fichier dump à la fermeture, même s'il n'y pas de plantage (true/false) 
-      DumpType - Pour spécifier le type de fichier dump (mini/full).
-      Exemple : /Blame
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      Exécute le test en mode blâme. Cette option est utile pour isoler le test problématique provoquant le crash de l'hôte de test.
+      Il crée un fichier de sortie dans le répertoire courant comme "Sequence.xml",
+      qui capture l'ordre d'exécution des tests avant le crash.
+      Vous pouvez éventuellement choisir de collecter le vidage de processus pour l'hôte de test.
+      Lorsque vous choisissez de collecter le vidage, par défaut, un mini vidage sera collecté lors d'un crash.
+      Vous pouvez également choisir de remplacer ce comportement par défaut par certains paramètres facultatifs :
+      CollectAlways - Pour collecter le vidage à la sortie, même s’il n’y a pas d’incident (true/false) 
+      DumpType – Pour spécifier le type de vidage (mini/complet).
+      La collecte d’un vidage sur incident sur Windows nécessite que procdump.exe et procdump64.exe soient disponibles dans PATH ou dans un répertoire désigné par la variable d’environnement PROCDUMP_PATH. Les outils peuvent être téléchargés à partir de https://docs.microsoft.com/sysinternals/downloads/procdump.
+      Exemple: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
         <note />

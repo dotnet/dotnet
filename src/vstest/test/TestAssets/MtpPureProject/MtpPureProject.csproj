@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A PURE Microsoft.Testing.Platform (MTP) application.
+
+    Unlike MtpMSTestProject, this asset references *only* Microsoft.Testing.Platform. It does NOT
+    reference MSTest, and therefore does NOT drag in the VSTestBridge or Microsoft.TestPlatform.ObjectModel.
+    It hand-rolls its own ITestFramework and reports test nodes over the MTP protocol directly.
+
+    This is the ultimate proof for the "MTP under vstest" work: a test app with ZERO vstest assemblies
+    on disk, run end-to-end by vstest.console via the MTP provider (including code coverage).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <!-- Mark this as an MTP application. This (and the explicit AssemblyMetadata below) is what
+         vstest detects to drive the app over the MTP protocol instead of the vstest testhost protocol. -->
+    <IsTestingPlatformApplication>true</IsTestingPlatformApplication>
+
+    <!-- Keep coverage honest: emit full debug info so the collector can map IL back to source. -->
+    <DebugType>portable</DebugType>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The ONLY test dependency. No MSTest, no ObjectModel, no VSTestBridge. -->
+    <PackageReference Include="Microsoft.Testing.Platform" Version="$(MicrosoftTestingPlatformVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Belt-and-suspenders: emit the detection metadata explicitly so it does not depend on which
+         package targets happen to be imported for a single-TFM build. -->
+    <AssemblyMetadata Include="Microsoft.Testing.Platform.Application" Value="true" />
+  </ItemGroup>
+
+</Project>

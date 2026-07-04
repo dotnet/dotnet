@@ -66,6 +66,7 @@ internal class TestRequestManager : ITestRequestManager
     private readonly ITestRunAttachmentsProcessingManager _attachmentsProcessingManager;
     private readonly IEnvironment _environment;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
+    private readonly IRunSettingsHelper _runSettingsHelper;
 
     /// <summary>
     /// Maintains the current active execution request.
@@ -108,7 +109,8 @@ internal class TestRequestManager : ITestRequestManager
             new ProcessHelper(),
             new TestRunAttachmentsProcessingManager(TestPlatformEventSource.Instance, new DataCollectorAttachmentsProcessorsFactory()),
             new PlatformEnvironment(),
-            new EnvironmentVariableHelper())
+            new EnvironmentVariableHelper(),
+            RunSettingsHelper.Instance)
     {
     }
 
@@ -123,6 +125,33 @@ internal class TestRequestManager : ITestRequestManager
         ITestRunAttachmentsProcessingManager attachmentsProcessingManager,
         IEnvironment environment,
         IEnvironmentVariableHelper environmentVariableHelper)
+        : this(
+            commandLineOptions,
+            testPlatform,
+            testRunResultAggregator,
+            testPlatformEventSource,
+            inferHelper,
+            metricsPublisher,
+            processHelper,
+            attachmentsProcessingManager,
+            environment,
+            environmentVariableHelper,
+            RunSettingsHelper.Instance)
+    {
+    }
+
+    internal TestRequestManager(
+        CommandLineOptions commandLineOptions,
+        ITestPlatform testPlatform,
+        TestRunResultAggregator testRunResultAggregator,
+        ITestPlatformEventSource testPlatformEventSource,
+        InferHelper inferHelper,
+        Task<IMetricsPublisher> metricsPublisher,
+        IProcessHelper processHelper,
+        ITestRunAttachmentsProcessingManager attachmentsProcessingManager,
+        IEnvironment environment,
+        IEnvironmentVariableHelper environmentVariableHelper,
+        IRunSettingsHelper runSettingsHelper)
     {
         _testPlatform = testPlatform;
         _commandLineOptions = commandLineOptions;
@@ -134,6 +163,7 @@ internal class TestRequestManager : ITestRequestManager
         _attachmentsProcessingManager = attachmentsProcessingManager;
         _environment = environment;
         _environmentVariableHelper = environmentVariableHelper;
+        _runSettingsHelper = runSettingsHelper;
     }
 
     /// <summary>
@@ -779,7 +809,7 @@ internal class TestRequestManager : ITestRequestManager
             // Other scenarios, most notably .NET Framework with MultiTFM disabled, will use the old default X86 architecture.
         }
 
-        EqtTrace.Verbose($"TestRequestManager.UpdateRunSettingsIfRequired: Default architecture: {defaultArchitecture} IsDefaultTargetArchitecture: {RunSettingsHelper.Instance.IsDefaultTargetArchitecture}, Current process architecture: {_processHelper.GetCurrentProcessArchitecture()} OperatingSystem: {_environment.OperatingSystem}.");
+        EqtTrace.Verbose($"TestRequestManager.UpdateRunSettingsIfRequired: Default architecture: {defaultArchitecture} IsDefaultTargetArchitecture: {_runSettingsHelper.IsDefaultTargetArchitecture}, Current process architecture: {_processHelper.GetCurrentProcessArchitecture()} OperatingSystem: {_environment.OperatingSystem}.");
 
         // True when runsettings don't set platforml. False when runsettings force platform
         // in both cases the sourceToArchitectureMap is populated with the real architecture as we inferred it
@@ -856,7 +886,7 @@ internal class TestRequestManager : ITestRequestManager
 
         Architecture GetDefaultArchitecture(RunConfiguration runConfiguration)
         {
-            if (!RunSettingsHelper.Instance.IsDefaultTargetArchitecture)
+            if (!_runSettingsHelper.IsDefaultTargetArchitecture)
             {
                 return runConfiguration.TargetPlatform;
             }

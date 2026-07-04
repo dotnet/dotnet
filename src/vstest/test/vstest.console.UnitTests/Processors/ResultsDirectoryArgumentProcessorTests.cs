@@ -34,14 +34,14 @@ public class ResultsDirectoryArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnResultsDirectoryArgumentProcessorCapabilities()
     {
-        var processor = new ResultsDirectoryArgumentProcessor();
+        var processor = new ResultsDirectoryArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is ResultsDirectoryArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnResultsDirectoryArgumentExecutor()
     {
-        var processor = new ResultsDirectoryArgumentProcessor();
+        var processor = new ResultsDirectoryArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is ResultsDirectoryArgumentExecutor);
     }
 

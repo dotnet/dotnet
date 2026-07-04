@@ -17,6 +17,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
 
+using vstest.console.UnitTests.Processors;
+
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 
 [TestClass]
@@ -41,14 +43,14 @@ public class TestAdapterPathArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnTestAdapterPathArgumentProcessorCapabilities()
     {
-        var processor = new TestAdapterPathArgumentProcessor();
+        var processor = new TestAdapterPathArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is TestAdapterPathArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnTestAdapterPathArgumentProcessorCapabilities()
     {
-        var processor = new TestAdapterPathArgumentProcessor();
+        var processor = new TestAdapterPathArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is TestAdapterPathArgumentExecutor);
     }
 

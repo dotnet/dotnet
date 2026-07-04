@@ -22,6 +22,12 @@ internal class ParallelArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+
+    public ParallelArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    {
+        _runSettingsProvider = runSettingsProvider;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -36,7 +42,7 @@ internal class ParallelArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new ParallelArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance));
+            new ParallelArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider));
 
         set => _executor = value;
     }

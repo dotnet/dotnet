@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.Parallel;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
+using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -122,6 +123,17 @@ public class TestEngine : ITestEngine
         {
             var sources = discoveryCriteria.Sources.ToList();
             var hostManager = _testHostProviderManager.GetTestHostManagerByRunConfiguration(runtimeProviderInfo.RunSettings, sources);
+
+            // A runtime provider may host the run over its own protocol (e.g. Microsoft.Testing.Platform's
+            // JSON-RPC) instead of launching a vstest testhost. Such a provider supplies its own proxy managers
+            // via IProxyManagerFactory, so ask the resolved provider for the discovery manager rather than
+            // building the standard vstest testhost proxy.
+            if (hostManager is IProxyManagerFactory proxyManagerFactory)
+            {
+                EqtTrace.Verbose("TestEngine.GetDiscoveryManager: provider '{0}' supplies its own discovery manager.", hostManager.GetType().Name);
+                return proxyManagerFactory.CreateDiscoveryManager();
+            }
+
             hostManager?.Initialize(TestSessionMessageLogger.Instance, runtimeProviderInfo.RunSettings!);
 
             ThrowExceptionIfTestHostManagerIsNull(hostManager, runtimeProviderInfo.RunSettings);
@@ -268,6 +280,20 @@ public class TestEngine : ITestEngine
         // ProxyExecutionManager(&POM)
         var sources = runtimeProviderInfo.SourceDetails.Select(r => r.Source!).ToList();
         var hostManager = _testHostProviderManager.GetTestHostManagerByRunConfiguration(runtimeProviderInfo.RunSettings, sources);
+
+        // A runtime provider may host the run over its own protocol (e.g. Microsoft.Testing.Platform's
+        // JSON-RPC) instead of launching a vstest testhost. Such a provider supplies its own proxy managers
+        // via IProxyManagerFactory, so ask the resolved provider for the execution manager (wiring in data
+        // collection when enabled) rather than building the standard vstest testhost proxy.
+        if (hostManager is IProxyManagerFactory proxyManagerFactory)
+        {
+            IProxyDataCollectionManager? dataCollectionManager = isDataCollectorEnabled
+                ? new ProxyDataCollectionManager(requestData, runtimeProviderInfo.RunSettings, sources)
+                : null;
+            EqtTrace.Verbose("TestEngine.CreateNonParallelExecutionManager: provider '{0}' supplies its own execution manager (data collection: {1}).", hostManager.GetType().Name, isDataCollectorEnabled);
+            return proxyManagerFactory.CreateExecutionManager(dataCollectionManager);
+        }
+
         ThrowExceptionIfTestHostManagerIsNull(hostManager, runtimeProviderInfo.RunSettings);
         hostManager!.Initialize(TestSessionMessageLogger.Instance, runtimeProviderInfo.RunSettings!);
 
@@ -446,16 +472,20 @@ public class TestEngine : ITestEngine
         out ITestRuntimeProvider? mostRecentlyCreatedInstance)
     {
         // Group source details to get unique frameworks and architectures for which we will run, so we can figure
-        // out which runtime providers would run them, and if the runtime provider is shared or not.
+        // out which runtime providers would run them, and if the runtime provider is shared or not. A source-aware
+        // provider (e.g. Microsoft.Testing.Platform) claims sources by their shape, not just their framework, so we
+        // include the claiming provider's type in the grouping key: this keeps such sources in their own
+        // configuration instead of being merged with generic (framework-only) sources of the same TFM/architecture.
         mostRecentlyCreatedInstance = null;
         var testRuntimeProviders = new List<TestRuntimeProviderInfo>();
-        var uniqueRunConfigurations = sourceToSourceDetailMap.Values.GroupBy(k => $"{k.Framework}|{k.Architecture}");
+        var uniqueRunConfigurations = sourceToSourceDetailMap.Values.GroupBy(k => $"{k.Framework}|{k.Architecture}|{_testHostProviderManager.GetSourceAwareRuntimeProviderType(runSettings, k.Source!)?.AssemblyQualifiedName ?? string.Empty}");
         foreach (var runConfiguration in uniqueRunConfigurations)
         {
             // It is okay to take the first (or any) source detail in the group. We are grouping to get the same source detail, so all architectures and frameworks are the same.
             var sourceDetail = runConfiguration.First();
             var runsettingsXml = SourceDetailHelper.UpdateRunSettingsFromSourceDetail(runSettings, sourceDetail);
             var sources = runConfiguration.Select(c => c.Source!).ToList();
+
             var testRuntimeProvider = _testHostProviderManager.GetTestHostManagerByRunConfiguration(runsettingsXml, sources);
 
             if (testRuntimeProvider != null)
@@ -601,6 +631,15 @@ public class TestEngine : ITestEngine
         if (testHostProviders.Count > 1)
         {
             EqtTrace.Info("TestEngine.ShouldRunInNoIsolation: This run has multiple different architectures or frameworks, running in isolation (in a separate testhost proces).");
+            return false;
+        }
+
+        // A provider that supplies its own proxy managers (IProxyManagerFactory) hosts the run over its own
+        // protocol out-of-process (e.g. Microsoft.Testing.Platform's JSON-RPC), so it can never run in-process
+        // inside vstest.console.
+        if (testHostProviders.Any(p => p.Type is not null && typeof(IProxyManagerFactory).IsAssignableFrom(p.Type)))
+        {
+            EqtTrace.Info("TestEngine.ShouldRunInNoIsolation: This run contains a provider that hosts its own protocol out-of-process, running in isolation.");
             return false;
         }
 

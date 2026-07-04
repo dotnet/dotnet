@@ -1,1 +1,7 @@
 #nullable enable
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.IProxyManagerFactory
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.IProxyManagerFactory.CreateDiscoveryManager() -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyDiscoveryManager!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.IProxyManagerFactory.CreateExecutionManager(Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces.IProxyDataCollectionManager? dataCollectionManager) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyExecutionManager!
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP.MtpProxyManagerFactory
+static Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP.MtpProxyManagerFactory.CreateDiscoveryManager() -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyDiscoveryManager!
+static Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP.MtpProxyManagerFactory.CreateExecutionManager(Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces.IProxyDataCollectionManager? dataCollectionManager) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyExecutionManager!
