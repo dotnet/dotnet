@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
+using NuGet.Configuration;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -239,7 +240,7 @@ namespace NuGet.Commands
                 telemetry.TelemetryEvent[NoOpResult] = false; // Getting here means we did not no-op.
 
                 bool success = !_request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
-                success &= BeforeGraphResolutionValidations(httpSourcesCount);
+                success &= BeforeGraphResolutionValidations(httpSourcesCount, auditEnabled);
 
                 var packagesLockFilePath = PackagesLockFileUtilities.GetNuGetLockFilePath(_request.Project);
                 PackagesLockFile packagesLockFile = null;
@@ -359,13 +360,13 @@ namespace NuGet.Commands
             }
         }
 
-        private bool BeforeGraphResolutionValidations(int httpSourcesCount)
+        private bool BeforeGraphResolutionValidations(int httpSourcesCount, bool auditEnabled)
         {
             var success = true;
 
             success &= EnsureNotDeprecatedProjectJsonProjectType();
             success &= AreCentralVersionRequirementsSatisfied(_request, httpSourcesCount);
-            success &= EvaluateHttpSourceUsage();
+            success &= EvaluateHttpSourceUsage(auditEnabled);
             success &= HasValidPlatformVersions();
             success &= PackageReferencesHaveVersions();
             success &= EnsureNoAliasesWithDisallowedCharacters();
@@ -514,49 +515,77 @@ namespace NuGet.Commands
             return (null, noOpCacheFileEvaluation, cacheFile);
         }
 
-        private bool EvaluateHttpSourceUsage()
+        private bool EvaluateHttpSourceUsage(bool auditEnabled)
         {
             bool error = false;
+
+            // Track source URLs that have already been warned/errored about so the same URL,
+            // even when configured as both a package source and an audit source, is only reported once.
+            var reportedSources = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             if (_request.DependencyProviders.RemoteProviders != null)
             {
                 foreach (var remoteProvider in _request.DependencyProviders.RemoteProviders)
                 {
-                    var source = remoteProvider.Source;
-                    if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
+                    error |= CheckDisallowedInsecureHttpSource(remoteProvider.Source, SdkAnalysisLevelMinimums.V9_0_100, reportedSources);
+                }
+            }
+
+            // Audit sources are only contacted when auditing is enabled, so only error about insecure audit sources in that case.
+            // Unlike package sources, audit sources error when the SDK analysis level is high enough and are silent otherwise (no warning).
+            if (auditEnabled && _request.DependencyProviders.VulnerabilityInfoProviders != null)
+            {
+                foreach (var vulnerabilityInfoProvider in _request.DependencyProviders.VulnerabilityInfoProviders)
+                {
+                    if (vulnerabilityInfoProvider.IsAuditSource)
                     {
-                        var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(
-                            _request.Project.RestoreMetadata.SdkAnalysisLevel,
-                            _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                            SdkAnalysisLevelMinimums.V9_0_100);
-
-                        if (isErrorEnabled)
-                        {
-                            _logger.Log(
-                                RestoreLogMessage.CreateError(
-                                    NuGetLogCode.NU1302,
-                                    string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
-
-                            error = true;
-                        }
-                        else
-                        {
-                            var message = RestoreLogMessage.CreateWarning(
-                                    NuGetLogCode.NU1803,
-                                    string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source));
-                            _logger.Log(message);
-
-                            // If the project treats this warning as an error, we should not continue
-                            if (message.Level == LogLevel.Error)
-                            {
-                                error = true;
-                            }
-                        }
+                        error |= CheckDisallowedInsecureHttpSource(vulnerabilityInfoProvider.PackageSource, SdkAnalysisLevelMinimums.V10_0_400, reportedSources, warnWhenNotError: false);
                     }
                 }
             }
 
             return !error;
+        }
+
+        private bool CheckDisallowedInsecureHttpSource(PackageSource source, NuGetVersion errorMinSdkAnalysisLevel, HashSet<string> reportedSources, bool warnWhenNotError = true)
+        {
+            if (!source.IsHttp || source.IsHttps || source.AllowInsecureConnections)
+            {
+                return false;
+            }
+
+            // Only warn/error once per unique source URL.
+            if (!reportedSources.Add(source.Source))
+            {
+                return false;
+            }
+
+            var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(
+                _request.Project.RestoreMetadata.SdkAnalysisLevel,
+                _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
+                errorMinSdkAnalysisLevel);
+
+            if (isErrorEnabled)
+            {
+                _logger.Log(
+                    RestoreLogMessage.CreateError(
+                        NuGetLogCode.NU1302,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
+
+                return true;
+            }
+            else if (warnWhenNotError)
+            {
+                var message = RestoreLogMessage.CreateWarning(
+                    NuGetLogCode.NU1803,
+                    string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source));
+                _logger.Log(message);
+
+                // If the project treats this warning as an error, we should not restore
+                return message.Level == LogLevel.Error;
+            }
+
+            return false;
         }
 
         private record struct EvaluateLockFileResult(bool Success, bool IsLockFileValid, bool RegenerateLockFile, string PackagesLockFilePath, PackagesLockFile PackagesLockFile);
