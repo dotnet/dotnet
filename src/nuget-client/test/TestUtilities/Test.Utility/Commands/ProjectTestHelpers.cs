@@ -13,6 +13,8 @@ using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Test;
 using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
@@ -195,6 +197,15 @@ namespace NuGet.Commands.Test
         /// </summary>
         public static TestRestoreRequest CreateRestoreRequest(SimpleTestPathContext pathContext, ILogger logger, params PackageSpec[] projects)
         {
+            return CreateRestoreRequest(pathContext, logger, auditSources: null, projects);
+        }
+
+        /// <summary>
+        /// Creates a restore request for the first project in the <paramref name="projects"/> list. If <see cref="ProjectRestoreMetadata.Sources"/> has any values, it is used for creating the providers, otherwise <see cref="SimpleTestPathContext.PackageSource"/> from <paramref name="pathContext"/> will be used.
+        /// When <paramref name="auditSources"/> is not null, it is used as the audit sources; otherwise the audit sources are loaded from the settings in <paramref name="pathContext"/>.
+        /// </summary>
+        public static TestRestoreRequest CreateRestoreRequest(SimpleTestPathContext pathContext, ILogger logger, IReadOnlyList<SourceRepository> auditSources, params PackageSpec[] projects)
+        {
             DependencyGraphSpec dgSpec = GetDGSpecForFirstProject(projects);
             var projectToRestore = projects[0];
             var sources = projectToRestore.RestoreMetadata.Sources.Any() ?
@@ -202,9 +213,18 @@ namespace NuGet.Commands.Test
                        [new PackageSource(pathContext.PackageSource)];
 
             var externalClosure = DependencyGraphSpecRequestProvider.GetExternalClosure(dgSpec, projectToRestore.RestoreMetadata.ProjectUniqueName).ToList();
-            var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(Settings.LoadDefaultSettings(pathContext.SolutionRoot));
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
 
-            return new TestRestoreRequest(projectToRestore, sources, pathContext.UserPackagesFolder, new TestSourceCacheContext(), packageSourceMapping, logger)
+            if (auditSources == null)
+            {
+                IReadOnlyList<PackageSource> auditPackageSources = new PackageSourceProvider(settings).LoadAuditSources();
+                auditSources = auditPackageSources.Count == 0
+                    ? Array.Empty<SourceRepository>()
+                    : auditPackageSources.Select(Repository.Factory.GetCoreV3).ToList();
+            }
+
+            return new TestRestoreRequest(projectToRestore, sources, pathContext.UserPackagesFolder, new TestSourceCacheContext(), packageSourceMapping, logger, auditSources)
             {
                 LockFilePath = Path.Combine(projectToRestore.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName),
                 DependencyGraphSpec = dgSpec,
