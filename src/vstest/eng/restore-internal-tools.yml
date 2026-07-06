@@ -1,7 +1,8 @@
 steps:
   - task: NuGetAuthenticate@1
     inputs:
-      nuGetServiceConnections: 'devdiv/dotnet-core-internal-tooling'
+      azureDevOpsServiceConnection: dnceng-devdiv-dotnet-core-internal-tooling-feed-rw-wif
+      feedUrl: https://pkgs.dev.azure.com/devdiv/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json
       forceReinstallCredentialProvider: true
 
   - script: $(Build.SourcesDirectory)\eng\RestoreInternal.cmd
