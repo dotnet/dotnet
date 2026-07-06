@@ -30,6 +30,11 @@
       <Uri>https://github.com/dotnet/xdt</Uri>
       <Sha>dea0a90f9a8f54babf081db780922a00a1ecc32c</Sha>
     </Dependency>
+    <!-- Newtonsoft.Json is not flowed by Arcade; it is listed here so that source build can override the version. -->
+    <Dependency Name="Newtonsoft.Json" Version="13.0.3">
+      <Uri>https://github.com/JamesNK/Newtonsoft.Json</Uri>
+      <Sha>0a2e291c0d9c0c7675d445703e51750363a549ef</Sha>
+    </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25208.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
       <Sha>48bd86bdcd926a194e1581a60d820d12a64ef3c6</Sha>
