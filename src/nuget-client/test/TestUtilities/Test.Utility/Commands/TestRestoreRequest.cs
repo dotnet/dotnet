@@ -108,13 +108,14 @@ namespace NuGet.Commands.Test
             string packagesDirectory,
             SourceCacheContext cacheContext,
             PackageSourceMapping packageSourceMappingConfiguration,
-            ILogger log) : base(
+            ILogger log,
+            IReadOnlyList<SourceRepository>? auditSources = null) : base(
                 project,
                 new RestoreCommandProvidersCache().GetOrCreate(
                     packagesDirectory,
                     Array.Empty<string>(),
                     packageSources: sources.Select(Repository.Factory.GetCoreV3).ToList(),
-                    auditSources: Array.Empty<SourceRepository>(),
+                    auditSources: auditSources ?? Array.Empty<SourceRepository>(),
                     cacheContext: cacheContext,
                     log: log,
                     updateLastAccess: false,
