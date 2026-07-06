@@ -4,6 +4,7 @@
 
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion Condition="'$(MicrosoftCodeAnalysisPublicApiAnalyzersVersion)' == ''">3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <!-- Microsoft.VisualStudio.RpcContracts has a dependency on Newtonsoft.Json 13.0.4, but we cannot update Newtonsoft.Json to 13.0.4 due to compatibility issues. We manually downgrade newtonsoft.json -->
+    <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">13.0.4</NewtonsoftJsonPackageVersion>
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
     <SystemFormatsAsn1PackageVersion Condition="'$(SystemFormatsAsn1PackageVersion)' == ''">8.0.2</SystemFormatsAsn1PackageVersion>
 
