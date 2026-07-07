@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Compile Include="..\NuGet.Build.Tasks\Common\MSBuildLogger.cs" />
+    <Compile Include="..\NuGet.Build.Tasks\Common\MSBuildMultiThreadableTaskAttribute.cs" />
     <Compile Include="..\NuGet.Build.Tasks\GetProjectTargetFrameworksTask.cs" />
   </ItemGroup>
 
