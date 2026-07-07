@@ -237,8 +237,15 @@
         <RestoreInParallel>true</RestoreInParallel>
       </_ProjectToRestore>
 
-      <!-- Invoke the 'Restore' target on solutions and projects which do not support NuGet. -->
-      <_ProjectToRestore Include="@(ProjectToBuild)" Exclude="@(_ProjectToRestoreWithNuGet)" />
+      <!--
+        Invoke the 'Restore' target on solutions and projects which do not support NuGet.
+        Project paths are normalized via %(FullPath) on both sides so that user-supplied
+        paths with redundant separators (e.g. '/repo//src/foo.csproj') still match the
+        NuGet-normalized paths returned by _IsProjectRestoreSupported. Without this
+        normalization the Exclude can miss, causing the same project to be restored
+        twice in parallel and racing on project.assets.json.
+      -->
+      <_ProjectToRestore Include="@(ProjectToBuild->'%(FullPath)')" Exclude="@(_ProjectToRestoreWithNuGet->'%(FullPath)')" />
     </ItemGroup>
 
     <!-- Enable binlog generation during static graph restore evaluation -->
