@@ -4253,6 +4253,168 @@ namespace NuGet.Commands.FuncTest
         }
 
         [Fact]
+        public async Task Restore_WithHttpAuditSourceSdkAnalysisLevelLowerThan100400_NoHttpDiagnostics()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            string httpAuditSourceUrl = "http://source.test/v3/index.json";
+            SourceRepository auditSource = CreateStaticHttpAuditSource(httpAuditSourceUrl, allowInsecureConnections: false);
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties() { EnableAudit = bool.TrueString };
+            // Audit sources error at SDK analysis level 10.0.400 or higher and are silent (no warning) below that.
+            project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion("10.0.100");
+            project1Spec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, new[] { auditSource }, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().NotContain(m => m.Code == NuGetLogCode.NU1302 || m.Code == NuGetLogCode.NU1803);
+        }
+
+        [Fact]
+        public async Task Restore_WithHttpAuditSourceSdkAnalysisLevel100400_LogsNU1302Error()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            string httpAuditSourceUrl = "http://source.test/v3/index.json";
+            pathContext.Settings.AddAuditSource("http-audit", httpAuditSourceUrl, allowInsecureConnectionsValue: "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties() { EnableAudit = bool.TrueString };
+            // Audit sources error at SDK analysis level 10.0.400 or higher.
+            project1Spec.RestoreMetadata.SdkAnalysisLevel = new NuGetVersion("10.0.400");
+            project1Spec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().ContainSingle(m => m.Code == NuGetLogCode.NU1302 && m.Message.Contains(httpAuditSourceUrl));
+        }
+
+        [Fact]
+        public async Task Restore_WithSameInsecureHttpUrlAsPackageAndAuditSource_ReportsOnce()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            string httpSourceUrl = "http://source.test/v3/index.json";
+            pathContext.Settings.AddSource("http-package", httpSourceUrl, allowInsecureConnectionsValue: "False");
+            pathContext.Settings.AddAuditSource("http-audit", httpSourceUrl, allowInsecureConnectionsValue: "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties() { EnableAudit = bool.TrueString };
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().ContainSingle(m => m.Code == NuGetLogCode.NU1302 && m.Message.Contains(httpSourceUrl));
+        }
+
+        [Fact]
+        public async Task Restore_WithHttpAuditSourceAndAuditDisabled_NoHttpDiagnostics()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            string httpAuditSourceUrl = "http://source.test/v3/index.json";
+            pathContext.Settings.AddAuditSource("http-audit", httpAuditSourceUrl, allowInsecureConnectionsValue: "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties() { EnableAudit = bool.FalseString };
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().NotContain(m => m.Code == NuGetLogCode.NU1302 || m.Code == NuGetLogCode.NU1803);
+        }
+
+        [Fact]
+        public async Task Restore_WithHttpAuditSourceAndAllowInsecureConnectionsTrue_Succeeds()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            string httpAuditSourceUrl = "http://source.test/v3/index.json";
+            SourceRepository auditSource = CreateStaticHttpAuditSource(httpAuditSourceUrl, allowInsecureConnections: true);
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            project1Spec.RestoreMetadata.RestoreAuditProperties = new RestoreAuditProperties() { EnableAudit = bool.TrueString };
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, new[] { auditSource }, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().NotContain(m => m.Code == NuGetLogCode.NU1302 || m.Code == NuGetLogCode.NU1803);
+        }
+
+        /// <summary>
+        /// Creates an audit <see cref="SourceRepository"/> whose HTTP requests are served from static, in-memory
+        /// responses (via <see cref="StaticHttpSource"/>) instead of a real <see cref="System.Net.HttpListener"/>.
+        /// The source advertises a VulnerabilityInfo resource and returns a vulnerability database containing an
+        /// unrelated package, which avoids NU1905 while never making a real network connection.
+        /// </summary>
+        private static SourceRepository CreateStaticHttpAuditSource(string serviceIndexUrl, bool allowInsecureConnections)
+        {
+            // serviceIndexUrl is expected to end with "index.json"; the base URL is used to build the vulnerability resource URLs.
+            string baseUrl = serviceIndexUrl.Substring(0, serviceIndexUrl.Length - "index.json".Length);
+            string vulnerabilityIndexUrl = baseUrl + "vulnerability/index.json";
+            string vulnerabilityDataUrl = baseUrl + "vulnerability/vulnerability.json";
+
+            JObject serviceIndex = FeedUtilities.CreateIndexJson();
+            FeedUtilities.AddVulnerabilitiesResource(serviceIndex, baseUrl);
+
+            JArray vulnerabilityIndex = FeedUtilities.CreateVulnerabilitiesJson(vulnerabilityDataUrl);
+
+            JObject vulnerabilityData = FeedUtilities.CreateVulnerabilityForPackages(
+                new Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["not.a.referenced.package"] = new()
+                    {
+                        (new Uri("https://contoso.test/advisories/12345"), PackageVulnerabilitySeverity.High, VersionRange.Parse("[1.0.0, 2.0.0)"))
+                    }
+                });
+
+            var responses = new Dictionary<string, string>()
+            {
+                [serviceIndexUrl] = serviceIndex.ToString(),
+                [vulnerabilityIndexUrl] = vulnerabilityIndex.ToString(),
+                [vulnerabilityDataUrl] = vulnerabilityData.ToString(),
+            };
+
+            var packageSource = new PackageSource(serviceIndexUrl, "http-audit") { AllowInsecureConnections = allowInsecureConnections };
+            var providers = Repository.Provider.GetCoreV3().ToList();
+            providers.Add(new Lazy<INuGetResourceProvider>(() => StaticHttpSource.CreateHttpSource(responses)));
+            return new SourceRepository(packageSource, providers);
+        }
+
+        [Fact]
         public async Task Restore_WithPackageWithoutAsset_Succeeds()
         {
             // Arrange
