@@ -127,3 +127,12 @@ steps:
       } else {
         Write-Host "No source index output to upload."
       }
+
+- pwsh: |
+    $baseDir = "${{ parameters.sourceIndexBaseDir }}"
+    if (Test-Path $baseDir) {
+      Write-Host "Cleaning up source index intermediate files at $baseDir"
+      Remove-Item -Path $baseDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+  displayName: "Source Index: Clean up intermediate files"
+  condition: and(always(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
