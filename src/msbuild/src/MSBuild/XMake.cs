@@ -4343,59 +4343,55 @@ namespace Microsoft.Build.CommandLine
 
             if (shouldShowLogo)
             {
-                string vmrCommit = GetVmrCommitForLogo();
-                if (string.IsNullOrEmpty(vmrCommit))
+                string sourceCommit = GetSourceCommitForLogo();
+                if (string.IsNullOrEmpty(sourceCommit))
                 {
                     Console.WriteLine(ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildVersionMessage", ProjectCollection.DisplayVersion, NativeMethods.FrameworkName));
                 }
                 else
                 {
-                    Console.WriteLine(ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildVersionMessageWithVmr", ProjectCollection.DisplayVersion, NativeMethods.FrameworkName, vmrCommit));
+                    Console.WriteLine(ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildVersionMessageWithSourceCommit", ProjectCollection.DisplayVersion, NativeMethods.FrameworkName, sourceCommit));
                 }
             }
         }
 
         /// <summary>
-        /// Returns the VMR (build) commit when it differs from the MSBuild commit shown by
-        /// <see cref="ProjectCollection.DisplayVersion"/>; otherwise null. In VMR builds the assembly
-        /// InformationalVersion carries the VMR commit while DisplayVersion carries the MSBuild commit.
+        /// Returns the product-repository (dotnet/msbuild) source commit when it differs from the VMR commit
+        /// shown by <see cref="ProjectCollection.DisplayVersion"/>; otherwise null. In VMR builds the
+        /// Microsoft.Build.Framework assembly carries the VMR commit in its InformationalVersion while the
+        /// <c>RepoOriginalSourceRevisionId</c> assembly metadata carries the product-repo commit.
         /// </summary>
-        private static string GetVmrCommitForLogo()
+        private static string GetSourceCommitForLogo()
         {
-            string informationalVersion = typeof(ProjectCollection).Assembly
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            // The RepoOriginalSourceRevisionId metadata is emitted onto the Microsoft.Build.Framework assembly
+            // (see Microsoft.Build.Framework.csproj), which is also the assembly ProjectCollection.DisplayVersion
+            // reads its version from, so the two are consistent.
+            string sourceRevisionId = typeof(Microsoft.Build.Framework.LoggerVerbosity).Assembly
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .FirstOrDefault(metadata => string.Equals(metadata.Key, "RepoOriginalSourceRevisionId", StringComparison.Ordinal))?.Value;
 
-            return GetVmrCommit(informationalVersion, ProjectCollection.DisplayVersion);
+            return GetSourceCommit(sourceRevisionId, ProjectCollection.DisplayVersion);
         }
 
         /// <summary>
-        /// Extracts the VMR (build) commit from <paramref name="informationalVersion"/> when it differs from the
-        /// MSBuild commit in <paramref name="displayVersion"/>; otherwise returns null. In VMR builds the assembly
-        /// InformationalVersion carries the VMR commit while DisplayVersion carries the MSBuild commit.
+        /// Truncates <paramref name="sourceRevisionId"/> (the product-repo commit) to nine characters and returns
+        /// it when it differs from the commit already shown in <paramref name="displayVersion"/>; otherwise null.
         /// </summary>
-        internal static string GetVmrCommit(string informationalVersion, string displayVersion)
+        internal static string GetSourceCommit(string sourceRevisionId, string displayVersion)
         {
-            if (string.IsNullOrEmpty(informationalVersion))
+            if (string.IsNullOrEmpty(sourceRevisionId))
             {
                 return null;
             }
 
-            int plusIndex = informationalVersion.IndexOf('+');
-            if (plusIndex < 0 || plusIndex + 1 >= informationalVersion.Length)
-            {
-                return null;
-            }
-
-            string vmrCommit = informationalVersion.Substring(plusIndex + 1);
-            if (vmrCommit.Length > 9)
-            {
-                vmrCommit = vmrCommit.Substring(0, 9);
-            }
+            string sourceCommit = sourceRevisionId.Length > 9
+                ? sourceRevisionId.Substring(0, 9)
+                : sourceRevisionId;
 
             int displayPlusIndex = displayVersion.IndexOf('+');
             string displayCommit = displayPlusIndex < 0 ? string.Empty : displayVersion.Substring(displayPlusIndex + 1);
 
-            return string.Equals(vmrCommit, displayCommit, StringComparison.Ordinal) ? null : vmrCommit;
+            return string.Equals(sourceCommit, displayCommit, StringComparison.Ordinal) ? null : sourceCommit;
         }
 
         /// <summary>

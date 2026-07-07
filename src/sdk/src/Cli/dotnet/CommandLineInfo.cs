@@ -24,10 +24,6 @@ public class CommandLineInfo
         Reporter.Output.WriteLine($"{LocalizableStrings.DotNetSdkInfoLabel}");
         Reporter.Output.WriteLine($" Version:           {Product.Version}");
         Reporter.Output.WriteLine($" Commit:            {commitSha}");
-        if (!string.IsNullOrEmpty(versionFile.VmrCommitSha) && versionFile.VmrCommitSha != versionFile.CommitSha)
-        {
-            Reporter.Output.WriteLine($" Source commit:     {versionFile.VmrCommitSha}");
-        }
         Reporter.Output.WriteLine($" Workload version:  {WorkloadInfoHelper.GetWorkloadsVersion()}");
         Reporter.Output.WriteLine($" MSBuild version:   {MSBuildForwardingAppWithoutLogging.MSBuildVersion}");
         Reporter.Output.WriteLine();
@@ -37,7 +33,24 @@ public class CommandLineInfo
         Reporter.Output.WriteLine($" OS Platform: {RuntimeEnvironment.OperatingSystemPlatform}");
         Reporter.Output.WriteLine($" RID:         {GetDisplayRid(versionFile)}");
         Reporter.Output.WriteLine($" Base Path:   {AppContext.BaseDirectory}");
+        PrintComponentsInfo();
         PrintWorkloadsInfo();
+    }
+
+    private static void PrintComponentsInfo()
+    {
+        SdkComponentManifest manifest = DotnetFiles.ComponentManifest;
+        if (!manifest.Exists || manifest.Components.Count == 0)
+        {
+            return;
+        }
+
+        Reporter.Output.WriteLine();
+        Reporter.Output.WriteLine("Components:");
+        foreach (string line in manifest.FormatTable())
+        {
+            Reporter.Output.WriteLine(line);
+        }
     }
 
     private static void PrintWorkloadsInfo()

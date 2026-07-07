@@ -3059,33 +3059,33 @@ EndGlobal
         }
 
         [Theory]
-        // VMR build: the informational version carries the VMR commit and DisplayVersion carries the MSBuild commit,
-        // so the (truncated) VMR commit is surfaced as secondary info.
-        [InlineData("18.8.0-dev+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", "18.8.0-dev+aaaaaaaaa", "vvvvvvvvv")]
-        // Non-VMR build: DisplayVersion's SHA matches the informational version's SHA, so there is nothing extra to show.
-        [InlineData("18.8.0-dev+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", "18.8.0-dev+vvvvvvvvv", null)]
-        // Informational version with no '+' SHA suffix => no VMR commit.
-        [InlineData("18.8.0-dev", "18.8.0-dev+aaaaaaaaa", null)]
-        // Empty or missing informational version => no VMR commit.
-        [InlineData("", "18.8.0-dev+aaaaaaaaa", null)]
-        [InlineData(null, "18.8.0-dev+aaaaaaaaa", null)]
-        // Trailing '+' with no SHA => no VMR commit.
-        [InlineData("18.8.0-dev+", "18.8.0-dev+aaaaaaaaa", null)]
-        public void GetVmrCommit_ReturnsVmrShaOnlyWhenItDiffersFromDisplayCommit(string informationalVersion, string displayVersion, string expected)
+        // VMR build: DisplayVersion carries the VMR commit while SourceRevisionId carries the product-repo
+        // (dotnet/msbuild) commit, so the (truncated) source commit is surfaced as secondary info.
+        [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "18.8.0-dev+vvvvvvvvv", "aaaaaaaaa")]
+        // Source commit matches the commit already shown in DisplayVersion, so there is nothing extra to show.
+        [InlineData("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv", "18.8.0-dev+vvvvvvvvv", null)]
+        // DisplayVersion with no '+' SHA suffix => the source commit still differs and is shown.
+        [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "18.8.0-dev", "aaaaaaaaa")]
+        // Empty or missing source revision id => no source commit.
+        [InlineData("", "18.8.0-dev+vvvvvvvvv", null)]
+        [InlineData(null, "18.8.0-dev+vvvvvvvvv", null)]
+        // A source revision id shorter than 9 characters is used as-is.
+        [InlineData("abc123", "18.8.0-dev+vvvvvvvvv", "abc123")]
+        public void GetSourceCommit_ReturnsSourceShaOnlyWhenItDiffersFromDisplayCommit(string sourceRevisionId, string displayVersion, string expected)
         {
-            MSBuildApp.GetVmrCommit(informationalVersion, displayVersion).ShouldBe(expected);
+            MSBuildApp.GetSourceCommit(sourceRevisionId, displayVersion).ShouldBe(expected);
         }
 
         [Fact]
-        public void MSBuildVersionMessageWithVmr_SubstitutesAllArguments()
+        public void MSBuildVersionMessageWithSourceCommit_SubstitutesAllArguments()
         {
-            string vmrMessage = ResourceUtilities.FormatResourceStringStripCodeAndKeyword(
-                "MSBuildVersionMessageWithVmr", "18.8.0-dev+aaaaaaaaa", ".NET Framework", "vvvvvvvvv");
+            string sourceCommitMessage = ResourceUtilities.FormatResourceStringStripCodeAndKeyword(
+                "MSBuildVersionMessageWithSourceCommit", "18.8.0-dev+vvvvvvvvv", ".NET Framework", "aaaaaaaaa");
 
-            // {0}=display version, {1}=framework, {2}=VMR commit. Guards against a missing placeholder or wrong argument count.
-            vmrMessage.ShouldContain("18.8.0-dev+aaaaaaaaa");
-            vmrMessage.ShouldContain(".NET Framework");
-            vmrMessage.ShouldContain("vvvvvvvvv");
+            // {0}=display version, {1}=framework, {2}=source commit. Guards against a missing placeholder or wrong argument count.
+            sourceCommitMessage.ShouldContain("18.8.0-dev+vvvvvvvvv");
+            sourceCommitMessage.ShouldContain(".NET Framework");
+            sourceCommitMessage.ShouldContain("aaaaaaaaa");
         }
 
         [Theory]

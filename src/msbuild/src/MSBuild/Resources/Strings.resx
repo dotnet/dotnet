@@ -148,9 +148,9 @@
     <value>MSBuild version {0} for {1}</value>
     <comment>LOCALIZATION: {0} contains the DLL version number. {1} contains the name of a runtime, like ".NET Framework" or ".NET Core"</comment>
   </data>
-  <data name="MSBuildVersionMessageWithVmr" xml:space="preserve">
-    <value>MSBuild version {0} (VMR {2}) for {1}</value>
-    <comment>LOCALIZATION: {0} contains the DLL version number. {1} contains the name of a runtime, like ".NET Framework" or ".NET Core". {2} contains the VMR (dotnet/dotnet) commit SHA.</comment>
+  <data name="MSBuildVersionMessageWithSourceCommit" xml:space="preserve">
+    <value>MSBuild version {0} for {1} (source dotnet/msbuild@{2})</value>
+    <comment>LOCALIZATION: {0} contains the DLL version number. {1} contains the name of a runtime, like ".NET Framework" or ".NET Core". {2} contains the product-repository (dotnet/msbuild) commit SHA. "source dotnet/msbuild@" should not be localized.</comment>
   </data>
   <data name="DuplicateProjectSwitchError" xml:space="preserve">
     <value>MSBUILD : error MSB1008: Only one project can be specified.</value>
