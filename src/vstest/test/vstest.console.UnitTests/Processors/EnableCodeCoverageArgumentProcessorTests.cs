@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -40,14 +40,14 @@ public class EnableCodeCoverageArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnEnableCodeCoverageArgumentProcessorCapabilities()
     {
-        var processor = new EnableCodeCoverageArgumentProcessor();
+        var processor = new EnableCodeCoverageArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is EnableCodeCoverageArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnEnableCodeCoverageArgumentProcessorCapabilities()
     {
-        var processor = new EnableCodeCoverageArgumentProcessor();
+        var processor = new EnableCodeCoverageArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is EnableCodeCoverageArgumentExecutor);
     }
 

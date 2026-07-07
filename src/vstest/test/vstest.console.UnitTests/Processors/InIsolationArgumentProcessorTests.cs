@@ -32,21 +32,21 @@ public class InIsolationArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnInProcessArgumentProcessorCapabilities()
     {
-        var processor = new InIsolationArgumentProcessor();
+        var processor = new InIsolationArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is InIsolationArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnInProcessArgumentExecutor()
     {
-        var processor = new InIsolationArgumentProcessor();
+        var processor = new InIsolationArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is InIsolationArgumentExecutor);
     }
 
     [TestMethod]
     public void InIsolationArgumentProcessorMetadataShouldProvideAppropriateCapabilities()
     {
-        var isolationProcessor = new InIsolationArgumentProcessor();
+        var isolationProcessor = new InIsolationArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsFalse(isolationProcessor.Metadata.Value.AllowMultiple);
         Assert.IsFalse(isolationProcessor.Metadata.Value.AlwaysExecute);
         Assert.IsFalse(isolationProcessor.Metadata.Value.IsAction);

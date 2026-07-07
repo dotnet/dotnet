@@ -31,9 +31,9 @@ Verify that:
         <source>Running .NET Framework tests is supported on Windows only.
 
 Running .NET Framework tests on this operating system relied on Mono, which is no longer supported. To run these tests, run them on Windows, or change the test project to target .NET instead of .NET Framework.</source>
-        <target state="new">Running .NET Framework tests is supported on Windows only.
+        <target state="translated">只有 Windows 支援執行 .NET Framework 測試。
 
-Running .NET Framework tests on this operating system relied on Mono, which is no longer supported. To run these tests, run them on Windows, or change the test project to target .NET instead of .NET Framework.</target>
+在此作業系統上執行 .NET Framework 測試時，會依賴 Mono，但系統已不再支援 Mono。若要執行這些測試，請在 Windows 上執行，或將測試專案的目標從 .NET Framework 改為 .NET。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindDepsFile">

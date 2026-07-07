@@ -868,7 +868,7 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[значение];[DumpType]=[значение]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[значение];[DumpType]=[значение]
       Выполняет тест в blame-режиме. Этот вариант помогает изолировать проблемный тест, вызывающий сбой хоста для тестов.
       В текущем каталоге создается выходной файл "Sequence.xml",
       который записывает порядок выполнения теста перед сбоем.
@@ -877,6 +877,7 @@
       Вы также можете переопределить поведение по умолчанию с помощью дополнительных параметров:
       CollectAlways — собирает дамп по завершении даже при отсутствии сбоев (true/false) 
       DumpType — задает тип дампа, mini (мини-дамп) или full (полный).
+      Для создания дампа аварийного дампа в Windows необходимо, чтобы файлы procdump.exe и procdump64.exe находились в одном из каталогов, указанных в переменной окружения PATH, либо в каталоге, на который указывает переменная окружения PROCDUMP_PATH. Эти инструменты можно загрузить по адресу https://docs.microsoft.com/sysinternals/downloads/procdump.
       Пример: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using vstest.console.UnitTests.Processors;
+
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
@@ -33,14 +35,14 @@ public class EnableLoggersArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnEnableLoggerArgumentProcessorCapabilities()
     {
-        EnableLoggerArgumentProcessor processor = new();
+        EnableLoggerArgumentProcessor processor = new(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is EnableLoggerArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnEnableLoggerArgumentExecutor()
     {
-        EnableLoggerArgumentProcessor processor = new();
+        EnableLoggerArgumentProcessor processor = new(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is EnableLoggerArgumentExecutor);
     }
 

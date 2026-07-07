@@ -109,7 +109,7 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
             // _dataAggregator.MarkAsAborted();
         }
 
-        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, InitializeDiscoverTestsOnConcurrentManager, DiscoverTestsOnConcurrentManager);
+        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, DiscoverTestsOnConcurrentManager);
     }
 
     private ITestDiscoveryEventsHandler2 GetParallelEventHandler(ITestDiscoveryEventsHandler2 eventHandler, IProxyDiscoveryManager concurrentManager)
@@ -257,41 +257,16 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
     }
 
     /// <summary>
-    /// Triggers the discovery for the next data object on the concurrent discoverer
-    /// Each concurrent discoverer calls this method, once its completed working on previous data
+    /// Triggers the discovery for the next data object on the concurrent discoverer.
+    /// Each concurrent discoverer calls this method once it has completed working on the previous data.
     /// </summary>
     /// <param name="proxyDiscoveryManager">Proxy discovery manager instance.</param>
     /// <param name="eventHandler">Discovery events handler.</param>
-    /// <param name="discoveryCriteria">Discovery criteria a parameters.</param>
-    private Task InitializeDiscoverTestsOnConcurrentManager(IProxyDiscoveryManager proxyDiscoveryManager, ITestDiscoveryEventsHandler2 eventHandler, DiscoveryCriteria discoveryCriteria)
-    {
-        // Kick off another discovery task for the next source
-        return Task.Run(() =>
-        {
-            EqtTrace.Verbose("ProxyParallelDiscoveryManager.InitializeDiscoverTestsOnConcurrentManager: Discovery preparation started.");
-
-            proxyDiscoveryManager.Initialize(_skipDefaultAdapters);
-            proxyDiscoveryManager.InitializeDiscovery(discoveryCriteria, eventHandler, _skipDefaultAdapters);
-
-            EqtTrace.Verbose($"ProxyParallelDiscoveryManager.InitializeDiscoverTestsOnConcurrentManager: Init only: {string.Join(", ", discoveryCriteria.Sources)}");
-        });
-    }
-
-    /// <summary>
-    /// Triggers the discovery for the next data object on the concurrent discoverer
-    /// Each concurrent discoverer calls this method, once its completed working on previous data
-    /// </summary>
-    /// <param name="proxyDiscoveryManager"></param>
-    /// <param name="eventHandler"></param>
-    /// <param name="discoveryCriteria"></param>
-    /// <param name="initialized"></param>
-    /// <param name="task"></param>
+    /// <param name="discoveryCriteria">Discovery criteria and parameters.</param>
     private void DiscoverTestsOnConcurrentManager(
         IProxyDiscoveryManager proxyDiscoveryManager,
         ITestDiscoveryEventsHandler2 eventHandler,
-        DiscoveryCriteria discoveryCriteria,
-        bool initialized,
-        Task? task)
+        DiscoveryCriteria discoveryCriteria)
     {
         // If we do the scheduling incorrectly this will get null. It should not happen, but it has happened before.
         if (discoveryCriteria == null)
@@ -299,26 +274,14 @@ internal sealed class ParallelProxyDiscoveryManager : IParallelProxyDiscoveryMan
             throw new ArgumentNullException(nameof(discoveryCriteria));
         }
 
-        // Kick off another discovery task for the next source
+        // Kick off the discovery task for the next source.
         Task.Run(() =>
             {
-                EqtTrace.Verbose("ParallelProxyDiscoveryManager: Discovery started.");
-                if (!initialized)
-                {
-                    EqtTrace.Verbose($"ProxyParallelDiscoveryManager.DiscoverTestsOnConcurrentManager: Initialize right before run: {string.Join(", ", discoveryCriteria.Sources)}");
-                    proxyDiscoveryManager.Initialize(_skipDefaultAdapters);
-                    proxyDiscoveryManager.InitializeDiscovery(discoveryCriteria, eventHandler, _skipDefaultAdapters);
-                }
-                else
-                {
-                    task?.Wait();
-                }
-
-                EqtTrace.Verbose($"ProxyParallelDiscoveryManager.DiscoverTestsOnConcurrentManager: Run: {string.Join(", ", discoveryCriteria.Sources)}");
+                EqtTrace.Verbose($"ParallelProxyDiscoveryManager.DiscoverTestsOnConcurrentManager: Discovery started for: {string.Join(", ", discoveryCriteria.Sources)}");
+                proxyDiscoveryManager.Initialize(_skipDefaultAdapters);
+                proxyDiscoveryManager.InitializeDiscovery(discoveryCriteria, eventHandler, _skipDefaultAdapters);
                 proxyDiscoveryManager.DiscoverTests(discoveryCriteria, eventHandler);
             }).ContinueWith(t => HandleError(eventHandler, t), TaskContinuationOptions.OnlyOnFaulted);
-
-        EqtTrace.Verbose("ProxyParallelDiscoveryManager.DiscoverTestsOnConcurrentManager: No sources available for discovery.");
     }
 
     private void HandleError(ITestDiscoveryEventsHandler2 eventHandler, Task t)

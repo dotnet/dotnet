@@ -11,6 +11,8 @@ using Microsoft.VisualStudio.TestPlatform.Client.DesignMode;
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
@@ -23,6 +25,7 @@ public class PortArgumentProcessorTests
     private readonly Mock<IProcessHelper> _mockProcessHelper;
     private readonly Mock<IDesignModeClient> _testDesignModeClient;
     private readonly Mock<ITestRequestManager> _testRequestManager;
+    private readonly IRunSettingsHelper _runSettingsHelper;
     private PortArgumentExecutor _executor;
 
     public PortArgumentProcessorTests()
@@ -30,20 +33,21 @@ public class PortArgumentProcessorTests
         _mockProcessHelper = new Mock<IProcessHelper>();
         _testDesignModeClient = new Mock<IDesignModeClient>();
         _testRequestManager = new Mock<ITestRequestManager>();
-        _executor = new PortArgumentExecutor(CommandLineOptions.Instance, _testRequestManager.Object);
+        _runSettingsHelper = new RunSettingsHelper();
+        _executor = new PortArgumentExecutor(CommandLineOptions.Instance, _testRequestManager.Object, _runSettingsHelper);
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnPortArgumentProcessorCapabilities()
     {
-        var processor = new PortArgumentProcessor();
+        var processor = new PortArgumentProcessor(_runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is PortArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecutorShouldReturnPortArgumentProcessorCapabilities()
     {
-        var processor = new PortArgumentProcessor();
+        var processor = new PortArgumentProcessor(_runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is PortArgumentExecutor);
     }
 
@@ -102,12 +106,13 @@ public class PortArgumentProcessorTests
         _executor.Initialize(port.ToString(CultureInfo.InvariantCulture));
 
         Assert.IsTrue(CommandLineOptions.Instance.IsDesignMode);
+        Assert.IsTrue(_runSettingsHelper.IsDesignMode);
     }
 
     [TestMethod]
     public void ExecutorInitializeShouldSetProcessExitCallback()
     {
-        _executor = new PortArgumentExecutor(CommandLineOptions.Instance, _testRequestManager.Object, _mockProcessHelper.Object);
+        _executor = new PortArgumentExecutor(CommandLineOptions.Instance, _testRequestManager.Object, _mockProcessHelper.Object, _runSettingsHelper);
         int port = 2345;
 #if NET5_0_OR_GREATER
         var pid = Environment.ProcessId;
@@ -127,7 +132,7 @@ public class PortArgumentProcessorTests
     public void ExecutorExecuteForValidConnectionReturnsArgumentProcessorResultSuccess()
     {
         _executor = new PortArgumentExecutor(CommandLineOptions.Instance, _testRequestManager.Object,
-            (parentProcessId, ph) => _testDesignModeClient.Object, _mockProcessHelper.Object);
+            (parentProcessId, ph) => _testDesignModeClient.Object, _mockProcessHelper.Object, _runSettingsHelper);
 
         int port = 2345;
         _executor.Initialize(port.ToString(CultureInfo.InvariantCulture));
@@ -143,7 +148,7 @@ public class PortArgumentProcessorTests
     public void ExecutorExecuteForFailedConnectionShouldThrowCommandLineException()
     {
         _executor = new PortArgumentExecutor(CommandLineOptions.Instance, _testRequestManager.Object,
-            (parentProcessId, ph) => _testDesignModeClient.Object, _mockProcessHelper.Object);
+            (parentProcessId, ph) => _testDesignModeClient.Object, _mockProcessHelper.Object, _runSettingsHelper);
 
         _testDesignModeClient.Setup(td => td.ConnectToClientAndProcessRequests(It.IsAny<int>(),
             It.IsAny<ITestRequestManager>())).Callback(() => throw new TimeoutException());
@@ -171,7 +176,8 @@ public class PortArgumentProcessorTests
                 actualParentProcessId = ppid;
                 return _testDesignModeClient.Object;
             },
-            _mockProcessHelper.Object
+            _mockProcessHelper.Object,
+            _runSettingsHelper
         );
 
         int port = 2345;

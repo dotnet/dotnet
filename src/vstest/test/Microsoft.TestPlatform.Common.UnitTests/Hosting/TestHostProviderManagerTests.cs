@@ -164,6 +164,63 @@ public class TestHostProviderManagerTests
         Assert.IsNull(manager.GetTestHostManagerByRunConfiguration(runSettingsXml, null));
     }
 
+    [TestMethod]
+    public void GetTestHostManagerByRunConfigurationShouldPreferSourceAwareProviderWhenSourcesMatch()
+    {
+        // A .NET Framework runsettings would normally resolve to the source-blind CustomTestHost, but the
+        // source-aware provider claims the source in the first pass and must win.
+        string runSettingsXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    <RunSettings>
+      <RunConfiguration>
+        <MaxCpuCount>0</MaxCpuCount>
+        <TargetPlatform>x64</TargetPlatform>
+        <TargetFrameworkVersion>.NETFramework,Version=v4.5.1</TargetFrameworkVersion>
+      </RunConfiguration>
+    </RunSettings>";
+
+        var manager = TestRuntimeProviderManager.Instance;
+        var testHostManager = manager.GetTestHostManagerByRunConfiguration(runSettingsXml, new List<string> { @"C:\temp\app.mtpapp.dll" });
+
+        Assert.AreEqual(typeof(SourceAwareTestHost), testHostManager!.GetType());
+    }
+
+    [TestMethod]
+    public void GetTestHostManagerByRunConfigurationShouldFallBackToLegacyWhenSourceAwareDeclines()
+    {
+        // The source does not match the source-aware provider, so selection must fall through to the
+        // source-blind resolution and pick the .NET Core host manager based on the framework.
+        string runSettingsXml = string.Concat(
+            @"<?xml version=""1.0"" encoding=""utf-8""?><RunSettings>
+<RunConfiguration><MaxCpuCount>0</MaxCpuCount><TargetPlatform> x64 </TargetPlatform><TargetFrameworkVersion>",
+            ".NETCoreApp,Version=v1.0",
+            "</TargetFrameworkVersion></RunConfiguration></RunSettings> ");
+
+        var manager = TestRuntimeProviderManager.Instance;
+        var testHostManager = manager.GetTestHostManagerByRunConfiguration(runSettingsXml, new List<string> { @"C:\temp\normal.dll" });
+
+        Assert.AreEqual(typeof(TestableTestHostManager), testHostManager!.GetType());
+    }
+
+    [TestMethod]
+    public void GetTestHostManagerByRunConfigurationShouldIgnoreSourceAwareProviderWhenSourcesAreNull()
+    {
+        // Passing null sources must skip the source-aware pass entirely (back-compat), resolving purely by
+        // run configuration.
+        string runSettingsXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    <RunSettings>
+      <RunConfiguration>
+        <MaxCpuCount>0</MaxCpuCount>
+        <TargetPlatform>x64</TargetPlatform>
+        <TargetFrameworkVersion>.NETFramework,Version=v4.5.1</TargetFrameworkVersion>
+      </RunConfiguration>
+    </RunSettings>";
+
+        var manager = TestRuntimeProviderManager.Instance;
+        var testHostManager = manager.GetTestHostManagerByRunConfiguration(runSettingsXml, null);
+
+        Assert.AreEqual(typeof(CustomTestHost), testHostManager!.GetType());
+    }
+
     #region Implementations
 
     [ExtensionUri("executor://DesktopTestHost")]
@@ -274,6 +331,85 @@ public class TestHostProviderManagerTests
         {
             var config = XmlRunSettingsUtilities.GetRunConfigurationNode(runsettingsXml);
             Shared = !config.DisableAppDomain;
+        }
+
+        public Task<bool> LaunchTestHostAsync(TestProcessStartInfo testHostStartInfo, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnHostExited(HostProviderEventArgs _)
+        {
+            HostExited?.Invoke(this, new HostProviderEventArgs("Error"));
+        }
+
+        public void OnHostLaunched(HostProviderEventArgs _)
+        {
+            HostLaunched?.Invoke(this, new HostProviderEventArgs("Error"));
+        }
+
+        public void SetCustomLauncher(ITestHostLauncher customLauncher)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CleanTestHostAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TestHostConnectionInfo GetTestHostConnectionInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> GetTestSources(IEnumerable<string> sources)
+        {
+            return sources;
+        }
+    }
+
+    [ExtensionUri("executor://SourceAwareTestHost")]
+    [FriendlyName("SourceAwareTestHost")]
+    private class SourceAwareTestHost : ITestRuntimeProvider, ISourceAwareTestRuntimeProvider
+    {
+        public event EventHandler<HostProviderEventArgs>? HostLaunched;
+
+        public event EventHandler<HostProviderEventArgs>? HostExited;
+
+        public bool Shared => false;
+
+        // Deliberately "greedy" source-blind answer: this would match any runsettings, yet the manager must
+        // never select a source-aware provider through the source-blind pass. It may only be chosen via the
+        // source-aware hook below. This proves the exclusion is enforced by the manager, not by the provider
+        // politely declining.
+        public bool CanExecuteCurrentRunConfiguration(string? runsettingsXml) => true;
+
+        public bool CanExecuteCurrentRunConfiguration(string? runsettingsXml, IEnumerable<string> sources)
+        {
+            foreach (var source in sources)
+            {
+                if (source.EndsWith(".mtpapp.dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public TestProcessStartInfo GetTestHostProcessStartInfo(IEnumerable<string> sources, IDictionary<string, string?>? environmentVariables, TestRunnerConnectionInfo connectionInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<string> GetTestPlatformExtensions(IEnumerable<string> sources, IEnumerable<string> extensions)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize(IMessageLogger? logger, string runsettingsXml)
+        {
         }
 
         public Task<bool> LaunchTestHostAsync(TestProcessStartInfo testHostStartInfo, CancellationToken cancellationToken)

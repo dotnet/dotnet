@@ -20,7 +20,7 @@ public class TelemetryTests : AcceptanceTestBase
     private const string LOG_TELEMETRY_PATH = "VSTEST_LOGTELEMETRY_PATH";
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunTestsShouldPublishMetrics(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -29,7 +29,7 @@ public class TelemetryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void DiscoverTestsShouldPublishMetrics(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

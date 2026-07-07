@@ -868,7 +868,7 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       Uruchamia test w trybie Blame. Ta opcja jest pomocna w odizolowaniu problematycznego testu powodującego awarię hosta testów.
       Tworzy w bieżącym katalogu plik wyjściowy „Sequence.xml”,
       który przechwytuje kolejność wykonywania testu przed awarią.
@@ -877,6 +877,7 @@
       Możesz także przesłonić to zachowanie domyślne opcjonalnymi parametrami:
       CollectAlways — zrzut jest zbierany przy wychodzeniu, nawet jeśli nie ma awarii (true/false) 
       DumpType — określa typ zrzutu (mini/full).
+      Aby zebrać zrzut awaryjny w systemie Windows, w ścieżce PATH muszą być dostępne pliki procdump.exe i procdump64.exe albo muszą znajdować się w katalogu wskazanym przez zmienną środowiskową PROCDUMP_PATH. Narzędzia można pobrać z https://docs.microsoft.com/sysinternals/downloads/procdump.
       Przykład: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

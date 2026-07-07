@@ -871,15 +871,16 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       Ejecuta la prueba en modo blame. Esta opción es útil a la hora de aislar la prueba problemática que provoca el bloqueo del host de prueba.
       Crea un archivo de salida en el directorio actual como "Sequence.xml",
       que captura el orden de ejecución de la prueba antes del bloqueo.
       Tiene la opción de elegir recopilar el volcado de proceso para el host de prueba.
-      Cuando elige recopilar el volcado, de forma predeterminada se recopila un mini volcado en un bloqueo.
+      Cuando elige recopilar el volcado, de forma predeterminada se recopilará un mini volcado en un bloqueo.
       También puede elegir invalidar este comportamiento predeterminado mediante algunos parámetros opcionales:
-      CollectAlways: para recopilar un volcado al salir incluso aunque no haya un bloqueo (true/false) 
-      DumpType: para especificar el tipo de volcado (mini/completo).
+      CollectAlways: para recopilar un volcado al salir incluso aunque no haya un bloqueo (true/false)
+      DumpType: para especificar el tipo de volcado (mini/full).
+      La recopilación de un volcado de memoria en Windows requiere que procdump.exe y procdump64.exe estén disponibles en PATH o en un directorio al que apunta la variable de entorno PROCDUMP_PATH. Las herramientas se pueden descargar desde aquí: https://docs.microsoft.com/sysinternals/downloads/procdump.
       Ejemplo: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

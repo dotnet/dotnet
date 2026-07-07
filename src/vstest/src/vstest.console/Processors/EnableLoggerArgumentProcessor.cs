@@ -27,6 +27,12 @@ internal class EnableLoggerArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+
+    public EnableLoggerArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    {
+        _runSettingsProvider = runSettingsProvider;
+    }
 
     /// <summary>
     /// Gets or sets the executor.
@@ -34,7 +40,7 @@ internal class EnableLoggerArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new EnableLoggerArgumentExecutor(RunSettingsManager.Instance));
+            new EnableLoggerArgumentExecutor(_runSettingsProvider));
 
         set => _executor = value;
     }

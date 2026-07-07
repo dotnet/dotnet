@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -49,14 +49,14 @@ public class EnableBlameArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnEnableBlameArgumentProcessorCapabilities()
     {
-        var processor = new EnableBlameArgumentProcessor();
+        var processor = new EnableBlameArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is EnableBlameArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnEnableBlameArgumentProcessorCapabilities()
     {
-        var processor = new EnableBlameArgumentProcessor();
+        var processor = new EnableBlameArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is EnableBlameArgumentExecutor);
     }
 

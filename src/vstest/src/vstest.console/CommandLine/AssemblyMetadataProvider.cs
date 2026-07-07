@@ -11,6 +11,7 @@ using System.Text;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
@@ -90,6 +91,23 @@ internal class AssemblyMetadataProvider : IAssemblyMetadataProvider
             assemblyPath);
 
         return archType;
+    }
+
+    /// <inheritdoc />
+    public bool IsMicrosoftTestingPlatformApp(string filePath)
+    {
+        try
+        {
+            using var assemblyStream = _fileHelper.GetStream(filePath, FileMode.Open, FileAccess.Read);
+            var result = MicrosoftTestingPlatformDetector.IsMicrosoftTestingPlatformApp(assemblyStream);
+            EqtTrace.Info("AssemblyMetadataProvider.IsMicrosoftTestingPlatformApp: '{0}' for source: '{1}'", result, filePath);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            EqtTrace.Warning("AssemblyMetadataProvider.IsMicrosoftTestingPlatformApp: failed to read assembly metadata, exception: {0} for assembly: {1}", ex, filePath);
+            return false;
+        }
     }
 
     private Architecture GetArchitectureFromAssemblyMetadata(string path)
