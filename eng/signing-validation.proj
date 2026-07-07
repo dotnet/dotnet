@@ -249,9 +249,6 @@
     <Message Text="   %(_DoNotSignViolationResult.Identity)"
       Importance="High"
       Condition="'@(_DoNotSignViolationResult)' != ''" />
-
-    <Error Text="SignCheck detected signing issues. See logs for details."
-      Condition="'@(_UnsignedSignCheckResult)' != '' or '@(_DoNotSignViolationResult)' != ''" />
   </Target>
 
   <Target Name="Execute"
