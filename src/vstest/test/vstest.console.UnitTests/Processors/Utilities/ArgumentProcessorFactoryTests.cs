@@ -169,18 +169,28 @@ public class ArgumentProcessorFactoryTests
 
         foreach (var processor in allProcessors)
         {
-            // Processors declare different constructor shapes: some take an IRunSettingsProvider, some take
-            // an IRunSettingsHelper, some take both, and the rest are parameterless. Pick the matching one.
+            // Processors declare different constructor shapes: most now take a CommandLineOptions first,
+            // optionally followed by an IRunSettingsProvider and/or IRunSettingsHelper; a few legacy ones take
+            // only a run settings dependency, and the rest are parameterless. Pick the matching one.
+            var commandLineOptions = CommandLineOptions.Instance;
             var runSettingsProvider = new TestableRunSettingsProvider();
             var runSettingsHelper = new RunSettingsHelper();
 
-            var instance = (processor.GetConstructor([typeof(IRunSettingsProvider), typeof(IRunSettingsHelper)]) is { } providerAndHelperCtor
-                ? providerAndHelperCtor.Invoke([runSettingsProvider, runSettingsHelper])
-                : processor.GetConstructor([typeof(IRunSettingsProvider)]) is { } providerCtor
-                    ? providerCtor.Invoke([runSettingsProvider])
-                    : processor.GetConstructor([typeof(IRunSettingsHelper)]) is { } helperCtor
-                        ? helperCtor.Invoke([runSettingsHelper])
-                        : Activator.CreateInstance(processor)) as IArgumentProcessor;
+            var instance = (processor.GetConstructor([typeof(CommandLineOptions), typeof(IRunSettingsProvider), typeof(IRunSettingsHelper)]) is { } optionsProviderHelperCtor
+                ? optionsProviderHelperCtor.Invoke([commandLineOptions, runSettingsProvider, runSettingsHelper])
+                : processor.GetConstructor([typeof(CommandLineOptions), typeof(IRunSettingsProvider)]) is { } optionsProviderCtor
+                    ? optionsProviderCtor.Invoke([commandLineOptions, runSettingsProvider])
+                    : processor.GetConstructor([typeof(CommandLineOptions), typeof(IRunSettingsHelper)]) is { } optionsHelperCtor
+                        ? optionsHelperCtor.Invoke([commandLineOptions, runSettingsHelper])
+                        : processor.GetConstructor([typeof(CommandLineOptions)]) is { } optionsCtor
+                            ? optionsCtor.Invoke([commandLineOptions])
+                            : processor.GetConstructor([typeof(IRunSettingsProvider), typeof(IRunSettingsHelper)]) is { } providerAndHelperCtor
+                                ? providerAndHelperCtor.Invoke([runSettingsProvider, runSettingsHelper])
+                                : processor.GetConstructor([typeof(IRunSettingsProvider)]) is { } providerCtor
+                                    ? providerCtor.Invoke([runSettingsProvider])
+                                    : processor.GetConstructor([typeof(IRunSettingsHelper)]) is { } helperCtor
+                                        ? helperCtor.Invoke([runSettingsHelper])
+                                        : Activator.CreateInstance(processor)) as IArgumentProcessor;
             Assert.IsNotNull(instance, $"Unable to instantiate processor: {processor}");
 
             var specialProcessor = instance.Metadata.Value.IsSpecialCommand;

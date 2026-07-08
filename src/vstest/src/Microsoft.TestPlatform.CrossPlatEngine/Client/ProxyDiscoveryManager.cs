@@ -29,6 +29,7 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
 {
     private readonly TestSessionInfo? _testSessionInfo;
     private readonly Func<string, ProxyDiscoveryManager, ProxyOperationManager>? _proxyOperationManagerCreator;
+    private readonly TestSessionPool? _testSessionPool;
     private readonly DiscoveryDataAggregator _discoveryDataAggregator;
     private readonly IFileHelper _fileHelper;
     private readonly IDataSerializer _dataSerializer;
@@ -56,11 +57,13 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
     internal ProxyDiscoveryManager(
         TestSessionInfo testSessionInfo,
         Func<string, ProxyDiscoveryManager, ProxyOperationManager> proxyOperationManagerCreator,
-        DiscoveryDataAggregator discoveryDataAggregator)
+        DiscoveryDataAggregator discoveryDataAggregator,
+        TestSessionPool? testSessionPool = null)
     {
         // Filling in test session info and proxy information.
         _testSessionInfo = testSessionInfo;
         _proxyOperationManagerCreator = proxyOperationManagerCreator;
+        _testSessionPool = testSessionPool;
         _discoveryDataAggregator = discoveryDataAggregator;
         _dataSerializer = JsonDataSerializer.Instance;
         _fileHelper = new FileHelper();
@@ -289,7 +292,7 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
             return;
         }
 
-        TestSessionPool.Instance.ReturnProxy(_testSessionInfo, _proxyOperationManager.Id);
+        (_testSessionPool ?? TestSessionPool.Instance).ReturnProxy(_testSessionInfo, _proxyOperationManager.Id);
     }
 
     /// <inheritdoc/>

@@ -58,18 +58,24 @@ internal class ArgumentProcessorFactory
     /// Defaults to the ambient <see cref="RunSettingsHelper.Instance"/> when not provided, so that
     /// callers (and the composition root) can inject an isolated instance instead of sharing static state.
     /// </param>
+    /// <param name="commandLineOptions">
+    /// The command line options that the created argument processors read from and write to.
+    /// Defaults to the ambient <see cref="CommandLineOptions.Instance"/> when not provided, so that
+    /// callers (and the composition root) can inject an isolated instance instead of sharing static state.
+    /// </param>
     /// <returns>ArgumentProcessorFactory.</returns>
-    internal static ArgumentProcessorFactory Create(IFeatureFlag? featureFlag = null, IRunSettingsProvider? runSettingsProvider = null, IRunSettingsHelper? runSettingsHelper = null)
+    internal static ArgumentProcessorFactory Create(IFeatureFlag? featureFlag = null, IRunSettingsProvider? runSettingsProvider = null, IRunSettingsHelper? runSettingsHelper = null, CommandLineOptions? commandLineOptions = null)
     {
         runSettingsProvider ??= RunSettingsManager.Instance;
         runSettingsHelper ??= RunSettingsHelper.Instance;
-        var defaultArgumentProcessor = GetDefaultArgumentProcessors(runSettingsProvider, runSettingsHelper);
+        commandLineOptions ??= CommandLineOptions.Instance;
+        var defaultArgumentProcessor = GetDefaultArgumentProcessors(runSettingsProvider, runSettingsHelper, commandLineOptions);
 
         if (!(featureFlag ?? FeatureFlag.Instance).IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING))
         {
-            defaultArgumentProcessor.Add(new ArtifactProcessingCollectModeProcessor());
-            defaultArgumentProcessor.Add(new ArtifactProcessingPostProcessModeProcessor());
-            defaultArgumentProcessor.Add(new TestSessionCorrelationIdProcessor());
+            defaultArgumentProcessor.Add(new ArtifactProcessingCollectModeProcessor(commandLineOptions));
+            defaultArgumentProcessor.Add(new ArtifactProcessingPostProcessModeProcessor(commandLineOptions));
+            defaultArgumentProcessor.Add(new TestSessionCorrelationIdProcessor(commandLineOptions));
         }
 
         // Get the ArgumentProcessorFactory
@@ -197,41 +203,41 @@ internal class ArgumentProcessorFactory
             .Where(lazyProcessor => lazyProcessor.Metadata.Value.IsSpecialCommand && lazyProcessor.Metadata.Value.AlwaysExecute);
     }
 
-    private static IList<IArgumentProcessor> GetDefaultArgumentProcessors(IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper) => new List<IArgumentProcessor> {
+    private static IList<IArgumentProcessor> GetDefaultArgumentProcessors(IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions) => new List<IArgumentProcessor> {
         new HelpArgumentProcessor(),
-        new TestSourceArgumentProcessor(),
-        new ListTestsArgumentProcessor(runSettingsProvider),
-        new RunTestsArgumentProcessor(runSettingsProvider),
-        new RunSpecificTestsArgumentProcessor(runSettingsProvider),
-        new TestAdapterPathArgumentProcessor(runSettingsProvider),
-        new TestAdapterLoadingStrategyArgumentProcessor(runSettingsProvider),
-        new TestCaseFilterArgumentProcessor(),
-        new ParentProcessIdArgumentProcessor(),
-        new PortArgumentProcessor(runSettingsHelper),
-        new RunSettingsArgumentProcessor(runSettingsProvider, runSettingsHelper),
-        new PlatformArgumentProcessor(runSettingsProvider, runSettingsHelper),
-        new FrameworkArgumentProcessor(runSettingsProvider),
+        new TestSourceArgumentProcessor(commandLineOptions),
+        new ListTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new RunTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new RunSpecificTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new TestAdapterPathArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new TestAdapterLoadingStrategyArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new TestCaseFilterArgumentProcessor(commandLineOptions),
+        new ParentProcessIdArgumentProcessor(commandLineOptions),
+        new PortArgumentProcessor(commandLineOptions, runSettingsHelper),
+        new RunSettingsArgumentProcessor(commandLineOptions, runSettingsProvider, runSettingsHelper),
+        new PlatformArgumentProcessor(commandLineOptions, runSettingsProvider, runSettingsHelper),
+        new FrameworkArgumentProcessor(commandLineOptions, runSettingsProvider),
         new EnableLoggerArgumentProcessor(runSettingsProvider),
-        new ParallelArgumentProcessor(runSettingsProvider),
+        new ParallelArgumentProcessor(commandLineOptions, runSettingsProvider),
         new EnableDiagArgumentProcessor(),
-        new CliRunSettingsArgumentProcessor(runSettingsProvider, runSettingsHelper),
-        new ResultsDirectoryArgumentProcessor(runSettingsProvider),
-        new InIsolationArgumentProcessor(runSettingsProvider),
+        new CliRunSettingsArgumentProcessor(commandLineOptions, runSettingsProvider, runSettingsHelper),
+        new ResultsDirectoryArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new InIsolationArgumentProcessor(commandLineOptions, runSettingsProvider),
         new CollectArgumentProcessor(runSettingsProvider),
-        new EnableCodeCoverageArgumentProcessor(runSettingsProvider),
-        new DisableAutoFakesArgumentProcessor(),
+        new EnableCodeCoverageArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new DisableAutoFakesArgumentProcessor(commandLineOptions),
         new ResponseFileArgumentProcessor(),
         new EnableBlameArgumentProcessor(runSettingsProvider),
         new AeDebuggerArgumentProcessor(),
-        new UseVsixExtensionsArgumentProcessor(),
+        new UseVsixExtensionsArgumentProcessor(commandLineOptions),
         new ListDiscoverersArgumentProcessor(),
         new ListExecutorsArgumentProcessor(),
         new ListLoggersArgumentProcessor(),
         new ListSettingsProvidersArgumentProcessor(),
-        new ListFullyQualifiedTestsArgumentProcessor(runSettingsProvider),
-        new ListTestsTargetPathArgumentProcessor(),
+        new ListFullyQualifiedTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new ListTestsTargetPathArgumentProcessor(commandLineOptions),
         new ShowDeprecateDotnetVStestMessageArgumentProcessor(),
-        new EnvironmentArgumentProcessor(runSettingsProvider)
+        new EnvironmentArgumentProcessor(commandLineOptions, runSettingsProvider)
     };
 
     /// <summary>

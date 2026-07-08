@@ -16,4 +16,8 @@ scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 if [[ -z "${DOTNET_ROOT:-}" && -d "$scriptroot/.dotnet" ]]; then
   export DOTNET_ROOT="$scriptroot/.dotnet"
 fi
+# Disable MSBuild terminal logger so test output isn't buffered. TestCaptureOutput=false
+# means there are no log files to reference, so the terminal logger would show
+# misleading "See log file" messages with paths to files that don't exist.
+export MSBUILDTERMINALLOGGER=${MSBUILDTERMINALLOGGER:-off}
 "$scriptroot/eng/common/build.sh" --test "$@"

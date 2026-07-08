@@ -14,7 +14,7 @@ public class DisableAutoFakesArgumentProcessorTests
 
     public DisableAutoFakesArgumentProcessorTests()
     {
-        _disableAutoFakesArgumentProcessor = new DisableAutoFakesArgumentProcessor();
+        _disableAutoFakesArgumentProcessor = new DisableAutoFakesArgumentProcessor(CommandLineOptions.Instance);
     }
 
     [TestMethod]

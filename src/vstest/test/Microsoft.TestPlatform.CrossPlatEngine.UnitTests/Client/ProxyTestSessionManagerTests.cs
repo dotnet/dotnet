@@ -313,6 +313,52 @@ public class ProxyTestSessionManagerTests
     }
 
     [TestMethod]
+    public void StartSessionWritesToTheInjectedTestSessionPoolWhichTheReadSideObservesThroughTheSameInstance()
+    {
+        // Point the static default at a separate pool. If the write side wrongly used the static
+        // instead of the injected instance (i.e. the writer and reader ended up on different
+        // instances), the read side below would observe nothing.
+        var staticPool = new TestSessionPool();
+        TestSessionPool.Instance = staticPool;
+
+        // The single pool instance shared by the write side (StartSession -> AddSession) and the
+        // read side (TryTakeProxy) in this test.
+        var injectedPool = new TestSessionPool();
+
+        var mockProxyOperationManager = new Mock<ProxyOperationManager>(null, null, null, null);
+        mockProxyOperationManager.Setup(pom => pom.SetupChannel(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()))
+            .Returns(true);
+
+        TestSessionInfo? sessionInfo = null;
+        _mockEventsHandler
+            .Setup(eh => eh.HandleStartTestSessionComplete(It.IsAny<StartTestSessionCompleteEventArgs>()))
+            .Callback((StartTestSessionCompleteEventArgs args) => sessionInfo = args.TestSessionInfo);
+
+        var testSessionCriteria = CreateTestSession(_fakeTestSources, _runSettingsNoEnvVars);
+        var proxyManager = CreateProxy(testSessionCriteria, mockProxyOperationManager.Object, injectedPool);
+
+        // Write side: StartSession adds the session (and its proxy) to the injected pool.
+        Assert.IsTrue(proxyManager.StartSession(_mockEventsHandler.Object, _mockRequestData.Object));
+        Assert.IsNotNull(sessionInfo);
+
+        // Read side: taking a proxy from the SAME injected instance observes what the writer added.
+        var proxy = injectedPool.TryTakeProxy(
+            sessionInfo,
+            testSessionCriteria.Sources![0],
+            testSessionCriteria.RunSettings,
+            _mockRequestData.Object);
+        Assert.AreSame(mockProxyOperationManager.Object, proxy);
+
+        // The separate static default never received the session, proving the writer and reader
+        // shared the injected instance rather than silently falling back to the static.
+        Assert.IsNull(staticPool.TryTakeProxy(
+            sessionInfo,
+            testSessionCriteria.Sources[0],
+            testSessionCriteria.RunSettings,
+            _mockRequestData.Object));
+    }
+
+    [TestMethod]
     public void StopSessionShouldSucceedIfCalledOnlyOnce()
     {
         var mockProxyOperationManager = new Mock<ProxyOperationManager>(null, null, null, null);
@@ -578,7 +624,8 @@ public class ProxyTestSessionManagerTests
 
     private ProxyTestSessionManager CreateProxy(
         StartTestSessionCriteria testSessionCriteria,
-        ProxyOperationManager proxyOperationManager)
+        ProxyOperationManager proxyOperationManager,
+        TestSessionPool? testSessionPool = null)
     {
         var runSettings = testSessionCriteria.RunSettings ?? _fakeRunSettings;
         var runtimeProviderInfo = new TestRuntimeProviderInfo
@@ -599,7 +646,8 @@ public class ProxyTestSessionManagerTests
             testSessionCriteria,
             testSessionCriteria.Sources!.Count,
             _ => proxyOperationManager,
-            runtimeProviders
+            runtimeProviders,
+            testSessionPool
             );
     }
 

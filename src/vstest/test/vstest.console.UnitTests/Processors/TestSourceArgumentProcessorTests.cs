@@ -26,7 +26,7 @@ public class TestSourceArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnTestSourceArgumentProcessorCapabilities()
     {
-        TestSourceArgumentProcessor processor = new();
+        TestSourceArgumentProcessor processor = new(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Metadata.Value is TestSourceArgumentProcessorCapabilities);
     }
 
@@ -36,7 +36,7 @@ public class TestSourceArgumentProcessorTests
     [TestMethod]
     public void GetExecuterShouldReturnTestSourceArgumentProcessorCapabilities()
     {
-        TestSourceArgumentProcessor processor = new();
+        TestSourceArgumentProcessor processor = new(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Executor!.Value is TestSourceArgumentExecutor);
     }
 

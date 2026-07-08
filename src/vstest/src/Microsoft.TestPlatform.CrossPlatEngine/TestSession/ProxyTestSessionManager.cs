@@ -51,6 +51,7 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
     private readonly IDictionary<string, int> _proxyMap;
     private readonly Stopwatch _testSessionStopwatch;
     private readonly Dictionary<string, TestRuntimeProviderInfo> _sourceToRuntimeProviderInfoMap;
+    private readonly TestSessionPool? _testSessionPool;
     private Dictionary<string, string?> _testSessionEnvironmentVariables = new();
 
     internal ProxyDisposalOnCreationFailPolicy DisposalPolicy { get; set; } = ProxyDisposalOnCreationFailPolicy.DisposeAllOnFailure;
@@ -82,11 +83,22 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
         int maxTesthostCount,
         Func<TestRuntimeProviderInfo, ProxyOperationManager?> proxyCreator,
         List<TestRuntimeProviderInfo> runtimeProviders)
+        : this(criteria, maxTesthostCount, proxyCreator, runtimeProviders, testSessionPool: null)
+    {
+    }
+
+    internal ProxyTestSessionManager(
+        StartTestSessionCriteria criteria,
+        int maxTesthostCount,
+        Func<TestRuntimeProviderInfo, ProxyOperationManager?> proxyCreator,
+        List<TestRuntimeProviderInfo> runtimeProviders,
+        TestSessionPool? testSessionPool)
     {
         _testSessionCriteria = criteria;
         _maxTesthostCount = maxTesthostCount;
         _proxyCreator = proxyCreator;
         _runtimeProviders = runtimeProviders;
+        _testSessionPool = testSessionPool;
         _proxyContainerList = new List<ProxyOperationManagerContainer>();
         _proxyMap = new Dictionary<string, int>();
         _testSessionStopwatch = new Stopwatch();
@@ -180,7 +192,7 @@ public class ProxyTestSessionManager : IProxyTestSessionManager
         }
 
         // Make the session available.
-        if (!TestSessionPool.Instance.AddSession(_testSessionInfo, this))
+        if (!(_testSessionPool ?? TestSessionPool.Instance).AddSession(_testSessionInfo, this))
         {
             requestData?.MetricsCollection.Add(
                 TelemetryDataConstants.TestSessionState,

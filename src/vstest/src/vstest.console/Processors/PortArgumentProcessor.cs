@@ -31,9 +31,11 @@ internal class PortArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsHelper _runSettingsHelper;
+    private readonly CommandLineOptions _commandLineOptions;
 
-    public PortArgumentProcessor(IRunSettingsHelper runSettingsHelper)
+    public PortArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsHelper runSettingsHelper)
     {
+        _commandLineOptions = commandLineOptions;
         _runSettingsHelper = runSettingsHelper;
     }
 
@@ -49,7 +51,7 @@ internal class PortArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new PortArgumentExecutor(CommandLineOptions.Instance, TestRequestManager.Instance, _runSettingsHelper));
+            new PortArgumentExecutor(_commandLineOptions, TestRequestManager.Instance, _runSettingsHelper));
 
         set => _executor = value;
     }

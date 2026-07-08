@@ -24,6 +24,12 @@ internal class ArtifactProcessingPostProcessModeProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
 
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public ArtifactProcessingPostProcessModeProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -38,8 +44,8 @@ internal class ArtifactProcessingPostProcessModeProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new ArtifactProcessingPostProcessModeProcessorExecutor(CommandLineOptions.Instance,
-                new ArtifactProcessingManager(CommandLineOptions.Instance.TestSessionCorrelationId)));
+            new ArtifactProcessingPostProcessModeProcessorExecutor(_commandLineOptions,
+                new ArtifactProcessingManager(_commandLineOptions.TestSessionCorrelationId)));
 
         set => _executor = value;
     }

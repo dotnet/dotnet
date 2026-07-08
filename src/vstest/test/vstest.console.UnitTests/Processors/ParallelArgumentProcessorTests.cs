@@ -29,14 +29,14 @@ public class ParallelArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnParallelArgumentProcessorCapabilities()
     {
-        var processor = new ParallelArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new ParallelArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is ParallelArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnParallelArgumentExecutor()
     {
-        var processor = new ParallelArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new ParallelArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is ParallelArgumentExecutor);
     }
 

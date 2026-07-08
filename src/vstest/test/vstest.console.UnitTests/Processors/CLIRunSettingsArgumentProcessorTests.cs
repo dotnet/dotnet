@@ -72,14 +72,14 @@ public class CliRunSettingsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new CliRunSettingsArgumentProcessor(new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new CliRunSettingsArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is CliRunSettingsArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new CliRunSettingsArgumentProcessor(new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new CliRunSettingsArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is CliRunSettingsArgumentExecutor);
     }
 

@@ -36,6 +36,7 @@ public class TestEngine : ITestEngine
     private readonly ITestRuntimeProviderManager _testHostProviderManager;
     private readonly IProcessHelper _processHelper;
     private readonly IEnvironment _environment;
+    private readonly TestSessionPool? _testSessionPool;
 
     private ITestExtensionManager? _testExtensionManager;
 
@@ -54,11 +55,13 @@ public class TestEngine : ITestEngine
     internal TestEngine(
         ITestRuntimeProviderManager testHostProviderManager,
         IProcessHelper processHelper,
-        IEnvironment environment)
+        IEnvironment environment,
+        TestSessionPool? testSessionPool = null)
     {
         _testHostProviderManager = testHostProviderManager;
         _processHelper = processHelper;
         _environment = environment;
+        _testSessionPool = testSessionPool;
     }
 
     #region ITestEngine implementation
@@ -150,7 +153,7 @@ public class TestEngine : ITestEngine
 
                     // In case we have an active test session, we always prefer the already
                     // created proxies instead of the ones that need to be created on the spot.
-                    var proxyOperationManager = TestSessionPool.Instance.TryTakeProxy(
+                    var proxyOperationManager = (_testSessionPool ?? TestSessionPool.Instance).TryTakeProxy(
                         discoveryCriteria.TestSessionInfo,
                         source,
                         runtimeProviderInfo.RunSettings,
@@ -184,7 +187,8 @@ public class TestEngine : ITestEngine
                 ? new ProxyDiscoveryManager(
                     discoveryCriteria.TestSessionInfo,
                     proxyOperationManagerCreator,
-                    discoveryDataAggregator)
+                    discoveryDataAggregator,
+                    _testSessionPool)
                 : new ProxyDiscoveryManager(
                     requestData,
                     new TestRequestSender(requestData.ProtocolConfig!, hostManager),
@@ -313,7 +317,7 @@ public class TestEngine : ITestEngine
                     string source,
                     ProxyExecutionManager proxyExecutionManager) =>
                 {
-                    var proxyOperationManager = TestSessionPool.Instance.TryTakeProxy(
+                    var proxyOperationManager = (_testSessionPool ?? TestSessionPool.Instance).TryTakeProxy(
                         testRunCriteria.TestSessionInfo,
                         source,
                         runtimeProviderInfo.RunSettings,
@@ -348,7 +352,8 @@ public class TestEngine : ITestEngine
             return new ProxyExecutionManager(
                 testRunCriteria.TestSessionInfo,
                 proxyOperationManagerCreator,
-                testRunCriteria.DebugEnabledForTestSession);
+                testRunCriteria.DebugEnabledForTestSession,
+                _testSessionPool);
         }
 
         return isDataCollectorEnabled
@@ -457,7 +462,7 @@ public class TestEngine : ITestEngine
         // can be smaller than the number of sources to run.
         var maxTesthostCount = isParallelRun ? testSessionCriteria.Sources.Count : 1;
 
-        return new ProxyTestSessionManager(testSessionCriteria, maxTesthostCount, proxyCreator, testRuntimeProviders)
+        return new ProxyTestSessionManager(testSessionCriteria, maxTesthostCount, proxyCreator, testRuntimeProviders, _testSessionPool)
         {
             // Individual proxy setup failures are tolerated since SetupChannel may fail if the
             // testhost it tries to start is not compatible with the test session feature.

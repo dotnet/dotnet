@@ -404,7 +404,14 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
                     proxyExecutionManager.Initialize(_skipDefaultAdapters);
                 }
 
-                Interlocked.Increment(ref _runStartedClients);
+                // Increment under the same lock that guards reads of this field in
+                // HandlePartialRunComplete, so the write is properly fenced against the
+                // concurrent read instead of relying on an unsynchronized Interlocked op.
+                lock (_executionStatusLockObject)
+                {
+                    _runStartedClients++;
+                }
+
                 EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing test run. Started clients: " + _runStartedClients);
                 proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
 

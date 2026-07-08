@@ -81,7 +81,7 @@ public class RunSpecificTestsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnRunSpecificTestsArgumentProcessorCapabilities()
     {
-        RunSpecificTestsArgumentProcessor processor = new(new TestableRunSettingsProvider());
+        RunSpecificTestsArgumentProcessor processor = new(CommandLineOptions.Instance, new TestableRunSettingsProvider());
 
         Assert.IsTrue(processor.Metadata.Value is RunSpecificTestsArgumentProcessorCapabilities);
     }
@@ -89,7 +89,7 @@ public class RunSpecificTestsArgumentProcessorTests
     [TestMethod]
     public void GetExecutorShouldReturnRunSpecificTestsArgumentExecutor()
     {
-        RunSpecificTestsArgumentProcessor processor = new(new TestableRunSettingsProvider());
+        RunSpecificTestsArgumentProcessor processor = new(CommandLineOptions.Instance, new TestableRunSettingsProvider());
 
         Assert.IsTrue(processor.Executor!.Value is RunSpecificTestsArgumentExecutor);
     }

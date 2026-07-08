@@ -14,14 +14,14 @@ public class ListTestsTargetPathArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnListTestsTargetPathArgumentProcessorCapabilities()
     {
-        ListTestsTargetPathArgumentProcessor processor = new();
+        ListTestsTargetPathArgumentProcessor processor = new(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Metadata.Value is ListTestsTargetPathArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecutorShouldReturnListTestsTargetPathArgumentProcessorCapabilities()
     {
-        ListTestsTargetPathArgumentProcessor processor = new();
+        ListTestsTargetPathArgumentProcessor processor = new(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Executor!.Value is ListTestsTargetPathArgumentExecutor);
     }
 

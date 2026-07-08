@@ -27,9 +27,11 @@ internal class RunTestsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
 
-    public RunTestsArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    public RunTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
     {
+        _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
     }
 
@@ -41,10 +43,10 @@ internal class RunTestsArgumentProcessor : IArgumentProcessor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
             new RunTestsArgumentExecutor(
-                CommandLineOptions.Instance,
+                _commandLineOptions,
                 _runSettingsProvider,
                 TestRequestManager.Instance,
-                new ArtifactProcessingManager(CommandLineOptions.Instance.TestSessionCorrelationId),
+                new ArtifactProcessingManager(_commandLineOptions.TestSessionCorrelationId),
                 ConsoleOutput.Instance));
 
         set => _executor = value;
@@ -230,7 +232,7 @@ internal class RunTestsArgumentExecutor : IArgumentExecutor
                 s_numberOfExecutedTests = e.TestRunStatistics!.ExecutedTests;
 
                 // Indicate the user to use test adapter path command if there are no tests found
-                if (!testsFoundInAnySource && !CommandLineOptions.Instance.TestAdapterPathsSet && _commandLineOptions.TestCaseFilterValue == null)
+                if (!testsFoundInAnySource && !_commandLineOptions.TestAdapterPathsSet && _commandLineOptions.TestCaseFilterValue == null)
                 {
                     _output.Warning(false, CommandLineResources.SuggestTestAdapterPathIfNoTestsIsFound);
                 }

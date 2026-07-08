@@ -26,6 +26,12 @@ internal class UseVsixExtensionsArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public UseVsixExtensionsArgumentProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -40,7 +46,7 @@ internal class UseVsixExtensionsArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new UseVsixExtensionsArgumentExecutor(CommandLineOptions.Instance, TestRequestManager.Instance, new VSExtensionManager(), ConsoleOutput.Instance));
+            new UseVsixExtensionsArgumentExecutor(_commandLineOptions, TestRequestManager.Instance, new VSExtensionManager(), ConsoleOutput.Instance));
 
         set => _executor = value;
     }

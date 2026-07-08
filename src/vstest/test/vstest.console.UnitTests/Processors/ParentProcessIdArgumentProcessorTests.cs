@@ -15,14 +15,14 @@ public class ParentProcessIdArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnParentProcessIdArgumentProcessorCapabilities()
     {
-        var processor = new ParentProcessIdArgumentProcessor();
+        var processor = new ParentProcessIdArgumentProcessor(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Metadata.Value is ParentProcessIdArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecutorShouldReturnParentProcessIdArgumentProcessorCapabilities()
     {
-        var processor = new ParentProcessIdArgumentProcessor();
+        var processor = new ParentProcessIdArgumentProcessor(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Executor!.Value is ParentProcessIdArgumentExecutor);
     }
 
