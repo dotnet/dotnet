@@ -28,4 +28,6 @@
   <Import Project="$(RepositoryEngineeringDir)common\native\LocateNativeCompiler.targets"
       Condition="'$(UseCommonLocateNativeCompilerTarget)' == 'true'" />
 
+  <Import Project="$(RepositoryEngineeringDir)common\native\NativeAotSccsId.targets"
+      Condition="'$(NativeAotSupported)' == 'true'" />
 </Project>
