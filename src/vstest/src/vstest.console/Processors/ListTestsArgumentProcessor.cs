@@ -36,9 +36,11 @@ internal class ListTestsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
 
-    public ListTestsArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    public ListTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
     {
+        _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
     }
 
@@ -56,7 +58,7 @@ internal class ListTestsArgumentProcessor : IArgumentProcessor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
             new ListTestsArgumentExecutor(
-                CommandLineOptions.Instance,
+                _commandLineOptions,
                 _runSettingsProvider,
                 TestRequestManager.Instance));
 

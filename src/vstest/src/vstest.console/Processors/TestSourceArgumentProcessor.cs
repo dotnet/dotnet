@@ -19,6 +19,12 @@ internal class TestSourceArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public TestSourceArgumentProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -33,7 +39,7 @@ internal class TestSourceArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new TestSourceArgumentExecutor(CommandLineOptions.Instance));
+            new TestSourceArgumentExecutor(_commandLineOptions));
 
         set => _executor = value;
     }

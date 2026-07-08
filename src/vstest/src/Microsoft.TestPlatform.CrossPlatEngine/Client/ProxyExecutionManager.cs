@@ -34,6 +34,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
 {
     private readonly TestSessionInfo? _testSessionInfo;
     private readonly Func<string, ProxyExecutionManager, ProxyOperationManager>? _proxyOperationManagerCreator;
+    private readonly TestSessionPool? _testSessionPool;
     private readonly IFileHelper _fileHelper;
     private readonly IDataSerializer _dataSerializer;
     private readonly bool _debugEnabledForTestSession;
@@ -73,14 +74,20 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
     /// <param name="debugEnabledForTestSession">
     /// A flag indicating if debugging should be enabled or not.
     /// </param>
+    /// <param name="testSessionPool">
+    /// The test session pool to return proxies to, or <see langword="null"/> to use the shared
+    /// <see cref="TestSessionPool.Instance"/>.
+    /// </param>
     public ProxyExecutionManager(
         TestSessionInfo testSessionInfo,
         Func<string, ProxyExecutionManager, ProxyOperationManager> proxyOperationManagerCreator,
-        bool debugEnabledForTestSession)
+        bool debugEnabledForTestSession,
+        TestSessionPool? testSessionPool = null)
     {
         // Filling in test session info and proxy information.
         _testSessionInfo = testSessionInfo;
         _proxyOperationManagerCreator = proxyOperationManagerCreator;
+        _testSessionPool = testSessionPool;
 
         // This should be set to enable debugging when we have test session info available.
         _debugEnabledForTestSession = debugEnabledForTestSession;
@@ -391,7 +398,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
             return;
         }
 
-        TestSessionPool.Instance.ReturnProxy(_testSessionInfo, _proxyOperationManager.Id);
+        (_testSessionPool ?? TestSessionPool.Instance).ReturnProxy(_testSessionInfo, _proxyOperationManager.Id);
     }
 
     /// <inheritdoc/>

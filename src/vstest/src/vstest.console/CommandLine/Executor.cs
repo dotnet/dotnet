@@ -64,6 +64,7 @@ internal class Executor
     private readonly IEnvironment _environment;
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly IRunSettingsHelper _runSettingsHelper;
+    private readonly CommandLineOptions _commandLineOptions;
     private bool _showHelp;
 
     /// <summary>
@@ -94,16 +95,16 @@ internal class Executor
     }
 
     internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment)
-        : this(output, testPlatformEventSource, processHelper, environment, RunSettingsManager.Instance, RunSettingsHelper.Instance)
+        : this(output, testPlatformEventSource, processHelper, environment, RunSettingsManager.Instance, RunSettingsHelper.Instance, CommandLineOptions.Instance)
     {
     }
 
     internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider)
-        : this(output, testPlatformEventSource, processHelper, environment, runSettingsProvider, RunSettingsHelper.Instance)
+        : this(output, testPlatformEventSource, processHelper, environment, runSettingsProvider, RunSettingsHelper.Instance, CommandLineOptions.Instance)
     {
     }
 
-    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper)
+    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions)
     {
         DebuggerBreakpoint.AttachVisualStudioDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_DEBUG_ATTACHVS);
         DebuggerBreakpoint.WaitForNativeDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_NATIVE_DEBUG);
@@ -116,6 +117,7 @@ internal class Executor
         _environment = environment;
         _runSettingsProvider = runSettingsProvider;
         _runSettingsHelper = runSettingsHelper;
+        _commandLineOptions = commandLineOptions;
     }
 
     /// <summary>
@@ -237,7 +239,7 @@ internal class Executor
     {
         processors = new List<IArgumentProcessor>();
         int result = 0;
-        var processorFactory = ArgumentProcessorFactory.Create(runSettingsProvider: _runSettingsProvider, runSettingsHelper: _runSettingsHelper);
+        var processorFactory = ArgumentProcessorFactory.Create(runSettingsProvider: _runSettingsProvider, runSettingsHelper: _runSettingsHelper, commandLineOptions: _commandLineOptions);
         for (var index = 0; index < args.Length; index++)
         {
             var arg = args[index];

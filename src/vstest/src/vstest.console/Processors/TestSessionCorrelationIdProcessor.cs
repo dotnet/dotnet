@@ -22,6 +22,12 @@ internal class TestSessionCorrelationIdProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
 
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public TestSessionCorrelationIdProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -36,7 +42,7 @@ internal class TestSessionCorrelationIdProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new TestSessionCorrelationIdProcessorModeProcessorExecutor(CommandLineOptions.Instance));
+            new TestSessionCorrelationIdProcessorModeProcessorExecutor(_commandLineOptions));
 
         set => _executor = value;
     }

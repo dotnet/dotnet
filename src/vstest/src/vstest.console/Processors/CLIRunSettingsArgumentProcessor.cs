@@ -30,10 +30,12 @@ internal class CliRunSettingsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
     private readonly IRunSettingsHelper _runSettingsHelper;
 
-    public CliRunSettingsArgumentProcessor(IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper)
+    public CliRunSettingsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper)
     {
+        _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
         _runSettingsHelper = runSettingsHelper;
     }
@@ -51,7 +53,7 @@ internal class CliRunSettingsArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new CliRunSettingsArgumentExecutor(_runSettingsProvider, CommandLineOptions.Instance, _runSettingsHelper));
+            new CliRunSettingsArgumentExecutor(_runSettingsProvider, _commandLineOptions, _runSettingsHelper));
 
         set => _executor = value;
     }

@@ -34,14 +34,14 @@ public class UseVsixExtensionsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnUseVsixExtensionsArgumentProcessorCapabilities()
     {
-        var processor = new UseVsixExtensionsArgumentProcessor();
+        var processor = new UseVsixExtensionsArgumentProcessor(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Metadata.Value is UseVsixExtensionsArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnUseVsixExtensionsArgumentProcessorCapabilities()
     {
-        var processor = new UseVsixExtensionsArgumentProcessor();
+        var processor = new UseVsixExtensionsArgumentProcessor(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Executor!.Value is UseVsixExtensionsArgumentExecutor);
     }
 

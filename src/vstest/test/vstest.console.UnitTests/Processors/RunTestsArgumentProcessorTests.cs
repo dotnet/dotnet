@@ -79,14 +79,14 @@ public class RunTestsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnRunTestsArgumentProcessorCapabilities()
     {
-        RunTestsArgumentProcessor processor = new(new TestableRunSettingsProvider());
+        RunTestsArgumentProcessor processor = new(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is RunTestsArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnRunTestsArgumentProcessorCapabilities()
     {
-        RunTestsArgumentProcessor processor = new(new TestableRunSettingsProvider());
+        RunTestsArgumentProcessor processor = new(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is RunTestsArgumentExecutor);
     }
 

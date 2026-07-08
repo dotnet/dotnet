@@ -40,14 +40,14 @@ public class EnableCodeCoverageArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnEnableCodeCoverageArgumentProcessorCapabilities()
     {
-        var processor = new EnableCodeCoverageArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new EnableCodeCoverageArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is EnableCodeCoverageArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnEnableCodeCoverageArgumentProcessorCapabilities()
     {
-        var processor = new EnableCodeCoverageArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new EnableCodeCoverageArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is EnableCodeCoverageArgumentExecutor);
     }
 

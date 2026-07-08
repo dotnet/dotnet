@@ -30,9 +30,11 @@ internal class TestAdapterPathArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
 
-    public TestAdapterPathArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    public TestAdapterPathArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
     {
+        _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
     }
 
@@ -49,7 +51,7 @@ internal class TestAdapterPathArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new TestAdapterPathArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider,
+            new TestAdapterPathArgumentExecutor(_commandLineOptions, _runSettingsProvider,
                 ConsoleOutput.Instance, new FileHelper()));
 
         set => _executor = value;

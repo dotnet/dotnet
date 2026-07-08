@@ -14,14 +14,14 @@ public class TestCaseFilterArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnTestCaseFilterArgumentProcessorCapabilities()
     {
-        TestCaseFilterArgumentProcessor processor = new();
+        TestCaseFilterArgumentProcessor processor = new(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Metadata.Value is TestCaseFilterArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecutorShouldReturnTestCaseFilterArgumentProcessorCapabilities()
     {
-        TestCaseFilterArgumentProcessor processor = new();
+        TestCaseFilterArgumentProcessor processor = new(CommandLineOptions.Instance);
         Assert.IsTrue(processor.Executor!.Value is TestCaseFilterArgumentExecutor);
     }
 

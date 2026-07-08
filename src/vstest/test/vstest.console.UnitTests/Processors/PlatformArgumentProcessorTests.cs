@@ -36,14 +36,14 @@ public class PlatformArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnPlatformArgumentProcessorCapabilities()
     {
-        var processor = new PlatformArgumentProcessor(new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new PlatformArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is PlatformArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnPlatformArgumentExecutor()
     {
-        var processor = new PlatformArgumentProcessor(new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new PlatformArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is PlatformArgumentExecutor);
     }
 

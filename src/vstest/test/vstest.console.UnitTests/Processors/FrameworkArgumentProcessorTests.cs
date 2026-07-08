@@ -32,14 +32,14 @@ public class FrameworkArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnFrameworkArgumentProcessorCapabilities()
     {
-        var processor = new FrameworkArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new FrameworkArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is FrameworkArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnFrameworkArgumentExecutor()
     {
-        var processor = new FrameworkArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new FrameworkArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is FrameworkArgumentExecutor);
     }
 

@@ -16,6 +16,7 @@ permissions:
   contents: read
   pull-requests: read
   issues: read
+  copilot-requests: write
 
 network:
   allowed:
@@ -25,13 +26,20 @@ network:
 tools:
   cache-memory: true
   github:
-    lockdown: true
     toolsets: [pull_requests, repos, issues]
     min-integrity: none
   bash: true
   edit:
 
 safe-outputs:
+  # Prefer an org-owned GitHub App: it mints a short-lived, auto-revoked token
+  # scoped to this job and (unlike GITHUB_TOKEN) triggers CI on pushed commits.
+  # ignore-if-missing lets the workflow fall back to GITHUB_TOKEN when the App
+  # secrets are absent, so it still runs without org-admin setup and on forks.
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   noop:
     report-as-issue: false
   add-comment:
@@ -42,7 +50,6 @@ safe-outputs:
     target: "*"
     title-prefix: "[fix] "
     max: 3
-    github-token: ${{ secrets.GH_AW_GITHUB_TOKEN }}
   reply-to-pull-request-review-comment:
     max: 10
     target: "*"

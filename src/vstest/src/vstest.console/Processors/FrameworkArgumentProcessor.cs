@@ -28,9 +28,11 @@ internal class FrameworkArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
 
-    public FrameworkArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    public FrameworkArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
     {
+        _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
     }
 
@@ -47,7 +49,7 @@ internal class FrameworkArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new FrameworkArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider));
+            new FrameworkArgumentExecutor(_commandLineOptions, _runSettingsProvider));
 
         set => _executor = value;
     }

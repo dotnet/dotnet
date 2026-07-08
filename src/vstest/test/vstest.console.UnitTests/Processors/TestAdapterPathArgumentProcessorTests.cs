@@ -43,14 +43,14 @@ public class TestAdapterPathArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnTestAdapterPathArgumentProcessorCapabilities()
     {
-        var processor = new TestAdapterPathArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new TestAdapterPathArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is TestAdapterPathArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnTestAdapterPathArgumentProcessorCapabilities()
     {
-        var processor = new TestAdapterPathArgumentProcessor(new TestableRunSettingsProvider());
+        var processor = new TestAdapterPathArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is TestAdapterPathArgumentExecutor);
     }
 

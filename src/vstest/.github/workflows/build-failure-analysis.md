@@ -50,6 +50,7 @@ if: needs.build.outputs.outcome == 'failure'
 permissions:
   contents: read
   pull-requests: read
+  copilot-requests: write
 
 concurrency:
   group: build-failure-analysis-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}

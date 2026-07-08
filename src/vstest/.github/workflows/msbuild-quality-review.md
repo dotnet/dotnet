@@ -15,6 +15,7 @@ permissions:
   contents: read
   issues: read
   pull-requests: read
+  copilot-requests: write
 
 imports:
   - shared/msbuild-review-shared.md

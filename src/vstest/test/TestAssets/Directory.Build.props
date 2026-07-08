@@ -17,8 +17,14 @@
     <!-- Suppress warning about using a preview of NETSDK -->
     NETSDK1057;
 
-    <!-- Use Environment.ProcessId instead of Process.GetCurrentProcess().Id, api is not available on all targetted frameworks. -->
+    <!-- Use Environment.ProcessId instead of Process.GetCurrentProcess().Id, API is not available on all targeted frameworks. -->
     CA1837;
+
+    <!-- These test assets (in particular the generated compatibility matrix) intentionally reference old, pinned
+    versions of Microsoft.NET.Test.Sdk and MSTest that transitively pull vulnerable Newtonsoft.Json versions.
+    Upgrading them defeats the purpose of the compatibility tests, so exclude NuGet audit warnings (NU1901-NU1904)
+    from failing the build. -->
+    NU1901;NU1902;NU1903;NU1904;
     </NoWarn>
   </PropertyGroup>
 

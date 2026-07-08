@@ -41,14 +41,14 @@ public class RunSettingsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new RunSettingsArgumentProcessor(new TestableRunSettingsProvider(), new RunSettingsHelper());
+        var processor = new RunSettingsArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), new RunSettingsHelper());
         Assert.IsTrue(processor.Metadata.Value is RunSettingsArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnRunSettingsArgumentExecutor()
     {
-        var processor = new RunSettingsArgumentProcessor(new TestableRunSettingsProvider(), new RunSettingsHelper());
+        var processor = new RunSettingsArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), new RunSettingsHelper());
         Assert.IsTrue(processor.Executor!.Value is RunSettingsArgumentExecutor);
     }
 
