@@ -4,7 +4,6 @@
 # same source commit.
 
 # https://github.com/dotnet/fsharp/issues/19732
-sdk/*/FSharp/FSharp.Compiler.Service.dll
 
 # https://github.com/NuGet/NuGet.Client/pull/7020
 # https://github.com/dotnet/arcade/pull/16787
