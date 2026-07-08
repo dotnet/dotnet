@@ -114,8 +114,8 @@
       "Shipping",
       "NonShipping"
     ],
-    "vsBranch": "main",
+    "vsBranch": "rel/insiders",
     "insertionCreateDraftPR": false,
-    "insertionTitlePrefix": "[Main 18.9]"
+    "insertionTitlePrefix": "[Insiders 18.9]"
   }
 }
