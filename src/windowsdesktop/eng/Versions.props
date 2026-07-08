@@ -19,7 +19,7 @@
     <SystemReflectionEmitILGenerationVersion>4.7.0</SystemReflectionEmitILGenerationVersion>
     <SystemReflectionEmitLightweightVersion>4.7.0</SystemReflectionEmitLightweightVersion>
     <!-- nuget -->
-    <NuGetPackagingVersion>6.12.1</NuGetPackagingVersion>
+    <NuGetPackagingVersion>6.12.5</NuGetPackagingVersion>
     <!-- runtime -->
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <SystemIOFileSystemAccessControlVersion>5.0.0</SystemIOFileSystemAccessControlVersion>
