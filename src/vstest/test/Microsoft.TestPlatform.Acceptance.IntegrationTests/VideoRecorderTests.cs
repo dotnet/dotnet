@@ -15,7 +15,7 @@ public class VideoRecorderTests : AcceptanceTestBase
 {
     [Ignore("Video recording is flaky in CI — screen recorder fails to establish communication. See #15586.")]
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useCoreRunner: false, useVsixRunner: true)]
+    [TestMatrix(console: NetFx, testHost: NetFx, vsix: true)]
     public void VideoRecorderDataCollectorShouldRecordVideoWithRunSettings(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

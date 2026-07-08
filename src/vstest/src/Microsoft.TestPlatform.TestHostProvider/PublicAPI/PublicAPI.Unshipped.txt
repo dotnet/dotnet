@@ -1,1 +1,3 @@
 #nullable enable
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.MtpTestRuntimeProvider
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.MtpTestRuntimeProvider.MtpTestRuntimeProvider() -> void

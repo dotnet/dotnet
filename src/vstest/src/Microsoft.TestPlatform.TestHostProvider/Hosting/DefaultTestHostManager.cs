@@ -16,7 +16,7 @@ using System.Xml.Linq;
 
 using Microsoft.TestPlatform.TestHostProvider;
 using Microsoft.TestPlatform.TestHostProvider.Hosting;
-using Microsoft.TestPlatform.TestHostProvider.Resources;
+using TestHostResources = Microsoft.TestPlatform.TestHostProvider.Resources.Resources;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
@@ -210,7 +210,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         // longer supported. Fail with a clear message instead of launching Mono.
         if (!_environment.OperatingSystem.Equals(PlatformOperatingSystem.Windows))
         {
-            throw new TestPlatformException(Resources.NetFrameworkTestsNotSupportedOnNonWindows);
+            throw new TestPlatformException(TestHostResources.NetFrameworkTestsNotSupportedOnNonWindows);
         }
 
         var launcherPath = testhostProcessPath;
@@ -478,7 +478,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
         if (conflictingExtensions.Count != 0)
         {
             var extensionsString = string.Join("\n", conflictingExtensions.Select(kv => $"  {kv.Key} : {kv.Value}"));
-            string message = string.Format(CultureInfo.CurrentCulture, Resources.MultipleFileVersions, extensionsString);
+            string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.MultipleFileVersions, extensionsString);
             _messageLogger.SendMessage(TestMessageLevel.Warning, message);
         }
 

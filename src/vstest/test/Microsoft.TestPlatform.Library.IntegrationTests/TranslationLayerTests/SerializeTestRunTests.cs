@@ -48,7 +48,7 @@ public class SerialTestRunDecoratorTests : AcceptanceTestBase
 
     [TestMethod]
     // This is testhost concept, try it on combination of testhosts, and .NET Runner.
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void DiscoverTestsAndRunTestsSequentially(RunnerInfo runnerInfo)
     {
         // Arrange
@@ -69,7 +69,7 @@ public class SerialTestRunDecoratorTests : AcceptanceTestBase
 
     [TestMethod]
     // This is testhost concept, try it on combination of testhosts, and .NET Runner.
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void DiscoverTestsAndRunTestsSequentially_DisabledByFeatureFlag(RunnerInfo runnerInfo)
     {
         // Arrange
@@ -90,7 +90,7 @@ public class SerialTestRunDecoratorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void DiscoverTestsAndRunTestsSequentially_IsNotSupportedForSources(RunnerInfo runnerInfo)
     {
         // Arrange

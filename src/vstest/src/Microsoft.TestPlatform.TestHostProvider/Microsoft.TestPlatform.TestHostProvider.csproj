@@ -25,6 +25,12 @@
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
+    <!--
+      The Microsoft.Testing.Platform runtime provider (MtpTestRuntimeProvider) drives MTP sources over the MTP
+      proxy managers that live in CrossPlatEngine, and implements the internal IProxyManagerFactory defined there.
+      CrossPlatEngine ships alongside this provider in the runner, so this reference adds no new payload.
+    -->
+    <ProjectReference Include="..\Microsoft.TestPlatform.CrossPlatEngine\Microsoft.TestPlatform.CrossPlatEngine.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />

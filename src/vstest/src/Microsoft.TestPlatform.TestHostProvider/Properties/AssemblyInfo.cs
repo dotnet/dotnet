@@ -4,4 +4,4 @@
 using Microsoft.VisualStudio.TestPlatform;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 
-[assembly: TestExtensionTypes(typeof(DefaultTestHostManager), typeof(DotnetTestHostManager))]
+[assembly: TestExtensionTypes(typeof(DefaultTestHostManager), typeof(DotnetTestHostManager), typeof(MtpTestRuntimeProvider))]

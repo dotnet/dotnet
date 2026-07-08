@@ -11,7 +11,7 @@ public class DebugAssertTests : AcceptanceTestBase
 {
     [TestMethod]
     // this is core only, there is nothing we can do about TPDebug.Assert crashing the process on framework
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void RunningTestWithAFailingDebugAssertDoesNotCrashTheHostingProcess(RunnerInfo runnerInfo)
     {
         // when debugging this test in case it starts failing, be aware that the default behavior of TPDebug.Assert

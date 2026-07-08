@@ -868,15 +868,16 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      在追责模式下运行测试。此选项有助于隔离导致测试主机崩溃的问题测试。
-      它会在当前目录中创建一个输出文件 "Sequence.xml"，
-      用于在崩溃之前捕获测试的执行顺序。
-      可以根据需要选择收集测试主机的进程转储。
-      选择收集转储时，默认情况下，将在崩溃时收集小型转储。
-      还可选择通过一些可选参数覆盖此默认行为:
-      CollectAlways - 若无崩溃则在退出时收集转储(true/false)
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+      在追溯模式下运行测试。此选项有助于隔离导致测试主机故障的问题测试。
+      它会在当前目录中创建一个输出文件 "Sequence.xml",
+      用于在发生故障之前捕获测试的执行顺序。
+      你可以根据需要选择收集测试主机的进程转储。
+      选择收集转储时，默认情况下，将在发生故障时收集小型转储。
+      你还可选择通过一些可选参数覆盖此默认行为:
+      CollectAlways - 即使没有故障，也会在退出时收集转储(true/false)
       DumpType - 指定转储类型(小型/完整)。
+      在 Windows 上收集故障转储时，需要 procdump.exe 和 procdump64.exe 位于 PATH 中，或者位于 PROCDUMP_PATH 环境变量指定的目录中。可在以下位置下载工具: https://docs.microsoft.com/sysinternals/downloads/procdump。
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

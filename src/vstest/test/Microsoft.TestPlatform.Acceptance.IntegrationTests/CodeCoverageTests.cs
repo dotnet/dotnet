@@ -48,8 +48,8 @@ internal struct TestParameters
 public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CollectCodeCoverageWithCollectOptionForx86(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -67,8 +67,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CollectCodeCoverageWithCollectOptionForx64(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -86,8 +86,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CollectCodeCoverageX86WithRunSettings(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -105,8 +105,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CollectCodeCoverageX64WithRunSettings(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -124,8 +124,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CodeCoverageShouldAvoidExclusionsX86(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -146,8 +146,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CodeCoverageShouldAvoidExclusionsX64(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -168,8 +168,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CollectCodeCoverageSpecifyOutputFormatXml(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()
@@ -187,8 +187,8 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CollectCodeCoverageSpecifyOutputFormatCoberturaOverrideRunSettingsConfiguration(RunnerInfo runnerInfo)
     {
         var parameters = new TestParameters()

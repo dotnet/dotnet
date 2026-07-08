@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyModel;
 #endif
 using Microsoft.TestPlatform.TestHostProvider;
 using Microsoft.TestPlatform.TestHostProvider.Hosting;
-using Microsoft.TestPlatform.TestHostProvider.Resources;
+using TestHostResources = Microsoft.TestPlatform.TestHostProvider.Resources.Resources;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
@@ -425,7 +425,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                     // built-in testhost (it would just discover no tests) - throw and point the user at Microsoft.NET.Test.Sdk.
                     if (!IsNativeModule(sourcePath))
                     {
-                        string message = string.Format(CultureInfo.CurrentCulture, Resources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+                        string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.CouldNotFindTesthost, sourcePath, sourceDirectory);
                         throw new TestPlatformException(message);
                     }
 
@@ -505,7 +505,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 
             if (testHostPath.IsNullOrEmpty())
             {
-                string message = string.Format(CultureInfo.CurrentCulture, Resources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+                string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.CouldNotFindTesthost, sourcePath, sourceDirectory);
                 throw new TestPlatformException(message);
             }
 
@@ -545,7 +545,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 PlatformArchitecture finalTargetArchitecture = forceToX64 ? PlatformArchitecture.X64 : targetArchitecture;
                 if (!_dotnetHostHelper.TryGetDotnetPathByArchitecture(finalTargetArchitecture, muxerResolutionStrategy, out string? muxerPath))
                 {
-                    string message = string.Format(CultureInfo.CurrentCulture, Resources.NoDotnetMuxerFoundForArchitecture, $"dotnet{(_platformEnvironment.OperatingSystem == PlatformOperatingSystem.Windows ? ".exe" : string.Empty)}", finalTargetArchitecture.ToString());
+                    string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.NoDotnetMuxerFoundForArchitecture, $"dotnet{(_platformEnvironment.OperatingSystem == PlatformOperatingSystem.Windows ? ".exe" : string.Empty)}", finalTargetArchitecture.ToString());
                     EqtTrace.Error(message);
                     throw new TestPlatformException(message);
                 }

@@ -22,8 +22,8 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
-    [NetCoreTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
+    [TestMatrix(console: NetFx, testHost: Net)]
     public void RunMultipleTestAssembliesWithCodeCoverage(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

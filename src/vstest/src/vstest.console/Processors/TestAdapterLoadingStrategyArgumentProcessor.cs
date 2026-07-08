@@ -29,6 +29,12 @@ internal class TestAdapterLoadingStrategyArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+
+    public TestAdapterLoadingStrategyArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    {
+        _runSettingsProvider = runSettingsProvider;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -43,7 +49,7 @@ internal class TestAdapterLoadingStrategyArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new TestAdapterLoadingStrategyArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance, ConsoleOutput.Instance, new FileHelper()));
+            new TestAdapterLoadingStrategyArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider, ConsoleOutput.Instance, new FileHelper()));
 
         set => _executor = value;
     }

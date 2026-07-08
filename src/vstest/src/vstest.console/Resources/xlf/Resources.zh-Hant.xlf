@@ -868,15 +868,16 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       以 blame 模式執行測試。此選項在隔離造成測試主機當機的問題測試時相當實用。
       它會在目前的目錄建立輸出檔案 "Sequence.xml"，
       該檔案會擷取當機前的測試執行順序。
       您也可以選擇收集測試主機的處理序傾印。
-      當您選擇收集傾印時，預設會在當機時收集迷你傾印／
+      當您選擇收集傾印時，預設會在當機時收集迷你傾印。
       您也可以選擇使用一些選用參數來覆寫此預設行為:
       CollectAlways - 即使沒有當機，也在離開時收集傾印 (true/false) 
       DumpType - 指定傾印類型 (mini/full)。
+      在 Windows 上收集當機傾印需要於 PATH 或於 PROCDUMP_PATH 環境變數所指向的目錄中提供 procdump.exe 和 procdump64.exe。您可以於下列位置下載工具: https://docs.microsoft.com/sysinternals/downloads/procdump。
       範例: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

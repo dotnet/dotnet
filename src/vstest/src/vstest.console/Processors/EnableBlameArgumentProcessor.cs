@@ -40,12 +40,14 @@ internal class EnableBlameArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EnableBlameArgumentProcessor"/> class.
     /// </summary>
-    public EnableBlameArgumentProcessor()
+    public EnableBlameArgumentProcessor(IRunSettingsProvider runSettingsProvider)
     {
+        _runSettingsProvider = runSettingsProvider;
     }
 
     public Lazy<IArgumentProcessorCapabilities> Metadata
@@ -58,7 +60,7 @@ internal class EnableBlameArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new EnableBlameArgumentExecutor(RunSettingsManager.Instance, new PlatformEnvironment(), new FileHelper()));
+            new EnableBlameArgumentExecutor(_runSettingsProvider, new PlatformEnvironment(), new FileHelper()));
 
         set => _executor = value;
     }

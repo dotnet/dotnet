@@ -868,15 +868,16 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       원인 모드에서 테스트를 실행합니다. 이 옵션은 테스트 호스트 크래시를 유발하는 문제 있는 테스트를 격리하는 데 유용합니다.
       이 경우 현재 디렉터리에 "Sequence.xml"라는 출력 파일을 만들며,
       이 파일에는 크래시 이전 테스트 실행 순서가 캡처되어 있습니다.
       필요에 따라 테스트 호스트에 대한 프로세스 덤프를 수집하도록 선택할 수 있습니다.
       덤프를 수집하도록 선택하는 경우 기본적으로 크래시에 대한 미니 덤프가 수집됩니다.
       다음과 같은 몇 가지 선택적 매개 변수로 이 기본 동작을 재정의하도록 선택할 수도 있습니다.
-      CollectAlways - 크래시가 없는 경우에도 종료 시 덤프를 수집함(true/false) 
-      DumpType - 덤프 유형을 지정함(mini/full).
+      CollectAlways - 크래시가 없는 경우에도 종료 시 덤프를 수집(true/false)
+      DumpType - 덤프 유형을 지정(mini/full).
+      Windows에서 크래시 덤프를 수집하려면 procdump.exe 및 procdump64.exe가 PATH에 있거나 PROCDUMP_PATH 환경 변수가 가리키는 디렉터리에 있어야 합니다. 도구는 다음 페이지에서 다운로드할 수 있습니다. https://docs.microsoft.com/sysinternals/downloads/procdump
       예: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

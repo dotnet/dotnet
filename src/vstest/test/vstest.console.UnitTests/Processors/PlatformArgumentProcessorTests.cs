@@ -5,6 +5,8 @@ using System.Globalization;
 
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using vstest.console.UnitTests.Processors;
@@ -16,11 +18,13 @@ public class PlatformArgumentProcessorTests
 {
     private readonly PlatformArgumentExecutor _executor;
     private readonly TestableRunSettingsProvider _runSettingsProvider;
+    private readonly IRunSettingsHelper _runSettingsHelper;
 
     public PlatformArgumentProcessorTests()
     {
         _runSettingsProvider = new TestableRunSettingsProvider();
-        _executor = new PlatformArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider);
+        _runSettingsHelper = new RunSettingsHelper();
+        _executor = new PlatformArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider, _runSettingsHelper);
     }
 
     [TestCleanup]
@@ -32,14 +36,14 @@ public class PlatformArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnPlatformArgumentProcessorCapabilities()
     {
-        var processor = new PlatformArgumentProcessor();
+        var processor = new PlatformArgumentProcessor(new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is PlatformArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnPlatformArgumentExecutor()
     {
-        var processor = new PlatformArgumentProcessor();
+        var processor = new PlatformArgumentProcessor(new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is PlatformArgumentExecutor);
     }
 

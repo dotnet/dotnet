@@ -12,7 +12,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class ListExtensionsTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: false, inProcess: true)]
+    [TestMatrix(testHost: NetFx, inIsolation: false, inProcess: true)]
     public void ListDiscoverersShouldShowInboxDiscoverers(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -33,7 +33,7 @@ public class ListExtensionsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: false, inProcess: true)]
+    [TestMatrix(testHost: NetFx, inIsolation: false, inProcess: true)]
     public void ListExecutorsShouldShowInboxExecutors(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -56,7 +56,7 @@ public class ListExtensionsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: false, inProcess: true)]
+    [TestMatrix(testHost: NetFx, inIsolation: false, inProcess: true)]
     public void ListLoggersShouldShowInboxLoggers(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -68,7 +68,7 @@ public class ListExtensionsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: false, inProcess: true)]
+    [TestMatrix(testHost: NetFx, inIsolation: false, inProcess: true)]
     public void ListSettingsProvidersShouldShowInboxSettingsProviders(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

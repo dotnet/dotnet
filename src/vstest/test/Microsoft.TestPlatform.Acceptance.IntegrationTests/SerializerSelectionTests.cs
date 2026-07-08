@@ -10,7 +10,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class SerializerSelectionTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetCoreRunner(Core11TargetFramework)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void OnNetCoreRunner_ShouldUseSystemTextJson(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -28,7 +28,7 @@ public class SerializerSelectionTests : AcceptanceTestBase
     // The .NET Framework runner (and its Jsonite serializer) only runs on Windows; the core counterpart
     // is covered by OnNetCoreRunner_ShouldUseSystemTextJson.
     [TestCategory("Windows-Review")]
-    [NetFrameworkRunner(Net481TargetFramework)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
     public void OnNetFrameworkRunner_ShouldUseJsonite(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

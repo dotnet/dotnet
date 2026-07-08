@@ -868,7 +868,7 @@
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
-        <target state="needs-review-translation">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
+        <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       テストを Blame モードで実行します。このオプションは、テスト ホストのクラッシュを引き起こしているテストを分離するのに役立ちます。
       現在のディレクトリに "Sequence.xml" という出力ファイルを作成し、
       そのファイルにクラッシュ前のテストの実行順序をキャプチャします。
@@ -877,6 +877,7 @@
       この既定の動作を次のオプション パラメーターでオーバーライドすることもできます:
       CollectAlways - クラッシュが発生していなくても終了時にダンプを収集します (true/false) 
       DumpType - ダンプの種類を指定します (mini/full)。
+      Windows でクラッシュ ダンプを収集するには、PATH または PROCDUMP_PATH 環境変数が指すディレクトリで procdump.exe と procdump64.exe を使用できる必要があります。ツールは次の場所からダウンロードできます: https://docs.microsoft.com/sysinternals/downloads/procdump。
       例: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>

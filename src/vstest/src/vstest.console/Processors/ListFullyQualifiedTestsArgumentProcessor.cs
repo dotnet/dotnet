@@ -32,6 +32,12 @@ internal class ListFullyQualifiedTestsArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+
+    public ListFullyQualifiedTestsArgumentProcessor(IRunSettingsProvider runSettingsProvider)
+    {
+        _runSettingsProvider = runSettingsProvider;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -48,7 +54,7 @@ internal class ListFullyQualifiedTestsArgumentProcessor : IArgumentProcessor
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
             new ListFullyQualifiedTestsArgumentExecutor(
                 CommandLineOptions.Instance,
-                RunSettingsManager.Instance,
+                _runSettingsProvider,
                 TestRequestManager.Instance));
 
         set => _executor = value;

@@ -21,4 +21,11 @@ internal interface IAssemblyMetadataProvider
     /// Determines Architecture from filePath.
     /// </summary>
     Architecture GetArchitecture(string filePath);
+
+    /// <summary>
+    /// Determines whether the assembly at <paramref name="filePath"/> is a Microsoft.Testing.Platform (MTP)
+    /// application, i.e. it is marked with
+    /// <c>[assembly: AssemblyMetadata("Microsoft.Testing.Platform.Application", "true")]</c>.
+    /// </summary>
+    bool IsMicrosoftTestingPlatformApp(string filePath);
 }

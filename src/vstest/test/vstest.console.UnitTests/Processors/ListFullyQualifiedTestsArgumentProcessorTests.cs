@@ -95,8 +95,8 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnListFullyQualifiedTestsArgumentProcessorCapabilities()
     {
-        var processor = new ListTestsArgumentProcessor();
-        Assert.IsTrue(processor.Metadata.Value is ListTestsArgumentProcessorCapabilities);
+        var processor = new ListFullyQualifiedTestsArgumentProcessor(new TestableRunSettingsProvider());
+        Assert.IsTrue(processor.Metadata.Value is ListFullyQualifiedTestsArgumentProcessorCapabilities);
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     [TestMethod]
     public void GetExecuterShouldReturnListFullyQualifiedTestsArgumentProcessorCapabilities()
     {
-        var processor = new ListFullyQualifiedTestsArgumentProcessor();
+        var processor = new ListFullyQualifiedTestsArgumentProcessor(new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is ListFullyQualifiedTestsArgumentExecutor);
     }
 
