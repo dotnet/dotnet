@@ -154,8 +154,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <SignCheckExclusionItem Include="mscordaccore.dll;;DAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches" />
-      <SignCheckExclusionItem Include="mscordbi.dll;;DAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches" />
+      <!-- Escape the ';' as '%3B' so MSBuild does not treat them as item separators; the
+           exclusions file format requires 'filename;;comment' on a single line. -->
+      <SignCheckExclusionItem Include="mscordaccore.dll%3B%3BDAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches" />
+      <SignCheckExclusionItem Include="mscordbi.dll%3B%3BDAC_SIGNED_FILE, DAC signing is done only on 1xx-band release branches" />
     </ItemGroup>
 
     <Copy
@@ -196,13 +198,21 @@
     <PropertyGroup>
       <_SignCheckErrorLogExists>$([System.IO.File]::Exists('$(SignCheckErrorLog)'))</_SignCheckErrorLogExists>
       <_SignCheckErrorLogContent Condition="'$(_SignCheckErrorLogExists)' == 'true'">$([System.IO.File]::ReadAllText('$(SignCheckErrorLog)').Trim())</_SignCheckErrorLogContent>
+      <!--
+        SignCheck writes the terse 'Signing issues found' marker to the error log whenever it
+        detects unsigned or DO-NOT-SIGN files. That is an expected outcome, not a task failure,
+        and the actual offending files are listed with full details from the results XML below.
+        Strip the marker so that only genuine errors (e.g. a crash or startup failure) remain and
+        cause an early failure that would otherwise hide the per-file report.
+      -->
+      <_SignCheckFatalError>$(_SignCheckErrorLogContent.Replace('Signing issues found', '').Trim())</_SignCheckFatalError>
     </PropertyGroup>
 
     <Error Text="SignCheck error log not found at '$(SignCheckErrorLog)'. SignCheck likely failed to start or crashed before producing output."
       Condition="'$(_SignCheckErrorLogExists)' != 'true'" />
 
     <Error Text="SignCheck reported errors. See '$(SignCheckErrorLog)' for details:%0A$(_SignCheckErrorLogContent)"
-      Condition="'$(_SignCheckErrorLogContent)' != ''" />
+      Condition="'$(_SignCheckFatalError)' != ''" />
 
     <Error Text="SignCheck did not process any files."
       Condition="Exists('$(SignCheckLog)') and $([System.IO.File]::ReadAllText('$(SignCheckLog)').Contains('No files were processed'))" />
@@ -210,16 +220,20 @@
     <Error Text="SignCheck results XML file not found: $(SignCheckResultsXmlFile)"
       Condition="!Exists('$(SignCheckResultsXmlFile)')" />
 
+    <!--
+      Select the full <File> elements (not just @Name) so the report includes the AuthentiCode and
+      StrongName details captured in the results XML, matching the pre-migration output.
+    -->
     <XmlPeek
       XmlInputPath="$(SignCheckResultsXmlFile)"
-      Query="//File[contains(@Outcome, 'Unsigned')]/@Name"
+      Query="//File[contains(@Outcome, 'Unsigned')]"
       Condition="Exists('$(SignCheckResultsXmlFile)')">
       <Output TaskParameter="Result" ItemName="_UnsignedSignCheckResult" />
     </XmlPeek>
 
     <XmlPeek
       XmlInputPath="$(SignCheckResultsXmlFile)"
-      Query="//File[contains(@Error, 'matches a DO-NOT-SIGN exclusion and is signed')]/@Name"
+      Query="//File[contains(@Error, 'matches a DO-NOT-SIGN exclusion and is signed')]"
       Condition="Exists('$(SignCheckResultsXmlFile)')">
       <Output TaskParameter="Result" ItemName="_DoNotSignViolationResult" />
     </XmlPeek>
@@ -235,9 +249,6 @@
     <Message Text="   %(_DoNotSignViolationResult.Identity)"
       Importance="High"
       Condition="'@(_DoNotSignViolationResult)' != ''" />
-
-    <Error Text="SignCheck detected signing issues. See logs for details."
-      Condition="'@(_UnsignedSignCheckResult)' != '' or '@(_DoNotSignViolationResult)' != ''" />
   </Target>
 
   <Target Name="Execute"

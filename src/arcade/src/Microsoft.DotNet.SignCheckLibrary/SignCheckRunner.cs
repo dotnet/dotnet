@@ -70,7 +70,7 @@ namespace Microsoft.SignCheck
         {
             Options = options;
 
-            Log = new Log(options.LogFile, options.ErrorLogFile, options.ResultsXmlFile, options.Verbosity);
+            Log = new Log(options.LogFile, options.ErrorLogFile, options.ResultsXmlFile, options.Verbosity, options.ConsoleOutput);
 
             if (Options.FileStatus != null && Options.FileStatus.Count() > 0)
             {

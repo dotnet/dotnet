@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.SignCheck.Logging;
 using Microsoft.SignCheck.Verification.BurnBundle;
 
@@ -22,7 +23,10 @@ namespace Microsoft.SignCheck.Verification
             // Let the base class take care of verifying the AuthentiCode/StrongName
             SignatureVerificationResult svr = base.VerifySignature(path, parent, virtualPath);
 
-            if (VerifyRecursive)
+            // Burn bundle payloads are packed in CAB containers, which can only be extracted using the
+            // native cabinet.dll that ships with Windows. On other platforms we skip recursive verification;
+            // the containing executable's Authenticode signature is still verified above.
+            if (VerifyRecursive && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 if (PEHeader.ImageSectionHeaders.Select(s => s.SectionName).Contains(".wixburn"))
                 {

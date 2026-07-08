@@ -28,6 +28,11 @@ Newtonsoft.Json.dll;; IGNORE-STRONG-NAME
 Spectre.Console.dll;; IGNORE-STRONG-NAME
 *.mibc;; IGNORE-STRONG-NAME, .mibc files are not strong-named
 
+;; Source-build only public-signs its outputs, so binaries inside the source-built
+;; intermediate/SDK tarballs carry a valid public key but a placeholder strong-name signature.
+Private.SourceBuilt.Artifacts.*.tar.gz*;; IGNORE-STRONG-NAME, source-build intermediate artifacts are public-signed only
+dotnet-sdk-*-centos.*-x64.tar.gz*;; IGNORE-STRONG-NAME, source-built SDK is public-signed only
+
 ;; ## Not Unpacked ##
 dotnet-source-*.tar.gz;; DO-NOT-UNPACK
 
