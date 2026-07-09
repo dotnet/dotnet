@@ -28,6 +28,11 @@ public static class V8jsAttributes
     public const string AttributeV8jsHeapSpaceName = "v8js.heap.space.name";
 
     /// <summary>
+    /// The type of resource keeping the event loop active.
+    /// </summary>
+    public const string AttributeV8jsResourceType = "v8js.resource.type";
+
+    /// <summary>
     /// The type of garbage collection.
     /// </summary>
     public static class V8jsGcTypeValues
@@ -82,5 +87,36 @@ public static class V8jsAttributes
         /// Large object memory space.
         /// </summary>
         public const string LargeObjectSpace = "large_object_space";
+    }
+
+    /// <summary>
+    /// The type of resource keeping the event loop active.
+    /// </summary>
+    public static class V8jsResourceTypeValues
+    {
+        /// <summary>
+        /// Active <c>setImmediate</c> callbacks.
+        /// </summary>
+        public const string Immediate = "Immediate";
+
+        /// <summary>
+        /// Active TCP Servers.
+        /// </summary>
+        public const string Tcpserverwrap = "TCPServerWrap";
+
+        /// <summary>
+        /// Active TCP connections.
+        /// </summary>
+        public const string Tcpwrap = "TCPWrap";
+
+        /// <summary>
+        /// Active <c>setTimeout</c> or <c>setInterval</c> timers.
+        /// </summary>
+        public const string Timeout = "Timeout";
+
+        /// <summary>
+        /// Active Terminal I/O (stdin/stdout).
+        /// </summary>
+        public const string Ttywrap = "TTYWrap";
     }
 }

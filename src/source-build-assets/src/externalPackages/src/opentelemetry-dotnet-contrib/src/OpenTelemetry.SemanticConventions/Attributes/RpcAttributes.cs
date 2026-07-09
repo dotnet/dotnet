@@ -57,9 +57,9 @@ public static class RpcAttributes
     public const string AttributeRpcJsonrpcErrorCode = "rpc.jsonrpc.error_code";
 
     /// <summary>
-    /// Deprecated, use span status description or <c>error.message</c> attribute on other signals.
+    /// Deprecated, use the span status description when reporting JSON-RPC spans.
     /// </summary>
-    [Obsolete("Use the span status description or <c>error.message</c> attribute on other signals.")]
+    [Obsolete("Use the span status description when reporting JSON-RPC spans.")]
     public const string AttributeRpcJsonrpcErrorMessage = "rpc.jsonrpc.error_message";
 
     /// <summary>
@@ -77,6 +77,7 @@ public static class RpcAttributes
     /// <summary>
     /// Compressed size of the message in bytes.
     /// </summary>
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeRpcMessageCompressedSize = "rpc.message.compressed_size";
 
     /// <summary>
@@ -85,16 +86,19 @@ public static class RpcAttributes
     /// <remarks>
     /// This way we guarantee that the values will be consistent between different implementations.
     /// </remarks>
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeRpcMessageId = "rpc.message.id";
 
     /// <summary>
     /// Whether this is a received or sent message.
     /// </summary>
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeRpcMessageType = "rpc.message.type";
 
     /// <summary>
     /// Uncompressed size of the message in bytes.
     /// </summary>
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeRpcMessageUncompressedSize = "rpc.message.uncompressed_size";
 
     /// <summary>
@@ -367,6 +371,7 @@ public static class RpcAttributes
     /// <summary>
     /// Whether this is a received or sent message.
     /// </summary>
+    [Obsolete("Deprecated, no replacement at this time.")]
     public static class RpcMessageTypeValues
     {
         /// <summary>

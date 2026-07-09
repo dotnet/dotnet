@@ -98,7 +98,12 @@ internal class AWSXRaySamplerClient : IDisposable
                 .Deserialize<GetSamplingTargetsResponse>(responseJson);
 #endif
 
-            return getSamplingTargetsResponse;
+            return getSamplingTargetsResponse == null
+                ? null
+                : new GetSamplingTargetsResponse(
+                    getSamplingTargetsResponse.LastRuleModification,
+                    getSamplingTargetsResponse.SamplingTargetDocuments,
+                    getSamplingTargetsResponse.UnprocessedStatistics);
         }
         catch (Exception ex)
         {

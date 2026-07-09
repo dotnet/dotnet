@@ -21,10 +21,9 @@ function ResolveProjectForTag {
   }
 
   $tagPrefix = $match.Groups[1].Value
-  $version = $match.Groups[2].Value
 
   # Step 1: Look for a .proj file in build/Projects with a matching MinVerTagPrefix
-  $buildProjects = @(Get-ChildItem -Path build/Projects/*.proj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select Path)
+  $buildProjects = @(Get-ChildItem -Path build/Projects/*.proj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select-Object Path)
 
   if ($buildProjects.Length -gt 1)
   {
@@ -40,7 +39,7 @@ function ResolveProjectForTag {
   }
 
   # Step 2: If no .proj file found use component build for the csproj found matching MinVerTagPrefix
-  $projects = @(Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select Path)
+  $projects = @(Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select-Object Path)
 
   if ($projects.Length -gt 1)
   {
@@ -117,7 +116,7 @@ function FindComponentOwners {
 
   $minVerTagPrefix = $match.Groups[1].Value
 
-  $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$minVerTagPrefix</MinVerTagPrefix>" -List | Select Path | Split-Path -Parent
+  $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$minVerTagPrefix</MinVerTagPrefix>" -List | Select-Object Path | Split-Path -Parent
 
   $componentOwnersContent = Get-Content '.github/component_owners.yml' -Raw
 
@@ -128,11 +127,11 @@ function FindComponentOwners {
     $match = [regex]::Match($componentOwnersContent, "src\/$projectName\/:([\w\W\s]*?)(src|test)")
     if ($match.Success -eq $true)
     {
-      $matches = [regex]::Matches($match.Groups[1].Value, "-\s*(.*)")
-      foreach ($match in $matches)
+      $ownerMatches = [regex]::Matches($match.Groups[1].Value, "-\s*(.*)")
+      foreach ($match in $ownerMatches)
       {
         $owner = $match.Groups[1].Value
-        $_ = $componentOwners.Value.Add($owner.Trim())
+        [void]$componentOwners.Value.Add($owner.Trim())
       }
     }
   }

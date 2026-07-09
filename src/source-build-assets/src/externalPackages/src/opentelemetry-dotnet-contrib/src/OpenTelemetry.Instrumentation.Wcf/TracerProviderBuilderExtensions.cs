@@ -43,6 +43,6 @@ public static class TracerProviderBuilderExtensions
         Instrumentation.Wcf.Implementation.AspNetParentSpanCorrector.Register();
 #endif
 
-        return builder.AddSource(WcfInstrumentationActivitySource.ActivitySourceName);
+        return builder.AddSource(WcfInstrumentationActivitySource.ActivitySource.Name);
     }
 }

@@ -9,7 +9,7 @@
     <!-- Tweak style rules for Geneva: Allow underscores in constant names and allow regions inside code blocks -->
     <NoWarn>$(NoWarn);SA1123;SA1310</NoWarn>
     <MinVerTagPrefix>Exporter.Geneva-</MinVerTagPrefix>
-    <PackageValidationBaselineVersion>1.15.1</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.15.2</PackageValidationBaselineVersion>
     <AssemblyIsCLSCompliant>false</AssemblyIsCLSCompliant>
   </PropertyGroup>
 

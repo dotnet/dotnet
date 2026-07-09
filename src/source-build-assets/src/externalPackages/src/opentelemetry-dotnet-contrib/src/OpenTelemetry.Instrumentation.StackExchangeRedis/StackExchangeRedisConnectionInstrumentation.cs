@@ -3,7 +3,6 @@
 
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Reflection;
 using OpenTelemetry.Instrumentation.StackExchangeRedis.Implementation;
 using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
@@ -18,12 +17,17 @@ namespace OpenTelemetry.Instrumentation.StackExchangeRedis;
 internal sealed class StackExchangeRedisConnectionInstrumentation : IDisposable
 {
     internal const string RedisDatabaseIndexKeyName = "db.redis.database_index";
-    internal static readonly Assembly Assembly = typeof(StackExchangeRedisConnectionInstrumentation).Assembly;
-#pragma warning disable IDE0370 // Suppression is unnecessary
-    internal static readonly string ActivitySourceName = Assembly.GetName().Name!;
-#pragma warning restore IDE0370 // Suppression is unnecessary
-    internal static readonly string ActivityName = ActivitySourceName + ".Execute";
-    internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Assembly.GetPackageVersion());
+
+    internal static readonly Version SemanticConventionsVersion = new(1, 23, 0);
+    internal static readonly ActivitySource ActivitySource = ActivitySourceFactory.Create<StackExchangeRedisConnectionInstrumentation>(SemanticConventionsVersion);
+
+    internal static readonly Version SemanticConventionsVersionNew = new(1, 42, 0);
+    internal static readonly ActivitySource ActivitySourceNew = ActivitySourceFactory.Create<StackExchangeRedisConnectionInstrumentation>(SemanticConventionsVersionNew);
+
+    internal static readonly ActivitySource ActivitySourceBoth = ActivitySourceFactory.Create<StackExchangeRedisConnectionInstrumentation>(null);
+
+    internal static readonly string ActivityName = $"{ActivitySource.Name}.Execute";
+
     internal static readonly IEnumerable<KeyValuePair<string, object?>> OldCreationTags =
     [
         new(SemanticConventions.AttributeDbSystem, "redis")
@@ -32,6 +36,12 @@ internal sealed class StackExchangeRedisConnectionInstrumentation : IDisposable
     internal static readonly IEnumerable<KeyValuePair<string, object?>> NewCreationTags =
     [
         new(SemanticConventions.AttributeDbSystemName, "redis")
+    ];
+
+    internal static readonly IEnumerable<KeyValuePair<string, object?>> BothCreationTags =
+    [
+        new(SemanticConventions.AttributeDbSystem, "redis"),
+        new(SemanticConventions.AttributeDbSystemName, "redis"),
     ];
 
     internal readonly ConcurrentDictionary<(ActivityTraceId TraceId, ActivitySpanId SpanId), (Activity Activity, ProfilingSession Session)> Cache
@@ -116,15 +126,18 @@ internal sealed class StackExchangeRedisConnectionInstrumentation : IDisposable
         foreach (var entry in this.Cache)
         {
             var parent = entry.Value.Activity;
-            if (parent.Duration == TimeSpan.Zero)
+            var parentCompleted = parent.Duration != TimeSpan.Zero;
+
+            if (this.options.EnableEarlyCommandDrain || parentCompleted)
             {
-                // Activity is still running, don't drain.
-                continue;
+                var session = entry.Value.Session;
+                RedisProfilerEntryToActivityConverter.DrainSession(parent, session.FinishProfiling(), this.options);
             }
 
-            var session = entry.Value.Session;
-            RedisProfilerEntryToActivityConverter.DrainSession(parent, session.FinishProfiling(), this.options);
-            this.Cache.TryRemove((entry.Key.TraceId, entry.Key.SpanId), out _);
+            if (parentCompleted)
+            {
+                this.Cache.TryRemove((entry.Key.TraceId, entry.Key.SpanId), out _);
+            }
         }
     }
 

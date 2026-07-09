@@ -30,6 +30,11 @@ public static class GenAiAttributes
     public const string AttributeGenAiAgentName = "gen_ai.agent.name";
 
     /// <summary>
+    /// The version of the GenAI agent.
+    /// </summary>
+    public const string AttributeGenAiAgentVersion = "gen_ai.agent.version";
+
+    /// <summary>
     /// Deprecated, use Event API to report completions contents.
     /// </summary>
     [Obsolete("Removed, no replacement at this time.")]
@@ -251,6 +256,11 @@ public static class GenAiAttributes
     public const string AttributeGenAiRequestStopSequences = "gen_ai.request.stop_sequences";
 
     /// <summary>
+    /// Indicates whether the GenAI request was made in streaming mode.
+    /// </summary>
+    public const string AttributeGenAiRequestStream = "gen_ai.request.stream";
+
+    /// <summary>
     /// The temperature setting for the GenAI request.
     /// </summary>
     public const string AttributeGenAiRequestTemperature = "gen_ai.request.temperature";
@@ -279,6 +289,35 @@ public static class GenAiAttributes
     /// The name of the model that generated the response.
     /// </summary>
     public const string AttributeGenAiResponseModel = "gen_ai.response.model";
+
+    /// <summary>
+    /// Time to first chunk in a streaming response, measured from request issuance, in seconds. The value is measured from when the client issues the generation request to when the first chunk is received in the response stream.
+    /// </summary>
+    public const string AttributeGenAiResponseTimeToFirstChunk = "gen_ai.response.time_to_first_chunk";
+
+    /// <summary>
+    /// The documents retrieved.
+    /// </summary>
+    /// <remarks>
+    /// Instrumentations MUST follow <a href="/docs/gen-ai/gen-ai-retrieval-documents.json">Retrieval documents JSON schema</a>.
+    /// When the attribute is recorded on events, it MUST be recorded in structured
+    /// form. When recorded on spans, it MAY be recorded as a JSON string if structured
+    /// format is not supported and SHOULD be recorded in structured form otherwise.
+    /// <p>
+    /// Each document object SHOULD contain at least the following properties:
+    /// <c>id</c> (string): A unique identifier for the document, <c>score</c> (double): The relevance score of the document.
+    /// </remarks>
+    public const string AttributeGenAiRetrievalDocuments = "gen_ai.retrieval.documents";
+
+    /// <summary>
+    /// The query text used for retrieval.
+    /// </summary>
+    /// <remarks>
+    /// <blockquote>
+    /// [!Warning]
+    /// This attribute may contain sensitive information.</blockquote>
+    /// </remarks>
+    public const string AttributeGenAiRetrievalQueryText = "gen_ai.retrieval.query.text";
 
     /// <summary>
     /// Deprecated, use <c>gen_ai.provider.name</c> instead.
@@ -352,18 +391,18 @@ public static class GenAiAttributes
     public const string AttributeGenAiToolCallResult = "gen_ai.tool.call.result";
 
     /// <summary>
-    /// The list of source system tool definitions available to the GenAI agent or model.
+    /// The list of tool definitions available to the GenAI agent or model.
     /// </summary>
     /// <remarks>
-    /// The value of this attribute matches source system tool definition format.
+    /// Instrumentations MUST follow <a href="/docs/gen-ai/gen-ai-tool-definitions.json">Tool Definitions JSON Schema</a>.
     /// <p>
-    /// It's expected to be an array of objects where each object represents a tool definition. In case a serialized string is available
-    /// to the instrumentation, the instrumentation SHOULD do the best effort to
-    /// deserialize it to an array. When recorded on spans, it MAY be recorded as a JSON string if structured format is not supported and SHOULD be recorded in structured form otherwise.
+    /// When the attribute is recorded on events, it MUST be recorded in structured
+    /// form. When recorded on spans, it MAY be recorded as a JSON string if structured
+    /// format is not supported and SHOULD be recorded in structured form otherwise.
     /// <p>
     /// Since this attribute could be large, it's NOT RECOMMENDED to populate
-    /// it by default. Instrumentations MAY provide a way to enable
-    /// populating this attribute.
+    /// non-required properties by default. Instrumentations MAY provide a way
+    /// to enable populating optional properties.
     /// </remarks>
     public const string AttributeGenAiToolDefinitions = "gen_ai.tool.definitions";
 
@@ -390,6 +429,22 @@ public static class GenAiAttributes
     public const string AttributeGenAiToolType = "gen_ai.tool.type";
 
     /// <summary>
+    /// The number of input tokens written to a provider-managed cache.
+    /// </summary>
+    /// <remarks>
+    /// The value SHOULD be included in <c>gen_ai.usage.input_tokens</c>.
+    /// </remarks>
+    public const string AttributeGenAiUsageCacheCreationInputTokens = "gen_ai.usage.cache_creation.input_tokens";
+
+    /// <summary>
+    /// The number of input tokens served from a provider-managed cache.
+    /// </summary>
+    /// <remarks>
+    /// The value SHOULD be included in <c>gen_ai.usage.input_tokens</c>.
+    /// </remarks>
+    public const string AttributeGenAiUsageCacheReadInputTokens = "gen_ai.usage.cache_read.input_tokens";
+
+    /// <summary>
     /// Deprecated, use <c>gen_ai.usage.output_tokens</c> instead.
     /// </summary>
     [Obsolete("Replaced by <c>gen_ai.usage.output_tokens</c>.")]
@@ -398,6 +453,12 @@ public static class GenAiAttributes
     /// <summary>
     /// The number of tokens used in the GenAI input (prompt).
     /// </summary>
+    /// <remarks>
+    /// This value SHOULD include all types of input tokens, including cached tokens.
+    /// Instrumentations SHOULD make a best effort to populate this value, using a total
+    /// provided by the provider when available or, depending on the provider API,
+    /// by summing different token types parsed from the provider output.
+    /// </remarks>
     public const string AttributeGenAiUsageInputTokens = "gen_ai.usage.input_tokens";
 
     /// <summary>
@@ -410,6 +471,22 @@ public static class GenAiAttributes
     /// </summary>
     [Obsolete("Replaced by <c>gen_ai.usage.input_tokens</c>.")]
     public const string AttributeGenAiUsagePromptTokens = "gen_ai.usage.prompt_tokens";
+
+    /// <summary>
+    /// The number of output tokens used for reasoning (e.g. chain-of-thought, extended thinking).
+    /// </summary>
+    /// <remarks>
+    /// The value SHOULD be included in <c>gen_ai.usage.output_tokens</c>.
+    /// </remarks>
+    public const string AttributeGenAiUsageReasoningOutputTokens = "gen_ai.usage.reasoning.output_tokens";
+
+    /// <summary>
+    /// Human-readable name of the GenAI workflow provided by the application.
+    /// </summary>
+    /// <remarks>
+    /// This attribute can be populated in different frameworks eg: name of the first chain in LangChain OR name of the crew in CrewAI.
+    /// </remarks>
+    public const string AttributeGenAiWorkflowName = "gen_ai.workflow.name";
 
     /// <summary>
     /// Deprecated, use <c>gen_ai.output.type</c>.
@@ -476,6 +553,11 @@ public static class GenAiAttributes
         public const string Embeddings = "embeddings";
 
         /// <summary>
+        /// Retrieval operation such as <a href="https://platform.openai.com/docs/api-reference/vector-stores/search">OpenAI Search Vector Store API</a>.
+        /// </summary>
+        public const string Retrieval = "retrieval";
+
+        /// <summary>
         /// Create GenAI agent.
         /// </summary>
         public const string CreateAgent = "create_agent";
@@ -489,6 +571,11 @@ public static class GenAiAttributes
         /// Execute a tool.
         /// </summary>
         public const string ExecuteTool = "execute_tool";
+
+        /// <summary>
+        /// Invoke GenAI workflow.
+        /// </summary>
+        public const string InvokeWorkflow = "invoke_workflow";
     }
 
     /// <summary>
@@ -558,7 +645,7 @@ public static class GenAiAttributes
         public const string AzureAiInference = "azure.ai.inference";
 
         /// <summary>
-        /// <a href="https://azure.microsoft.com/products/ai-services/openai-service/">Azure OpenAI</a>.
+        /// <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/overview">Azure OpenAI</a>.
         /// </summary>
         public const string AzureAiOpenai = "azure.ai.openai";
 

@@ -52,6 +52,9 @@ public static class CicdAttributes
     /// <summary>
     /// The unique identifier of a task run within a pipeline.
     /// </summary>
+    /// <remarks>
+    /// For a given pipeline run and task, the <c>cicd.pipeline.task.run.id</c> MUST be unique within that run. For the same task across different runs of the same pipeline, the <c>cicd.pipeline.task.run.id</c> MAY remain the same, enabling correlation of <c>cicd.pipeline.task.run.result</c> values across multiple pipeline runs.
+    /// </remarks>
     public const string AttributeCicdPipelineTaskRunId = "cicd.pipeline.task.run.id";
 
     /// <summary>

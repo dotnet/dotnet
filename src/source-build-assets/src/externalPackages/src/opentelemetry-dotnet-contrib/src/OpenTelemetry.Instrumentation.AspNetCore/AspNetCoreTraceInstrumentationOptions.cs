@@ -115,7 +115,7 @@ public class AspNetCoreTraceInstrumentationOptions
     /// Gets or sets a value indicating whether RPC attributes are added to an Activity when using Grpc.AspNetCore.
     /// </summary>
     /// <remarks>
-    /// https://github.com/open-telemetry/semantic-conventions/blob/main/docs/rpc/rpc-spans.md.
+    /// https://github.com/open-telemetry/semantic-conventions/blob/v1.41.0/docs/rpc/rpc-spans.md.
     /// </remarks>
     internal bool EnableGrpcAspNetCoreSupport { get; set; }
 
