@@ -121,5 +121,16 @@ namespace SignCheckTask
             get;
             set;
         }
+
+        /// <summary>
+        /// When <see langword="true"/> (the default), SignCheck writes its per-file results to the console.
+        /// Hosts that only consume the log and results files (e.g. the MSBuild task) can set this to
+        /// <see langword="false"/> to avoid flooding the build output with every processed file.
+        /// </summary>
+        public bool ConsoleOutput
+        {
+            get;
+            set;
+        } = true;
     }
 }

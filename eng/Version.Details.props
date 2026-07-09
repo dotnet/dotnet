@@ -10,6 +10,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26270.133</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.26354.104</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftDotNetSignCheckTaskPackageVersion>10.0.0-beta.26354.104</MicrosoftDotNetSignCheckTaskPackageVersion>
     <MicrosoftNETSdkPackageVersion>10.0.110-servicing.26354.104</MicrosoftNETSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.10</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>10.0.10-servicing.26354.104</MicrosoftNETCorePlatformsPackageVersion>
@@ -24,5 +25,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
+    <MicrosoftDotNetSignCheckTaskVersion>$(MicrosoftDotNetSignCheckTaskPackageVersion)</MicrosoftDotNetSignCheckTaskVersion>
   </PropertyGroup>
 </Project>

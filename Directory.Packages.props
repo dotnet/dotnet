@@ -11,6 +11,7 @@
     <!-- Arcade dependencies -->
     <PackageVersion Include="Microsoft.DotNet.Build.Manifest" Version="$(MicrosoftDotNetBuildManifestVersion)" />
     <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersVersion)" />
+    <PackageVersion Include="Microsoft.DotNet.SignCheckTask" Version="$(MicrosoftDotNetSignCheckTaskVersion)" />
     <!-- Arcade-services dependencies -->
     <PackageVersion Include="Microsoft.DotNet.DarcLib" Version="$(MicrosoftDotNetDarcLibVersion)" />
     <!-- Command-line-api dependencies -->

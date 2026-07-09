@@ -4,10 +4,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.SignCheck.Logging;
-#if NETFRAMEWORK
-using Microsoft.Tools.WindowsInstallerXml;
-#endif
+using Microsoft.SignCheck.Verification.BurnBundle;
 
 namespace Microsoft.SignCheck.Verification
 {
@@ -26,55 +25,50 @@ namespace Microsoft.SignCheck.Verification
 
             if (VerifyRecursive)
             {
-#if NETFRAMEWORK
                 if (PEHeader.ImageSectionHeaders.Select(s => s.SectionName).Contains(".wixburn"))
                 {
                     Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagSectionHeader, ".wixburn");
                     Log.WriteMessage(LogVerbosity.Detailed, SignCheckResources.WixBundle, svr.FullPath);
-                    Unbinder unbinder = null;
 
-                    try
+                    // Burn bundle payloads are packed in CAB containers, which can only be extracted using
+                    // the native cabinet.dll that ships with Windows. On other platforms, skip inner-container
+                    // verification; the containing executable's Authenticode signature is still verified above,
+                    // and the payloads are verified by the Windows leg of signing validation.
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, svr.TempPath);
-                        unbinder = new Unbinder();
-                        unbinder.Message += UnbinderEventHandler;
-                        Output o = unbinder.Unbind(svr.FullPath, OutputType.Bundle, svr.TempPath);
-
-                        if (Directory.Exists(svr.TempPath))
+                        Log.WriteMessage(LogVerbosity.Detailed,
+                            $"Skipping Burn bundle container verification for '{svr.FullPath}' because CAB extraction requires Windows.");
+                    }
+                    else
+                    {
+                        try
                         {
-                            foreach (string file in Directory.EnumerateFiles(svr.TempPath, "*.*", SearchOption.AllDirectories))
+                            Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, svr.TempPath);
+
+                            if (BurnReader.ExtractContainers(svr.FullPath, PEHeader, svr.TempPath))
                             {
-                                var payloadPath = Path.Combine(svr.VirtualPath, Path.GetFileName(file));
-                                SignatureVerificationResult bundleEntryResult = VerifyFile(Path.GetFullPath(file), svr.Filename, payloadPath, Path.GetFileName(file));
-                                svr.NestedResults.Add(bundleEntryResult);
+                                foreach (string file in Directory.EnumerateFiles(svr.TempPath, "*.*", SearchOption.AllDirectories))
+                                {
+                                    var payloadPath = Path.Combine(svr.VirtualPath, Path.GetFileName(file));
+                                    SignatureVerificationResult bundleEntryResult = VerifyFile(Path.GetFullPath(file), svr.Filename, payloadPath, Path.GetFileName(file));
+                                    svr.NestedResults.Add(bundleEntryResult);
+                                }
                             }
                         }
-
-                        Directory.Delete(svr.TempPath, recursive: true);
-                    }
-                    finally
-                    {
-                        unbinder.DeleteTempFiles();
+                        finally
+                        {
+                            if (Directory.Exists(svr.TempPath))
+                            {
+                                try { Directory.Delete(svr.TempPath, recursive: true); } catch { }
+                            }
+                        }
                     }
                 }
-#else
-                Log.WriteMessage(LogVerbosity.Normal, $"Unable to verify contents of '{svr.FullPath}' on .NET Core.");
-#endif
             }
 
             // TODO: Check for SFXCAB, IronMan, etc.
 
             return svr;
         }
-
-        /// <summary>
-        /// Event handler for WiX Burn to extract a bundle.
-        /// </summary>
-#if NETFRAMEWORK
-        private void UnbinderEventHandler(object sender, MessageEventArgs e)
-        {
-            Log.WriteMessage(LogVerbosity.Detailed, String.Format("{0}|{1}|{2}|{3}", e.Id, e.Level, e.ResourceName, e.SourceLineNumbers));
-        }
-#endif
     }
 }
