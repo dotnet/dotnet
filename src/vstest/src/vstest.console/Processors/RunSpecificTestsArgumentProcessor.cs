@@ -32,11 +32,13 @@ internal class RunSpecificTestsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly ITestRequestManager? _testRequestManager;
 
-    public RunSpecificTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
+    public RunSpecificTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, ITestRequestManager? testRequestManager = null)
     {
         _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
+        _testRequestManager = testRequestManager;
     }
 
     public Lazy<IArgumentProcessorCapabilities> Metadata
@@ -49,7 +51,7 @@ internal class RunSpecificTestsArgumentProcessor : IArgumentProcessor
             new RunSpecificTestsArgumentExecutor(
                 _commandLineOptions,
                 _runSettingsProvider,
-                TestRequestManager.Instance,
+                _testRequestManager ?? TestRequestManager.Instance,
                 new ArtifactProcessingManager(_commandLineOptions.TestSessionCorrelationId),
                 ConsoleOutput.Instance));
 

@@ -1171,16 +1171,6 @@
         <target state="translated">Zeitüberschreitung beim Warten auf die Anforderungshandlerverbindung nach {0} Sekunden.</target>
         <note />
       </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Zeitüberschreitung beim Warten auf das Starten der Testsitzung nach {0} Sekunden.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Zeitüberschreitung beim Warten auf das Stoppen der Testsitzung nach {0} Sekunden.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
         <target state="translated">Fehler beim Hosten des Kommunikationskanals.</target>

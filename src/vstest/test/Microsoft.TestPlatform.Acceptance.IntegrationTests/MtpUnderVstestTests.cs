@@ -96,4 +96,30 @@ public class MtpUnderVstestTests : AcceptanceTestBase
         var trxPath = Path.Combine(TempDirectory.Path, trxFileName);
         Assert.IsTrue(File.Exists(trxPath), "Expected a single TRX to be written for the mixed run at '{0}'.", trxPath);
     }
+
+    [TestMethod]
+    // Blame runs the datacollector out of process; in the classic path testhost dials into it and reports
+    // which test is currently running so collectors can track it. An MTP app has no testhost, so
+    // vstest.console forwards those per-test-case started/ended notifications itself (see
+    // MtpDataCollectionForwarder). Before that forwarding existed the datacollector waited on an event
+    // channel nobody connected to and blocked until its connection timeout. This guards that enabling
+    // /Blame on an MTP app connects the datacollector and completes the run with the expected results.
+    [TestMatrix(testHost: Target.Net)]
+    public void RunMtpApplicationWithBlameCompletesRun(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var arguments = PrepareArguments(
+            GetAssetFullPath(MtpApp),
+            testAdapterPath: null,
+            runSettings: string.Empty,
+            FrameworkArgValue,
+            runnerInfo.InIsolationValue,
+            resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, " /Blame");
+
+        InvokeVsTest(arguments);
+
+        ValidateSummaryStatus(2, 1, 1);
+    }
 }

@@ -1171,16 +1171,6 @@
         <target state="translated">L’attente de la connexion du gestionnaire de demandes a expiré après {0} secondes.</target>
         <note />
       </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">L’attente du démarrage de la session de test a expiré après {0} secondes.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">L’attente d’arrêt de la session de test a expiré après {0} secondes.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
         <target state="translated">Erreur lors de l’hébergement du canal de communication</target>

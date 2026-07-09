@@ -34,11 +34,13 @@ internal class ListFullyQualifiedTestsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly ITestRequestManager? _testRequestManager;
 
-    public ListFullyQualifiedTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
+    public ListFullyQualifiedTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, ITestRequestManager? testRequestManager = null)
     {
         _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
+        _testRequestManager = testRequestManager;
     }
 
     /// <summary>
@@ -57,7 +59,7 @@ internal class ListFullyQualifiedTestsArgumentProcessor : IArgumentProcessor
             new ListFullyQualifiedTestsArgumentExecutor(
                 _commandLineOptions,
                 _runSettingsProvider,
-                TestRequestManager.Instance));
+                _testRequestManager ?? TestRequestManager.Instance));
 
         set => _executor = value;
     }

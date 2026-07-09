@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
+using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
@@ -65,6 +66,9 @@ internal class Executor
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly IRunSettingsHelper _runSettingsHelper;
     private readonly CommandLineOptions _commandLineOptions;
+    // Left null in production so the argument processors resolve TestRequestManager.Instance lazily
+    // (only when a run/discovery command actually executes); tests inject a specific instance.
+    private readonly ITestRequestManager? _testRequestManager;
     private bool _showHelp;
 
     /// <summary>
@@ -104,7 +108,7 @@ internal class Executor
     {
     }
 
-    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions)
+    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions, ITestRequestManager? testRequestManager = null)
     {
         DebuggerBreakpoint.AttachVisualStudioDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_DEBUG_ATTACHVS);
         DebuggerBreakpoint.WaitForNativeDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_NATIVE_DEBUG);
@@ -118,6 +122,7 @@ internal class Executor
         _runSettingsProvider = runSettingsProvider;
         _runSettingsHelper = runSettingsHelper;
         _commandLineOptions = commandLineOptions;
+        _testRequestManager = testRequestManager;
     }
 
     /// <summary>
@@ -239,7 +244,7 @@ internal class Executor
     {
         processors = new List<IArgumentProcessor>();
         int result = 0;
-        var processorFactory = ArgumentProcessorFactory.Create(runSettingsProvider: _runSettingsProvider, runSettingsHelper: _runSettingsHelper, commandLineOptions: _commandLineOptions);
+        var processorFactory = ArgumentProcessorFactory.Create(runSettingsProvider: _runSettingsProvider, runSettingsHelper: _runSettingsHelper, commandLineOptions: _commandLineOptions, testRequestManager: _testRequestManager);
         for (var index = 0; index < args.Length; index++)
         {
             var arg = args[index];

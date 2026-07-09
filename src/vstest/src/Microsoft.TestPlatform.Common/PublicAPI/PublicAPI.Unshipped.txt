@@ -1,2 +1,6 @@
 #nullable enable
 Microsoft.VisualStudio.TestPlatform.Common.Interfaces.ITestDiscovererCapabilities.IsDirectoryBased.get -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyTestSessionManager
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyTestSessionManager.StartSession(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler! eventsHandler, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IRequestData! requestData) -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyTestSessionManager.StopSession(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IRequestData! requestData) -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ITestEngine.GetTestSessionManager(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IRequestData! requestData, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria! testSessionCriteria, System.Collections.Generic.IDictionary<string!, Microsoft.VisualStudio.TestPlatform.ObjectModel.SourceDetail!>! sourceToSourceDetailMap, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IWarningLogger! warningLogger) -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.IProxyTestSessionManager?

@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 
 namespace Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 
@@ -72,32 +71,6 @@ public interface ITestRequestManager : IDisposable
     void ProcessTestRunAttachments(
         TestRunAttachmentsProcessingPayload testRunAttachmentsProcessingPayload,
         ITestRunAttachmentsProcessingEventsHandler testRunAttachmentsProcessingEventsHandler,
-        ProtocolConfig protocolConfig);
-
-    /// <summary>
-    /// Starts a test session.
-    /// </summary>
-    ///
-    /// <param name="payload">The start test session payload.</param>
-    /// <param name="testHostLauncher">The custom test host launcher.</param>
-    /// <param name="eventsHandler">The events handler.</param>
-    /// <param name="protocolConfig">Protocol related information.</param>
-    void StartTestSession(
-        StartTestSessionPayload payload,
-        ITestHostLauncher3? testHostLauncher,
-        ITestSessionEventsHandler eventsHandler,
-        ProtocolConfig protocolConfig);
-
-    /// <summary>
-    /// Stops a test session.
-    /// </summary>
-    ///
-    /// <param name="payload">The stop test session payload.</param>
-    /// <param name="eventsHandler">The events handler.</param>
-    /// <param name="protocolConfig">Protocol related information.</param>
-    void StopTestSession(
-        StopTestSessionPayload payload,
-        ITestSessionEventsHandler eventsHandler,
         ProtocolConfig protocolConfig);
 
     /// <summary>

@@ -3,3 +3,7 @@ const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.Mes
 ~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionTimeoutProcessDidNotStartErrorMessage.get -> string
 ~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionTimeoutProcessExitedErrorMessage.get -> string
 ~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionTimeoutWithDetailsErrorMessage.get -> string
+*REMOVED*const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartTestSession = "TestSession.StartTestSession" -> string!
+*REMOVED*const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StartTestSessionCallback = "TestSession.StartTestSessionCallback" -> string!
+*REMOVED*const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StopTestSession = "TestSession.StopTestSession" -> string!
+*REMOVED*const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.StopTestSessionCallback = "TestSession.StopTestSessionCallback" -> string!

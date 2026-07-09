@@ -37,11 +37,13 @@ internal class ListTestsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly ITestRequestManager? _testRequestManager;
 
-    public ListTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
+    public ListTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, ITestRequestManager? testRequestManager = null)
     {
         _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
+        _testRequestManager = testRequestManager;
     }
 
     /// <summary>
@@ -60,7 +62,7 @@ internal class ListTestsArgumentProcessor : IArgumentProcessor
             new ListTestsArgumentExecutor(
                 _commandLineOptions,
                 _runSettingsProvider,
-                TestRequestManager.Instance));
+                _testRequestManager ?? TestRequestManager.Instance));
 
         set => _executor = value;
     }

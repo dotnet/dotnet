@@ -1171,16 +1171,6 @@ Günlükler için izleme düzeyini aşağıda gösterildiği gibi değiştirin
         <target state="translated">İstek işleyicisi bağlantısını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
         <note />
       </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Test oturumunun başlamasını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Test oturumunun durdurulmasını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
         <target state="translated">İletişim kanalını barındırma hatası.</target>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 using FluentAssertions;
@@ -425,123 +424,6 @@ public class MultiTFM
         }
     }
 
-    public class MultiTFMTestSessions
-    {
-
-        [Test(@"
-            Given two test assemblies that have the same architecture
-            but have different target frameworks.
-
-            When we execute tests
-            and provide runsettings that define the desired target framework.
-
-            Then two testhosts should be started that target the framework chosen by runsettings.
-        ")]
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Specific test needs to be non-static")]
-        public async Task E()
-        {
-            // -- arrange
-            using var fixture = new Fixture();
-
-            var mstest1Dll = new FakeTestDllBuilder()
-                .WithPath(@"X:\fake\mstest1.dll")
-                .WithFramework(KnownFrameworkNames.Net5) // <---
-                .WithArchitecture(Architecture.X64)
-                .WithTestCount(11, 5)
-                .Build();
-
-            var testhost1Process = new FakeProcess(fixture.ErrorAggregator, @"X:\fake\testhost1.exe");
-
-            var runTests1 = new FakeTestHostResponsesBuilder()
-                .VersionCheck(5)
-                .ExecutionInitialize(FakeMessage.NoResponse)
-                .StartTestExecutionWithSources(mstest1Dll.TestResultBatches)
-                .SessionEnd(FakeMessage.NoResponse, afterAction: _ => testhost1Process.Exit())
-                .Build();
-
-            var testhost1 = new FakeTestHostFixtureBuilder(fixture)
-                .WithTestDll(mstest1Dll)
-                .WithProcess(testhost1Process)
-                .WithResponses(runTests1)
-                .Build();
-
-            // --
-
-            var mstest2Dll = new FakeTestDllBuilder()
-                .WithPath(@"X:\fake\mstest2.dll")
-                .WithFramework(KnownFrameworkNames.Net6) // <---
-                .WithArchitecture(Architecture.X64)
-                .WithTestCount(21, 5)
-                .Build();
-
-            var testhost2Process = new FakeProcess(fixture.ErrorAggregator, @"X:\fake\testhost2.exe");
-
-            var runTests2 = new FakeTestHostResponsesBuilder()
-                .VersionCheck(5)
-                .ExecutionInitialize(FakeMessage.NoResponse)
-                .StartTestExecutionWithSources(mstest2Dll.TestResultBatches)
-                .SessionEnd(FakeMessage.NoResponse, _ => testhost2Process.Exit())
-                // We actually do get asked to terminate multiple times. In the second host only.
-                .SessionEnd(FakeMessage.NoResponse)
-                .Build();
-
-            var testhost2 = new FakeTestHostFixtureBuilder(fixture)
-                .WithTestDll(mstest2Dll)
-                .WithProcess(testhost2Process)
-                .WithResponses(runTests2)
-                .Build();
-
-            fixture.AddTestHostFixtures(testhost1, testhost2);
-
-            var testRequestManager = fixture.BuildTestRequestManager();
-
-            mstest1Dll.FrameworkName.Should().NotBe(mstest2Dll.FrameworkName);
-
-            // -- act
-
-            var startTestSessionPayload = new StartTestSessionPayload
-            {
-                // We need to have a parallel run, otherwise we will create just a single proxy,
-                // because 1 is the maximum number of proxies to start for non-parallel run.
-                RunSettings = "<RunSettings><RunConfiguration><MaxCpuCount>0</MaxCpuCount></RunConfiguration></RunSettings>",
-                Sources = new[] { mstest1Dll.Path, mstest2Dll.Path }
-            };
-
-            await testRequestManager.ExecuteWithAbort(tm => tm.StartTestSession(startTestSessionPayload, testHostLauncher: null, fixture.TestSessionEventsHandler, fixture.ProtocolConfig));
-
-            // You need to pass this on, otherwise it will ignore the test session that you just started. This is a by product of being able to start multiple test sessions.
-            var testSessionInfo = fixture.TestSessionEventsHandler.StartTestSessionCompleteEvents.Single()!.TestSessionInfo;
-
-            var testRunRequestPayload = new TestRunRequestPayload
-            {
-                Sources = new List<string> { mstest1Dll.Path, mstest2Dll.Path },
-                RunSettings = $"<RunSettings><RunConfiguration><MaxCpuCount>0</MaxCpuCount></RunConfiguration></RunSettings>",
-                TestSessionInfo = testSessionInfo,
-            };
-
-            await testRequestManager.ExecuteWithAbort(tm => tm.RunTests(testRunRequestPayload, testHostLauncher: null, fixture.TestRunEventsRegistrar, fixture.ProtocolConfig));
-
-            // -- assert
-            fixture.AssertNoErrors();
-            // We figure out the framework for each assembly so there should be no incompatibility warnings
-            fixture.LoggedWarnings.Should().NotContainMatch("Test run detected DLL(s) which would use different framework*");
-
-            fixture.ProcessHelper.Processes.Where(p => p.Started).Should().HaveCount(2);
-            var startWithSources1 = testhost1.FakeCommunicationChannel.ProcessedMessages.Single(m => m.Request.MessageType == MessageType.StartTestExecutionWithSources);
-            var startWithSources1Text = startWithSources1.Request.GetRawMessage();
-            // We sent mstest1.dll.
-            startWithSources1Text.Should().Contain("mstest1.dll");
-            startWithSources1Text.Should().Contain(mstest1Dll.FrameworkName.ToString());
-
-            var startWithSources2 = testhost2.FakeCommunicationChannel.ProcessedMessages.Single(m => m.Request.MessageType == MessageType.StartTestExecutionWithSources);
-            var startWithSources2Text = startWithSources2.Request.GetRawMessage();
-            // We sent mstest2.dll.
-            startWithSources2Text.Should().Contain("mstest2.dll");
-            startWithSources2Text.Should().Contain(mstest2Dll.FrameworkName.ToString());
-
-            fixture.ExecutedTests.Should().HaveCount(mstest1Dll.TestCount + mstest2Dll.TestCount);
-        }
-    }
 }
 
 public class MultiTFMRunAndDiscoveryCompatibilityMode

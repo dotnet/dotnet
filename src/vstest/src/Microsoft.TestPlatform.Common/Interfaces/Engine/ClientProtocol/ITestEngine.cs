@@ -51,27 +51,6 @@ public interface ITestEngine
         IWarningLogger warningLogger);
 
     /// <summary>
-    /// Fetches the TestSessionManager for this engine. This manager would provide all
-    /// functionality required for test session management.
-    /// </summary>
-    ///
-    /// <param name="requestData">
-    /// The request data for providing test session services and data.
-    /// </param>
-    /// <param name="testSessionCriteria">
-    /// Test session criteria of the current test session.
-    /// </param>
-    /// <param name="sourceToSourceDetailMap">Details of every source.</param>
-    /// <param name="warningLogger">Logger of warnings.</param>
-    ///
-    /// <returns>An IProxyTestSessionManager object that can manage test sessions.</returns>
-    IProxyTestSessionManager? GetTestSessionManager(
-        IRequestData requestData,
-        StartTestSessionCriteria testSessionCriteria,
-        IDictionary<string, SourceDetail> sourceToSourceDetailMap,
-        IWarningLogger warningLogger);
-
-    /// <summary>
     /// Fetches the extension manager for this engine. This manager would provide extensibility
     /// features that this engine supports.
     /// </summary>

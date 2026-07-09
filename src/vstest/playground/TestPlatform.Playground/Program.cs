@@ -136,26 +136,21 @@ internal class Program
             CollectMetrics = true,
         };
         var r = new VsTestConsoleWrapper(console, consoleOptions);
-        var sessionHandler = new TestSessionHandler();
-#pragma warning disable CS0618 // Type or member is obsolete
-        //// TestSessions
-        // r.StartTestSession(sources, sourceSettings, sessionHandler);
-#pragma warning restore CS0618 // Type or member is obsolete
         var discoveryHandler = new PlaygroundTestDiscoveryHandler(detailedOutput);
         var sw = Stopwatch.StartNew();
         // Discovery
-        r.DiscoverTests(sources, sourceSettings, options, sessionHandler.TestSessionInfo, discoveryHandler);
+        r.DiscoverTests(sources, sourceSettings, options, testSessionInfo: null, discoveryHandler);
         var discoveryDuration = sw.ElapsedMilliseconds;
         Console.WriteLine($"Discovery done in {discoveryDuration} ms");
         sw.Restart();
         // Run with test cases and custom testhost launcher
-        //r.RunTestsWithCustomTestHost(discoveryHandler.TestCases, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
+        //r.RunTestsWithCustomTestHost(discoveryHandler.TestCases, sourceSettings, options, testSessionInfo: null, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
         //// Run with test cases and without custom testhost launcher
-        r.RunTests(discoveryHandler.TestCases, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput));
+        r.RunTests(discoveryHandler.TestCases, sourceSettings, options, testSessionInfo: null, new TestRunHandler(detailedOutput));
         //// Run with sources and custom testhost launcher and debugging
-        //r.RunTestsWithCustomTestHost(sources, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
+        //r.RunTestsWithCustomTestHost(sources, sourceSettings, options, testSessionInfo: null, new TestRunHandler(detailedOutput), new DebuggerTestHostLauncher());
         //// Run with sources
-        //r.RunTests(sources, sourceSettings, options, sessionHandler.TestSessionInfo, new TestRunHandler(detailedOutput));
+        //r.RunTests(sources, sourceSettings, options, testSessionInfo: null, new TestRunHandler(detailedOutput));
         var rd = sw.ElapsedMilliseconds;
         Console.WriteLine($"Discovery: {discoveryDuration} ms, Run: {rd} ms, Total: {discoveryDuration + rd} ms");
         // Console.WriteLine($"Settings:\n{sourceSettings}");
@@ -312,31 +307,5 @@ internal class Program
         {
             return 1;
         }
-    }
-}
-
-internal class TestSessionHandler : ITestSessionEventsHandler
-{
-    public TestSessionHandler() { }
-    public TestSessionInfo? TestSessionInfo { get; private set; }
-
-    public void HandleLogMessage(TestMessageLevel level, string? message)
-    {
-
-    }
-
-    public void HandleRawMessage(string rawMessage)
-    {
-
-    }
-
-    public void HandleStartTestSessionComplete(StartTestSessionCompleteEventArgs? eventArgs)
-    {
-        TestSessionInfo = eventArgs?.TestSessionInfo;
-    }
-
-    public void HandleStopTestSessionComplete(StopTestSessionCompleteEventArgs? eventArgs)
-    {
-
     }
 }

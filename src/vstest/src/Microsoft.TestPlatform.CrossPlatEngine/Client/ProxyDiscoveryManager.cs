@@ -27,47 +27,16 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 /// </summary>
 public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDiscoveryEventsHandler2
 {
-    private readonly TestSessionInfo? _testSessionInfo;
-    private readonly Func<string, ProxyDiscoveryManager, ProxyOperationManager>? _proxyOperationManagerCreator;
-    private readonly TestSessionPool? _testSessionPool;
     private readonly DiscoveryDataAggregator _discoveryDataAggregator;
     private readonly IFileHelper _fileHelper;
     private readonly IDataSerializer _dataSerializer;
 
-    private ITestRuntimeProvider? _testHostManager;
+    private readonly ITestRuntimeProvider? _testHostManager;
     private bool _isCommunicationEstablished;
-    private ProxyOperationManager? _proxyOperationManager;
+    private readonly ProxyOperationManager? _proxyOperationManager;
     private ITestDiscoveryEventsHandler2? _baseTestDiscoveryEventsHandler;
     private bool _skipDefaultAdapters;
     private string? _previousSource;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProxyDiscoveryManager"/> class.
-    /// </summary>
-    ///
-    /// <param name="testSessionInfo">The test session info.</param>
-    /// <param name="proxyOperationManagerCreator">The proxy operation manager creator.</param>
-    public ProxyDiscoveryManager(
-        TestSessionInfo testSessionInfo,
-        Func<string, ProxyDiscoveryManager, ProxyOperationManager> proxyOperationManagerCreator)
-        : this(testSessionInfo, proxyOperationManagerCreator, new())
-    {
-    }
-
-    internal ProxyDiscoveryManager(
-        TestSessionInfo testSessionInfo,
-        Func<string, ProxyDiscoveryManager, ProxyOperationManager> proxyOperationManagerCreator,
-        DiscoveryDataAggregator discoveryDataAggregator,
-        TestSessionPool? testSessionPool = null)
-    {
-        // Filling in test session info and proxy information.
-        _testSessionInfo = testSessionInfo;
-        _proxyOperationManagerCreator = proxyOperationManagerCreator;
-        _testSessionPool = testSessionPool;
-        _discoveryDataAggregator = discoveryDataAggregator;
-        _dataSerializer = JsonDataSerializer.Instance;
-        _fileHelper = new FileHelper();
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProxyDiscoveryManager"/> class.
@@ -134,13 +103,7 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
         // it's built once.
         var discoverySources = discoveryCriteria.Sources.ToArray();
 
-        if (_proxyOperationManager == null)
-        {
-            TPDebug.Assert(_proxyOperationManagerCreator is not null, "_proxyOperationManagerCreator is null");
-            // Passing only first because that is how the testhost pool is keyed.
-            _proxyOperationManager = _proxyOperationManagerCreator(discoverySources[0], this);
-            _testHostManager = _proxyOperationManager.TestHostManager;
-        }
+        TPDebug.Assert(_proxyOperationManager is not null, "ProxyOperationManager is null.");
 
         _baseTestDiscoveryEventsHandler = eventHandler;
 
@@ -276,23 +239,8 @@ public class ProxyDiscoveryManager : IProxyDiscoveryManager, IBaseProxy, ITestDi
             return;
         }
 
-        // When no test session is being used, we don't share the testhost
-        // between test discovery and test run. The testhost is closed upon
-        // successfully completing the operation it was spawned for.
-        //
-        // In contrast, the new workflow (using test sessions) means we should keep
-        // the testhost alive until explicitly closed by the test session owner, but
-        // only if the testhost is part of a test session (i.e. the proxy operation manager
-        // id is valid), since there is the distinct possibility of test session criteria
-        // changing between spawn and discovery/run, causing a new proxy operation manager
-        // to be spawned on demand instead of dequeuing an incompatible proxy from the pool.
-        if (_testSessionInfo == null || _proxyOperationManager.Id < 0)
-        {
-            _proxyOperationManager.Close();
-            return;
-        }
-
-        (_testSessionPool ?? TestSessionPool.Instance).ReturnProxy(_testSessionInfo, _proxyOperationManager.Id);
+        // The testhost is closed upon successfully completing the operation it was spawned for.
+        _proxyOperationManager.Close();
     }
 
     /// <inheritdoc/>

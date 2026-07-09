@@ -32,16 +32,6 @@
         <target state="translated">Le traitement des pièces jointes de série de tests actif a été abandonné.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">L'opération de démarrage de la session de test a été abandonnée.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">L'opération d'arrêt de la session de test a été abandonnée.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

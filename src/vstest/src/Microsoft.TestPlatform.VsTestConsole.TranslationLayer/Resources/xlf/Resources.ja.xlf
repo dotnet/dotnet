@@ -32,16 +32,6 @@
         <target state="translated">アクティブなテストの実行の添付ファイルの処理が中止されました。</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">テスト セッションの開始操作が中止されました。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">テスト セッションの停止操作が中止されました。</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

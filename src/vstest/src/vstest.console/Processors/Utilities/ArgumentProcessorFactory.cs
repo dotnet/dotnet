@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
+using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -63,13 +64,19 @@ internal class ArgumentProcessorFactory
     /// Defaults to the ambient <see cref="CommandLineOptions.Instance"/> when not provided, so that
     /// callers (and the composition root) can inject an isolated instance instead of sharing static state.
     /// </param>
+    /// <param name="testRequestManager">
+    /// The test request manager that the run/discovery argument processors hand to their executors.
+    /// When not provided the processors fall back to the ambient <see cref="Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers.TestRequestManager.Instance"/>
+    /// lazily, at the point the executor is built, so that commands that never touch it (for example
+    /// <c>--Help</c>) do not force its (relatively heavy) construction.
+    /// </param>
     /// <returns>ArgumentProcessorFactory.</returns>
-    internal static ArgumentProcessorFactory Create(IFeatureFlag? featureFlag = null, IRunSettingsProvider? runSettingsProvider = null, IRunSettingsHelper? runSettingsHelper = null, CommandLineOptions? commandLineOptions = null)
+    internal static ArgumentProcessorFactory Create(IFeatureFlag? featureFlag = null, IRunSettingsProvider? runSettingsProvider = null, IRunSettingsHelper? runSettingsHelper = null, CommandLineOptions? commandLineOptions = null, ITestRequestManager? testRequestManager = null)
     {
         runSettingsProvider ??= RunSettingsManager.Instance;
         runSettingsHelper ??= RunSettingsHelper.Instance;
         commandLineOptions ??= CommandLineOptions.Instance;
-        var defaultArgumentProcessor = GetDefaultArgumentProcessors(runSettingsProvider, runSettingsHelper, commandLineOptions);
+        var defaultArgumentProcessor = GetDefaultArgumentProcessors(runSettingsProvider, runSettingsHelper, commandLineOptions, testRequestManager);
 
         if (!(featureFlag ?? FeatureFlag.Instance).IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING))
         {
@@ -203,17 +210,17 @@ internal class ArgumentProcessorFactory
             .Where(lazyProcessor => lazyProcessor.Metadata.Value.IsSpecialCommand && lazyProcessor.Metadata.Value.AlwaysExecute);
     }
 
-    private static IList<IArgumentProcessor> GetDefaultArgumentProcessors(IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions) => new List<IArgumentProcessor> {
+    private static IList<IArgumentProcessor> GetDefaultArgumentProcessors(IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions, ITestRequestManager? testRequestManager) => new List<IArgumentProcessor> {
         new HelpArgumentProcessor(),
         new TestSourceArgumentProcessor(commandLineOptions),
-        new ListTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
-        new RunTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
-        new RunSpecificTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new ListTestsArgumentProcessor(commandLineOptions, runSettingsProvider, testRequestManager),
+        new RunTestsArgumentProcessor(commandLineOptions, runSettingsProvider, testRequestManager),
+        new RunSpecificTestsArgumentProcessor(commandLineOptions, runSettingsProvider, testRequestManager),
         new TestAdapterPathArgumentProcessor(commandLineOptions, runSettingsProvider),
         new TestAdapterLoadingStrategyArgumentProcessor(commandLineOptions, runSettingsProvider),
         new TestCaseFilterArgumentProcessor(commandLineOptions),
         new ParentProcessIdArgumentProcessor(commandLineOptions),
-        new PortArgumentProcessor(commandLineOptions, runSettingsHelper),
+        new PortArgumentProcessor(commandLineOptions, runSettingsHelper, testRequestManager),
         new RunSettingsArgumentProcessor(commandLineOptions, runSettingsProvider, runSettingsHelper),
         new PlatformArgumentProcessor(commandLineOptions, runSettingsProvider, runSettingsHelper),
         new FrameworkArgumentProcessor(commandLineOptions, runSettingsProvider),
@@ -229,12 +236,12 @@ internal class ArgumentProcessorFactory
         new ResponseFileArgumentProcessor(),
         new EnableBlameArgumentProcessor(runSettingsProvider),
         new AeDebuggerArgumentProcessor(),
-        new UseVsixExtensionsArgumentProcessor(commandLineOptions),
+        new UseVsixExtensionsArgumentProcessor(commandLineOptions, testRequestManager),
         new ListDiscoverersArgumentProcessor(),
         new ListExecutorsArgumentProcessor(),
         new ListLoggersArgumentProcessor(),
         new ListSettingsProvidersArgumentProcessor(),
-        new ListFullyQualifiedTestsArgumentProcessor(commandLineOptions, runSettingsProvider),
+        new ListFullyQualifiedTestsArgumentProcessor(commandLineOptions, runSettingsProvider, testRequestManager),
         new ListTestsTargetPathArgumentProcessor(commandLineOptions),
         new ShowDeprecateDotnetVStestMessageArgumentProcessor(),
         new EnvironmentArgumentProcessor(commandLineOptions, runSettingsProvider)

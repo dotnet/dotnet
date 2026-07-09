@@ -1174,16 +1174,6 @@
         <target state="translated">Se ha agotado el tiempo de espera de la conexión del controlador de solicitudes después de {0} segundos.</target>
         <note />
       </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera de la sesión de prueba de inicio después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera para detener la sesión de prueba después de {0} segundos.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
         <target state="translated">Error al hospedar el canal de comunicación.</target>

@@ -65,7 +65,13 @@
     <ItemGroup>
       <!-- .NET Framework console -->
       <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\win7-x64\**\*.*" SubFolder="netfx" />
-      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\**\*.*" SubFolder="netfx\Extensions\" />
+      <!-- Copy only the runtime provider assembly (and its satellites), NOT the whole build output folder.
+           The provider's build output carries its full dependency closure (Common.dll, ObjectModel.dll, ...),
+           and Common.dll contains SerialTestRunDecorator, an ITestExecutor without a parameterless constructor.
+           If that closure lands in Extensions\, vstest.console discovers the decorator as a rogue executor and
+           instantiating it throws, which tears down the whole executor manager -> "Could not find test executor".
+           The provider's dependencies resolve from the netfx root (copied above) at runtime. -->
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\**\Microsoft.TestPlatform.TestHostRuntimeProvider*" SubFolder="netfx\Extensions\" />
 
       <!-- copy net462, net47, net471, net472, net48 and net481 testhosts -->
       <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />
@@ -95,7 +101,8 @@
 
       <!-- .NET console -->
       <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net" />
-      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\netstandard2.0\**\*.*" SubFolder="net\Extensions\" />
+      <!-- Copy only the runtime provider assembly (see the netfx note above for why the whole folder must not be copied). -->
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\netstandard2.0\**\Microsoft.TestPlatform.TestHostRuntimeProvider*" SubFolder="net\Extensions\" />
 
       <!-- copy testhost -->
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net" />
