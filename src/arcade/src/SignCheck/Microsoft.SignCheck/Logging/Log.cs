@@ -25,11 +25,14 @@ namespace Microsoft.SignCheck.Logging
             private set;
         }
 
-        public Log(string logFile, string errorFile, string resultsFile, LogVerbosity verbosity)
+        public Log(string logFile, string errorFile, string resultsFile, LogVerbosity verbosity, bool consoleOutput = true)
         {
             _loggers = new List<ILogger>();
             Add(new FileLogger(verbosity, logFile, errorFile, resultsFile));
-            Add(new ConsoleLogger(verbosity));
+            if (consoleOutput)
+            {
+                Add(new ConsoleLogger(verbosity));
+            }
             Verbosity = verbosity;
         }
 
