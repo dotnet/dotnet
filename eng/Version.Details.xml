@@ -22,6 +22,10 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>901ca941248413c79832d2fdbd709da0c4386353</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="10.0.0-beta.26270.133">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>96856fd726ffd058fb3dfef0851dbafc7ef3b011</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25407.5">
       <Uri>arcade-services</Uri>
       <Sha>cf3578623981f08c57b1bec18eaacdeaedb479f6</Sha>
