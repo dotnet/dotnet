@@ -136,6 +136,9 @@ namespace SignCheckTask
             options.LogFile = LogFile;
             options.ErrorLogFile = ErrorLogFile;
             options.ResultsXmlFile = ResultsXmlFile;
+            // The task consumes the log and results files directly, so suppress the per-file
+            // console output that would otherwise flood the build log with every processed file.
+            options.ConsoleOutput = false;
 
             List<string> inputFiles = new List<string>();
             if (InputFiles != null)
@@ -181,6 +184,16 @@ namespace SignCheckTask
             
             var sc = new SignCheck(options);
             int result = sc.Run();
+
+            // SignCheck signals signing issues (and internal failures) through a non-zero exit
+            // code without logging an MSBuild error. Surface a real error here so the build fails
+            // meaningfully instead of the generic MSB4181. The detailed per-file report is produced
+            // by the calling project from the results XML.
+            if (result != 0)
+            {
+                Log.LogError("SignCheck reported signing issues. See the SignCheck logs for details.");
+            }
+
             return result == 0;
         }
     }
