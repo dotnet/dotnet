@@ -568,6 +568,7 @@ internal sealed class RunCommandSelector : IDisposable
     /// This reuses the already-loaded project instance for performance.
     /// </summary>
     /// <returns>True if deployment succeeded or was skipped (no target), false if deployment failed</returns>
+    [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Temporary unblock for dotnet/msbuild#14064 (MSBuild build APIs are now [RequiresUnreferencedCode]). dotnet CLI runs MSBuild in-proc (not trimmed). Remove when dotnet/sdk#55225 is fixed.")]
     public bool TryDeployToDevice()
     {
         if (!OpenProjectIfNeeded(out var projectInstance))
