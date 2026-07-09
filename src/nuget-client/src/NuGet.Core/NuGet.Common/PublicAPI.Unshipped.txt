@@ -2,3 +2,8 @@
 NuGet.Common.NuGetLogCode.NU1512 = 1512 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5052 = 5052 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU5502 = 5502 -> NuGet.Common.NuGetLogCode
+NuGet.Common.StaticState
+static NuGet.Common.StaticState.EndMSBuildRestoreTasks -> System.Action?
+static NuGet.Common.StaticState.RaiseEndMSBuildRestoreTasks() -> void
+static NuGet.Common.StaticState.RaiseStartMSBuildRestoreTasks() -> void
+static NuGet.Common.StaticState.StartMSBuildRestoreTasks -> System.Action?

@@ -177,6 +177,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   <UsingTask TaskName="NuGet.Build.Tasks.NuGetMessageTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.CheckForDuplicateNuGetItemsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetGlobalPropertyValueTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
+  <UsingTask TaskName="NuGet.Build.Tasks.RefreshNuGetStaticStateTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
 
   <!--
     ============================================================
@@ -551,12 +552,26 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <!--
     ============================================================
+    _RefreshNuGetStaticState
+    Refreshes NuGet's environment-derived static caches once, before any other restore task runs. Wired as the
+    first dependency of _GenerateRestoreGraph so it precedes the Get* collection tasks and RestoreTask /
+    WriteRestoreGraphTask on the entry node, letting a process reused across builds (MSBuild Server, multithreaded
+    MSBuild) observe the current environment instead of caches frozen at the first build. Must not declare
+    Inputs/Outputs: it has to run on every restore, never be skipped by MSBuild's incremental (up-to-date) check.
+    ============================================================
+  -->
+  <Target Name="_RefreshNuGetStaticState">
+    <RefreshNuGetStaticStateTask />
+  </Target>
+
+  <!--
+    ============================================================
     _GenerateRestoreGraph
     Entry point for creating the project to project restore graph.
     ============================================================
   -->
   <Target Name="_GenerateRestoreGraph"
-        DependsOnTargets="_FilterRestoreGraphProjectInputItems;_GetAllRestoreProjectPathItems"
+        DependsOnTargets="_RefreshNuGetStaticState;_FilterRestoreGraphProjectInputItems;_GetAllRestoreProjectPathItems"
         Returns="@(_RestoreGraphEntry)">
     <Message Text="Generating dg file" Importance="low" />
     <Message Text="%(_RestoreProjectPathItems.Identity)" Importance="low" />

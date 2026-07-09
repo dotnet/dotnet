@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using NuGet.Common;
 
 namespace NuGet.Protocol.Plugins
@@ -17,7 +18,29 @@ namespace NuGet.Protocol.Plugins
         private readonly Stopwatch _stopwatch;
         private readonly object _streamWriterLock;
 
-        internal static PluginLogger DefaultInstance { get; } = new PluginLogger(EnvironmentVariableWrapper.Instance);
+        static PluginLogger()
+        {
+            // Plugin logging is configured from NUGET_PLUGIN_ENABLE_LOG / NUGET_PLUGIN_LOG_DIRECTORY_PATH, which are
+            // read once when an instance is created. In a process reused across builds, re-read them at the start of
+            // each restore so a toggled environment variable takes effect.
+            StaticState.StartMSBuildRestoreTasks += ResetDefaultInstance;
+        }
+
+        internal static PluginLogger DefaultInstance => s_defaultInstanceBackingField;
+
+        private static PluginLogger s_defaultInstanceBackingField = new PluginLogger(EnvironmentVariableWrapper.Instance);
+
+        /// <summary>
+        /// Recreates <see cref="DefaultInstance" /> from the current environment so a process reused across builds
+        /// observes the current plugin-logging configuration on the next restore, and disposes the previous instance
+        /// to close its log file. Safe because plugins (and their loggers) from the prior restore are already torn
+        /// down by the end-of-restore reset before this runs at the start of the next restore.
+        /// </summary>
+        internal static void ResetDefaultInstance()
+        {
+            PluginLogger previous = Interlocked.Exchange(ref s_defaultInstanceBackingField, new PluginLogger(EnvironmentVariableWrapper.Instance));
+            previous.Dispose();
+        }
 
         public bool IsEnabled { get; }
         // The DateTimeOffset and Stopwatch ticks are not equivalent. 1/10000000 is 1 DateTime tick.

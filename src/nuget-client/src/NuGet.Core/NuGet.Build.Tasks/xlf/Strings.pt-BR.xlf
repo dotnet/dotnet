@@ -118,7 +118,7 @@
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
-        <target state="new">RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</target>
+        <target state="translated">RestoreNoCache foi preterido e renomeado para RestoreNoHttpCache. Use RestoreNoHttpCache em vez disso.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">
@@ -146,6 +146,11 @@
         <source>Evaluated {0} project(s) in {1:D2}ms ({2} builds, {3} failures).</source>
         <target state="translated">Foram avaliados {0} projetos em {1:D2}ms ({2} builds, {3} falhas).</target>
         <note />
+      </trans-unit>
+      <trans-unit id="RefreshNuGetStaticState_UnexpectedError">
+        <source>An unexpected error occurred while refreshing NuGet's cached restore state at the start of the build; restore will continue using the existing state. Error: {0}</source>
+        <target state="new">An unexpected error occurred while refreshing NuGet's cached restore state at the start of the build; restore will continue using the existing state. Error: {0}</target>
+        <note>0 - The exception message</note>
       </trans-unit>
       <trans-unit id="RestoreCanceled">
         <source>Restore canceled!</source>

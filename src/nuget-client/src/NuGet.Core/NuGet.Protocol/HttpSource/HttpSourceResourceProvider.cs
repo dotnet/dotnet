@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 
@@ -28,6 +29,17 @@ namespace NuGet.Protocol
         /// The throttle to apply to all <see cref="HttpSource"/> HTTP requests.
         /// </summary>
         public static IThrottle? Throttle { get; set; }
+
+        static HttpSourceResourceProvider()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetThrottle;
+        }
+
+        /// <summary>
+        /// Clears the process-wide HTTP request throttle (set per restore from <c>NUGET_CONCURRENCY_LIMIT</c> or the
+        /// disable-parallel option) so it does not leak from one restore to the next in a reused process.
+        /// </summary>
+        internal static void ResetThrottle() => Throttle = null;
 
         public HttpSourceResourceProvider()
             : base(typeof(HttpSourceResource),

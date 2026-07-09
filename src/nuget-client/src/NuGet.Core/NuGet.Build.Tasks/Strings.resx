@@ -234,4 +234,8 @@
     <comment>0 - The project name
 1 - The error message</comment>
   </data>
+  <data name="RefreshNuGetStaticState_UnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred while refreshing NuGet's cached restore state at the start of the build; restore will continue using the existing state. Error: {0}</value>
+    <comment>0 - The exception message</comment>
+  </data>
 </root>

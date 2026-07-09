@@ -349,5 +349,14 @@ namespace NuGet.Build.Tasks {
                 return ResourceManager.GetString("Warning_InvalidPackageSaveMode", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error occurred while refreshing NuGet&apos;s cached restore state at the start of the build; restore will continue using the existing state. Error: {0}.
+        /// </summary>
+        public static string RefreshNuGetStaticState_UnexpectedError {
+            get {
+                return ResourceManager.GetString("RefreshNuGetStaticState_UnexpectedError", resourceCulture);
+            }
+        }
     }
 }

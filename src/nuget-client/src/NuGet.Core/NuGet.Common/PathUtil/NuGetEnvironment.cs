@@ -24,11 +24,28 @@ namespace NuGet.Common
         private const string DotNetHome = "DOTNET_CLI_HOME";
 #endif
 
-        private static readonly Lazy<string> _getHome = new Lazy<string>(() => GetHome());
+        private static Lazy<string> _getHome = new Lazy<string>(() => GetHome());
 
         private static string _nuGetTempDirectory = null;
 
         private static readonly ConcurrentDictionary<NuGetFolderPath, string> Cache = new ConcurrentDictionary<NuGetFolderPath, string>();
+
+        static NuGetEnvironment()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetEnvironmentCaches;
+        }
+
+        /// <summary>
+        /// Clears the cached, environment-derived paths (home directory, NuGet temp directory, and resolved
+        /// folder paths) so they are recomputed from the current environment on next use. Intended for a host
+        /// that reuses the process across builds.
+        /// </summary>
+        internal static void ResetEnvironmentCaches()
+        {
+            _getHome = new Lazy<string>(() => GetHome());
+            _nuGetTempDirectory = null;
+            Cache.Clear();
+        }
 
         internal static string NuGetTempDirectory
         {
