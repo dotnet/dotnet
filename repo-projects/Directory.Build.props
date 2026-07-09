@@ -30,6 +30,34 @@
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
     <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
 
+    <!-- MSBuild Server configuration.
+         UseMSBuildServer controls whether this repository engages the persistent MSBuild Server
+         (MSBUILDUSESERVER=1) when DotNetBuildMSBuildServer=true.
+
+         Override the exclusion list via MSBuild property /p:MSBuildServerExcludedReposOverride=... or the
+         MSBUILD_SERVER_EXCLUDED_REPOS environment variable (colon-separated for bash compatibility).
+
+         Priority (highest to lowest):
+         1. Per-repo .proj file setting <UseMSBuildServer>false</UseMSBuildServer>
+         2. MSBuildServerExcludedReposOverride MSBuild property
+         3. MSBUILD_SERVER_EXCLUDED_REPOS environment variable override
+         4. Default exclusion list below (empty: engage for all repos)
+         5. Default: enabled for all repos
+    -->
+    <_MSBuildServerExcludedRepos></_MSBuildServerExcludedRepos>
+    <_MSBuildServerExcludedRepos Condition="'$(MSBuildServerExcludedReposOverride)' != ''">$(MSBuildServerExcludedReposOverride)</_MSBuildServerExcludedRepos>
+    <_MSBuildServerExcludedReposOverride>$([System.Environment]::GetEnvironmentVariable('MSBUILD_SERVER_EXCLUDED_REPOS'))</_MSBuildServerExcludedReposOverride>
+    <_MSBuildServerExcludedRepos Condition="'$(_MSBuildServerExcludedReposOverride)' != ''">$(_MSBuildServerExcludedReposOverride.Replace(':',';'))</_MSBuildServerExcludedRepos>
+    <UseMSBuildServer Condition="'$(UseMSBuildServer)' == '' and '$(_MSBuildServerExcludedRepos)' != '' and $([System.String]::new(';$(_MSBuildServerExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildServer>
+    <UseMSBuildServer Condition="'$(UseMSBuildServer)' == ''">true</UseMSBuildServer>
+
+    <!-- Per-repo MSBuild Server handshake salt. The server pipe name and busy mutex are derived from a
+         handshake hash that includes this salt, so a distinct salt gives each repo build its own isolated
+         server (and worker nodes). This is required because the VMR builds many repos in parallel on a
+         single machine - an exotic scenario the server was not originally designed for. The value is stable
+         within a repo build (so its own MSBuild invocations reuse one server) and distinct across repos. -->
+    <MSBuildServerHandshakeSalt Condition="'$(MSBuildServerHandshakeSalt)' == ''">dotnet-vmr-$(RepositoryName)</MSBuildServerHandshakeSalt>
+
     <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
@@ -227,9 +255,24 @@
        Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
        Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
        By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
-       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
-  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
+       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>.
+       The MSBuild Server also requires node reuse: without it a non-/mt build does not engage the server
+       and the server would not stay resident for reuse across a repo's MSBuild invocations. -->
+  <PropertyGroup>
+    <_VmrEnableNodeReuse Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">true</_VmrEnableNodeReuse>
+    <_VmrEnableNodeReuse Condition="'$(DotNetBuildMSBuildServer)' == 'true' and '$(UseMSBuildServer)' != 'false'">true</_VmrEnableNodeReuse>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(_VmrEnableNodeReuse)' == 'true'">
     <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
+  </ItemGroup>
+
+  <!-- Enable the persistent MSBuild Server when DotNetBuildMSBuildServer is set and the repository hasn't
+       opted out (see the UseMSBuildServer computation above). Each repo build gets a distinct handshake salt
+       so the servers of repos building in parallel on the same machine never collide. Node reuse is enabled
+       via _VmrEnableNodeReuse above (the server is a reused node). -->
+  <ItemGroup Condition="'$(DotNetBuildMSBuildServer)' == 'true' and '$(UseMSBuildServer)' != 'false'">
+    <EnvironmentVariables Include="MSBUILDUSESERVER=1" />
+    <EnvironmentVariables Include="MSBUILDNODEHANDSHAKESALT=$(MSBuildServerHandshakeSalt)" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">

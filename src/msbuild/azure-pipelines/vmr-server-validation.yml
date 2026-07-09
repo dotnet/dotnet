@@ -1,0 +1,45 @@
+# MSBuild VMR MSBuild-Server validation pipeline.
+#
+# Builds the VMR in source-build mode to validate that every component build engages the
+# persistent MSBuild Server with a per-repo handshake salt (so the parallel repo builds on
+# one machine get isolated servers) and that the server is cleaned up after each repo build.
+#
+# Enable by passing /p:DotNetBuildMSBuildServer=true to stage 2. dotnet/msbuild#14156 (overlaid
+# onto src/msbuild in this branch) logs the server spawn/reuse/not-used lifecycle into each
+# repo's binlog so the engagement can be verified from published artifacts.
+#
+# Trigger: Manual only (queue from Azure DevOps UI)
+# Uses the same pattern as msbuild's vmr-sb-validation.yml.
+
+trigger: none
+pr: none
+
+parameters:
+- name: extraPropertiesStage2
+  displayName: 'Extra MSBuild properties for stage 2 (e.g., /p:DotNetBuildMSBuildServer=true)'
+  type: string
+  default: '/p:DotNetBuildMSBuildServer=true'
+
+variables:
+- template: /eng/common/templates/variables/pool-providers.yml@self
+
+- name: skipComponentGovernanceDetection
+  value: true
+
+- name: Codeql.Enabled
+  value: false
+
+resources:
+  repositories:
+  - repository: vmr
+    type: github
+    name: dotnet/dotnet
+    endpoint: public
+
+stages:
+- template: /eng/pipelines/templates/stages/vmr-build.yml@vmr
+  parameters:
+    isBuiltFromVmr: false
+    scope: lite
+    verifications: [ "source-build-stage1", "source-build-stage2" ]
+    extraPropertiesStage2: ${{ parameters.extraPropertiesStage2 }}

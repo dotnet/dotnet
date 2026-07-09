@@ -496,11 +496,6 @@ function MSBuild {
       Write-PipelineTelemetryError -category 'Build'  "Binary log must be enabled in CI build, or explicitly opted-out from with the -noBinaryLog switch."
       ExitWithExitCode 1
     fi
-
-    if [[ "$node_reuse" == true ]]; then
-      Write-PipelineTelemetryError -category 'Build'  "Node reuse must be disabled in CI build."
-      ExitWithExitCode 1
-    fi
   fi
 
   InitializeBuildTool

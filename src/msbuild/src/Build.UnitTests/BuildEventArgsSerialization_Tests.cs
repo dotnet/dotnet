@@ -539,6 +539,66 @@ namespace Microsoft.Build.UnitTests
                 e => string.Join(", ", e.RawArguments ?? Array.Empty<object>()));
         }
 
+        /// <summary>
+        /// The MSBuild Server lifecycle events are logged as a dedicated <see cref="MSBuildServerLifecycleEventArgs"/>
+        /// recorded under its own <see cref="BinaryLogRecordKind.MSBuildServerLifecycle"/>. This keeps the data in a
+        /// specific, versionable event type (not an ad-hoc message); binary-log readers that predate the record kind
+        /// skip it via the forward-compatible, length-prefixed record framing.
+        /// </summary>
+        [Fact]
+        public void RoundtripMSBuildServerLifecycleEventArgs()
+        {
+            var args = new MSBuildServerLifecycleEventArgs(
+                MSBuildServerLifecycleKind.Spawned,
+                processId: 4321,
+                reason: null,
+                reasonCode: null,
+                "MSBuild Server node started for this build only; it will shut down afterward (process ID 4321).",
+                MessageImportance.Low,
+                shortLived: true)
+            {
+                BuildEventContext = BuildEventContext.Invalid,
+            };
+
+            var memoryStream = new MemoryStream();
+            using (var binaryWriter = new BinaryWriter(memoryStream, Encoding.UTF8, leaveOpen: true))
+            {
+                new BuildEventArgsWriter(binaryWriter).Write(args);
+            }
+
+            // The event serializes under its OWN dedicated record kind (not Message), so readers that predate it
+            // skip the unknown record via the forward-compatible length-prefixed framing rather than mis-reading it.
+            memoryStream.Position = 0;
+            using (var rawReader = new BinaryReader(memoryStream, Encoding.UTF8, leaveOpen: true))
+            using (var eventsReader = new BuildEventArgsReader(rawReader, BinaryLogger.FileFormatVersion))
+            {
+                BinaryLogRecordKind eventRecordKind;
+                do
+                {
+                    eventRecordKind = eventsReader.ReadRaw().RecordKind;
+                }
+                while (eventRecordKind is BinaryLogRecordKind.String
+                    or BinaryLogRecordKind.NameValueList
+                    or BinaryLogRecordKind.ProjectImportArchive);
+
+                eventRecordKind.ShouldBe(BinaryLogRecordKind.MSBuildServerLifecycle);
+            }
+
+            // A current reader reconstructs the strongly-typed event with all of its structured fields.
+            memoryStream.Position = 0;
+            using (var binaryReader = new BinaryReader(memoryStream, Encoding.UTF8, leaveOpen: true))
+            using (var eventsReader = new BuildEventArgsReader(binaryReader, BinaryLogger.FileFormatVersion))
+            {
+                var deserialized = eventsReader.Read().ShouldBeOfType<MSBuildServerLifecycleEventArgs>();
+                deserialized.Kind.ShouldBe(MSBuildServerLifecycleKind.Spawned);
+                deserialized.ShortLived.ShouldBeTrue();
+                deserialized.ProcessId.ShouldBe(4321);
+                deserialized.Reason.ShouldBeNull();
+                deserialized.ReasonCode.ShouldBeNull();
+                deserialized.Message.ShouldBe("MSBuild Server node started for this build only; it will shut down afterward (process ID 4321).");
+            }
+        }
+
         [Fact]
         public void RoundtripAssemblyLoadBuild()
         {

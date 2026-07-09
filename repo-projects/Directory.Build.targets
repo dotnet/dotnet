@@ -15,6 +15,12 @@
     <BuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--vbcscompiler' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Build server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</BuildServerShutdownCommand>
     <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); if kill -0 $_build_server_shutdown_pid 2&gt;/dev/null; then echo 'Build server shutdown timed out; terminating process.' &gt;&amp;2; kill $_build_server_shutdown_pid 2&gt;/dev/null; fi) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
 
+    <!-- Shut down this repo's isolated MSBuild Server (identified by its per-repo handshake salt) after the
+         repo build so the server does not leak across the ~40 parallel repo builds on the machine. The salt is
+         passed via MSBUILDNODEHANDSHAKESALT on the shutdown Exec so it targets only this repo's server. -->
+    <MSBuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--msbuild' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'MSBuild server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</MSBuildServerShutdownCommand>
+    <MSBuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --msbuild &amp; _msbuild_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); if kill -0 $_msbuild_server_shutdown_pid 2&gt;/dev/null; then echo 'MSBuild server shutdown timed out; terminating process.' &gt;&amp;2; kill $_msbuild_server_shutdown_pid 2&gt;/dev/null; fi) &amp; _msbuild_server_shutdown_watchdog_pid=$!; wait $_msbuild_server_shutdown_pid; _msbuild_server_shutdown_exit_code=$?; kill $_msbuild_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_msbuild_server_shutdown_exit_code</MSBuildServerShutdownCommand>
+
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
 
@@ -642,6 +648,15 @@
           YieldDuringToolExecution="true">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
+
+    <!-- Shut down this repo's isolated MSBuild Server so it doesn't leak across the parallel repo builds.
+         Runs with the repo's handshake salt so it targets only this repo's server. Best-effort. -->
+    <Exec Command="$(MSBuildServerShutdownCommand)"
+          EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache);MSBUILDNODEHANDSHAKESALT=$(MSBuildServerHandshakeSalt)"
+          Condition="'$(DotNetBuildMSBuildServer)' == 'true' and '$(UseMSBuildServer)' != 'false'"
+          ContinueOnError="WarnAndContinue"
+          IgnoreStandardErrorWarningFormat="true"
+          IgnoreExitCode="true" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)...done" />
 

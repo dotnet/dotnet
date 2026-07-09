@@ -320,13 +320,17 @@ namespace Microsoft.Build.CommandLine
                 out bool multiThreaded,
                 out bool shutdownServerAfterBuild,
                 out CommandLineSwitches switchesFromAutoResponseFile,
-                out CommandLineSwitches switchesNotFromAutoResponseFile);
+                out CommandLineSwitches switchesNotFromAutoResponseFile,
+                out string serverDisabledReason,
+                out string serverDisabledReasonCode);
 
             int exitCode;
+            bool shouldUseServer = ShouldUseMSBuildServer(multiThreaded, out string serverEnableReason);
+            bool stdOutHatchPreventsServer = Traits.Instance.EscapeHatches.EnsureStdOutForChildNodesIsPrimaryStdout;
             if (
                 canRunServer &&
-                ShouldUseMSBuildServer(multiThreaded, out string serverEnableReason) &&
-                !Traits.Instance.EscapeHatches.EnsureStdOutForChildNodesIsPrimaryStdout)
+                shouldUseServer &&
+                !stdOutHatchPreventsServer)
             {
                 Console.CancelKeyPress += Console_CancelKeyPress;
 
@@ -342,6 +346,24 @@ namespace Microsoft.Build.CommandLine
             }
             else
             {
+                // The server was requested for this invocation but cannot be used by the in-process build below.
+                // Record the specific localized reason so the build log (and any binary log) explains why the
+                // server was skipped. When the server was never requested we stay silent to avoid noise on
+                // ordinary builds. The null check defends the (currently unreachable from here) case where the
+                // client-fallback path in MSBuildClientApp already recorded a more specific reason before invoking
+                // the in-process build.
+                if (shouldUseServer && s_serverNotUsedReason is null)
+                {
+                    // Reaching the else branch with shouldUseServer means either the switches preclude the server
+                    // (serverDisabledReason is set) or only the stdout escape hatch does.
+                    s_serverNotUsedReason = canRunServer
+                        ? ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerReasonStdOutForChildNodes")
+                        : serverDisabledReason;
+                    s_serverNotUsedReasonCode = canRunServer
+                        ? ServerNotUsedReasonCodeStdOutRedirected
+                        : serverDisabledReasonCode;
+                }
+
                 // return 0 on success, non-zero on failure. Reuse the switches already gathered above (when the
                 // parse succeeded) so the command line is not parsed a second time; on parse failure they are null
                 // and Execute re-parses to surface the error.
@@ -377,18 +399,25 @@ namespace Microsoft.Build.CommandLine
         /// project <c>Directory.Build.rsp</c>), or <see langword="null"/> if parsing failed.</param>
         /// <param name="switchesNotFromAutoResponseFile">The gathered command-line/environment switches, or
         /// <see langword="null"/> if parsing failed.</param>
+        /// <param name="serverDisabledReason">When the return value is <see langword="false"/>, a localized,
+        /// human-readable reason describing why the switches preclude MSBuild Server (e.g. node reuse disabled);
+        /// <see langword="null"/> when the server can run.</param>
         private static bool CanRunServerBasedOnCommandLineSwitches(
             string[] commandLine,
             out bool multiThreaded,
             out bool shutdownServerAfterBuild,
             out CommandLineSwitches switchesFromAutoResponseFile,
-            out CommandLineSwitches switchesNotFromAutoResponseFile)
+            out CommandLineSwitches switchesNotFromAutoResponseFile,
+            out string serverDisabledReason,
+            out string serverDisabledReasonCode)
         {
             bool canRunServer = true;
             multiThreaded = false;
             shutdownServerAfterBuild = false;
             switchesFromAutoResponseFile = null;
             switchesNotFromAutoResponseFile = null;
+            serverDisabledReason = null;
+            serverDisabledReasonCode = null;
             bool switchesFullyGathered = false;
             try
             {
@@ -426,24 +455,44 @@ namespace Microsoft.Build.CommandLine
                     commandLineSwitches[CommandLineSwitches.ParameterlessSwitch.Version] ||
                     FileUtilities.IsBinaryLogFilename(projectFile);
 
-                // Node reuse being disabled normally disqualifies the server. The exception is a multithreaded (/mt) build: it requires the server purely to enable Server GC. 
+                // Node reuse being disabled normally disqualifies the server. The exception is a multithreaded (/mt)
+                // build: it requires the server purely to enable Server GC, so it uses a short-lived server instead
+                // of falling back in-process.
                 bool nodeReuseDisqualifies = !nodeReuse && !multiThreaded;
 
-                if (serverIncompatibleSwitch || nodeReuseDisqualifies)
+                if (serverIncompatibleSwitch)
                 {
                     canRunServer = false;
+                    serverDisabledReason = ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerDisabledForBuild");
+                    serverDisabledReasonCode = ServerNotUsedReasonCodeIncompatibleInvocation;
+                    if (KnownTelemetry.PartialBuildTelemetry is not null)
+                    {
+                        KnownTelemetry.PartialBuildTelemetry.ServerFallbackReason = "Arguments";
+                    }
+                }
+                else if (nodeReuseDisqualifies)
+                {
+                    // Node reuse is the disablement reason a user most commonly hits while expecting the server
+                    // (and the in-process build still proceeds), so give it a specific message. A /mt build is
+                    // exempt: it keeps the server on (short-lived) for Server GC rather than falling back.
+                    canRunServer = false;
+                    serverDisabledReason = ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerReasonNodeReuseDisabled");
+                    serverDisabledReasonCode = ServerNotUsedReasonCodeNodeReuseDisabled;
                     if (KnownTelemetry.PartialBuildTelemetry is not null)
                     {
                         KnownTelemetry.PartialBuildTelemetry.ServerFallbackReason = "Arguments";
                     }
                 }
 
-                // When /mt forced the server on despite node reuse being disabled, the server must not persist past this build. 
+                // When /mt forced the server on despite node reuse being disabled, the server must not persist
+                // past this build (a "short-lived" server: fresh process, torn down afterward).
                 shutdownServerAfterBuild = canRunServer && multiThreaded && !nodeReuse;
             }
             catch (Exception ex)
             {
                 CommunicationsUtilities.Trace($"Unexpected exception during command line parsing. Can not determine if it is allowed to use Server. Fall back to old behavior. Exception: {ex}");
+                serverDisabledReason = ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerDisabledForBuild");
+                serverDisabledReasonCode = ServerNotUsedReasonCodeCommandLineParseError;
                 if (KnownTelemetry.PartialBuildTelemetry is not null)
                 {
                     KnownTelemetry.PartialBuildTelemetry.ServerFallbackReason = "ErrorParsingCommandLine";
@@ -1976,6 +2025,50 @@ namespace Microsoft.Build.CommandLine
                     MessageImportance.Low),
             };
 
+            // Record the MSBuild Server lifecycle for this build so it is visible in the binary log and at
+            // diagnostic verbosity. These are logged as a dedicated, versionable MSBuildServerLifecycleEventArgs
+            // (recorded under its own binary-log record kind) rather than an ad-hoc message, so tooling can
+            // recognize and render them structurally; the console still shows the human-readable text at -v:diag.
+            // The s_isServerNode check must come first: it intentionally masks any s_serverNotUsedReason
+            // that the server process may have set during its own startup (the server's own command line
+            // can look "server requested but not used"), so the server only ever logs a spawn/reuse message.
+            if (s_isServerNode)
+            {
+                // The first build a freshly spawned server serves reports a "spawned" message; every
+                // subsequent build on the same long-lived node reports that the node is being reused.
+                // A spawned server that will tear itself down after this build (a /mt build with node reuse
+                // off) reports a distinct "short-lived" spawn message.
+                bool spawned = s_serverBuildCounter == 1;
+                bool shortLived = spawned && OutOfProcServerNode.CurrentBuildShutsDownServerNode;
+                string serverStatusResource = spawned
+                    ? (shortLived ? "MSBuildServerNodeSpawnedShortLived" : "MSBuildServerNodeSpawned")
+                    : "MSBuildServerNodeReused";
+                MSBuildServerLifecycleEventArgs lifecycleEvent = new(
+                    spawned ? MSBuildServerLifecycleKind.Spawned : MSBuildServerLifecycleKind.Reused,
+                    EnvironmentUtilities.CurrentProcessId,
+                    reason: null,
+                    reasonCode: null,
+                    ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword(
+                        serverStatusResource,
+                        EnvironmentUtilities.CurrentProcessId),
+                    MessageImportance.Low,
+                    shortLived);
+                messages.Add(new BuildManager.DeferredBuildMessage(lifecycleEvent, MessageImportance.Low));
+            }
+            else if (!string.IsNullOrEmpty(s_serverNotUsedReason))
+            {
+                MSBuildServerLifecycleEventArgs lifecycleEvent = new(
+                    MSBuildServerLifecycleKind.NotUsed,
+                    processId: 0,
+                    s_serverNotUsedReason,
+                    s_serverNotUsedReasonCode,
+                    ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword(
+                        "MSBuildServerNotUsedForBuild",
+                        s_serverNotUsedReason),
+                    MessageImportance.Low);
+                messages.Add(new BuildManager.DeferredBuildMessage(lifecycleEvent, MessageImportance.Low));
+            }
+
             NativeMethodsShared.LongPathsStatus longPaths = NativeMethodsShared.IsLongPathsEnabled();
             if (longPaths != NativeMethodsShared.LongPathsStatus.NotApplicable)
             {
@@ -2181,6 +2274,40 @@ namespace Microsoft.Build.CommandLine
         /// Indicates that this process is working as a server.
         /// </summary>
         private static bool s_isServerNode;
+
+        /// <summary>
+        /// Number of builds this MSBuild Server node has executed (only meaningful when
+        /// <see cref="s_isServerNode"/> is true). Incremented once per build command the server serves.
+        /// A value of 1 means the node was just spawned for this build; greater than 1 means an
+        /// already-running node is being reused. Used to log a server lifecycle message into the build log.
+        /// </summary>
+        private static int s_serverBuildCounter;
+
+        /// <summary>
+        /// When MSBuild Server was requested for this invocation but the build is instead running in-process
+        /// (e.g. the server was busy, unreachable, or precluded by command-line switches), this holds a
+        /// localized human-readable reason. It is surfaced as a low-importance message in the build log so a
+        /// binary log records why the server was not used. Null when the server was not requested or was used.
+        /// </summary>
+        internal static string s_serverNotUsedReason;
+
+        /// <summary>
+        /// A stable, non-localized companion to <see cref="s_serverNotUsedReason"/> that identifies *why* the
+        /// requested server was not used, so tooling can branch on it without parsing localized text. Surfaced
+        /// as <see cref="Microsoft.Build.Framework.MSBuildServerLifecycleEventArgs.ReasonCode"/>. Null when the
+        /// server was not requested or was used.
+        /// </summary>
+        internal static string s_serverNotUsedReasonCode;
+
+        /// <summary>Stable "reasonCode" values for <see cref="s_serverNotUsedReasonCode"/>.</summary>
+        internal const string ServerNotUsedReasonCodeIncompatibleInvocation = "incompatible-invocation";
+        internal const string ServerNotUsedReasonCodeNodeReuseDisabled = "node-reuse-disabled";
+        internal const string ServerNotUsedReasonCodeStdOutRedirected = "stdout-redirected";
+        internal const string ServerNotUsedReasonCodeCommandLineParseError = "command-line-parse-error";
+        internal const string ServerNotUsedReasonCodeServerBusy = "server-busy";
+        internal const string ServerNotUsedReasonCodeServerCrashed = "server-crashed";
+        internal const string ServerNotUsedReasonCodeServerStateUnknown = "server-state-unknown";
+        internal const string ServerNotUsedReasonCodeServerUnreachable = "server-unreachable";
 
         /// <summary>
         /// Indicates that this process was launched as a worker node (via -nodeMode switch).
@@ -3197,6 +3324,13 @@ namespace Microsoft.Build.CommandLine
                         // we have to pass down xmake build invocation to avoid circular dependency
                         OutOfProcServerNode.BuildCallback buildFunction = (commandLine) =>
                         {
+                            // Count builds this server node serves so the build log can distinguish a
+                            // freshly spawned node (first build) from a reused one (subsequent builds).
+                            // A plain increment is safe: the server serializes build commands behind the
+                            // busy mutex, so this never runs concurrently and the mutex provides the memory
+                            // barrier that makes the new value visible to GetMessagesToLogInBuildLoggers.
+                            s_serverBuildCounter++;
+
                             int exitCode;
                             ExitType exitType;
 
