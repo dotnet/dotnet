@@ -14,9 +14,13 @@ namespace NuGet.Protocol.Core.Types
         {
             // cached for the life-time of the app domain
             Enabled = FromEnvironmentVariable();
+            NuGet.Common.NuGetProcessState.RegisterResetAction(NuGet.Common.NuGetProcessState.ResetKey.StartRestore, ResetCache);
         }
 
         public static bool Enabled { get; private set; }
+
+        /// <summary>Re-reads <c>NuGetTestModeEnabled</c> from the current environment.</summary>
+        internal static void ResetCache() => Enabled = FromEnvironmentVariable();
 
         private static bool FromEnvironmentVariable()
         {

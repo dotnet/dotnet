@@ -47,6 +47,11 @@ namespace NuGet.Build.Tasks
 
         public override bool Execute()
         {
+            // This is the first restore-specific NuGet task to run for each project, on the entry node and on every
+            // worker node, so it is where a reused process re-reads its environment-derived caches. The call is
+            // guarded to run at most once per build on each node even though projects invoke this task in parallel.
+            BuildTasksUtility.ResetProcessStateOncePerBuild(BuildEngine);
+
             var log = new MSBuildLogger(Log);
 
             var result = BuildTasksUtility.GetProjectRestoreStyle(RestoreProjectStyle, HasPackageReferenceItems, MSBuildProjectDirectory, MSBuildProjectName, log);
