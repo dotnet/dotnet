@@ -446,13 +446,18 @@ public partial class PRCreator
 
         foreach (var (path, modifiedItem) in modifiedByPath)
         {
-            // Compare the raw content. Whitespace-only differences (line-ending or trailing-newline
-            // changes) are legitimate baseline updates for this tool and must be captured in the PR,
-            // so they are intentionally NOT normalized away here. A commit that turns out to be empty
-            // after GitFile's own content rewrite is caught later by CommitIntroducesTargetChangesAsync.
-            if (!originalByPath.TryGetValue(path, out var originalItem) || originalItem.Content != modifiedItem.Content)
+            // Build the file exactly as it will be committed. DarcLib's GitFile constructor folds
+            // Environment.NewLine to '\n' and always appends a trailing '\n' (so empty content
+            // becomes "\n"); the committed bytes can therefore differ from the raw content. Detect
+            // changes by comparing the original against the modified content in that same committed
+            // form, otherwise a 0-byte baseline (whose committed form is "\n") is perpetually
+            // re-written to "\n", producing a spurious no-op diff on every run. Real whitespace/
+            // line-ending differences are still captured because both sides are normalized identically.
+            GitFile candidate = new(prefix + path, modifiedItem.Content);
+            if (!originalByPath.TryGetValue(path, out var originalItem)
+                || new GitFile(prefix + path, originalItem.Content).Content != candidate.Content)
             {
-                changes.Add(new GitFile(prefix + path, modifiedItem.Content));
+                changes.Add(candidate);
             }
         }
 
