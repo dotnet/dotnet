@@ -1224,6 +1224,9 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="updateProjectFactory">A factory method that updates a project adapter with a target framework and MSBuild ProjectInstance.</param>
         /// <param name="projectFinalizeDelegate">An option delegate to finalize a project adapter once all projects have been evaluated.</param>
         /// <returns>An <see cref="ICollection{ProjectWithInnerNodes}" /> object containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
+#if NET5_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Temporary VMR unblock: static graph restore intentionally runs full MSBuild in-process. Replace with proper annotations in NuGet/Home#14987.")]
+#endif
         private ConcurrentDictionary<string, TProject> LoadProjects<TProject>(
             IEnumerable<ProjectGraphEntryPoint> entryProjects,
             bool interactive,
