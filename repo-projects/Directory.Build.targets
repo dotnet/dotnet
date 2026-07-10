@@ -650,10 +650,11 @@
     </Exec>
 
     <!-- Shut down this repo's isolated MSBuild Server so it doesn't leak across the parallel repo builds.
-         Runs with the repo's handshake salt so it targets only this repo's server. Best-effort. -->
+         Runs with the repo's handshake salt so it targets only this repo's server. Best-effort. Only needed
+         when node reuse was enabled (otherwise the server never engaged for this repo). -->
     <Exec Command="$(MSBuildServerShutdownCommand)"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache);MSBUILDNODEHANDSHAKESALT=$(MSBuildServerHandshakeSalt)"
-          Condition="'$(DotNetBuildMSBuildServer)' == 'true' and '$(UseMSBuildServer)' != 'false'"
+          Condition="'$(UseNodeReuse)' != 'false'"
           ContinueOnError="WarnAndContinue"
           IgnoreStandardErrorWarningFormat="true"
           IgnoreExitCode="true" />

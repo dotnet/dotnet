@@ -3,14 +3,6 @@
   <PropertyGroup>
     <ForceDotNetMSBuildEngine>false</ForceDotNetMSBuildEngine>
 
-    <!-- MSBuild Server validation: opt wpf out of the server. With MSBUILDUSESERVER=1 the server engages
-         (binlog: "MSBuild Server node started for this build (process ID N)") and the build succeeds
-         (0 errors, binlog written), but the source-built MSBuild returns process exit code 1, failing the
-         repo build. wpf passes with the server under the bootstrap SDK, so this is an MSBuild Server
-         exit-code bug in the current msbuild source, not the VMR wiring. Excluded here to keep validation
-         CI green; remove once the server exit-code issue is fixed. -->
-    <UseMSBuildServer>false</UseMSBuildServer>
-
     <!-- TODO setting Platform shouldn't be necesary: https://github.com/dotnet/source-build/issues/4314 -->
     <BuildArgs>$(BuildArgs) /p:Platform=$(TargetArchitecture)</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:BuildWithNetFrameworkHostedCompiler=true</BuildArgs>
