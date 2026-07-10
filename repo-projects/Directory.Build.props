@@ -204,8 +204,8 @@
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
   </ItemGroup>
 
-  <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
-  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
+  <!-- Enable MSBuild -mt mode for every repo when DotNetBuildMT is set -->
+  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true'">
     <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
   </ItemGroup>
 
