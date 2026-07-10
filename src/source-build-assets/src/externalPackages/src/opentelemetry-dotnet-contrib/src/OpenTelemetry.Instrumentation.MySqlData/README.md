@@ -1,5 +1,9 @@
 # MySqlData Instrumentation for OpenTelemetry
 
+| Status | |
+| ------ | --- |
+| Stability | [Deprecated](../../README.md#deprecated) |
+
 [![NuGet version badge](https://img.shields.io/nuget/v/OpenTelemetry.Instrumentation.MySqlData)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.MySqlData)
 [![NuGet download count badge](https://img.shields.io/nuget/dt/OpenTelemetry.Instrumentation.MySqlData)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.MySqlData)
 

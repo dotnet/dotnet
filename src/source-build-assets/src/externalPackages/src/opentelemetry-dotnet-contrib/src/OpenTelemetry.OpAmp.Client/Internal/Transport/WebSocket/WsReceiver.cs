@@ -18,6 +18,7 @@ internal sealed class WsReceiver : IDisposable
 
     private readonly ClientWebSocket ws;
     private readonly FrameProcessor processor;
+    private readonly SemaphoreSlim sendLock;
     private readonly CancellationTokenSource disposeTokenSource = new();
 
     private readonly byte[] receiveBuffer = new byte[ReceiveBufferSize];
@@ -26,13 +27,15 @@ internal sealed class WsReceiver : IDisposable
     private Task? receiveTask;
     private bool disposed;
 
-    public WsReceiver(ClientWebSocket ws, FrameProcessor processor)
+    public WsReceiver(ClientWebSocket ws, FrameProcessor processor, SemaphoreSlim sendLock)
     {
         Guard.ThrowIfNull(ws, nameof(ws));
         Guard.ThrowIfNull(processor, nameof(processor));
+        Guard.ThrowIfNull(sendLock, nameof(sendLock));
 
         this.ws = ws;
         this.processor = processor;
+        this.sendLock = sendLock;
     }
 
     public void Start(CancellationToken token = default)
@@ -133,8 +136,9 @@ internal sealed class WsReceiver : IDisposable
         var workingBuffer = this.receiveBuffer;
 
         List<byte[]>? rentalBuffers = null;
-        bool continueRead = true;
-        bool isClosed = false;
+
+        bool continueRead;
+        bool isClosed;
 
         do
         {
@@ -172,7 +176,7 @@ internal sealed class WsReceiver : IDisposable
             {
                 StopReading(out continueRead, out isClosed);
             }
-            catch (Exception ex) when (ex is WebSocketException || ex is ObjectDisposedException)
+            catch (Exception ex) when (ex is WebSocketException or ObjectDisposedException)
             {
                 StopReading(out continueRead, out isClosed);
             }
@@ -182,14 +186,26 @@ internal sealed class WsReceiver : IDisposable
             {
                 OpAmpClientEventSource.Log.OversizedWebSocketMessageReceived(totalCount, TransportConstants.MaxMessageSize);
 
-                // Message too large, abort the connection.
+                // Message too large, abort the connection. Take the send lock so the close frame does
+                // not race a concurrent data send (WsTransmitter) on the socket: ClientWebSocket rejects
+                // concurrent sends with InvalidOperationException, which would otherwise fault this loop
+                // and leave the close frame unsent. Use the dispose token so a shutdown does not block here.
                 try
                 {
-                    await this.ws
-                        .CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, "Message too large", CancellationToken.None)
-                        .ConfigureAwait(false);
+                    await this.sendLock.WaitAsync(this.disposeTokenSource.Token).ConfigureAwait(false);
+
+                    try
+                    {
+                        await this.ws
+                            .CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, "Message too large", CancellationToken.None)
+                            .ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        this.sendLock.Release();
+                    }
                 }
-                catch (Exception ex) when (ex is WebSocketException || ex is ObjectDisposedException)
+                catch (Exception ex) when (ex is WebSocketException or ObjectDisposedException or OperationCanceledException)
                 {
                     OpAmpClientEventSource.Log.TransportCloseException(ex);
                 }

@@ -14,8 +14,13 @@ public sealed class AWSXRayRemoteSampler : Trace.Sampler, IDisposable
 {
     internal static readonly TimeSpan DefaultTargetInterval = TimeSpan.FromSeconds(10);
 
+    private const string ClientIdCharacters = "0123456789abcdef";
+
     private static readonly Random Random = new();
+    private readonly CancellationTokenSource cancellationTokenSource = new();
+    private readonly SemaphoreSlim pollerLock = new(1, 1);
     private bool isFallBackEventToWriteSwitch = true;
+    private int disposed;
 
     [SuppressMessage("Performance", "CA5394: Do not use insecure randomness", Justification = "Secure random is not required for jitters.")]
     internal AWSXRayRemoteSampler(Resource resource, TimeSpan pollingInterval, string endpoint, Clock clock)
@@ -73,10 +78,7 @@ public sealed class AWSXRayRemoteSampler : Trace.Sampler, IDisposable
     /// to identify the service attributes for sampling. This resource should
     /// be the same as what the OpenTelemetry SDK is configured with.</param>
     /// <returns>an instance of <see cref="AWSXRayRemoteSamplerBuilder"/>.</returns>
-    public static AWSXRayRemoteSamplerBuilder Builder(Resource resource)
-    {
-        return new AWSXRayRemoteSamplerBuilder(resource);
-    }
+    public static AWSXRayRemoteSamplerBuilder Builder(Resource resource) => new(resource);
 
     /// <inheritdoc/>
     public override SamplingResult ShouldSample(in SamplingParameters samplingParameters)
@@ -105,48 +107,54 @@ public sealed class AWSXRayRemoteSampler : Trace.Sampler, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    [SuppressMessage(
-        "Usage",
-        "CA5394: Do not use insecure randomness",
-        Justification = "using insecure random is fine here since clientId doesn't need to be secure.")]
-    private static string GenerateClientId()
+    internal async Task ExecutePollAsync(Func<CancellationToken, Task> pollAsync)
     {
-        char[] hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-        var clientIdChars = new char[24];
-        for (var i = 0; i < clientIdChars.Length; i++)
+        var lockTaken = false;
+
+        try
         {
-            clientIdChars[i] = hex[Random.Next(hex.Length)];
+            await this.pollerLock.WaitAsync(this.cancellationTokenSource.Token).ConfigureAwait(false);
+            lockTaken = true;
+
+            if (Volatile.Read(ref this.disposed) != 0)
+            {
+                return;
+            }
+
+            await pollAsync(this.cancellationTokenSource.Token).ConfigureAwait(false);
         }
-
-        return new string(clientIdChars);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (disposing)
+        catch (OperationCanceledException) when (this.cancellationTokenSource.IsCancellationRequested)
         {
-            this.RulePollerTimer?.Dispose();
-            this.Client?.Dispose();
-            this.RulesCache?.Dispose();
+            // Sampler is shutting down.
+        }
+        catch (ObjectDisposedException) when (Volatile.Read(ref this.disposed) != 0)
+        {
+            // Sampler is shutting down.
+        }
+        catch (Exception ex)
+        {
+            AWSSamplerEventSource.Log.ExceptionFromSampler(ex.Message);
+        }
+        finally
+        {
+            if (lockTaken)
+            {
+                this.pollerLock.Release();
+            }
         }
     }
 
-    private async void GetAndUpdateRules(object? state)
+    internal async Task GetAndUpdateTargetsAsync(CancellationToken cancellationToken)
     {
-        var rules = await this.Client.GetSamplingRules().ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
 
-        this.RulesCache.UpdateRules(rules);
-
-        // schedule the next rule poll.
-        this.RulePollerTimer.Change(this.PollingInterval.Add(this.RulePollerJitter), Timeout.InfiniteTimeSpan);
-    }
-
-    private async void GetAndUpdateTargets(object? state)
-    {
         var statistics = this.RulesCache.Snapshot(this.Clock.Now());
 
         var request = new GetSamplingTargetsRequest(statistics);
-        var response = await this.Client.GetSamplingTargets(request).ConfigureAwait(false);
+        var response = await this.Client.GetSamplingTargets(request, cancellationToken).ConfigureAwait(false);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (response != null)
         {
             Dictionary<string, SamplingTargetDocument> targets = [];
@@ -164,7 +172,8 @@ public sealed class AWSXRayRemoteSampler : Trace.Sampler, IDisposable
             {
                 var lastRuleModificationTime = this.Clock.ToDateTime(response.LastRuleModification);
 
-                if (lastRuleModificationTime > this.RulesCache.GetUpdatedAt())
+                if (!cancellationToken.IsCancellationRequested &&
+                    lastRuleModificationTime > this.RulesCache.GetUpdatedAt())
                 {
                     // rules have been updated. fetch the new ones right away.
                     this.RulePollerTimer.Change(TimeSpan.Zero, Timeout.InfiniteTimeSpan);
@@ -180,6 +189,100 @@ public sealed class AWSXRayRemoteSampler : Trace.Sampler, IDisposable
             nextTargetFetchInterval = DefaultTargetInterval;
         }
 
-        this.TargetPollerTimer.Change(nextTargetFetchInterval.Add(this.TargetPollerJitter), Timeout.InfiniteTimeSpan);
+        if (!cancellationToken.IsCancellationRequested)
+        {
+            this.TargetPollerTimer.Change(nextTargetFetchInterval.Add(this.TargetPollerJitter), Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    [SuppressMessage(
+        "Usage",
+        "CA5394: Do not use insecure randomness",
+        Justification = "using insecure random is fine here since clientId doesn't need to be secure.")]
+    private static string GenerateClientId()
+    {
+        const int ClientIdLength = 24;
+
+#if NET
+        Span<char> buffer = stackalloc char[ClientIdLength];
+
+        Random.GetItems(ClientIdCharacters, buffer);
+
+        return new(buffer);
+#else
+        var buffer = new char[ClientIdLength];
+        for (var i = 0; i < buffer.Length; i++)
+        {
+            buffer[i] = ClientIdCharacters[Random.Next(ClientIdCharacters.Length)];
+        }
+
+        return new string(buffer);
+#endif
+    }
+
+    private static void DisposeTimer(Timer? timer)
+    {
+        if (timer == null)
+        {
+            return;
+        }
+
+        using var disposedEvent = new ManualResetEvent(false);
+        if (timer.Dispose(disposedEvent))
+        {
+            disposedEvent.WaitOne();
+        }
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (Interlocked.Exchange(ref this.disposed, 1) != 0)
+            {
+                return;
+            }
+
+            this.cancellationTokenSource.Cancel();
+            DisposeTimer(this.RulePollerTimer);
+            DisposeTimer(this.TargetPollerTimer);
+
+            this.pollerLock.Wait();
+
+            try
+            {
+                this.Client?.Dispose();
+                this.RulesCache?.Dispose();
+            }
+            finally
+            {
+                this.pollerLock.Release();
+                this.pollerLock.Dispose();
+                this.cancellationTokenSource.Dispose();
+            }
+        }
+    }
+
+    private void GetAndUpdateRules(object? state) =>
+        _ = this.ExecutePollAsync(this.GetAndUpdateRulesAsync);
+
+    private void GetAndUpdateTargets(object? state) =>
+        _ = this.ExecutePollAsync(this.GetAndUpdateTargetsAsync);
+
+    private async Task GetAndUpdateRulesAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var rules = await this.Client.GetSamplingRules(cancellationToken).ConfigureAwait(false);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        this.RulesCache.UpdateRules(rules);
+
+        if (!cancellationToken.IsCancellationRequested)
+        {
+            // schedule the next rule poll.
+            this.RulePollerTimer.Change(this.PollingInterval.Add(this.RulePollerJitter), Timeout.InfiniteTimeSpan);
+        }
     }
 }

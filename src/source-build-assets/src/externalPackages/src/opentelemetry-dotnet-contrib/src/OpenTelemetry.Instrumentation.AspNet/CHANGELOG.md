@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 1.16.0
+
+Released 2026-Jun-24
+
+* Fixed route template token matching so short route parameters no longer throw
+  `IndexOutOfRangeException` during route extraction.
+  ([#4340](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4340))
+
+* Fixed route template extraction for routes with missing MVC route values or
+  `null` defaults.
+  ([#4344](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4344))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
 ## 1.15.2
 
 Released 2026-Apr-21
@@ -163,6 +178,7 @@ Released 2024-Apr-17
   `?key1=value1&key2=value2` becomes `?key1=Redacted&key2=Redacted`. You can
   disable this redaction by setting the environment variable
   `OTEL_DOTNET_EXPERIMENTAL_ASPNET_DISABLE_URL_QUERY_REDACTION` to `true`.
+  Resolves [GHSA-vh2m-22xx-q94f](https://github.com/advisories/GHSA-vh2m-22xx-q94f).
   ([#1656](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/1656))
 
 ## 1.8.0-beta.1

@@ -47,9 +47,9 @@ internal static class Matcher
         return string.Equals(text, globPattern, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static bool AttributeMatch(IEnumerable<KeyValuePair<string, object?>>? tags, Dictionary<string, string> ruleAttributes)
+    public static bool AttributeMatch(IEnumerable<KeyValuePair<string, object?>>? tags, Dictionary<string, string>? ruleAttributes)
     {
-        if (ruleAttributes.Count == 0)
+        if (ruleAttributes == null || ruleAttributes.Count == 0)
         {
             return true;
         }

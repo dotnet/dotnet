@@ -61,9 +61,9 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
         }
         finally
         {
-            var end = DateTimeOffset.UtcNow;
-            if (result is { IsPartitionEOF: false })
+            if (ShouldInstrument(result, errorType))
             {
+                var end = DateTimeOffset.UtcNow;
                 this.InstrumentConsumption(start, end, consumeResult, errorType);
             }
         }
@@ -88,9 +88,9 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
         }
         finally
         {
-            var end = DateTimeOffset.UtcNow;
-            if (result is { IsPartitionEOF: false })
+            if (ShouldInstrument(result, errorType))
             {
+                var end = DateTimeOffset.UtcNow;
                 this.InstrumentConsumption(start, end, consumeResult, errorType);
             }
         }
@@ -115,9 +115,9 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
         }
         finally
         {
-            var end = DateTimeOffset.UtcNow;
-            if (result is { IsPartitionEOF: false })
+            if (ShouldInstrument(result, errorType))
             {
+                var end = DateTimeOffset.UtcNow;
                 this.InstrumentConsumption(start, end, consumeResult, errorType);
             }
         }
@@ -200,6 +200,10 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
     public void Close()
         => this.consumer.Close();
 
+    private static bool ShouldInstrument(ConsumeResult<TKey, TValue>? result, string? errorType) =>
+        result is { IsPartitionEOF: false } ||
+        (result is null && errorType is not null);
+
     private static string FormatConsumeException(ConsumeException consumeException) =>
         $"ConsumeException: {consumeException.Error}";
 
@@ -217,7 +221,7 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
         _ => (new ConsumeResult(exception.ConsumerRecord.TopicPartitionOffset, exception.ConsumerRecord.Message.Headers, exception.ConsumerRecord.Message.Key), FormatConsumeException(exception)),
     };
 
-    private static void GetTags(string topic, out TagList tags, int? partition = null, string? errorType = null)
+    private static void GetTags(string? topic, out TagList tags, int? partition = null, string? errorType = null)
     {
         tags = new TagList()
         {
@@ -227,10 +231,15 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
             new KeyValuePair<string, object?>(
                 SemanticConventions.AttributeMessagingSystem,
                 ConfluentKafkaCommon.KafkaMessagingSystem),
-            new KeyValuePair<string, object?>(
-                SemanticConventions.AttributeMessagingDestinationName,
-                topic),
         };
+
+        if (topic is not null)
+        {
+            tags.Add(
+                new KeyValuePair<string, object?>(
+                    SemanticConventions.AttributeMessagingDestinationName,
+                    topic));
+        }
 
         if (partition is not null)
         {
@@ -249,9 +258,9 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
         }
     }
 
-    private static void RecordReceive(TopicPartition topicPartition, TimeSpan duration, string? errorType = null)
+    private static void RecordReceive(TopicPartition? topicPartition, TimeSpan duration, string? errorType = null)
     {
-        GetTags(topicPartition.Topic, out var tags, partition: topicPartition.Partition, errorType);
+        GetTags(topicPartition?.Topic, out var tags, partition: topicPartition?.Partition, errorType);
 
         ConfluentKafkaCommon.ReceiveMessagesCounter.Add(1, in tags);
         ConfluentKafkaCommon.ReceiveDurationHistogram.Record(duration.TotalSeconds, in tags);
@@ -284,7 +293,7 @@ internal class InstrumentedConsumer<TKey, TValue> : IConsumer<TKey, TValue>
         if (this.options.Metrics)
         {
             var duration = endTime - startTime;
-            RecordReceive(consumeResult.TopicPartitionOffset!.TopicPartition, duration, errorType);
+            RecordReceive(consumeResult.TopicPartitionOffset?.TopicPartition, duration, errorType);
         }
     }
 

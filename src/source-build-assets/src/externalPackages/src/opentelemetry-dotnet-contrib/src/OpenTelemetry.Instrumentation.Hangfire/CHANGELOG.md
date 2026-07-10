@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 1.16.0-beta.1
+
+Released 2026-Jun-24
+
+* Fix baggage propagation cleanup so baggage extracted for one job is cleared and
+  the previous ambient baggage is restored after job completion.
+  ([#4288](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4288))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
 ## 1.15.1-beta.1
 
 Released 2026-Apr-21

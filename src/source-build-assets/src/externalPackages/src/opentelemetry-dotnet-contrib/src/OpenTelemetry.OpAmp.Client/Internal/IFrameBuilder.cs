@@ -21,6 +21,8 @@ internal interface IFrameBuilder
 
     IFrameBuilder AddEffectiveConfig(IEnumerable<EffectiveConfigFile> files);
 
+    IFrameBuilder AddRemoteConfigStatus(RemoteConfigStatusReport status);
+
     IFrameBuilder AddCustomMessage(string capability, string type, ReadOnlyMemory<byte> data);
 
     AgentToServer Build();

@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 1.16.0
+
+Released 2026-Jun-24
+
+* Fixed `OnRequestStoppedCallback` invocation when no root `Activity` was
+  created.
+  ([#4307](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4307))
+
+* Fixed internal request stop instrumentation callback exception handling so
+  telemetry processing failures do not escape request stop processing.
+  ([#4344](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4344))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
 ## 1.15.2
 
 Released 2026-Apr-21

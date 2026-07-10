@@ -93,17 +93,5 @@ internal sealed class SqlTelemetryHelper
     }
 
     internal static double CalculateDurationFromTimestamp(long begin)
-    {
-#if NET
-        var duration = Stopwatch.GetElapsedTime(begin);
-#else
-        var end = Stopwatch.GetTimestamp();
-        var timestampToTicks = TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
-        var delta = end - begin;
-        var ticks = (long)(timestampToTicks * delta);
-        var duration = new TimeSpan(ticks);
-#endif
-
-        return duration.TotalSeconds;
-    }
+        => Stopwatch.GetElapsedTime(begin).TotalSeconds;
 }

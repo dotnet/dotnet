@@ -37,9 +37,9 @@ public static class HttpClientInstrumentationMeterProviderBuilderExtensions
         _ = HttpTagHelper.RequestDataHelper;
 
 #if NETFRAMEWORK
-        builder.AddMeter(HttpWebRequestActivitySource.MeterName);
+        builder.AddMeter(HttpWebRequestActivitySource.WebRequestMeter.Name);
 #else
-        builder.AddMeter(HttpHandlerMetricsDiagnosticListener.MeterName);
+        builder.AddMeter(HttpHandlerMetricsDiagnosticListener.Meter.Name);
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
         builder.AddInstrumentation(new HttpClientMetrics());

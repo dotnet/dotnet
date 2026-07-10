@@ -1,9 +1,6 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if NET
-using System.Diagnostics.CodeAnalysis;
-#endif
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Instrumentation.SqlClient;
@@ -22,9 +19,6 @@ public static class TracerProviderBuilderExtensions
     /// </summary>
     /// <param name="builder"><see cref="TracerProviderBuilder"/> being configured.</param>
     /// <returns>The instance of <see cref="TracerProviderBuilder"/> to chain the calls.</returns>
-#if NET
-    [RequiresUnreferencedCode(SqlClientInstrumentation.SqlClientTrimmingUnsupportedMessage)]
-#endif
     public static TracerProviderBuilder AddSqlClientInstrumentation(this TracerProviderBuilder builder)
         => AddSqlClientInstrumentation(builder, name: null, configureSqlClientTraceInstrumentationOptions: null);
 
@@ -34,9 +28,6 @@ public static class TracerProviderBuilderExtensions
     /// <param name="builder"><see cref="TracerProviderBuilder"/> being configured.</param>
     /// <param name="configureSqlClientTraceInstrumentationOptions">Callback action for configuring <see cref="SqlClientTraceInstrumentationOptions"/>.</param>
     /// <returns>The instance of <see cref="TracerProviderBuilder"/> to chain the calls.</returns>
-#if NET
-    [RequiresUnreferencedCode(SqlClientInstrumentation.SqlClientTrimmingUnsupportedMessage)]
-#endif
     public static TracerProviderBuilder AddSqlClientInstrumentation(
         this TracerProviderBuilder builder,
         Action<SqlClientTraceInstrumentationOptions> configureSqlClientTraceInstrumentationOptions)
@@ -49,9 +40,6 @@ public static class TracerProviderBuilderExtensions
     /// <param name="name">Name which is used when retrieving options.</param>
     /// <param name="configureSqlClientTraceInstrumentationOptions">Callback action for configuring <see cref="SqlClientTraceInstrumentationOptions"/>.</param>
     /// <returns>The instance of <see cref="TracerProviderBuilder"/> to chain the calls.</returns>
-#if NET
-    [RequiresUnreferencedCode(SqlClientInstrumentation.SqlClientTrimmingUnsupportedMessage)]
-#endif
     public static TracerProviderBuilder AddSqlClientInstrumentation(
         this TracerProviderBuilder builder,
         string? name,
@@ -69,8 +57,7 @@ public static class TracerProviderBuilderExtensions
         builder.AddInstrumentation(sp =>
         {
             var sqlOptions = sp.GetRequiredService<IOptionsMonitor<SqlClientTraceInstrumentationOptions>>().Get(name);
-            SqlClientInstrumentation.TracingOptions = sqlOptions;
-            return SqlClientInstrumentation.Instance.HandleManager.AddTracingHandle();
+            return SqlClientInstrumentation.Instance.AddTracingHandle(sqlOptions);
         });
 
         builder.AddSource(SqlTelemetryHelper.ActivitySource.Name);

@@ -2,7 +2,18 @@
 
 ## Unreleased
 
-* Limit how much of the response body is consumed from metadata service HTTP responses.
+* Update `System.Text.Json` for `netstandard2.0` to `8.0.5`.
+  ([#4154](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4154))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 1.15.1-beta.1
+
+Released 2026-Apr-21
+
+* Limit how much of the response body is consumed from metadata service HTTP responses
+  to resolve [GHSA-vc24-j8c5-2vw4](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/security/advisories/GHSA-vc24-j8c5-2vw4).
   ([#4121](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4121))
 
 * Updated OpenTelemetry core component version(s) to `1.15.3`.

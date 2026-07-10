@@ -21,7 +21,20 @@ internal partial class AWSSemanticConventions
         public override string AttributeAWSDynamoTableName => "aws.dynamodb.table_names";
 
         // aws.dynamodb.table_names is specified as string[] in the OTel semantic conventions
-        public override IReadOnlyCollection<string> ArrayValueAttributeNames { get; } = ["aws.dynamodb.table_names"];
+        public override IReadOnlyCollection<string> ArrayValueAttributeNames { get; } =
+        [
+            "aws.dynamodb.attribute_definitions",
+            "aws.dynamodb.attributes_to_get",
+            "aws.dynamodb.consumed_capacity",
+            "aws.dynamodb.global_secondary_index_updates",
+            "aws.dynamodb.global_secondary_indexes",
+            "aws.dynamodb.local_secondary_indexes",
+            "aws.dynamodb.table_names",
+            "aws.log.group.arns",
+            "aws.log.group.names",
+            "aws.log.stream.arns",
+            "aws.log.stream.names",
+        ];
 
         // FAAS Attributes
         public override string AttributeFaasID => "cloud.resource_id";

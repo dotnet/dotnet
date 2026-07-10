@@ -20,9 +20,14 @@ public static class FeatureFlagAttributes
     public const string AttributeFeatureFlagContextId = "feature_flag.context.id";
 
     /// <summary>
-    /// Deprecated, use <c>error.message</c> instead.
+    /// A message providing more detail about an error that occurred during feature flag evaluation in human-readable form.
     /// </summary>
-    [Obsolete("Replaced by <c>error.message</c>.")]
+    public const string AttributeFeatureFlagErrorMessage = "feature_flag.error.message";
+
+    /// <summary>
+    /// Deprecated, use <c>feature_flag.error.message</c> instead.
+    /// </summary>
+    [Obsolete("Replaced by <c>feature_flag.error.message</c>.")]
     public const string AttributeFeatureFlagEvaluationErrorMessage = "feature_flag.evaluation.error.message";
 
     /// <summary>

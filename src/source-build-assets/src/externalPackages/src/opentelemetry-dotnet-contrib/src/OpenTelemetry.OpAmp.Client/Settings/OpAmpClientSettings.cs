@@ -58,10 +58,10 @@ public sealed class OpAmpClientSettings
     /// If not explicitly set, a default URL is returned based on the <see cref="ConnectionType"/>:
     /// <list type="bullet">
     ///   <item>
-    ///     <description><see cref="ConnectionType.Http"/> -> <c>https://localhost:4318/v1/opamp</c></description>
+    ///     <description><see cref="ConnectionType.Http"/> -> <c>https://localhost:4320/v1/opamp</c></description>
     ///   </item>
     ///   <item>
-    ///     <description><see cref="ConnectionType.WebSocket"/> -> <c>wss://localhost:4318/v1/opamp</c></description>
+    ///     <description><see cref="ConnectionType.WebSocket"/> -> <c>wss://localhost:4320/v1/opamp</c></description>
     ///   </item>
     /// </list>
     /// </value>
@@ -72,8 +72,8 @@ public sealed class OpAmpClientSettings
     {
         get => field ?? this.ConnectionType switch
         {
-            ConnectionType.Http => new("https://localhost:4318/v1/opamp"),
-            ConnectionType.WebSocket => new("wss://localhost:4318/v1/opamp"),
+            ConnectionType.Http => new("https://localhost:4320/v1/opamp"),
+            ConnectionType.WebSocket => new("wss://localhost:4320/v1/opamp"),
             _ => throw new InvalidOperationException("Unknown connection type"),
         };
         set;

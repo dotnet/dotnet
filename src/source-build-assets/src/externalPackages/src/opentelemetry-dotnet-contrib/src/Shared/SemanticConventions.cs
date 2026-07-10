@@ -59,7 +59,9 @@ internal static class SemanticConventions
     public const string AttributeRpcSystem = "rpc.system";
     public const string AttributeRpcService = "rpc.service";
     public const string AttributeRpcMethod = "rpc.method";
+    public const string AttributeRpcMethodOriginal = "rpc.method_original";
     public const string AttributeRpcGrpcStatusCode = "rpc.grpc.status_code";
+    public const string AttributeRpcResponseStatusCode = "rpc.response.status_code";
 
     public const string AttributeMessageType = "message.type";
     public const string AttributeMessageId = "message.id";

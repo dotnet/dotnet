@@ -15,7 +15,7 @@
          from git tags, but MinVer is disabled here via /p:IntegrationBuild=true (see CommonBuildArgs).
          Set them explicitly so the source-built packages match the Microsoft-shipped NuGet packages.
          These must be updated when the submodule is updated. See https://github.com/dotnet/source-build/issues/5577 -->
-    <FileVersionRevision>2017</FileVersionRevision>
+    <FileVersionRevision>2072</FileVersionRevision>
     <!-- Microsoft-shipped OpenTelemetry packages use MinVer's default AssemblyVersion of Major.0.0.0. -->
     <AssemblyVersionOverride>1.0.0.0</AssemblyVersionOverride>
   </PropertyGroup>

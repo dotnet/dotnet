@@ -34,8 +34,6 @@ internal sealed class AspNetCoreMetrics : IDisposable
 
     /// <inheritdoc/>
     public void Dispose()
-    {
-        this.diagnosticSourceSubscriber?.Dispose();
-    }
+        => this.diagnosticSourceSubscriber?.Dispose();
 }
 #endif

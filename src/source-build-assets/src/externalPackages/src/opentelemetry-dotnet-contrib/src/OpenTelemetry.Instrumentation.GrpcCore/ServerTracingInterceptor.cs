@@ -176,7 +176,7 @@ public class ServerTracingInterceptor : Interceptor
         /// <param name="context">The context.</param>
         /// <param name="options">The options.</param>
         public ServerRpcScope(ServerCallContext context, ServerTracingInterceptorOptions options)
-            : base(context.Method, options.RecordMessageEvents, options.RecordException)
+            : base(context.Host, context.Method, options.RecordMessageEvents, options.RecordException)
         {
             if (!GrpcCoreInstrumentation.ActivitySource.HasListeners())
             {
