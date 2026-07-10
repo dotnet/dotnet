@@ -18,6 +18,22 @@ namespace NuGet.Credentials
     public static class DefaultCredentialServiceUtility
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
+        static DefaultCredentialServiceUtility()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetCredentialService;
+        }
+
+        /// <summary>
+        /// Discards the process-wide credential service and its delegating logger so a process reused across builds
+        /// rebuilds them for the next restore (with the current interactivity, settings, and credential providers)
+        /// instead of reusing the first build's instance and its cached credentials.
+        /// </summary>
+        internal static void ResetCredentialService()
+        {
+            HttpHandlerResourceV3.CredentialService = null;
+            DelegatingLogger = null;
+        }
+
         /// <summary>
         /// Sets-up the CredentialService and all of its providers.
         /// It always updates the logger the CredentialService and its children own,

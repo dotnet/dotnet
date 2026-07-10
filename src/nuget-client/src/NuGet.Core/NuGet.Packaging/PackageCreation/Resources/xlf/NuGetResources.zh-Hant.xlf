@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="IncompatibleSchema">
         <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
-        <target state="new">The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</target>
+        <target state="translated">'{0}' 的結構描述版本與 NuGet 版本 {1} 不相容。從 http://go.microsoft.com/fwlink/?LinkId=213942 將 NuGet 升級為最新版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageId">

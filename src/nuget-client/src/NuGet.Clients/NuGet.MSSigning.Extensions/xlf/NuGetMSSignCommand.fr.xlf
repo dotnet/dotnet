@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
-        <target state="new">Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
+        <target state="translated">Valeur non valide fournie pour « {0} ». Si vous souhaitez obtenir une liste des valeurs acceptées, consultez https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidCertificateFingerprint">
@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="MSSignCommandNoPackageException">
         <source>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Aucun package n’a été fourni. Pour obtenir la liste des moyens de fournir des packages qui sont acceptés, consultez le site https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandNoTimestamperWarning">
         <source>No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Aucune option « -Timestamper » n’a été fournie. Le paquet signé ne sera pas horodaté. Si vous souhaitez obtenir plus d’informations sur cette option, consultez le site https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandNoValidCertificateFileException">

@@ -108,11 +108,6 @@ NuGet.PackageManagement.IPackageRestoreManager.RaiseAssetsFileMissingEventForPro
 ~NuGet.PackageManagement.IPackageRestoreManager.RaisePackagesMissingEventForSolutionAsync(string solutionDirectory, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~NuGet.PackageManagement.IPackageRestoreManager.RestoreMissingPackagesAsync(string solutionDirectory, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
 ~NuGet.PackageManagement.IPackageRestoreManager.RestoreMissingPackagesInSolutionAsync(string solutionDirectory, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.PackageManagement.PackageRestoreResult>
-NuGet.PackageManagement.IProductUpdateService
-NuGet.PackageManagement.IProductUpdateService.CheckForAvailableUpdateAsync() -> void
-NuGet.PackageManagement.IProductUpdateService.DeclineUpdate(bool doNotRemindAgain) -> void
-NuGet.PackageManagement.IProductUpdateService.Update() -> void
-NuGet.PackageManagement.IProductUpdateService.UpdateAvailable -> System.EventHandler<NuGet.PackageManagement.ProductUpdateAvailableEventArgs>
 NuGet.PackageManagement.ISolutionManager
 NuGet.PackageManagement.ISolutionManager.ActionsExecuted -> System.EventHandler<NuGet.PackageManagement.ActionsExecutedEventArgs>
 NuGet.PackageManagement.ISolutionManager.AfterNuGetCacheUpdated -> System.EventHandler<NuGet.PackageManagement.NuGetEventArgs<string>>
@@ -319,10 +314,6 @@ NuGet.PackageManagement.PackagesMarkedForDeletionEventArgs
 NuGet.PackageManagement.PackagesMissingStatusEventArgs
 NuGet.PackageManagement.PackagesMissingStatusEventArgs.PackagesMissing.get -> bool
 NuGet.PackageManagement.PackagesMissingStatusEventArgs.PackagesMissingStatusEventArgs(bool packagesMissing) -> void
-NuGet.PackageManagement.ProductUpdateAvailableEventArgs
-~NuGet.PackageManagement.ProductUpdateAvailableEventArgs.CurrentVersion.get -> System.Version
-~NuGet.PackageManagement.ProductUpdateAvailableEventArgs.NewVersion.get -> System.Version
-~NuGet.PackageManagement.ProductUpdateAvailableEventArgs.ProductUpdateAvailableEventArgs(System.Version currentVersion, System.Version newVersion) -> void
 NuGet.PackageManagement.ProjectContextLogger
 ~NuGet.PackageManagement.ProjectContextLogger.ProjectContextLogger(NuGet.ProjectManagement.INuGetProjectContext projectContext) -> void
 NuGet.PackageManagement.PrunePackageTree

@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_DisplayFile">
         <source>Provide password for: {0}</source>
-        <target state="new">Provide password for: {0}</target>
+        <target state="translated">Zadejte heslo pro: {0}</target>
         <note>0 - file that requires password</note>
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_PromptForPassword">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="Credentials_ForbiddenCredentials">
         <source>The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</source>
-        <target state="new">The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</target>
+        <target state="translated">Vzdálený server uvedl, že předchozí požadavek byl zakázán. Zadejte přihlašovací údaje pro: {0}</target>
         <note>{0} will be replaced with the URL that needs credentials.</note>
       </trans-unit>
       <trans-unit id="Credentials_Password">
@@ -84,12 +84,12 @@
       </trans-unit>
       <trans-unit id="Credentials_ProxyCredentials">
         <source>Provide proxy credentials:</source>
-        <target state="new">Provide proxy credentials:</target>
+        <target state="translated">Zadejte přihlašovací údaje proxy serveru:</target>
         <note />
       </trans-unit>
       <trans-unit id="Credentials_RequestCredentials">
         <source>Provide credentials for: {0}</source>
-        <target state="new">Provide credentials for: {0}</target>
+        <target state="translated">Zadejte přihlašovací údaje pro: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Credentials_UserName">
@@ -257,9 +257,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="new">`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
-Consider migrating '{0}' to `PackageReference` and using the pack targets.
-You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</target>
+        <target state="translated">Balík `project.json` je v aktuální verzi NuGet zakázaný a v budoucí verzi se trvale odebere.
+Zvažte migraci {0} na `PackageReference` a použití cílů balíčku.
+Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se tato funkce mohla dočasně znovu povolit.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -324,12 +324,12 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSlnx">
         <source>This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</source>
-        <target state="new">This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</target>
+        <target state="translated">Tato verze MSBuildu nepodporuje formát slnx: „{0}“. Pokud chcete použít tuto funkci, použijte verzi MSBuildu 17.13 nebo novější.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
         <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
-        <target state="new">This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</target>
+        <target state="translated">Tato verze nástroje MSBuild nepodporuje filtr řešení: '{0}'. Pokud chcete použít tuto funkci, použijte verzi MSBuildu 16.7 nebo novější.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">
@@ -349,7 +349,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="FailedToLoadExtension">
         <source>Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</source>
-        <target state="new">Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</target>
+        <target state="translated">Nepovedlo se načíst {0}. Pokud se toto rozšíření stáhlo z internetu, ujistěte se, že se odblokovalo (klikněte pravým tlačítkem, Vlastnosti, Odblokovat).</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToLoadExtensionDuringMefComposition">
@@ -454,7 +454,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="InvalidSource">
         <source>The specified source '{0}' is invalid. Provide a valid source.</source>
-        <target state="new">The specified source '{0}' is invalid. Provide a valid source.</target>
+        <target state="translated">Zadaný zdroj {0} není platný. Zadejte platný zdroj.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListCommandNoPackages">
@@ -509,7 +509,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="LocalsCommand_InvalidLocalResourceName">
         <source>An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
-        <target state="new">An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</target>
+        <target state="translated">Poskytl se neplatný název místního prostředku. Zadejte jednu z následujících hodnot: http-cache, packages-cache, global-packages, all.</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
@@ -669,7 +669,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="PackageCommandSpecifyInputFileError">
         <source>Specify a nuspec or project file to use.</source>
-        <target state="new">Specify a nuspec or project file to use.</target>
+        <target state="translated">Zadejte soubor nuspec nebo soubor projektu, který se má použít.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandSuccess">
@@ -704,7 +704,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="ProjectJsonPack_Deprecated">
         <source>`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
-        <target state="new">`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</target>
+        <target state="translated">Balík `project.json` je zastaralý. Zvažte migraci {0} na `PackageReference` a použití cílů balíčku.</target>
         <note>Do not localize project.json and `PackageReference` 
 0 - project path (project.json file path)</note>
       </trans-unit>
@@ -715,7 +715,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="PushCommandNoSourceError">
         <source>There is no default source, specify a source.</source>
-        <target state="new">There is no default source, specify a source.</target>
+        <target state="translated">Neexistuje žádný výchozí zdroj, zadejte ho.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandTimeoutError">
@@ -735,12 +735,12 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
         <source>'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
-        <target state="new">'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</target>
+        <target state="translated">Nastavení „globalPackagesFolder“ je relativní cesta. Chcete-li určit úplnou cestu, zadejte jako parametr buď parametr -SolutionDirectory, nebo soubor řešení. Pokud chcete ignorovat nastavení „globalPackagesFolder“, zadejte -PackagesDirectory.</target>
         <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
         <source>Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</source>
-        <target state="new">Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</target>
+        <target state="translated">Nelze určit složku balíčků pro obnovení balíčků NuGet. Zadejte buď -PackagesDirectory, nebo -SolutionDirectory.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandFileNotFound">
@@ -964,17 +964,17 @@ Pokud chcete NuGetu ve stahování balíčků během sestavování zabránit, ot
       </trans-unit>
       <trans-unit id="Warning_LongPath_DisabledPolicy">
         <source>Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
-        <target state="new">Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
+        <target state="translated">Povolte v místních zásadách skupiny podporu dlouhých cest k souborům. Další podrobnosti najdete na https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_UnsupportedNetFramework">
         <source>Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
-        <target state="new">Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
+        <target state="translated">Nainstalujte .NET Framework 4.6.2 nebo novější, který podporuje dlouhé cesty k souborům. Další podrobnosti najdete na https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_UnsupportedOS">
         <source>Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
-        <target state="new">Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
+        <target state="translated">Dlouhá cesta k souboru je aktuálně podporována pouze u Windows 10. Další podrobnosti najdete na https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MsbuildPath">

@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Cmdlet_CommandObsolete">
         <source>This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</source>
-        <target state="new">This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</target>
+        <target state="translated">這個命令/參數組合已過時，將在下個版本移除。考慮使用可取代它的新命令: '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_DeprecatedFrameworkContinue">
@@ -227,7 +227,7 @@
       </trans-unit>
       <trans-unit id="Host_PSNotInstalled">
         <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
-        <target state="new">Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</target>
+        <target state="translated">錯誤: 套件管理員主控台需要 PowerShell 2.0 執行階段，但在這部電腦上偵測不到這個執行階段。從 http://support.microsoft.com/kb/968929 安裝 PowerShell 2.0 並重新啟動 Visual Studio。</target>
         <note />
       </trans-unit>
       <trans-unit id="PowerShellHostTitle">
@@ -242,12 +242,12 @@
       </trans-unit>
       <trans-unit id="UnknownSource">
         <source>Source '{0}' not found. Provide an HTTP or local source.</source>
-        <target state="new">Source '{0}' not found. Provide an HTTP or local source.</target>
+        <target state="translated">找不到來源 '{0}'。提供 HTTP 或本機來源。</target>
         <note>{0} is the source</note>
       </trans-unit>
       <trans-unit id="UnknownSourceType">
         <source>Unsupported type of source '{0}'. Provide an HTTP or local source.</source>
-        <target state="new">Unsupported type of source '{0}'. Provide an HTTP or local source.</target>
+        <target state="translated">來源 '{0}' 不受支援的類型。提供 HTTP 或本機來源。</target>
         <note>{0} is the input source.</note>
       </trans-unit>
       <trans-unit id="UnknownSourceWithId">
