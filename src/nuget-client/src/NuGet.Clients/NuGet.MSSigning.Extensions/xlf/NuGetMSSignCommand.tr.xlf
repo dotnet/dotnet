@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
-        <target state="new">Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
+        <target state="translated">'{0}' için geçersiz değer sağlandı. Kabul edilen değerlerin listesi için https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign sayfasını ziyaret edin</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidCertificateFingerprint">
@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="MSSignCommandNoPackageException">
         <source>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Hiçbir paket sağlanmadı. Kabul edilen paket sağlama yollarının listesi için https://docs.nuget.org/docs/reference/command-line-reference adresini ziyaret edin</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandNoTimestamperWarning">
         <source>No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">'-Timestamper' seçeneği sağlanmadı. İmzalı pakete zaman damgası uygulanmayacak. Bu seçenek hakkında daha fazla bilgi için https://docs.nuget.org/docs/reference/command-line-reference adresini ziyaret edin</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandNoValidCertificateFileException">

@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using NuGet.Common;
 
 namespace NuGet.Protocol.Core.Types
 {
@@ -14,9 +15,13 @@ namespace NuGet.Protocol.Core.Types
         {
             // cached for the life-time of the app domain
             Enabled = FromEnvironmentVariable();
+            StaticState.StartMSBuildRestoreTasks += ResetCache;
         }
 
         public static bool Enabled { get; private set; }
+
+        /// <summary>Re-reads <c>NuGetTestModeEnabled</c> from the current environment.</summary>
+        internal static void ResetCache() => Enabled = FromEnvironmentVariable();
 
         private static bool FromEnvironmentVariable()
         {

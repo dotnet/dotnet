@@ -85,7 +85,10 @@ namespace NuGet.Protocol.Plugins
                 }
             }
 
-            _logger.Dispose();
+            // Do not dispose of _logger. This factory does not own it: it is the shared, process-wide
+            // PluginLogger.DefaultInstance (never recreated), and other consumers (Connection, MessageDispatcher)
+            // deliberately do not dispose it either. Disposing it here would leave a disposed singleton that throws
+            // ObjectDisposedException on the next restore when plugin logging is enabled.
 
             GC.SuppressFinalize(this);
 

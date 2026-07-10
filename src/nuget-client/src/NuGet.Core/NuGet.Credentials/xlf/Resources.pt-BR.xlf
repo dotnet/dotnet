@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="PluginWarning_PluginIsBeingDeprecated">
         <source>The credential plugin model used by '{0}' is deprecated. Contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</source>
-        <target state="new">The credential plugin model used by '{0}' is deprecated. Contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</target>
+        <target state="translated">O modelo de plug-in de credencial usado por '{0}' foi preterido. Entre em contato com o provedor do plug-in para obter uma alternativa. Encontre mais informações sobre o modelo de plug-in recomendado em '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProviderException_InvalidCredentialResponse">

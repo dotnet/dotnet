@@ -219,7 +219,7 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">未儲存解決方案。先儲存解決方案，再管理 NuGet 套件。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink">
@@ -234,7 +234,7 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
         <source>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, refer to the</source>
-        <target state="new">The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, refer to the</target>
+        <target state="translated">因為有一或多個套件與您的專案不相容，所以 NuGet 作業失敗。'{0}' ('{1}') 專案架構已淘汰。如需如何將專案移轉至支援架構的相關詳細資訊，請參閱</target>
         <note>This text goes immediately before the document link.
 {0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
 {1} is the short folder representation of the framework (e.g. "net45").</note>

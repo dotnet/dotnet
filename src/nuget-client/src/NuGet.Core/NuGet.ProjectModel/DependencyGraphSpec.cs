@@ -19,10 +19,18 @@ namespace NuGet.ProjectModel
 {
     public class DependencyGraphSpec
     {
+        static DependencyGraphSpec()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetCache;
+        }
+
         /// <summary>
         /// Allows a user to enable the legacy SHA512 hash function for dgSpec files which is used by no-op.
         /// </summary>
         private static bool? UseLegacyHashFunction;
+
+        /// <summary>Clears the cached legacy-hash env flag so it is re-read on the next construction.</summary>
+        internal static void ResetCache() => UseLegacyHashFunction = null;
 
         private const string DGSpecFileNameExtension = "{0}.nuget.dgspec.json";
 

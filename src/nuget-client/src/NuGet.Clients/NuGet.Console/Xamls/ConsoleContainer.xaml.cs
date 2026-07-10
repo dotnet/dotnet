@@ -52,14 +52,12 @@ namespace NuGetConsole
                             Assumes.NotNull(_solutionManager);
 
                             IComponentModel componentModel = await ServiceLocator.GetComponentModelAsync();
-                            var productUpdateService = componentModel.GetService<IProductUpdateService>();
                             var packageRestoreManager = componentModel.GetService<IPackageRestoreManager>();
                             var deleteOnRestartManager = componentModel.GetService<IDeleteOnRestartManager>();
                             var shell = await ServiceLocator.GetGlobalServiceAsync<SVsShell, IVsShell4>();
 
                             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                            RootLayout.Children.Add(new ProductUpdateBar(productUpdateService));
                             RootLayout.Children.Add(new PackageRestoreBar(_solutionManager, packageRestoreManager, projectContextInfo: null));
                             RootLayout.Children.Add(new RestartRequestBar(deleteOnRestartManager, shell));
                         });

@@ -56,7 +56,7 @@
       </trans-unit>
       <trans-unit id="FilePathTooLongWarning">
         <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Shorten the file path or file name.</source>
-        <target state="new">The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Shorten the file path or file name.</target>
+        <target state="translated">Le chemin « {0} » ou le nom du fichier, ou les deux, sont trop longs. Il est possible que votre package ne fonctionne pas sans prise en charge de chemin de fichier long. Raccourcissez le chemin ou le nom du fichier.</target>
         <note />
       </trans-unit>
       <trans-unit id="IconUrlDeprecationWarning">
@@ -71,7 +71,7 @@
       </trans-unit>
       <trans-unit id="InvalidPlaceholderFileWarning">
         <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Remove this file from directories that contain other files.</source>
-        <target state="new">The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Remove this file from directories that contain other files.</target>
+        <target state="translated">Le fichier sur « {0} » utilise le symbole de répertoire vide « _._ », alors qu’il se trouve dans un répertoire contenant d’autres fichiers. Supprimez ce fichier des répertoires qui contiennent d’autres fichiers.</target>
         <note>0 - file path ending in _._</note>
       </trans-unit>
       <trans-unit id="InvalidPrereleaseDependencyWarning">
@@ -101,7 +101,7 @@
       </trans-unit>
       <trans-unit id="InvalidUndottedFrameworkWarning">
         <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
-        <target state="new">One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Rename them to include dots as needed (e.g. 'net50' to 'net5.0').</target>
+        <target state="translated">Un ou plusieurs spécificateurs de framework cible dans votre package ont un numéro de version de framework sans le point obligatoire. Ces points sont obligatoires à compte de .NET 5.0. Renommez-les en ajoutant des points (par ex., « net50 » devient « net5.0 »).</target>
         <note />
       </trans-unit>
       <trans-unit id="LegacyVersionWarning">

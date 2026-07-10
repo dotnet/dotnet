@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
-        <target state="new">Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
+        <target state="translated">'{0}' に対して指定された値が無効です。受け入れられる値の一覧については、https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign にアクセスしてください</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="MSSignCommandInvalidCertificateFingerprint">
@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="MSSignCommandNoPackageException">
         <source>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">パッケージが指定されていません。パッケージを指定する承認済みの方法の一覧については、https://docs.nuget.org/docs/reference/command-line-reference を参照してください</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandNoTimestamperWarning">
         <source>No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">'-Timestamper' オプションは指定されませんでした。署名済みのパッケージにはタイムスタンプが付けられません。このオプションの詳細については、https://docs.nuget.org/docs/reference/command-line-reference にアクセスしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="MSSignCommandNoValidCertificateFileException">

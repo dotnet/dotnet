@@ -315,7 +315,7 @@
       </trans-unit>
       <trans-unit id="FailToLoadPackagesConfig">
         <source>Failed to load packages.config as XML file. Check that it is valid.</source>
-        <target state="new">Failed to load packages.config as XML file. Check that it is valid.</target>
+        <target state="translated">Fehler beim Laden von „packages.config“ als XML-Datei. Stellen Sie sicher, dass sie gültig ist.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailToWritePackagesConfig">
@@ -653,7 +653,7 @@
       </trans-unit>
       <trans-unit id="PackageMinVersionNotSatisfied">
         <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</source>
-        <target state="new">The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</target>
+        <target state="translated">Das Paket „{0}“ erfordert die NuGet-Clientversion {1} oder höher. Die aktuelle NuGet-Version lautet jedoch {2}. Wenn Sie ein Upgrade von NuGet ausführen möchten, wechseln Sie zu https://docs.nuget.org/consume/installing-nuget.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageSignatureVerificationLog">
@@ -785,7 +785,7 @@
       </trans-unit>
       <trans-unit id="SignedPackageAlreadySigned">
         <source>The package already contains a signature. Remove the existing signature before adding a new signature.</source>
-        <target state="new">The package already contains a signature. Remove the existing signature before adding a new signature.</target>
+        <target state="translated">Das Paket enthält bereits eine Signatur. Entfernen Sie die vorhandene Signatur, bevor Sie eine neue Signatur hinzufügen.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageArchiveIOExtraRead">
@@ -810,12 +810,12 @@
       </trans-unit>
       <trans-unit id="SignedPackagePackageAlreadyCountersigned">
         <source>The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</source>
-        <target state="new">The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</target>
+        <target state="translated">Das Paket enthält bereits eine Repositorygegensignatur. Entfernen Sie die vorhandene Signatur, bevor Sie eine neue Repositorygegensignatur hinzufügen.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageUnableToAccessSignature">
         <source>The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</source>
-        <target state="new">The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</target>
+        <target state="translated">Das Paket wurde für die Durchführung von Signaturvorgängen nicht korrekt geöffnet. Verwenden Sie einen Stream-basierten Konstruktor, um Zugriff auf die Signaturattribute des Pakets zu erhalten.</target>
         <note />
       </trans-unit>
       <trans-unit id="SigningCannotBeDoneInPlace">
