@@ -23,6 +23,12 @@ parameters:
   type: string
   default: Update Test Baselines
 
+# Optional discriminator forwarded to the runner so multiple jobs of the same pipeline
+# targeting the same branch produce distinct PRs.
+- name: identifier
+  type: string
+  default: ''
+
 # Two separate invocations of the underlying runner, gated by mutually-exclusive
 # branch conditions. This is defensive programming to ensure that an internal
 # branch isn't accidentally pushed to a public repository.
@@ -37,6 +43,7 @@ steps:
       originalFilesDirectory: ${{ parameters.originalFilesDirectory }}
       updatedFilesDirectory: ${{ parameters.updatedFilesDirectory }}
       pullRequestTitle: ${{ parameters.pullRequestTitle }}
+      identifier: ${{ parameters.identifier }}
 
 - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/') }}:
   - task: AzureCLI@2
@@ -69,3 +76,4 @@ steps:
       originalFilesDirectory: ${{ parameters.originalFilesDirectory }}
       updatedFilesDirectory: ${{ parameters.updatedFilesDirectory }}
       pullRequestTitle: ${{ parameters.pullRequestTitle }}
+      identifier: ${{ parameters.identifier }}
