@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,11 +19,11 @@ namespace NuGet.Protocol
         {
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(
             SourceRepository source,
             CancellationToken token)
         {
-            ListResource resource = null;
+            ListResource? resource = null;
 
             var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>(token);
 
@@ -34,7 +32,8 @@ namespace NuGet.Protocol
                 var baseUrl = serviceIndex.GetServiceEntryUri(ServiceTypes.LegacyGallery);
                 if (baseUrl != null)
                 {
-                    var httpSource = await source.GetResourceAsync<HttpSourceResource>(token);
+                    var httpSource = await source.GetResourceAsync<HttpSourceResource>(token)
+                        ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
                     var serviceDocument =
                         await ODataServiceDocumentUtils.CreateODataServiceDocumentResourceV2(
                             baseUrl.AbsoluteUri, httpSource.HttpSource, DateTime.UtcNow, NullLogger.Instance, token);
@@ -44,8 +43,7 @@ namespace NuGet.Protocol
                 }
             }
 
-            var result = new Tuple<bool, INuGetResource>(resource != null, resource);
-            return result;
+            return new Tuple<bool, INuGetResource?>(resource != null, resource);
         }
     }
 }
