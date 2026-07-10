@@ -144,3 +144,4 @@ jobs:
           originalFilesDirectory: test/Microsoft.DotNet.Reproducibility.Tests/assets
           updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
           pullRequestTitle: ${{ parameters.pullRequestTitle }}
+          identifier: ${{ parameters.buildType }}
