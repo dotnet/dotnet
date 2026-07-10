@@ -94,6 +94,8 @@ namespace NuGet.PackageManagement.Telemetry
                     projectType,
                     isUpgradable,
                     fullPath);
+
+                returnValue[ProjectSystemNamePropertyName] = GetProjectSystemName(nuGetProject);
             }
             catch (Exception ex)
             {
@@ -142,6 +144,27 @@ namespace NuGet.PackageManagement.Telemetry
             }
 
             return projectType;
+        }
+
+        internal const string ProjectSystemNamePropertyName = "ProjectSystemName";
+
+        internal static string GetProjectSystemName(NuGetProject nuGetProject)
+        {
+            // packages.config projects: the IMSBuildProjectSystem adapter is exactly the value we want, and
+            // it is reachable directly from the project (the same instance the project services wrap).
+            if (nuGetProject is MSBuildNuGetProject msbuildProject)
+            {
+                return msbuildProject.ProjectSystem?.GetType().Name;
+            }
+
+            // project.json projects expose their project system safely through VsCoreProjectSystemServices.
+            if (nuGetProject?.ProjectServices is VsCoreProjectSystemServices vsCoreServices)
+            {
+                return vsCoreServices.ProjectSystem?.GetType().Name;
+            }
+
+            // PackageReference projects (both CPS and legacy) throw if you try to access the ProjectSystem property.
+            return null;
         }
 
         public static string NormalizePackageId(string packageId)
