@@ -2604,6 +2604,75 @@ public class TestRequestManagerTests
     }
 
     [TestMethod]
+    public void WritingTestCaseFilterThroughArgumentExecutorIsObservedByTestRequestManager()
+    {
+        // -- Arrange
+        // The --TestCaseFilter argument executor (the writer) and this TestRequestManager (the reader) are handed the
+        // same CommandLineOptions instance: _commandLineOptions, which was injected into the manager in the test
+        // constructor. This guards the same-instance contract of the injection - a value the writer sets on the injected
+        // options has to be observed by the reader precisely because both ends resolve to one object and not to two
+        // separate copies.
+        const string filter = "FullyQualifiedName~SharedInstanceMarker";
+
+        // The process-wide static default is a different object. Capturing it up front lets us prove the write lands on
+        // the injected instance only, and that a reader bound to the static default observes none of it.
+        var staticDefault = CommandLineOptions.Instance;
+        staticDefault.Should().NotBeSameAs(_commandLineOptions, "the manager under test was injected with a separate CommandLineOptions instance");
+
+        var payload = new DiscoveryRequestPayload()
+        {
+            Sources = new List<string>() { "AnyCPU.dll" },
+            RunSettings = DefaultRunsettings
+        };
+
+        DiscoveryCriteria? observedCriteria = null;
+        _mockTestPlatform.Setup(mt => mt.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()))
+            .Callback((IRequestData _, DiscoveryCriteria criteria, TestPlatformOptions _, Dictionary<string, SourceDetail> _, IWarningLogger _) =>
+                observedCriteria = criteria)
+            .Returns(_mockDiscoveryRequest.Object);
+
+        // -- Act
+        // Writer: parsing "--TestCaseFilter <filter>" sets TestCaseFilterValue on the injected instance and nowhere else.
+        new TestCaseFilterArgumentExecutor(_commandLineOptions).Initialize(filter);
+        _commandLineOptions.TestCaseFilterValue.Should().Be(filter, "the executor writes the filter on the injected instance");
+        staticDefault.TestCaseFilterValue.Should().BeNull("the write must not leak onto the static default instance");
+
+        // Reader: the manager copies TestCaseFilterValue from the same injected instance onto the DiscoveryCriteria.
+        _testRequestManager.DiscoverTests(payload, new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
+
+        // -- Assert
+        observedCriteria.Should().NotBeNull();
+        observedCriteria!.TestCaseFilter.Should().Be(filter, "the reader observed the writer's value through the shared instance");
+
+        // Reader-vs-reader: a second manager bound to the static default instance (which never received the write) must
+        // NOT observe the filter - it falls back to the run settings, which carry none, so the criteria filter is null.
+        DiscoveryCriteria? staticDefaultCriteria = null;
+        var mockTestPlatformForStaticDefault = new Mock<ITestPlatform>();
+        mockTestPlatformForStaticDefault.Setup(mt => mt.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()))
+            .Callback((IRequestData _, DiscoveryCriteria criteria, TestPlatformOptions _, Dictionary<string, SourceDetail> _, IWarningLogger _) =>
+                staticDefaultCriteria = criteria)
+            .Returns(new Mock<IDiscoveryRequest>().Object);
+
+        var managerBoundToStaticDefault = new TestRequestManager(
+            staticDefault,
+            mockTestPlatformForStaticDefault.Object,
+            new DummyTestRunResultAggregator(),
+            _mockTestPlatformEventSource.Object,
+            _inferHelper,
+            _mockMetricsPublisherTask,
+            _mockProcessHelper.Object,
+            _mockAttachmentsProcessingManager.Object,
+            _mockEnvironment.Object,
+            _mockEnvironmentVariableHelper.Object,
+            _runSettingsHelper);
+
+        managerBoundToStaticDefault.DiscoverTests(payload, new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
+
+        staticDefaultCriteria.Should().NotBeNull();
+        staticDefaultCriteria!.TestCaseFilter.Should().BeNull("the manager bound to the static default instance never saw the write");
+    }
+
+    [TestMethod]
     public void UsingInvalidValueForDefaultPlatformSettingThrowsSettingsException()
     {
         var settingXml = @"

@@ -75,7 +75,7 @@ internal class DiscoveryCriteriaConverter : JsonConverter<DiscoveryCriteria>
     {
         if (element.TryGetProperty(name, out var prop) && prop.ValueKind != JsonValueKind.Null)
         {
-            return StjSafe.Deserialize<T>(prop.GetRawText(), options);
+            return StjSafe.Deserialize<T>(prop, options);
         }
 
         return default;

@@ -75,40 +75,58 @@
     <None Include="_._" Pack="true" PackagePath="lib/net462/" />
   </ItemGroup>
 
-  <!-- Bundle the .NET testhost runtime output: the platform assemblies and satellites in lib\net8.0,
-       the msdia natives, the testhost launchers under build\net8.0 and the MSBuild props/targets.
-       Runs in the inner net8.0 build (where the output and Dia path property are available). -->
+  <!--
+    Bundle the .NET testhost runtime output into lib\net8.0 and build\net8.0. The platform
+    assemblies, the managed testhost.dll, its deps.json and the satellites are harvested from
+    src\testhost\testhost.csproj's OWN net8.0 publish rather than cherry-picked from this package's
+    commingled $(OutputPath) (where every ProjectReference copies its output). Sourcing each DLL from
+    the single project that publishes it guarantees a self-consistent net8.0 set instead of files that
+    won a race in a shared folder. See eng/PublishForPackaging.targets. Runs in the inner net8.0 build
+    (where the msdia path property and the package's own props/targets output are available). -->
   <Target Name="IncludeTestHostContent"
           Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) "
           Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <!-- Canonical folders that the testhost projects publish/build into (see
+           eng/PublishForPackaging.targets). Populated during the solution Build pass, which
+           completes before any package Pack pass, so they are present here. -->
+      <_NetTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetCoreAppMinimum)\</_NetTestHostPublishDir>
+      <_NetTestHostX86Dir>$(ArtifactsBinDir)testhost.x86\$(Configuration)\$(NetCoreAppMinimum)\win-x86\</_NetTestHostX86Dir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_NetTestHostPublishDir)')"
+           Text="Expected published .NET testhost at '$(_NetTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
     <ItemGroup>
-      <!-- Platform assemblies (everything except this package's own TestHost assembly). -->
-      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.VisualStudio.TestPlatform.*.dll" PackagePath="lib/$(TargetFramework)/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.*.dll"
-                              Exclude="$(OutputPath)Microsoft.TestPlatform.TestHost.dll"
-                              PackagePath="lib/$(TargetFramework)/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)testhost.dll" PackagePath="lib/$(TargetFramework)/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)testhost.deps.json" PackagePath="lib/$(TargetFramework)/" />
+      <!-- Platform assemblies + managed testhost + deps.json from the net8.0 publish. Name-scoped so
+           only the historically shipped assemblies are packed; testhost.exe (used for the launcher
+           below), testhost.dll.config, the *.xml docs and testhost.runtimeconfig.json that also live
+           in the publish are left out, matching the original payload. -->
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)Microsoft.VisualStudio.TestPlatform.*.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)Microsoft.TestPlatform.*.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)testhost.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)testhost.deps.json" PackagePath="lib/$(TargetFramework)/" />
 
-      <!-- msdia natives. -->
+      <!-- msdia natives (external package content copied into this package's output by CopyDiaFiles). -->
       <TfmSpecificPackageFile Include="$(OutputPath)x86\msdia140.dll" PackagePath="lib/$(TargetFramework)/x86/" />
       <TfmSpecificPackageFile Include="$(OutputPath)x64\msdia140.dll" PackagePath="lib/$(TargetFramework)/x64/" />
       <TfmSpecificPackageFile Include="$(OutputPath)arm64\msdia140.dll" PackagePath="lib/$(TargetFramework)/arm64/" />
 
-      <!-- testhost launchers (see the original nuspec for why the AnyCPU testhost.dll is used for x64). -->
-      <TfmSpecificPackageFile Include="$(OutputPath)testhost.dll" PackagePath="build/$(TargetFramework)/x64/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)testhost.exe" PackagePath="build/$(TargetFramework)/x64/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)testhost.x86.dll" PackagePath="build/$(TargetFramework)/x86/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)testhost.x86.exe" PackagePath="build/$(TargetFramework)/x86/" />
+      <!-- testhost launchers: the AnyCPU host (used for x64, see the original nuspec) from testhost's
+           net8.0 publish, the x86 host from testhost.x86's own net8.0 build output. -->
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)testhost.dll" PackagePath="build/$(TargetFramework)/x64/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)testhost.exe" PackagePath="build/$(TargetFramework)/x64/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostX86Dir)testhost.x86.dll" PackagePath="build/$(TargetFramework)/x86/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostX86Dir)testhost.x86.exe" PackagePath="build/$(TargetFramework)/x86/" />
 
-      <!-- MSBuild integration. -->
+      <!-- MSBuild integration (this package's own content). -->
       <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.TestHost.props" PackagePath="build/$(TargetFramework)/" />
       <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.TestHost.targets" PackagePath="build/$(TargetFramework)/" />
 
-      <!-- Satellite resources for the bundled assemblies (CommunicationUtilities, CrossPlatEngine, Common). -->
-      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" PackagePath="lib/$(TargetFramework)/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" PackagePath="lib/$(TargetFramework)/" />
-      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <!-- Satellite resources for the bundled assemblies (CommunicationUtilities, CrossPlatEngine,
+           Common). Name-scoped so the CoreUtilities/Utilities/ObjectModel satellites that also live in
+           the publish are not shipped, matching the original payload. -->
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)**/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)**/Microsoft.TestPlatform.CrossPlatEngine.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(_NetTestHostPublishDir)**/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" PackagePath="lib/$(TargetFramework)/" />
     </ItemGroup>
   </Target>
 </Project>

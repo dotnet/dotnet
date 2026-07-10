@@ -15,9 +15,12 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
+
+using vstest.console.UnitTests.TestDoubles;
 
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
@@ -356,6 +359,55 @@ public class ExecutorUnitTests
         Assert.HasCount(3, mockOutput.Messages);
         Assert.MatchesRegex(@"VSTest version .* \(x64\)", mockOutput.Messages[0].Message!);
         Assert.DoesNotContain(message => message.Message!.Contains("vstest.console.exe is running in emulated mode"), mockOutput.Messages);
+    }
+
+    [TestMethod]
+    public void MarkingTestRunFailedOnInjectedAggregatorIsObservedByExecutorExitCode()
+    {
+        // The exit code produced at the end of Executor.Execute is OR-ed with the outcome of the
+        // TestRunResultAggregator (Executor.cs: exitCode |= (Outcome == Passed) ? 0 : 1). This test
+        // proves the reader (Executor) observes the SAME aggregator instance it was constructed with,
+        // not the process-wide TestRunResultAggregator.Instance static.
+        //
+        // "--help" is a zero-baseline path: HelpArgumentProcessor runs first and returns Abort, which
+        // does not set the exit bit (only Fail does), so the aggregator's outcome is the sole
+        // contributor to the final exit code. That makes the two outcomes below decisively distinct.
+
+        // Baseline the shared static so the negative control is deterministic.
+        TestRunResultAggregator.Instance.Reset();
+
+        // Writer: mark a failure on an injected aggregator that is a different instance from the static.
+        var injectedAggregator = new DummyTestRunResultAggregator();
+        injectedAggregator.MarkTestRunFailed();
+        Assert.AreNotSame(TestRunResultAggregator.Instance, injectedAggregator);
+
+        // Reader observes the write through the injected instance: Failed outcome sets the exit bit.
+        var exitCodeWithInjected = new Executor(
+            new MockOutput(),
+            _mockTestPlatformEventSource.Object,
+            new ProcessHelper(),
+            new PlatformEnvironment(),
+            RunSettingsManager.Instance,
+            RunSettingsHelper.Instance,
+            CommandLineOptions.Instance,
+            injectedAggregator).Execute("--help");
+
+        Assert.AreEqual(1, exitCodeWithInjected, "Executor must observe the injected aggregator's Failed outcome.");
+
+        // Negative control: an Executor bound to the static default (still Passed) yields a zero exit
+        // for the same args, and the write above did not leak onto the static instance.
+        var exitCodeWithStatic = new Executor(
+            new MockOutput(),
+            _mockTestPlatformEventSource.Object,
+            new ProcessHelper(),
+            new PlatformEnvironment(),
+            RunSettingsManager.Instance,
+            RunSettingsHelper.Instance,
+            CommandLineOptions.Instance,
+            TestRunResultAggregator.Instance).Execute("--help");
+
+        Assert.AreEqual(0, exitCodeWithStatic, "The static default aggregator is still Passed, so its Executor must not set the failure bit.");
+        Assert.AreEqual(TestOutcome.Passed, TestRunResultAggregator.Instance.Outcome, "Marking the injected aggregator failed must not leak onto the static instance.");
     }
 
     private class MockOutput : IOutput

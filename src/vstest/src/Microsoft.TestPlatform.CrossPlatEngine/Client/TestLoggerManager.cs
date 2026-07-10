@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 
+using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Exceptions;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
 using Microsoft.VisualStudio.TestPlatform.Common.Logging;
@@ -354,6 +355,17 @@ internal class TestLoggerManager : ITestLoggerManager
         ValidateArg.NotNull(uri, nameof(uri));
         CheckDisposed();
 
+        // Give the composition root the first chance to supply a pre-configured instance of its own
+        // built-in logger (keyed by URI) so it receives injected dependencies instead of a
+        // reflection-activated one. This covers loggers the user names explicitly in run settings by URI
+        // or by friendly name (which is resolved to a URI before we get here). Unknown / third-party
+        // loggers return null and fall through to the reflection-based extension manager below, exactly
+        // as before, so this does not widen any public extension point.
+        if ((_requestData as RequestData)?.KnownExtensionInstanceFactory?.Invoke(uri) is ITestLogger knownLogger)
+        {
+            return InitializeKnownLogger(knownLogger, uri, parameters);
+        }
+
         // Look up the extension and initialize it if one is found.
         var extensionManager = TestLoggerExtensionManager;
         var logger = extensionManager.TryGetTestExtension(uri.AbsoluteUri);
@@ -541,6 +553,23 @@ internal class TestLoggerManager : ITestLoggerManager
                 assembly?.GetTypes()
                     .FirstOrDefault(x => string.Equals(x.AssemblyQualifiedName, assemblyQualifiedName));
 
+            // Give the composition root (vstest.console) the first chance to supply a pre-configured
+            // instance of one of its own built-in loggers (for example ConsoleLogger with the parsed
+            // CommandLineOptions injected). This is the path our shipped ConsoleLogger actually takes:
+            // it is registered in run settings by assembly-qualified name (see AddConsoleLogger), not
+            // discovered through the logger extension manager, so it is always activated here. The
+            // instance is looked up by the extension URI declared on the resolved type, letting our
+            // extensions receive their dependencies by injection instead of reaching for process-wide
+            // singletons. Unknown / third-party loggers are not matched by the factory and fall through
+            // to reflection activation below, exactly as before, so this does not widen any public
+            // extension point.
+            if (loggerType?.GetCustomAttribute<ExtensionUriAttribute>()?.ExtensionUri is { } extensionUri
+                && Uri.TryCreate(extensionUri, UriKind.Absolute, out var loggerUri)
+                && (_requestData as RequestData)?.KnownExtensionInstanceFactory?.Invoke(loggerUri) is ITestLogger knownLogger)
+            {
+                return InitializeKnownLogger(knownLogger, loggerUri, parameters);
+            }
+
             // Create logger instance
             var constructorInfo = loggerType?.GetConstructor(Type.EmptyTypes);
             var logger = constructorInfo?.Invoke([]);
@@ -575,6 +604,30 @@ internal class TestLoggerManager : ITestLoggerManager
                 "TestLoggerManager: Error occurred while initializing the Logger assemblyQualifiedName : {0}, codeBase : {1} , Exception Details : {2}", assemblyQualifiedName, codeBase, ex);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Initializes a logger instance supplied directly by the composition root (see
+    /// <see cref="RequestData.KnownExtensionInstanceFactory"/>) rather than one created by reflection.
+    /// Mirrors the dedup / initialize / track steps used by the reflection-based paths.
+    /// </summary>
+    private bool InitializeKnownLogger(ITestLogger logger, Uri uri, Dictionary<string, string?>? parameters)
+    {
+        // If the logger has already been initialized just return.
+        if (_initializedLoggers.Contains(logger.GetType()))
+        {
+            EqtTrace.Verbose("TestLoggerManager: Skipping duplicate logger initialization: {0}", logger.GetType());
+            return true;
+        }
+
+        var initialized = InitializeLogger(logger, uri.AbsoluteUri, parameters);
+
+        if (initialized)
+        {
+            _initializedLoggers.Add(logger.GetType());
+        }
+
+        return initialized;
     }
 
     private bool InitializeLogger(object? logger, string? extensionUri, Dictionary<string, string?>? parameters)

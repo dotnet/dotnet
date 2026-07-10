@@ -50,20 +50,7 @@
     <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <None Include="$(OutputPath)net10.0\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <None Include="$(OutputPath)net10.0\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <!-- Generated testhost runtimeconfig.json templates (produced under $(RepoRoot)temp\testhost). -->
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-5.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-6.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-7.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-8.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-9.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-10.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-11.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- Generated testhost runtimeconfig.json fallback template. Only the roll-forward-to-latest template is shipped; the native (C++) fallback has no target framework preference. -->
     <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <!-- External Microsoft.CodeCoverage.IO localized satellites. -->
     <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\cs\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
@@ -204,19 +191,7 @@
     <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Client.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Common.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.1.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-5.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-6.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-7.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-8.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-9.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-10.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-11.0.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- Only the roll-forward-to-latest testhost runtimeconfig.json template (native fallback has no TFM preference). -->
     <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <None Include="$(OutputPath)$(_CliContentTfm)\testhost.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
     <None Include="$(OutputPath)$(_CliContentTfm)\testhost.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />

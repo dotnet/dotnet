@@ -66,6 +66,7 @@ internal class Executor
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly IRunSettingsHelper _runSettingsHelper;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly TestRunResultAggregator _testRunResultAggregator;
     // Left null in production so the argument processors resolve TestRequestManager.Instance lazily
     // (only when a run/discovery command actually executes); tests inject a specific instance.
     private readonly ITestRequestManager? _testRequestManager;
@@ -99,16 +100,16 @@ internal class Executor
     }
 
     internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment)
-        : this(output, testPlatformEventSource, processHelper, environment, RunSettingsManager.Instance, RunSettingsHelper.Instance, CommandLineOptions.Instance)
+        : this(output, testPlatformEventSource, processHelper, environment, RunSettingsManager.Instance, RunSettingsHelper.Instance, CommandLineOptions.Instance, TestRunResultAggregator.Instance)
     {
     }
 
     internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider)
-        : this(output, testPlatformEventSource, processHelper, environment, runSettingsProvider, RunSettingsHelper.Instance, CommandLineOptions.Instance)
+        : this(output, testPlatformEventSource, processHelper, environment, runSettingsProvider, RunSettingsHelper.Instance, CommandLineOptions.Instance, TestRunResultAggregator.Instance)
     {
     }
 
-    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions, ITestRequestManager? testRequestManager = null)
+    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions, TestRunResultAggregator testRunResultAggregator, ITestRequestManager? testRequestManager = null)
     {
         DebuggerBreakpoint.AttachVisualStudioDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_DEBUG_ATTACHVS);
         DebuggerBreakpoint.WaitForNativeDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_NATIVE_DEBUG);
@@ -122,6 +123,7 @@ internal class Executor
         _runSettingsProvider = runSettingsProvider;
         _runSettingsHelper = runSettingsHelper;
         _commandLineOptions = commandLineOptions;
+        _testRunResultAggregator = testRunResultAggregator;
         _testRequestManager = testRequestManager;
     }
 
@@ -219,7 +221,7 @@ internal class Executor
         }
 
         // Use the test run result aggregator to update the exit code.
-        exitCode |= (TestRunResultAggregator.Instance.Outcome == TestOutcome.Passed) ? 0 : 1;
+        exitCode |= (_testRunResultAggregator.Outcome == TestOutcome.Passed) ? 0 : 1;
 
         EqtTrace.Verbose("Executor.Execute: Exiting with exit code of {0}", exitCode);
 

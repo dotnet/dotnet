@@ -730,17 +730,13 @@ public class DotnetTestHostManagerTests
 
     [TestMethod]
 
-    // we can't put in a "default" value, and we don't have other way to determine if this provided value is the
-    // runtime default or the actual value that user provided, so right now the default will use the latest, instead
-    // or the more correct 1.0, it should be okay, as that version is not supported anymore anyway
-    [DataRow("net8.0", "8.0", true)]
-
-    // net9.0 is currently the latest released version, but it still has it's own runtime config, it is not the same as
-    // "latest" which means the latest you have on system. So if you have only 5.0 SDK then net8.0 will fail because it can't find net8.0,
-    // but latest would use net9.0 because that is the latest one on your system.
-    [DataRow("net9.0", "9.0", true)]
-    [DataRow("net9.0", "latest", false)]
-    public void GetTestHostProcessStartInfoShouldIncludeTestHostPathNextToTestRunnerIfTesthostDllIsNoFoundAndDepsFileNotFoundWithTheCorrectTfm(string tfm, string suffix, bool runtimeConfigExists)
+    // A native (e.g. C++) source has no real target framework. Even when a TargetFrameworkVersion ends up in
+    // the run settings (e.g. because vstest.console unified incompatible assemblies to a default framework, or
+    // the user set one), the built-in testhost fallback always rolls forward to the latest installed runtime via
+    // testhost-latest.runtimeconfig.json. We no longer ship version-specific testhost-<ver>.runtimeconfig.json files.
+    [DataRow("net8.0")]
+    [DataRow("net9.0")]
+    public void GetTestHostProcessStartInfoNativeFallbackAlwaysUsesLatestRuntimeConfigRegardlessOfTfm(string tfm)
     {
         // Absolute path to the source directory
         var sourcePath = Path.Combine(_temp, "test.dll");
@@ -755,12 +751,10 @@ public class DotnetTestHostManagerTests
         var testhostNextToRunner = Path.Combine(here, "testhost.dll");
         _mockFileHelper.Setup(ph => ph.Exists(testhostNextToRunner)).Returns(true);
 
-        _mockFileHelper.Setup(ph => ph.Exists(It.Is<string>(s => s.Contains($"{suffix}.runtimeconfig.json")))).Returns(runtimeConfigExists);
-
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, $"<RunSettings><RunConfiguration><TargetFrameworkVersion>{tfm}</TargetFrameworkVersion></RunConfiguration></RunSettings>");
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        var expectedRuntimeConfigPath = Path.Combine(here, $"testhost-{suffix}.runtimeconfig.json");
+        var expectedRuntimeConfigPath = Path.Combine(here, "testhost-latest.runtimeconfig.json");
         Assert.Contains($"--runtimeconfig \"{expectedRuntimeConfigPath}\"", startInfo.Arguments!);
     }
 
