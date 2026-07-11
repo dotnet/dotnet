@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DotNet.Helix.Sdk.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="**\*.py;**\*.bat;**\*.sh"
           Pack="true"
           PackagePath="%(RecursiveDir)%(Filename)%(Extension)" />

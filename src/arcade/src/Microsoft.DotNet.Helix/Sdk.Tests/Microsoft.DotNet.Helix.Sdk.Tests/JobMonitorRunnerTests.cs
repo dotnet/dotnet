@@ -2806,12 +2806,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             logger.Messages.Should().Contain(message =>
                 message.Contains("##vso[task.logissue type=warning]Work item 'wi-fail' in job 'helix-linux' failed", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
-                message.Contains("Failed work item console logs:", StringComparison.Ordinal)
+                message.Contains("Failed work item information:", StringComparison.Ordinal)
                 && message.Contains("Test results: https://dev.azure.com/dnceng/public/_build/results?buildId=123&view=ms.vss-test-web.build-test-results-tab", StringComparison.Ordinal)
                 && message.Contains("└─ wi-fail (Job: helix-linux) (Finished, exit code 1)", StringComparison.Ordinal)
                 && message.Contains("└─ Console: https://helix.example/wi-fail/console", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
-                message.Contains("##vso[task.logissue type=error]Failed work item console logs:", StringComparison.Ordinal));
+                message.Contains("##vso[task.logissue type=error]Failed work item information:", StringComparison.Ordinal));
             logger.Messages.Should().NotContain(message =>
                 message.Contains("Helix job: helix-linux", StringComparison.Ordinal));
         }

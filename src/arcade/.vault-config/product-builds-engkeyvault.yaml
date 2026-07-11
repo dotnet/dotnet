@@ -46,17 +46,6 @@ secrets:
       description: Client id for akams app
 
   #AzureDevOps-Artifact-Feeds-Pats
-  dn-bot-dnceng-artifact-feeds-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dnceng-artifact-feeds
-      organizations: dnceng
-      scopes: packaging_write
-
   dn-bot-all-orgs-artifact-feeds-rw:
     type: azure-devops-access-token
     parameters:

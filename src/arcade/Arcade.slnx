@@ -20,6 +20,7 @@
     <Project Path="src/Common/Microsoft.Arcade.Common.Tests/Microsoft.Arcade.Common.Tests.csproj" />
     <Project Path="src/Common/Microsoft.Arcade.Test.Common/Microsoft.Arcade.Test.Common.csproj" />
     <Project Path="src/Microsoft.DotNet.Arcade.Sdk.Tests/Microsoft.DotNet.Arcade.Sdk.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Arcade.Validation.Tests/Microsoft.DotNet.Arcade.Validation.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Manifest.Tests/Microsoft.DotNet.Build.Manifest.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed.Tests/Microsoft.DotNet.Build.Tasks.Feed.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Packaging/tests/Microsoft.DotNet.Build.Tasks.Packaging.Tests.csproj" />
@@ -80,6 +81,8 @@
   <Project Path="src/Microsoft.DotNet.SignCheckLibrary/Microsoft.DotNet.SignCheckLibrary.csproj" />
   <Project Path="src/Microsoft.DotNet.SignCheck/Microsoft.DotNet.SignCheck.csproj" />
   <Project Path="src/Microsoft.DotNet.SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog/Microsoft.DotNet.Build.Tasks.FileCatalog.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests.csproj" />
   <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
   <Project Path="src/WinShimmer/WinShimmer.csproj" />
 </Solution>
