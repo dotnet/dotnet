@@ -2,21 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Diagnostics.Metrics;
-using System.Reflection;
-using OpenTelemetry.Internal;
 using Diagnostics = System.Diagnostics;
 
 namespace OpenTelemetry.Instrumentation.Process;
 
 internal sealed class ProcessMetrics
 {
-    internal static readonly Assembly Assembly = typeof(ProcessMetrics).Assembly;
-    internal static readonly AssemblyName AssemblyName = Assembly.GetName();
-#pragma warning disable IDE0370 // Suppression is unnecessary
-    internal static readonly string MeterName = AssemblyName.Name!;
-#pragma warning restore IDE0370 // Suppression is unnecessary
-
-    private static readonly Meter MeterInstance = new(MeterName, Assembly.GetPackageVersion());
+    internal static readonly Version SemanticConventionsVersion = new(1, 25, 0);
+    internal static readonly Meter MeterInstance = Metrics.MeterFactory.Create<ProcessMetrics>(SemanticConventionsVersion);
 
     static ProcessMetrics()
     {
@@ -53,15 +46,6 @@ internal sealed class ProcessMetrics
             },
             unit: "s",
             description: "Total CPU seconds broken down by different states.");
-
-        MeterInstance.CreateObservableUpDownCounter(
-            "process.cpu.count",
-            () =>
-            {
-                return Environment.ProcessorCount;
-            },
-            unit: "{processors}",
-            description: "The number of processors (CPU cores) available to the current process.");
 
         MeterInstance.CreateObservableUpDownCounter(
             "process.thread.count",

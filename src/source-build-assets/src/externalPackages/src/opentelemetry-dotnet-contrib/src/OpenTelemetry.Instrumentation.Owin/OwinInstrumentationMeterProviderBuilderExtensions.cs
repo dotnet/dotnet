@@ -21,7 +21,7 @@ public static class OwinInstrumentationMeterProviderBuilderExtensions
     {
         Guard.ThrowIfNull(builder);
 
-        builder.AddMeter(OwinInstrumentationMetrics.MeterName);
+        builder.AddMeter(OwinInstrumentationMetrics.Meter.Name);
         return builder;
     }
 }

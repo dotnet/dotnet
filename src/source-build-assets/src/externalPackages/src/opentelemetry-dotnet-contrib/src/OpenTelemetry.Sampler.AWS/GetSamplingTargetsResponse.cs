@@ -9,12 +9,12 @@ internal sealed class GetSamplingTargetsResponse
 {
     public GetSamplingTargetsResponse(
         double lastRuleModification,
-        List<SamplingTargetDocument> samplingTargetDocuments,
-        List<UnprocessedStatistic> unprocessedStatistics)
+        List<SamplingTargetDocument>? samplingTargetDocuments,
+        List<UnprocessedStatistic>? unprocessedStatistics)
     {
         this.LastRuleModification = lastRuleModification;
-        this.SamplingTargetDocuments = samplingTargetDocuments;
-        this.UnprocessedStatistics = unprocessedStatistics;
+        this.SamplingTargetDocuments = samplingTargetDocuments ?? [];
+        this.UnprocessedStatistics = unprocessedStatistics ?? [];
     }
 
     // This is actually a time in unix seconds.

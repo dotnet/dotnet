@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+* Update `System.Text.Json` for `netstandard2.0` to `8.0.5`.
+  ([#4154](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4154))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 1.0.0-alpha.1
+
+Released 2026-Apr-21
+
 * Add Google Cloud Platform resource detector for GKE, GAE, GCR, and GCE. Detector
   is accessible via `AddGcpDetector` extension method on `ResourceBuilder`.
   ([#1691](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/1691))

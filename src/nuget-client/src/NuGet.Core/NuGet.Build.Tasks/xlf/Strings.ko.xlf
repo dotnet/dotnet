@@ -118,7 +118,7 @@
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
-        <target state="new">RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</target>
+        <target state="translated">RestoreNoCache는 더 이상 사용되지 않으며 RestoreNoHttpCache로 이름이 바뀌었습니다. 대신 RestoreNoHttpCache를 사용하세요.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">

@@ -11,24 +11,27 @@ namespace OpenTelemetry.Instrumentation.AspNet.Implementation;
 
 internal sealed class HttpInListener : IDisposable
 {
+    private const string StopInstrumentationCallbackContextKey = "__AspnetOpenTelemetryInstrumentationStopCallback__";
     private static readonly double TimestampToTicks = TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
+
     private readonly HttpRequestRouteHelper routeHelper = new();
     private readonly RequestDataHelper requestDataHelper = new(configureByHttpKnownMethodsEnvironmentalVariable: true);
     private readonly AsyncLocal<long> beginTimestamp = new();
+    private readonly Action<Activity?, HttpContextBase> onStopActivityCallback;
 
     public HttpInListener()
     {
+        this.onStopActivityCallback = this.OnStopActivity;
+
         TelemetryHttpModule.Options.TextMapPropagator = Propagators.DefaultTextMapPropagator;
 
         TelemetryHttpModule.Options.OnRequestStartedCallback += this.StartActivity;
-        TelemetryHttpModule.Options.OnRequestStoppedCallback += this.OnStopActivity;
         TelemetryHttpModule.Options.OnExceptionCallback += this.OnException;
     }
 
     public void Dispose()
     {
         TelemetryHttpModule.Options.OnRequestStartedCallback -= this.StartActivity;
-        TelemetryHttpModule.Options.OnRequestStoppedCallback -= this.OnStopActivity;
         TelemetryHttpModule.Options.OnExceptionCallback -= this.OnException;
     }
 
@@ -113,15 +116,15 @@ internal sealed class HttpInListener : IDisposable
 
     private Activity? StartActivity(HttpContextBase context, ActivityContext activityContext)
     {
+        context.Items[StopInstrumentationCallbackContextKey] = this.onStopActivityCallback;
+
+        if (AspNetInstrumentation.Instance.HandleManager.MetricHandles > 0)
+        {
+            this.beginTimestamp.Value = Stopwatch.GetTimestamp();
+        }
+
         if (AspNetInstrumentation.Instance.HandleManager.TracingHandles == 0)
         {
-            if (AspNetInstrumentation.Instance.HandleManager.MetricHandles > 0)
-            {
-                // If we are not tracing, but we are collecting metrics, we still
-                // need to set the activity name and tags.
-                this.beginTimestamp.Value = Stopwatch.GetTimestamp();
-            }
-
             return null;
         }
 

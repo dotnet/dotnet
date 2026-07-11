@@ -15,33 +15,33 @@ namespace OpenTelemetry.SemanticConventions;
 public static class MessageAttributes
 {
     /// <summary>
-    /// Deprecated, use <c>rpc.message.compressed_size</c> instead.
+    /// Deprecated, no replacement at this time.
     /// </summary>
-    [Obsolete("Replaced by <c>rpc.message.compressed_size</c>.")]
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeMessageCompressedSize = "message.compressed_size";
 
     /// <summary>
-    /// Deprecated, use <c>rpc.message.id</c> instead.
+    /// Deprecated, no replacement at this time.
     /// </summary>
-    [Obsolete("Replaced by <c>rpc.message.id</c>.")]
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeMessageId = "message.id";
 
     /// <summary>
-    /// Deprecated, use <c>rpc.message.type</c> instead.
+    /// Deprecated, no replacement at this time.
     /// </summary>
-    [Obsolete("Replaced by <c>rpc.message.type</c>.")]
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeMessageType = "message.type";
 
     /// <summary>
-    /// Deprecated, use <c>rpc.message.uncompressed_size</c> instead.
+    /// Deprecated, no replacement at this time.
     /// </summary>
-    [Obsolete("Replaced by <c>rpc.message.uncompressed_size</c>.")]
+    [Obsolete("Deprecated, no replacement at this time.")]
     public const string AttributeMessageUncompressedSize = "message.uncompressed_size";
 
     /// <summary>
-    /// Deprecated, use <c>rpc.message.type</c> instead.
+    /// Deprecated, no replacement at this time.
     /// </summary>
-    [Obsolete("Replaced by <c>rpc.message.type</c>.")]
+    [Obsolete("Deprecated, no replacement at this time.")]
     public static class MessageTypeValues
     {
         /// <summary>

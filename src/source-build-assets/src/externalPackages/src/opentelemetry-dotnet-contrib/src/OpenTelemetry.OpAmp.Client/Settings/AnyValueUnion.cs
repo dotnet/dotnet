@@ -11,16 +11,17 @@ namespace OpenTelemetry.OpAmp.Client.Settings;
 /// </summary>
 public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
 {
-    internal AnyValueUnion(AnyValueType type, int? intValue = null, bool? boolValue = null, string? stringValue = null, double? doubleValue = null)
+    internal AnyValueUnion(AnyValueType type, int? intValue = null, bool? boolValue = null, string? stringValue = null, double? doubleValue = null, ICollection<AnyValueUnion>? arrayValue = null)
     {
         this.Type = type;
         this.IntValue = intValue;
         this.BoolValue = boolValue;
         this.StringValue = stringValue;
         this.DoubleValue = doubleValue;
+        this.ArrayValue = arrayValue;
 
         // No value defined
-        if (intValue == null && boolValue == null && stringValue == null && doubleValue == null)
+        if (intValue == null && boolValue == null && stringValue == null && doubleValue == null && arrayValue == null)
         {
             switch (type)
             {
@@ -32,6 +33,8 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
                     throw new ArgumentNullException(nameof(intValue), "Must not be null");
                 case AnyValueType.Double:
                     throw new ArgumentNullException(nameof(doubleValue), "Must not be null");
+                case AnyValueType.Array:
+                    throw new ArgumentNullException(nameof(arrayValue), "Must not be null");
                 default:
                     Debug.Fail($"Missing check for AnyValueType of '{type}'");
                     return;
@@ -58,6 +61,11 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
     /// Gets the double value associated with this instance.
     /// </summary>
     public double? DoubleValue { get; }
+
+    /// <summary>
+    /// Gets the array value associated with this instance.
+    /// </summary>
+    public ICollection<AnyValueUnion>? ArrayValue { get; }
 
     /// <summary>
     /// Gets the type of the value represented by this instance.
@@ -104,6 +112,7 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
         AnyValueType.Boolean => this.BoolValue == other.BoolValue,
         AnyValueType.String => string.Equals(this.StringValue, other.StringValue, StringComparison.Ordinal),
         AnyValueType.Double => this.DoubleValue == other.DoubleValue,
+        AnyValueType.Array => EqualsArray(this.ArrayValue, other.ArrayValue),
         _ => false,
     };
 
@@ -121,6 +130,7 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
         AnyValueType.String => this.StringValue?.GetHashCode() ?? 0,
 #endif
         AnyValueType.Double => this.DoubleValue.GetHashCode(),
+        AnyValueType.Array => GetHashCodeArray(this.ArrayValue),
         _ => 0,
     };
 
@@ -131,4 +141,84 @@ public readonly struct AnyValueUnion : IEquatable<AnyValueUnion>
     internal static AnyValueUnion From(bool value) => new(AnyValueType.Boolean, boolValue: value);
 
     internal static AnyValueUnion From(string value) => new(AnyValueType.String, stringValue: value);
+
+    internal static AnyValueUnion From(ICollection<int> values) => GetArray(values);
+
+    internal static AnyValueUnion From(ICollection<double> values) => GetArray(values);
+
+    internal static AnyValueUnion From(ICollection<bool> values) => GetArray(values);
+
+    internal static AnyValueUnion From(ICollection<string> values) => GetArray(values);
+
+    private static AnyValueUnion GetArray<T>(ICollection<T> values)
+    {
+        var array = new AnyValueUnion[values.Count];
+        var i = 0;
+
+        foreach (var v in values)
+        {
+            array[i++] = v switch
+            {
+                int intValue => From(intValue),
+                double doubleValue => From(doubleValue),
+                bool boolValue => From(boolValue),
+                string stringValue => From(stringValue),
+                _ => throw new NotSupportedException($"Type {typeof(T).Name} is not supported."),
+            };
+        }
+
+        return new AnyValueUnion(AnyValueType.Array, arrayValue: array);
+    }
+
+    private static bool EqualsArray(ICollection<AnyValueUnion>? left, ICollection<AnyValueUnion>? right)
+    {
+        if (ReferenceEquals(left, right))
+        {
+            return true;
+        }
+
+        if (left == null || right == null)
+        {
+            return false;
+        }
+
+        return left.SequenceEqual(right);
+    }
+
+#if NET
+    private static int GetHashCodeArray(ICollection<AnyValueUnion>? arrayValue)
+    {
+        var hash = default(HashCode);
+
+        if (arrayValue == null)
+        {
+            return hash.ToHashCode();
+        }
+
+        foreach (var v in arrayValue)
+        {
+            hash.Add(v);
+        }
+
+        return hash.ToHashCode();
+    }
+#else
+    private static int GetHashCodeArray(ICollection<AnyValueUnion>? arrayValue)
+    {
+        var hash = 0;
+
+        if (arrayValue == null)
+        {
+            return hash;
+        }
+
+        // Follows the same logic as Google.Protobuf.Collections.RepeatedField
+        foreach (var v in arrayValue)
+        {
+            hash = (hash * 31) + v.GetHashCode();
+        }
+
+        return hash;
+    }
+#endif
 }

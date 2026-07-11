@@ -50,8 +50,8 @@ public class GenevaMetricExporterOptions
 
             foreach (var entry in value)
             {
-                if (entry.Key.Equals(GenevaMetricExporter.DimensionKeyForCustomMonitoringAccount, StringComparison.OrdinalIgnoreCase) ||
-                    entry.Key.Equals(GenevaMetricExporter.DimensionKeyForCustomMetricsNamespace, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(entry.Key, GenevaMetricExporter.DimensionKeyForCustomMonitoringAccount, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(entry.Key, GenevaMetricExporter.DimensionKeyForCustomMetricsNamespace, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new ArgumentException($"The dimension: {entry.Key} is reserved and cannot be used as a prepopulated dimension.");
                 }

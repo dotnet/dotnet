@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="tr" original="../Strings.resx">
     <body>
@@ -1115,7 +1115,7 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
       </trans-unit>
       <trans-unit id="RestrictedPackageIdWarning">
         <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
-        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <target state="translated">'{0}' paket kimliği geçersiz. Paket kimlikleri harf, rakam veya alt çizgiyle başlamalı ve yalnızca ASCII karakteri, rakam, nokta (.), kısa çizgi (-) ve alt çizgi (_) içermelidir. Art arda noktalar veya kısa çizgiler içermemelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1464,7 +1464,7 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
         <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
+        <target state="translated">Yapılandırmanızda tanımlanmış {0} paket kaynağı var. Merkezi paket yönetimini kullanırken paket kaynak eşleme (https://aka.ms/nuget-package-source-mapping) ile paket kaynaklarınızı eşleyin veya tek bir paket kaynağı belirtin. Aşağıdaki kaynaklar tanımlandı: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace OpenTelemetry.Instrumentation;
@@ -72,11 +73,11 @@ internal sealed partial class SqlConnectionDetails
                 if (match.Groups["port"].Length > 0)
                 {
                     instanceName = match.Groups["nameOrPort"].Value;
-                    port = int.TryParse(match.Groups["port"].Value, out var parsedPort)
+                    port = int.TryParse(match.Groups["port"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var parsedPort)
                         ? parsedPort == 1433 ? null : parsedPort
                         : null;
                 }
-                else if (int.TryParse(match.Groups["nameOrPort"].Value, out var parsedPort))
+                else if (int.TryParse(match.Groups["nameOrPort"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var parsedPort))
                 {
                     instanceName = null;
                     port = parsedPort == 1433 ? null : parsedPort;
@@ -131,11 +132,11 @@ internal sealed partial class SqlConnectionDetails
      *  np:\\serverName\pipe\MSSQL$instanceName\pipeName - in this case a separate regex (see NamedPipeRegex below)
      *  is used to extract instanceName
      */
-    [GeneratedRegex("^(?<protocol>[^[]*\\s*:\\s*\\\\{0,2})?(?<host>.*?)\\s*(?:[\\\\,]|$)\\s*(?<nameOrPort>.*?)\\s*(?:,|$)\\s*(?<port>.*)$", RegexOptions.None, RegexTimeoutMs)]
+    [GeneratedRegex("^(?<protocol>[^:[]*\\s*:\\s*(?:[\\\\/]{0,2})?)?(?<host>\\[[^\\]]+\\]|.*?)\\s*(?:[\\\\,:]|$)\\s*(?<nameOrPort>.*?)\\s*(?:,|$)\\s*(?<port>.*)$", RegexOptions.None, RegexTimeoutMs)]
     private static partial Regex DataSourceRegex();
 #else
 #pragma warning disable SA1201 // A field should not follow a method
-    private static readonly Regex DataSourceRegexField = new("^(?<protocol>[^[]*\\s*:\\s*\\\\{0,2})?(?<host>.*?)\\s*(?:[\\\\,]|$)\\s*(?<nameOrPort>.*?)\\s*(?:,|$)\\s*(?<port>.*)$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(RegexTimeoutMs));
+    private static readonly Regex DataSourceRegexField = new("^(?<protocol>[^:[]*\\s*:\\s*(?:[\\\\/]{0,2})?)?(?<host>\\[[^\\]]+\\]|.*?)\\s*(?:[\\\\,:]|$)\\s*(?<nameOrPort>.*?)\\s*(?:,|$)\\s*(?<port>.*)$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(RegexTimeoutMs));
 #pragma warning restore SA1201 // A field should not follow a method
 
     private static Regex DataSourceRegex() => DataSourceRegexField;

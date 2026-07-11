@@ -118,7 +118,7 @@
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
-        <target state="new">RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</target>
+        <target state="translated">Element RestoreNoCache jest przestarzały i jego nazwa została zmieniona na RestoreNoHttpCache. Zamiast tego użyj elementu RestoreNoHttpCache.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">

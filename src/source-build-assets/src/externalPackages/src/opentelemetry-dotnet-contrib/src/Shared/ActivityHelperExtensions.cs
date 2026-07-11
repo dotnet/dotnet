@@ -17,8 +17,11 @@ internal static class ActivityHelperExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static object? GetTagValue(this Activity activity, string? tagName)
     {
-        foreach (ref readonly var tag in activity.EnumerateTagObjects())
+        var tagEnumerator = activity.EnumerateTagObjects();
+        while (tagEnumerator.MoveNext())
         {
+            ref readonly var tag = ref tagEnumerator.Current;
+
             if (tag.Key == tagName)
             {
                 return tag.Value;
@@ -34,7 +37,7 @@ internal static class ActivityHelperExtensions
     /// <param name="activity">Activity instance.</param>
     /// <param name="tagName">Tag name.</param>
     /// <param name="tagValue">Tag value.</param>
-    /// <returns><see langword="true"/> if the first tag of the supplied Activity matches the user provide tag name.</returns>
+    /// <returns><see langword="true"/> if the first tag of the supplied Activity matches the user provided tag name.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryCheckFirstTag(this Activity activity, string tagName, out object? tagValue)
     {

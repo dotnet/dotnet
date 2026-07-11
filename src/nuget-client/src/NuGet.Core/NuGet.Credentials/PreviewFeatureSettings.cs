@@ -12,6 +12,11 @@ namespace NuGet.Credentials
     /// </summary>
     public static class PreviewFeatureSettings
     {
+        static PreviewFeatureSettings()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetCache;
+        }
+
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public const string DefaultCredentialsAfterCredentialProvidersEnvironmentVariableName
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
@@ -25,6 +30,10 @@ namespace NuGet.Credentials
         /// </summary>
         public static bool DefaultCredentialsAfterCredentialProviders { get; set; }
             = GetFlagFromEnvironmentVariable(DefaultCredentialsAfterCredentialProvidersEnvironmentVariableName);
+
+        /// <summary>Re-reads <c>NUGET_CREDENTIAL_PROVIDER_OVERRIDE_DEFAULT</c> from the current environment.</summary>
+        internal static void ResetCache()
+            => DefaultCredentialsAfterCredentialProviders = GetFlagFromEnvironmentVariable(DefaultCredentialsAfterCredentialProvidersEnvironmentVariableName);
 
         private static bool GetFlagFromEnvironmentVariable(string variableName)
         {

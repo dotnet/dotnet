@@ -119,8 +119,7 @@ internal sealed class TldLogExporter : TldLogCommon, IDisposable
             }
             else
             {
-                // TODO: Avoid allocation
-                eventName = GetSanitizedCategoryName(categoryName);
+                eventName = this.GetSanitizedCategoryName(categoryName);
             }
         }
 

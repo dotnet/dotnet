@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>net10.0;$(NetMinimumSupportedVersion);netstandard2.1;$(NetStandardMinimumSupportedVersion)</TargetFrameworks>
     <TargetFrameworks Condition="$(OS) == 'Windows_NT'">$(TargetFrameworks);$(NetFrameworkMinimumSupportedVersion)</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Description>An OpenTelemetry .NET exporter that sends telemetry to Microsoft OneCollector.</Description>
     <MinVerTagPrefix>Exporter.OneCollector-</MinVerTagPrefix>
     <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
@@ -13,7 +12,7 @@
     this at the call site but there is a bug. This could possibly be cleaned up
     in the future (hopefully .NET 9) see https://github.com/dotnet/runtime/issues/92509 -->
     <NoWarn>$(NoWarn);SYSLIB1100;SYSLIB1101</NoWarn>
-    <PackageValidationBaselineVersion>1.15.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.15.1</PackageValidationBaselineVersion>
     <AssemblyIsCLSCompliant>false</AssemblyIsCLSCompliant>
   </PropertyGroup>
 

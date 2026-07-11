@@ -130,8 +130,6 @@ internal sealed class SqlEventSourceListener : EventListener
             return;
         }
 
-        var options = SqlClientInstrumentation.TracingOptions;
-
         if (eventData.Payload.Count < 4)
         {
             SqlClientInstrumentationEventSource.Log.InvalidPayload(nameof(SqlEventSourceListener), nameof(this.OnBeginExecute));

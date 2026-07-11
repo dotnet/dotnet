@@ -15,64 +15,79 @@ internal sealed class WsTransmitter
     private readonly byte[] buffer = new byte[BufferSize];
 
     private readonly ClientWebSocket ws;
+    private readonly SemaphoreSlim sendLock;
 
-    public WsTransmitter(ClientWebSocket ws)
+    public WsTransmitter(ClientWebSocket ws, SemaphoreSlim sendLock)
     {
         Guard.ThrowIfNull(ws, nameof(ws));
+        Guard.ThrowIfNull(sendLock, nameof(sendLock));
 
         this.ws = ws;
+        this.sendLock = sendLock;
     }
 
     public async Task SendAsync(IMessage message, CancellationToken token = default)
     {
-        var headerSize = OpAmpWsHeaderHelper.WriteHeader(new ArraySegment<byte>(this.buffer));
-        var size = message.CalculateSize();
+        // Serialize with the close frames sent by WsTransport/WsReceiver. ClientWebSocket forbids
+        // concurrent sends, and a fragmented message must not be interleaved with another frame.
+        // The lock also guards the reused header buffer against concurrent SendAsync calls.
+        await this.sendLock.WaitAsync(token).ConfigureAwait(false);
 
-        // fits to the buffer, send completely
-        if (size + headerSize <= BufferSize)
+        try
         {
-            var segment = new ArraySegment<byte>(this.buffer, headerSize, size);
-            message.WriteTo(segment);
+            var headerSize = OpAmpWsHeaderHelper.WriteHeader(new ArraySegment<byte>(this.buffer));
+            var size = message.CalculateSize();
 
-            // resegment to include the header byte
-            segment = new ArraySegment<byte>(this.buffer, 0, size + headerSize);
-
-            await this.ws.SendAsync(segment, WebSocketMessageType.Binary, true, token).ConfigureAwait(false);
-        }
-
-        // Does not fit, need to chunk the message
-        else
-        {
-            // It's expected that large messages are created very rarely by the client.
-            var messageBuffer = message.ToByteArray();
-            var frameBuffer = new byte[headerSize + size];
-            var offset = 0;
-
-            // Copy the already written header
-            Buffer.BlockCopy(this.buffer, 0, frameBuffer, 0, headerSize);
-
-            // Copy the message
-            Buffer.BlockCopy(messageBuffer, 0, frameBuffer, headerSize, size);
-
-            while (true)
+            // fits to the buffer, send completely
+            if (size + headerSize <= BufferSize)
             {
-                token.ThrowIfCancellationRequested();
+                var segment = new ArraySegment<byte>(this.buffer, headerSize, size);
+                message.WriteTo(segment);
 
-                var count = frameBuffer.Length - offset < BufferSize
-                    ? frameBuffer.Length - offset
-                    : BufferSize;
+                // resegment to include the header byte
+                segment = new ArraySegment<byte>(this.buffer, 0, size + headerSize);
 
-                var segment = new ArraySegment<byte>(frameBuffer, offset, count);
-                var isEnd = (offset + count) == frameBuffer.Length;
-                await this.ws.SendAsync(segment, WebSocketMessageType.Binary, isEnd, token).ConfigureAwait(false);
-
-                if (isEnd)
-                {
-                    break;
-                }
-
-                offset += count;
+                await this.ws.SendAsync(segment, WebSocketMessageType.Binary, true, token).ConfigureAwait(false);
             }
+
+            // Does not fit, need to chunk the message
+            else
+            {
+                // It's expected that large messages are created very rarely by the client.
+                var messageBuffer = message.ToByteArray();
+                var frameBuffer = new byte[headerSize + size];
+                var offset = 0;
+
+                // Copy the already written header
+                Buffer.BlockCopy(this.buffer, 0, frameBuffer, 0, headerSize);
+
+                // Copy the message
+                Buffer.BlockCopy(messageBuffer, 0, frameBuffer, headerSize, size);
+
+                while (true)
+                {
+                    token.ThrowIfCancellationRequested();
+
+                    var count = frameBuffer.Length - offset < BufferSize
+                        ? frameBuffer.Length - offset
+                        : BufferSize;
+
+                    var segment = new ArraySegment<byte>(frameBuffer, offset, count);
+                    var isEnd = (offset + count) == frameBuffer.Length;
+                    await this.ws.SendAsync(segment, WebSocketMessageType.Binary, isEnd, token).ConfigureAwait(false);
+
+                    if (isEnd)
+                    {
+                        break;
+                    }
+
+                    offset += count;
+                }
+            }
+        }
+        finally
+        {
+            this.sendLock.Release();
         }
     }
 }

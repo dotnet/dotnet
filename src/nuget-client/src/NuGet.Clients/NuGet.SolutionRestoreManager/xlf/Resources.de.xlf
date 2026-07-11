@@ -84,7 +84,7 @@ Fehlende Pakete: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
         <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">Fehler beim Wiederherstellen des NuGet-Pakets für das Projekt „{0}“: {1}. Detaillierte Warnungen und Fehler finden Sie im Fenster mit der Fehlerliste.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -99,7 +99,7 @@ Fehlende Pakete: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
         <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet package restore failed. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">Fehler beim Wiederherstellen des NuGet-Pakets. Detaillierte Warnungen und Fehler finden Sie im Fenster mit der Fehlerliste.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -116,7 +116,7 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
         <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="new">'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</target>
+        <target state="translated">„globalPackagesFolder“ aus der Datei „nuget.config“ oder der Umgebungsvariablen ist „{0}“, ein relativer Pfad, und die Lösung ist nicht gespeichert. Speichern Sie Ihre Lösung, oder konfigurieren Sie einen Ordner „globalPackagesFolder“, der einen vollständigen Pfad darstellt.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -131,7 +131,7 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">Die Lösung wurde nicht gespeichert. Speichern Sie Ihre Lösung, bevor Sie NuGet-Pakete verwalten.</target>
         <note />
       </trans-unit>
     </body>

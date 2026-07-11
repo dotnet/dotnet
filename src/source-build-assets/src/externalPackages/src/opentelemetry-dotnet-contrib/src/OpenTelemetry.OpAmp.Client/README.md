@@ -31,7 +31,7 @@ using var client = new OpAmpClient(opts =>
 {
     // Set up the OpAMP server connection.
     // Supported options are HTTP (polling) and WebSocket connection.
-    opts.ServerUrl = new Uri("wss://localhost:4318/v1/opamp");
+    opts.ServerUrl = new Uri("wss://localhost:4320/v1/opamp");
     opts.ConnectionType = ConnectionType.WebSocket;
 
     // Add custom resources to help the server identify your client.

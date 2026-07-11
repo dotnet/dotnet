@@ -25,9 +25,9 @@ is released, there can be breaking changes.
 
 ## Supported .NET Versions
 
-This package targets
-[`NETSTANDARD2.1`](https://docs.microsoft.com/dotnet/standard/net-standard#net-implementation-support)
-and hence can be used in any .NET versions implementing `NETSTANDARD2.1`.
+This package targets all supported versions of .NET and
+[`netstandard2.1`](https://docs.microsoft.com/dotnet/standard/net-standard#net-implementation-support)
+and hence can be used in any .NET versions implementing `netstandard2.1`.
 
 ## Steps to enable OpenTelemetry.Instrumentation.GrpcNetClient
 

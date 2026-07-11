@@ -133,3 +133,56 @@ Component owners are defined in `.github/component_owners.yml` (not `CODEOWNERS`
 3. Add both projects to `opentelemetry-dotnet-contrib.slnx` (hand-maintained).
 4. Add the component path to `.github/component_owners.yml`.
 5. Add path filters for the new component to `.github/workflows/ci.yml`.
+
+## CHANGELOG Entries
+
+Every behavioural change needs a CHANGELOG entry in the affected component's
+`CHANGELOG.md` under `## Unreleased`. Format:
+
+```markdown
+* Description of the change (sentence case, ends with a period).
+  ([#NNNN](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/NNNN))
+```
+
+- New entries go at the **end** of `## Unreleased`, not the top.
+- Do **not** add a new version header - that is added automatically during
+  release.
+- No CHANGELOG entry is needed for pure infrastructure changes (CI workflows,
+  Renovate config, editor config).
+- When a PR touches multiple components, add an entry to each component's
+  `CHANGELOG.md`.
+
+## NuGet References in Source Projects
+
+Instrumentation `src/` projects must reference only the minimal OpenTelemetry
+packages needed:
+
+- Use `OpenTelemetry.Api` or `OpenTelemetry.Api.ProviderBuilderExtensions` when
+  adding or editing existing code.
+- Do **not** add new references to `OpenTelemetry` (the SDK) wherever possible.
+
+## Code Conventions
+
+### Banned APIs (enforced by `build/BannedSymbols.txt`)
+
+- Use `string.Equals(a, b, StringComparison)` (**static**), not the instance
+  method `a.Equals(b, StringComparison)`.
+- All `TryParse` overloads on numeric/date types must pass
+  `CultureInfo.InvariantCulture`.
+
+### XML Documentation
+
+- Use `<para/>` as the paragraph break inside `///` XML doc comments - not a
+  blank line.
+- For property setters, the `paramName` in any `ArgumentException` should be
+  `nameof(value)`, not the property name.
+
+### Tests
+
+- Use `[Obsolete("...")]` on a test method that exercises an obsolete API
+  rather than suppressing the compiler warning with `#pragma`.
+
+## Code Review Instructions
+
+See [`REVIEW.md`](./REVIEW.md) for guidance used by automated code review
+agents when reviewing pull requests in this repository.

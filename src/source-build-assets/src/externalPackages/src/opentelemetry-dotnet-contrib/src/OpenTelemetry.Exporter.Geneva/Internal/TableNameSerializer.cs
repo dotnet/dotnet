@@ -1,6 +1,9 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#if NET
+using System.Collections.Frozen;
+#endif
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -24,7 +27,11 @@ internal sealed class TableNameSerializer
     private static readonly StringComparer DictionaryKeyComparer = StringComparer.Ordinal;
 
     private readonly byte[] defaultTableName;
+#if NET
+    private readonly FrozenDictionary<string, byte[]>? tableMappings;
+#else
     private readonly Dictionary<string, byte[]>? tableMappings;
+#endif
     private readonly bool shouldPassThruTableMappings;
     private readonly Lock lockObject = new();
     private TableNameCacheDictionary tableNameCache = new();
@@ -58,7 +65,12 @@ internal sealed class TableNameSerializer
                 }
             }
 
-            this.tableMappings = tempTableMappings;
+            this.tableMappings = tempTableMappings
+#if NET
+                .ToFrozenDictionary(DictionaryKeyComparer);
+#else
+                ;
+#endif
         }
     }
 
