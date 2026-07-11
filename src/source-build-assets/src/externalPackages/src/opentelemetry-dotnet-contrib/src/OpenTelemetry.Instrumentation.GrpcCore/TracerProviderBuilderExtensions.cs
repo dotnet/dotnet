@@ -21,6 +21,6 @@ public static class TracerProviderBuilderExtensions
     {
         Guard.ThrowIfNull(builder);
 
-        return builder.AddSource(GrpcCoreInstrumentation.ActivitySourceName);
+        return builder.AddSource(GrpcCoreInstrumentation.ActivitySource.Name);
     }
 }

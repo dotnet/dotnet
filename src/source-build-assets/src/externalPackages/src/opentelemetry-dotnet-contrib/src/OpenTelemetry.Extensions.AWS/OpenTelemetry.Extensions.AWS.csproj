@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageValidationBaselineVersion>1.15.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.16.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -351,10 +351,17 @@ internal static class MetricSerializer
     {
         if (!string.IsNullOrEmpty(value))
         {
-            var encodedValue = Encoding.UTF8.GetBytes(value);
-            SerializeUInt64AsBase128(buffer, ref bufferIndex, (ulong)encodedValue.Length);
-            Array.Copy(encodedValue, 0, buffer, bufferIndex, encodedValue.Length);
-            bufferIndex += encodedValue.Length;
+#if NETSTANDARD2_1_OR_GREATER || NET
+            var byteCount = Encoding.UTF8.GetByteCount(value);
+            SerializeUInt64AsBase128(buffer, ref bufferIndex, (ulong)byteCount);
+            var lengthWritten = Encoding.UTF8.GetBytes(value, buffer.AsSpan(bufferIndex));
+            bufferIndex += lengthWritten;
+#else
+            var byteCount = Encoding.UTF8.GetByteCount(value);
+            SerializeUInt64AsBase128(buffer, ref bufferIndex, (ulong)byteCount);
+            var lengthWritten = Encoding.UTF8.GetBytes(value!, 0, value!.Length, buffer, bufferIndex);
+            bufferIndex += lengthWritten;
+#endif
         }
         else
         {
@@ -467,9 +474,6 @@ internal static class MetricSerializer
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void CheckBounds(byte[] buffer, int index, int size, [CallerArgumentExpression(nameof(index))] string? paramName = default)
-#if NET
-        => ArgumentOutOfRangeException.ThrowIfGreaterThan(index + size, buffer.Length, paramName);
-#else
     {
         if (buffer.Length < index + size)
         {
@@ -477,7 +481,8 @@ internal static class MetricSerializer
         }
     }
 
+    // Always throw with the shared message so the overflow can be detected consistently across
+    // target frameworks (ArgumentOutOfRangeException.ThrowIfGreaterThan uses a different message).
     private static void ThrowArgumentOutOfRange(object value, [CallerArgumentExpression(nameof(value))] string? paramName = default)
-        => throw new ArgumentOutOfRangeException(paramName, value, "The buffer is too small to write a value at the specified index.");
-#endif
+        => throw new ArgumentOutOfRangeException(paramName, value, GenevaBufferOverflowExceptionHelper.MetricBufferTooSmallMessage);
 }

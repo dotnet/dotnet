@@ -15,9 +15,56 @@ namespace OpenTelemetry.SemanticConventions;
 public static class GoAttributes
 {
     /// <summary>
+    /// The detailed state of the CPU.
+    /// </summary>
+    /// <remarks>
+    /// Value SHOULD match the specific CPU class reported by the Go runtime under <c>/cpu/classes/...</c>. The list of possible values is subject to change with the Go version used.
+    /// </remarks>
+    public const string AttributeGoCpuDetailedState = "go.cpu.detailed_state";
+
+    /// <summary>
+    /// The state of the CPU.
+    /// </summary>
+    public const string AttributeGoCpuState = "go.cpu.state";
+
+    /// <summary>
+    /// The detailed type of memory.
+    /// </summary>
+    /// <remarks>
+    /// Value SHOULD match the specific memory class reported by the Go runtime under <c>/memory/classes/...</c>. The list of possible values is subject to change with the Go version used.
+    /// </remarks>
+    public const string AttributeGoMemoryDetailedType = "go.memory.detailed_type";
+
+    /// <summary>
     /// The type of memory.
     /// </summary>
     public const string AttributeGoMemoryType = "go.memory.type";
+
+    /// <summary>
+    /// The state of the CPU.
+    /// </summary>
+    public static class GoCpuStateValues
+    {
+        /// <summary>
+        /// CPU time spent running user Go code.
+        /// </summary>
+        public const string User = "user";
+
+        /// <summary>
+        /// CPU time spent performing garbage collection tasks.
+        /// </summary>
+        public const string Gc = "gc";
+
+        /// <summary>
+        /// CPU time spent returning unused memory to the underlying platform.
+        /// </summary>
+        public const string Scavenge = "scavenge";
+
+        /// <summary>
+        /// Available CPU time not spent executing any Go or Go runtime code.
+        /// </summary>
+        public const string Idle = "idle";
+    }
 
     /// <summary>
     /// The type of memory.

@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+* Updated the new database semantic conventions emitted when
+  `OTEL_SEMCONV_STABILITY_OPT_IN` is set to `database` or `database/dup` to
+  [v1.42.0](https://github.com/open-telemetry/semantic-conventions/blob/v1.42.0/docs/db/database-spans.md)
+  of the Semantic Conventions for Database Client Calls.
+  ([#4519](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4519))
+
+## 1.15.1-beta.2
+
+Released 2026-May-27
+
+* Fixed `db.query.text` not respecting `SetVerboseDatabaseStatements` when
+  the new database semantic conventions are enabled.
+  ([#4245](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4245))
+
+* Add instrumentation scope version and schema URL to traces.
+  ([#4095](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4095))
+
+* Add optimized path to flush commands on every `FlushInterval` tick
+  regardless whether the parent `Activity` completes. Whether the new behavior
+  is used depends on instrumentation configuration:
+  * If both `Enrich` and `Filter` are not set, commands are flushed
+    eagerly each tick without waiting for the parent `Activity` to complete, reducing
+    memory pressure for long-lived or high-volume parent spans.
+  * If `Enrich` or `Filter` is set, commands are buffered until the
+    parent `Activity` completes, maintaining the previous behavior.
+    ([#4398](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4398))
+
+## 1.15.1-beta.1
+
+Released 2026-Apr-21
+
 * Updated OpenTelemetry core component version(s) to `1.15.3`.
   ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
 

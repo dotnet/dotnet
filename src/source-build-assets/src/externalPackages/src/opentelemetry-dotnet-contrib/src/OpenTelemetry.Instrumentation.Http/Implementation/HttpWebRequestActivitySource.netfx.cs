@@ -27,17 +27,15 @@ namespace OpenTelemetry.Instrumentation.Http.Implementation;
 /// </remarks>
 internal static class HttpWebRequestActivitySource
 {
-    internal static readonly AssemblyName AssemblyName = typeof(HttpWebRequestActivitySource).Assembly.GetName();
-    internal static readonly string ActivitySourceName = AssemblyName.Name + ".HttpWebRequest";
-    internal static readonly string ActivityName = ActivitySourceName + ".HttpRequestOut";
-    internal static readonly string MeterName = AssemblyName.Name;
+    internal const string ActivitySourceName = "OpenTelemetry.Instrumentation.Http.HttpWebRequest";
+    internal const string ActivityName = ActivitySourceName + ".HttpRequestOut";
 
     internal static readonly Func<HttpWebRequest, string, IEnumerable<string>> HttpWebRequestHeaderValuesGetter = (request, name) => request.Headers.GetValues(name);
     internal static readonly Action<HttpWebRequest, string, string> HttpWebRequestHeaderValuesSetter = (request, name, value) => request.Headers.Add(name, value);
 
-    private static readonly string Version = AssemblyName.Version.ToString();
-    private static readonly ActivitySource WebRequestActivitySource = new(ActivitySourceName, Version);
-    private static readonly Meter WebRequestMeter = new(MeterName, Version);
+    internal static readonly ActivitySource WebRequestActivitySource = ActivitySourceFactory.Create(typeof(HttpWebRequestActivitySource), HttpClientInstrumentation.SemanticConventionsVersion, name: ActivitySourceName);
+    internal static readonly Meter WebRequestMeter = Metrics.MeterFactory.Create(typeof(HttpWebRequestActivitySource), HttpClientInstrumentation.SemanticConventionsVersion);
+
     private static readonly Histogram<double> HttpClientRequestDuration = WebRequestMeter.CreateHistogram(
         "http.client.request.duration",
         unit: "s",

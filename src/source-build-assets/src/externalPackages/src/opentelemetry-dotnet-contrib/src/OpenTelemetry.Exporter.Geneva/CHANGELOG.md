@@ -2,9 +2,18 @@
 
 ## Unreleased
 
-## 1.15.1-alpha.1
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
 
-Released 2026-Apr-21
+* Log error when telemetry data exceeds the serialization buffer capacity.
+  ([#4027](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4027))
+
+* Reduced per-log-record and per-span allocations in the Geneva exporter:
+  cache sanitized logger category names (with a fast path that reuses already
+  valid names) and freeze the cache on .NET 8+, serialize metric base-128
+  strings and HTTP url spans directly into the output buffer instead of via
+  temporary arrays/strings.
+  ([#4498](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4498))
 
 ## 1.15.2
 

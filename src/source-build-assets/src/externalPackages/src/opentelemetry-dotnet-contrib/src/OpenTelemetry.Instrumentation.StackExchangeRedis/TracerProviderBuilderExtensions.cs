@@ -151,7 +151,7 @@ public static class TracerProviderBuilderExtensions
         }
 
         return builder
-            .AddSource(StackExchangeRedisConnectionInstrumentation.ActivitySourceName)
+            .AddSource(StackExchangeRedisConnectionInstrumentation.ActivitySource.Name)
             .AddInstrumentation(sp =>
             {
                 var instrumentation = sp.GetRequiredService<StackExchangeRedisInstrumentation>();

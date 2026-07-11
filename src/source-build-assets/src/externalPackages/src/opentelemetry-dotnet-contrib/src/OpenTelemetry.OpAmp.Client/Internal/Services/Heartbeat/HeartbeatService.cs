@@ -34,9 +34,7 @@ internal sealed class HeartbeatService : IBackgroundService, IOpAmpListener<Conn
     public string ServiceName => Name;
 
     public void Configure(OpAmpClientSettings settings)
-    {
-        this.tickInterval = settings.Heartbeat.Interval;
-    }
+        => this.tickInterval = settings.Heartbeat.Interval;
 
     public void Start()
     {
@@ -80,9 +78,7 @@ internal sealed class HeartbeatService : IBackgroundService, IOpAmpListener<Conn
     }
 
     private static ulong GetCurrentTimeInNanoseconds()
-    {
-        return (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1_000_000; // Convert to nanoseconds
-    }
+        => (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1_000_000; // Convert to nanoseconds
 
     private void CreateOrUpdateTimer(TimeSpan interval)
     {
@@ -100,7 +96,9 @@ internal sealed class HeartbeatService : IBackgroundService, IOpAmpListener<Conn
         }
     }
 
-    private async void HeartbeatTick(object? state)
+    private void HeartbeatTick(object? state) => _ = this.HeartbeatTickAsync();
+
+    private async Task HeartbeatTickAsync()
     {
         try
         {
@@ -119,14 +117,11 @@ internal sealed class HeartbeatService : IBackgroundService, IOpAmpListener<Conn
         }
     }
 
-    private HealthReport CreateHealthReport()
+    private HealthReport CreateHealthReport() => new()
     {
-        return new HealthReport
-        {
-            StartTime = this.startTime,
-            StatusTime = GetCurrentTimeInNanoseconds(),
-            IsHealthy = true,
-            Status = "OK",
-        };
-    }
+        StartTime = this.startTime,
+        StatusTime = GetCurrentTimeInNanoseconds(),
+        IsHealthy = true,
+        Status = "OK",
+    };
 }

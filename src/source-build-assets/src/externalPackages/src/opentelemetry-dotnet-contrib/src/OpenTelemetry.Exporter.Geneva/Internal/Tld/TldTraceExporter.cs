@@ -1,6 +1,9 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#if NET
+using System.Collections.Frozen;
+#endif
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
@@ -18,7 +21,7 @@ internal sealed class TldTraceExporter : IDisposable
 
     private static readonly string INVALID_SPAN_ID = default(ActivitySpanId).ToHexString();
 
-    private static readonly Dictionary<string, string> CS40_PART_B_MAPPING = new()
+    private static readonly Dictionary<string, string> CS40_PART_B_MAPPING_DICTIONARY = new()
     {
         ["db.system"] = "dbSystem",
         ["db.name"] = "dbName",
@@ -36,9 +39,19 @@ internal sealed class TldTraceExporter : IDisposable
         ["messaging.url"] = "messagingUrl",
     };
 
+#if NET
+    private static readonly FrozenDictionary<string, string> CS40_PART_B_MAPPING = CS40_PART_B_MAPPING_DICTIONARY.ToFrozenDictionary();
+#else
+    private static readonly Dictionary<string, string> CS40_PART_B_MAPPING = CS40_PART_B_MAPPING_DICTIONARY;
+#endif
+
     private readonly string partAName = "Span";
     private readonly byte partAFieldsCount = 3; // At least three fields: time, ext_dt_traceId, ext_dt_spanId
+#if NET
+    private readonly FrozenSet<string>? customFields;
+#else
     private readonly HashSet<string>? customFields;
+#endif
     private readonly Tuple<byte[], byte[]>? repeatedPartAFields;
     private readonly bool shouldIncludeTraceState;
     private readonly EventProvider eventProvider;
@@ -77,7 +90,11 @@ internal sealed class TldTraceExporter : IDisposable
                 customFields.Add(name);
             }
 
+#if NET
+            this.customFields = customFields.ToFrozenSet(StringComparer.Ordinal);
+#else
             this.customFields = customFields;
+#endif
         }
 
         if (options.PrepopulatedFields != null)

@@ -23,6 +23,12 @@ public static class ExceptionAttributes
     /// <summary>
     /// The exception message.
     /// </summary>
+    /// <remarks>
+    /// <blockquote>
+    /// [!WARNING]
+    /// <p>
+    /// This attribute may contain sensitive information.</blockquote>
+    /// </remarks>
     public const string AttributeExceptionMessage = "exception.message";
 
     /// <summary>
@@ -33,5 +39,12 @@ public static class ExceptionAttributes
     /// <summary>
     /// The type of the exception (its fully-qualified class name, if applicable). The dynamic type of the exception should be preferred over the static type in languages that support it.
     /// </summary>
+    /// <remarks>
+    /// If the recorded exception type is a wrapper that is not meaningful for
+    /// failure classification, instrumentation MAY use the type of the inner
+    /// exception instead. For example, in Go, errors created with <c>fmt.Errorf</c>
+    /// using <c>%w</c> MAY be unwrapped when the wrapper type does not help
+    /// classify the failure.
+    /// </remarks>
     public const string AttributeExceptionType = "exception.type";
 }

@@ -22,11 +22,6 @@
     <PackageReference Include="Grpc.Tools" VersionOverride="[2.72.0,)" PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- .NET Framework supporting packages -->
-  <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETFramework'">
-    <PackageReference Include="System.Net.Http" />
-  </ItemGroup>
-
   <ItemGroup>
     <Protobuf Include="Protos\anyvalue.proto" ProtoRoot="Protos" Access="Internal" />
     <Protobuf Include="Protos\opamp.proto" ProtoRoot="Protos" Access="Internal" />

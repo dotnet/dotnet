@@ -146,6 +146,11 @@ internal sealed class FrameBuilder : IFrameBuilder
             capabilities |= AgentCapabilities.AcceptsRemoteConfig;
         }
 
+        if (this.settings.RemoteConfiguration.ReportsRemoteConfigStatus)
+        {
+            capabilities |= AgentCapabilities.ReportsRemoteConfig;
+        }
+
         if (this.settings.EffectiveConfigurationReporting.EnableReporting)
         {
             capabilities |= AgentCapabilities.ReportsEffectiveConfig;
@@ -188,6 +193,11 @@ internal sealed class FrameBuilder : IFrameBuilder
         var fileMap = new Dictionary<string, global::OpAmp.Proto.V1.AgentConfigFile>(StringComparer.Ordinal);
         foreach (var file in files)
         {
+            if (fileMap.ContainsKey(file.FileName))
+            {
+                throw new ArgumentException($"Multiple config files share the same FileName '{file.FileName}'. FileNames must be unique.", nameof(files));
+            }
+
             fileMap.Add(file.FileName, new global::OpAmp.Proto.V1.AgentConfigFile()
             {
                 Body = ByteString.CopyFrom(file.Content.Span),
@@ -203,6 +213,15 @@ internal sealed class FrameBuilder : IFrameBuilder
         };
 
         this.currentMessage.EffectiveConfig = effectiveConfig;
+
+        return this;
+    }
+
+    IFrameBuilder IFrameBuilder.AddRemoteConfigStatus(RemoteConfigStatusReport status)
+    {
+        this.EnsureInitialized();
+
+        this.currentMessage.RemoteConfigStatus = status.ToRemoteConfigStatus();
 
         return this;
     }

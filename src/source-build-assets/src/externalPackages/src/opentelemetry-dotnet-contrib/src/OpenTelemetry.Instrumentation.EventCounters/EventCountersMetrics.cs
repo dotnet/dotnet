@@ -80,7 +80,7 @@ internal sealed class EventCountersMetrics : EventListener
 
             // DO NOT clear the ConcurrentDictionary instances as some other thread executing the OnEventWritten callback might be using them
             this.enabledEventSources.Clear();
-            this.options.EventSourceNames.Clear();
+            this.options.ClearEventSources();
         }
 
         base.Dispose();
@@ -117,6 +117,11 @@ internal sealed class EventCountersMetrics : EventListener
         }
 
         var eventSourceName = eventData.EventSource.Name;
+
+        if (!this.options.ShouldListenToSource(eventSourceName))
+        {
+            return;
+        }
 
         if (eventData.EventName != "EventCounters")
         {
@@ -190,9 +195,7 @@ internal sealed class EventCountersMetrics : EventListener
     }
 
     private void EnableEvents(EventSource eventSource)
-    {
-        this.EnableEvents(eventSource, EventLevel.Critical, EventKeywords.None, GetEnableEventsArguments(this.options));
-    }
+        => this.EnableEvents(eventSource, EventLevel.Critical, EventKeywords.None, GetEnableEventsArguments(this.options));
 
     private void UpdateInstrumentWithEvent(bool isGauge, string eventSourceName, string name, double value)
     {

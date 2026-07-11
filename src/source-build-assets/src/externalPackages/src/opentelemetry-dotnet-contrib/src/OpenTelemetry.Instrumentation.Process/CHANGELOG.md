@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+* Add instrumentation scope version and schema URL to metrics.
+  ([#4088](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4088))
+
+* Removed the `process.cpu.count` metric as it is not part of
+  the semantic conventions. Use the
+  [`dotnet.process.cpu.count`](https://github.com/open-telemetry/semantic-conventions/blob/v1.41.0/docs/runtime/dotnet-metrics.md#metric-dotnetprocesscpucount)
+  metric as an alternative.
+  ([#4088](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4088))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
 ## 1.15.1-beta.1
 
 Released 2026-Apr-21
