@@ -47,8 +47,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 /// </summary>
 internal class TestRequestManager : ITestRequestManager
 {
-    private static ITestRequestManager? s_testRequestManagerInstance;
-
     private readonly ITestPlatform _testPlatform;
     private readonly ITestPlatformEventSource _testPlatformEventSource;
     // TODO: No idea what is Task supposed to buy us, Tasks start immediately on instantiation
@@ -92,19 +90,12 @@ internal class TestRequestManager : ITestRequestManager
     /// </summary>
     private CancellationTokenSource? _currentAttachmentsProcessingCancellationTokenSource;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TestRequestManager"/> class.
-    /// </summary>
-    public TestRequestManager()
-        : this(CommandLineOptions.Instance)
-    {
-    }
 
-    internal TestRequestManager(CommandLineOptions commandLineOptions)
+    internal TestRequestManager(CommandLineOptions commandLineOptions, TestRunResultAggregator testRunResultAggregator)
         : this(
             commandLineOptions,
             TestPlatformFactory.GetTestPlatform(),
-            TestRunResultAggregator.Instance,
+            testRunResultAggregator,
             TestPlatformEventSource.Instance,
             new InferHelper(AssemblyMetadataProvider.Instance),
             MetricsPublisherFactory.GetMetricsPublisher(
@@ -170,12 +161,6 @@ internal class TestRequestManager : ITestRequestManager
         _runSettingsHelper = runSettingsHelper;
     }
 
-    /// <summary>
-    /// Gets the test request manager instance.
-    /// </summary>
-    public static ITestRequestManager Instance
-        => s_testRequestManagerInstance ??= new TestRequestManager();
-
     #region ITestRequestManager
 
     /// <inheritdoc />
@@ -195,7 +180,10 @@ internal class TestRequestManager : ITestRequestManager
     /// <inheritdoc />
     public void ResetOptions()
     {
-        CommandLineOptions.Reset();
+        // Nothing to reset. The manager holds the CommandLineOptions it was constructed with and
+        // never mutates them per request; design-mode requests derive their state from the request
+        // payload (sources, run settings), not from shared mutable command-line options. This used
+        // to null a process-wide CommandLineOptions singleton, which no longer exists.
     }
 
     /// <inheritdoc />

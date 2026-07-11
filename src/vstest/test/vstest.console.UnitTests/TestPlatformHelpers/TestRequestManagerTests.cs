@@ -118,7 +118,6 @@ public class TestRequestManagerTests
     [TestCleanup]
     public void Cleanup()
     {
-        CommandLineOptions.Reset();
 
         // Opt out the Telemetry
         Environment.SetEnvironmentVariable("VSTEST_TELEMETRY_OPTEDIN", "0");
@@ -127,11 +126,11 @@ public class TestRequestManagerTests
     [TestMethod]
     public void TestRequestManagerShouldNotInitializeConsoleLoggerIfDesignModeIsSet()
     {
-        CommandLineOptions.Instance.IsDesignMode = true;
+        _commandLineOptions.IsDesignMode = true;
         _mockLoggerEvents = new DummyLoggerEvents(TestSessionMessageLogger.Instance);
-        _ = new TestRequestManager(CommandLineOptions.Instance,
+        _ = new TestRequestManager(_commandLineOptions,
             new Mock<ITestPlatform>().Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             new Mock<ITestPlatformEventSource>().Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -156,10 +155,10 @@ public class TestRequestManagerTests
     [TestMethod]
     public void ResetShouldResetCommandLineOptionsInstance()
     {
-        var oldInstance = CommandLineOptions.Instance;
+        var oldInstance = new CommandLineOptions();
         _testRequestManager.ResetOptions();
 
-        var newInstance = CommandLineOptions.Instance;
+        var newInstance = new CommandLineOptions();
 
         Assert.AreNotEqual(oldInstance, newInstance, "CommandLineOptions must be cleaned up");
     }
@@ -210,10 +209,10 @@ public class TestRequestManagerTests
         var mockDiscoveryRegistrar = new Mock<ITestDiscoveryEventsRegistrar>();
 
         string testCaseFilterValue = "TestFilter";
-        CommandLineOptions.Instance.TestCaseFilterValue = testCaseFilterValue;
-        _testRequestManager = new TestRequestManager(CommandLineOptions.Instance,
+        _commandLineOptions.TestCaseFilterValue = testCaseFilterValue;
+        _testRequestManager = new TestRequestManager(_commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -262,10 +261,10 @@ public class TestRequestManagerTests
         var mockDiscoveryRegistrar = new Mock<ITestDiscoveryEventsRegistrar>();
 
         string testCaseFilterValue = "TestFilter";
-        CommandLineOptions.Instance.TestCaseFilterValue = testCaseFilterValue;
-        _testRequestManager = new TestRequestManager(CommandLineOptions.Instance,
+        _commandLineOptions.TestCaseFilterValue = testCaseFilterValue;
+        _testRequestManager = new TestRequestManager(_commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -313,9 +312,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -364,9 +363,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -409,9 +408,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -454,9 +453,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -499,9 +498,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -510,11 +509,11 @@ public class TestRequestManagerTests
             _mockEnvironment.Object,
             _mockEnvironmentVariableHelper.Object);
 
-        CommandLineOptions.Instance.Parallel = true;
-        CommandLineOptions.Instance.EnableCodeCoverage = true;
-        CommandLineOptions.Instance.InIsolation = true;
-        CommandLineOptions.Instance.UseVsixExtensions = true;
-        CommandLineOptions.Instance.SettingsFile = @"c://temp/.runsettings";
+        _commandLineOptions.Parallel = true;
+        _commandLineOptions.EnableCodeCoverage = true;
+        _commandLineOptions.InIsolation = true;
+        _commandLineOptions.UseVsixExtensions = true;
+        _commandLineOptions.SettingsFile = @"c://temp/.runsettings";
 
         // Act
         _testRequestManager.DiscoverTests(payload, mockDiscoveryRegistrar.Object, mockProtocolConfig);
@@ -556,9 +555,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -567,7 +566,7 @@ public class TestRequestManagerTests
             _mockEnvironment.Object,
             _mockEnvironmentVariableHelper.Object);
 
-        CommandLineOptions.Instance.SettingsFile = @"c://temp/.testsettings";
+        _commandLineOptions.SettingsFile = @"c://temp/.testsettings";
 
         // Act
         _testRequestManager.DiscoverTests(payload, mockDiscoveryRegistrar.Object, mockProtocolConfig);
@@ -604,9 +603,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -615,7 +614,7 @@ public class TestRequestManagerTests
             _mockEnvironment.Object,
             _mockEnvironmentVariableHelper.Object);
 
-        CommandLineOptions.Instance.SettingsFile = @"c://temp/.vsmdi";
+        _commandLineOptions.SettingsFile = @"c://temp/.vsmdi";
 
         // Act
         _testRequestManager.DiscoverTests(payload, mockDiscoveryRegistrar.Object, mockProtocolConfig);
@@ -652,9 +651,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, DiscoveryCriteria discoveryCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -663,7 +662,7 @@ public class TestRequestManagerTests
             _mockEnvironment.Object,
             _mockEnvironmentVariableHelper.Object);
 
-        CommandLineOptions.Instance.SettingsFile = @"c://temp/.testrunConfig";
+        _commandLineOptions.SettingsFile = @"c://temp/.testrunConfig";
 
         // Act
         _testRequestManager.DiscoverTests(payload, mockDiscoveryRegistrar.Object, mockProtocolConfig);
@@ -956,9 +955,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, TestRunCriteria runCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -967,11 +966,11 @@ public class TestRequestManagerTests
             _mockEnvironment.Object,
             _mockEnvironmentVariableHelper.Object);
 
-        CommandLineOptions.Instance.Parallel = true;
-        CommandLineOptions.Instance.EnableCodeCoverage = true;
-        CommandLineOptions.Instance.InIsolation = true;
-        CommandLineOptions.Instance.UseVsixExtensions = true;
-        CommandLineOptions.Instance.SettingsFile = @"c://temp/.runsettings";
+        _commandLineOptions.Parallel = true;
+        _commandLineOptions.EnableCodeCoverage = true;
+        _commandLineOptions.InIsolation = true;
+        _commandLineOptions.UseVsixExtensions = true;
+        _commandLineOptions.SettingsFile = @"c://temp/.runsettings";
 
         // Act.
         _testRequestManager.RunTests(payload, new Mock<ITestHostLauncher3>().Object, new Mock<ITestRunEventsRegistrar>().Object, mockProtocolConfig);
@@ -1022,9 +1021,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, TestRunCriteria runCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -1071,9 +1070,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, TestRunCriteria runCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -1118,9 +1117,9 @@ public class TestRequestManagerTests
             (IRequestData requestData, TestRunCriteria runCriteria, TestPlatformOptions options, Dictionary<string, SourceDetail> sourceToSourceDetailMap, IWarningLogger _) => actualRequestData = requestData).Returns(mockDiscoveryRequest.Object);
 
         _testRequestManager = new TestRequestManager(
-            CommandLineOptions.Instance,
+            _commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -1167,9 +1166,9 @@ public class TestRequestManagerTests
 
         string testCaseFilterValue = "TestFilter";
         payload.TestPlatformOptions = new TestPlatformOptions { TestCaseFilter = testCaseFilterValue };
-        _testRequestManager = new TestRequestManager(CommandLineOptions.Instance,
+        _testRequestManager = new TestRequestManager(_commandLineOptions,
             _mockTestPlatform.Object,
-            TestRunResultAggregator.Instance,
+            new TestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
             _inferHelper,
             _mockMetricsPublisherTask,
@@ -2614,10 +2613,10 @@ public class TestRequestManagerTests
         // separate copies.
         const string filter = "FullyQualifiedName~SharedInstanceMarker";
 
-        // The process-wide static default is a different object. Capturing it up front lets us prove the write lands on
-        // the injected instance only, and that a reader bound to the static default observes none of it.
-        var staticDefault = CommandLineOptions.Instance;
-        staticDefault.Should().NotBeSameAs(_commandLineOptions, "the manager under test was injected with a separate CommandLineOptions instance");
+        // A separate instance is a different object. Capturing it up front lets us prove the write lands on
+        // the injected instance only, and that a reader bound to the separate instance observes none of it.
+        var separateInstance = new CommandLineOptions();
+        separateInstance.Should().NotBeSameAs(_commandLineOptions, "the manager under test was injected with a separate CommandLineOptions instance");
 
         var payload = new DiscoveryRequestPayload()
         {
@@ -2635,7 +2634,7 @@ public class TestRequestManagerTests
         // Writer: parsing "--TestCaseFilter <filter>" sets TestCaseFilterValue on the injected instance and nowhere else.
         new TestCaseFilterArgumentExecutor(_commandLineOptions).Initialize(filter);
         _commandLineOptions.TestCaseFilterValue.Should().Be(filter, "the executor writes the filter on the injected instance");
-        staticDefault.TestCaseFilterValue.Should().BeNull("the write must not leak onto the static default instance");
+        separateInstance.TestCaseFilterValue.Should().BeNull("the write must not leak onto the separate instance");
 
         // Reader: the manager copies TestCaseFilterValue from the same injected instance onto the DiscoveryCriteria.
         _testRequestManager.DiscoverTests(payload, new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
@@ -2644,17 +2643,17 @@ public class TestRequestManagerTests
         observedCriteria.Should().NotBeNull();
         observedCriteria!.TestCaseFilter.Should().Be(filter, "the reader observed the writer's value through the shared instance");
 
-        // Reader-vs-reader: a second manager bound to the static default instance (which never received the write) must
+        // Reader-vs-reader: a second manager bound to the separate instance (which never received the write) must
         // NOT observe the filter - it falls back to the run settings, which carry none, so the criteria filter is null.
-        DiscoveryCriteria? staticDefaultCriteria = null;
+        DiscoveryCriteria? separateInstanceCriteria = null;
         var mockTestPlatformForStaticDefault = new Mock<ITestPlatform>();
         mockTestPlatformForStaticDefault.Setup(mt => mt.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()))
             .Callback((IRequestData _, DiscoveryCriteria criteria, TestPlatformOptions _, Dictionary<string, SourceDetail> _, IWarningLogger _) =>
-                staticDefaultCriteria = criteria)
+                separateInstanceCriteria = criteria)
             .Returns(new Mock<IDiscoveryRequest>().Object);
 
         var managerBoundToStaticDefault = new TestRequestManager(
-            staticDefault,
+            separateInstance,
             mockTestPlatformForStaticDefault.Object,
             new DummyTestRunResultAggregator(),
             _mockTestPlatformEventSource.Object,
@@ -2668,8 +2667,8 @@ public class TestRequestManagerTests
 
         managerBoundToStaticDefault.DiscoverTests(payload, new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
 
-        staticDefaultCriteria.Should().NotBeNull();
-        staticDefaultCriteria!.TestCaseFilter.Should().BeNull("the manager bound to the static default instance never saw the write");
+        separateInstanceCriteria.Should().NotBeNull();
+        separateInstanceCriteria!.TestCaseFilter.Should().BeNull("the manager bound to the separate instance never saw the write");
     }
 
     [TestMethod]

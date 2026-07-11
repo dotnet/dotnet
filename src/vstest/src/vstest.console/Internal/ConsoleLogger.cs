@@ -131,8 +131,8 @@ internal class ConsoleLogger : ITestLoggerWithParameters
         Output = output;
         _progressIndicator = progressIndicator;
         _featureFlag = featureFlag;
-        // Never fall back to CommandLineOptions.Instance: the logger owns its own options so tests
-        // stay isolated and the built-in logger no longer reads the process-wide singleton.
+        // The logger owns its own options so tests stay isolated and the built-in logger never reads a
+        // process-wide singleton (there is none): callers inject the options, tests get a fresh instance.
         _commandLineOptions = commandLineOptions ?? new CommandLineOptions();
     }
 

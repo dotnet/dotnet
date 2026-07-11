@@ -174,7 +174,7 @@ public class ArgumentProcessorFactoryTests
             // optionally followed by an IRunSettingsProvider and/or IRunSettingsHelper, and the run/discovery
             // ones also take an ITestRequestManager; a few legacy ones take only a run settings dependency, and
             // the rest are parameterless. Try the known shapes from most to least specific.
-            var commandLineOptions = CommandLineOptions.Instance;
+            var commandLineOptions = new CommandLineOptions();
             var runSettingsProvider = new TestableRunSettingsProvider();
             var runSettingsHelper = new RunSettingsHelper();
             var testRequestManager = new Mock<ITestRequestManager>().Object;

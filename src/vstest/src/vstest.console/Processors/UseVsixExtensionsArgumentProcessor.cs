@@ -5,7 +5,6 @@ using System;
 using System.Globalization;
 
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
-using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 using Microsoft.VisualStudio.TestPlatform.Common.ExtensionFramework;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
@@ -27,9 +26,9 @@ internal class UseVsixExtensionsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
     private readonly CommandLineOptions _commandLineOptions;
-    private readonly ITestRequestManager? _testRequestManager;
+    private readonly ITestRequestManager _testRequestManager;
 
-    public UseVsixExtensionsArgumentProcessor(CommandLineOptions commandLineOptions, ITestRequestManager? testRequestManager = null)
+    public UseVsixExtensionsArgumentProcessor(CommandLineOptions commandLineOptions, ITestRequestManager testRequestManager)
     {
         _commandLineOptions = commandLineOptions;
         _testRequestManager = testRequestManager;
@@ -48,7 +47,7 @@ internal class UseVsixExtensionsArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new UseVsixExtensionsArgumentExecutor(_commandLineOptions, _testRequestManager ?? TestRequestManager.Instance, new VSExtensionManager(), ConsoleOutput.Instance));
+            new UseVsixExtensionsArgumentExecutor(_commandLineOptions, _testRequestManager, new VSExtensionManager(), ConsoleOutput.Instance));
 
         set => _executor = value;
     }

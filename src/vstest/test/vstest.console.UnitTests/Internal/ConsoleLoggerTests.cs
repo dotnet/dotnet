@@ -1004,12 +1004,11 @@ public class ConsoleLoggerTests
     }
 
     [TestMethod]
-    public void TestRunStartHandlerShouldUseInjectedCommandLineOptionsSourcesRatherThanTheStaticDefault()
+    public void TestRunStartHandlerShouldUseInjectedCommandLineOptionsSourcesRatherThanASeparateInstance()
     {
         // The console logger reads the discovered sources from the CommandLineOptions it was given. Injecting a distinct
-        // instance (with its own source) while the static default stays empty proves the reader resolves to the injected
-        // instance rather than to CommandLineOptions.Instance.
-        CommandLineOptions.Reset();
+        // instance (with its own source) while a separate instance stays empty proves the reader resolves to the injected
+        // instance rather than to some other CommandLineOptions.
 
         var fileHelper = new Mock<IFileHelper>();
         var injectedOptions = new CommandLineOptions
@@ -1021,8 +1020,8 @@ public class ConsoleLoggerTests
         fileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
         injectedOptions.AddSource(testFilePath);
 
-        // The static default carries no sources, so a discovered count of 1 can only come from the injected instance.
-        Assert.AreEqual(0, CommandLineOptions.Instance.Sources.Count());
+        // The separate instance carries no sources, so a discovered count of 1 can only come from the injected instance.
+        Assert.AreEqual(0, _commandLineOptions.Sources.Count());
 
         var consoleLogger = new ConsoleLogger(_mockOutput.Object, _mockProgressIndicator.Object, _mockFeatureFlag.Object, injectedOptions);
 
