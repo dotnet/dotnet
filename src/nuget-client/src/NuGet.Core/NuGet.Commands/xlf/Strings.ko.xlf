@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
     <body>
@@ -1115,7 +1115,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="RestrictedPackageIdWarning">
         <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
-        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <target state="translated">패키지 ID '{0}'이(가) 잘못되었습니다. 패키지 ID는 문자, 숫자 또는 밑줄로 시작해야 합니다. 또한 ASCII 문자, 숫자, 점(.), 대시(-), 밑줄(_)만 포함해야 하며, 점이나 대시가 연속해서 나오면 안 됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1464,7 +1464,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
         <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
+        <target state="translated">구성에 정의된 {0} 패키지 원본이 있습니다. 중앙 패키지 관리를 사용하는 경우 패키지 원본을 패키지 원본 매핑(https://aka.ms/nuget-package-source-mapping)으로 매핑하거나 단일 패키지 원본을 지정하세요. 다음 원본이 정의됩니다. {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">

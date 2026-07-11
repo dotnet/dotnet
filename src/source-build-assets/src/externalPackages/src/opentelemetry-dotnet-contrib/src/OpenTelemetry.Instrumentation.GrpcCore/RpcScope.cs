@@ -20,6 +20,11 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     where TResponse : class
 {
     /// <summary>
+    /// The host.
+    /// </summary>
+    private readonly string? host;
+
+    /// <summary>
     /// The record message events flag.
     /// </summary>
     private readonly bool recordMessageEvents;
@@ -52,12 +57,18 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="RpcScope{TRequest, TResponse}" /> class.
     /// </summary>
+    /// <param name="host">The host that the current invocation will be dispatched to.</param>
     /// <param name="fullServiceName">Full name of the service.</param>
     /// <param name="recordMessageEvents">if set to <c>true</c> [record message events].</param>
     /// <param name="recordException">If set to <c>true</c> [record exception].</param>
-    protected RpcScope(string? fullServiceName, bool recordMessageEvents, bool recordException)
+    protected RpcScope(
+        string? host,
+        string? fullServiceName,
+        bool recordMessageEvents,
+        bool recordException)
     {
-        this.FullServiceName = fullServiceName?.TrimStart('/') ?? "unknownservice/unknownmethod";
+        this.host = host;
+        this.FullServiceName = fullServiceName?.Trim('/') ?? "unknownservice/unknownmethod";
         this.recordMessageEvents = recordMessageEvents;
         this.recordException = recordException;
     }
@@ -164,21 +175,29 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
             return;
         }
 
-        // assign some reasonable defaults
-        var rpcService = this.FullServiceName;
-        var rpcMethod = this.FullServiceName;
+        GrpcTagHelper.SetGrpcSystemName(this.activity);
+        GrpcTagHelper.SetGrpcMethodAndDisplayNameFromActivity(this.activity, this.FullServiceName);
 
-        // split the full service name by the slash
-        var parts = this.FullServiceName.Split('/');
-        if (parts.Length == 2)
+        if (this.host is { Length: > 0 } host)
         {
-            rpcService = parts[0];
-            rpcMethod = parts[1];
+            TrySetServerAttributes(this.activity, host);
+        }
+    }
+
+    private static void TrySetServerAttributes(Activity activity, string host)
+    {
+        // Add a placeholder for the scheme so the parse succeeds. The value is not important.
+        if (!Uri.TryCreate($"http://{host}", UriKind.Absolute, out var uri))
+        {
+            return;
         }
 
-        this.activity.SetTag(SemanticConventions.AttributeRpcSystem, "grpc");
-        this.activity.SetTag(SemanticConventions.AttributeRpcService, rpcService);
-        this.activity.SetTag(SemanticConventions.AttributeRpcMethod, rpcMethod);
+        activity.SetTag(SemanticConventions.AttributeServerAddress, uri.Host);
+
+        if (!uri.IsDefaultPort)
+        {
+            activity.SetTag(SemanticConventions.AttributeServerPort, uri.Port);
+        }
     }
 
     /// <summary>
@@ -186,14 +205,34 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     /// </summary>
     /// <param name="statusCode">The status code.</param>
     /// <param name="markAsCompleted">If set to <c>true</c> [mark as completed].</param>
-    private void StopActivity(int statusCode, bool markAsCompleted = true)
+    /// <param name="statusDescription">The status description to set when the span is marked as failed, if any.</param>
+    private void StopActivity(int statusCode, bool markAsCompleted = true, string? statusDescription = null)
     {
-        if (markAsCompleted && !this.TryMarkAsCompleted())
+        if ((markAsCompleted && !this.TryMarkAsCompleted()) || this.activity is null)
         {
             return;
         }
 
-        this.activity!.SetTag(SemanticConventions.AttributeRpcGrpcStatusCode, statusCode);
+        var grpcStatusName = GrpcTagHelper.GetGrpcStatusCodeName(statusCode);
+        this.activity.SetTag(SemanticConventions.AttributeRpcResponseStatusCode, grpcStatusName);
+
+        // Resolve the span status from the gRPC status code using the rules for the span kind:
+        // client spans treat every non-OK status as an error, whereas server spans only treat a
+        // subset of status codes as errors.
+        // See https://github.com/open-telemetry/semantic-conventions/blob/v1.42.0/docs/rpc/grpc.md
+        var spanStatus = this.activity.Kind == ActivityKind.Client
+            ? GrpcTagHelper.ResolveSpanStatusForGrpcStatusCodeOnClient(statusCode)
+            : GrpcTagHelper.ResolveSpanStatusForGrpcStatusCodeOnServer(statusCode);
+
+        if (spanStatus == ActivityStatusCode.Error)
+        {
+            this.activity.SetStatus(spanStatus, statusDescription);
+
+            // error.type is conditionally required when the operation failed; for gRPC it is set to
+            // the status code name.
+            this.activity.SetTag(SemanticConventions.AttributeErrorType, grpcStatusName);
+        }
+
         this.activity.Stop();
     }
 
@@ -203,7 +242,7 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     /// <param name="exception">The exception.</param>
     private void StopActivity(Exception exception)
     {
-        if (!this.TryMarkAsCompleted())
+        if (!this.TryMarkAsCompleted() || this.activity is null)
         {
             return;
         }
@@ -217,17 +256,15 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
             description = rpcException.Message;
         }
 
-        if (!string.IsNullOrEmpty(description))
-        {
-            this.activity!.SetStatus(ActivityStatusCode.Error, description);
-        }
-
-        if (this.activity!.IsAllDataRequested && this.recordException)
+        if (this.activity.IsAllDataRequested && this.recordException)
         {
             this.activity.AddException(exception);
         }
 
-        this.StopActivity((int)grpcStatusCode, markAsCompleted: false);
+        // Defer to StopActivity to apply the span-kind specific status rules. The status description
+        // is only used when the resolved span status is an error so that, for example, server spans
+        // do not report an error status for status codes the conventions consider successful.
+        this.StopActivity((int)grpcStatusCode, markAsCompleted: false, statusDescription: description);
     }
 
     /// <summary>
@@ -235,9 +272,7 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     /// </summary>
     /// <returns>Returns <c>true</c> if marked as completed successfully.</returns>
     private bool TryMarkAsCompleted()
-    {
-        return Interlocked.CompareExchange(ref this.complete, 1, 0) == 0;
-    }
+        => Interlocked.CompareExchange(ref this.complete, 1, 0) == 0;
 
     /// <summary>
     /// Adds a message event.
@@ -247,7 +282,7 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
     /// <param name="request">if true this is a request message.</param>
     private void AddMessageEvent(string eventName, IMessage? message, bool request)
     {
-        if (message == null)
+        if (message == null || this.activity is null)
         {
             return;
         }
@@ -265,6 +300,6 @@ internal abstract class RpcScope<TRequest, TResponse> : IDisposable
             new(SemanticConventions.AttributeMessageUncompressedSize, messageSize),
         ]);
 
-        this.activity!.AddEvent(new ActivityEvent(eventName, default, attributes));
+        this.activity.AddEvent(new ActivityEvent(eventName, default, attributes));
     }
 }

@@ -71,15 +71,22 @@ public static class AWSXRayIdGenerator
         {
             var result = !Sdk.SuppressInstrumentation ? ComputeRootActivitySamplingResult(activity, sampler) : ActivitySamplingResult.None;
 
-            activity.ActivityTraceFlags = ActivityTraceFlags.None;
-
             // Following the same behavior when .NET runtime sets the trace flag for a newly created root activity.
             // See: https://github.com/dotnet/runtime/blob/master/src/libraries/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Activity.cs#L1022-L1027
             activity.IsAllDataRequested = result is ActivitySamplingResult.AllData or ActivitySamplingResult.AllDataAndRecorded;
 
+            // Disable recording when the data is not required. We do this,
+            // rather than override to None then turn it on, in order to preserve
+            // any other trace flags that may have been set which are not available
+            // in the version of the ActivityTraceFlags enum we are compiling against
+            // (e.g. ActivityTraceFlags.RandomTraceId added in .NET 11).
             if (result == ActivitySamplingResult.AllDataAndRecorded)
             {
                 activity.ActivityTraceFlags |= ActivityTraceFlags.Recorded;
+            }
+            else
+            {
+                activity.ActivityTraceFlags &= ~ActivityTraceFlags.Recorded;
             }
         }
     }

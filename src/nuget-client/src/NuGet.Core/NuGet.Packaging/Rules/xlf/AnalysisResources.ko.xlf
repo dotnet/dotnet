@@ -56,7 +56,7 @@
       </trans-unit>
       <trans-unit id="FilePathTooLongWarning">
         <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Shorten the file path or file name.</source>
-        <target state="new">The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Shorten the file path or file name.</target>
+        <target state="translated">파일 '{0}' 경로, 이름 또는 둘 다 너무 깁니다. 긴 파일 경로 지원 없이는 패키지가 작동하지 않을 수 있습니다. 파일 경로 또는 파일 이름을 줄이세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="IconUrlDeprecationWarning">
@@ -71,7 +71,7 @@
       </trans-unit>
       <trans-unit id="InvalidPlaceholderFileWarning">
         <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Remove this file from directories that contain other files.</source>
-        <target state="new">The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Remove this file from directories that contain other files.</target>
+        <target state="translated">'{0}'의 파일은 빈 디렉터리 '_._'에 대한 기호를 사용하지만 다른 파일이 포함된 디렉터리에 있습니다. 다른 파일이 포함된 디렉터리에서 이 파일을 제거하세요.</target>
         <note>0 - file path ending in _._</note>
       </trans-unit>
       <trans-unit id="InvalidPrereleaseDependencyWarning">
@@ -101,7 +101,7 @@
       </trans-unit>
       <trans-unit id="InvalidUndottedFrameworkWarning">
         <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
-        <target state="new">One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Rename them to include dots as needed (e.g. 'net50' to 'net5.0').</target>
+        <target state="translated">패키지에 있는 하나 이상의 대상 프레임워크 지정자에 프레임워크 버전 번호에 필요한 점이 없습니다. .NET5.0부터 이는 필수입니다. 필요에 따라 점을 포함하도록 이름을 바꾸세요(예: 'net50'에서 'net5.0'으로 변경).</target>
         <note />
       </trans-unit>
       <trans-unit id="LegacyVersionWarning">

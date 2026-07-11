@@ -68,7 +68,7 @@ internal partial class AWSSemanticConventions
     /// </remarks>
     internal const SemanticConventionVersion DefaultSemanticConventionVersion = SemanticConventionVersion.V1_28_0;
 
-    private readonly SemanticConventionVersion semanticConventionVersion;
+    private readonly AWSSemanticConventions_V1_28_0 semanticConventionVersion;
 
     /// <inheritdoc cref="AttributeBuilderImpl"/>
     public AttributeBuilderImpl AttributeBuilder { get; }
@@ -79,6 +79,8 @@ internal partial class AWSSemanticConventions
     /// <inheritdoc cref="TagBuilderImpl"/>
     public TagBuilderImpl TagBuilder { get; }
 
+    public Version Version { get; }
+
     /// <summary>
     /// Returns attribute names whose values must be reported as a <c>string[]</c>
     /// (string array) rather than a plain <c>string</c>, as required by the
@@ -86,7 +88,7 @@ internal partial class AWSSemanticConventions
     /// </summary>
     /// <returns>A collection of attribute names that require array values.</returns>
     public IReadOnlyCollection<string> GetArrayValueAttributeNames()
-        => this.GetSemanticConventionVersion().ArrayValueAttributeNames;
+        => this.semanticConventionVersion.ArrayValueAttributeNames;
 
     /// <inheritdoc cref="AWSSemanticConventions"/>
     /// <param name="semanticConventionVersion">
@@ -94,10 +96,11 @@ internal partial class AWSSemanticConventions
     /// </param>
     public AWSSemanticConventions(SemanticConventionVersion semanticConventionVersion = DefaultSemanticConventionVersion)
     {
-        this.semanticConventionVersion = semanticConventionVersion;
+        this.semanticConventionVersion = CreateSemanticConventionVersion(semanticConventionVersion);
         this.AttributeBuilder = new(this);
         this.ParameterMappingBuilder = new(this);
         this.TagBuilder = new(this);
+        this.Version = GetVersion(semanticConventionVersion);
     }
 
     /// <summary>
@@ -133,6 +136,10 @@ internal partial class AWSSemanticConventions
         public ParameterMappingBuilderImpl AddAttributeAWSSQSQueueUrl(string value)
             => this.awsSemanticConventions.AddDic(this, x => x.AttributeAWSSQSQueueUrl, value);
 
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeAWSSNSTopicArn"/>
+        public ParameterMappingBuilderImpl AddAttributeAWSSNSTopicArn(string value)
+            => this.awsSemanticConventions.AddDic(this, x => x.AttributeAWSSNSTopicArn, value);
+
         /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeGenAiModelId"/>
         public ParameterMappingBuilderImpl AddAttributeGenAiModelId(string value)
             => this.awsSemanticConventions.AddDic(this, x => x.AttributeGenAiModelId, value);
@@ -160,6 +167,10 @@ internal partial class AWSSemanticConventions
         /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeAWSS3Key"/>
         public ParameterMappingBuilderImpl AddAttributeAWSS3Key(string value)
             => this.awsSemanticConventions.AddDic(this, x => x.AttributeAWSS3Key, value);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeMessagingMessageId"/>
+        public ParameterMappingBuilderImpl AddAttributeMessageId(string value)
+            => this.awsSemanticConventions.AddDic(this, x => x.AttributeMessagingMessageId, value);
         #endregion
     }
 
@@ -436,6 +447,22 @@ internal partial class AWSSemanticConventions
         /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeGenAiSystem"/>
         public Activity? SetTagAttributeGenAiSystemToBedrock(Activity? activity)
             => this.awsSemanticConventions.SetTag(activity, x => x.AttributeGenAiSystem, x => x.AttributeAWSBedrock);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeCloudRegion"/>
+        public Activity? SetTagAttributeCloudRegion(Activity? activity, object? value)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeCloudRegion, value);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeAWSExtendedRequestId"/>
+        public Activity? SetTagAttributeAWSExtendedRequestId(Activity? activity, object? value)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeAWSExtendedRequestId, value);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeGenAiSystem"/>
+        public Activity? SetTagAttributeMessagingSystemToSns(Activity? activity)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeMessagingSystem, x => x.AttributeAWSSNS);
+
+        /// <inheritdoc cref="AWSSemanticConventionsBase.AttributeGenAiSystem"/>
+        public Activity? SetTagAttributeMessagingSystemToSqs(Activity? activity)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeMessagingSystem, x => x.AttributeAWSSQS);
         #endregion
 
         #region Http
@@ -449,16 +476,54 @@ internal partial class AWSSemanticConventions
         public Activity? SetTagAttributeHttpResponseStatusCode(Activity? activity, int value)
             => this.awsSemanticConventions.SetTag(activity, x => x.AttributeHttpResponseStatusCode, value);
         #endregion
+
+        #region Messaging
+
+        public Activity? SetTagAttributeMessagingDestinationName(Activity? activity, string value)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeMessagingDestinationName, value);
+
+        public Activity? SetTagAttributeMessagingMessageId(Activity? activity, string value)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeMessagingMessageId, value);
+
+        public Activity? SetTagAttributeMessagingOperationName(Activity? activity, string value)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeMessagingOperationName, value);
+
+        public Activity? SetTagAttributeMessagingOperationType(Activity? activity, string value)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeMessagingOperationType, value);
+
+        #endregion
+
+        #region RPC
+        public Activity? SetTagAttributeRpcSystemName(Activity? activity)
+            => this.awsSemanticConventions.SetTag(activity, x => x.AttributeRpcSystemName, x => x.AttributeRpcSystemNameValue);
+        #endregion
     }
 
+    internal static Version GetVersion(SemanticConventionVersion semanticConventionVersion) => semanticConventionVersion switch
+    {
+        SemanticConventionVersion.Latest or SemanticConventionVersion.V1_40_0 => new(1, 40, 0),
+        SemanticConventionVersion.V1_29_0 => new(1, 29, 0),
+        SemanticConventionVersion.V1_28_0 => new(1, 28, 0),
+        _ => throw new InvalidEnumArgumentException(nameof(semanticConventionVersion), (int)semanticConventionVersion, typeof(SemanticConventionVersion)),
+    };
+
+    private static AWSSemanticConventions_V1_28_0 CreateSemanticConventionVersion(SemanticConventionVersion semanticConventionVersion) => semanticConventionVersion switch
+    {
+        SemanticConventionVersion.Latest or SemanticConventionVersion.V1_40_0 => new AWSSemanticConventions_V1_40_0(),
+        SemanticConventionVersion.V1_29_0 => new AWSSemanticConventions_V1_29_0(),
+        SemanticConventionVersion.V1_28_0 => new AWSSemanticConventions_V1_28_0(),
+        _ => throw new InvalidEnumArgumentException(
+                argumentName: nameof(SemanticConventionVersion),
+                (int)semanticConventionVersion,
+                typeof(SemanticConventionVersion)),
+    };
+
     private AttributeBuilderImpl Add(AttributeBuilderImpl attributes, Func<AWSSemanticConventionsBase, string> attributeNameFunc, Func<AWSSemanticConventionsBase, string> valueFunc) =>
-        this.Add(attributes, attributeNameFunc, valueFunc(this.GetSemanticConventionVersion()));
+        this.Add(attributes, attributeNameFunc, valueFunc(this.semanticConventionVersion));
 
     private AttributeBuilderImpl Add(AttributeBuilderImpl attributes, Func<AWSSemanticConventionsBase, string> attributeNameFunc, object? value, bool addIfEmpty = false)
     {
-        var semanticConventionVersionImpl = this.GetSemanticConventionVersion();
-
-        var attributeName = attributeNameFunc(semanticConventionVersionImpl);
+        var attributeName = attributeNameFunc(this.semanticConventionVersion);
 
         // if attributeName is empty or there is no value, exit
         if (string.IsNullOrEmpty(attributeName) ||
@@ -473,13 +538,11 @@ internal partial class AWSSemanticConventions
     }
 
     private Activity? SetTag(Activity? activity, Func<AWSSemanticConventionsBase, string> attributeNameFunc, Func<AWSSemanticConventionsBase, object?> valueFunc) =>
-        this.SetTag(activity, attributeNameFunc, valueFunc(this.GetSemanticConventionVersion()));
+        this.SetTag(activity, attributeNameFunc, valueFunc(this.semanticConventionVersion));
 
     private Activity? SetTag(Activity? activity, Func<AWSSemanticConventionsBase, string> attributeNameFunc, object? value)
     {
-        var semanticConventionVersionImpl = this.GetSemanticConventionVersion();
-
-        var attributeName = attributeNameFunc(semanticConventionVersionImpl);
+        var attributeName = attributeNameFunc(this.semanticConventionVersion);
 
         // if attributeName is empty, exit
         if (string.IsNullOrEmpty(attributeName))
@@ -494,9 +557,7 @@ internal partial class AWSSemanticConventions
 
     private ParameterMappingBuilderImpl AddDic(ParameterMappingBuilderImpl dict, Func<AWSSemanticConventionsBase, string> attributeNameFunc, string value)
     {
-        var semanticConventionVersionImpl = this.GetSemanticConventionVersion();
-
-        var attributeName = attributeNameFunc(semanticConventionVersionImpl);
+        var attributeName = attributeNameFunc(this.semanticConventionVersion);
 
         if (!string.IsNullOrEmpty(attributeName))
         {
@@ -505,14 +566,4 @@ internal partial class AWSSemanticConventions
 
         return dict;
     }
-
-    private AWSSemanticConventions_V1_28_0 GetSemanticConventionVersion() => this.semanticConventionVersion switch
-    {
-        SemanticConventionVersion.Latest or SemanticConventionVersion.V1_29_0 => new AWSSemanticConventions_V1_29_0(),
-        SemanticConventionVersion.V1_28_0 => new AWSSemanticConventions_V1_28_0(),
-        _ => throw new InvalidEnumArgumentException(
-                argumentName: nameof(SemanticConventionVersion),
-                (int)this.semanticConventionVersion,
-                typeof(SemanticConventionVersion)),
-    };
 }

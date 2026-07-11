@@ -12,6 +12,10 @@ function CreatePullRequestToUpdateChangelogsAndPublicApis {
     [Parameter()][string]$gitUserEmail
   )
 
+  $ErrorActionPreference = "Stop"
+  $InformationPreference = "Continue"
+  $WarningPreference = "Continue"
+
   $match = [regex]::Match($version, '^(\d+\.\d+\.\d+)(?:-((?:alpha)|(?:beta)|(?:rc))\.(\d+))?$')
   if ($match.Success -eq $false)
   {
@@ -39,7 +43,7 @@ function CreatePullRequestToUpdateChangelogsAndPublicApis {
     git config user.email $gitUserEmail
   }
 
-  git switch --create $branch 2>&1 | % ToString
+  git switch --create $branch 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git switch failure'
@@ -85,13 +89,13 @@ Requested by: @$requestedByUserName
 ``/CreateReleaseTag``: Use after merging to push the release tag and trigger the job to create packages and push to NuGet [``approvers``, ``maintainers``]
 "@
 
-  git commit -a -m "Prepare repo to release $tag." -s 2>&1 | % ToString
+  git commit -a -m "Prepare repo to release $tag." -s 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git commit failure'
   }
 
-  git push -u origin $branch 2>&1 | % ToString
+  git push -u origin $branch 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git push failure'
@@ -188,13 +192,13 @@ function CreateReleaseTagAndPostNoticeOnPullRequest {
     git config user.email $gitUserEmail
   }
 
-  git tag -a $tag -m "$tag" $commit 2>&1 | % ToString
+  git tag -a $tag -m "$tag" $commit 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git tag failure'
   }
 
-  git push origin $tag 2>&1 | % ToString
+  git push origin $tag 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git push failure'
@@ -203,7 +207,7 @@ function CreateReleaseTagAndPostNoticeOnPullRequest {
   gh pr unlock $pullRequestNumber
 
   # Avoid race condition between the PR being unlocked and being able to post a comment
-  sleep 10
+  Start-Sleep -Seconds 10
 
   $body =
 @"
@@ -268,7 +272,7 @@ function UpdateChangelogReleaseDatesAndPostNoticeOnPullRequest {
     git config user.email $gitUserEmail
   }
 
-  git switch $prViewResponse.headRefName 2>&1 | % ToString
+  git switch $prViewResponse.headRefName 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git switch failure'
@@ -282,7 +286,7 @@ function UpdateChangelogReleaseDatesAndPostNoticeOnPullRequest {
 Released $(Get-Date -UFormat '%Y-%b-%d')
 "@
 
-  $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select Path | Split-Path -Parent
+  $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select-Object Path | Split-Path -Parent
 
   foreach ($projectDir in $projectDirs)
   {
@@ -303,13 +307,13 @@ Released $(Get-Date -UFormat '%Y-%b-%d')
     return
   }
 
-  git commit -a -m "Update CHANGELOG release dates for $tag." -s 2>&1 | % ToString
+  git commit -a -m "Update CHANGELOG release dates for $tag." -s 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git commit failure'
   }
 
-  git push -u origin $prViewResponse.headRefName 2>&1 | % ToString
+  git push -u origin $prViewResponse.headRefName 2>&1 | ForEach-Object { $_.ToString() }
   if ($LASTEXITCODE -gt 0)
   {
       throw 'git push failure'
@@ -328,6 +332,7 @@ function TagCodeOwnersOnOrRunWorkflowForRequestReleaseIssue {
     [Parameter(Mandatory=$true)][string]$requestedByUserName,
     [Parameter(Mandatory=$true)][string]$issueNumber,
     [Parameter(Mandatory=$true)][string]$issueBody,
+    [Parameter(Mandatory=$true)][string]$issueTitle,
     [Parameter()][string]$targetBranch="main",
     [Parameter()][string]$gitUserName,
     [Parameter()][string]$gitUserEmail
@@ -336,20 +341,45 @@ function TagCodeOwnersOnOrRunWorkflowForRequestReleaseIssue {
   $match = [regex]::Match($issueBody, '^[#]+ Component\s*(OpenTelemetry\.(?:.|\w+)+)$', [Text.RegularExpressions.RegexOptions]::Multiline)
   if ($match.Success -eq $false)
   {
-      Write-Host 'Component could not be parsed from body'
+      Write-Warning 'Component could not be parsed from body'
       Return
   }
 
   $component = $match.Groups[1].Value.Trim()
 
+  # Compare the component chosen with the title and verify that they match
+  $titleMatch = [regex]::Match($issueTitle, '^\[release request\]\s+(OpenTelemetry\.[^\s]+)(?:\s+(.+))?\s*$')
+  if ($titleMatch.Success -eq $false)
+  {
+      Write-Warning 'Component and version could not be parsed from title'
+      Return
+  }
+
+  $componentInTitle = $titleMatch.Groups[1].Value.Trim()
+  if ($component -ne $componentInTitle)
+  {
+      gh issue comment $issueNumber `
+        --body "The component specified in the release request title does not match the component in the body. Please create a new release request with matching components or edit the issue so they match."
+      Return
+  }
+
   $match = [regex]::Match($issueBody, '^[#]+ Version\s*(.*)$', [Text.RegularExpressions.RegexOptions]::Multiline)
   if ($match.Success -eq $false)
   {
-      Write-Host 'Version could not be parsed from body'
+      Write-Warning 'Version could not be parsed from body'
       Return
   }
 
   $version = $match.Groups[1].Value.Trim()
+
+  # Compare the version chosen with the title and verify that they match
+  $versionInTitle = $titleMatch.Groups[2].Value.Trim()
+  if ($version -ne $versionInTitle)
+  {
+      gh issue comment $issueNumber `
+        --body "The version specified in the release request title does not match the version in the body. Please create a new release request with matching versions or edit the issue so they match."
+      Return
+  }
 
   $match = [regex]::Match($version, '^(\d+\.\d+\.\d+)(?:-((?:alpha)|(?:beta)|(?:rc))\.(\d+))?$')
   if ($match.Success -eq $false)
@@ -362,10 +392,11 @@ function TagCodeOwnersOnOrRunWorkflowForRequestReleaseIssue {
   $componentOwners = $null
 
   if ((FindComponentOwners `
-      -component $component `
-      -issueNumber $issueNumber `
-      -componentOwners ([ref]$componentOwners)) -eq $false)
+          -component $component `
+          -issueNumber $issueNumber `
+          -componentOwners ([ref]$componentOwners)) -eq $false)
   {
+    Write-Warning 'Could not find component owners'
     return
   }
 

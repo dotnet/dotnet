@@ -277,15 +277,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A new version of NuGet Package Manager is available..
-        /// </summary>
-        public static string AskForUpdateMessage {
-            get {
-                return ResourceManager.GetString("AskForUpdateMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Implicitly referenced by an SDK. To update the package, update the SDK to which it belongs..
         /// </summary>
         public static string AutoReferenced {
@@ -885,15 +876,6 @@ namespace NuGet.PackageManagement.UI {
         public static string Hyperlink_ReportAbuse {
             get {
                 return ResourceManager.GetString("Hyperlink_ReportAbuse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ignore for now.
-        /// </summary>
-        public static string IgnoreUpgrade {
-            get {
-                return ResourceManager.GetString("IgnoreUpgrade", resourceCulture);
             }
         }
         
@@ -1668,15 +1650,6 @@ namespace NuGet.PackageManagement.UI {
         public static string RestoreButtonLabel {
             get {
                 return ResourceManager.GetString("RestoreButtonLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show Details.
-        /// </summary>
-        public static string ShowDetails {
-            get {
-                return ResourceManager.GetString("ShowDetails", resourceCulture);
             }
         }
         

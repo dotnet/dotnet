@@ -154,7 +154,7 @@
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
         <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
-        <target state="new">Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</target>
+        <target state="translated">尝试添加源“{1}”时引发了异常“{0}”。检查你的所有联机包源是否都可用。</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -274,7 +274,7 @@
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
         <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="new">Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</target>
+        <target state="translated">在以下主源中找不到包“{0}”:“{1}”。验证你的所有联机包源是否都可用，以及是否正确指定了包 ID、版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -401,7 +401,7 @@
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
         <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
-        <target state="new">Solution is not opened or not saved. Ensure you have an open and saved solution.</target>
+        <target state="translated">未打开或保存解决方案。确保你拥有打开的已保存解决方案。</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionManagerNotAvailableForUninstall">
@@ -444,7 +444,7 @@
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
         <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
-        <target state="new">Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</target>
+        <target state="translated">无法从源“{1}”收集包“{0}”。检查你的所有联机包源是否都可用。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

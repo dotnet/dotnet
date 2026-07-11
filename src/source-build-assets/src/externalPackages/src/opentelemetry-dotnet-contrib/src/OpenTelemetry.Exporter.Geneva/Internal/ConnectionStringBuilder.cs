@@ -71,16 +71,16 @@ internal sealed class ConnectionStringBuilder
     }
 
     public bool PrivatePreviewEnableTraceLoggingDynamic => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableTraceLoggingDynamic), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public bool PrivatePreviewEnableOtlpProtobufEncoding => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableOtlpProtobufEncoding), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public bool PrivatePreviewEnableUserEvents => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableUserEvents), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public bool PrivatePreviewEnableAFDCorrelationIdEnrichment => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableAFDCorrelationIdEnrichment), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public int PrivatePreviewLogMessagePackStringSizeLimit =>
         !this.parts.TryGetValue(nameof(this.PrivatePreviewLogMessagePackStringSizeLimit), out var value)

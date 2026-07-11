@@ -27,7 +27,6 @@ internal partial class AWSSemanticConventions
         public override string AttributeCloudAvailabilityZone => "cloud.availability_zone";
         public override string AttributeCloudPlatform => "cloud.platform";
         public override string AttributeCloudProvider => "cloud.provider";
-        public override string AttributeCloudRegion => "cloud.region";
         public override string AttributeCloudResourceId => "cloud.resource_id";
         public override string CloudPlatformValuesAwsEc2 => "aws_ec2";
         public override string CloudPlatformValuesAwsEcs => "aws_ecs";
@@ -102,6 +101,11 @@ internal partial class AWSSemanticConventions
 
         // K8s Attributes
         public override string AttributeK8SClusterName => "k8s.cluster.name";
+
+        // RPC Attributes
+        public override string AttributeRpcService => "rpc.service";
+        public override string AttributeRpcSystemName => "rpc.system";
+        public override string AttributeRpcSystemNameValue => "aws-api";
 
         // SERVICE Attributes
         public override string AttributeServiceName => "service.name";

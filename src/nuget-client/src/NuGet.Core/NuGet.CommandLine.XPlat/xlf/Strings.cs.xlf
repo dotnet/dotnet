@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="Delete_MissingArguments">
         <source>Provide arguments for package id and package version.</source>
-        <target state="new">Provide arguments for package id and package version.</target>
+        <target state="translated">Zadejte argumenty pro ID a verzi balíčku.</target>
         <note />
       </trans-unit>
       <trans-unit id="Delete_PackageIdAndVersion_Description">
@@ -271,7 +271,7 @@
       </trans-unit>
       <trans-unit id="Error_AssetsFileNotFound">
         <source>No assets file was found for `{0}`. Run restore before running this command.</source>
-        <target state="new">No assets file was found for `{0}`. Run restore before running this command.</target>
+        <target state="translated">Pro `{0}` se nenašel žádný soubor prostředků. Než spustíte tento příkaz, spusťte obnovení.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotObtainSearchSource">
@@ -370,7 +370,7 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
       </trans-unit>
       <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
         <source>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</source>
-        <target state="new">The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</target>
+        <target state="translated">Adresář {0} obsahuje více souborů projektu nebo řešení. Zadejte soubor projektu nebo řešení, který chcete použít.</target>
         <note>{0} - Directory</note>
       </trans-unit>
       <trans-unit id="Error_NoDgSpec">
@@ -410,7 +410,7 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="new">Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</target>
+        <target state="translated">Chybějící nebo neplatná cesta {0}. Zadejte cestu k projektu, souboru řešení, souborové aplikaci nebo adresáři projektu.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -558,12 +558,12 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingAssetsFile">
         <source>Unable to read the assets file `{0}`. Make sure the file has the correct format.</source>
-        <target state="new">Unable to read the assets file `{0}`. Make sure the file has the correct format.</target>
+        <target state="translated">Nepovedlo se přečíst soubor prostředků `{0}`. Ujistěte se, že má soubor správný formát.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingReferenceFromProject">
         <source>Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</source>
-        <target state="new">Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</target>
+        <target state="translated">Z projektu `{0}` se nepovedlo přečíst odkaz na balíček. Spusťte obnovení, abyste měli jistotu, že soubor projektu a soubor project.assets.json jsou synchronizované.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_FrameworkDescription">
@@ -792,9 +792,9 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
         <source>Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
-usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
-For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Ve stejném příkazu se nepodporují zároveň operace --list a --clear. Zadejte jenom jednu operaci.
+Použití: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Další informace najdete tady: https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_NoArguments">
@@ -810,9 +810,9 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <source>Specify an operation i.e. --list or --clear.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Specify an operation i.e. --list or --clear.
-usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
-For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Zadejte operaci, tj. --list nebo --clear.
+Použití: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Další informace najdete tady: https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="NoServiceEndpoint_Description">
@@ -1086,7 +1086,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="Push_MissingArguments">
         <source>Specify the path to the package.</source>
-        <target state="new">Specify the path to the package.</target>
+        <target state="translated">Zadejte cestu k balíčku.</target>
         <note />
       </trans-unit>
       <trans-unit id="Push_Package_ApiKey_Description">
@@ -1204,7 +1204,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
         <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</source>
-        <target state="new">The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</target>
+        <target state="translated">Parametr --timestamper nebyl zadán. Podepsaný balíček nebude opatřen časovým razítkem. Další informace o tomto parametru najdete na https://docs.microsoft.com/dotnet/core/tools.</target>
         <note>Please don't localize '--timestamper'</note>
       </trans-unit>
       <trans-unit id="SignCommandOutputDirectoryDescription">
@@ -1394,7 +1394,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
         <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</source>
-        <target state="new">The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</target>
+        <target state="translated">Balíček {0} odkazuje na různé verze balíčku pro různé cílové architektury. Tento příkaz to nepodporuje. Upravte soubor projektu přímo. ({1})</target>
         <note>0 - The package id
 1 - The project path</note>
       </trans-unit>
@@ -1493,7 +1493,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</source>
-        <target state="new">The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</target>
+        <target state="translated">Zdá se, že soubor {0} není souborem prostředků NuGet. Před spuštěním tohoto příkazu spusťte obnovení projektu {1}.</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithoutProject">

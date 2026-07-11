@@ -17,8 +17,9 @@ namespace OpenTelemetry.Instrumentation.Owin;
 internal sealed class DiagnosticsMiddleware : OwinMiddleware
 {
     private const string ContextKey = "__OpenTelemetry.Context__";
-    private static readonly Func<IOwinRequest, string, IEnumerable<string>> OwinRequestHeaderValuesGetter
-        = (request, name) => request.Headers.GetValues(name);
+
+    private static readonly Func<IOwinRequest, string, IEnumerable<string>> OwinRequestHeaderValuesGetter =
+        static (request, name) => request.Headers.GetValues(name);
 
     private static readonly RequestDataHelper RequestDataHelper = new(configureByHttpKnownMethodsEnvironmentalVariable: false);
 
@@ -40,7 +41,8 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
         {
             BeginRequest(owinContext);
 
-            if (OwinInstrumentationMetrics.HttpServerDuration.Enabled && !owinContext.Environment.ContainsKey(ContextKey))
+            if (OwinInstrumentationMetrics.HttpServerDuration.Enabled &&
+                !owinContext.Environment.ContainsKey(ContextKey))
             {
                 startTimestamp = Stopwatch.GetTimestamp();
             }
@@ -58,20 +60,25 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static void BeginRequest(IOwinContext owinContext)
     {
-        try
+        var options = OwinInstrumentationActivitySource.Options;
+
+        if (options?.Filter is { } filter)
         {
-            if (OwinInstrumentationActivitySource.Options == null || OwinInstrumentationActivitySource.Options.Filter?.Invoke(owinContext) == false)
+            try
             {
-                OwinInstrumentationEventSource.Log.RequestIsFilteredOut();
+                if (!filter(owinContext))
+                {
+                    OwinInstrumentationEventSource.Log.RequestIsFilteredOut();
+                    return;
+                }
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                OwinInstrumentationEventSource.Log.RequestFilterException(ex);
                 return;
             }
-        }
-#pragma warning disable CA1031 // Do not catch general exception types
-        catch (Exception ex)
-#pragma warning restore CA1031 // Do not catch general exception types
-        {
-            OwinInstrumentationEventSource.Log.RequestFilterException(ex);
-            return;
         }
 
         var textMapPropagator = Propagators.DefaultTextMapPropagator;
@@ -87,14 +94,13 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
             var request = owinContext.Request;
 
             // Note: Display name is intentionally set to a low cardinality
-            // value because OWIN does not expose any kind of
-            // route/template. See:
-            // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/http.md#name
+            // value because OWIN does not expose any kind of route/template.
+            // See: https://github.com/open-telemetry/semantic-conventions/blob/v1.41.0/docs/http/http-spans.md#name
             RequestDataHelper.SetActivityDisplayName(activity, request.Method);
 
             if (activity.IsAllDataRequested)
             {
-                var queryString = OwinInstrumentationActivitySource.Options.DisableUrlQueryRedaction
+                var queryString = options?.DisableUrlQueryRedaction is true
                     ? request.QueryString.Value
                     : RedactionHelper.GetRedactedQueryString(request.QueryString.Value);
 
@@ -112,19 +118,22 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
                     activity.SetTag(SemanticConventions.AttributeUserAgentOriginal, userAgent[0]);
                 }
 
-                try
+                if (options?.Enrich is { } enrich)
                 {
-                    OwinInstrumentationActivitySource.Options?.Enrich?.Invoke(
-                        activity,
-                        OwinEnrichEventType.BeginRequest,
-                        owinContext,
-                        null);
-                }
+                    try
+                    {
+                        enrich(
+                            activity,
+                            OwinEnrichEventType.BeginRequest,
+                            owinContext,
+                            null);
+                    }
 #pragma warning disable CA1031 // Do not catch general exception types
-                catch (Exception ex)
+                    catch (Exception ex)
 #pragma warning restore CA1031 // Do not catch general exception types
-                {
-                    OwinInstrumentationEventSource.Log.EnrichmentException(ex);
+                    {
+                        OwinInstrumentationEventSource.Log.EnrichmentException(ex);
+                    }
                 }
             }
 
@@ -151,12 +160,13 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
             if (activity.IsAllDataRequested)
             {
                 var response = owinContext.Response;
+                var options = OwinInstrumentationActivitySource.Options;
 
                 if (exception != null)
                 {
                     activity.SetStatus(ActivityStatusCode.Error);
 
-                    if (OwinInstrumentationActivitySource.Options?.RecordException == true)
+                    if (options?.RecordException == true)
                     {
                         activity.AddException(exception);
                     }
@@ -168,19 +178,22 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
 
                 activity.SetTag(SemanticConventions.AttributeHttpResponseStatusCode, response.StatusCode);
 
-                try
+                if (options?.Enrich is { } enrich)
                 {
-                    OwinInstrumentationActivitySource.Options?.Enrich?.Invoke(
-                        activity,
-                        OwinEnrichEventType.EndRequest,
-                        owinContext,
-                        exception);
-                }
+                    try
+                    {
+                        enrich(
+                            activity,
+                            OwinEnrichEventType.EndRequest,
+                            owinContext,
+                            exception);
+                    }
 #pragma warning disable CA1031 // Do not catch general exception types
-                catch (Exception ex)
+                    catch (Exception ex)
 #pragma warning restore CA1031 // Do not catch general exception types
-                {
-                    OwinInstrumentationEventSource.Log.EnrichmentException(ex);
+                    {
+                        OwinInstrumentationEventSource.Log.EnrichmentException(ex);
+                    }
                 }
             }
 
@@ -188,11 +201,7 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
 
             if (OwinInstrumentationMetrics.HttpServerDuration.Enabled)
             {
-                OwinInstrumentationMetrics.HttpServerDuration.Record(
-                    activity.Duration.TotalSeconds,
-                    new(SemanticConventions.AttributeHttpRequestMethod, owinContext.Request.Method),
-                    new(SemanticConventions.AttributeUrlScheme, owinContext.Request.Scheme),
-                    new(SemanticConventions.AttributeHttpResponseStatusCode, owinContext.Response.StatusCode));
+                RecordDuration(activity.Duration, owinContext, exception);
             }
 
             if (Propagators.DefaultTextMapPropagator is not TraceContextPropagator)
@@ -202,15 +211,25 @@ internal sealed class DiagnosticsMiddleware : OwinMiddleware
         }
         else if (OwinInstrumentationMetrics.HttpServerDuration.Enabled)
         {
-            var endTimestamp = Stopwatch.GetTimestamp();
-            var duration = endTimestamp - startTimestamp;
-            var durationS = duration / (double)Stopwatch.Frequency;
+            var duration = Stopwatch.GetElapsedTime(startTimestamp);
+            RecordDuration(duration, owinContext, exception);
+        }
 
-            OwinInstrumentationMetrics.HttpServerDuration.Record(
-                durationS,
-                new(SemanticConventions.AttributeHttpRequestMethod, owinContext.Request.Method),
-                new(SemanticConventions.AttributeUrlScheme, owinContext.Request.Scheme),
-                new(SemanticConventions.AttributeHttpResponseStatusCode, owinContext.Response.StatusCode));
+        static void RecordDuration(TimeSpan duration, IOwinContext owinContext, Exception? exception)
+        {
+            var tagList = default(TagList);
+
+            RequestDataHelper.SetHttpMethodTag(ref tagList, owinContext.Request.Method);
+
+            tagList.Add(SemanticConventions.AttributeUrlScheme, owinContext.Request.Scheme);
+            tagList.Add(SemanticConventions.AttributeHttpResponseStatusCode, owinContext.Response.StatusCode);
+
+            if (exception is not null)
+            {
+                tagList.Add(SemanticConventions.AttributeErrorType, exception.GetType().FullName);
+            }
+
+            OwinInstrumentationMetrics.HttpServerDuration.Record(duration.TotalSeconds, in tagList);
         }
     }
 }

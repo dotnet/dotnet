@@ -61,4 +61,20 @@ public static class PprofAttributes
     /// Frames with Function.function_name fully matching the regexp will be kept, even if it matches drop_frames.
     /// </summary>
     public const string AttributePprofProfileKeepFrames = "pprof.profile.keep_frames";
+
+    /// <summary>
+    /// Records the pprof's default_sample_type in the original profile. Not set if the default sample type was missing.
+    /// </summary>
+    /// <remarks>
+    /// This attribute, if present, MUST be set at the scope level (resource_profiles[].scope_profiles[].scope.attributes[]).
+    /// </remarks>
+    public const string AttributePprofScopeDefaultSampleType = "pprof.scope.default_sample_type";
+
+    /// <summary>
+    /// Records the indexes of the sample types in the original profile.
+    /// </summary>
+    /// <remarks>
+    /// This attribute, if present, MUST be set at the scope level (resource_profiles[].scope_profiles[].scope.attributes[]).
+    /// </remarks>
+    public const string AttributePprofScopeSampleTypeOrder = "pprof.scope.sample_type_order";
 }

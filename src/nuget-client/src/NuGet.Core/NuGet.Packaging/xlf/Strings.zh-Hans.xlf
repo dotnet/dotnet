@@ -315,7 +315,7 @@
       </trans-unit>
       <trans-unit id="FailToLoadPackagesConfig">
         <source>Failed to load packages.config as XML file. Check that it is valid.</source>
-        <target state="new">Failed to load packages.config as XML file. Check that it is valid.</target>
+        <target state="translated">无法将 packages.config 加载为 XML 文件。请检查它是否有效。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailToWritePackagesConfig">
@@ -653,7 +653,7 @@
       </trans-unit>
       <trans-unit id="PackageMinVersionNotSatisfied">
         <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</source>
-        <target state="new">The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</target>
+        <target state="translated">“{0}”包需要 NuGet 客户端版本“{1}”或更高版本，但是当前 NuGet 版本为“{2}”。要升级 NuGet，请访问 https://docs.nuget.org/consume/installing-nuget</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageSignatureVerificationLog">
@@ -785,7 +785,7 @@
       </trans-unit>
       <trans-unit id="SignedPackageAlreadySigned">
         <source>The package already contains a signature. Remove the existing signature before adding a new signature.</source>
-        <target state="new">The package already contains a signature. Remove the existing signature before adding a new signature.</target>
+        <target state="translated">包中已包含一个签名。添加新签名之前，请删除现有签名。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageArchiveIOExtraRead">
@@ -810,12 +810,12 @@
       </trans-unit>
       <trans-unit id="SignedPackagePackageAlreadyCountersigned">
         <source>The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</source>
-        <target state="new">The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</target>
+        <target state="translated">包中已包含一个存储库副署。添加新存储库副署之前，请删除现有签名。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageUnableToAccessSignature">
         <source>The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</source>
-        <target state="new">The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</target>
+        <target state="translated">包未正确打开，无法执行签名操作。使用基于流的构造函数访问包的签名属性。</target>
         <note />
       </trans-unit>
       <trans-unit id="SigningCannotBeDoneInPlace">

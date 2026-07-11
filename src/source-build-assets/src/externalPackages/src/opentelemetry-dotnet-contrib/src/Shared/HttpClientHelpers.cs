@@ -78,7 +78,7 @@ internal static class HttpClientHelpers
                     totalRead += bytesRead;
                 }
 
-                bool extra = false;
+                var extra = false;
 
                 if (totalRead == length)
                 {
@@ -189,7 +189,7 @@ internal static class HttpClientHelpers
                     totalRead += bytesRead;
                 }
 
-                bool extra = false;
+                var extra = false;
 
                 if (totalRead == length)
                 {
@@ -259,7 +259,7 @@ internal static class HttpClientHelpers
 
     private static Encoding GetEncoding(string? name)
     {
-        Encoding encoding = Encoding.UTF8;
+        var encoding = Encoding.UTF8;
 
         if (!string.IsNullOrWhiteSpace(name))
         {

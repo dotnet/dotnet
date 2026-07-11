@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Cmdlet_CommandObsolete">
         <source>This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</source>
-        <target state="new">This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</target>
+        <target state="translated">Questa combinazione comando/parametro è deprecata e verrà rimossa nella prossima versione. Valutare l'opportunità di usare il nuovo comando che lo sostituisce: '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_DeprecatedFrameworkContinue">
@@ -227,7 +227,7 @@
       </trans-unit>
       <trans-unit id="Host_PSNotInstalled">
         <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
-        <target state="new">Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</target>
+        <target state="translated">Errore: Package Manager Console richiede il runtime di PowerShell 2.0, che non risulta presente nel computer. Installare PowerShell 2.0 da http://support.microsoft.com/kb/968929 e riavviare Visual Studio.</target>
         <note />
       </trans-unit>
       <trans-unit id="PowerShellHostTitle">
@@ -242,12 +242,12 @@
       </trans-unit>
       <trans-unit id="UnknownSource">
         <source>Source '{0}' not found. Provide an HTTP or local source.</source>
-        <target state="new">Source '{0}' not found. Provide an HTTP or local source.</target>
+        <target state="translated">L'origine '{0}' non è stata trovata. Specificare un'origine HTTP o locale.</target>
         <note>{0} is the source</note>
       </trans-unit>
       <trans-unit id="UnknownSourceType">
         <source>Unsupported type of source '{0}'. Provide an HTTP or local source.</source>
-        <target state="new">Unsupported type of source '{0}'. Provide an HTTP or local source.</target>
+        <target state="translated">Il tipo di origine '{0}' non è supportato. Specificare un'origine HTTP o locale.</target>
         <note>{0} is the input source.</note>
       </trans-unit>
       <trans-unit id="UnknownSourceWithId">

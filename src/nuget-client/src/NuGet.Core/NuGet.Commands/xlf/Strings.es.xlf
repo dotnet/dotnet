@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="es" original="../Strings.resx">
     <body>
@@ -1115,7 +1115,7 @@ Actualice el SDK de .NET o quite RestoreUseLegacyDependencyResolver para usar es
       </trans-unit>
       <trans-unit id="RestrictedPackageIdWarning">
         <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
-        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <target state="translated">El id. del paquete "{0}" no es válido. Los id. de paquete deben empezar por una letra, un dígito o un guion bajo, y contener solo letras ASCII, dígitos, puntos (.), guiones (-) y guiones bajos (_), sin puntos ni guiones consecutivos.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1464,7 +1464,7 @@ Actualice el SDK de .NET o quite RestoreUseLegacyDependencyResolver para usar es
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
         <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
+        <target state="translated">Hay {0} orígenes de paquetes definidos en la configuración. Al usar la administración central de paquetes, asigne los orígenes de paquetes con la asignación de origen del paquete (https://aka.ms/nuget-package-source-mapping) o especifique un único origen de paquete. Se definen los siguientes orígenes: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">

@@ -356,7 +356,7 @@ appBuilder.Services.AddOpenTelemetry()
 ```
 
  Semantic conventions for RPC are still
- [experimental](https://github.com/open-telemetry/semantic-conventions/tree/main/docs/rpc)
+ [experimental](https://github.com/open-telemetry/semantic-conventions/tree/main/docs/rpc#semantic-conventions-for-rpc)
  and hence the instrumentation only offers it as an experimental feature.
 
 ## Troubleshooting

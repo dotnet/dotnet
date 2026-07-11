@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+* Update `System.Text.Json` for `netstandard2.0` to `8.0.5`.
+  ([#4154](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4154))
+
+* Fix AWS X-Ray remote sampler rule matching to handle sampling rules with
+  missing or null `Attributes`.
+  ([#4316](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4316))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 0.1.0-alpha.9
+
+Released 2026-Apr-21
+
 * Updated OpenTelemetry core component version(s) to `1.15.3`.
   ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
 
@@ -12,7 +26,8 @@ Released 2026-Apr-14
 * Updated OpenTelemetry core component version(s) to `1.15.2`.
   ([#4080](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4080))
 
-* Limit the max size read for response body getting the sampling rules to 1MB.
+* Limit the max size read for response body getting the sampling rules to 1MB to
+  resolve [GHSA-28xm-prxc-5866](https://github.com/advisories/GHSA-28xm-prxc-5866).
   ([#4100](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4100))
 
 ## 0.1.0-alpha.7

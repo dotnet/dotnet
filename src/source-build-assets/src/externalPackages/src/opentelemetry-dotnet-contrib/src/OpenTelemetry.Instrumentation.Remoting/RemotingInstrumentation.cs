@@ -16,7 +16,7 @@ internal sealed class RemotingInstrumentation : IDisposable
     {
         // Just in case we are called multiple times, make sure we register
         // the dynamic sink only once per AppDomain
-        int count = Interlocked.Increment(ref RegistrationCount);
+        var count = Interlocked.Increment(ref RegistrationCount);
         if (count == 1)
         {
             // See https://docs.microsoft.com/dotnet/api/system.runtime.remoting.contexts.context.registerdynamicproperty
@@ -35,7 +35,7 @@ internal sealed class RemotingInstrumentation : IDisposable
     {
         // If there were multiple registration attempts, assume that each
         // of those registrations will also try to un-register.
-        int count = Interlocked.Decrement(ref RegistrationCount);
+        var count = Interlocked.Decrement(ref RegistrationCount);
         if (count == 0)
         {
             // When the last registration disposes, remove the property.

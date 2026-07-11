@@ -352,15 +352,6 @@
   <data name="RestartButtonLabel" xml:space="preserve">
     <value>Rest_art</value>
   </data>
-  <data name="AskForUpdateMessage" xml:space="preserve">
-    <value>A new version of NuGet Package Manager is available.</value>
-  </data>
-  <data name="IgnoreUpgrade" xml:space="preserve">
-    <value>Ignore for now</value>
-  </data>
-  <data name="ShowDetails" xml:space="preserve">
-    <value>Show Details</value>
-  </data>
   <data name="Checkbox_ProjectSelection" xml:space="preserve">
     <value>{0} project(s)</value>
   </data>

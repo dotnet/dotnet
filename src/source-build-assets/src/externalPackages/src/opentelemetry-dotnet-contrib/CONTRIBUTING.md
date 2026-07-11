@@ -7,8 +7,15 @@ repo for information on this and other language SIGs.
 See the [public meeting
 notes](https://docs.google.com/document/d/1yjjD6aBcLxlRazYrawukDgrhZMObwHARJbB9glWdHj8/edit?usp=sharing)
 for a summary description of past meetings. To request edit access, join the
-meeting or get in touch on
-[Slack](https://cloud-native.slack.com/archives/C01N3BC2W7Q).
+meeting or get in touch on the
+[#otel-dotnet](https://cloud-native.slack.com/archives/C01N3BC2W7Q)
+channel on CNCF Slack. If you are new to the CNCF Slack community,
+you can [create an account](https://slack.cncf.io/).
+
+The meeting is open for all to join. We invite everyone to join our meeting,
+regardless of your experience level. Whether you're a seasoned OpenTelemetry
+developer, just starting your journey, or simply curious about the work we do,
+you're more than welcome to participate!
 
 Anyone may contribute but there are benefits of being a member of our community.
 See the [community membership
@@ -245,6 +252,12 @@ shipped through CI.
   added the `OpenTelemetry.Instrumentation.Kusto` project:
   [#4041](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4041).
 
+* The NuGet package and project's name must start with `OpenTelemetry.`.
+  "Namespaces" are used to group similar components together. For example, all
+  instrumentation libraries are grouped under `OpenTelemetry.Instrumentation.*`
+  and all exporters are grouped under `OpenTelemetry.Exporter.*`. Choose an
+  appropriate name for your project based on this convention.
+
 * Based on what your project is, you may need to depend on the [OpenTelemetry
   SDK](https://www.nuget.org/packages/OpenTelemetry) or the [OpenTelemetry
   API](https://www.nuget.org/packages/OpenTelemetry.Api) Include the necessary
@@ -268,7 +281,7 @@ shipped through CI.
    </ItemGroup>
    ```
 
-* The assembly and nuget versioning is managed through
+* The assembly and NuGet versioning is managed through
   [MinVer](https://github.com/adamralph/minver) for all the projects in the
   repo. MinVer will assign the version to your project based on the tag prefix
   specified by you. To ensure your project is versioned appropriately, specify a
@@ -298,12 +311,13 @@ shipped through CI.
 
 * Add your component name to the [issue
   templates](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/tree/main/.github/ISSUE_TEMPLATE/)
-  in your PR. The maintainer will help to create a new ["comp:"
-  label](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/labels?q=comp%3A)
+  and [.github/security-insights.yml](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/.github/security-insights.yml)
+  files in your PR. The maintainer will help to create a new
+  ["comp:" label](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/labels?q=comp%3A)
   once the PR is merged.
 
 * Add a `README.md` file for your project describing how to install and use your
-  package. Every project's README file needs to have a link to the Nuget
+  package. Every project's README file needs to have a link to the NuGet
   package. You can use the below snippet for reference:
 
   ```md

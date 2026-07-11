@@ -14,18 +14,15 @@ internal static class Extensions
     /// <param name="first">The first.</param>
     /// <param name="second">The second.</param>
     /// <returns>An Action.</returns>
-    internal static Action WithBestEffortDispose(this IDisposable first, IDisposable second)
+    internal static Action WithBestEffortDispose(this IDisposable first, IDisposable second) => () =>
     {
-        return () =>
+        try
         {
-            try
-            {
-                first.Dispose();
-            }
-            finally
-            {
-                second.Dispose();
-            }
-        };
-    }
+            first.Dispose();
+        }
+        finally
+        {
+            second.Dispose();
+        }
+    };
 }

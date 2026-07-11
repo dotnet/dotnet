@@ -8,7 +8,7 @@ namespace OpenTelemetry.Instrumentation.EventCounters;
 /// </summary>
 public class EventCountersInstrumentationOptions
 {
-    internal readonly HashSet<string> EventSourceNames = [];
+    private HashSet<string> eventSourceNames = [];
 
     /// <summary>
     /// Gets or sets the subscription interval in seconds for reading values
@@ -20,6 +20,7 @@ public class EventCountersInstrumentationOptions
     /// Listens to EventCounters from the given EventSource name.
     /// </summary>
     /// <param name="names">The EventSource names to listen to.</param>
+    /// <exception cref="NotSupportedException">Thrown if <paramref name="names"/> contains the <c>System.Runtime"</c> EventSource.</exception>"
     public void AddEventSources(params string[] names)
     {
         if (names.Contains("System.Runtime"))
@@ -27,8 +28,10 @@ public class EventCountersInstrumentationOptions
             throw new NotSupportedException("Use the `OpenTelemetry.Instrumentation.Runtime` or `OpenTelemetry.Instrumentation.Process` instrumentations.");
         }
 
-        this.EventSourceNames.UnionWith(names);
+        this.eventSourceNames = [.. this.eventSourceNames.Union(names)];
     }
+
+    internal void ClearEventSources() => this.eventSourceNames = [];
 
     /// <summary>
     /// Returns whether or not an EventSource should be enabled on the EventListener.
@@ -36,7 +39,5 @@ public class EventCountersInstrumentationOptions
     /// <param name="eventSourceName">The EventSource name.</param>
     /// <returns><c>true</c> when an EventSource with the name <paramref name="eventSourceName"/> should be enabled.</returns>
     internal bool ShouldListenToSource(string eventSourceName)
-    {
-        return this.EventSourceNames.Contains(eventSourceName);
-    }
+        => this.eventSourceNames.Contains(eventSourceName);
 }

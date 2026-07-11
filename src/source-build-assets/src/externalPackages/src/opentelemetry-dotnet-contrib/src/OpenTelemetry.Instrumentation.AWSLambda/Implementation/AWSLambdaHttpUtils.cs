@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Web;
 using Amazon.Lambda.APIGatewayEvents;
@@ -208,7 +209,7 @@ internal class AWSLambdaHttpUtils
         if (hostAndPort.Length > 1)
         {
             var host = hostAndPort[0];
-            return int.TryParse(hostAndPort[1], out var port)
+            return int.TryParse(hostAndPort[1], NumberStyles.None, CultureInfo.InvariantCulture, out var port)
                 ? (host, port)
                 : (host, null);
         }
@@ -219,5 +220,5 @@ internal class AWSLambdaHttpUtils
     }
 
     private static int? GetDefaultPort(string? httpScheme) =>
-        httpScheme == "https" ? 443 : httpScheme == "http" ? 80 : null;
+        httpScheme == Uri.UriSchemeHttps ? 443 : httpScheme == Uri.UriSchemeHttp ? 80 : null;
 }

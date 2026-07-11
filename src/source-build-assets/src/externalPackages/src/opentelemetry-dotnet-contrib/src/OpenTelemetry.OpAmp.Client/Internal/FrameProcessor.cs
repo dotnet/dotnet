@@ -108,7 +108,7 @@ internal sealed class FrameProcessor
 
         if (message.Capabilities != 0)
         {
-            this.Dispatch(new CapabilitiesMessage((ServerCapabilities)message.Capabilities));
+            this.Dispatch(new ServerCapabilitiesMessage((ServerCapabilities)message.Capabilities));
         }
 
         if (message.AgentIdentification != null)

@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.AspNetCore.Implementation;
@@ -62,6 +63,13 @@ public static class AspNetCoreInstrumentationTracerProviderBuilderExtensions
             }
 
             services.RegisterOptionsFactory(configuration => new AspNetCoreTraceInstrumentationOptions(configuration));
+
+            // Guard against duplicate DiagnosticSource subscriptions when AddAspNetCoreInstrumentation
+            // is called multiple times with the same name (e.g., by a distro package and the user).
+            // AspNetCoreInstrumentationProvider is a singleton that creates at most one
+            // AspNetCoreInstrumentation per named-options name, while options configure callbacks
+            // still accumulate normally.
+            services.TryAddSingleton<AspNetCoreInstrumentationProvider>();
         });
 
         if (builder is IDeferredTracerProviderBuilder deferredTracerProviderBuilder)
@@ -73,12 +81,7 @@ public static class AspNetCoreInstrumentationTracerProviderBuilderExtensions
         }
 
         return builder.AddInstrumentation(sp =>
-        {
-            var options = sp.GetRequiredService<IOptionsMonitor<AspNetCoreTraceInstrumentationOptions>>().Get(name);
-
-            return new AspNetCoreInstrumentation(
-                new HttpInListener(options));
-        });
+            sp.GetRequiredService<AspNetCoreInstrumentationProvider>().GetOrCreate(name));
     }
 
     // Note: This is used by unit tests.
@@ -102,9 +105,9 @@ public static class AspNetCoreInstrumentationTracerProviderBuilderExtensions
         string optionsName,
         IServiceProvider? serviceProvider = null)
     {
-        // For .NET7.0 onwards activity will be created using activitySource.
+        // For .NET 7.0+ the activity will be created using activitySource.
         // https://github.com/dotnet/aspnetcore/blob/bf3352f2422bf16fa3ca49021f0e31961ce525eb/src/Hosting/Hosting/src/Internal/HostingApplicationDiagnostics.cs#L327
-        // For .NET6.0 and below, we will continue to use legacy way.
+        // For .NET 6.0 and below, we will continue to use legacy way.
         if (HttpInListener.Net7OrGreater)
         {
             // TODO: Check with .NET team to see if this can be prevented
@@ -122,7 +125,7 @@ public static class AspNetCoreInstrumentationTracerProviderBuilderExtensions
         }
         else
         {
-            builder.AddSource(HttpInListener.ActivitySourceName);
+            builder.AddSource(HttpInListener.ActivitySource.Name);
             builder.AddLegacySource(HttpInListener.ActivityOperationName); // for the activities created by AspNetCore
         }
 

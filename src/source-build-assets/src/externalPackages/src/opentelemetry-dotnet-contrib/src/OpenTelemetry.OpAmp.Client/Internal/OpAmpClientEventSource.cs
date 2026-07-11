@@ -17,6 +17,7 @@ internal sealed class OpAmpClientEventSource : EventSource
     private const int EventIdHttpResponseReceived = 3;
     private const int EventIdOversizedWebSocketMessage = 4;
     private const int EventIdFrameProcessingFailure = 5;
+    private const int EventIdEffectiveConfigSizeLimitViolation = 6;
 
     // Service events 500-999
     private const int EventIdHeartbeatServiceStart = 500;
@@ -32,6 +33,7 @@ internal sealed class OpAmpClientEventSource : EventSource
     private const int EventIdSendingEffectiveConfigMessage = 1_003;
     private const int EventIdSendingCustomCapabilitiesMessage = 1_004;
     private const int EventIdSendingCustomMessageMessage = 1_005;
+    private const int EventIdSendingRemoteConfigStatusMessage = 1_006;
 
     // FrameDispatcher error messages 1100-1199
     private const int EventIdFailedToSendIdentificationMessage = 1_100;
@@ -40,6 +42,7 @@ internal sealed class OpAmpClientEventSource : EventSource
     private const int EventIdFailedToSendEffectiveConfigMessage = 1_103;
     private const int EventIdFailedToSendCustomCapabilitiesMessage = 1_104;
     private const int EventIdFailedToSendCustomMessageMessage = 1_105;
+    private const int EventIdFailedToSendRemoteConfigStatusMessage = 1_106;
 
     [Event(EventIdInvalidWsFrame, Message = "Received invalid WebSocket frame header: {0}. Dropping the frame.", Level = EventLevel.Warning)]
     public void InvalidWsFrame(string errorMessage)
@@ -105,6 +108,21 @@ internal sealed class OpAmpClientEventSource : EventSource
     public void FrameProcessingFailure(string exception)
     {
         this.WriteEvent(EventIdFrameProcessingFailure, exception);
+    }
+
+    [NonEvent]
+    public void EffectiveConfigSizeLimitExceeded(int maxBytes)
+    {
+        if (this.IsEnabled(EventLevel.Warning, EventKeywords.All))
+        {
+            this.EffectiveConfigSizeLimitViolation(maxBytes);
+        }
+    }
+
+    [Event(EventIdEffectiveConfigSizeLimitViolation, Message = "Configuration file exceeds maximum allowed size of {0} bytes.", Level = EventLevel.Warning)]
+    public void EffectiveConfigSizeLimitViolation(int maxBytes)
+    {
+        this.WriteEvent(EventIdEffectiveConfigSizeLimitViolation, maxBytes);
     }
 
     [Event(EventIdHeartbeatServiceStart, Message = "Heartbeat service started.", Level = EventLevel.Informational)]
@@ -191,6 +209,12 @@ internal sealed class OpAmpClientEventSource : EventSource
     public void SendingCustomMessageMessage()
     {
         this.WriteEvent(EventIdSendingCustomMessageMessage);
+    }
+
+    [Event(EventIdSendingRemoteConfigStatusMessage, Message = "Sending remote config status message.", Level = EventLevel.Informational)]
+    public void SendingRemoteConfigStatusMessage()
+    {
+        this.WriteEvent(EventIdSendingRemoteConfigStatusMessage);
     }
 
     [NonEvent]
@@ -281,5 +305,20 @@ internal sealed class OpAmpClientEventSource : EventSource
     public void FailedToSendCustomMessageMessage(string exception)
     {
         this.WriteEvent(EventIdFailedToSendCustomMessageMessage, exception);
+    }
+
+    [NonEvent]
+    public void SendRemoteConfigStatusMessageException(Exception ex)
+    {
+        if (this.IsEnabled(EventLevel.Error, EventKeywords.All))
+        {
+            this.FailedToSendRemoteConfigStatusMessage(ex.ToInvariantString());
+        }
+    }
+
+    [Event(EventIdFailedToSendRemoteConfigStatusMessage, Message = "Failed to send remote config status message: {0}", Level = EventLevel.Error)]
+    public void FailedToSendRemoteConfigStatusMessage(string exception)
+    {
+        this.WriteEvent(EventIdFailedToSendRemoteConfigStatusMessage, exception);
     }
 }
