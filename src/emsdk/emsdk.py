@@ -98,18 +98,19 @@ else:
   if os.name == 'nt' or ('windows' in os.getenv('SYSTEMROOT', '').lower()) or ('windows' in os.getenv('COMSPEC', '').lower()):
     WINDOWS = True
 
-  if os.getenv('MSYSTEM'):
+  msystem = os.getenv('MSYSTEM')
+  if msystem:
     MSYS = True
     # Some functions like os.path.normpath() exhibit different behavior between
     # different versions of Python, so we need to distinguish between the MinGW
     # and MSYS versions of Python
     if sysconfig.get_platform() == 'mingw':
       MINGW = True
-    if os.getenv('MSYSTEM') != 'MSYS' and os.getenv('MSYSTEM') != 'MINGW64':
+    if msystem not in {'MSYS', 'MINGW64'}:
       # https://stackoverflow.com/questions/37460073/msys-vs-mingw-internal-environment-variables
-      errlog('Warning: MSYSTEM environment variable is present, and is set to "' + os.getenv('MSYSTEM') + '". This shell has not been tested with emsdk and may not work.')
+      errlog(f'Warning: MSYSTEM environment variable is present, and is set to "{msystem}". This shell has not been tested with emsdk and may not work.')
 
-  if platform.mac_ver()[0] != '':
+  if platform.mac_ver()[0]:
     MACOS = True
 
   if not MACOS and (platform.system() == 'Linux'):
@@ -234,30 +235,6 @@ def parse_github_url_and_refspec(url):
 ARCHIVE_SUFFIXES = ('zip', '.tar', '.gz', '.xz', '.tbz2', '.bz2')
 
 
-# Finds the given executable 'program' in PATH. Operates like the Unix tool 'which'.
-def which(program):
-  def is_exe(fpath):
-    return os.path.isfile(fpath) and (WINDOWS or os.access(fpath, os.X_OK))
-
-  fpath, fname = os.path.split(program)
-  if fpath:
-    if is_exe(program):
-      return program
-  else:
-    exe_suffixes = ['']
-    if WINDOWS and '.' not in fname:
-      exe_suffixes = ['.exe', '.cmd', '.bat']
-
-    for path in os.environ["PATH"].split(os.pathsep):
-      path = path.strip('"')
-      exe_file = os.path.join(path, program)
-      for ext in exe_suffixes:
-        if is_exe(exe_file + ext):
-          return exe_file + ext
-
-  return None
-
-
 def vswhere(version):
   try:
     program_files = os.getenv('ProgramFiles(x86)')
@@ -287,14 +264,14 @@ if WINDOWS:
     CMAKE_GENERATOR = 'Visual Studio 17'
   elif len(vswhere(16)) > 0:
     CMAKE_GENERATOR = 'Visual Studio 16'
-  elif which('mingw32-make') is not None and which('g++') is not None:
+  elif shutil.which('mingw32-make') is not None and shutil.which('g++') is not None:
     CMAKE_GENERATOR = 'MinGW Makefiles'
   else:
     # No detected generator
     CMAKE_GENERATOR = ''
 
 
-sys.argv = [a for a in sys.argv if a not in ('--mingw', '--vs2019', '--vs2022')]
+sys.argv = [a for a in sys.argv if a not in {'--mingw', '--vs2019', '--vs2022'}]
 
 
 # Computes a suitable path prefix to use when building with a given generator.
@@ -312,7 +289,7 @@ def cmake_generator_prefix():
 # Removes a directory tree even if it was readonly, and doesn't throw exception
 # on failure.
 def remove_tree(d):
-  debug_print('remove_tree(' + str(d) + ')')
+  debug_print(f'remove_tree({d})')
   if not os.path.exists(d):
     return
   try:
@@ -388,7 +365,7 @@ def win_get_environment_variable(key, system=True, user=True, fallback=True):
 
 
 def win_set_environment_variable(key, value, system, user):
-  debug_print('set ' + str(key) + '=' + str(value) + ', in system=' + str(system))
+  debug_print(f'set {key}={value}, in system={system}')
   previous_value = win_get_environment_variable(key, system=system, user=user)
   if previous_value == value:
     debug_print('  no need to set, since same value already exists.')
@@ -441,7 +418,7 @@ def win_set_environment_variables(env_vars_to_add, system, user):
         changed = True
         print('Setting global environment variables:')
 
-      print(key + ' = ' + value)
+      print(f'{key} = {value}')
 
   if not changed:
     print('Global environment variables up to date')
@@ -495,11 +472,11 @@ def is_nonempty_directory(path):
 
 
 def run(cmd, cwd=None, quiet=False):
-  debug_print('run(cmd=' + str(cmd) + ', cwd=' + str(cwd) + ')')
+  debug_print(f'run(cmd={cmd}, cwd={cwd})')
   process = subprocess.Popen(cmd, cwd=cwd, env=os.environ.copy())
   process.communicate()
   if process.returncode != 0 and not quiet:
-    errlog(str(cmd) + ' failed with error code ' + str(process.returncode) + '!')
+    errlog(f'{cmd} failed with error code {process.returncode}')
   return process.returncode
 
 
@@ -626,7 +603,7 @@ def path_points_to_directory(path):
   suffix = path[last_dot:]
   # Very simple logic for the only file suffixes used by emsdk downloader. Other
   # suffixes, like 'clang-3.2' are treated as dirs.
-  if suffix in ('.exe', '.zip', '.txt'):
+  if suffix in {'.exe', '.zip', '.txt'}:
     return False
   else:
     return True
@@ -663,7 +640,7 @@ def get_download_target(url, dstpath, filename_prefix=''):
 
 def download_with_curl(url, file_name):
   print("Downloading: %s from %s" % (file_name, url))
-  if not which('curl'):
+  if not shutil.which('curl'):
     exit_with_error('curl not found in PATH')
   # -#: show progress bar
   # -L: Follow HTTP 3XX redirections
@@ -766,10 +743,10 @@ def GIT(must_succeed=True):
   # The order in the following is important, and specifies the preferred order
   # of using the git tools.  Primarily use git from emsdk if installed. If not,
   # use system git.
-  gits = ['git/1.9.4/bin/git.exe', which('git')]
+  gits = ['git/1.9.4/bin/git.exe', shutil.which('git')]
   for git in gits:
     try:
-      ret, stdout, stderr = run_get_output([git, '--version'])
+      ret, _stdout, _stderr = run_get_output([git, '--version'])
       if ret == 0:
         cached_git_executable = git
         return git
@@ -790,7 +767,7 @@ def GIT(must_succeed=True):
 
 
 def git_repo_version(repo_path):
-  returncode, stdout, stderr = run_get_output([GIT(), 'log', '-n', '1', '--pretty="%aD %H"'], cwd=repo_path)
+  returncode, stdout, _stderr = run_get_output([GIT(), 'log', '-n', '1', '--pretty="%aD %H"'], cwd=repo_path)
   if returncode == 0:
     return stdout.strip()
   else:
@@ -798,7 +775,7 @@ def git_repo_version(repo_path):
 
 
 def git_recent_commits(repo_path, n=20):
-  returncode, stdout, stderr = run_get_output([GIT(), 'log', '-n', str(n), '--pretty="%H"'], cwd=repo_path)
+  returncode, stdout, _stderr = run_get_output([GIT(), 'log', '-n', str(n), '--pretty="%H"'], cwd=repo_path)
   if returncode == 0:
     return stdout.strip().replace('\r', '').replace('"', '').split('\n')
   else:
@@ -829,7 +806,7 @@ def git_clone(url, dstpath, branch, remote_name='origin'):
   if GIT_CLONE_SHALLOW:
     git_clone_args += ['--depth', '1']
   print(f'Cloning from {url}...')
-  return run([GIT(), 'clone', '-o', remote_name] + git_clone_args + [url, dstpath]) == 0
+  return run([GIT(), 'clone', '-o', remote_name, *git_clone_args, url, dstpath]) == 0
 
 
 def git_pull(repo_path, branch_or_tag, remote_name='origin'):
@@ -894,7 +871,7 @@ def llvm_build_dir(tool):
   generator_suffix = cmake_generator_prefix()
   bitness_suffix = '_32' if tool.bitness == 32 else '_64'
 
-  if hasattr(tool, 'git_branch'):
+  if tool.git_branch:
     build_dir = 'build_' + tool.git_branch.replace(os.sep, '-') + generator_suffix + bitness_suffix
   else:
     build_dir = 'build_' + tool.version + generator_suffix + bitness_suffix
@@ -966,7 +943,7 @@ def find_cmake():
         return cmake_exe
 
   # 2. If cmake already exists in PATH, then use that cmake to configure the build.
-  cmake_exe = which('cmake')
+  cmake_exe = shutil.which('cmake')
   if cmake_exe:
     info(f'Found CMake from PATH at "{cmake_exe}"')
     return cmake_exe
@@ -988,7 +965,7 @@ def find_cmake():
 def make_build(build_root, build_type):
   debug_print(f'make_build(build_root={build_root}, build_type={build_type})')
   if CPU_CORES > 1:
-    print('Performing a parallel build with ' + str(CPU_CORES) + ' cores.')
+    print(f'Performing a parallel build with {CPU_CORES} cores.')
   else:
     print('Performing a singlethreaded build.')
 
@@ -1010,7 +987,7 @@ def make_build(build_root, build_type):
     print('Running build: ' + str(make))
     ret = subprocess.check_call(make, cwd=build_root, env=build_env())
     if ret != 0:
-      errlog('Build failed with exit code {ret}!')
+      errlog(f'Build failed with exit code {ret}!')
       errlog('Working directory: ' + build_root)
       return False
   except Exception as e:
@@ -1023,7 +1000,7 @@ def make_build(build_root, build_type):
 
 
 def cmake_configure(generator, build_root, src_root, build_type, extra_cmake_args):
-  debug_print('cmake_configure(generator=' + str(generator) + ', build_root=' + str(build_root) + ', src_root=' + str(src_root) + ', build_type=' + str(build_type) + ', extra_cmake_args=' + str(extra_cmake_args) + ')')
+  debug_print(f'cmake_configure(generator={generator}, build_root={build_root}, src_root={src_root}, build_type={build_type}, extra_cmake_args={extra_cmake_args})')
   # Configure
   if not os.path.isdir(build_root):
     # Create build output directory if it doesn't yet exist.
@@ -1035,9 +1012,9 @@ def cmake_configure(generator, build_root, src_root, build_type, extra_cmake_arg
     # Target macOS 11.0 Big Sur at minimum, to support older Mac devices.
     # See https://en.wikipedia.org/wiki/MacOS#Hardware_compatibility for min-spec details.
     cmdline += ['-DCMAKE_OSX_DEPLOYMENT_TARGET=11.0']
-    cmdline += extra_cmake_args + [src_root]
+    cmdline += [*extra_cmake_args, src_root]
 
-    print('Running CMake: ' + str(cmdline))
+    print(f'Running CMake: {cmdline}')
 
     # Specify the deployment target also as an env. var, since some Xcode versions
     # read this instead of the CMake field.
@@ -1054,8 +1031,8 @@ def cmake_configure(generator, build_root, src_root, build_type, extra_cmake_arg
     open(os.path.join(build_root, 'recmake.' + ('bat' if WINDOWS else 'sh')), 'w').write(' '.join(map(quote_parens, cmdline)))
     ret = subprocess.check_call(cmdline, cwd=build_root, env=build_env())
     if ret != 0:
-      errlog('CMake invocation failed with exit code {ret}!')
-      errlog('Working directory: ' + build_root)
+      errlog(f'CMake invocation failed with exit code {ret}')
+      errlog(f'Working directory: {build_root}')
       return False
   except OSError as e:
     if e.errno == errno.ENOENT:
@@ -1070,8 +1047,8 @@ def cmake_configure(generator, build_root, src_root, build_type, extra_cmake_arg
       return False
     raise
   except Exception as e:
-    errlog('CMake invocation failed due to exception!')
-    errlog('Working directory: ' + build_root)
+    errlog('CMake invocation failed due to exception')
+    errlog(f'Working directory: {build_root}')
     errlog(str(e))
     return False
 
@@ -1088,7 +1065,7 @@ def xcode_sdk_version():
 
 def cmake_target_platform(tool):
   # Source: https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2017%202022.html#platform-selection
-  if hasattr(tool, 'arch'):
+  if tool.arch:
     if tool.arch == 'arm64':
       return 'ARM64'
     elif tool.arch == 'x86_64':
@@ -1127,8 +1104,25 @@ def get_generator_and_config_args(tool):
   return (cmake_generator, args)
 
 
+def cmake_configure_and_build(cmake_generator, build_root, cmakelists_dir, build_type, args):
+  success = cmake_configure(cmake_generator, build_root, cmakelists_dir, build_type, args)
+  if success:
+    success = make_build(build_root, build_type)
+
+  if not success and get_env_boolean('EMSDK_RETRY_CLEAN_BUILD'):
+    # Delete the CMake build directory to force a full re-cmake + clean rebuild.
+    shutil.rmtree(build_root)
+
+    # And re-try configure + build again.
+    success = cmake_configure(cmake_generator, build_root, cmakelists_dir, build_type, args)
+    if success:
+      success = make_build(build_root, build_type)
+
+  return success
+
+
 def build_llvm(tool):
-  debug_print('build_llvm(' + str(tool) + ')')
+  debug_print(f'build_llvm({tool})')
   llvm_root = tool.installation_path()
   llvm_src_root = os.path.join(llvm_root, 'src')
   success = git_clone_checkout_and_pull(tool.download_url(), llvm_src_root, tool.git_branch)
@@ -1145,7 +1139,7 @@ def build_llvm(tool):
 
   enable_assertions = ENABLE_LLVM_ASSERTIONS.lower() == 'on' or (ENABLE_LLVM_ASSERTIONS == 'auto' and build_type.lower() != 'release' and build_type.lower() != 'minsizerel')
 
-  if ARCH in ('x86', 'x86_64'):
+  if ARCH in {'x86', 'x86_64'}:
     targets_to_build = 'WebAssembly;X86'
   elif ARCH == 'arm':
     targets_to_build = 'WebAssembly;ARM'
@@ -1161,7 +1155,7 @@ def build_llvm(tool):
            '-DLLVM_ENABLE_ASSERTIONS=' + ('ON' if enable_assertions else 'OFF'),
            # Disable optional LLVM dependencies, these can cause unwanted .so dependencies
            # that prevent distributing the generated compiler for end users.
-           '-DLLVM_ENABLE_LIBXML2=OFF', '-DLLVM_ENABLE_TERMINFO=OFF', '-DLLDB_ENABLE_LIBEDIT=OFF',
+           '-DLLVM_ENABLE_LIBXML2=OFF', '-DLLDB_ENABLE_LIBEDIT=OFF',
            '-DLLVM_ENABLE_LIBEDIT=OFF', '-DLLVM_ENABLE_LIBPFM=OFF']
   # LLVM build system bug: compiler-rt does not build on Windows. It insists on performing a CMake install step that writes to C:\Program Files. Attempting
   # to reroute that to build_root directory then fails on an error
@@ -1181,17 +1175,14 @@ def build_llvm(tool):
     args += extra_args
 
   cmakelists_dir = os.path.join(llvm_src_root, 'llvm')
-  success = cmake_configure(cmake_generator, build_root, cmakelists_dir, build_type, args)
-  if not success:
-    return False
 
-  # Make
-  success = make_build(build_root, build_type)
+  success = cmake_configure_and_build(cmake_generator, build_root, cmakelists_dir, build_type, args)
+
   return success
 
 
 def build_ninja(tool):
-  debug_print('build_ninja(' + str(tool) + ')')
+  debug_print(f'build_ninja({tool})')
   root = os.path.normpath(tool.installation_path())
   src_root = os.path.join(root, 'src')
   success = git_clone_checkout_and_pull(tool.download_url(), src_root, tool.git_branch)
@@ -1207,12 +1198,8 @@ def build_ninja(tool):
   cmake_generator, args = get_generator_and_config_args(tool)
 
   cmakelists_dir = os.path.join(src_root)
-  success = cmake_configure(cmake_generator, build_root, cmakelists_dir, build_type, args)
-  if not success:
-    return False
 
-  # Make
-  success = make_build(build_root, build_type)
+  success = cmake_configure_and_build(cmake_generator, build_root, cmakelists_dir, build_type, args)
 
   if success:
     bin_dir = os.path.join(root, 'bin')
@@ -1230,7 +1217,7 @@ def build_ninja(tool):
 
 
 def build_ccache(tool):
-  debug_print('build_ccache(' + str(tool) + ')')
+  debug_print(f'build_ccache({tool})')
   root = os.path.normpath(tool.installation_path())
   src_root = os.path.join(root, 'src')
   success = git_clone_checkout_and_pull(tool.download_url(), src_root, tool.git_branch)
@@ -1247,12 +1234,8 @@ def build_ccache(tool):
   args += ['-DZSTD_FROM_INTERNET=ON']
 
   cmakelists_dir = os.path.join(src_root)
-  success = cmake_configure(cmake_generator, build_root, cmakelists_dir, build_type, args)
-  if not success:
-    return False
 
-  # Make
-  success = make_build(build_root, build_type)
+  success = cmake_configure_and_build(cmake_generator, build_root, cmakelists_dir, build_type, args)
 
   if success:
     bin_dir = os.path.join(root, 'bin')
@@ -1277,7 +1260,7 @@ cache_dir = %s
 
 
 def download_firefox(tool):
-  debug_print('download_firefox(' + str(tool) + ')')
+  debug_print(f'download_firefox({tool})')
 
   # Use mozdownload to acquire Firefox versions.
   try:
@@ -1314,7 +1297,7 @@ def download_firefox(tool):
     firefox_version = os.path.basename(scraper.filename).split("firefox-")[1].split(".en-US")[0]
 
   print('Target Firefox version: ' + firefox_version)
-  if tool.version in ['latest', 'latest-esr', 'latest-beta', 'nightly']:
+  if tool.version in {'latest', 'latest-esr', 'latest-beta', 'nightly'}:
     pretend_version_dir = os.path.normpath(tool.installation_path())
     orig_version = tool.version
     tool.version = firefox_version
@@ -1337,7 +1320,7 @@ def download_firefox(tool):
   exe_dir = os.path.join(root, 'Contents', 'MacOS') if MACOS else root
   firefox_exe = os.path.join(exe_dir, exe_suffix('firefox'))
   if os.path.isfile(firefox_exe):
-    print(firefox_exe + ' is already installed, skipping..')
+    print(f'{firefox_exe} is already installed, skipping..')
     save_actual_version()
     return True
 
@@ -1358,7 +1341,7 @@ def download_firefox(tool):
     elif filename.endswith('.tar.xz'):
       tar_type = 'r:xz'
     else:
-      raise Exception('Unknown archive type!')
+      raise Exception('Unknown archive type')
 
     with tarfile.open(filename, tar_type) as tar:
       tar.extractall(path=root)
@@ -1458,11 +1441,11 @@ def find_latest_installed_tool(name):
 def emscripten_npm_install(tool, directory):
   node_tool = find_latest_installed_tool('node')
   if not node_tool:
-    npm_fallback = which('npm')
+    npm_fallback = shutil.which('npm')
     if not npm_fallback:
-      errlog('Failed to find npm command!')
-      errlog('Running "npm ci" in installed Emscripten root directory ' + tool.installation_path() + ' is required!')
-      errlog('Please install node.js first!')
+      errlog('Failed to find npm command')
+      errlog(f'Running "npm ci" in installed Emscripten root directory {tool.installation_path()} is required')
+      errlog('Please install node.js first')
       return False
     node_path = os.path.dirname(npm_fallback)
   else:
@@ -1502,12 +1485,12 @@ def binaryen_build_root(tool):
   if build_root.endswith(('/', '\\')):
     build_root = build_root[:-1]
   generator_prefix = cmake_generator_prefix()
-  build_root = build_root + generator_prefix + '_' + str(tool.bitness) + 'bit_binaryen'
+  build_root = f'{build_root}{generator_prefix}_{tool.bitness}bit_binaryen'
   return build_root
 
 
 def uninstall_binaryen(tool):
-  debug_print('uninstall_binaryen(' + str(tool) + ')')
+  debug_print(f'uninstall_binaryen({tool})')
   build_root = binaryen_build_root(tool)
   print(f"Deleting path '{build_root}'")
   remove_tree(build_root)
@@ -1519,7 +1502,7 @@ def is_binaryen_installed(tool):
 
 
 def build_binaryen_tool(tool):
-  debug_print('build_binaryen_tool(' + str(tool) + ')')
+  debug_print(f'build_binaryen_tool({tool})')
   src_root = tool.installation_path()
   build_root = binaryen_build_root(tool)
   build_type = decide_cmake_build_type(tool)
@@ -1533,24 +1516,20 @@ def build_binaryen_tool(tool):
     if BUILD_FOR_TESTING:
       args += ['-DRUN_STATIC_ANALYZER=1']
 
-  success = cmake_configure(cmake_generator, build_root, src_root, build_type, args)
-  if not success:
-    return False
+  success = cmake_configure_and_build(cmake_generator, build_root, src_root, build_type, args)
 
-  # Make
-  success = make_build(build_root, build_type)
-
-  # Deploy scripts needed from source repository to build directory
-  remove_tree(os.path.join(build_root, 'scripts'))
-  shutil.copytree(os.path.join(src_root, 'scripts'), os.path.join(build_root, 'scripts'))
-  remove_tree(os.path.join(build_root, 'src', 'js'))
-  shutil.copytree(os.path.join(src_root, 'src', 'js'), os.path.join(build_root, 'src', 'js'))
+  if success:
+    # Deploy scripts needed from source repository to build directory
+    remove_tree(os.path.join(build_root, 'scripts'))
+    shutil.copytree(os.path.join(src_root, 'scripts'), os.path.join(build_root, 'scripts'))
+    remove_tree(os.path.join(build_root, 'src', 'js'))
+    shutil.copytree(os.path.join(src_root, 'src', 'js'), os.path.join(build_root, 'src', 'js'))
 
   return success
 
 
 def download_and_extract(archive, dest_dir, filename_prefix='', clobber=True):
-  debug_print('download_and_extract(archive={archive}, dest_dir={dest_dir})')
+  debug_print(f'download_and_extract(archive={archive}, dest_dir={dest_dir})')
 
   url = urljoin(emsdk_packages_url, archive)
 
@@ -1600,15 +1579,15 @@ def to_native_path(p):
 def get_required_path(active_tools):
   path_add = [to_native_path(EMSDK_PATH)]
   for tool in active_tools:
-    if hasattr(tool, 'activated_path'):
+    if tool.activated_path:
       path = to_native_path(tool.expand_vars(tool.activated_path))
       # If the tool has an activated_path_skip attribute then we don't add
       # the tools path to the users path if a program by that name is found
       # in the existing PATH.  This allows us to, for example, add our version
       # node to the users PATH if, and only if, they don't already have a
       # another version of node in their PATH.
-      if hasattr(tool, 'activated_path_skip'):
-        current_path = which(tool.activated_path_skip)
+      if tool.activated_path_skip:
+        current_path = shutil.which(tool.activated_path_skip)
         # We found an executable by this name in the current PATH, but we
         # ignore our own version for this purpose.
         if current_path and os.path.dirname(current_path) != path:
@@ -1645,7 +1624,7 @@ def load_em_config():
   for line in lines:
     try:
       key, value = parse_key_value(line)
-      if value != '':
+      if value:
         EM_CONFIG_DICT[key] = value
     except Exception:
       pass
@@ -1667,11 +1646,6 @@ def find_emscripten_root(active_tools):
 
 
 def fetch_nightly_node_versions():
-  # Node.js Apple ARM64 nightly downloads are currently out of order, so pin
-  # to recent version that does still exist. https://github.com/nodejs/node/issues/59654
-  if MACOS and ARCH == 'arm64':
-    return ['v25.0.0-nightly20250715b305119844']
-
   url = "https://nodejs.org/download/nightly/"
   with urlopen(url) as response:
     html = response.read().decode("utf-8")
@@ -1693,7 +1667,7 @@ def dir_installed_nightly_node_versions():
 def extract_newest_node_nightly_version(versions):
   def parse(v):
     # example: v7.0.0-nightly2016080175c6d9dd95
-    m = re.match(r'v(\d+)\.(\d+)\.(\d+)-nightly(\d+)', v)
+    m = re.search(r'v(\d+)\.(\d+)\.(\d+)-nightly(\d{8})', v)
     if m:
       major, minor, patch, nightly = m.groups()
       return [int(major), int(minor), int(patch), int(nightly)]
@@ -1701,7 +1675,7 @@ def extract_newest_node_nightly_version(versions):
       return []
 
   try:
-    return max(versions, key=lambda v: parse(v))
+    return max(versions, key=parse)
   except Exception:
     return None
 
@@ -1709,7 +1683,7 @@ def extract_newest_node_nightly_version(versions):
 def download_node_nightly(tool):
   nightly_versions = fetch_nightly_node_versions()
   latest_nightly = extract_newest_node_nightly_version(nightly_versions)
-  print('Latest Node.js Nightly download available is "{latest_nightly}"')
+  print(f'Latest Node.js Nightly download available is "{latest_nightly}"')
 
   output_dir = os.path.abspath('node/nightly-' + latest_nightly)
   # Node.js zip structure quirk: Linux and macOS archives have a /bin,
@@ -1729,9 +1703,9 @@ def download_node_nightly(tool):
     os_ = 'darwin'
   else:
     os_ = ''
-  if platform.machine().lower() in ["x86_64", "amd64"]:
+  if platform.machine().lower() in {'x86_64', 'amd64'}:
     arch = 'x64'
-  elif platform.machine().lower() in ["arm64", "aarch64"]:
+  elif platform.machine().lower() in {'arm64', 'aarch64'}:
     arch = 'arm64'
   if WINDOWS:
     zip_suffix = 'zip'
@@ -1773,7 +1747,7 @@ def generate_em_config(active_tools, permanently_activate, system):
       activated_config[name] = value
 
   if 'NODE_JS' not in activated_config:
-    node_fallback = which('nodejs')
+    node_fallback = shutil.which('nodejs')
     if not node_fallback:
       node_fallback = 'node'
     activated_config['NODE_JS'] = node_fallback
@@ -1830,7 +1804,32 @@ def generate_em_config(active_tools, permanently_activate, system):
 
 
 class Tool:
+  os = None
+  bitness = None
+  append_bitness = True
+  is_old = False
+  version = None
+  activated_path = None
+  cmake_build_type = None
+  install_path = None
+  activated_path_skip = False
+  activated_cfg = None
+  activated_env = None
+  arch = None
+  custom_is_installed_script = None
+  custom_install_script = None
+  custom_uninstall_script = None
+  emscripten_releases_hash = None
+  git_branch = None
+  url = None
+  macos_url = None
+  unix_url = None
+  linux_url = None
+  windows_url = None
+
   def __init__(self, data):
+    self.uses = []
+
     # Convert the dictionary representation of the tool in 'data' to members of
     # this class for convenience.
     for key, value in data.items():
@@ -1839,9 +1838,9 @@ class Tool:
     # Cache the name ID of this Tool (these are read very often)
     self.name = self.id
     if self.version:
-      self.name += '-' + self.version
-    if hasattr(self, 'bitness'):
-      self.name += '-' + str(self.bitness) + 'bit'
+      self.name += f'-{self.version}'
+    if self.bitness:
+      self.name += f'-{self.bitness}bit'
 
   def __str__(self):
     return self.name
@@ -1875,29 +1874,28 @@ class Tool:
 
   # Return true if this tool requires building from source, and false if this is a precompiled tool.
   def needs_compilation(self):
-    if hasattr(self, 'cmake_build_type'):
+    if self.cmake_build_type:
       return True
 
-    if hasattr(self, 'uses'):
-      for tool_name in self.uses:
-        tool = find_tool(tool_name)
-        if not tool:
-          debug_print(f'Tool {self} depends on {tool_name} which does not exist!')
-          continue
-        if tool.needs_compilation():
-          return True
+    for tool_name in self.uses:
+      tool = find_tool(tool_name)
+      if not tool:
+        debug_print(f'Tool {self} depends on {tool_name} which does not exist!')
+        continue
+      if tool.needs_compilation():
+        return True
 
     return False
 
   # Specifies the target path where this tool will be installed to. This could
   # either be a directory or a filename (e.g. in case of node.js)
   def installation_path(self):
-    if hasattr(self, 'install_path'):
+    if self.install_path:
       pth = self.expand_vars(self.install_path)
       return sdk_path(pth)
     p = self.version
-    if hasattr(self, 'bitness') and (not hasattr(self, 'append_bitness') or self.append_bitness):
-      p += '_' + str(self.bitness) + 'bit'
+    if self.bitness and self.append_bitness:
+      p += f'_{self.bitness}bit'
     return sdk_path(os.path.join(self.id, p))
 
   # Specifies the target directory this tool will be installed to.
@@ -1911,57 +1909,53 @@ class Tool:
   # Returns the configuration item that needs to be added to .emscripten to make
   # this Tool active for the current user.
   def activated_config(self):
-    if hasattr(self, 'activated_cfg'):
-      activated_cfg = self.activated_cfg
-    else:
+    if not self.activated_cfg:
       return {}
 
     config = OrderedDict()
-    expanded = to_unix_path(self.expand_vars(activated_cfg))
+    expanded = to_unix_path(self.expand_vars(self.activated_cfg))
     for specific_cfg in expanded.split(';'):
       name, value = specific_cfg.split('=')
       config[name] = value.strip("'")
     return config
 
   def activated_environment(self):
-    if hasattr(self, 'activated_env'):
-      activated_env = self.activated_env
-    else:
+    if not self.activated_env:
       return []
 
-    return self.expand_vars(activated_env).split(';')
+    return self.expand_vars(self.activated_env).split(';')
 
   def compatible_with_this_arch(self):
-    if hasattr(self, 'arch'):
-      if self.arch != ARCH:
-        return False
-    return True
+    return self.arch == ARCH or not self.arch
 
   def compatible_with_this_os(self):
-    if hasattr(self, 'os'):
+    if not self.compatible_with_this_arch():
+      return False
+
+    if self.os:
+      assert self.os in {'all', 'linux', 'win', 'macos'}
       if self.os == 'all':
         return True
-      if self.compatible_with_this_arch() and ((WINDOWS and 'win' in self.os) or (LINUX and ('linux' in self.os or 'unix' in self.os)) or (MACOS and ('macos' in self.os or 'unix' in self.os))):
+      if (WINDOWS and self.os == 'win') or (LINUX and (self.os in {'linux', 'unix'})) or (MACOS and (self.os in {'macos', 'unix'})):
         return True
-      else:
-        return False
-    else:
-      if not hasattr(self, 'macos_url') and not hasattr(self, 'windows_url') and not hasattr(self, 'unix_url') and not hasattr(self, 'linux_url'):
-        return True
+      return False
 
-    if MACOS and hasattr(self, 'macos_url') and self.compatible_with_this_arch():
+    if not any((self.macos_url, self.windows_url, self.unix_url, self.linux_url)):
       return True
 
-    if LINUX and hasattr(self, 'linux_url') and self.compatible_with_this_arch():
+    if MACOS and self.macos_url:
       return True
 
-    if WINDOWS and hasattr(self, 'windows_url') and self.compatible_with_this_arch():
+    if LINUX and self.linux_url:
       return True
 
-    if UNIX and hasattr(self, 'unix_url'):
+    if WINDOWS and self.windows_url:
       return True
 
-    return hasattr(self, 'url')
+    if UNIX and self.unix_url:
+      return True
+
+    return self.url is not None
 
   # the "version file" is a file inside install dirs that indicates the
   # version installed there. this helps disambiguate when there is more than
@@ -1985,7 +1979,7 @@ class Tool:
   def is_installed(self, skip_version_check=False):
     # If this tool/sdk depends on other tools, require that all dependencies are
     # installed for this tool to count as being installed.
-    if hasattr(self, 'uses'):
+    if self.uses:
       for tool_name in self.uses:
         tool = find_tool(tool_name)
         if tool is None:
@@ -1995,11 +1989,11 @@ class Tool:
           return False
 
     if self.download_url() is None:
-      debug_print(str(self) + ' has no files to download, so is installed by default.')
+      debug_print(f'{self} has no files to download, so is installed by default.')
       return True
 
     content_exists = is_nonempty_directory(self.installation_path())
-    debug_print(str(self) + ' installation path is ' + self.installation_path() + ', exists: ' + str(content_exists) + '.')
+    debug_print(f'{self} installation path is {self.installation_path()}, exists: {content_exists}.')
 
     # For e.g. fastcomp clang from git repo, the activated PATH is the
     # directory where the compiler is built to, and installation_path is
@@ -2008,10 +2002,10 @@ class Tool:
     # clang-main-64bit, clang-main-32bit and clang-main-64bit each
     # share the same git repo), require that in addition to the installation
     # directory, each item in the activated PATH must exist.
-    if hasattr(self, 'activated_path') and not os.path.exists(self.expand_vars(self.activated_path)):
+    if self.activated_path and not os.path.exists(self.expand_vars(self.activated_path)):
       content_exists = False
 
-    if hasattr(self, 'custom_is_installed_script'):
+    if self.custom_is_installed_script:
       if self.custom_is_installed_script == 'lie_and_say_yes':
         return True
       elif self.custom_is_installed_script == 'is_binaryen_installed':
@@ -2019,7 +2013,7 @@ class Tool:
       elif self.custom_is_installed_script == 'is_firefox_installed':
         return is_firefox_installed(self)
       else:
-        raise Exception('Unknown custom_is_installed_script directive "' + self.custom_is_installed_script + '"!')
+        raise Exception(f'Unknown custom_is_installed_script: "{self.custom_is_installed_script}"')
 
     return content_exists and (skip_version_check or self.is_installed_version())
 
@@ -2060,7 +2054,7 @@ class Tool:
         debug_print(f'{self} is not active, because environment variable key="{key}" has value "{os.getenv(key)}" but should have value "{value}"')
         return False
 
-    if hasattr(self, 'activated_path'):
+    if self.activated_path:
       path = to_unix_path(self.expand_vars(self.activated_path))
       for p in path:
         path_items = os.environ['PATH'].replace('\\', '/').split(ENVPATH_SEPARATOR)
@@ -2073,24 +2067,20 @@ class Tool:
   # Otherwise, this function returns a string that describes the reason why this
   # tool is not available.
   def can_be_installed(self):
-    if hasattr(self, 'bitness'):
-      if self.bitness == 64 and not is_os_64bit():
+    if self.bitness == 64 and not is_os_64bit():
         return "this tool is only provided for 64-bit OSes"
     return True
 
   def download_url(self):
-    if WINDOWS and hasattr(self, 'windows_url'):
+    if WINDOWS and self.windows_url:
       return self.windows_url
-    elif MACOS and hasattr(self, 'macos_url'):
+    elif MACOS and self.macos_url:
       return self.macos_url
-    elif LINUX and hasattr(self, 'linux_url'):
+    elif LINUX and self.linux_url:
       return self.linux_url
-    elif UNIX and hasattr(self, 'unix_url'):
+    elif UNIX and self.unix_url:
       return self.unix_url
-    elif hasattr(self, 'url'):
-      return self.url
-    else:
-      return None
+    return self.url
 
   def install(self):
     """Returns True if the Tool was installed of False if was skipped due to
@@ -2121,7 +2111,7 @@ class Tool:
       print(f"All SDK components already installed: '{self}'.")
       return False
 
-    if getattr(self, 'custom_install_script', None) == 'emscripten_npm_install':
+    if self.custom_install_script == 'emscripten_npm_install':
       # upstream tools have hardcoded paths that are not stored in emsdk_manifest.json registry
       install_path = 'upstream'
       emscripten_dir = os.path.join(EMSDK_PATH, install_path, 'emscripten')
@@ -2142,7 +2132,7 @@ class Tool:
     # However all tools that are sourced directly from git branches do need to be
     # installed every time when requested, since the install step is then used to git
     # pull the tool to a newer version.
-    if self.is_installed() and not hasattr(self, 'git_branch'):
+    if self.is_installed() and not self.git_branch:
       print(f"Skipped installing {self.name}, already installed.")
       return False
 
@@ -2156,9 +2146,9 @@ class Tool:
       'download_node_nightly': download_node_nightly,
       'download_firefox': download_firefox,
     }
-    if hasattr(self, 'custom_install_script') and self.custom_install_script in custom_install_scripts:
+    if self.custom_install_script in custom_install_scripts:
       success = custom_install_scripts[self.custom_install_script](self)
-    elif hasattr(self, 'git_branch'):
+    elif self.git_branch:
       success = git_clone_checkout_and_pull(url, self.installation_path(), self.git_branch, getattr(self, 'remote_name', 'origin'))
     elif url.endswith(ARCHIVE_SUFFIXES):
       success = download_and_extract(url, self.installation_path(),
@@ -2169,17 +2159,17 @@ class Tool:
     if not success:
       exit_with_error("installation failed!")
 
-    if hasattr(self, 'custom_install_script'):
+    if self.custom_install_script:
       if self.custom_install_script == 'emscripten_npm_install':
         success = emscripten_npm_install(self, self.installation_path())
-      elif self.custom_install_script in ('build_llvm', 'build_ninja', 'build_ccache', 'download_node_nightly', 'download_firefox'):
+      elif self.custom_install_script in {'build_llvm', 'build_ninja', 'build_ccache', 'download_node_nightly', 'download_firefox'}:
         # 'build_llvm' is a special one that does the download on its
         # own, others do the download manually.
         pass
       elif self.custom_install_script == 'build_binaryen':
         success = build_binaryen_tool(self)
       else:
-        raise Exception('Unknown custom_install_script command "' + self.custom_install_script + '"!')
+        raise Exception(f'Unknown custom_install_script: "{self.custom_install_script}"')
 
     if not success:
       exit_with_error("installation failed!")
@@ -2187,7 +2177,7 @@ class Tool:
     # Install an emscripten-version.txt file if told to, and if there is one.
     # (If this is not an actual release, but some other build, then we do not
     # write anything.)
-    if hasattr(self, 'emscripten_releases_hash'):
+    if self.emscripten_releases_hash:
       emscripten_version_file_path = os.path.join(to_native_path(self.expand_vars(self.activated_path)), 'emscripten-version.txt')
       version = get_emscripten_release_version(self.emscripten_releases_hash)
       if version:
@@ -2219,7 +2209,7 @@ class Tool:
       print(f"Tool '{self}' was not installed. No need to uninstall.")
       return
     print(f"Uninstalling tool '{self}'..")
-    if hasattr(self, 'custom_uninstall_script'):
+    if self.custom_uninstall_script:
       if self.custom_uninstall_script == 'uninstall_binaryen':
         uninstall_binaryen(self)
       else:
@@ -2229,8 +2219,6 @@ class Tool:
     print(f"Done uninstalling '{self}'.")
 
   def dependencies(self):
-    if not hasattr(self, 'uses'):
-      return []
     deps = []
 
     for tool_name in self.uses:
@@ -2240,8 +2228,6 @@ class Tool:
     return deps
 
   def recursive_dependencies(self):
-    if not hasattr(self, 'uses'):
-      return []
     deps = []
     for tool_name in self.uses:
       tool = find_tool(tool_name)
@@ -2541,33 +2527,23 @@ def load_sdk_manifest():
       if not found_param:
         continue
       t2.is_old = i < len(category_list) - 2
-      if hasattr(t2, 'uses'):
-        t2.uses = [x.replace(param, ver) for x in t2.uses]
-
-      # Filter out expanded tools by version requirements, such as ["tag", "<=", "1.37.22"]
-      if hasattr(t2, 'version_filter'):
-        passes = passes_filters(param, ver, t2.version_filter)
-        if not passes:
-          continue
+      t2.uses = [x.replace(param, ver) for x in t2.uses]
 
       if is_sdk:
         if dependencies_exist(t2):
           if not find_sdk(t2.name):
             add_sdk(t2)
           else:
-            debug_print('SDK ' + str(t2) + ' already existed in manifest, not adding twice')
+            debug_print(f'SDK {t2} already existed in manifest, not adding twice')
       else:
         if not find_tool(t2.name):
           add_tool(t2)
         else:
-          debug_print('Tool ' + str(t2) + ' already existed in manifest, not adding twice')
+          debug_print(f'Tool {t2} already existed in manifest, not adding twice')
 
   for tool in manifest['tools']:
     t = Tool(tool)
     if t.compatible_with_this_os():
-      if not hasattr(t, 'is_old'):
-        t.is_old = False
-
       # Expand the metapackages that refer to tags
       if '%tag%' in t.version:
         expand_category_param('%tag%', emscripten_tags, t, is_sdk=False)
@@ -2655,7 +2631,9 @@ def set_active_tools(tools_to_activate, permanently_activate, system):
 
   if tools_to_activate:
     tools = [x for x in tools_to_activate if not x.is_sdk]
-    print('Setting the following tools as active:\n   ' + '\n   '.join([str(t) for t in tools]))
+    print('Setting the following tools as active:')
+    for t in tools:
+      print(f'   {t}')
     print('')
 
   generate_em_config(tools_to_activate, permanently_activate, system)
@@ -2839,7 +2817,7 @@ def construct_env_with_vars(env_vars_to_add):
       # Don't set env vars which are already set to the correct value.
       if key in os.environ and to_unix_path(os.environ[key]) == to_unix_path(value):
         continue
-      info(key + ' = ' + value)
+      info(f'{key} = {value}')
       if POWERSHELL:
         env_string += f'$env:{key}="{value}"\n'
       elif CMD:
@@ -2869,7 +2847,7 @@ def construct_env_with_vars(env_vars_to_add):
                  'EMSDK_NUM_CORES', 'EMSDK_NOTTY', 'EMSDK_KEEP_DOWNLOADS'}
   env_keys_to_add = {pair[0] for pair in env_vars_to_add}
   for key in os.environ:
-    if key.startswith('EMSDK_') or key in ('EM_CACHE', 'EM_CONFIG'):
+    if key.startswith('EMSDK_') or key in {'EM_CACHE', 'EM_CONFIG'}:
       if key not in env_keys_to_add and key not in ignore_keys:
         info('Clearing existing environment variable: %s' % key)
         env_string += unset_env(key)
@@ -2890,7 +2868,7 @@ def expand_sdk_name(name, activating):
     name = name.replace('upstream-master', 'main')
   if 'fastcomp' in name:
     exit_with_error('the fastcomp backend is no longer supported.  Please use an older version of emsdk (for example 3.1.29) if you want to install the old fastcomp-based SDK')
-  if name in ('tot', 'sdk-tot', 'tot-upstream'):
+  if name in {'tot', 'sdk-tot', 'tot-upstream'}:
     if activating:
       # When we are activating a tot release, assume that the currently
       # installed SDK, if any, is the tot release we want to activate.
@@ -2931,7 +2909,7 @@ def expand_sdk_name(name, activating):
   return name
 
 
-def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
+def main(args):  # noqa: C901, PLR0911, PLR0912
   if not args:
     errlog("Missing command; Type 'emsdk help' to get a list of commands.")
     return 1
@@ -2939,7 +2917,7 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
   debug_print('emsdk.py running under `%s`' % sys.executable)
   cmd = args.pop(0)
 
-  if cmd in ('help', '--help', '-h'):
+  if cmd in {'help', '--help', '-h'}:
     print(' emsdk: Available commands:')
 
     print('''
@@ -3062,7 +3040,9 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
       EMSDK_KEEP_DOWNLOADS=1     - if you want to keep the downloaded archives.
       EMSDK_NOTTY=1              - override isatty() result (mainly to log progress).
       EMSDK_NUM_CORES=n          - limit parallelism to n cores.
-      EMSDK_VERBOSE=1            - very verbose output, useful for debugging.''')
+      EMSDK_VERBOSE=1            - very verbose output, useful for debugging.
+      EMSDK_RETRY_CLEAN_BUILD=1  - performs a clean rebuild of compiled tools if
+                                   incremental build fails. Useful on CI.''')
     return 0
 
   # Extracts a boolean command line argument from args and returns True if it was present
@@ -3101,7 +3081,7 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
     TTY_OUTPUT = False
 
   # Replace meta-packages with the real package names.
-  if cmd in ('update', 'install', 'activate'):
+  if cmd in {'update', 'install', 'activate'}:
     activating = cmd == 'activate'
     args = [expand_sdk_name(a, activating=activating) for a in args]
 
@@ -3114,7 +3094,7 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
     tool_name, url_and_refspec = forked_url.split('@')
     t = find_tool(tool_name)
     if not t:
-      errlog('Failed to find tool {tool_name}!')
+      errlog(f'Failed to find tool {tool_name}')
       return False
     else:
       t.url, t.git_branch, t.remote_name = parse_github_url_and_refspec(url_and_refspec)
@@ -3158,7 +3138,7 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
       sdk = find_sdk(name)
       return 'INSTALLED' if sdk and sdk.is_installed() else ''
 
-    if (LINUX or MACOS or WINDOWS) and ARCH in ('x86', 'x86_64'):
+    if (LINUX or MACOS or WINDOWS) and ARCH in {'x86', 'x86_64'}:
       print('The *recommended* precompiled SDK download is %s (%s).' % (find_latest_version(), find_latest_hash()))
       print()
       print('To install/activate it use:')
@@ -3286,7 +3266,7 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
   elif cmd == 'update-tags':
     errlog('`update-tags` is not longer needed.  To install the latest tot release just run `install tot`')
     return 0
-  elif cmd in ('activate', 'deactivate'):
+  elif cmd in {'activate', 'deactivate'}:
     if arg_permanent:
       print('Registering active Emscripten environment permanently')
       print('')
@@ -3302,7 +3282,7 @@ def main(args):  # noqa: C901, PLR0911, PLR0912, PLR0915
       if cmd == 'activate':
         tools_to_activate += [tool]
       elif tool in tools_to_activate:
-        print('Deactivating tool ' + str(tool) + '.')
+        print(f'Deactivating tool {tool}.')
         tools_to_activate.remove(tool)
       else:
         print(f'Tool "{arg}" was not active, no need to deactivate.')
