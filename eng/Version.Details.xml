@@ -14,9 +14,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>901ca941248413c79832d2fdbd709da0c4386353</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.26268.2">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.26359.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>8690d7113c92d2dd112a20bc77b80d314b8f669b</Sha>
+      <Sha>12f6b696271e14a2089e19a97ca6aa9df61fe4e7</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
