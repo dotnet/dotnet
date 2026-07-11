@@ -94,19 +94,19 @@ internal class SamplingRuleApplier
         {
             foreach (var tag in samplingParameters.Tags)
             {
-                if (tag.Key.Equals(SemanticConventions.AttributeUrlPath, StringComparison.Ordinal))
+                if (string.Equals(tag.Key, SemanticConventions.AttributeUrlPath, StringComparison.Ordinal))
                 {
                     httpTarget = (string?)tag.Value;
                 }
-                else if (tag.Key.Equals(SemanticConventions.AttributeUrlFull, StringComparison.Ordinal))
+                else if (string.Equals(tag.Key, SemanticConventions.AttributeUrlFull, StringComparison.Ordinal))
                 {
                     httpUrl = (string?)tag.Value;
                 }
-                else if (tag.Key.Equals(SemanticConventions.AttributeHttpRequestMethod, StringComparison.Ordinal))
+                else if (string.Equals(tag.Key, SemanticConventions.AttributeHttpRequestMethod, StringComparison.Ordinal))
                 {
                     httpMethod = (string?)tag.Value;
                 }
-                else if (tag.Key.Equals(SemanticConventions.AttributeHttpHost, StringComparison.Ordinal))
+                else if (string.Equals(tag.Key, SemanticConventions.AttributeHttpHost, StringComparison.Ordinal))
                 {
                     httpHost = (string?)tag.Value;
                 }
@@ -128,7 +128,7 @@ internal class SamplingRuleApplier
         }
 
         var serviceName = (string)resource.Attributes.FirstOrDefault(kvp =>
-                kvp.Key.Equals("service.name", StringComparison.Ordinal)).Value;
+                string.Equals(kvp.Key, "service.name", StringComparison.Ordinal)).Value;
 
         return Matcher.AttributeMatch(samplingParameters.Tags, this.Rule.Attributes) &&
                Matcher.WildcardMatch(httpTarget, this.Rule.UrlPath) &&
@@ -224,7 +224,7 @@ internal class SamplingRuleApplier
     private static string GetServiceType(Resource resource)
     {
         var cloudPlatform = (string)resource.Attributes.FirstOrDefault(kvp =>
-            kvp.Key.Equals("cloud.platform", StringComparison.Ordinal)).Value;
+            string.Equals(kvp.Key, "cloud.platform", StringComparison.Ordinal)).Value;
 
         return cloudPlatform == null ? string.Empty :
             Matcher.XRayCloudPlatform.TryGetValue(cloudPlatform, out var value) ? value : string.Empty;
@@ -234,16 +234,16 @@ internal class SamplingRuleApplier
     {
         // currently the aws resource detectors only capture ARNs for ECS and Lambda environments.
         var arn = (string?)resource.Attributes.FirstOrDefault(kvp =>
-            kvp.Key.Equals("aws.ecs.container.arn", StringComparison.Ordinal)).Value;
+            string.Equals(kvp.Key, "aws.ecs.container.arn", StringComparison.Ordinal)).Value;
 
         if (arn != null)
         {
             return arn;
         }
 
-        if (GetServiceType(resource).Equals("AWS::Lambda::Function", StringComparison.Ordinal))
+        if (string.Equals(GetServiceType(resource), "AWS::Lambda::Function", StringComparison.Ordinal))
         {
-            arn = (string?)samplingParameters.Tags?.FirstOrDefault(kvp => kvp.Key.Equals("faas.id", StringComparison.Ordinal)).Value;
+            arn = (string?)samplingParameters.Tags?.FirstOrDefault(kvp => string.Equals(kvp.Key, "faas.id", StringComparison.Ordinal)).Value;
 
             if (arn != null)
             {

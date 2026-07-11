@@ -132,4 +132,9 @@ internal enum GrpcStatusCanonicalCode
     /// The request does not have valid authentication credentials for the operation.
     /// </summary>
     Unauthenticated = 16,
+
+    /// <summary>
+    /// The maximum valid GRPC status code.
+    /// </summary>
+    MaxValue = Unauthenticated, // Update this value if new status codes are added.
 }

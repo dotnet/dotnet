@@ -9,7 +9,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
-    <SourceRevisionId>b89c765905dbc6db1421ff0a098127d44665c71f</SourceRevisionId>
+    <SourceRevisionId>0f4a2340b6ea7e5cad83efe2d6d73574794d6388</SourceRevisionId>
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
   </PropertyGroup>
 
@@ -22,6 +22,8 @@
     <PropertyGroup>
       <HttpProject>$(ProjectDirectory)src/OpenTelemetry.Instrumentation.Http/OpenTelemetry.Instrumentation.Http.csproj</HttpProject>
       <RuntimeProject>$(ProjectDirectory)src/OpenTelemetry.Instrumentation.Runtime/OpenTelemetry.Instrumentation.Runtime.csproj</RuntimeProject>
+      <PersistentStorageAbstractionsProject>$(ProjectDirectory)src/OpenTelemetry.PersistentStorage.Abstractions/OpenTelemetry.PersistentStorage.Abstractions.csproj</PersistentStorageAbstractionsProject>
+      <PersistentStorageFileSystemProject>$(ProjectDirectory)src/OpenTelemetry.PersistentStorage.FileSystem/OpenTelemetry.PersistentStorage.FileSystem.csproj</PersistentStorageFileSystemProject>
 
       <CommonBuildArgs>/p:Configuration=$(Configuration)</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:DelaySign=$(DelaySign)</CommonBuildArgs>
@@ -49,6 +51,8 @@
            the MSFT-shipped package by ExternalPackageTests / UpdateExternalMetadata. -->
       <HttpVersionArgs>/p:Version=$(OpenTelemetryDotNetContribHttpReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribHttpAssemblyVersionOverride) /p:FileVersion=$(OpenTelemetryDotNetContribHttpReleaseVersion).$(OpenTelemetryDotNetContribHttpFileVersionRevision)</HttpVersionArgs>
       <RuntimeVersionArgs>/p:Version=$(OpenTelemetryDotNetContribRuntimeReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribRuntimeAssemblyVersionOverride) /p:FileVersion=$(OpenTelemetryDotNetContribRuntimeReleaseVersion).$(OpenTelemetryDotNetContribRuntimeFileVersionRevision)</RuntimeVersionArgs>
+      <PersistentStorageAbstractionsVersionArgs>/p:Version=$(OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribPersistentStorageAbstractionsAssemblyVersionOverride) /p:FileVersion=$(OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion).$(OpenTelemetryDotNetContribPersistentStorageAbstractionsFileVersionRevision)</PersistentStorageAbstractionsVersionArgs>
+      <PersistentStorageFileSystemVersionArgs>/p:Version=$(OpenTelemetryDotNetContribPersistentStorageFileSystemReleaseVersion) /p:AssemblyVersion=$(OpenTelemetryDotNetContribPersistentStorageFileSystemAssemblyVersionOverride) /p:FileVersion=$(OpenTelemetryDotNetContribPersistentStorageFileSystemReleaseVersion).$(OpenTelemetryDotNetContribPersistentStorageFileSystemFileVersionRevision)</PersistentStorageFileSystemVersionArgs>
     </PropertyGroup>
 
     <!-- OpenTelemetry.Instrumentation.Http -->
@@ -67,6 +71,26 @@
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />
     <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_Runtime.binlog $(RuntimeProject) $(PackArgs) $(RuntimeVersionArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- OpenTelemetry.PersistentStorage.Abstractions (packed before FileSystem, which references it) -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_PersistentStorageAbstractions.binlog $(PersistentStorageAbstractionsProject) $(CommonBuildArgs) $(PersistentStorageAbstractionsVersionArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_PersistentStorageAbstractions.binlog $(PersistentStorageAbstractionsProject) $(PackArgs) $(PersistentStorageAbstractionsVersionArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <!-- OpenTelemetry.PersistentStorage.FileSystem (depends on PersistentStorage.Abstractions) -->
+    <Exec Command="&quot;$(DotNetTool)&quot; restore /bl:$(ArtifactsLogRepoDir)restore_PersistentStorageFileSystem.binlog $(PersistentStorageFileSystemProject) $(CommonBuildArgs) $(PersistentStorageFileSystemVersionArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec Command="&quot;$(DotNetTool)&quot; pack /bl:$(ArtifactsLogRepoDir)pack_PersistentStorageFileSystem.binlog $(PersistentStorageFileSystemProject) $(PackArgs) $(PersistentStorageFileSystemVersionArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"
           IgnoreStandardErrorWarningFormat="true" />

@@ -25,10 +25,10 @@
       "commitSha": "bc16495bebe4b70aa2a0f76167544597ddd8b330"
     },
     {
-      "barId": 316255,
+      "barId": 322309,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "f8c30e60063b6e4bc74f4ca40519456eb3a88be8"
+      "commitSha": "5123486f3d021174a962666d4a70d80763df0aca"
     },
     {
       "barId": 321764,
@@ -43,10 +43,10 @@
       "commitSha": "9aa4d2c51d5cffe2f1756ef71ed39b9cff32972e"
     },
     {
-      "barId": 318220,
+      "barId": 322462,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "fffd5d50e18d213a2b76e9bfda1b02f9a83d23c4"
+      "commitSha": "6cc177d1e5e34b130c379bafd087fbb5641eae4f"
     },
     {
       "barId": 322024,
@@ -55,16 +55,16 @@
       "commitSha": "7192705edeb685a7594d5f6114c63f2596fadf1c"
     },
     {
-      "barId": 321904,
+      "barId": 322268,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "98935500d8efcb66c1f32927cb2976ea067172d2"
+      "commitSha": "ad7e074ca3a93f4af30405c4cd24db04151d7ce8"
     },
     {
-      "barId": 322041,
+      "barId": 322246,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "4ee94157cb700a07cc316c6cbcf04b4f281b1fe7"
+      "commitSha": "fce55812db557186fb44617e487cd19667a16341"
     },
     {
       "barId": 321838,
@@ -73,10 +73,10 @@
       "commitSha": "97ee762dcf4f7135ff591ebf24b6f1dab3fe0632"
     },
     {
-      "barId": 321863,
+      "barId": 322260,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "fdecb6b73237947d1429b5d3de71edea536b5b53"
+      "commitSha": "6c5849144dc8a23aa0760080d6f7784fed60da37"
     },
     {
       "barId": 321044,
@@ -85,16 +85,16 @@
       "commitSha": "3422b95b546c5f47b22656367e50729903902e57"
     },
     {
-      "barId": 322038,
+      "barId": 322279,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "be0fd8c72f4e0d8d4447d1d3134e2ce550b60c41"
+      "commitSha": "f0f0fe5e7d283441c5143c0157b617bed3b4d8db"
     },
     {
-      "barId": 321563,
+      "barId": 321996,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "3291b67571c6955d69a2b02d475366a4ba4336c4"
+      "commitSha": "fabc140df32321079f5fff2f297fab380d47b50c"
     },
     {
       "barId": 321328,
@@ -203,12 +203,12 @@
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
-      "commitSha": "d622e6c7c899527638b53a6b06919859f5752add"
+      "commitSha": "611868a27afda59761da60b98610f8d3b85497dc"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-contrib",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet-contrib",
-      "commitSha": "b89c765905dbc6db1421ff0a098127d44665c71f"
+      "commitSha": "0f4a2340b6ea7e5cad83efe2d6d73574794d6388"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/spectre-console",

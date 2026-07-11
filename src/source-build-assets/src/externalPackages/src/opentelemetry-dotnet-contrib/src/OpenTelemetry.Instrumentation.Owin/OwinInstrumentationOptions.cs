@@ -52,7 +52,7 @@ public class OwinInstrumentationOptions
     /// Gets or sets a value indicating whether the exception will be recorded as <see cref="ActivityEvent"/> or not.
     /// </summary>
     /// <remarks>
-    /// https://github.com/open-telemetry/semantic-conventions/blob/main/docs/exceptions/exceptions-spans.md.
+    /// https://github.com/open-telemetry/semantic-conventions/blob/v1.41.0/docs/exceptions/exceptions-spans.md.
     /// </remarks>
     public bool RecordException { get; set; }
 

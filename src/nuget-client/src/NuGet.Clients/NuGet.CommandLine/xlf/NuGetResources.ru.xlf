@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_DisplayFile">
         <source>Provide password for: {0}</source>
-        <target state="new">Provide password for: {0}</target>
+        <target state="translated">Предоставьте пароль для: {0}</target>
         <note>0 - file that requires password</note>
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_PromptForPassword">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="Credentials_ForbiddenCredentials">
         <source>The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</source>
-        <target state="new">The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</target>
+        <target state="translated">Удаленный сервер указал, что предыдущий запрос запрещен. Предоставьте учетные данные для: {0}</target>
         <note>{0} will be replaced with the URL that needs credentials.</note>
       </trans-unit>
       <trans-unit id="Credentials_Password">
@@ -84,12 +84,12 @@
       </trans-unit>
       <trans-unit id="Credentials_ProxyCredentials">
         <source>Provide proxy credentials:</source>
-        <target state="new">Provide proxy credentials:</target>
+        <target state="translated">Предоставьте учетные данные прокси-сервера:</target>
         <note />
       </trans-unit>
       <trans-unit id="Credentials_RequestCredentials">
         <source>Provide credentials for: {0}</source>
-        <target state="new">Provide credentials for: {0}</target>
+        <target state="translated">Предоставьте учетные данные для: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Credentials_UserName">
@@ -257,9 +257,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="new">`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
-Consider migrating '{0}' to `PackageReference` and using the pack targets.
-You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</target>
+        <target state="translated">Пакет `project.json` отключен в текущей версии NuGet, и будет окончательно удален в будущей версии.
+Рассмотрите возможность миграции "{0}" на `PackageReference` и использования целей пакетов.
+Вы можете установить для "{1}" значение "ИСТИНА", чтобы временно повторно разрешить эту функцию.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -324,12 +324,12 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSlnx">
         <source>This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</source>
-        <target state="new">This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</target>
+        <target state="translated">Эта версия MSBuild не поддерживает формат slnx: '{0}'. Для использования этой функции применяйте MSBuild версии 17.13 или выше.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
         <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
-        <target state="new">This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</target>
+        <target state="translated">Эта версия MSBuild не поддерживает фильтр решений: "{0}". Для использования этой функции применяйте MSBuild версии 16.7 или выше.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">
@@ -349,7 +349,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="FailedToLoadExtension">
         <source>Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</source>
-        <target state="new">Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</target>
+        <target state="translated">Не удалось загрузить {0}. Если это расширение было скачано из Интернета, убедитесь, что оно разблокировано (щелкните правой кнопкой мыши, выберите "Свойства" и нажмите "Разблокировать").</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToLoadExtensionDuringMefComposition">
@@ -454,7 +454,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="InvalidSource">
         <source>The specified source '{0}' is invalid. Provide a valid source.</source>
-        <target state="new">The specified source '{0}' is invalid. Provide a valid source.</target>
+        <target state="translated">Указанный источник "{0}" является недопустимым. Укажите допустимый источник.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListCommandNoPackages">
@@ -509,7 +509,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="LocalsCommand_InvalidLocalResourceName">
         <source>An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
-        <target state="new">An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</target>
+        <target state="translated">Указанное название локального ресурса недопустимо. Укажите одно из следующих значений: http-cache, packages-cache, global-packages, all.</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
@@ -669,7 +669,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="PackageCommandSpecifyInputFileError">
         <source>Specify a nuspec or project file to use.</source>
-        <target state="new">Specify a nuspec or project file to use.</target>
+        <target state="translated">Укажите файл nuspec или файл проекта для использования.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandSuccess">
@@ -704,7 +704,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="ProjectJsonPack_Deprecated">
         <source>`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
-        <target state="new">`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</target>
+        <target state="translated">Пакет `project.json` упразднен. Рассмотрите возможность миграции "{0}" на `PackageReference` и использования целей пакетов.</target>
         <note>Do not localize project.json and `PackageReference` 
 0 - project path (project.json file path)</note>
       </trans-unit>
@@ -715,7 +715,7 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="PushCommandNoSourceError">
         <source>There is no default source, specify a source.</source>
-        <target state="new">There is no default source, specify a source.</target>
+        <target state="translated">Источник по умолчанию отсутствует. Укажите источник.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandTimeoutError">
@@ -735,12 +735,12 @@ You can set the '{1}' environment variable to 'true' to temporarily reenable thi
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
         <source>'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
-        <target state="new">'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</target>
+        <target state="translated">Параметр "globalPackagesFolder" является относительным путем. Чтобы определить полный путь, укажите в качестве параметра либо -SolutionDirectory, либо файл решения. Чтобы игнорировать параметр "globalPackagesFolder", укажите -PackagesDirectory.</target>
         <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
         <source>Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</source>
-        <target state="new">Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</target>
+        <target state="translated">Не удается определить папку пакетов для восстановления пакетов NuGet. Укажите -PackagesDirectory или -SolutionDirectory.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandFileNotFound">
@@ -964,17 +964,17 @@ To prevent NuGet from downloading packages during build, open the Visual Studio 
       </trans-unit>
       <trans-unit id="Warning_LongPath_DisabledPolicy">
         <source>Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
-        <target state="new">Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
+        <target state="translated">Включите поддержку длинных путей к файлам в локальной групповой политике. Дополнительные сведения см. по адресу https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_UnsupportedNetFramework">
         <source>Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
-        <target state="new">Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
+        <target state="translated">Установите .NET Framework 4.6.2 или более поздней версии, поддерживающую длинные пути к файлам. Дополнительные сведения см. по адресу https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_UnsupportedOS">
         <source>Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
-        <target state="new">Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
+        <target state="translated">Поддержка длинных путей к файлам в настоящее время доступна только в Windows 10. Дополнительные сведения см. по адресу https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MsbuildPath">

@@ -12,7 +12,7 @@
 
   <PropertyGroup>
     <EmscriptenSourceVersion>sdk-main</EmscriptenSourceVersion>
-    <EmscriptenVersion>5.0.6</EmscriptenVersion>
+    <EmscriptenVersion>6.0.2</EmscriptenVersion>
   </PropertyGroup>
 
 </Project>

@@ -81,6 +81,11 @@ public class TelemetryEndpointBehavior : IEndpointBehavior
 
         foreach (var clientOperation in clientRuntime.ClientOperations)
         {
+            if (clientOperation.Action == null)
+            {
+                continue;
+            }
+
             actionMappings[clientOperation.Action] = new ActionMetadata(
                 contractName: $"{clientRuntime.ContractNamespace}{clientRuntime.ContractName}",
                 operationName: clientOperation.Name);
@@ -96,6 +101,11 @@ public class TelemetryEndpointBehavior : IEndpointBehavior
 
         foreach (var dispatchOperation in endpointDispatcher.DispatchRuntime.Operations)
         {
+            if (dispatchOperation.Action == null)
+            {
+                continue;
+            }
+
             actionMappings[dispatchOperation.Action] = new ActionMetadata(
                 contractName: $"{endpointDispatcher.ContractNamespace}{endpointDispatcher.ContractName}",
                 operationName: dispatchOperation.Name);

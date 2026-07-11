@@ -924,6 +924,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="framework">Framework to get reference(s) for</param>
         /// <returns>List of Items containing the package reference for the package.
         /// If the libraryDependency is null then it returns all package references</returns>
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Temporary VMR unblock: the NuGet CLI intentionally runs MSBuild in-process. Replace with proper annotations in NuGet/Home#14987.")]
         private static IEnumerable<InstalledPackageReference> GetPackageReferencesFromTargets(Project project, string framework)
         {
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

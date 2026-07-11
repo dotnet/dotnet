@@ -24,37 +24,37 @@
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
         <source>Access denied. Ensure you are signed in to GitHub Copilot.</source>
-        <target state="new">Access denied. Ensure you are signed in to GitHub Copilot.</target>
+        <target state="translated">Erişim reddedildi. GitHub Copilot’ta oturum açtığınızdan emin olun.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
         <source>GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot hazır değil. GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot Hizmeti kullanılamıyor. GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpServerInfoServiceNotAvailable">
         <source>Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">NuGet MCP Sunucusu'nun durumu belirlenemiyor. GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpServerNotActive">
         <source>The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">NuGet MCP Sunucusu etkin değil. GitHub Copilot sohbet penceresinde NuGet MCP Sunucusu'nu etkinleştirin ve yeniden deneyin.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
         <source>MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">MCP Araç Hizmeti kullanılamıyor. GitHub Copilot’un yüklü ve oturum açıldığından emin olun.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_NuGetSolverNotAvailable">
         <source>The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">NuGet Oyun Yardımcısı aracı kullanılamıyor. GitHub Copilot sohbet penceresinde NuGet MCP Sunucusu'nu etkinleştirin ve yeniden deneyin.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
         <source>Service Broker is not available. Ensure Visual Studio is running correctly.</source>
-        <target state="new">Service Broker is not available. Ensure Visual Studio is running correctly.</target>
+        <target state="translated">Hizmet Aracısı kullanılamıyor. Visual Studio’nun düzgün çalıştığından emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">Çözüm kaydedilmedi. NuGet paketlerini yönetmeden önce çözümünüzü kaydedin.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">

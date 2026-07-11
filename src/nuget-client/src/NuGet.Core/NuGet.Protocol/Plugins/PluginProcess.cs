@@ -118,7 +118,15 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         public void CancelRead()
         {
-            _process.CancelOutputRead();
+            try
+            {
+                _process.CancelOutputRead();
+            }
+            catch (InvalidOperationException)
+            {
+                // No asynchronous read operation is in progress - for example, the plugin process has already
+                // exited, which completes the async read. There is nothing to cancel in that case.
+            }
         }
 
         /// <summary>

@@ -86,6 +86,20 @@ internal sealed class FrameDispatcher : IDisposable
         }
     }
 
+    public async Task DispatchRemoteConfigStatusAsync(RemoteConfigStatusReport status, CancellationToken token)
+    {
+        await this.DispatchFrameAsync(
+            BuildRemoteConfigStatusMessage,
+            OpAmpClientEventSource.Log.SendingRemoteConfigStatusMessage,
+            OpAmpClientEventSource.Log.SendRemoteConfigStatusMessageException,
+            token).ConfigureAwait(false);
+
+        AgentToServer BuildRemoteConfigStatusMessage(FrameBuilder fb)
+        {
+            return fb.StartBaseMessage().AddRemoteConfigStatus(status).Build();
+        }
+    }
+
     public async Task DispatchCustomCapabilitiesAsync(IEnumerable<string> capabilities, CancellationToken token)
     {
         await this.DispatchFrameAsync(

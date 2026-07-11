@@ -3,18 +3,12 @@
 # Files listed here have known root-cause-justified differences between two builds of the
 # same source commit
 
-# https://github.com/dotnet/fsharp/issues/19732
-sdk/*/FSharp/FSharp.Compiler.Service.dll
-
 # https://github.com/NuGet/NuGet.Client/pull/7020
 # https://github.com/dotnet/arcade/pull/16787
 # The JSON files are included as well due to a cascade effect of sha512 hash diffs from the nupkgs
 **/*.nupkg
-sdk/*/Containers/tasks/net11.0/Microsoft.NET.Build.Containers.deps.json
 sdk/*/dotnet.deps.json
 sdk/*/DotnetTools/dotnet-format/**/*.deps.json
-sdk/*/DotnetTools/dotnet-user-jwts/*/tools/net11.0/any/dotnet-user-jwts.deps.json
-sdk/*/DotnetTools/dotnet-user-secrets/*/tools/net11.0/any/dotnet-user-secrets.deps.json
 sdk/*/DotnetTools/dotnet-watch/*/tools/net11.0/any/dotnet-watch.deps.json
 sdk/*/FSharp/*.deps.json
 sdk/*/MSBuild.deps.json
