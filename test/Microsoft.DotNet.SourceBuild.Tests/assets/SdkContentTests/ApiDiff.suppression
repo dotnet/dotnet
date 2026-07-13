@@ -225,12 +225,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Spectre.Console, Version=x.y.z, Culture=neutral, PublicKeyToken=170fe27f8af98a30</Target>
-    <Left>/msft/sdk/x.y.z/Spectre.Console.dll</Left>
-    <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
     <Target>System.IO.Hashing, Version=x.y.z, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51</Target>
     <Left>/msft/sdk/x.y.z/System.IO.Hashing.dll</Left>
     <Right>/sb/sdk/x.y.z/System.IO.Hashing.dll</Right>
