@@ -37,6 +37,13 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
 
     private readonly DataCollectionRunEventsHandler? _dataCollectionEventsHandler;
 
+    /// <summary>
+    /// Forwards per-test-case started/ended notifications (observed from the MTP application) to the
+    /// out-of-process datacollector. Created only when a data collector asks for test-case-level
+    /// events (e.g. Blame); left null for code coverage or when data collection is off.
+    /// </summary>
+    private MtpDataCollectionForwarder? _testCaseEventForwarder;
+
     private bool _isInitialized;
 
     public MtpProxyExecutionManager()
@@ -154,6 +161,24 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
             }
         }
 
+        // If a data collector needs per-test-case events (e.g. Blame tracks the currently running
+        // test to attribute crashes), it opens a socket and returns its port. In the classic path
+        // testhost connects to it; under MTP there is no testhost, so we connect from here and
+        // forward the started/ended notifications we observe from the MTP application. A port of 0
+        // means no collector needs these events (e.g. code coverage) and we do nothing.
+        if (parameters?.DataCollectionEventsPort > 0)
+        {
+            _testCaseEventForwarder = new MtpDataCollectionForwarder();
+            if (!_testCaseEventForwarder.Connect(parameters.DataCollectionEventsPort))
+            {
+                eventHandler.HandleLogMessage(
+                    ObjectModel.Logging.TestMessageLevel.Warning,
+                    "Could not connect to the data collector for per-test-case events; collectors that rely on them (such as Blame) may not function for this Microsoft.Testing.Platform run.");
+                _testCaseEventForwarder.Dispose();
+                _testCaseEventForwarder = null;
+            }
+        }
+
         // Surface any messages the data collector produced while starting up.
         foreach (Tuple<ObjectModel.Logging.TestMessageLevel, string?> message in _dataCollectionEventsHandler!.Messages)
         {
@@ -173,6 +198,10 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
         {
             return;
         }
+
+        // Signal end-of-stream on the test-case event channel so the datacollector's wait on it
+        // completes promptly instead of blocking until the connection timeout (~90s).
+        _testCaseEventForwarder?.NotifySessionEnd();
 
         DataCollectionResult result = _dataCollectionManager.AfterTestRunEnd(
             _cancellationTokenSource.IsCancellationRequested,
@@ -200,6 +229,15 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
 
     public void Dispose()
     {
+        try
+        {
+            _testCaseEventForwarder?.Dispose();
+        }
+        catch
+        {
+            // ignore
+        }
+
         try
         {
             _dataCollectionManager?.Dispose();
@@ -247,12 +285,30 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
                     continue;
                 }
 
-                if (!MtpTestNodeConverter.IsTerminalState(MtpTestNodeConverter.GetExecutionState(node)))
+                string? state = MtpTestNodeConverter.GetExecutionState(node);
+
+                if (EqtTrace.IsVerboseEnabled)
+                {
+                    EqtTrace.Verbose("MtpProxyExecutionManager: node update uid={0} state={1}", MtpJson.GetString(node, MtpConstants.Uid), state ?? "(none)");
+                }
+
+                // A test entering the in-progress state is our "test started" signal. Forwarding it
+                // lets per-test-case collectors (e.g. Blame) know which test is in flight, which is
+                // what makes crash attribution work when the test never reaches a terminal state.
+                if (_testCaseEventForwarder is { } forwarder && state == MtpConstants.StateInProgress)
+                {
+                    forwarder.NotifyTestCaseStart(MtpTestNodeConverter.ToTestCase(node, source));
+                    continue;
+                }
+
+                if (!MtpTestNodeConverter.IsTerminalState(state))
                 {
                     continue;
                 }
 
-                results.Add(MtpTestNodeConverter.ToTestResult(node, source));
+                TestResult result = MtpTestNodeConverter.ToTestResult(node, source);
+                _testCaseEventForwarder?.NotifyTestCaseEnd(result);
+                results.Add(result);
             }
 
             if (results.Count == 0)

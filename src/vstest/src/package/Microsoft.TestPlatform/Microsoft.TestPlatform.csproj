@@ -28,7 +28,7 @@
     <!-- The Microsoft.Internal.CodeCoverage content trees are added to the package at pack time by
          the _IncludeInternalCodeCoverageContent target below; they must not be added via an
          evaluation-time wildcard because that expands before the package is restored/built. -->
-    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeInternalCodeCoverageContent</TargetsForTfmSpecificContentInPackage>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeInternalCodeCoverageContent;_PublishNetTestHostContent;_PublishRunnerRootContent;_IncludeExtensionContent;_IncludeToolContent;_IncludeNetFrameworkTestHostContent</TargetsForTfmSpecificContentInPackage>
     <PackageId>Microsoft.TestPlatform</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
@@ -187,127 +187,16 @@
     <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\en\collectionplan.xml" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\en\collectionplan.xml" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x64\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\Microsoft.IntelliTrace.Profiler.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\Microsoft.IntelliTrace.Profiler.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x64\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\1033\Microsoft.IntelliTrace.Profilerui.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\1033\Microsoft.IntelliTrace.Profilerui.dll" />
-    <None Include="$(OutputPath)net48\datacollector.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\datacollector.exe" />
-    <None Include="$(OutputPath)net48\datacollector.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\datacollector.exe.config" />
-    <None Include="$(OutputPath)net48\datacollector.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\datacollector.arm64.exe" />
-    <None Include="$(OutputPath)net48\datacollector.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\datacollector.arm64.exe.config" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.DiaSymReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.DiaSymReader.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.Extensions.DependencyModel.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.Extensions.FileSystemGlobbing.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.IntelliTrace.Core.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.CommunicationUtilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.CommunicationUtilities.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.CoreUtilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.CoreUtilities.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.CrossPlatEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.CrossPlatEngine.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.PlatformAbstractions.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.PlatformAbstractions.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.Utilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.Utilities.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.dll" />
     <None Include="$(OutputPath)net48\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Diagnostics.Utilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Diagnostics.Utilities.dll" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.QualityTools\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.Client.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.TestPlatform.Client.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.Common.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.TestPlatform.Common.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" />
-    <None Include="$(OutputPath)net48\System.Reflection.Metadata.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\System.Reflection.Metadata.dll" />
-    <None Include="$(OutputPath)net48\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\System.Collections.Immutable.dll" />
-    <None Include="$(OutputPath)net48\System.Memory.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\System.Memory.dll" />
-    <None Include="$(OutputPath)net48\System.Runtime.CompilerServices.Unsafe.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\System.Runtime.CompilerServices.Unsafe.dll" />
-    <None Include="$(OutputPath)net48\System.Numerics.Vectors.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\System.Numerics.Vectors.dll" />
-    <None Include="$(OutputPath)net48\System.Buffers.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\System.Buffers.dll" />
     <None Include="$(OutputPath)net48\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\System.Collections.Immutable.dll" />
-    <None Include="$(OutputPath)net462\testhost.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.exe" />
-    <None Include="$(OutputPath)net462\testhost.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.exe.config" />
-    <None Include="$(OutputPath)net47\testhost.net47.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net47.exe" />
-    <None Include="$(OutputPath)net47\testhost.net47.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net47.exe.config" />
-    <None Include="$(OutputPath)net471\testhost.net471.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net471.exe" />
-    <None Include="$(OutputPath)net471\testhost.net471.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net471.exe.config" />
-    <None Include="$(OutputPath)net472\testhost.net472.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net472.exe" />
-    <None Include="$(OutputPath)net472\testhost.net472.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net472.exe.config" />
-    <None Include="$(OutputPath)net48\testhost.net48.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net48.exe" />
-    <None Include="$(OutputPath)net48\testhost.net48.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net48.exe.config" />
-    <None Include="$(OutputPath)net481\testhost.net481.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net481.exe" />
-    <None Include="$(OutputPath)net481\testhost.net481.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net481.exe.config" />
-    <None Include="$(OutputPath)net462\testhost.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.x86.exe" />
-    <None Include="$(OutputPath)net462\testhost.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.x86.exe.config" />
-    <None Include="$(OutputPath)net47\testhost.net47.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net47.x86.exe" />
-    <None Include="$(OutputPath)net47\testhost.net47.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net47.x86.exe.config" />
-    <None Include="$(OutputPath)net471\testhost.net471.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net471.x86.exe" />
-    <None Include="$(OutputPath)net471\testhost.net471.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net471.x86.exe.config" />
-    <None Include="$(OutputPath)net472\testhost.net472.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net472.x86.exe" />
-    <None Include="$(OutputPath)net472\testhost.net472.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net472.x86.exe.config" />
-    <None Include="$(OutputPath)net48\testhost.net48.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net48.x86.exe" />
-    <None Include="$(OutputPath)net48\testhost.net48.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net48.x86.exe.config" />
-    <None Include="$(OutputPath)net481\testhost.net481.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net481.x86.exe" />
-    <None Include="$(OutputPath)net481\testhost.net481.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net481.x86.exe.config" />
-    <None Include="$(OutputPath)net462\testhost.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.arm64.exe" />
-    <None Include="$(OutputPath)net462\testhost.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.arm64.exe.config" />
-    <None Include="$(OutputPath)net47\testhost.net47.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net47.arm64.exe" />
-    <None Include="$(OutputPath)net47\testhost.net47.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net47.arm64.exe.config" />
-    <None Include="$(OutputPath)net471\testhost.net471.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net471.arm64.exe" />
-    <None Include="$(OutputPath)net471\testhost.net471.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net471.arm64.exe.config" />
-    <None Include="$(OutputPath)net472\testhost.net472.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net472.arm64.exe" />
-    <None Include="$(OutputPath)net472\testhost.net472.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net472.arm64.exe.config" />
-    <None Include="$(OutputPath)net48\testhost.net48.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net48.arm64.exe" />
-    <None Include="$(OutputPath)net48\testhost.net48.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net48.arm64.exe.config" />
-    <None Include="$(OutputPath)net481\testhost.net481.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net481.arm64.exe" />
-    <None Include="$(OutputPath)net481\testhost.net481.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\testhost.net481.arm64.exe.config" />
-    <None Include="$(OutputPath)net48\vstest.console.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" />
-    <None Include="$(OutputPath)net48\vstest.console.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\vstest.console.exe.config" />
-    <None Include="$(OutputPath)net48\vstest.console.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\vstest.console.arm64.exe" />
-    <None Include="$(OutputPath)net48\vstest.console.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\vstest.console.arm64.exe.config" />
-    <None Include="$(OutputPath)net48\SettingsMigrator.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\SettingsMigrator.exe" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\cs\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\cs\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\cs\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\de\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\de\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\de\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\de\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\de\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\es\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\es\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\es\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\es\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\es\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" />
-    <None Include="$(OutputPath)net48\DumpMinitool.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\DumpMinitool.exe" />
-    <None Include="$(OutputPath)net48\DumpMinitool.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\DumpMinitool.exe.config" />
-    <None Include="$(OutputPath)net48\DumpMinitool.x86.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\DumpMinitool.x86.exe" />
-    <None Include="$(OutputPath)net48\DumpMinitool.x86.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\DumpMinitool.x86.exe.config" />
-    <None Include="$(OutputPath)net48\DumpMinitool.arm64.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\DumpMinitool.arm64.exe" />
-    <None Include="$(OutputPath)net48\DumpMinitool.arm64.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\DumpMinitool.arm64.exe.config" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.Extensions.EventLogCollector.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.TestPlatform.Extensions.EventLogCollector.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.TestHostRuntimeProvider.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.TestPlatform.TestHostRuntimeProvider.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\VideoRecorder\Microsoft.VisualStudio.QualityTools.VideoRecorderEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\Microsoft.VisualStudio.QualityTools.VideoRecorderEngine.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll" />
@@ -359,154 +248,17 @@
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x86\msdia140.dll.manifest" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\arm64\msdia140.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\arm64\msdia140.dll.manifest" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\fr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\fr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\fr\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\it\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\it\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\it\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\it\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\it\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ja\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ja\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ja\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ko\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ko\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ko\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\pl\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\pl\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\pl\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\pt-BR\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\pt-BR\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\pt-BR\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ru\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ru\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\ru\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\tr\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\tr\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\tr\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\SettingsMigrator.resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x64\msdia140.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x64\msdia140.dll.manifest" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x86\msdia140.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x86\msdia140.dll.manifest" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\arm64\msdia140.dll.manifest" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hans\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hans\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hans\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\SettingsMigrator.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hant\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.VisualStudio.TestPlatform.Client.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\zh-Hant\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\vstest.console.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\vstest.console.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\SettingsMigrator.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\SettingsMigrator.resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.Core.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x86\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.ObjectModel.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.ObjectModel.dll" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Telemetry.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Telemetry.dll" />
     <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Utilities.Internal.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Utilities.Internal.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\dbghelp.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.CommunicationUtilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.TestPlatform.CommunicationUtilities.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.CoreUtilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.TestPlatform.CoreUtilities.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.CrossPlatEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.TestPlatform.CrossPlatEngine.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.PlatformAbstractions.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.TestPlatform.PlatformAbstractions.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.Utilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.TestPlatform.Utilities.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.Common.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestPlatform.Common.dll" />
-    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Arm.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Arm.Resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.arm64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.arm64.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" />
@@ -524,103 +276,9 @@
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-1.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-1.1.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-1.1.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-2.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-2.1.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-2.1.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-3.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-3.1.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-3.1.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-5.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-5.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-6.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-6.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-7.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-7.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-8.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-8.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-9.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-9.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-10.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-10.0.runtimeconfig.json" />
-    <None Include="$(RepoRoot)temp\testhost\testhost-11.0.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-11.0.runtimeconfig.json" />
     <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-latest.runtimeconfig.json" />
-    <None Include="$(OutputPath)net8.0\testhost.deps.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.deps.json" />
-    <None Include="$(OutputPath)net8.0\testhost.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.dll" />
-    <None Include="$(OutputPath)net8.0\testhost.dll.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.dll.config" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\arm64\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\arm64\dbghelp.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\cs\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\cs\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\cs\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\cs\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\de\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\de\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\de\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\de\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\de\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\de\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\es\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\es\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\es\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\es\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\es\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\es\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\fr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\fr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\fr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\fr\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\fr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\fr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\it\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\it\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\it\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\it\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\it\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\it\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ja\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ja\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ja\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ja\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ja\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ja\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ko\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ko\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ko\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ko\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ko\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ko\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pl\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pl\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pl\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pl\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pl\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pl\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pt-BR\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pt-BR\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pt-BR\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pt-BR\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pt-BR\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\pt-BR\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ru\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ru\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ru\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ru\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ru\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\ru\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\tr\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\tr\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\tr\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\tr\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\tr\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\tr\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\x64\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\x64\dbghelp.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hans\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hans\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hans\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hans\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hans\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hans\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hant\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.TestPlatform.Utilities.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hant\Microsoft.TestPlatform.Utilities.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\TestPlatform\Microsoft.VisualStudio.TestPlatform.Fakes.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.TestPlatform.Fakes.dll" />
     <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\DataCollector\Microsoft.VisualStudio.Fakes.DataCollector.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.Fakes.DataCollector.dll" />
     <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\DataCollector\Microsoft.Cci.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.Cci.dll" />
@@ -655,6 +313,169 @@
         <PackagePath>tools\net462\Team Tools\Dynamic Code Coverage Tools\%(RecursiveDir)</PackagePath>
       </_CodeCoverageDynamicToolsContent>
       <TfmSpecificPackageFile Include="@(_CodeCoverageTestPlatformContent);@(_CodeCoverageDynamicToolsContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Publish the .NET (NetCoreAppMinimum) testhost and pack its output into the TestHostNet folder.
+
+    Previously the TestHostNet payload was hand-listed: testhost.dll came from the net8.0 build output
+    but the Test Platform dependency assemblies (Microsoft.TestPlatform.CoreUtilities.dll, ObjectModel,
+    CrossPlatEngine, ...) and their satellite resources were copied from the *net48* build output
+    ($(OutputPath)net48\...). That shipped .NET Framework-built assemblies - and a testhost.dll.config
+    whose binding redirects were computed for a different framework - next to the .NET testhost, so the
+    files on disk could disagree with the config. Running the real 'dotnet publish' emits testhost.dll,
+    its dependency assemblies, satellite resources and testhost.dll.config together for the SAME target
+    framework, keeping the runnable layout self-consistent by construction.
+
+    Gated to the .NET Framework runner TFM so it contributes to the package exactly once (mirrors
+    _IncludeInternalCodeCoverageContent). testhost.exe (apphost) and the single generated
+    testhost.runtimeconfig.json are excluded: the .NET testhost is launched via 'dotnet exec' using the
+    templated testhost-<version>.runtimeconfig.json files packed separately. XML doc files are excluded
+    to match the historical payload.
+  -->
+  <Target Name="_PublishNetTestHostContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <!-- Canonical folder that src\testhost\testhost.csproj publishes into once (see
+           eng/PublishForPackaging.targets). Populated during the solution Build pass, which
+           completes before any package Pack pass, so it is present here. -->
+      <_NetTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetCoreAppMinimum)\</_NetTestHostPublishDir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_NetTestHostPublishDir)')"
+           Text="Expected published .NET testhost at '$(_NetTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
+    <ItemGroup>
+      <!-- The managed testhost payload comes wholesale from the publish (testhost.dll + its
+           .config + deps.json + the shared TestPlatform DLLs and their satellites), guaranteeing
+           the DLLs and their configs are all net8.0 and mutually consistent. The generated apphost
+           (testhost.exe), doc XML, and the single generated runtimeconfig are excluded: the package
+           ships templated testhost-<ver>.runtimeconfig.json files (added as extras below) instead. -->
+      <_NetTestHostPublishedFile Include="$(_NetTestHostPublishDir)**\*" Exclude="$(_NetTestHostPublishDir)**\*.xml;$(_NetTestHostPublishDir)testhost.exe;$(_NetTestHostPublishDir)testhost.runtimeconfig.json" />
+      <TfmSpecificPackageFile Include="@(_NetTestHostPublishedFile)">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Publish the .NET Framework runner (vstest.console, net48) and pack its output into the runner
+    root (tools\net462\...\Extensions\TestPlatform\). Previously vstest.console.exe, its .config
+    with binding redirects, the Test Platform dependency assemblies and their satellite resources
+    were hand-listed from the package project's own re-resolved net48 output ($(OutputPath)net48\).
+    Because that output is produced by a different project than the one that owns each assembly, a
+    shipped DLL and the binding redirects baked into vstest.console.exe.config could be computed
+    from different framework resolutions (e.g. System.Collections.Immutable 10.0.0.11 vs 10.0.0.0),
+    breaking assembly load at runtime. Running the real 'dotnet publish' of vstest.console emits
+    the exe, its config and its full dependency closure together for the same framework, so the
+    runnable layout is self-consistent by construction.
+
+    Gated to the netfx runner TFM so it contributes exactly once (mirrors _PublishNetTestHostContent).
+    XML doc files are excluded to match the historical payload; System.ValueTuple.dll is excluded
+    because it is framework-provided on net4x and was never shipped. Files that are not part of the
+    runner's publish closure - the .NET Framework testhosts, datacollector, arm64 binaries,
+    SettingsMigrator, code coverage, Dia/IntelliTrace/Fakes and other VS-internal assets - remain
+    hand-listed above.
+  -->
+  <Target Name="_PublishRunnerRootContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <_RunnerRootPublishDir>$(TestPlatformPackagingPublishRoot)vstest.console\$(NetFrameworkRunnerTargetFramework)\</_RunnerRootPublishDir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_RunnerRootPublishDir)')"
+           Text="Expected published .NET Framework runner at '$(_RunnerRootPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
+    <ItemGroup>
+      <_RunnerRootPublishedFile Include="$(_RunnerRootPublishDir)**\*" Exclude="$(_RunnerRootPublishDir)**\*.xml;$(_RunnerRootPublishDir)System.ValueTuple.dll" />
+      <TfmSpecificPackageFile Include="@(_RunnerRootPublishedFile)">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+  <!--
+    Pack the vstest-produced logger/collector extensions from each owning project's own build
+    output rather than the package project's commingled $(OutputPath)net48\ folder. Every extension
+    (and its satellite resources) is taken from artifacts\bin\<Project>\<Config>\<tfm>\, so each file
+    has a single, predictable producer instead of being cherry-picked out of a folder that aggregates
+    every ProjectReference. Gated to the netfx runner TFM so it contributes exactly once (mirrors
+    _PublishRunnerRootContent). The globs are name-scoped so only each extension's own primary and
+    satellite assemblies are packed - the shared dependency closure stays at the runner root. The
+    wildcards are expanded here (pack time), not in an evaluation-time ItemGroup, because the source
+    folders are produced during the build.
+  -->
+  <Target Name="_IncludeExtensionContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_TrxLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\net462\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_TrxLoggerContent>
+      <_HtmlLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_HtmlLoggerContent>
+      <_TestHostRuntimeProviderContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\net48\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_TestHostRuntimeProviderContent>
+      <_BlameDataCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
+      </_BlameDataCollectorContent>
+      <_EventLogCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.EventLogCollector.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
+      </_EventLogCollectorContent>
+      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_EventLogCollectorContent)" />
+    </ItemGroup>
+  </Target>
+  <!--
+    Pack the vstest-produced .NET Framework tools (datacollector, the arm64 runner, SettingsMigrator
+    and its satellites, and DumpMinitool) from each owning project's own RID-specific build output
+    rather than the package project's commingled $(OutputPath)net48\ folder. Every file has a single,
+    predictable producer instead of being cherry-picked out of a folder that aggregates every
+    ProjectReference. Gated to the netfx runner TFM so it contributes exactly once. The includes are
+    name-scoped so only each tool's own executable, config, and satellites are packed - the shared
+    dependency closure that also lands in those RID folders stays out. The wildcards are expanded here
+    (pack time), not in an evaluation-time ItemGroup, because the source folders are produced during
+    the build.
+  -->
+  <Target Name="_IncludeToolContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_DataCollectorContent Include="$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe;$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe.config;$(ArtifactsBinDir)datacollector.arm64\$(Configuration)\net48\win10-arm64\datacollector.arm64.exe;$(ArtifactsBinDir)datacollector.arm64\$(Configuration)\net48\win10-arm64\datacollector.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_DataCollectorContent>
+      <_VsTestConsoleArm64Content Include="$(ArtifactsBinDir)vstest.console.arm64\$(Configuration)\net48\win10-arm64\vstest.console.arm64.exe;$(ArtifactsBinDir)vstest.console.arm64\$(Configuration)\net48\win10-arm64\vstest.console.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_VsTestConsoleArm64Content>
+      <_SettingsMigratorContent Include="$(ArtifactsBinDir)SettingsMigrator\$(Configuration)\net48\win7-x64\SettingsMigrator.exe">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_SettingsMigratorContent>
+      <_SettingsMigratorSatelliteContent Include="$(ArtifactsBinDir)SettingsMigrator\$(Configuration)\net48\win7-x64\**\SettingsMigrator.resources.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_SettingsMigratorSatelliteContent>
+      <_DumpMinitoolContent Include="$(ArtifactsBinDir)DumpMinitool\$(Configuration)\net462\win7-x64\DumpMinitool.exe;$(ArtifactsBinDir)DumpMinitool\$(Configuration)\net462\win7-x64\DumpMinitool.exe.config;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\net462\win-x86\DumpMinitool.x86.exe;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\net462\win-x86\DumpMinitool.x86.exe.config;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\net462\win10-arm64\DumpMinitool.arm64.exe;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\net462\win10-arm64\DumpMinitool.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\%(Filename)%(Extension)</PackagePath>
+      </_DumpMinitoolContent>
+      <TfmSpecificPackageFile Include="@(_DataCollectorContent);@(_VsTestConsoleArm64Content);@(_SettingsMigratorContent);@(_SettingsMigratorSatelliteContent);@(_DumpMinitoolContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Pack the .NET Framework testhost executables (and their .config files) for every supported netfx
+    TFM (net462..net481) and architecture (default/x86/arm64) from each testhost project's own
+    RID-specific build output. The paths are enumerated explicitly rather than globbed: a wildcard
+    over the TFM folder would both over-capture the netcore testhost's RID subfolder (net8.0, handled
+    separately by _PublishNetTestHostContent) and, via %(RecursiveDir), preserve the TFM\RID path
+    instead of flattening. Each executable has a unique file name, so explicit paths flatten into the
+    runner root by file name. Each architecture uses a distinct item name because reusing one item
+    name across several groups with %(Filename) child metadata triggers MSBuild self-referential
+    batching (later groups would bind to an earlier group's file names). Gated to the netfx runner TFM
+    so it contributes exactly once; expanded at pack time because the source folders are produced
+    during the build.
+  -->
+  <Target Name="_IncludeNetFrameworkTestHostContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_NetFrameworkTestHostContent Include="$(ArtifactsBinDir)testhost\$(Configuration)\net462\win7-x64\testhost.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net462\win7-x64\testhost.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_NetFrameworkTestHostContent>
+      <_NetFrameworkTestHostX86Content Include="$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_NetFrameworkTestHostX86Content>
+      <_NetFrameworkTestHostArm64Content Include="$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_NetFrameworkTestHostArm64Content>
+      <TfmSpecificPackageFile Include="@(_NetFrameworkTestHostContent);@(_NetFrameworkTestHostX86Content);@(_NetFrameworkTestHostArm64Content)" />
     </ItemGroup>
   </Target>
 </Project>

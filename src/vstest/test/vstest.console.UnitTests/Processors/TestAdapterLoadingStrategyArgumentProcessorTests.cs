@@ -22,6 +22,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [DoNotParallelize]
 public class TestAdapterLoadingStrategyArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly RunSettings _currentActiveSetting;
 
     public TestAdapterLoadingStrategyArgumentProcessorTests()
@@ -49,7 +50,7 @@ public class TestAdapterLoadingStrategyArgumentProcessorTests
         mockFileHelper.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
         mockFileHelper.Setup(x => x.GetFullPath(It.IsAny<string>())).Returns((Func<string, string>)(s => Path.GetFullPath(s)));
 
-        var executor = new TestAdapterLoadingStrategyArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance, mockOutput.Object, mockFileHelper.Object);
+        var executor = new TestAdapterLoadingStrategyArgumentExecutor(_commandLineOptions, RunSettingsManager.Instance, mockOutput.Object, mockFileHelper.Object);
 
         executor.Initialize(nameof(TestAdapterLoadingStrategy.Default));
         var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
@@ -71,7 +72,7 @@ public class TestAdapterLoadingStrategyArgumentProcessorTests
 
         mockFileHelper.Setup(x => x.DirectoryExists("d:\\users")).Returns(false);
         mockFileHelper.Setup(x => x.DirectoryExists("c:\\users")).Returns(true);
-        var executor = new TestAdapterLoadingStrategyArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance, mockOutput.Object, mockFileHelper.Object);
+        var executor = new TestAdapterLoadingStrategyArgumentExecutor(_commandLineOptions, RunSettingsManager.Instance, mockOutput.Object, mockFileHelper.Object);
 
         var message = "The path 'd:\\users' specified in the 'TestAdapterPath' is invalid. Error: The custom test adapter search path provided was not found, provide a valid path and try again.";
 
@@ -91,7 +92,7 @@ public class TestAdapterLoadingStrategyArgumentProcessorTests
         RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
 
         var mockOutput = new Mock<IOutput>();
-        var executor = new TestAdapterLoadingStrategyArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance, mockOutput.Object, new FileHelper());
+        var executor = new TestAdapterLoadingStrategyArgumentExecutor(_commandLineOptions, RunSettingsManager.Instance, mockOutput.Object, new FileHelper());
 
         var message = $"The path '{folder}' specified in the 'TestAdapterPath' is invalid. Error: The custom test adapter search path provided was not found, provide a valid path and try again.";
 

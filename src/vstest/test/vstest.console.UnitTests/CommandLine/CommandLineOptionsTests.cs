@@ -19,6 +19,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.CommandLine;
 [TestClass]
 public class CommandLineOptionsTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly Mock<IFileHelper> _fileHelper;
     private readonly FilePatternParser _filePatternParser;
     private readonly string _currentDirectory = @"C:\\Temp";
@@ -27,16 +28,15 @@ public class CommandLineOptionsTests
     {
         _fileHelper = new Mock<IFileHelper>();
         _filePatternParser = new FilePatternParser(new Mock<Matcher>().Object, _fileHelper.Object);
-        CommandLineOptions.Reset();
-        CommandLineOptions.Instance.FileHelper = _fileHelper.Object;
-        CommandLineOptions.Instance.FilePatternParser = _filePatternParser;
+        _commandLineOptions.FileHelper = _fileHelper.Object;
+        _commandLineOptions.FilePatternParser = _filePatternParser;
         _fileHelper.Setup(fh => fh.GetCurrentDirectory()).Returns(_currentDirectory);
     }
 
     [TestMethod]
     public void CommandLineOptionsDefaultBatchSizeIsTen()
     {
-        Assert.AreEqual(10, CommandLineOptions.Instance.BatchSize);
+        Assert.AreEqual(10, _commandLineOptions.BatchSize);
     }
 
     [TestMethod]
@@ -51,29 +51,29 @@ public class CommandLineOptionsTests
     public void CommandLineOptionsDefaultTestRunStatsEventTimeoutIsOnePointFiveSec()
     {
         var timeout = new TimeSpan(0, 0, 0, 1, 500);
-        Assert.AreEqual(timeout, CommandLineOptions.Instance.TestStatsEventTimeout);
+        Assert.AreEqual(timeout, _commandLineOptions.TestStatsEventTimeout);
     }
 
     [TestMethod]
     public void CommandLineOptionsGetForSourcesPropertyShouldReturnReadonlySourcesEnumerable()
     {
-        Assert.IsTrue(CommandLineOptions.Instance.Sources is ReadOnlyCollection<string>);
+        Assert.IsTrue(_commandLineOptions.Sources is ReadOnlyCollection<string>);
     }
 
     [TestMethod]
     public void CommandLineOptionsGetForHasPhoneContextPropertyIfTargetDeviceIsSetReturnsTrue()
     {
-        Assert.IsFalse(CommandLineOptions.Instance.HasPhoneContext);
+        Assert.IsFalse(_commandLineOptions.HasPhoneContext);
 
         // Set some not null value
-        CommandLineOptions.Instance.TargetDevice = "TargetDevice";
-        Assert.IsTrue(CommandLineOptions.Instance.HasPhoneContext);
+        _commandLineOptions.TargetDevice = "TargetDevice";
+        Assert.IsTrue(_commandLineOptions.HasPhoneContext);
     }
 
     [TestMethod]
     public void CommandLineOptionsAddSourceShouldThrowCommandLineExceptionForNullSource()
     {
-        Assert.ThrowsExactly<TestSourceException>(() => CommandLineOptions.Instance.AddSource(null!));
+        Assert.ThrowsExactly<TestSourceException>(() => _commandLineOptions.AddSource(null!));
     }
 
     [TestMethod]
@@ -84,14 +84,14 @@ public class CommandLineOptionsTests
         _fileHelper.Setup(fh => fh.Exists(absolutePath)).Returns(true);
 
         // Pass relative path
-        CommandLineOptions.Instance.AddSource(relativeTestFilePath);
-        Assert.IsTrue(CommandLineOptions.Instance.Sources.Contains(absolutePath));
+        _commandLineOptions.AddSource(relativeTestFilePath);
+        Assert.IsTrue(_commandLineOptions.Sources.Contains(absolutePath));
     }
 
     [TestMethod]
     public void CommandLineOptionsAddSourceShouldThrowCommandLineExceptionForInvalidSource()
     {
-        Assert.ThrowsExactly<TestSourceException>(() => CommandLineOptions.Instance.AddSource("DummySource"));
+        Assert.ThrowsExactly<TestSourceException>(() => _commandLineOptions.AddSource("DummySource"));
     }
 
     [TestMethod]
@@ -100,8 +100,8 @@ public class CommandLineOptionsTests
         string testFilePath = Path.Combine(Path.GetTempPath(), "DummyTestFile.txt");
         _fileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
 
-        CommandLineOptions.Instance.AddSource(testFilePath);
+        _commandLineOptions.AddSource(testFilePath);
 
-        Assert.IsTrue(CommandLineOptions.Instance.Sources.Contains(testFilePath));
+        Assert.IsTrue(_commandLineOptions.Sources.Contains(testFilePath));
     }
 }

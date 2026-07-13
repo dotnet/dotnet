@@ -133,8 +133,18 @@ stages:
             PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/Shipping'
             ArtifactName: PackageArtifacts
 
+        # NonShipping packages are optional. When there are none, the folder is not
+        # produced and PublishBuildArtifacts would fail on a missing path, so only
+        # publish when the folder actually contains packages.
+        - powershell: |
+            $dir = "$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping"
+            $hasFiles = (Test-Path $dir) -and (@(Get-ChildItem -Path $dir -File -Recurse -ErrorAction SilentlyContinue).Count -gt 0)
+            Write-Host "##vso[task.setvariable variable=HasNonShippingPackages]$($hasFiles.ToString().ToLowerInvariant())"
+          displayName: 'Check for NonShipping Packages'
+
         - task: PublishBuildArtifacts@1
           displayName: 'Publish NonShipping Packages'
+          condition: and(succeeded(), eq(variables['HasNonShippingPackages'], 'true'))
           inputs:
             PathtoPublish: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping'
             ArtifactName: PackageArtifacts

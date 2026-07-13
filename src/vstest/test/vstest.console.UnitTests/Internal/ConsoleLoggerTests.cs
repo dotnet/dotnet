@@ -38,6 +38,7 @@ public class ConsoleLoggerTests
     private readonly ConsoleLogger _consoleLogger;
     private readonly Mock<IProgressIndicator> _mockProgressIndicator;
     private readonly Mock<IFeatureFlag> _mockFeatureFlag;
+    private readonly CommandLineOptions _commandLineOptions;
 
     private const string PassedTestIndicator = "  Passed ";
     private const string FailedTestIndicator = "  Failed ";
@@ -53,7 +54,8 @@ public class ConsoleLoggerTests
 
         _mockOutput = new Mock<IOutput>();
         _mockProgressIndicator = new Mock<IProgressIndicator>();
-        _consoleLogger = new ConsoleLogger(_mockOutput.Object, _mockProgressIndicator.Object, _mockFeatureFlag.Object);
+        _commandLineOptions = new CommandLineOptions();
+        _consoleLogger = new ConsoleLogger(_mockOutput.Object, _mockProgressIndicator.Object, _mockFeatureFlag.Object, _commandLineOptions);
 
         RunTestsArgumentProcessorTests.SetupMockExtensions();
     }
@@ -1002,19 +1004,55 @@ public class ConsoleLoggerTests
     }
 
     [TestMethod]
+    public void TestRunStartHandlerShouldUseInjectedCommandLineOptionsSourcesRatherThanASeparateInstance()
+    {
+        // The console logger reads the discovered sources from the CommandLineOptions it was given. Injecting a distinct
+        // instance (with its own source) while a separate instance stays empty proves the reader resolves to the injected
+        // instance rather than to some other CommandLineOptions.
+
+        var fileHelper = new Mock<IFileHelper>();
+        var injectedOptions = new CommandLineOptions
+        {
+            FileHelper = fileHelper.Object,
+            FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object)
+        };
+        string testFilePath = Path.Combine(Path.GetTempPath(), "InjectedTestFile.dll");
+        fileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
+        injectedOptions.AddSource(testFilePath);
+
+        // The separate instance carries no sources, so a discovered count of 1 can only come from the injected instance.
+        Assert.AreEqual(0, _commandLineOptions.Sources.Count());
+
+        var consoleLogger = new ConsoleLogger(_mockOutput.Object, _mockProgressIndicator.Object, _mockFeatureFlag.Object, injectedOptions);
+
+        var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);
+        loggerEvents.EnableEvents();
+        var parameters = new Dictionary<string, string?>
+        {
+            { "verbosity", "normal" }
+        };
+        consoleLogger.Initialize(loggerEvents, parameters);
+
+        var testRunStartEventArgs = new TestRunStartEventArgs(new TestRunCriteria(new List<string> { testFilePath }, 1));
+        loggerEvents.RaiseTestRunStart(testRunStartEventArgs);
+        loggerEvents.WaitForEventCompletion();
+
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, 1), OutputLevel.Information), Times.Once());
+    }
+
+    [TestMethod]
     public void TestRunStartHandlerShouldWriteNumberOfTestSourcesDiscoveredOnConsole()
     {
         var loggerEvents = new InternalTestLoggerEvents(TestSessionMessageLogger.Instance);
         loggerEvents.EnableEvents();
 
         var fileHelper = new Mock<IFileHelper>();
-        CommandLineOptions.Reset();
-        CommandLineOptions.Instance.FileHelper = fileHelper.Object;
-        CommandLineOptions.Instance.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object);
+        _commandLineOptions.FileHelper = fileHelper.Object;
+        _commandLineOptions.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object);
         string testFilePath = Path.Combine(Path.GetTempPath(), "DmmyTestFile.dll");
         fileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
 
-        CommandLineOptions.Instance.AddSource(testFilePath);
+        _commandLineOptions.AddSource(testFilePath);
 
         var parameters = new Dictionary<string, string?>
         {
@@ -1026,7 +1064,7 @@ public class ConsoleLoggerTests
         loggerEvents.RaiseTestRunStart(testRunStartEventArgs);
         loggerEvents.WaitForEventCompletion();
 
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, CommandLineOptions.Instance.Sources.Count()), OutputLevel.Information), Times.Once());
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, _commandLineOptions.Sources.Count()), OutputLevel.Information), Times.Once());
     }
 
     [TestMethod]
@@ -1036,17 +1074,16 @@ public class ConsoleLoggerTests
         loggerEvents.EnableEvents();
 
         var fileHelper = new Mock<IFileHelper>();
-        CommandLineOptions.Reset();
-        CommandLineOptions.Instance.FileHelper = fileHelper.Object;
-        CommandLineOptions.Instance.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object);
+        _commandLineOptions.FileHelper = fileHelper.Object;
+        _commandLineOptions.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object);
         var temp = Path.GetTempPath();
         string testFilePath = Path.Combine(temp, "DummyTestFile.dll");
         fileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
         string testFilePath2 = Path.Combine(temp, "DummyTestFile2.dll");
         fileHelper.Setup(fh => fh.Exists(testFilePath2)).Returns(true);
 
-        CommandLineOptions.Instance.AddSource(testFilePath);
-        CommandLineOptions.Instance.AddSource(testFilePath2);
+        _commandLineOptions.AddSource(testFilePath);
+        _commandLineOptions.AddSource(testFilePath2);
 
         var parameters = new Dictionary<string, string?>
         {
@@ -1058,7 +1095,7 @@ public class ConsoleLoggerTests
         loggerEvents.RaiseTestRunStart(testRunStartEventArgs);
         loggerEvents.WaitForEventCompletion();
 
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, CommandLineOptions.Instance.Sources.Count()), OutputLevel.Information), Times.Once());
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, _commandLineOptions.Sources.Count()), OutputLevel.Information), Times.Once());
         _mockOutput.Verify(o => o.WriteLine(testFilePath, OutputLevel.Information), Times.Once);
         _mockOutput.Verify(o => o.WriteLine(testFilePath, OutputLevel.Information), Times.Once);
     }
@@ -1070,17 +1107,16 @@ public class ConsoleLoggerTests
         loggerEvents.EnableEvents();
 
         var fileHelper = new Mock<IFileHelper>();
-        CommandLineOptions.Reset();
-        CommandLineOptions.Instance.FileHelper = fileHelper.Object;
-        CommandLineOptions.Instance.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object);
+        _commandLineOptions.FileHelper = fileHelper.Object;
+        _commandLineOptions.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, fileHelper.Object);
         var temp = Path.GetTempPath();
         string testFilePath = Path.Combine(temp, "DummyTestFile.dll");
         fileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
         string testFilePath2 = Path.Combine(temp, "DummyTestFile2.dll");
         fileHelper.Setup(fh => fh.Exists(testFilePath2)).Returns(true);
 
-        CommandLineOptions.Instance.AddSource(testFilePath);
-        CommandLineOptions.Instance.AddSource(testFilePath2);
+        _commandLineOptions.AddSource(testFilePath);
+        _commandLineOptions.AddSource(testFilePath2);
 
         var parameters = new Dictionary<string, string?>
         {
@@ -1092,7 +1128,7 @@ public class ConsoleLoggerTests
         loggerEvents.RaiseTestRunStart(testRunStartEventArgs);
         loggerEvents.WaitForEventCompletion();
 
-        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, CommandLineOptions.Instance.Sources.Count()), OutputLevel.Information), Times.Once());
+        _mockOutput.Verify(o => o.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, _commandLineOptions.Sources.Count()), OutputLevel.Information), Times.Once());
         _mockOutput.Verify(o => o.WriteLine(testFilePath, OutputLevel.Information), Times.Never);
         _mockOutput.Verify(o => o.WriteLine(testFilePath2, OutputLevel.Information), Times.Never);
     }

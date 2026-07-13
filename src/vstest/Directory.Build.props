@@ -9,6 +9,14 @@
     <IsSourceFile>false</IsSourceFile>
     <IsSourceFile Condition="$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src/')) OR $([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src\'))">true</IsSourceFile>
     <SrcPackageFolder>$(RepoRoot)src\package\</SrcPackageFolder>
+    <!--
+      Canonical root for per-product publish outputs consumed by the src/package/* self-contained
+      "tool" packages (Microsoft.TestPlatform, .CLI, .Portable, ...). A bundled product publishes
+      itself exactly once per (project, TFM) into
+      $(TestPlatformPackagingPublishRoot)<ProjectName>\<TargetFramework>\, and the tool packages
+      harvest those folders via globs at pack time. See eng/PublishForPackaging.targets.
+    -->
+    <TestPlatformPackagingPublishRoot Condition="'$(TestPlatformPackagingPublishRoot)' == ''">$(ArtifactsDir)publish\</TestPlatformPackagingPublishRoot>
     <Nullable>enable</Nullable>
     <!-- When building the .NET product, there's no need to publish Windows PDBs. Any conversion to Windows PDBs will be done during staging, if necessary. -->
     <PublishWindowsPdb Condition="'$(DotNetBuild)' == 'true'">false</PublishWindowsPdb>

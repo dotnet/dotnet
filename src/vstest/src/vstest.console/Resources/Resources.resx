@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -831,12 +831,6 @@
   </data>
   <data name="RequestHandlerConnectionTimedOut" xml:space="preserve">
     <value>Waiting for request handler connection timed out after {0} seconds.</value>
-  </data>
-  <data name="StartTestSessionTimedOut" xml:space="preserve">
-    <value>Waiting for start test session timed out after {0} seconds.</value>
-  </data>
-  <data name="StopTestSessionTimedOut" xml:space="preserve">
-    <value>Waiting for stop test session timed out after {0} seconds.</value>
   </data>
   <data name="ErrorHostingCommunicationChannel" xml:space="preserve">
     <value>Error hosting communication channel.</value>

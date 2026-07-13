@@ -32,16 +32,6 @@
         <target state="translated">Etkin Test Çalıştırması Ekleri İşlemi durduruldu.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">Test Oturumunu Başlatma işlemi iptal edildi.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">Test Oturumunu Durdurma işlemi iptal edildi.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

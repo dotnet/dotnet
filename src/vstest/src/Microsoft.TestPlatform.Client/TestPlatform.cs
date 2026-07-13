@@ -135,39 +135,6 @@ internal class TestPlatform : ITestPlatform
         return false;
     }
 
-    /// <inheritdoc/>
-    public bool StartTestSession(
-        IRequestData requestData,
-        StartTestSessionCriteria testSessionCriteria,
-        ITestSessionEventsHandler eventsHandler,
-        Dictionary<string, SourceDetail> sourceToSourceDetailMap,
-        IWarningLogger warningLogger)
-    {
-        ValidateArg.NotNull(testSessionCriteria, nameof(testSessionCriteria));
-
-        RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(testSessionCriteria.RunSettings);
-        TestAdapterLoadingStrategy strategy = runConfiguration.TestAdapterLoadingStrategy;
-
-        AddExtensionAssemblies(testSessionCriteria.RunSettings, strategy);
-
-        if (!runConfiguration.DesignMode)
-        {
-            return false;
-        }
-
-        IProxyTestSessionManager? testSessionManager = _testEngine.GetTestSessionManager(requestData, testSessionCriteria, sourceToSourceDetailMap, warningLogger);
-        if (testSessionManager == null)
-        {
-            // The test session manager is null because the combination of runsettings and
-            // sources tells us we should run in-process (i.e. in vstest.console). Because
-            // of this no session will be created because there's no testhost to be launched.
-            // Expecting a subsequent call to execute tests with the same set of parameters.
-            return false;
-        }
-
-        return testSessionManager.StartSession(eventsHandler, requestData);
-    }
-
     private void PopulateExtensions(string? runSettings, IEnumerable<string> sources)
     {
         RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);

@@ -55,4 +55,14 @@ public class RequestData : IRequestData
     /// Gets or sets a value indicating whether is telemetry opted in.
     /// </summary>
     public bool IsTelemetryOptedIn { get; set; }
+
+    /// <summary>
+    /// Gets or sets an optional factory the composition root uses to supply pre-configured instances
+    /// of its own built-in extensions (keyed by extension URI) instead of reflection-activating them.
+    /// Returns <see langword="null"/> for unknown / third-party extensions, which continue to be
+    /// created by reflection. This is an internal, closed injection seam for our own extensions and is
+    /// deliberately not part of the public <see cref="IRequestData"/> contract, so it never becomes a
+    /// third-party extension point.
+    /// </summary>
+    internal Func<Uri, object?>? KnownExtensionInstanceFactory { get; set; }
 }
