@@ -78,6 +78,15 @@
     <_TarOwnershipArguments Condition="'$(DotNetBuildSourceOnly)' == 'true'">--numeric-owner --owner=2001 --group=2001</_TarOwnershipArguments>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Deterministic)' == 'true' and $([MSBuild]::IsOSPlatform('Linux'))">
+    <TarTimestamp Condition="'$(DeterministicTimestamp)' == 'true'">@$([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds())</TarTimestamp>
+    <TarTimestamp Condition="$(DeterministicTimestamp.Contains('-'))">$(DeterministicTimestamp)</TarTimestamp>
+    <TarTimestamp Condition="'$(DeterministicTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false' and !$(DeterministicTimestamp.Contains('-'))">@$(DeterministicTimestamp)</TarTimestamp>
+    <TarTimestampArgument Condition="'$(TarTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false'">--mtime="$(TarTimestamp)" </TarTimestampArgument>
+    <ReproducibleTarArgs>--sort=name $(TarTimestampArgument) --owner=0 --group=0 --numeric-owner</ReproducibleTarArgs>
+  </PropertyGroup>
+
+
   <Target Name="_CheckPigzAvailability" Condition="'$(_PigzFoundExitCode)' == ''">
     <PropertyGroup>
       <_CommandProbe>command -v</_CommandProbe>
@@ -127,11 +136,11 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar $(_TarOwnershipArguments) -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
+    <Exec Command="tar $(ReproducibleTarArgs) $(_TarOwnershipArguments) -cf - . | pigz -p 1 &gt; &quot;$(_DestinationFileName)&quot;"
           WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
+    <Exec Command="tar $(ReproducibleTarArgs) $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
           WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
@@ -177,11 +186,11 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(_CurrentArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar $(_TarOwnershipArguments) -cf - . | pigz &gt; &quot;$(_DestinationFileName)&quot;"
+    <Exec Command="tar $(ReproducibleTarArgs) $(_TarOwnershipArguments) -cf - . | pigz -p 1 &gt; &quot;$(_DestinationFileName)&quot;"
           WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
+    <Exec Command="tar $(ReproducibleTarArgs) $(_TarOwnershipArguments) -czf &quot;$(_DestinationFileName)&quot; ."
           WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(_CurrentArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
