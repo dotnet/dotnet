@@ -148,12 +148,22 @@
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(AllPackageVersionsPropsName)"
-                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)" />
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
+                               Deterministic="$(Deterministic)"
+                               DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <!-- Ensure the target parent dir has been created. -->
     <MakeDir Directories="$(SourceBuiltAssetsDir)" />
 
-    <Exec Command="tar --numeric-owner -czhf $(SourceBuiltTarballName) $([System.IO.Path]::GetFileName('$(SourceBuiltVersionName)')) *"
+    <PropertyGroup Condition="'$(Deterministic)' == 'true' and $([MSBuild]::IsOSPlatform('Linux'))">
+      <TarTimestamp Condition="'$(DeterministicTimestamp)' == 'true'">@$([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds())</TarTimestamp>
+      <TarTimestamp Condition="$(DeterministicTimestamp.Contains('-'))">$(DeterministicTimestamp)</TarTimestamp>
+      <TarTimestamp Condition="'$(DeterministicTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false' and !$(DeterministicTimestamp.Contains('-'))">@$(DeterministicTimestamp)</TarTimestamp>
+      <TarTimestampArgument Condition="'$(TarTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false'">--mtime="$(TarTimestamp)" </TarTimestampArgument>
+      <ReproducibleTarArgs>--sort=name $(TarTimestampArgument) --owner=0 --group=0 --numeric-owner</ReproducibleTarArgs>
+    </PropertyGroup>
+
+    <Exec Command="tar $(ReproducibleTarArgs) --numeric-owner -czhf $(SourceBuiltTarballName) $([System.IO.Path]::GetFileName('$(SourceBuiltVersionName)')) *"
           WorkingDirectory="$(SourceBuiltLayoutDir)" />
 
     <Message Importance="High" Text="Packaged source-built artifacts to $(SourceBuiltTarballName)" />

@@ -16,6 +16,19 @@
     <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBA001</MSBuildWarningsNotAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Deterministic Condition="'$(Deterministic)' == ''">true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Deterministic)' == 'true' and $([MSBuild]::IsOSPlatform('Linux'))">
+    <DeterministicTimestamp Condition="'$(DeterministicTimestamp)' == '' and '$(SOURCE_DATE_EPOCH)' != ''">$(SOURCE_DATE_EPOCH)</DeterministicTimestamp>
+    <TarTimestamp Condition="'$(DeterministicTimestamp)' == 'true'">@$([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds())</TarTimestamp>
+    <TarTimestamp Condition="$(DeterministicTimestamp.Contains('-'))">$(DeterministicTimestamp)</TarTimestamp>
+    <TarTimestamp Condition="'$(DeterministicTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false' and !$(DeterministicTimestamp.Contains('-'))">@$(DeterministicTimestamp)</TarTimestamp>
+    <TarTimestampArgument Condition="'$(TarTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false'">--mtime="$(TarTimestamp)" </TarTimestampArgument>
+    <ReproducibleTarArgs>--sort=name $(TarTimestampArgument) --owner=0 --group=0 --numeric-owner</ReproducibleTarArgs>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.SourceBuild.Tasks.LeakDetection\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.csproj" />
@@ -208,8 +221,12 @@
           Inputs="@(IntermediateSymbol)"
           Outputs="$(UnifiedSymbolsTarball)">
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UnifiedSymbolsTarball)'))" />
+    <Exec Command="tar $(ReproducibleTarArgs) -czf $(UnifiedSymbolsTarball) *"
+          WorkingDirectory="$(IntermediateSymbolsRootDir)"
+          Condition="'$(ReproducibleTarArgs)' != ''" />
     <Exec Command="tar --numeric-owner -czf $(UnifiedSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSymbolsRootDir)" />
+          WorkingDirectory="$(IntermediateSymbolsRootDir)"
+          Condition="'$(ReproducibleTarArgs)' == ''" />
 
     <Message Importance="High" Text="Packaged all symbols in '$(UnifiedSymbolsTarball)'" />
   </Target>
@@ -230,8 +247,12 @@
                             SdkSymbolsLayoutPath="$(IntermediateSdkSymbolsLayout)"
                             FailOnMissingPDBs="false" />
 
+    <Exec Command="tar $(ReproducibleTarArgs) -czf $(SdkSymbolsTarball) *"
+          WorkingDirectory="$(IntermediateSdkSymbolsLayout)"
+          Condition="'$(ReproducibleTarArgs)' != ''" />
     <Exec Command="tar --numeric-owner -czf $(SdkSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSdkSymbolsLayout)" />
+          WorkingDirectory="$(IntermediateSdkSymbolsLayout)"
+          Condition="'$(ReproducibleTarArgs)' == ''" />
 
     <Message Importance="High" Text="Packaged sdk symbols in '$(SdkSymbolsTarball)'" />
 

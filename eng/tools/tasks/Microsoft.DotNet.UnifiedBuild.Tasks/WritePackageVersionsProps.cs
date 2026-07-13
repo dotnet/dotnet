@@ -93,6 +93,17 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         public ITaskItem[] PropertySuffixes { get; set; }
 
         /// <summary>
+        /// Whether to build deterministic artifacts.
+        /// </summary>
+        public bool Deterministic { get; set; }
+
+        /// <summary>
+        /// Optional Unix epoch timestamp (seconds) for reproducible builds.
+        /// When set, used instead of DateTime.UtcNow for the creation time property.
+        /// </summary>
+        public string DeterministicTimestamp { get; set; }
+
+        /// <summary>
         /// Retrieve the set of the dependencies from the repo's Version.Details.Xml file.
         /// </summary>
         /// <returns>Hash set of dependency names. </returns>
@@ -179,8 +190,17 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 WriteVersionEntries(sw, packageElementsToWrite, "packages");
                 WriteExtraProperties(sw);
 
+                long ticks = GetCreationTimeTicks();
+
                 sw.WriteLine(@"  <PropertyGroup>");
-                sw.WriteLine($@"    <{CreationTimePropertyName}>{DateTime.UtcNow.Ticks}</{CreationTimePropertyName}>");
+                if (Deterministic)
+                {
+                    sw.WriteLine($@"    <{CreationTimePropertyName}>{ticks}</{CreationTimePropertyName}>");
+                }
+                else
+                {
+                    sw.WriteLine($@"    <{CreationTimePropertyName}>{DateTime.UtcNow.Ticks}</{CreationTimePropertyName}>");
+                }
                 sw.WriteLine(@"  </PropertyGroup>");
 
                 sw.WriteLine(@"</Project>");
@@ -267,6 +287,34 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     ?? string.Empty);
 
             return $"{formattedId}{suffix}";
+        }
+
+        /// <summary>
+        /// Resolve the creation time ticks from DeterministicTimestamp.
+        /// See https://github.com/NuGet/Home/blob/dev/accepted/2026/deterministic-pack-revisited.md
+        /// for the accepted input formats.
+        /// </summary>
+        private long GetCreationTimeTicks()
+        {
+            if (string.IsNullOrEmpty(DeterministicTimestamp) ||
+                DeterministicTimestamp.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+                DeterministicTimestamp.Equals("false", StringComparison.OrdinalIgnoreCase))
+            {
+                return DateTime.UtcNow.Ticks;
+            }
+
+            if (long.TryParse(DeterministicTimestamp, out long epoch))
+            {
+                return DateTimeOffset.FromUnixTimeSeconds(epoch).UtcTicks;
+            }
+
+            if (DateTimeOffset.TryParse(DeterministicTimestamp, out DateTimeOffset dto))
+            {
+                return dto.UtcTicks;
+            }
+
+            Log.LogWarning($"Could not parse DeterministicTimestamp '{DeterministicTimestamp}', falling back to DateTime.UtcNow");
+            return DateTime.UtcNow.Ticks;
         }
     }
 }
