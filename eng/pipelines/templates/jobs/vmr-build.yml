@@ -595,6 +595,8 @@ jobs:
           Get-ChildItem -Path "$(sourcesPath)/src" -Directory | ForEach-Object {
             Setup-NuGetFeeds $_.FullName $_.Name
           }
+    # Necessary for PAT-less authentication
+    - task: NuGetAuthenticate@1
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
