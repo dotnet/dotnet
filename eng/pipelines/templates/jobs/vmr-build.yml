@@ -584,7 +584,7 @@ jobs:
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
             
             Write-Host "Setting up internal NuGet feeds for $description"
-            & $setupScript $nugetConfig $env:Token
+            & $setupScript $nugetConfig
             Write-Host ""
           }
           
@@ -595,8 +595,6 @@ jobs:
           Get-ChildItem -Path "$(sourcesPath)/src" -Directory | ForEach-Object {
             Setup-NuGetFeeds $_.FullName $_.Name
           }
-      env:
-        Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
