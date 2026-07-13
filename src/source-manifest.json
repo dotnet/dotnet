@@ -9,7 +9,7 @@
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
       "path": "aspire",
-      "remoteUri": "https://github.com/dotnet/aspire",
+      "remoteUri": "https://github.com/microsoft/aspire",
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
