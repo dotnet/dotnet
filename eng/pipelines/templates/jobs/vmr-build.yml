@@ -632,7 +632,6 @@ jobs:
         version: 24.14.1
 
     - ${{ if eq(parameters.signDac, 'true') }}:
-      # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
       - template: ../steps/setup-diagnostics-esrp.yml@self
         parameters:
           isOfficialBuild: true
