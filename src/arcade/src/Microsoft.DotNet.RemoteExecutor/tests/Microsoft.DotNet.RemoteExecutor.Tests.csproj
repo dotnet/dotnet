@@ -8,5 +8,26 @@
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.DotNet.RemoteExecutor.csproj" />
   </ItemGroup>
- 
+
+  <!--
+    The RemoteExecutor project reference transitively pulls Microsoft.Diagnostics.Runtime 4.0.732101,
+    which requires newer Azure/runtime packages than this servicing branch's central versions. Mirror the
+    RemoteExecutor VersionOverrides here so the test project restores consistently. See the comment in
+    Microsoft.DotNet.RemoteExecutor.csproj for why these are not applied centrally.
+  -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1510</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Core" VersionOverride="1.53.0" />
+    <PackageReference Include="Azure.Identity" VersionOverride="1.21.0" />
+    <PackageReference Include="Microsoft.Identity.Client" VersionOverride="4.83.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" VersionOverride="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Collections.Immutable" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Text.Encodings.Web" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Text.Json" VersionOverride="10.0.7" />
+  </ItemGroup>
+
 </Project>

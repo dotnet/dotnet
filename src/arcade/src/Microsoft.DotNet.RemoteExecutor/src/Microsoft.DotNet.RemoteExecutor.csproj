@@ -12,8 +12,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
     <PackageReference Include="Microsoft.Diagnostics.Runtime" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+  </ItemGroup>
+
+  <!--
+    Microsoft.Diagnostics.Runtime 4.0.732101 (and Microsoft.Diagnostics.NETCore.Client) require a newer
+    Azure.Identity/Azure.Core and 10.0.x runtime packages than this servicing branch's central versions.
+    These overrides raise them for the RemoteExecutor projects only. They are intentionally NOT applied
+    centrally: the repo's .NETFramework MSBuild build tasks are capped at 8.0.x by the toolset MSBuild.exe
+    binding redirects (see eng/BuildTask.Packages.props), so a central bump would break those tasks.
+    NU1510 is suppressed because some overridden packages are provided by the shared framework on
+    .NETCoreApp targets.
+  -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1510</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Core" VersionOverride="1.53.0" />
+    <PackageReference Include="Azure.Identity" VersionOverride="1.21.0" />
+    <PackageReference Include="Microsoft.Identity.Client" VersionOverride="4.83.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" VersionOverride="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Collections.Immutable" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Text.Encodings.Web" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Text.Json" VersionOverride="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+    <Compile Remove="MiniDump.cs" />
   </ItemGroup>
 
   <ItemGroup>
