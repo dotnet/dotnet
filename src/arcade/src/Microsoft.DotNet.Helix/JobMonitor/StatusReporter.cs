@@ -235,7 +235,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 lines.Add($"{childPrefix}└─ Console: {failure.ConsoleOutput}");
             }
 
-            LogError($"Failed work item console logs:{Environment.NewLine}Test results: {GetTestResultsUri()}{Environment.NewLine}{string.Join(Environment.NewLine, lines)}");
+            LogError($"Failed work item information:{Environment.NewLine}Test results: {GetTestResultsUri()}{Environment.NewLine}{string.Join(Environment.NewLine, lines)}");
         }
 
         /// <summary>

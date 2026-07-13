@@ -207,6 +207,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItCanBuildATemplatePackMsi()
         {
+            if (string.IsNullOrEmpty(MSBuildExePath))
+                return; // machine doesn't have native toolchain
+
             using var fixture = new MsiTestFixture(true);
 
             string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
