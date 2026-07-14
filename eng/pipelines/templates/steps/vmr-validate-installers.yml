@@ -46,9 +46,7 @@ steps:
         $setupScript = "$(Build.SourcesDirectory)/src/scenario-tests/eng/common/SetupNugetSources.ps1"
         $nugetConfigFile = Get-ChildItem -Path "$(Build.SourcesDirectory)/src/scenario-tests" -Filter "nuget.config" -File | Select-Object -First 1
         $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { "$(Build.SourcesDirectory)/src/scenario-tests/NuGet.config" }
-        & $setupScript $nugetConfig $env:Token
-    env:
-      Token: $(dn-bot-dnceng-artifact-feeds-rw)
+        & $setupScript $nugetConfig
 
 - ${{ if eq(parameters.OS, 'Linux') }}:
   - script: |
