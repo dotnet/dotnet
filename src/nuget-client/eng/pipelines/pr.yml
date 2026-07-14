@@ -179,26 +179,6 @@ stages:
 
 - ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
   - stage:
-    displayName: Dotnet.Integration.Test on Windows (SDK Next)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Dotnet.Integration.Test on Windows (SDK Next)
-        osName: Windows
-        ${{ if eq(variables['System.TeamProject'], 'public') }}:
-          agentPool: NetCore-Public
-          agentDemands: ImageOverride -equals Windows.VS2026.Amd64.Open
-        ${{ else }}:
-          agentPool: VSEng-MicroBuildVSStable
-        testType: Functional
-        testTargetFramework: sdkNext
-        testProjectName: Dotnet.Integration.Test
-        useDotNetBuild: true
-        timeoutInMinutes: 60
-
-- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
-  - stage:
     displayName: NuGet.Packaging.FuncTest on Windows (.NET 10.0)
     dependsOn: []
     jobs:
@@ -242,21 +222,6 @@ stages:
         testTargetFramework: net10.0
         timeoutInMinutes: 30
 
-- ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
-  - stage:
-    displayName: Dotnet.Integration.Test on Linux (SDK Next)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Dotnet.Integration.Test on Linux (SDK Next)
-        osName: Linux
-        vmImage: ubuntu-latest
-        testType: Functional
-        testTargetFramework: sdkNext
-        testProjectName: Dotnet.Integration.Test
-        timeoutInMinutes: 60
-
 - ${{ if eq(parameters.RunUnitTestsOnMacOS, true) }}:
   - stage:
     displayName: Unit Tests on MacOS (.NET 10.0)
@@ -283,21 +248,6 @@ stages:
         testType: Functional
         testTargetFramework: net10.0
         timeoutInMinutes: 30
-
-- ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
-  - stage:
-    displayName: Dotnet.Integration.Test on MacOS (SDK Next)
-    dependsOn: []
-    jobs:
-    - template: pr.job.yml
-      parameters:
-        displayName: Dotnet.Integration.Test on MacOS (SDK Next)
-        osName: MacOS
-        vmImage: macos-14
-        testType: Functional
-        testTargetFramework: sdkNext
-        testProjectName: Dotnet.Integration.Test
-        timeoutInMinutes: 60
 
 - ${{ if or(eq(parameters.RunSourceBuild, true), eq(parameters.RunStaticAnalysis, true)) }}:
   - stage:
