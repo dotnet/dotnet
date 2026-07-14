@@ -3,8 +3,8 @@
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="templating" Sha="e8558e6339cd4fccd998b5cdecb76eeb6ec75363" BarId="318234" />
   <ProductDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.10">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>e8558e6339cd4fccd998b5cdecb76eeb6ec75363</Sha>
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>

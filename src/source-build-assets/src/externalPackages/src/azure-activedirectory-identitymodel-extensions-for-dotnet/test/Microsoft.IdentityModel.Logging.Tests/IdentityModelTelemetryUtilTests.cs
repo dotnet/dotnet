@@ -162,8 +162,8 @@ namespace Microsoft.IdentityModel.Logging.Tests
 
         public class TelemetryTheoryData : TheoryDataBase
         {
-            public TelemetryTheoryData(): base(false)
-            {}
+            public TelemetryTheoryData() : base(false)
+            { }
             public bool SendTelemetry { get; set; } = true;
 
             public HttpRequestMessage HttpRequestMessage { get; set; }

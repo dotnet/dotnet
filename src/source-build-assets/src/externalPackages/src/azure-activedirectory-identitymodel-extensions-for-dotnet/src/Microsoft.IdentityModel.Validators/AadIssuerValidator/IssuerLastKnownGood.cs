@@ -2,12 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Validators
 {
@@ -18,7 +13,7 @@ namespace Microsoft.IdentityModel.Validators
     {
         private string _issuer;
         private TimeSpan _lastKnownGoodLifetime;
-        private DateTime? _lastKnownGoodConfigFirstUse = null;
+        private DateTime? _lastKnownGoodConfigFirstUse;
 
         /// <summary>
         /// Gets or sets the issuer value.

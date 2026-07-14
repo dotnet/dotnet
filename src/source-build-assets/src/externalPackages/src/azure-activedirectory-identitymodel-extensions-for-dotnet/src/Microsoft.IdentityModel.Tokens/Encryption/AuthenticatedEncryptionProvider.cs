@@ -2,11 +2,13 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Logging;
+
+#if NETSTANDARD2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -63,7 +65,7 @@ namespace Microsoft.IdentityModel.Tokens
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         throw LogHelper.LogExceptionMessage(new PlatformNotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10713, LogHelper.MarkAsNonPII(algorithm))));
 #elif NET6_0_OR_GREATER
-                    if(!System.Security.Cryptography.AesGcm.IsSupported)
+                    if (!System.Security.Cryptography.AesGcm.IsSupported)
                         throw LogHelper.LogExceptionMessage(new PlatformNotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10713, LogHelper.MarkAsNonPII(algorithm))));
 #endif
                     InitializeUsingAesGcm();
@@ -72,7 +74,7 @@ namespace Microsoft.IdentityModel.Tokens
                     InitializeUsingAesCbc();
             }
             else
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10668, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII(algorithm), key)));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10668, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII(algorithm), LogHelper.MarkAsNonPII(key.KeyId))));
         }
 
         private void InitializeUsingAesGcm()
@@ -150,7 +152,7 @@ namespace Microsoft.IdentityModel.Tokens
                 throw LogHelper.LogExceptionMessage(new SecurityTokenEncryptionFailedException(LogHelper.FormatInvariant(LogMessages.IDX10654, ex)));
             }
 
-            byte[] al = Utility.ConvertToBigEndian(authenticatedData.Length * 8);
+            byte[] al = Utility.ConvertToBigEndian(authenticatedData.Length * 8L);
             byte[] macBytes = new byte[authenticatedData.Length + aes.IV.Length + ciphertext.Length + al.Length];
             Array.Copy(authenticatedData, 0, macBytes, 0, authenticatedData.Length);
             Array.Copy(aes.IV, 0, macBytes, authenticatedData.Length, aes.IV.Length);
@@ -171,7 +173,7 @@ namespace Microsoft.IdentityModel.Tokens
                 throw LogHelper.LogExceptionMessage(new SecurityTokenDecryptionFailedException(
                     LogHelper.FormatInvariant(LogMessages.IDX10625, authenticationTag.Length, expectedTagLength, Base64UrlEncoder.Encode(authenticationTag), Algorithm)));
 
-            byte[] al = Utility.ConvertToBigEndian(authenticatedData.Length * 8);
+            byte[] al = Utility.ConvertToBigEndian(authenticatedData.Length * 8L);
             byte[] macBytes = new byte[authenticatedData.Length + iv.Length + ciphertext.Length + al.Length];
             Array.Copy(authenticatedData, 0, macBytes, 0, authenticatedData.Length);
             Array.Copy(iv, 0, macBytes, authenticatedData.Length, iv.Length);
@@ -205,7 +207,7 @@ namespace Microsoft.IdentityModel.Tokens
         internal SymmetricSignatureProvider CreateSymmetricSignatureProvider()
         {
             if (!IsSupportedAlgorithm(Key, Algorithm))
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10668, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII(Algorithm), Key)));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10668, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII(Algorithm), LogHelper.MarkAsNonPII(Key.KeyId))));
 
             ValidateKeySize(Key, Algorithm);
 
@@ -368,7 +370,7 @@ namespace Microsoft.IdentityModel.Tokens
             else if (algorithm.Equals(SecurityAlgorithms.Aes128CbcHmacSha256))
                 keyLength = 16;
             else
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10668, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII(algorithm), key)));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10668, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII(algorithm), LogHelper.MarkAsNonPII(key.KeyId))));
 
             var keyBytes = GetKeyBytes(key);
             byte[] aesKey = new byte[keyLength];
@@ -424,7 +426,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (key is JsonWebKey jsonWebKey && JsonWebKeyConverter.TryConvertToSymmetricSecurityKey(jsonWebKey, out SecurityKey securityKey))
                 return GetKeyBytes(securityKey);
 
-            throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10667, key)));
+            throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10667, LogHelper.MarkAsNonPII(key.KeyId))));
         }
 
         internal static byte[] Transform(ICryptoTransform transform, byte[] input, int inputOffset, int inputLength)
@@ -462,7 +464,14 @@ namespace Microsoft.IdentityModel.Tokens
             if (SecurityAlgorithms.Aes128CbcHmacSha256.Equals(algorithm))
             {
                 if (key.KeySize < 256)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes128CbcHmacSha256), LogHelper.MarkAsNonPII(256), key.KeyId, LogHelper.MarkAsNonPII(key.KeySize))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(key),
+                            LogHelper.FormatInvariant(LogMessages.IDX10653,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes128CbcHmacSha256),
+                                LogHelper.MarkAsNonPII(256),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(key.KeySize))));
 
                 return;
             }
@@ -470,7 +479,15 @@ namespace Microsoft.IdentityModel.Tokens
             if (SecurityAlgorithms.Aes192CbcHmacSha384.Equals(algorithm))
             {
                 if (key.KeySize < 384)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes192CbcHmacSha384), LogHelper.MarkAsNonPII(384), key.KeyId, LogHelper.MarkAsNonPII(key.KeySize))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(key),
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10653,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes192CbcHmacSha384),
+                                LogHelper.MarkAsNonPII(384),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(key.KeySize))));
 
                 return;
             }
@@ -478,7 +495,15 @@ namespace Microsoft.IdentityModel.Tokens
             if (SecurityAlgorithms.Aes256CbcHmacSha512.Equals(algorithm))
             {
                 if (key.KeySize < 512)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes256CbcHmacSha512), LogHelper.MarkAsNonPII(512), key.KeyId, LogHelper.MarkAsNonPII(key.KeySize))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(key),
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10653,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes256CbcHmacSha512),
+                                LogHelper.MarkAsNonPII(512),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(key.KeySize))));
 
                 return;
             }
@@ -486,7 +511,15 @@ namespace Microsoft.IdentityModel.Tokens
             if (SecurityAlgorithms.Aes128Gcm.Equals(algorithm))
             {
                 if (key.KeySize < 128)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes128Gcm), LogHelper.MarkAsNonPII(128), key.KeyId, LogHelper.MarkAsNonPII(key.KeySize))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(key),
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10653,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes128Gcm),
+                                LogHelper.MarkAsNonPII(128),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(key.KeySize))));
 
                 return;
             }
@@ -494,7 +527,15 @@ namespace Microsoft.IdentityModel.Tokens
             if (SecurityAlgorithms.Aes192Gcm.Equals(algorithm))
             {
                 if (key.KeySize < 192)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes192Gcm), LogHelper.MarkAsNonPII(192), key.KeyId, LogHelper.MarkAsNonPII(key.KeySize))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(key),
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10653,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes192Gcm),
+                                LogHelper.MarkAsNonPII(192),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(key.KeySize))));
 
                 return;
             }
@@ -502,7 +543,15 @@ namespace Microsoft.IdentityModel.Tokens
             if (SecurityAlgorithms.Aes256Gcm.Equals(algorithm))
             {
                 if (key.KeySize < 256)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes256Gcm), LogHelper.MarkAsNonPII(256), key.KeyId, LogHelper.MarkAsNonPII(key.KeySize))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(key),
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10653,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Aes256Gcm),
+                                LogHelper.MarkAsNonPII(256),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(key.KeySize))));
 
                 return;
             }

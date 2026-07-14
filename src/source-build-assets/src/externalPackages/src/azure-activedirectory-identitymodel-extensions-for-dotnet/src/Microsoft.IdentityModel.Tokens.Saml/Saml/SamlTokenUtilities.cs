@@ -2,15 +2,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Security.Claims;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.IdentityModel.Xml;
-using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Xml;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
 namespace Microsoft.IdentityModel.Tokens.Saml
@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
     /// <summary>
     /// A class which contains useful methods for processing saml tokens.
     /// </summary>
-    internal class SamlTokenUtilities
+    internal partial class SamlTokenUtilities
     {
         /// <summary>
         /// Returns a <see cref="SecurityKey"/> to use when validating the signature of a token.
@@ -152,7 +152,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             validationParametersCloned.ValidIssuers = (validationParametersCloned.ValidIssuers == null ? issuers : validationParametersCloned.ValidIssuers.Concat(issuers));
             validationParametersCloned.IssuerSigningKeys = (validationParametersCloned.IssuerSigningKeys == null ? currentConfiguration.SigningKeys : validationParametersCloned.IssuerSigningKeys.Concat(currentConfiguration.SigningKeys));
             return validationParametersCloned;
-
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
     /// <summary>
     /// 
     /// </summary>
-    public class SamlSecurityTokenHandlerTests
+    public partial class SamlSecurityTokenHandlerTests
     {
         [Fact]
         public void Constructors()
@@ -63,14 +63,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
 
         }
 
-        [Theory, MemberData(nameof(CanReadTokenTheoryData))]
+        [Theory, MemberData(nameof(CanReadTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void CanReadToken(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CanReadToken", theoryData);
             try
             {
                 if (theoryData.CanRead != theoryData.Handler.CanReadToken(theoryData.Token))
-                    Assert.False(true, $"Expected CanRead != CanRead, token: {theoryData.Token}");
+                    Assert.Fail($"Expected CanRead != CanRead, token: {theoryData.Token}");
 
                 theoryData.ExpectedException.ProcessNoException(context);
             }
@@ -116,7 +116,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(CreateClaimsIdentitiesTheoryData))]
+        [Theory, MemberData(nameof(CreateClaimsIdentitiesTheoryData), DisableDiscoveryEnumeration = true)]
         public void CreateClaimsIdentities(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.CreateClaimsIdentities", theoryData);
@@ -173,7 +173,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ReadTokenTheoryData))]
+        [Theory, MemberData(nameof(ReadTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadToken(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadToken", theoryData);
@@ -236,7 +236,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             Assert.NotEqual(DateTime.MinValue, samlSecurityToken.ValidTo);
         }
 
-        [Theory, MemberData(nameof(ValidateAudienceTheoryData))]
+        [Theory, MemberData(nameof(ValidateAudienceTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateAudience(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateAudience", theoryData);
@@ -271,7 +271,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateIssuerTheoryData))]
+        [Theory, MemberData(nameof(ValidateIssuerTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateIssuer(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateIssuer", theoryData);
@@ -306,7 +306,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateTokenTheoryData))]
+        [Theory, MemberData(nameof(ValidateTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateToken(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateToken", theoryData);
@@ -323,7 +323,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ValidateTokenTheoryData))]
+        [Theory, MemberData(nameof(ValidateTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task ValidateTokenAsync(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateToken", theoryData);
@@ -836,7 +836,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(WriteTokenTheoryData))]
+        [Theory, MemberData(nameof(WriteTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void WriteToken(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.WriteToken", theoryData);
@@ -1012,7 +1012,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(WriteTokenXmlTheoryData))]
+        [Theory, MemberData(nameof(WriteTokenXmlTheoryData), DisableDiscoveryEnumeration = true)]
         public void WriteTokenXml(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.WriteTokenXml", theoryData);
@@ -1068,7 +1068,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(CreateSamlTokenUsingTokenDescriptorTheoryData))]
+        [Theory, MemberData(nameof(CreateSamlTokenUsingTokenDescriptorTheoryData), DisableDiscoveryEnumeration = true)]
         public void CreateSamlTokenUsingTokenDescriptor(CreateTokenTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateSamlTokenUsingTokenDescriptor", theoryData);
@@ -1345,7 +1345,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(SecurityKeyNotFoundExceptionTestTheoryData))]
+        [Theory, MemberData(nameof(SecurityKeyNotFoundExceptionTestTheoryData), DisableDiscoveryEnumeration = true)]
         public void SamlSecurityKeyNotFoundExceptionTest(CreateTokenTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.SecurityKeyNotFoundExceptionTest", theoryData);

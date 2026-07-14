@@ -1,0 +1,3 @@
+static Microsoft.IdentityModel.Dpop.DPoPProofValidator.ComputeAccessTokenHash(string accessToken) -> string
+static Microsoft.IdentityModel.Dpop.DPoPProofValidator.ComputeJwkThumbprint(Microsoft.IdentityModel.Tokens.JsonWebKey jwk) -> string
+static Microsoft.IdentityModel.Dpop.DPoPProofValidator.ContainsPrivateKeyMaterial(Microsoft.IdentityModel.Tokens.JsonWebKey jwk) -> bool

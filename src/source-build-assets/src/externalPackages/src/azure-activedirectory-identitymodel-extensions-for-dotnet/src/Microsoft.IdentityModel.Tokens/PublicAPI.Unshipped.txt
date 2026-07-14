@@ -1,0 +1,21 @@
+~const Microsoft.IdentityModel.Tokens.JsonWebAlgorithmsKeyTypes.Akp = "AKP" -> string
+~const Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Priv = "priv" -> string
+~const Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Pub = "pub" -> string
+~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa44 = "ML-DSA-44" -> string
+~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa65 = "ML-DSA-65" -> string
+~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa87 = "ML-DSA-87" -> string
+Microsoft.IdentityModel.Tokens.MlDsaSecurityKey
+~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MlDsaSecurityKey(System.Security.Cryptography.MLDsa mlDsa) -> void
+~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MLDsa.get -> System.Security.Cryptography.MLDsa
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.HasPrivateKey.get -> bool
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.PrivateKeyStatus.get -> Microsoft.IdentityModel.Tokens.PrivateKeyStatus
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.KeySize.get -> int
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.CanComputeJwkThumbprint() -> bool
+~override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.ComputeJwkThumbprint() -> byte[]
+Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.Dispose() -> void
+virtual Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.Dispose(bool disposing) -> void
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Pub.get -> string
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Pub.set -> void
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Priv.get -> string
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Priv.set -> void
+~static Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(Microsoft.IdentityModel.Tokens.MlDsaSecurityKey key) -> Microsoft.IdentityModel.Tokens.JsonWebKey
