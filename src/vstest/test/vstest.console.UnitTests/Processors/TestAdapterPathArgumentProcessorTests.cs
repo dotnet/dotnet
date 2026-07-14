@@ -22,23 +22,11 @@ using vstest.console.UnitTests.Processors;
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 
 [TestClass]
-// Because runsettings tests use the instance of RunSettingsManager which is static.
 [DoNotParallelize]
 public class TestAdapterPathArgumentProcessorTests
 {
     private readonly CommandLineOptions _commandLineOptions = new();
-    private readonly RunSettings _currentActiveSetting;
-
-    public TestAdapterPathArgumentProcessorTests()
-    {
-        _currentActiveSetting = RunSettingsManager.Instance.ActiveRunSettings;
-    }
-
-    [TestCleanup]
-    public void TestClean()
-    {
-        RunSettingsManager.Instance.SetActiveRunSettings(_currentActiveSetting);
-    }
+    private readonly RunSettingsManager _runSettingsManager = new();
 
 
     [TestMethod]
@@ -109,16 +97,16 @@ public class TestAdapterPathArgumentProcessorTests
     [TestMethod]
     public void InitializeShouldUpdateTestAdapterPathInRunSettings()
     {
-        RunSettingsManager.Instance.AddDefaultRunSettings();
+        _runSettingsManager.AddDefaultRunSettings();
 
         var mockOutput = new Mock<IOutput>();
-        var executor = new TestAdapterPathArgumentExecutor(_commandLineOptions, RunSettingsManager.Instance, mockOutput.Object, new FileHelper());
+        var executor = new TestAdapterPathArgumentExecutor(_commandLineOptions, _runSettingsManager, mockOutput.Object, new FileHelper());
 
         var currentAssemblyPath = typeof(TestAdapterPathArgumentExecutor).Assembly.Location;
         var currentFolder = Path.GetDirectoryName(currentAssemblyPath);
 
         executor.Initialize(currentFolder);
-        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(_runSettingsManager.ActiveRunSettings.SettingsXml);
         Assert.AreEqual(currentFolder, runConfiguration.TestAdaptersPaths);
     }
 
@@ -129,15 +117,15 @@ public class TestAdapterPathArgumentProcessorTests
         var runSettingsXml = "<RunSettings><RunConfiguration><TestAdaptersPaths>d:\\users;f:\\users</TestAdaptersPaths></RunConfiguration></RunSettings>";
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(runSettingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
         var mockFileHelper = new Mock<IFileHelper>();
         var mockOutput = new Mock<IOutput>();
 
         mockFileHelper.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
-        var executor = new TestAdapterPathArgumentExecutor(_commandLineOptions, RunSettingsManager.Instance, mockOutput.Object, mockFileHelper.Object);
+        var executor = new TestAdapterPathArgumentExecutor(_commandLineOptions, _runSettingsManager, mockOutput.Object, mockFileHelper.Object);
 
         executor.Initialize("c:\\users");
-        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(_runSettingsManager.ActiveRunSettings.SettingsXml);
         Assert.AreEqual("d:\\users;f:\\users;c:\\users", runConfiguration.TestAdaptersPaths);
     }
 
@@ -148,15 +136,15 @@ public class TestAdapterPathArgumentProcessorTests
         var runSettingsXml = "<RunSettings><RunConfiguration><TestAdaptersPaths>d:\\users</TestAdaptersPaths></RunConfiguration></RunSettings>";
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(runSettingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
         var mockFileHelper = new Mock<IFileHelper>();
         var mockOutput = new Mock<IOutput>();
 
         mockFileHelper.Setup(x => x.DirectoryExists(It.IsAny<string>())).Returns(true);
-        var executor = new TestAdapterPathArgumentExecutor(_commandLineOptions, RunSettingsManager.Instance, mockOutput.Object, mockFileHelper.Object);
+        var executor = new TestAdapterPathArgumentExecutor(_commandLineOptions, _runSettingsManager, mockOutput.Object, mockFileHelper.Object);
 
         executor.Initialize("\"c:\\users\"");
-        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(_runSettingsManager.ActiveRunSettings.SettingsXml);
         Assert.AreEqual("d:\\users;c:\\users", runConfiguration.TestAdaptersPaths);
 
     }
