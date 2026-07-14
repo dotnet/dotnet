@@ -65,3 +65,11 @@ index ------------
  ./sdk/x.y.z/es/
  ./sdk/x.y.z/es/cs/
  ./sdk/x.y.z/es/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll
+@@ ------------ @@
+ ./sdk/x.y.z/ko/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+ ./sdk/x.y.z/ko/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll
+ ./sdk/x.y.z/ko/zh-Hant/vstest.console.resources.dll
+-./sdk/x.y.z/libdotnet-aot.so
+ ./sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll
+ ./sdk/x.y.z/Microsoft.Build.dll
+ ./sdk/x.y.z/Microsoft.Build.Framework.dll
