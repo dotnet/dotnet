@@ -4,6 +4,7 @@
     Keep in sync with arcade's Microsoft.DotNet.Build.Tasks.Packaging/src/build/Packaging.targets
   -->
   <Target Name="AddSccsidMetadata"
+          Condition="'$(TargetOS)' != 'windows'"
           DependsOnTargets="GetAssemblyVersion;InitializeSourceControlInformation"
           BeforeTargets="BeforeCompile">
     <ItemGroup>
