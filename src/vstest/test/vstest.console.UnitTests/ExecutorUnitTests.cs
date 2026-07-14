@@ -27,11 +27,12 @@ using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Res
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests;
 
 [TestClass]
-// Because runsettings tests use the instance of RunSettingsManager which is static.
+// These tests construct real Executors and share fixed temp-file names, so they must not run in parallel.
 [DoNotParallelize]
 public class ExecutorUnitTests
 {
     private readonly CommandLineOptions _commandLineOptions = new();
+    private readonly RunSettingsManager _runSettingsManager = new();
     private readonly Mock<ITestPlatformEventSource> _mockTestPlatformEventSource;
 
     public ExecutorUnitTests()
@@ -150,8 +151,8 @@ public class ExecutorUnitTests
     public void ExecuteShouldInitializeDefaultRunsettings()
     {
         var mockOutput = new MockOutput();
-        _ = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment()).Execute(null);
-        RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
+        _ = new Executor(mockOutput, _mockTestPlatformEventSource.Object, new ProcessHelper(), new PlatformEnvironment(), _runSettingsManager).Execute(null);
+        RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(_runSettingsManager.ActiveRunSettings.SettingsXml);
         Assert.AreEqual(Constants.DefaultResultsDirectory, runConfiguration.ResultsDirectory);
         Assert.AreEqual(Framework.DefaultFramework.ToString(), runConfiguration.TargetFramework!.ToString());
         Assert.AreEqual(Constants.DefaultPlatform, runConfiguration.TargetPlatform);
@@ -212,7 +213,6 @@ public class ExecutorUnitTests
     [TestMethod]
     public void ExecuteShouldNotThrowSettingsExceptionButLogOutput()
     {
-        var activeRunSetting = RunSettingsManager.Instance.ActiveRunSettings;
         var runSettingsFile = Path.Combine(Path.GetTempPath(), "ExecutorShouldShowRightErrorMessage.runsettings");
 
         try
@@ -244,14 +244,12 @@ public class ExecutorUnitTests
         finally
         {
             File.Delete(runSettingsFile);
-            RunSettingsManager.Instance.SetActiveRunSettings(activeRunSetting);
         }
     }
 
     [TestMethod]
     public void ExecuteShouldReturnNonZeroExitCodeIfSettingsException()
     {
-        var activeRunSetting = RunSettingsManager.Instance.ActiveRunSettings;
         var runSettingsFile = Path.Combine(Path.GetTempPath(), "ExecutorShouldShowRightErrorMessage.runsettings");
 
         try
@@ -281,14 +279,12 @@ public class ExecutorUnitTests
         finally
         {
             File.Delete(runSettingsFile);
-            RunSettingsManager.Instance.SetActiveRunSettings(activeRunSetting);
         }
     }
 
     [TestMethod]
     public void ExecutorShouldShowRightErrorMessage()
     {
-        var activeRunSetting = RunSettingsManager.Instance.ActiveRunSettings;
         var runSettingsFile = Path.Combine(Path.GetTempPath(), "ExecutorShouldShowRightErrorMessage.runsettings");
 
         try
@@ -318,7 +314,6 @@ public class ExecutorUnitTests
         finally
         {
             File.Delete(runSettingsFile);
-            RunSettingsManager.Instance.SetActiveRunSettings(activeRunSetting);
         }
     }
 
@@ -384,7 +379,7 @@ public class ExecutorUnitTests
             _mockTestPlatformEventSource.Object,
             new ProcessHelper(),
             new PlatformEnvironment(),
-            RunSettingsManager.Instance,
+            _runSettingsManager,
             RunSettingsHelper.Instance,
             _commandLineOptions,
             injectedAggregator).Execute("--help");
@@ -399,7 +394,7 @@ public class ExecutorUnitTests
             _mockTestPlatformEventSource.Object,
             new ProcessHelper(),
             new PlatformEnvironment(),
-            RunSettingsManager.Instance,
+            _runSettingsManager,
             RunSettingsHelper.Instance,
             _commandLineOptions,
             defaultAggregator).Execute("--help");
