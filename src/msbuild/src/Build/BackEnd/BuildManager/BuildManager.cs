@@ -426,12 +426,21 @@ namespace Microsoft.Build.Execution
             /// </summary>
             public string? Code { get; }
 
+            /// <summary>
+            /// When set, the deferred message is logged by raising this pre-built event (via
+            /// <see cref="ILoggingService.LogBuildEvent"/>) instead of a plain comment. This lets a caller emit
+            /// a dedicated, structured event type (recorded under its own binary-log record kind) rather than
+            /// communicating build/system data through an ad-hoc message.
+            /// </summary>
+            public BuildEventArgs? BuildEvent { get; }
+
             public DeferredBuildMessage(string text, MessageImportance importance)
             {
                 Importance = importance;
                 Text = text;
                 FilePath = null;
                 Code = null;
+                BuildEvent = null;
             }
 
             public DeferredBuildMessage(string text, MessageImportance importance, string filePath)
@@ -440,6 +449,7 @@ namespace Microsoft.Build.Execution
                 Text = text;
                 FilePath = filePath;
                 Code = null;
+                BuildEvent = null;
             }
 
             /// <summary>
@@ -455,6 +465,23 @@ namespace Microsoft.Build.Execution
                 FilePath = null;
                 Code = code;
                 MessageSeverity = messageSeverity;
+                BuildEvent = null;
+            }
+
+            /// <summary>
+            /// Creates a deferred message backed by a pre-built <see cref="BuildEventArgs"/>. The event is raised
+            /// as-is when the build begins, so a caller can emit a dedicated, structured event type instead of an
+            /// ad-hoc message. <see cref="Text"/> mirrors the event's message for callers that inspect the struct.
+            /// </summary>
+            /// <param name="buildEvent">The pre-built event to raise (its <see cref="BuildEventArgs.Message"/> is used as <see cref="Text"/>).</param>
+            /// <param name="importance">The importance to report for the deferred message.</param>
+            public DeferredBuildMessage(BuildEventArgs buildEvent, MessageImportance importance)
+            {
+                Importance = importance;
+                Text = buildEvent.Message ?? string.Empty;
+                FilePath = null;
+                Code = null;
+                BuildEvent = buildEvent;
             }
         }
 
@@ -3403,6 +3430,15 @@ namespace Microsoft.Build.Execution
                         helpKeyword: null,
                         file: BuildEventFileInfo.Empty,
                         message: message.Text);
+                }
+                else if (message.BuildEvent is not null)
+                {
+                    // Raise the caller's pre-built event as-is so it is recorded under its own (structured)
+                    // event type / binary-log record kind, rather than being flattened into an ad-hoc message.
+                    // Deferred messages have no project/target context; give the event the Invalid context that
+                    // the text path uses so loggers (e.g. the console) that require a non-null context accept it.
+                    message.BuildEvent.BuildEventContext ??= BuildEventContext.Invalid;
+                    loggingService.LogBuildEvent(message.BuildEvent);
                 }
                 else
                 {

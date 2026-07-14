@@ -79,6 +79,13 @@ namespace Microsoft.Build.CommandLine
                     KnownTelemetry.PartialBuildTelemetry.ServerFallbackReason = exitResult.MSBuildClientExitType.ToString();
                 }
 
+                // Record a localized reason so the in-process fallback build's log (and any binary log)
+                // explains why MSBuild Server was requested but not used, plus a stable, non-localized
+                // reasonCode so tooling can branch on the cause without parsing localized text.
+                string detail = GetServerFallbackDetail(exitResult);
+                MSBuildApp.s_serverNotUsedReason = detail;
+                MSBuildApp.s_serverNotUsedReasonCode = GetServerFallbackReasonCode(exitResult);
+
                 // Surface a single user-visible message on stderr when the failure is something
                 // other than the well-understood "another client is racing us for the launch
                 // mutex" case. Without this the user sees no indication that MSBuild Server was
@@ -86,7 +93,6 @@ namespace Microsoft.Build.CommandLine
                 // the process (the DOTNET_CLI_USE_MSBUILD_SERVER=true regression in 10.0.300).
                 if (exitResult.MSBuildClientExitType != MSBuildClientExitType.ServerBusy)
                 {
-                    string detail = GetServerFallbackDetail(exitResult);
                     Console.Error.WriteLine(ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerUnavailable", detail));
                 }
 
@@ -106,15 +112,17 @@ namespace Microsoft.Build.CommandLine
         }
 
         /// <summary>
-        /// Picks the most specific localized "why MSBuild server was unavailable" sub-message for
-        /// the user-visible fallback notice. Prefers the "server crashed immediately on launch"
-        /// detail over a generic connect-failure message when the launched server's exit code is
-        /// known.
+        /// Picks the most specific localized "why MSBuild server was not used" sub-message for the
+        /// user-visible fallback notice and the build-log reason. Prefers the "server crashed immediately
+        /// on launch" detail over a generic connect-failure message when the launched server's exit code is
+        /// known, and distinguishes a busy server from an unavailable one.
         /// </summary>
         private static string GetServerFallbackDetail(MSBuildClientExitResult exitResult)
         {
             return exitResult.MSBuildClientExitType switch
             {
+                MSBuildClientExitType.ServerBusy =>
+                    ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerBusy"),
                 MSBuildClientExitType.LaunchError =>
                     ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerLaunchError"),
                 MSBuildClientExitType.UnknownServerState =>
@@ -127,6 +135,23 @@ namespace Microsoft.Build.CommandLine
                 // value the caller forwards here. Wording is deliberately neutral about whether the
                 // underlying failure was a timeout or a non-timeout connect error.
                 _ => ResourceUtilities.FormatResourceStringStripCodeAndKeyword("MSBuildServerConnectFailed"),
+            };
+        }
+
+        /// <summary>
+        /// Stable, non-localized companion to <see cref="GetServerFallbackDetail"/> identifying the fall-back
+        /// cause, surfaced as the "reasonCode" extended-metadata value on the server lifecycle message.
+        /// </summary>
+        private static string GetServerFallbackReasonCode(MSBuildClientExitResult exitResult)
+        {
+            return exitResult.MSBuildClientExitType switch
+            {
+                MSBuildClientExitType.ServerBusy => MSBuildApp.ServerNotUsedReasonCodeServerBusy,
+                MSBuildClientExitType.LaunchError => MSBuildApp.ServerNotUsedReasonCodeServerCrashed,
+                MSBuildClientExitType.UnknownServerState => MSBuildApp.ServerNotUsedReasonCodeServerStateUnknown,
+                MSBuildClientExitType.UnableToConnect when exitResult.ServerProcessExitCode is not null =>
+                    MSBuildApp.ServerNotUsedReasonCodeServerCrashed,
+                _ => MSBuildApp.ServerNotUsedReasonCodeServerUnreachable,
             };
         }
     }

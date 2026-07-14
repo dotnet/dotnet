@@ -17,12 +17,12 @@ internal sealed class MSBuildForwardingAppWithoutLogging
     private static readonly bool AlwaysExecuteMSBuildOutOfProc = Env.GetEnvironmentVariableAsBool("DOTNET_CLI_RUN_MSBUILD_OUTOFPROC");
 
     /// <summary>
-    /// An override flag that determines whether to use the MSBuild server - a persistent central node that can serve
+    /// Determines whether the SDK defaults the MSBuild server on - a persistent central node that can serve
     /// as a place to cache data and prevent re-doing CoreCLR startup/JITting for small builds.
-    /// By default, the MSBuild server is disabled due to stability/correctness concerns with some 1P tasks that keep static state around,
-    /// but it can be used by users that are confident they will not encounter those issues.
+    /// The server is now defaulted on; set <c>DOTNET_CLI_USE_MSBUILD_SERVER=false</c> to opt out of the
+    /// default-on behavior, or set <c>MSBUILDUSESERVER</c> explicitly (which always takes precedence).
     /// </summary>
-    private static readonly bool UseMSBuildServer = Env.GetEnvironmentVariableAsBool("DOTNET_CLI_USE_MSBUILD_SERVER", false);
+    private static readonly bool UseMSBuildServer = Env.GetEnvironmentVariableAsBool("DOTNET_CLI_USE_MSBUILD_SERVER", true);
 
     /// <summary>
     /// What the SDK's opinion is on the default terminal logger. The SDK defaults to '<c>auto</c>' which will use the terminal logger if the output is going to a terminal, otherwise it will use the console logger.
@@ -98,9 +98,10 @@ internal sealed class MSBuildForwardingAppWithoutLogging
 
         MSBuildPath = msbuildPath ?? defaultMSBuildPath;
 
-        // Only force MSBUILDUSESERVER on when DOTNET_CLI_USE_MSBUILD_SERVER opts in; otherwise leave
-        // any user-provided MSBUILDUSESERVER value untouched so it can toggle the server on its own.
-        if (UseMSBuildServer)
+        // Default the MSBuild server ON: pass MSBUILDUSESERVER=1 when the user hasn't explicitly set it.
+        // An explicit MSBUILDUSESERVER value (e.g. "0") is respected and left untouched, and
+        // DOTNET_CLI_USE_MSBUILD_SERVER=false opts out of the default-on behavior entirely.
+        if (UseMSBuildServer && Environment.GetEnvironmentVariable("MSBUILDUSESERVER") is null)
         {
             EnvironmentVariable("MSBUILDUSESERVER", "1");
         }
