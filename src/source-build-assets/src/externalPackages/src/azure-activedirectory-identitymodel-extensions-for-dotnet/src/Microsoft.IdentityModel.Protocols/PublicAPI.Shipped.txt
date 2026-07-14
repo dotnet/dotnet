@@ -1,0 +1,113 @@
+const Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.ResponseContent = "response_content" -> string
+const Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.StatusCode = "status_code" -> string
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.AuthenticationProtocolMessage() -> void
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.IssuerAddress.get -> string
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.IssuerAddress.set -> void
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.Parameters.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.PostTitle.get -> string
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.PostTitle.set -> void
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.Script.get -> string
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.Script.set -> void
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.ScriptButtonText.get -> string
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.ScriptButtonText.set -> void
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.ScriptDisabledText.get -> string
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.ScriptDisabledText.set -> void
+Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.SetParameter(string parameter, string value) -> void
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>.Configuration.get -> T
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>.ConfigurationEventHandlerResult(T configuration, System.DateTimeOffset retrievalTime) -> void
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>.RetrievalTime.get -> System.DateTimeOffset
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationRetrievalContext
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationRetrievalContext.BypassCache.get -> bool
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationRetrievalContext.BypassCache.set -> void
+Microsoft.IdentityModel.Protocols.Configuration.ConfigurationRetrievalContext.ConfigurationRetrievalContext() -> void
+Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandler<T>
+Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandler<T>.AfterUpdateAsync(string metadataAddress, T configuration, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task
+Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandler<T>.BeforeRetrieveAsync(string metadataAddress, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>>
+Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandlerContextAware<T>
+Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandlerContextAware<T>.AfterUpdateAsync(string metadataAddress, T configuration, Microsoft.IdentityModel.Protocols.Configuration.ConfigurationRetrievalContext context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task
+Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandlerContextAware<T>.BeforeRetrieveAsync(string metadataAddress, Microsoft.IdentityModel.Protocols.Configuration.ConfigurationRetrievalContext context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>>
+Microsoft.IdentityModel.Protocols.Configuration.InvalidConfigurationException
+Microsoft.IdentityModel.Protocols.Configuration.InvalidConfigurationException.InvalidConfigurationException() -> void
+Microsoft.IdentityModel.Protocols.Configuration.InvalidConfigurationException.InvalidConfigurationException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.Configuration.InvalidConfigurationException.InvalidConfigurationException(string message) -> void
+Microsoft.IdentityModel.Protocols.Configuration.InvalidConfigurationException.InvalidConfigurationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.Configuration.LastKnownGoodConfigurationCacheOptions
+Microsoft.IdentityModel.Protocols.Configuration.LastKnownGoodConfigurationCacheOptions.LastKnownGoodConfigurationCacheOptions() -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationEventHandler.get -> Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandler<T>
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationEventHandler.set -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever, Microsoft.IdentityModel.Protocols.IDocumentRetriever docRetriever, Microsoft.IdentityModel.Protocols.Configuration.LastKnownGoodConfigurationCacheOptions lkgCacheOptions) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever, Microsoft.IdentityModel.Protocols.IDocumentRetriever docRetriever, Microsoft.IdentityModel.Protocols.IConfigurationValidator<T> configValidator, Microsoft.IdentityModel.Protocols.Configuration.LastKnownGoodConfigurationCacheOptions lkgCacheOptions, Microsoft.IdentityModel.Protocols.Configuration.IConfigurationEventHandler<T> configurationEventHandler) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever, Microsoft.IdentityModel.Protocols.IDocumentRetriever docRetriever, Microsoft.IdentityModel.Protocols.IConfigurationValidator<T> configValidator, Microsoft.IdentityModel.Protocols.Configuration.LastKnownGoodConfigurationCacheOptions lkgCacheOptions) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever, Microsoft.IdentityModel.Protocols.IDocumentRetriever docRetriever, Microsoft.IdentityModel.Protocols.IConfigurationValidator<T> configValidator) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever, Microsoft.IdentityModel.Protocols.IDocumentRetriever docRetriever) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever, System.Net.Http.HttpClient httpClient) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.ConfigurationManager(string metadataAddress, Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T> configRetriever) -> void
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.GetConfigurationAsync() -> System.Threading.Tasks.Task<T>
+Microsoft.IdentityModel.Protocols.ConfigurationValidationResult
+Microsoft.IdentityModel.Protocols.ConfigurationValidationResult.ConfigurationValidationResult() -> void
+Microsoft.IdentityModel.Protocols.ConfigurationValidationResult.ErrorMessage.get -> string
+Microsoft.IdentityModel.Protocols.ConfigurationValidationResult.ErrorMessage.set -> void
+Microsoft.IdentityModel.Protocols.ConfigurationValidationResult.Succeeded.get -> bool
+Microsoft.IdentityModel.Protocols.ConfigurationValidationResult.Succeeded.set -> void
+Microsoft.IdentityModel.Protocols.FileDocumentRetriever
+Microsoft.IdentityModel.Protocols.FileDocumentRetriever.FileDocumentRetriever() -> void
+Microsoft.IdentityModel.Protocols.FileDocumentRetriever.GetDocumentAsync(string address, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<string>
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.GetDocumentAsync(string address, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<string>
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.HttpDocumentRetriever() -> void
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.HttpDocumentRetriever(System.Net.Http.HttpClient httpClient) -> void
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.HttpVersion.get -> System.Version
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.HttpVersion.set -> void
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.RequireHttps.get -> bool
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.RequireHttps.set -> void
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.SendAdditionalHeaderData.get -> bool
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.SendAdditionalHeaderData.set -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData
+Microsoft.IdentityModel.Protocols.HttpRequestData.AppendHeaders(System.Net.Http.Headers.HttpHeaders headers) -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData.Body.get -> byte[]
+Microsoft.IdentityModel.Protocols.HttpRequestData.Body.set -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData.ClientCertificates.get -> System.Security.Cryptography.X509Certificates.X509Certificate2Collection
+Microsoft.IdentityModel.Protocols.HttpRequestData.Headers.get -> System.Collections.Generic.IDictionary<string, System.Collections.Generic.IEnumerable<string>>
+Microsoft.IdentityModel.Protocols.HttpRequestData.Headers.set -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData.HttpRequestData() -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData.Method.get -> string
+Microsoft.IdentityModel.Protocols.HttpRequestData.Method.set -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData.PropertyBag.get -> System.Collections.Generic.IDictionary<string, object>
+Microsoft.IdentityModel.Protocols.HttpRequestData.PropertyBag.set -> void
+Microsoft.IdentityModel.Protocols.HttpRequestData.Uri.get -> System.Uri
+Microsoft.IdentityModel.Protocols.HttpRequestData.Uri.set -> void
+Microsoft.IdentityModel.Protocols.IConfigurationManager<T>
+Microsoft.IdentityModel.Protocols.IConfigurationManager<T>.GetConfigurationAsync(System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<T>
+Microsoft.IdentityModel.Protocols.IConfigurationManager<T>.RequestRefresh() -> void
+Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T>
+Microsoft.IdentityModel.Protocols.IConfigurationRetriever<T>.GetConfigurationAsync(string address, Microsoft.IdentityModel.Protocols.IDocumentRetriever retriever, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<T>
+Microsoft.IdentityModel.Protocols.IConfigurationValidator<T>
+Microsoft.IdentityModel.Protocols.IConfigurationValidator<T>.Validate(T configuration) -> Microsoft.IdentityModel.Protocols.ConfigurationValidationResult
+Microsoft.IdentityModel.Protocols.IDocumentRetriever
+Microsoft.IdentityModel.Protocols.IDocumentRetriever.GetDocumentAsync(string address, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<string>
+Microsoft.IdentityModel.Protocols.StaticConfigurationManager<T>
+Microsoft.IdentityModel.Protocols.StaticConfigurationManager<T>.GetConfigurationAsync(System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<T>
+Microsoft.IdentityModel.Protocols.StaticConfigurationManager<T>.StaticConfigurationManager(T configuration) -> void
+Microsoft.IdentityModel.Protocols.X509CertificateValidationMode
+Microsoft.IdentityModel.Protocols.X509CertificateValidationMode.X509CertificateValidationMode() -> void
+override Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.GetBaseConfigurationAsync(System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.BaseConfiguration>
+override Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.RequestRefresh() -> void
+override Microsoft.IdentityModel.Protocols.StaticConfigurationManager<T>.GetBaseConfigurationAsync(System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.BaseConfiguration>
+override Microsoft.IdentityModel.Protocols.StaticConfigurationManager<T>.RequestRefresh() -> void
+static Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.DefaultSendAdditionalHeaderData.get -> bool
+static Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.DefaultSendAdditionalHeaderData.set -> void
+static readonly Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>.NoResult -> Microsoft.IdentityModel.Protocols.Configuration.ConfigurationEventHandlerResult<T>
+static readonly Microsoft.IdentityModel.Protocols.Configuration.LastKnownGoodConfigurationCacheOptions.DefaultLastKnownGoodConfigurationSizeLimit -> int
+static readonly Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.DefaultAutomaticRefreshInterval -> System.TimeSpan
+static readonly Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.DefaultRefreshInterval -> System.TimeSpan
+static readonly Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.MinimumAutomaticRefreshInterval -> System.TimeSpan
+static readonly Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.MinimumRefreshInterval -> System.TimeSpan
+virtual Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.BuildFormPost() -> string
+virtual Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.BuildRedirectUrl() -> string
+virtual Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.GetParameter(string parameter) -> string
+virtual Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.RemoveParameter(string parameter) -> void
+virtual Microsoft.IdentityModel.Protocols.AuthenticationProtocolMessage.SetParameters(System.Collections.Specialized.NameValueCollection nameValueCollection) -> void
+virtual Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.GetConfigurationAsync(System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<T>

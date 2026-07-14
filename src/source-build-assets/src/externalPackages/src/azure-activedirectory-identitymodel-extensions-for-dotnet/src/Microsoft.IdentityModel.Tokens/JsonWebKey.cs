@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading;
 using Microsoft.IdentityModel.Abstractions;
@@ -319,6 +320,26 @@ namespace Microsoft.IdentityModel.Tokens
         public string Y { get; set; }
 
         /// <summary>
+        /// Gets or sets the 'pub' (AKP public key).
+        /// </summary>
+        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.Pub)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
+        public string Pub { get; set; }
+
+        /// <summary>
+        /// Gets or sets the 'priv' (AKP private key / seed).
+        /// </summary>
+        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+        [JsonPropertyName(JsonWebKeyParameterNames.Priv)]
+#if NET6_0_OR_GREATER
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+#endif
+        public string Priv { get; set; }
+
+        /// <summary>
         /// Gets the key size of <see cref="JsonWebKey"/>.
         /// </summary>
         [JsonIgnore]
@@ -332,6 +353,8 @@ namespace Microsoft.IdentityModel.Tokens
                     return Base64UrlEncoder.DecodeBytes(X).Length * 8;
                 else if (Kty == JsonWebAlgorithmsKeyTypes.Octet && !string.IsNullOrEmpty(K))
                     return Base64UrlEncoder.DecodeBytes(K).Length * 8;
+                else if (Kty == JsonWebAlgorithmsKeyTypes.Akp && !string.IsNullOrEmpty(Pub))
+                    return Base64UrlEncoder.DecodeBytes(Pub).Length * 8;
                 else
                     return 0;
             }
@@ -350,6 +373,8 @@ namespace Microsoft.IdentityModel.Tokens
                     return D != null && DP != null && DQ != null && P != null && Q != null && QI != null;
                 else if (Kty == JsonWebAlgorithmsKeyTypes.EllipticCurve)
                     return D != null;
+                else if (Kty == JsonWebAlgorithmsKeyTypes.Akp)
+                    return !string.IsNullOrEmpty(Priv);
                 else
                     return false;
             }
@@ -392,6 +417,8 @@ namespace Microsoft.IdentityModel.Tokens
                 return CanComputeRsaThumbprint();
             else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Octet))
                 return CanComputeOctThumbprint();
+            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Akp))
+                return CanComputeAkpThumbprint();
             else
                 return false;
         }
@@ -411,8 +438,10 @@ namespace Microsoft.IdentityModel.Tokens
                 return ComputeRsaThumbprint();
             else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Octet))
                 return ComputeOctThumbprint();
+            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Akp))
+                return ComputeAkpThumbprint();
             else
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10706, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA, JsonWebAlgorithmsKeyTypes.Octet)), LogHelper.MarkAsNonPII(nameof(Kty)))));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10706, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA, JsonWebAlgorithmsKeyTypes.Octet, JsonWebAlgorithmsKeyTypes.Akp)), LogHelper.MarkAsNonPII(nameof(Kty)))));
         }
 
         private bool CanComputeOctThumbprint()
@@ -466,8 +495,72 @@ namespace Microsoft.IdentityModel.Tokens
             return Utility.GenerateSha256Hash(canonicalJwk);
         }
 
+        private bool CanComputeAkpThumbprint()
+        {
+            return !string.IsNullOrEmpty(Alg) && !string.IsNullOrEmpty(Pub);
+        }
+
+        private byte[] ComputeAkpThumbprint()
+        {
+            if (string.IsNullOrEmpty(Alg))
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10705, LogHelper.MarkAsNonPII(nameof(Alg)))));
+
+            if (string.IsNullOrEmpty(Pub))
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10705, LogHelper.MarkAsNonPII(nameof(Pub)))));
+
+            var canonicalJwk = $@"{{""{JsonWebKeyParameterNames.Alg}"":""{Alg}"",""{JsonWebKeyParameterNames.Kty}"":""{Kty}"",""{JsonWebKeyParameterNames.Pub}"":""{Pub}""}}";
+            return Utility.GenerateSha256Hash(canonicalJwk);
+        }
+
+        /// <summary>
+        /// Creates a minimal public JWK representation for DPoP proof headers per RFC 9449 and RFC 7638.
+        /// Only the required members for the key type are included (no alg, kid, or use).
+        /// </summary>
+        internal JsonObject RepresentAsAsymmetricPublicJwkForDpop()
+        {
+            if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.EllipticCurve))
+            {
+                if (string.IsNullOrEmpty(Crv))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Crv)))));
+
+                if (string.IsNullOrEmpty(X))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(X)))));
+
+                if (string.IsNullOrEmpty(Y))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Y)))));
+
+                return new JsonObject
+                {
+                    [JsonWebKeyParameterNames.Crv] = Crv,
+                    [JsonWebKeyParameterNames.Kty] = Kty,
+                    [JsonWebKeyParameterNames.X] = X,
+                    [JsonWebKeyParameterNames.Y] = Y,
+                };
+            }
+            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.RSA))
+            {
+                if (string.IsNullOrEmpty(E))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(E)))));
+
+                if (string.IsNullOrEmpty(N))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(N)))));
+
+
+                return new JsonObject
+                {
+                    [JsonWebKeyParameterNames.E] = E,
+                    [JsonWebKeyParameterNames.Kty] = Kty,
+                    [JsonWebKeyParameterNames.N] = N,
+                };
+            }
+            else
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10707, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA)), LogHelper.MarkAsNonPII(nameof(Kty)))));
+
+        }
+
         /// <summary>
         /// Creates a JsonWebKey representation of an asymmetric public key.
+        /// For AKP keys, the 'alg' parameter is included as it is required by the key type specification.
         /// </summary>
         /// <returns>JsonWebKey representation of an asymmetric public key.</returns>
         /// <remarks>https://datatracker.ietf.org/doc/html/rfc7800#section-3.2</remarks>
@@ -486,7 +579,7 @@ namespace Microsoft.IdentityModel.Tokens
                 if (string.IsNullOrEmpty(Y))
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Y)))));
 
-                return  $@"{kid}" +
+                return $@"{kid}" +
                         $@"""{JsonWebKeyParameterNames.Crv}"":""{Crv}""," +
                         $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
                         $@"""{JsonWebKeyParameterNames.X}"":""{X}""," +
@@ -500,13 +593,26 @@ namespace Microsoft.IdentityModel.Tokens
                 if (string.IsNullOrEmpty(N))
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10709, LogHelper.MarkAsNonPII(nameof(N)))));
 
-                return  $@"{kid}" +
+                return $@"{kid}" +
                         $@"""{JsonWebKeyParameterNames.E}"":""{E}""," +
                         $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
                         $@"""{JsonWebKeyParameterNames.N}"":""{N}""}}";
             }
+            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Akp))
+            {
+                if (string.IsNullOrEmpty(Alg))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Alg)))));
+
+                if (string.IsNullOrEmpty(Pub))
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Pub)))));
+
+                return $@"{kid}" +
+                        $@"""{JsonWebKeyParameterNames.Alg}"":""{Alg}""," +
+                        $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
+                        $@"""{JsonWebKeyParameterNames.Pub}"":""{Pub}""}}";
+            }
             else
-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10707, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA)), LogHelper.MarkAsNonPII(nameof(Kty)))));
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10707, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA, JsonWebAlgorithmsKeyTypes.Akp)), LogHelper.MarkAsNonPII(nameof(Kty)))));
 
         }
 

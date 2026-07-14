@@ -8,7 +8,7 @@ namespace Microsoft.IdentityModel.Xml
     /// </summary>
     public static class WsUtility
     {
-        #pragma warning disable 1591
+#pragma warning disable 1591
 
         public const string Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
         public const string PreferredPrefix = "wsu";
@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Xml
             public const string Expires = "Expires";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+

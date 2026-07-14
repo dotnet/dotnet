@@ -1,0 +1,19 @@
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20000 = "IDX20000: The parameter '{0}' cannot be a 'null' or an empty object." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20108 = "IDX20108: The address specified '{0}' is not valid as per HTTPS scheme. Please specify an https address for security reasons. If you want to test with http address, set the RequireHttps property  on IDocumentRetriever to false." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20803 = "IDX20803: Unable to obtain configuration from: '{0}'. Will retry at '{1}'. Exception: '{2}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20804 = "IDX20804: Unable to retrieve document from: '{0}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20805 = "IDX20805: Obtaining information from metadata endpoint: '{0}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20806 = "IDX20806: Unable to obtain an updated configuration from: '{0}'. Returning the current configuration. Exception: '{1}." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20807 = "IDX20807: Unable to retrieve document from: '{0}'. HttpResponseMessage: '{1}', HttpResponseMessage.Content: '{2}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20808 = "IDX20808: Network error occurred. Status code: '{0}'. \nResponse content: '{1}'. \nAttempting to retrieve document again from: '{2}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20809 = "IDX20809: Unable to retrieve document from: '{0}'. Status code: '{1}'. \nResponse content: '{2}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20810 = "IDX20810: Configuration validation failed, see inner exception for more details. Exception: '{0}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20811 = "IDX20811: Failed to retrieve configuration from event handler. MetadataAddress: '{0}', Exception: '{1}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20812 = "IDX20812: Failed to validate configuration retrieved via event handler. Exception: '{0}'." -> string
+const Microsoft.IdentityModel.Protocols.LogMessages.IDX20813 = "IDX20813: ConfigurationEventHandler implementation threw an exception on AfterUpdateAsync call for metadata address '{0}'. Exception: '{1}'." -> string
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>._onBackgroundTaskFinish -> System.Action
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.TelemetryClient -> Microsoft.IdentityModel.Telemetry.ITelemetryClient
+Microsoft.IdentityModel.Protocols.ConfigurationManager<T>.TimeProvider -> System.TimeProvider
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.AdditionalHeaderData.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.AdditionalHeaderData.set -> void
+Microsoft.IdentityModel.Protocols.LogMessages

@@ -1,0 +1,9 @@
+static Microsoft.IdentityModel.Dpop.DpopProofValidator.ComputeAccessTokenHash(string accessToken) -> string
+static Microsoft.IdentityModel.Dpop.DpopProofValidator.ComputeJwkThumbprint(Microsoft.IdentityModel.Tokens.JsonWebKey jwk) -> string
+static Microsoft.IdentityModel.Dpop.DpopProofValidator.ContainsPrivateKeyMaterial(Microsoft.IdentityModel.Tokens.JsonWebKey jwk) -> bool
+static Microsoft.IdentityModel.Dpop.DpopProofValidator.TryConvertToAsymmetricKeyFromBareParameters(Microsoft.IdentityModel.Tokens.JsonWebKey jwk, out Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
+Microsoft.IdentityModel.Dpop.UriComparer
+static Microsoft.IdentityModel.Dpop.UriComparer.AreEquivalent(System.Uri uri, string uriToCompareTo) -> bool
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPProofValidator.ComputeAccessTokenHash(string accessToken) -> string
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPProofValidator.ComputeJwkThumbprint(Microsoft.IdentityModel.Tokens.JsonWebKey jwk) -> string
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPProofValidator.ContainsPrivateKeyMaterial(Microsoft.IdentityModel.Tokens.JsonWebKey jwk) -> bool

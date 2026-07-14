@@ -20,7 +20,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             Assert.Throws<ArgumentNullException>(() => JwtSecurityTokenConverter.Convert(null));
         }
 
-        [Theory, MemberData(nameof(ConverterTheoryData))]
+        [Theory, MemberData(nameof(ConverterTheoryData), DisableDiscoveryEnumeration = true)]
         public void JsonWebTokenToJwtSecurityTokenConversions(JwtSecurityTokenConverterTheoryData theoryData)
         {
             var output = JwtSecurityTokenConverter.Convert(theoryData.InputToken);
@@ -87,7 +87,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                             Assert.True(token.Header.ContainsKey(header.Type));
                             var otherHeader = token.Header[header.Type];
                             Assert.Equal(header.Value, otherHeader);
-	                    }
+                        }
 
                         foreach (var header in jweToken.InnerToken.Header.Claims((string)Default.PayloadDictionary[JwtRegisteredClaimNames.Iss]))
                         {

@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class RsaCryptoServiceProviderProxyTests
     {
-        [Theory, MemberData(nameof(RSADecryptTheoryData))]
+        [Theory, MemberData(nameof(RSADecryptTheoryData), DisableDiscoveryEnumeration = true)]
         public void RSADecrypt(RSACryptoServiceProviderProxyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RSADecrypt", theoryData);
@@ -36,7 +36,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(RSADecryptTheoryData))]
+        [Theory, MemberData(nameof(RSADecryptTheoryData), DisableDiscoveryEnumeration = true)]
         public void RSADecryptValue(RSACryptoServiceProviderProxyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RSADecryptValue", theoryData);
@@ -84,7 +84,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(RSAEncryptDecryptTheoryData))]
+        [Theory, MemberData(nameof(RSAEncryptDecryptTheoryData), DisableDiscoveryEnumeration = true)]
         public void RSAEncryptDecrypt(RSACryptoServiceProviderProxyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RSAEncryptDecrypt", theoryData);
@@ -158,7 +158,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(RSAEncryptDecryptValueTheoryData))]
+        [Theory, MemberData(nameof(RSAEncryptDecryptValueTheoryData), DisableDiscoveryEnumeration = true)]
         public void RSAEncryptDecryptValue(RSACryptoServiceProviderProxyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RSAEncryptDecryptValue", theoryData);
@@ -224,7 +224,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(RSASignVerifyDataTheoryData))]
+        [Theory, MemberData(nameof(RSASignVerifyDataTheoryData), DisableDiscoveryEnumeration = true)]
         public void RSASignVerifyData(RSACryptoServiceProviderProxyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RSASignVerifyData", theoryData);
@@ -304,7 +304,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(RSAVerifyDataTheoryData))]
+        [Theory, MemberData(nameof(RSAVerifyDataTheoryData), DisableDiscoveryEnumeration = true)]
         public void RSAVerifyData(RSACryptoServiceProviderProxyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RSAVerifyData", theoryData);

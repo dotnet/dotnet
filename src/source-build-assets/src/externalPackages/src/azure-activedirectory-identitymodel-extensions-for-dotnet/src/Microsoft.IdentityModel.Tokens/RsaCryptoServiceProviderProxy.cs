@@ -25,8 +25,8 @@ namespace Microsoft.IdentityModel.Tokens
         private const int PROV_RSA_FULL = 1;
         private const int PROV_RSA_SCHANNEL = 12;
 
-        private bool _disposed = false;
-        private bool _disposeRsa = false;
+        private bool _disposed;
+        private bool _disposeRsa;
 
         // Only dispose of the RsaCryptoServiceProvider object if we created a new instance that supports SHA-256,
         // otherwise do not disposed of the referenced RsaCryptoServiceProvider
@@ -176,7 +176,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (input == null || input.Length == 0)
                 throw LogHelper.LogArgumentNullException(nameof(input));
 
-            _  = hash ?? throw LogHelper.LogArgumentNullException(nameof(hash));
+            _ = hash ?? throw LogHelper.LogArgumentNullException(nameof(hash));
 
             return _rsa.SignData(input, offset, length, hash);
         }

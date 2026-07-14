@@ -30,7 +30,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
         {
             ValidateTsClaim(jwtSignedHttpRequest, signedHttpRequestValidationContext);
         }
-    
+
         public void ValidateMClaimPublic(JsonWebToken jwtSignedHttpRequest, SignedHttpRequestValidationContext signedHttpRequestValidationContext)
         {
             ValidateMClaim(jwtSignedHttpRequest, signedHttpRequestValidationContext);
@@ -45,12 +45,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
         {
             ValidatePClaim(jwtSignedHttpRequest, signedHttpRequestValidationContext);
         }
-  
+
         public void ValidateQClaimPublic(JsonWebToken jwtSignedHttpRequest, SignedHttpRequestValidationContext signedHttpRequestValidationContext)
         {
             ValidateQClaim(jwtSignedHttpRequest, signedHttpRequestValidationContext);
         }
-       
+
         public void ValidateHClaimPublic(JsonWebToken jwtSignedHttpRequest, SignedHttpRequestValidationContext signedHttpRequestValidationContext)
         {
             ValidateHClaim(jwtSignedHttpRequest, signedHttpRequestValidationContext);
@@ -85,7 +85,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
         {
             return await ResolvePopKeyFromJweAsync(jwe, signedHttpRequestValidationContext, cancellationToken).ConfigureAwait(false);
         }
-      
+
         internal async Task<SecurityKey> ResolvePopKeyFromJkuPublicAsync(string jkuSetUrl, Cnf cnf, JsonWebToken signedHttpRequest, JsonWebToken validatedAccessToken, SignedHttpRequestValidationContext signedHttpRequestValidationContext, CancellationToken cancellationToken)
         {
             return await ResolvePopKeyFromJkuAsync(jkuSetUrl, cnf, signedHttpRequestValidationContext, cancellationToken).ConfigureAwait(false);
@@ -254,7 +254,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 return null;
             }
 
-            return base.ResolvePopKeyFromJwk(jwk, signedHttpRequestValidationContext);  
+            return base.ResolvePopKeyFromJwk(jwk, signedHttpRequestValidationContext);
         }
 
         internal override async Task<SecurityKey> ResolvePopKeyFromJweAsync(string jwe, SignedHttpRequestValidationContext signedHttpRequestValidationContext, CancellationToken cancellationToken)

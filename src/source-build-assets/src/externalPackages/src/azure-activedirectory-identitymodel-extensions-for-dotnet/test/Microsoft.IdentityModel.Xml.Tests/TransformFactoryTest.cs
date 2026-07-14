@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
 {
     public class TransformFactoryTest
     {
-        [Theory, MemberData(nameof(GetTransformTestTheoryData))]
+        [Theory, MemberData(nameof(GetTransformTestTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetTransformTest(TransformTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.GetTransformTest", theoryData);
@@ -48,7 +48,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             };
         }
 
-        [Theory, MemberData(nameof(GetCanonicalizingTransformTestTheoryData))]
+        [Theory, MemberData(nameof(GetCanonicalizingTransformTestTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetCanonicalizingTransformTest(TransformTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.GetCanonicalizingTransformTest", theoryData);

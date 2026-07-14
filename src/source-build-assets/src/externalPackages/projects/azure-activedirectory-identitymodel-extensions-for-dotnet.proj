@@ -17,6 +17,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false /p:IsTrimmable=false</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>

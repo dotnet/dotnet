@@ -12,6 +12,10 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Json;
 
+#if NET9_0_OR_GREATER
+using System.Threading;
+#endif
+
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
     /// <summary>
@@ -21,14 +25,17 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     internal class JsonClaimSet
     {
         internal const string ClassName = "Microsoft.IdentityModel.JsonWebTokens.JsonClaimSet";
-
+#if NET9_0_OR_GREATER
+        internal Lock _claimsLock = new();
+#else
         internal object _claimsLock = new();
+#endif
         internal readonly Dictionary<string, object> _jsonClaims;
         private List<Claim> _claims;
 
         internal JsonClaimSet()
         {
-            _jsonClaims = new Dictionary<string, object>();
+            _jsonClaims = [];
         }
 
         internal JsonClaimSet(Dictionary<string, object> jsonClaims)
@@ -74,16 +81,16 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             else if (value is double d)
                 claims.Add(new Claim(claimType, d.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer));
             else if (value is DateTime dt)
-                claims.Add(new Claim(claimType, dt.ToString("o",CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
+                claims.Add(new Claim(claimType, dt.ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
             else if (value is float f)
                 claims.Add(new Claim(claimType, f.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer));
             else if (value is decimal m)
                 claims.Add(new Claim(claimType, m.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer));
             else if (value is null)
                 claims.Add(new Claim(claimType, string.Empty, JsonClaimValueTypes.JsonNull, issuer, issuer));
-            else if (value is IList ilist)
+            else if (value is IList iList)
             {
-                foreach (var item in ilist)
+                foreach (var item in iList)
                     CreateClaimFromObject(claims, claimType, item, issuer);
             }
             else if (value is JsonElement j)
@@ -102,6 +109,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                     if (claim != null)
                         claims.Add(claim);
                 }
+            else
+            {
+                claims.Add(new Claim(claimType, value.ToString(), ClaimValueTypes.String, issuer, issuer));
+            }
         }
 
         internal static Claim CreateClaimFromJsonElement(string claimType, string issuer, JsonElement jsonElement)
@@ -320,7 +331,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             else if (typeof(T) == typeof(Collection<object>))
                 return (T)(object)new Collection<object> { obj };
 
-            else if(typeof(T).IsEnum)
+            else if (typeof(T).IsEnum)
             {
                 return (T)Enum.Parse(typeof(T), obj.ToString(), ignoreCase: true);
             }
@@ -342,7 +353,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 if (objType == typeof(long))
                     return (T)(object)new long[] { (long)obj };
 
-                if(objType == typeof(int))
+                if (objType == typeof(int))
                     return (T)(object)new long[] { (int)obj };
 
                 if (long.TryParse(obj.ToString(), out long value))
@@ -350,7 +361,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             }
             else if (typeof(T) == typeof(double))
             {
-                if(double.TryParse(obj.ToString(), out double value))
+                if (double.TryParse(obj.ToString(), out double value))
                     return (T)(object)value;
             }
             else if (typeof(T) == typeof(uint))
