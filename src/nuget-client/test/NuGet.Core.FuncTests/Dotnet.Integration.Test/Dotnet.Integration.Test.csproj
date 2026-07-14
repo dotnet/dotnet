@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks Condition="'$(DotNetBuildSourceOnly)' == 'true' Or '$(DotNetBuildFromVMR)' == 'true'">$(LatestNETCoreTargetFramework)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(DotNetBuildSourceOnly)' != 'true' And '$(DotNetBuildFromVMR)' != 'true'">$(LatestNETCoreTargetFramework);sdkNext</TargetFrameworks>
+    <TargetFrameworks Condition="'$(DotNetBuildSourceOnly)' == 'true' Or '$(DotNetBuildFromVMR)' == 'true' or '$(IsEscrowMode)' == 'true'">$(LatestNETCoreTargetFramework)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(DotNetBuildSourceOnly)' != 'true' And '$(DotNetBuildFromVMR)' != 'true' And '$(IsEscrowMode)' != 'true'">$(LatestNETCoreTargetFramework);sdkNext</TargetFrameworks>
     <Description>Integration tests for NuGet-powered dotnet CLI commands such as pack/restore/list package and dotnet nuget.</Description>
     <LatestNETCoreTargetFrameworkMajorVersion>$([System.Version]::Parse('$([MSBuild]::GetTargetFrameworkVersion('$(LatestNETCoreTargetFramework)', 2))').Major)</LatestNETCoreTargetFrameworkMajorVersion>
     <NextNETCoreTargetFrameworkMajorVersion>$([MSBuild]::Add($(LatestNETCoreTargetFrameworkMajorVersion), 1))</NextNETCoreTargetFrameworkMajorVersion>
