@@ -76,7 +76,7 @@ jobs:
           --branch '${{ parameters.vmrBranch }}'
           --remote-url '$(vmrPublicUrl)'
           --github-pat '$(BotAccount-dotnet-bot-repo-PAT)'
-          --verbose
+          --debug
         displayName: Push changes to dotnet/dotnet (public)
         workingDirectory: $(Agent.BuildDirectory)/installer
   
