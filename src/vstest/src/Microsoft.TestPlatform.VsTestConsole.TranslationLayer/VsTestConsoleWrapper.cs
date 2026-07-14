@@ -22,7 +22,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer;
-using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 
 using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
 using CoreUtilitiesConstants = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants;
@@ -186,92 +185,6 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             _requestSender.Close();
             throw new TransationLayerException("Error hosting communication channel");
         }
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public ITestSession? StartTestSession(
-        IList<string> sources,
-        string? runSettings,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        return StartTestSession(
-            sources,
-            runSettings,
-            options: null,
-            eventsHandler);
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public ITestSession? StartTestSession(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        return StartTestSession(
-            sources,
-            runSettings,
-            options,
-            eventsHandler,
-            testHostLauncher: null);
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public ITestSession? StartTestSession(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler,
-        ITestHostLauncher? testHostLauncher)
-    {
-        _testPlatformEventSource.TranslationLayerStartTestSessionStart();
-
-        EnsureInitialized();
-
-        var testSessionInfo = _requestSender.StartTestSession(
-            sources,
-            runSettings,
-            options,
-            eventsHandler,
-            testHostLauncher);
-
-        return (testSessionInfo != null)
-            ? new TestSession(
-                testSessionInfo,
-                eventsHandler,
-                this)
-            : null;
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public bool StopTestSession(
-        TestSessionInfo? testSessionInfo,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        return StopTestSession(
-            testSessionInfo,
-            options: null,
-            eventsHandler);
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public bool StopTestSession(
-        TestSessionInfo? testSessionInfo,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        _testPlatformEventSource.TranslationLayerStopTestSessionStart();
-
-        EnsureInitialized();
-        return _requestSender.StopTestSession(
-            testSessionInfo,
-            options,
-            eventsHandler);
     }
 
     /// <inheritdoc/>
@@ -699,92 +612,6 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
             _requestSender.Close();
             throw new TransationLayerException("Error hosting communication channel and connecting to console");
         }
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public async Task<ITestSession?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        return await StartTestSessionAsync(
-            sources,
-            runSettings,
-            options: null,
-            eventsHandler).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public async Task<ITestSession?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        return await StartTestSessionAsync(
-            sources,
-            runSettings,
-            options,
-            eventsHandler,
-            testHostLauncher: null).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public async Task<ITestSession?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler,
-        ITestHostLauncher? testHostLauncher)
-    {
-        _testPlatformEventSource.TranslationLayerStartTestSessionStart();
-
-        await EnsureInitializedAsync().ConfigureAwait(false);
-
-        var testSessionInfo = await _requestSender.StartTestSessionAsync(
-            sources,
-            runSettings,
-            options,
-            eventsHandler,
-            testHostLauncher).ConfigureAwait(false);
-
-        return testSessionInfo != null
-            ? new TestSession(
-                testSessionInfo,
-                eventsHandler,
-                this)
-            : null;
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public async Task<bool> StopTestSessionAsync(
-        TestSessionInfo? testSessionInfo,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        return await StopTestSessionAsync(
-            testSessionInfo,
-            options: null,
-            eventsHandler).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc/>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    public async Task<bool> StopTestSessionAsync(
-        TestSessionInfo? testSessionInfo,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler)
-    {
-        _testPlatformEventSource.TranslationLayerStopTestSessionStart();
-
-        await EnsureInitializedAsync().ConfigureAwait(false);
-        return await _requestSender.StopTestSessionAsync(
-            testSessionInfo,
-            options,
-            eventsHandler).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>

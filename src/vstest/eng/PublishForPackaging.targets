@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <!--
+    Publish-for-packaging infrastructure.
+
+    The src/package/* projects are self-contained "tool" packages: they ship a full runnable
+    tree (not a lib/) and take no NuGet dependencies. Historically each of them was assembled
+    by hand-listing hundreds of files gathered from mixed per-TFM output folders. Because the
+    files were re-gathered from a shared output folder, a shipped DLL and its binding-redirect
+    .config could come from different target frameworks (e.g. a .NET Framework-built assembly
+    next to a net8.0-generated testhost.dll.config) -> FileLoadException at runtime.
+
+    Instead, every bundled product publishes ITSELF exactly once. A product's own build emits
+    the DLLs together with the matching .config / binding redirects, so publishing it guarantees
+    a self-consistent set. The output lands in a canonical, per-(project, TFM) folder that the
+    tool packages then harvest via globs at pack time. A product is never published more than
+    once per build, even though several tool packages bundle it, because each inner (per-TFM)
+    build's Build target runs exactly once.
+
+    Opt a product in with:
+      <PropertyGroup>
+        <PublishForPackaging>true</PublishForPackaging>
+      </PropertyGroup>
+
+    Publishing only happens when the overall build is packing. Arcade sets __ImportPackTargets=true
+    on the solution build exactly when Pack=true (see arcade.sdk toolset/Build.proj), and that
+    property flows into the inner builds, so a plain inner-loop build (build.cmd without -pack)
+    does not pay for publish.
+  -->
+
+  <PropertyGroup Condition="'$(PublishForPackaging)' == 'true' and '$(TargetFramework)' != ''">
+    <!-- Canonical publish dir for THIS product+TFM. Consumers (tool packages) compute the same
+         path as $(TestPlatformPackagingPublishRoot)<ProjectName>\<TargetFramework>\. -->
+    <_PackagingPublishDir>$(TestPlatformPackagingPublishRoot)$(MSBuildProjectName)\$(TargetFramework)\</_PackagingPublishDir>
+  </PropertyGroup>
+
+  <!--
+    Publish the product into its canonical folder right after it builds. The publish is a nested
+    NoBuild publish so it reuses the freshly built outputs (it never recompiles) and cannot recurse
+    into this AfterBuild hook: with NoBuild=true the child does not run Build, so its own
+    AfterTargets="Build" hook never fires. The child also does not inherit __ImportPackTargets,
+    which independently disarms the gate below.
+  -->
+  <Target Name="_PublishForPackaging"
+          AfterTargets="Build"
+          Condition="'$(PublishForPackaging)' == 'true' and '$(TargetFramework)' != '' and '$(__ImportPackTargets)' == 'true'">
+    <Message Importance="high" Text="Publishing $(MSBuildProjectName) ($(TargetFramework)) for packaging into $(_PackagingPublishDir)" />
+    <RemoveDir Directories="$(_PackagingPublishDir)" />
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="Publish"
+             Properties="TargetFramework=$(TargetFramework);Configuration=$(Configuration);PublishDir=$(_PackagingPublishDir);NoBuild=true" />
+  </Target>
+
+</Project>

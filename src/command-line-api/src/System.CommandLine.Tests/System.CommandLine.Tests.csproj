@@ -10,6 +10,7 @@
   <ItemGroup>
     <Content Include="TestApps/**/*.csproj" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="TestApps/**/*.cs" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\System.CommandLine\build\System.CommandLine.targets" CopyToOutputDirectory="PreserveNewest" Link="TestApps\System.CommandLine.targets" />
   </ItemGroup>
 
   <ItemGroup>

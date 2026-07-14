@@ -20,7 +20,6 @@
     <File Path=".github/workflows/Component.BuildTest.yml" />
     <File Path=".github/workflows/core-version-update.yml" />
     <File Path=".github/workflows/dotnet-format.yml" />
-    <File Path=".github/workflows/integration.yml" />
     <File Path=".github/workflows/markdownlint.yml" />
     <File Path=".github/workflows/post-release.yml" />
     <File Path=".github/workflows/prepare-release.yml" />
@@ -137,7 +136,6 @@
   <Folder Name="/src/">
     <Project Path="src/OpenTelemetry.Exporter.Geneva/OpenTelemetry.Exporter.Geneva.csproj" />
     <Project Path="src/OpenTelemetry.Exporter.InfluxDB/OpenTelemetry.Exporter.InfluxDB.csproj" />
-    <Project Path="src/OpenTelemetry.Exporter.Instana/OpenTelemetry.Exporter.Instana.csproj" />
     <Project Path="src/OpenTelemetry.Exporter.OneCollector/OpenTelemetry.Exporter.OneCollector.csproj" />
     <Project Path="src/OpenTelemetry.Extensions.AWS/OpenTelemetry.Extensions.AWS.csproj" />
     <Project Path="src/OpenTelemetry.Extensions.Enrichment.AspNetCore/OpenTelemetry.Extensions.Enrichment.AspNetCore.csproj" />
@@ -207,6 +205,7 @@
     <File Path="src/Shared/RedactionHelper.cs" />
     <File Path="src/Shared/RequestDataHelper.cs" />
     <File Path="src/Shared/ResourceSemanticConventions.cs" />
+    <File Path="src/Shared/RpcSemanticConventionHelper.cs" />
     <File Path="src/Shared/SemanticConventions.cs" />
     <File Path="src/Shared/ServerCertificateValidationHandler.cs" />
     <File Path="src/Shared/ServerCertificateValidationProvider.cs" />
@@ -215,6 +214,7 @@
     <File Path="src/Shared/SqlParameterProcessor.cs" />
     <File Path="src/Shared/SqlProcessor.cs" />
     <File Path="src/Shared/SqlStatementInfo.cs" />
+    <File Path="src/Shared/StopwatchExtensions.cs" />
     <File Path="src/Shared/UriHelper.cs" />
   </Folder>
   <Folder Name="/src/Shared/AWS/">
@@ -223,6 +223,7 @@
     <File Path="src/Shared/AWS/AWSSemanticConventions.Legacy.cs" />
     <File Path="src/Shared/AWS/AWSSemanticConventions.v1.28.0.cs" />
     <File Path="src/Shared/AWS/AWSSemanticConventions.v1.29.0.cs" />
+    <File Path="src/Shared/AWS/AWSSemanticConventions.v1.40.0.cs" />
     <File Path="src/Shared/AWS/SemanticConventionVersion.cs" />
   </Folder>
   <Folder Name="/src/Shared/Configuration/">
@@ -249,7 +250,6 @@
     <Project Path="test/OpenTelemetry.Exporter.Geneva.Stress/OpenTelemetry.Exporter.Geneva.Stress.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.Geneva.Tests/OpenTelemetry.Exporter.Geneva.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.InfluxDB.Tests/OpenTelemetry.Exporter.InfluxDB.Tests.csproj" />
-    <Project Path="test/OpenTelemetry.Exporter.Instana.Tests/OpenTelemetry.Exporter.Instana.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.OneCollector.Benchmarks/OpenTelemetry.Exporter.OneCollector.Benchmarks.csproj" />
     <Project Path="test/OpenTelemetry.Exporter.OneCollector.Tests/OpenTelemetry.Exporter.OneCollector.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Extensions.AWS.Tests/OpenTelemetry.Extensions.AWS.Tests.csproj" />
@@ -266,6 +266,7 @@
     <Project Path="test/OpenTelemetry.Instrumentation.Cassandra.Tests/OpenTelemetry.Instrumentation.Cassandra.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.ConfluentKafka.Tests/OpenTelemetry.Instrumentation.ConfluentKafka.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.ElasticsearchClient.Tests/OpenTelemetry.Instrumentation.ElasticsearchClient.Tests.csproj" />
+    <Project Path="test/OpenTelemetry.Instrumentation.EntityFrameworkCore.Benchmarks/OpenTelemetry.Instrumentation.EntityFrameworkCore.Benchmarks.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.EntityFrameworkCore.Tests/OpenTelemetry.Instrumentation.EntityFrameworkCore.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.EventCounters.Tests/OpenTelemetry.Instrumentation.EventCounters.Tests.csproj" />
     <Project Path="test/OpenTelemetry.Instrumentation.GrpcCore.Tests/OpenTelemetry.Instrumentation.GrpcCore.Tests.csproj" />
@@ -316,5 +317,10 @@
     <File Path="test/Shared/TestSampler.cs" />
     <File Path="test/Shared/TestTextMapPropagator.cs" />
     <File Path="test/Shared/TestWebSocketServer.cs" />
+    <File Path="test/Shared/weaver.Dockerfile" />
+    <File Path="test/Shared/WeaverCollection.cs" />
+    <File Path="test/Shared/WeaverFixture.cs" />
+    <File Path="test/Shared/WeaverSpecificationTests.cs" />
+    <File Path="test/Shared/WeaverTelemetryVerifier.cs" />
   </Folder>
 </Solution>

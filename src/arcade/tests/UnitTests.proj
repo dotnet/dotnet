@@ -24,6 +24,8 @@
          instead of the in-build Python reporter. The corresponding monitor job is
          configured in the Arcade pipeline YAML. -->
     <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
+
+    <EnableShowHelixQueueStats>true</EnableShowHelixQueueStats>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,6 +56,11 @@
 
     <!-- xUnit v3 tests are self-hosting MTP executables and use MTPProject instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+
+    <!-- Arcade SDK validation tests spawn full build.ps1/build.sh sub-builds against the newly
+         produced SDK and must run on a build agent with a local package feed; they are intended to
+         be executed directly by the validation pipeline stage, not submitted to Helix. -->
+    <XUnitProject Remove="..\src\Microsoft.DotNet.Arcade.Validation.Tests\Microsoft.DotNet.Arcade.Validation.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

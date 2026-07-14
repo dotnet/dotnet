@@ -46,8 +46,6 @@ internal class Fixture : IDisposable
 
     public List<string> LoggedWarnings => TestRunEventsRegistrar.LoggedWarnings.Concat(TestDiscoveryEventsRegistrar.LoggedWarnings).ToList();
 
-    public FakeTestSessionEventsHandler TestSessionEventsHandler { get; }
-
     public Fixture(FixtureOptions? fixtureOptions = null)
     {
         // This type is compiled only in DEBUG, and won't exist otherwise.
@@ -80,7 +78,6 @@ internal class Fixture : IDisposable
         TestRunEventsRegistrar = new FakeTestRunEventsRegistrar(ErrorAggregator);
         Environment = new FakeEnvironment();
         TestDiscoveryEventsRegistrar = new FakeTestDiscoveryEventsRegistrar(ErrorAggregator);
-        TestSessionEventsHandler = new FakeTestSessionEventsHandler(ErrorAggregator);
         ProtocolConfig = new ProtocolConfig();
     }
 

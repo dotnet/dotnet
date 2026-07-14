@@ -78,7 +78,6 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
   {
     $fileChanged = $fileChanged.ToLower()
     $fullFileName = [System.IO.Path]::GetFileName($fileChanged)
-    $fileName = [System.IO.Path]::GetFileNameWithoutExtension($fileChanged)
     $fileExtension = [System.IO.Path]::GetExtension($fileChanged)
 
     if ($fileChanged.StartsWith('src/') -or $fileChanged.StartsWith('test/'))
@@ -91,7 +90,7 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
       $rawProjectName = $match.Groups[1].Value
       if ($rawProjectName.Contains(".benchmarks") -or $rawProjectName.Contains(".stress"))
       {
-        $added = $labelsToAdd.Add("perf")
+        [void]$labelsToAdd.Add("perf")
       }
 
       $projectName = $rawProjectName.Replace(".tests", "").Replace(".benchmarks", "").Replace(".stress", "")
@@ -100,7 +99,7 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
         continue
       }
 
-      $added = $visitedProjects.Add($projectName);
+      [void]$visitedProjects.Add($projectName)
 
       foreach ($repoLabel in $repoLabels)
       {
@@ -114,7 +113,7 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
             }
             if ($package -eq $projectName)
             {
-                $added = $labelsToAdd.Add($repoLabel.name)
+                [void]$labelsToAdd.Add($repoLabel.name)
                 break
             }
         }
@@ -125,7 +124,7 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
         $fileChanged.StartsWith('docs/') -or
         $fileChanged.StartsWith('examples/'))
     {
-        $added = $labelsToAdd.Add("documentation")
+        [void]$labelsToAdd.Add("documentation")
     }
 
     if ($fileChanged.StartsWith('build/') -or
@@ -135,17 +134,17 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
         $fileExtension -eq ".targets" -or
         $fileChanged.StartsWith('test/openTelemetry.aotcompatibility'))
     {
-        $added = $labelsToAdd.Add("infra")
+        [void]$labelsToAdd.Add("infra")
     }
 
     if ($fileChanged.StartsWith('test/benchmarks'))
     {
-        $added = $labelsToAdd.Add("perf")
+        [void]$labelsToAdd.Add("perf")
     }
 
     if ($fullFileName -eq 'directory.packages.props')
     {
-        $added = $labelsToAdd.Add("dependencies")
+        [void]$labelsToAdd.Add("dependencies")
     }
   }
 
@@ -153,12 +152,12 @@ function AddLabelsOnPullRequestsBasedOnFilesChanged {
   {
      if ($labelsToAdd.Contains($labelOnPullRequest.name))
      {
-        $removed = $labelsToAdd.Remove($labelOnPullRequest.name)
+        [void]$labelsToAdd.Remove($labelOnPullRequest.name)
      }
      elseif ($labelOnPullRequest.name.StartsWith($labelPackagePrefix) -or
         $managedLabels.Contains($labelOnPullRequest.name))
      {
-        $added = $labelsToRemove.Add($labelOnPullRequest.name)
+        [void]$labelsToRemove.Add($labelOnPullRequest.name)
      }
   }
 

@@ -63,7 +63,6 @@
   <Folder Name="/src/Package/">
     <Project Path="src/package/Microsoft.NET.Test.Sdk/Microsoft.NET.Test.Sdk.csproj" />
     <Project Path="src/package/Microsoft.TestPlatform.CLI/Microsoft.TestPlatform.CLI.csproj" />
-    <Project Path="src/package/Microsoft.TestPlatform.Internal.Uwp/Microsoft.TestPlatform.Internal.Uwp.csproj" />
     <Project Path="src/package/Microsoft.TestPlatform.Portable/Microsoft.TestPlatform.Portable.csproj" />
     <Project Path="src/package/Microsoft.TestPlatform.TestHost/Microsoft.TestPlatform.TestHost.csproj" />
     <Project Path="src/package/Microsoft.TestPlatform/Microsoft.TestPlatform.csproj" />

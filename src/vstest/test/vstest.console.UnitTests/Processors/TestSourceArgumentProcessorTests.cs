@@ -20,13 +20,14 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class TestSourceArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     /// <summary>
     /// The help argument processor get metadata should return help argument processor capabilities.
     /// </summary>
     [TestMethod]
     public void GetMetadataShouldReturnTestSourceArgumentProcessorCapabilities()
     {
-        TestSourceArgumentProcessor processor = new(CommandLineOptions.Instance);
+        TestSourceArgumentProcessor processor = new(_commandLineOptions);
         Assert.IsTrue(processor.Metadata.Value is TestSourceArgumentProcessorCapabilities);
     }
 
@@ -36,7 +37,7 @@ public class TestSourceArgumentProcessorTests
     [TestMethod]
     public void GetExecuterShouldReturnTestSourceArgumentProcessorCapabilities()
     {
-        TestSourceArgumentProcessor processor = new(CommandLineOptions.Instance);
+        TestSourceArgumentProcessor processor = new(_commandLineOptions);
         Assert.IsTrue(processor.Executor!.Value is TestSourceArgumentExecutor);
     }
 
@@ -65,7 +66,7 @@ public class TestSourceArgumentProcessorTests
     [TestMethod]
     public void ExecuterInitializeWithInvalidSourceShouldThrowCommandLineException()
     {
-        var options = CommandLineOptions.Instance;
+        var options = new CommandLineOptions();
         var mockFileHelper = new Mock<IFileHelper>();
         mockFileHelper.Setup(x => x.GetCurrentDirectory()).Returns("");
         options.FileHelper = mockFileHelper.Object;
@@ -87,8 +88,7 @@ public class TestSourceArgumentProcessorTests
         mockFileHelper.Setup(fh => fh.Exists(testFilePath)).Returns(true);
         mockFileHelper.Setup(x => x.GetCurrentDirectory()).Returns("");
 
-        var options = CommandLineOptions.Instance;
-        CommandLineOptions.Reset();
+        var options = new CommandLineOptions();
         options.FileHelper = mockFileHelper.Object;
         options.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, mockFileHelper.Object);
         var executor = new TestSourceArgumentExecutor(options);
@@ -102,7 +102,7 @@ public class TestSourceArgumentProcessorTests
     [TestMethod]
     public void ExecutorExecuteReturnArgumentProcessorResultSuccess()
     {
-        var options = CommandLineOptions.Instance;
+        var options = new CommandLineOptions();
         var executor = new TestSourceArgumentExecutor(options);
         var result = executor.Execute();
         Assert.AreEqual(ArgumentProcessorResult.Success, result);

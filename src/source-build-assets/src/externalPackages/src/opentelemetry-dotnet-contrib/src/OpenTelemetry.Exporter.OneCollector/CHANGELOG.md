@@ -2,12 +2,29 @@
 
 ## Unreleased
 
+## 1.16.0
+
+Released 2026-Jun-24
+
+* Fix serialization of whole `float`/`double` values.
+  ([#4017](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4017))
+
+* Remove all `unsafe` code paths.
+  ([#4442](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4442))
+
+* Fix `IndexOutOfRangeException` if the extension key limit is reached.
+  ([#4442](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4442))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
 ## 1.15.1
 
 Released 2026-Apr-21
 
 * Limit how much of the response body is read when export fails using the HTTP
-  JSON transport and informational logging is enabled.
+  JSON transport and informational logging is enabled to resolve
+  [GHSA-55m9-299j-53c7](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/security/advisories/GHSA-55m9-299j-53c7).
   ([#4117](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4117))
 
 * Updated OpenTelemetry core component version(s) to `1.15.3`.

@@ -1,4 +1,4 @@
-From 2c324453939922623123778045fc46f863de2c20 Mon Sep 17 00:00:00 2001
+From 7059b16cb3c0ce12f87cbb2c4a2e3b54dcb41e45 Mon Sep 17 00:00:00 2001
 From: Matt Thalman <mthalman@microsoft.com>
 Date: Tue, 30 Jun 2026 10:23:31 -0500
 Subject: [PATCH] Source-build: tolerate missing 'origin' remote during pack
@@ -33,3 +33,6 @@ index b844ce97..c4c0a2d1 100644
        StandardOutputImportance="low">
        <Output PropertyName="GitOriginConsoleOutput" TaskParameter="ConsoleOutput"/>
        <Output PropertyName="GitOriginExitCode" TaskParameter="ExitCode"/>
+-- 
+2.53.0.windows.3
+

@@ -32,7 +32,7 @@ internal class AttachmentSetConverter : JsonConverter<AttachmentSet>
             {
                 if (attachment.ValueKind != JsonValueKind.Null)
                 {
-                    attachmentSet.Attachments.Add(StjSafe.Deserialize<UriDataAttachment>(attachment.GetRawText(), options)!);
+                    attachmentSet.Attachments.Add(StjSafe.Deserialize<UriDataAttachment>(attachment, options)!);
                 }
             }
         }

@@ -17,6 +17,8 @@ internal sealed class AWSTraceSpan : TraceSpan
         this.Name = activity?.DisplayName;
     }
 
+    internal static AWSTraceSpan Noop { get; } = new(null);
+
     public override void EmitEvent(string name, Attributes? attributes = null)
     {
         if (this.activity == null || !this.activity.IsAllDataRequested)

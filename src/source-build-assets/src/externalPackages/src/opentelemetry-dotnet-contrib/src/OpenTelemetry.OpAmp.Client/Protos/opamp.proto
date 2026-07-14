@@ -23,8 +23,7 @@ import "anyvalue.proto";
 option go_package = "github.com/open-telemetry/opamp-go/protobufs";
 option csharp_namespace = "OpAmp.Proto.V1";
 
-message AgentToServer
-{
+message AgentToServer {
     // Globally unique identifier of the running instance of the Agent. SHOULD remain
     // unchanged for the lifetime of the Agent process.
     // MUST be 16 bytes long and SHOULD be generated using the UUID v7 spec.
@@ -97,17 +96,22 @@ message AgentToServer
     // A message indicating the components that are available for configuration on the agent.
     // Status: [Development]
     AvailableComponents available_components = 14;
+
+    // The status of the OfferedConnectionSettings that was previously received
+    // from the Server. This field SHOULD be unset if the offered connection
+    // settings status is unchanged since the last AgentToServer message.
+    // Status: [Development]
+    ConnectionSettingsStatus connection_settings_status = 15;
 }
 
-enum AgentToServerFlags
-{
+enum AgentToServerFlags {
     AgentToServerFlags_Unspecified = 0;
 
     // AgentToServerFlags is a bit mask. Values below define individual bits.
 
     // The Agent requests Server go generate a new instance_uid, which will
     // be sent back in ServerToAgent message
-    AgentToServerFlags_RequestInstanceUid = 0x00000001;
+    AgentToServerFlags_RequestInstanceUid     = 0x00000001;
 }
 
 // AgentDisconnect is the last message sent from the Agent to the Server. The Server
@@ -117,15 +121,13 @@ enum AgentToServerFlags
 // forget association of all Agent instances that were previously established for
 // this message stream using AgentConnect message, even if the corresponding
 // AgentDisconnect message were not explicitly received from the Agent.
-message AgentDisconnect
-{
+message AgentDisconnect {
 }
 
 // ConnectionSettingsRequest is a request from the Agent to the Server to create
 // and respond with an offer of connection settings for the Agent.
 // Status: [Development]
-message ConnectionSettingsRequest
-{
+message ConnectionSettingsRequest {
     // Request for OpAMP connection settings. If this field is unset
     // then the ConnectionSettingsRequest message is empty and is not actionable
     // for the Server.
@@ -138,8 +140,7 @@ message ConnectionSettingsRequest
 // OpAMPConnectionSettingsRequest is a request for the Server to produce
 // a OpAMPConnectionSettings in its response.
 // Status: [Development]
-message OpAMPConnectionSettingsRequest
-{
+message OpAMPConnectionSettingsRequest {
     // A request to create a client certificate. This is used to initiate a
     // Client Signing Request (CSR) flow.
     // Required.
@@ -147,8 +148,7 @@ message OpAMPConnectionSettingsRequest
 }
 
 // Status: [Development]
-message CertificateRequest
-{
+message CertificateRequest {
     // PEM-encoded Client Certificate Signing Request (CSR), signed by client's private key.
     // The Server SHOULD validate the request and SHOULD respond with a
     // OpAMPConnectionSettings where the certificate.cert contains the issued
@@ -159,8 +159,7 @@ message CertificateRequest
 // AvailableComponents contains metadata relating to the components included
 // within the agent.
 // status: [Development]
-message AvailableComponents
-{
+message AvailableComponents {
     // A map of a unique component ID to details about the component.
     // This may be omitted from the message if the server has not
     // explicitly requested it be sent by setting the ReportAvailableComponents
@@ -172,8 +171,7 @@ message AvailableComponents
     bytes hash = 2;
 }
 
-message ComponentDetails
-{
+message ComponentDetails {
     // Extra key/value pairs that may be used to describe the component.
     // The key/value pairs are according to semantic conventions, see:
     // https://opentelemetry.io/docs/specs/semconv/
@@ -193,8 +191,7 @@ message ComponentDetails
 }
 
 
-message ServerToAgent
-{
+message ServerToAgent {
     // Agent instance uid. MUST match the instance_uid field in AgentToServer message.
     // Used for multiplexing messages from/to multiple agents using one message stream.
     bytes instance_uid = 1;
@@ -249,8 +246,7 @@ message ServerToAgent
     CustomMessage custom_message = 11;
 }
 
-enum ServerToAgentFlags
-{
+enum ServerToAgentFlags {
     ServerToAgentFlags_Unspecified = 0;
 
     // Flags is a bit mask. Values below define individual bits.
@@ -271,24 +267,23 @@ enum ServerToAgentFlags
     ServerToAgentFlags_ReportAvailableComponents = 0x00000002;
 }
 
-enum ServerCapabilities
-{
+enum ServerCapabilities {
     // The capabilities field is unspecified.
     ServerCapabilities_Unspecified = 0;
 
     // The Server can accept status reports. This bit MUST be set, since all Server
     // MUST be able to accept status reports.
-    ServerCapabilities_AcceptsStatus = 0x00000001;
+    ServerCapabilities_AcceptsStatus            = 0x00000001;
     // The Server can offer remote configuration to the Agent.
-    ServerCapabilities_OffersRemoteConfig = 0x00000002;
+    ServerCapabilities_OffersRemoteConfig       = 0x00000002;
     // The Server can accept EffectiveConfig in AgentToServer.
-    ServerCapabilities_AcceptsEffectiveConfig = 0x00000004;
+    ServerCapabilities_AcceptsEffectiveConfig   = 0x00000004;
     // The Server can offer Packages.
     // Status: [Beta]
-    ServerCapabilities_OffersPackages = 0x00000008;
+    ServerCapabilities_OffersPackages           = 0x00000008;
     // The Server can accept Packages status.
     // Status: [Beta]
-    ServerCapabilities_AcceptsPackagesStatus = 0x00000010;
+    ServerCapabilities_AcceptsPackagesStatus    = 0x00000010;
     // The Server can offer connection settings.
     // Status: [Beta]
     ServerCapabilities_OffersConnectionSettings = 0x00000020;
@@ -303,10 +298,9 @@ enum ServerCapabilities
 // offer from the Server to the Agent to use the specified settings for OpAMP
 // connection.
 // Status: [Beta]
-message OpAMPConnectionSettings
-{
+message OpAMPConnectionSettings {
     // OpAMP Server URL This MUST be a WebSocket or HTTP URL and MUST be non-empty, for
-    // example: "wss://example.com:4318/v1/opamp"
+    // example: "wss://example.com:4320/v1/opamp"
     string destination_endpoint = 1;
 
     // Optional headers to use when connecting. Typically used to set access tokens or
@@ -340,14 +334,17 @@ message OpAMPConnectionSettings
     // Optional connection specific TLS settings.
     // Status: [Development]
     TLSConnectionSettings tls = 5;
+
+    // Optional connection specific proxy settings.
+    // Status: [Development]
+    ProxyConnectionSettings proxy = 6;
 }
 
 // The TelemetryConnectionSettings message is a collection of fields which comprise an
 // offer from the Server to the Agent to use the specified settings for a network
 // connection to report own telemetry.
 // Status: [Beta]
-message TelemetryConnectionSettings
-{
+message TelemetryConnectionSettings {
     // The value MUST be a full URL an OTLP/HTTP/Protobuf receiver with path. Schema
     // SHOULD begin with "https://", for example "https://example.com:4318/v1/metrics"
     // The Agent MAY refuse to send the telemetry if the URL begins with "http://".
@@ -371,6 +368,10 @@ message TelemetryConnectionSettings
     // Optional connection specific TLS settings.
     // Status: [Development]
     TLSConnectionSettings tls = 4;
+
+    // Optional connection specific proxy settings.
+    // Status: [Development]
+    ProxyConnectionSettings proxy = 5;
 }
 
 // The OtherConnectionSettings message is a collection of fields which comprise an
@@ -394,8 +395,7 @@ message TelemetryConnectionSettings
 // compilers don't generate methods that allow to check for the presence of
 // the field.
 // Status: [Beta]
-message OtherConnectionSettings
-{
+message OtherConnectionSettings {
     // A URL, host:port or some other destination specifier.
     string destination_endpoint = 1;
 
@@ -421,14 +421,17 @@ message OtherConnectionSettings
     // Optional connection specific TLS settings.
     // Status: [Development]
     TLSConnectionSettings tls = 5;
+
+    // Optional connection specific proxy settings.
+    // Status: [Development]
+    ProxyConnectionSettings proxy = 6;
 }
 
 
 // TLSConnectionSettings are optional connection settings that can be passed to
 // the client in order to specify TLS configuration.
 // Status: [Development]
-message TLSConnectionSettings
-{
+message TLSConnectionSettings {
   // Provides CA cert contents as a string.
   string ca_pem_contents = 1;
 
@@ -444,26 +447,35 @@ message TLSConnectionSettings
   // Maximum accepted TLS version; default "".
   string max_version = 5;
 
-    // Explicit list of cipher suites.
-    repeated string cipher_suites = 6;
+  // Explicit list of cipher suites.
+  repeated string cipher_suites = 6;
+}
+
+// Status: [Development]
+message ProxyConnectionSettings {
+    // A URL, host:port or some other destination specifier.
+    string url = 1;
+
+    // Optional headers to send to proxies during CONNECT requests.
+    // These headers can be ignored for non-HTTP based proxies.
+    // For example:
+    // key="Authorization", Value="Basic YWxhZGRpbjpvcGVuc2VzYW1l".
+    Headers connect_headers = 2;
 }
 
 // Status: [Beta]
-message Headers
-{
+message Headers {
     repeated Header headers = 1;
 }
 
 // Status: [Beta]
-message Header
-{
+message Header {
     string key = 1;
     string value = 2;
 }
 
 // Status: [Beta]
-message TLSCertificate
-{
+message TLSCertificate {
     // The (cert,private_key) pair should be issued and signed by a Certificate
     // Authority (CA) that the destination Server recognizes.
     //
@@ -493,8 +505,7 @@ message TLSCertificate
 }
 
 // Status: [Beta]
-message ConnectionSettingsOffers
-{
+message ConnectionSettingsOffers {
     // Hash of all settings, including settings that may be omitted from this message
     // because they are unchanged.
     bytes hash = 1;
@@ -542,8 +553,7 @@ message ConnectionSettingsOffers
 
 // List of packages that the Server offers to the Agent.
 // Status: [Beta]
-message PackagesAvailable
-{
+message PackagesAvailable {
     // Map of packages. Keys are package names, values are the packages available for download.
     map<string, PackageAvailable> packages = 1;
 
@@ -575,8 +585,7 @@ message PackagesAvailable
 // hash then the Agent does not need to do anything, it already
 // has the right version of the package.
 // Status: [Beta]
-message PackageAvailable
-{
+message PackageAvailable {
     PackageType type = 1;
 
     // The package version that is available on the Server side. The Agent may for
@@ -596,15 +605,13 @@ message PackageAvailable
 
 // The type of the package, either an addon or a top-level package.
 // Status: [Beta]
-enum PackageType
-{
+enum PackageType {
     PackageType_TopLevel = 0;
-    PackageType_Addon = 1;
+    PackageType_Addon    = 1;
 }
 
 // Status: [Beta]
-message DownloadableFile
-{
+message DownloadableFile {
     // The URL from which the file can be downloaded using HTTP GET request.
     // The Server at the specified URL SHOULD support range requests
     // to allow for resuming downloads.
@@ -631,22 +638,19 @@ message DownloadableFile
     Headers headers = 4;
 }
 
-message ServerErrorResponse
-{
+message ServerErrorResponse {
     ServerErrorResponseType type = 1;
 
     // Error message in the string form, typically human readable.
     string error_message = 2;
 
-    oneof Details
-    {
+    oneof Details {
         // Additional information about retrying if type==UNAVAILABLE.
         RetryInfo retry_info = 3;
     }
 }
 
-enum ServerErrorResponseType
-{
+enum ServerErrorResponseType {
     // Unknown error. Something went wrong, but it is not known what exactly.
     // The Agent SHOULD NOT retry the message.
     // The error_message field may contain a description of the problem.
@@ -662,22 +666,19 @@ enum ServerErrorResponseType
     ServerErrorResponseType_Unavailable = 2;
 }
 
-message RetryInfo
-{
+message RetryInfo {
     uint64 retry_after_nanoseconds = 1;
 }
 
 // ServerToAgentCommand is sent from the Server to the Agent to request that the Agent
 // perform a command.
 // Status: [Beta]
-message ServerToAgentCommand
-{
+message ServerToAgentCommand {
     CommandType type = 1;
 }
 
 // Status: [Beta]
-enum CommandType
-{
+enum CommandType {
     // The Agent should restart. This request will be ignored if the Agent does not
     // support restart.
     CommandType_Restart = 0;
@@ -686,8 +687,7 @@ enum CommandType
 ////////////////////////////////////////////////////////////////////////////////////
 // Status reporting
 
-message AgentDescription
-{
+message AgentDescription {
     // Attributes that identify the Agent.
     // Keys/values are according to OpenTelemetry semantic conventions, see:
     // https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification/resource/semantic_conventions
@@ -726,67 +726,68 @@ message AgentDescription
     // is responsible/associated with).
 }
 
-enum AgentCapabilities
-{
+enum AgentCapabilities {
     // The capabilities field is unspecified.
     AgentCapabilities_Unspecified = 0;
     // The Agent can report status. This bit MUST be set, since all Agents MUST
     // report status.
-    AgentCapabilities_ReportsStatus = 0x00000001;
+    AgentCapabilities_ReportsStatus                   = 0x00000001;
     // The Agent can accept remote configuration from the Server.
-    AgentCapabilities_AcceptsRemoteConfig = 0x00000002;
+    AgentCapabilities_AcceptsRemoteConfig             = 0x00000002;
     // The Agent will report EffectiveConfig in AgentToServer.
-    AgentCapabilities_ReportsEffectiveConfig = 0x00000004;
+    AgentCapabilities_ReportsEffectiveConfig          = 0x00000004;
     // The Agent can accept package offers.
     // Status: [Beta]
-    AgentCapabilities_AcceptsPackages = 0x00000008;
+    AgentCapabilities_AcceptsPackages                 = 0x00000008;
     // The Agent can report package status.
     // Status: [Beta]
-    AgentCapabilities_ReportsPackageStatuses = 0x00000010;
+    AgentCapabilities_ReportsPackageStatuses          = 0x00000010;
     // The Agent can report own trace to the destination specified by
     // the Server via ConnectionSettingsOffers.own_traces field.
     // Status: [Beta]
-    AgentCapabilities_ReportsOwnTraces = 0x00000020;
+    AgentCapabilities_ReportsOwnTraces                = 0x00000020;
     // The Agent can report own metrics to the destination specified by
     // the Server via ConnectionSettingsOffers.own_metrics field.
     // Status: [Beta]
-    AgentCapabilities_ReportsOwnMetrics = 0x00000040;
+    AgentCapabilities_ReportsOwnMetrics               = 0x00000040;
     // The Agent can report own logs to the destination specified by
     // the Server via ConnectionSettingsOffers.own_logs field.
     // Status: [Beta]
-    AgentCapabilities_ReportsOwnLogs = 0x00000080;
+    AgentCapabilities_ReportsOwnLogs                  = 0x00000080;
     // The can accept connections settings for OpAMP via
     // ConnectionSettingsOffers.opamp field.
     // Status: [Beta]
-    AgentCapabilities_AcceptsOpAMPConnectionSettings = 0x00000100;
+    AgentCapabilities_AcceptsOpAMPConnectionSettings  = 0x00000100;
     // The can accept connections settings for other destinations via
     // ConnectionSettingsOffers.other_connections field.
     // Status: [Beta]
-    AgentCapabilities_AcceptsOtherConnectionSettings = 0x00000200;
+    AgentCapabilities_AcceptsOtherConnectionSettings  = 0x00000200;
     // The Agent can accept restart requests.
     // Status: [Beta]
-    AgentCapabilities_AcceptsRestartCommand = 0x00000400;
+    AgentCapabilities_AcceptsRestartCommand           = 0x00000400;
     // The Agent will report Health via AgentToServer.health field.
-    AgentCapabilities_ReportsHealth = 0x00000800;
+    AgentCapabilities_ReportsHealth                   = 0x00000800;
     // The Agent will report RemoteConfig status via AgentToServer.remote_config_status field.
-    AgentCapabilities_ReportsRemoteConfig = 0x00001000;
+    AgentCapabilities_ReportsRemoteConfig             = 0x00001000;
     // The Agent can report heartbeats.
     // This is specified by the ServerToAgent.OpAMPConnectionSettings.heartbeat_interval_seconds field.
     // If this capability is true, but the Server does not set a heartbeat_interval_seconds field, the
     // Agent should use its own configured interval, which by default will be 30s. The Server may not
     // know the configured interval and should not make assumptions about it.
     // Status: [Development]
-    AgentCapabilities_ReportsHeartbeat = 0x00002000;
+    AgentCapabilities_ReportsHeartbeat                = 0x00002000;
     // The agent will report AvailableComponents via the AgentToServer.available_components field.
     // Status: [Development]
-    AgentCapabilities_ReportsAvailableComponents = 0x00004000;
+    AgentCapabilities_ReportsAvailableComponents      = 0x00004000;
+    // The agent will report ConnectionSettingsOffers status via AgentToServer.connection_settings_status field.
+    // Status: [Development]
+    AgentCapabilities_ReportsConnectionSettingsStatus = 0x00008000;
     // Add new capabilities here, continuing with the least significant unused bit.
 }
 
 // The health of the Agent and sub-components
 // Status: [Beta]
-message ComponentHealth
-{
+message ComponentHealth {
     // Set to true if the component is up and healthy.
     bool healthy = 1;
 
@@ -812,14 +813,12 @@ message ComponentHealth
     map<string, ComponentHealth> component_health_map = 6;
 }
 
-message EffectiveConfig
-{
+message EffectiveConfig {
     // The effective config of the Agent.
     AgentConfigMap config_map = 1;
 }
 
-message RemoteConfigStatus
-{
+message RemoteConfigStatus {
     // The hash of the remote config that was last received by this Agent in the
     // AgentRemoteConfig.config_hash field.
     // The Server SHOULD compare this hash with the config hash
@@ -833,8 +832,38 @@ message RemoteConfigStatus
     string error_message = 3;
 }
 
-enum RemoteConfigStatuses
-{
+// Status: [Development]
+message ConnectionSettingsStatus {
+    // The hash of the connection settings that was last received by this Agent
+    // in the connection_settings.hash field. The Server SHOULD compare this
+    // hash with the OfferedConnectionSettings hash it has for the Agent and if
+    // the hashes are different the Server MUST include the connection_settings
+    // field in the response in the ServerToAgent message.
+    bytes last_connection_settings_hash = 1;
+
+    ConnectionSettingsStatuses status = 2;
+
+    // Optional error message if status==FAILED.
+    string error_message = 3;
+}
+
+// Status: [Development]
+enum ConnectionSettingsStatuses {
+    // The value of status field is not set.
+    ConnectionSettingsStatuses_UNSET = 0;
+
+    // ConnectionSettings were successfully applied by the Agent.
+    ConnectionSettingsStatuses_APPLIED = 1;
+
+    // Agent is currently applying the ConnectionSettings that it received.
+    ConnectionSettingsStatuses_APPLYING = 2;
+
+    // Agent tried to apply the ConnectionSettings it received earlier, but failed.
+    // See error_message for more details.
+    ConnectionSettingsStatuses_FAILED = 3;
+}
+
+enum RemoteConfigStatuses {
     // The value of status field is not set.
     RemoteConfigStatuses_UNSET = 0;
 
@@ -852,8 +881,7 @@ enum RemoteConfigStatuses
 // The PackageStatuses message describes the status of all packages that the Agent
 // has or was offered.
 // Status: [Beta]
-message PackageStatuses
-{
+message PackageStatuses {
     // A map of PackageStatus messages, where the keys are package names.
     // The key MUST match the name field of PackageStatus message.
     map<string, PackageStatus> packages = 1;
@@ -875,8 +903,7 @@ message PackageStatuses
 
 // The status of a single package.
 // Status: [Beta]
-message PackageStatus
-{
+message PackageStatus {
     // Package name. MUST be always set and MUST match the key in the packages field
     // of PackageStatuses message.
     string name = 1;
@@ -935,8 +962,7 @@ message PackageStatus
 
 // Additional details that an agent can use to describe an in-progress package download.
 // Status: [Development]
-message PackageDownloadDetails
-{
+message PackageDownloadDetails {
     // The package download progress as a percentage.
     double download_percent = 1;
 
@@ -946,8 +972,7 @@ message PackageDownloadDetails
 
 // The status of this package.
 // Status: [Beta]
-enum PackageStatusEnum
-{
+enum PackageStatusEnum {
     // Package is successfully installed by the Agent.
     // The error_message field MUST NOT be set.
     PackageStatusEnum_Installed = 0;
@@ -975,8 +1000,7 @@ enum PackageStatusEnum
 
 // Properties related to identification of the Agent, which can be overridden
 // by the Server if needed
-message AgentIdentification
-{
+message AgentIdentification {
     // When new_instance_uid is set, Agent MUST update instance_uid
     // to the value provided and use it for all further communication.
     // MUST be 16 bytes long and SHOULD be generated using the UUID v7 spec.
@@ -987,8 +1011,7 @@ message AgentIdentification
 // Config messages
 /////////////////////////////////////////////////////////////////////////////////////
 
-message AgentRemoteConfig
-{
+message AgentRemoteConfig {
     // Agent config offered by the management Server to the Agent instance. SHOULD NOT be
     // set if the config for this Agent has not changed since it was last requested (i.e.
     // AgentConfigRequest.last_remote_config_hash field is equal to
@@ -1007,8 +1030,7 @@ message AgentRemoteConfig
     bytes config_hash = 2;
 }
 
-message AgentConfigMap
-{
+message AgentConfigMap {
     // Map of configs. Keys are config file names or config section names.
     // The configuration is assumed to be a collection of one or more named config files
     // or sections.
@@ -1017,8 +1039,7 @@ message AgentConfigMap
     map<string, AgentConfigFile> config_map = 1;
 }
 
-message AgentConfigFile
-{
+message AgentConfigFile {
     // Config file or section body. The content, format and encoding depends on the Agent
     // type. The content_type field may optionally describe the MIME type of the body.
     bytes body = 1;
@@ -1032,8 +1053,7 @@ message AgentConfigFile
 // Custom messages
 /////////////////////////////////////////////////////////////////////////////////////
 
-message CustomCapabilities
-{
+message CustomCapabilities {
     // A list of custom capabilities that are supported. Each capability is a reverse FQDN
     // with optional version information that uniquely identifies the custom capability
     // and should match a capability specified in a supported CustomMessage.
@@ -1041,8 +1061,7 @@ message CustomCapabilities
     repeated string capabilities = 1;
 }
 
-message CustomMessage
-{
+message CustomMessage {
     // A reverse FQDN that uniquely identifies the capability and matches one of the
     // capabilities in the CustomCapabilities message.
     // Status: [Development]

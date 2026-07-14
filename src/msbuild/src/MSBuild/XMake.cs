@@ -20,6 +20,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Build.Collections;
+using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Eventing;
 using Microsoft.Build.Exceptions;
@@ -999,7 +1000,27 @@ namespace Microsoft.Build.CommandLine
                                 // globalProperties collection contains values only from CommandLine at this stage populated by ProcessCommandLineSwitches
                                 collection.PropertiesFromCommandLine = [.. globalProperties.Keys];
 
-                                Project project = collection.LoadProject(projectFile, globalProperties, toolsVersion);
+                                // -getProperty/-getItem without a target only read data produced by the early
+                                // evaluation passes, so stop evaluation as soon as the requested data is available
+                                // instead of running a full evaluation. Property values are final after the
+                                // Properties pass; items require the Items pass. This skips the later passes
+                                // (using-tasks and target registration) entirely. Gated behind change wave 18.10
+                                // so the historical full-evaluation behavior can be restored if needed.
+                                // A ProjectInstance (an uncached evaluation snapshot) is used rather than a Project
+                                // because this is a read-only "evaluate, read, discard" scenario and partial
+                                // evaluation is only supported on ProjectInstance.
+                                ProjectEvaluationStage evaluationStage =
+                                    ChangeWaves.AreFeaturesEnabled(ChangeWaves.Wave18_10)
+                                        ? (getItem.Length == 0 ? ProjectEvaluationStage.Properties : ProjectEvaluationStage.Items)
+                                        : ProjectEvaluationStage.Full;
+
+                                ProjectInstance project = ProjectInstance.FromFile(projectFile, new ProjectOptions
+                                {
+                                    ProjectCollection = collection,
+                                    GlobalProperties = globalProperties,
+                                    ToolsVersion = toolsVersion,
+                                    EvaluationStage = evaluationStage,
+                                });
 
                                 if (getResultOutputFile.Length == 0)
                                 {
@@ -1015,8 +1036,17 @@ namespace Microsoft.Build.CommandLine
                                 collection.LogBuildFinishedEvent(exitType == ExitType.Success);
                             }
                         }
-                        catch (InvalidProjectFileException)
+                        catch (InvalidProjectFileException ex)
                         {
+                            // ProjectInstance evaluation logs semantic evaluation errors through the collection's
+                            // loggers, but a pre-evaluation failure (for example malformed project XML) throws
+                            // before any logging occurs. Surface the latter in canonical format so the CLI still
+                            // reports the project load error (for example MSB4025) rather than failing silently.
+                            if (!ex.HasBeenLogged)
+                            {
+                                Console.WriteLine($"MSBUILD : error {ex.ErrorCode}: {ex.Message}");
+                            }
+
                             exitType = ExitType.BuildError;
                         }
                     }
@@ -1297,7 +1327,7 @@ namespace Microsoft.Build.CommandLine
                 isStandaloneExecution: !s_isNodeMode);
         }
 
-        private static ExitType OutputPropertiesAfterEvaluation(string[] getProperty, string[] getItem, Project project, TextWriter outputStream)
+        private static ExitType OutputPropertiesAfterEvaluation(string[] getProperty, string[] getItem, ProjectInstance project, TextWriter outputStream)
         {
             // Special case if the user requests exactly one property: skip json formatting
             if (getProperty.Length == 1 && getItem.Length == 0)
@@ -1308,7 +1338,7 @@ namespace Microsoft.Build.CommandLine
             {
                 JsonOutputFormatter jsonOutputFormatter = new();
                 jsonOutputFormatter.AddPropertiesInJsonFormat(getProperty, property => project.GetPropertyValue(property));
-                jsonOutputFormatter.AddItemsInJsonFormat(getItem, project);
+                jsonOutputFormatter.AddItemInstancesInJsonFormat(getItem, project);
                 outputStream.WriteLine(jsonOutputFormatter.ToString());
             }
 
@@ -2063,6 +2093,19 @@ namespace Microsoft.Build.CommandLine
 
             // Add a property to indicate that a Restore is executing
             restoreGlobalProperties[MSBuildConstants.MSBuildIsRestoring] = bool.TrueString;
+
+            // Add the property that NuGet passes when it re-invokes the build during restore. NuGet's restore targets pass
+            // ExcludeRestorePackageImports=true as a global property, which normally forces a second evaluation of every project.
+            // Setting it up front here means the initial evaluation already matches, so it is reused instead of being discarded.
+            // The value must match NuGet's exactly (the literal lowercase "true" from NuGet.targets) because global property values
+            // are compared case-sensitively when matching build configurations for evaluation reuse.
+            // Only set it when the user has not explicitly supplied a value so that an explicit opt-out (e.g.
+            // /p:ExcludeRestorePackageImports=false) is respected instead of being silently overwritten.
+            if (ChangeWaves.AreFeaturesEnabled(ChangeWaves.Wave18_10)
+                && !globalProperties.ContainsKey(MSBuildConstants.ExcludeRestorePackageImports))
+            {
+                restoreGlobalProperties[MSBuildConstants.ExcludeRestorePackageImports] = MSBuildConstants.ExcludeRestorePackageImportsValue;
+            }
 
             // Create a new request with a Restore target only and specify:
             //  - BuildRequestDataFlags.ClearCachesAfterBuild to ensure the projects will be reloaded from disk for subsequent builds

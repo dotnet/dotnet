@@ -18,7 +18,7 @@
         "a225acc7c1c2b34bdf3071f05c53ce824ac736fbc7c551a2caab7d5d575a7ff0",
         "4c669bfcc429c5f3069421b9b07696b68a34f0eb4c6b611d41bf3e2c692903f5"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/python.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/python.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -36,7 +36,7 @@
         "327966d0fe32def6da5c1ca7c90a0074adb5e7adda3b8940bc5590b95c0a3a52",
         "3542765fa3ee6095ceac8bcc5fe6947a533295c6d107f3ac4017241b8a4f5133"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/python311.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/python311.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -54,7 +54,7 @@
         "250767f82b10a6d090e0b8508674fd6146e4a47b7de2f6151612c8da1bd772f9",
         "9f6314c671cd2fb22722a7418cb798762e0da81396811bf7962981d4850855a3"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/pythonw.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/pythonw.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -72,7 +72,7 @@
         "7709e0084e17223c8493911bac7f9d045157644378bf08786933caf782f31ec6",
         "630d3ea5466078d08cfc97d41fc375728a04ea55a8cbbfbc150d1354925076bf"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Node.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/node.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Node.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/node.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -90,7 +90,7 @@
         "b114e0492a1432ef7cdcf681ad524c2a3861d099d2aa9536d13f77fccc3266b8",
         "02bfe0304783b1fb80bdee27a7a2f04414186d811479c3cdd2cf2df551b139ce"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libcrypto-1_1-arm64.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libcrypto-1_1-arm64.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -108,7 +108,7 @@
         "98580bfd8960c0c3b599c8195e45291a8d958b116df80f9bd30775f6a9346873",
         "882b5f765690ddc371e0f1884a1722b1e7a7d1f6d5b01122b6fe008a0f6a3cea"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libffi-8.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libffi-8.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -126,7 +126,7 @@
         "160b5461fa07980ccac8879ed4f085c04ab97449d2acbf6445591be98885488c",
         "a4a26af453403f2799012b91b07265b8cb3daf1f5ebb8754ad15dd4deb47380e"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libssl-1_1-arm64.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libssl-1_1-arm64.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -144,7 +144,7 @@
         "c41848845ae8cebf21dea24e623db0dbe72d3b0c02ad2376f058e2666f1d276d",
         "0d510ab6c46cf50c53fd560079f08b270a6ee59b0e74ce8eedd761bf990d3775"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/sqlite3.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/sqlite3.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -162,7 +162,7 @@
         "1784e0bd0c3a5c79b7ceb67ee49d0d650491a31c1933e0a6d60fa1010800682f",
         "c98d039326be8954bb9d2736cc193f525a7ca0c8ba36bac8569f328a3d24d8ae"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-as.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-as.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -180,7 +180,7 @@
         "b162f15a37619f274e6ac03d2fe180fd2539cf624185b01f9a1ad32c42eb8877",
         "f2f394a5d66b53416160a5f33d3e537af55837b93fdac850d4a7d5c641b12ffd"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-ctor-eval.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-ctor-eval.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -198,7 +198,7 @@
         "291f8d36b70058f51ff40c325e132b7e4d44d7c6a4b179c7b779b6fcceb86e14",
         "5ea0c69aee489793a7502617ca24ffb3ace94832e69541a4e43ac094b2b20d45"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-dis.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-dis.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -216,7 +216,7 @@
         "8e30d1bc702d9da0d943e95254afb48732c2359adf1c2b5d6fc837080944ae94",
         "f3a332952bc8a7dcee6fad3dc5285235a9fc31f433b4cd3964d198cd68da8d89"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-emscripten-finalize.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-emscripten-finalize.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -234,7 +234,7 @@
         "f3f37dc25f9d2c39cfd13ccd542a5de64ca3af2ac16b831becce8ea1a8ff3546",
         "ed5c45f2cdae6db19dabbfef2a7c388f6718d248283c556faf8d5344ca396c23"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-lattices.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-lattices.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -252,7 +252,7 @@
         "8d00d0ff13d2cd6fca4109b87662b96f6f798965be3e1bcf6aacd5912111b862",
         "f7c71b995ae6b78874e8a083251d442396e0e7d453e909e7ad6eb49fc701d62f"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-types.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-types.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -270,7 +270,7 @@
         "d4a19a0336297aecdf0e14e67d4a6f694c5f769364cd623e93a544251e47f230",
         "85a54e1a497783a7ba41c3752599b124a8601776c28e34a5db4e3535758bc232"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-merge.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-merge.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -288,7 +288,7 @@
         "d6525bf8b9f896f5ec288f77c92366a20e2cfce1c8dda796abd0974d78fe4b71",
         "ff57eab405865d1b3a45b0428e2d7d3467c16765a0834eee5f9544b44386b08e"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-metadce.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-metadce.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -306,7 +306,7 @@
         "912516c99bd4788ccbad797d9dbddbfbf0c908513b2a7bc089e401b357551472",
         "269829cd2394ff6920d2f8505506b2251258d844f651f1e0f16bccfd755b8493"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-opt.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-opt.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -324,7 +324,7 @@
         "c53b2a3bdfe6b00e59adef5527e6aee90334c177eeb734e7decd33b665e81704",
         "75f3af791354c4dc085666efdbf2749358210e3516dc0703b203b20fe68883e8"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-reduce.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-reduce.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -342,7 +342,7 @@
         "35c48cd23caab1fce99c0ad3f0af57dd56fdc7b1d6a1c200a8ce0c11ce2ebd78",
         "70307a0f83d9843702e589cf9d9ed4a48af5b5ab715f70d55774defb2f67226a"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-shell.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-shell.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -360,7 +360,7 @@
         "6c81ddf355dd308c64427c6a3e921efc14cc94db0fba07dd44f36a43d68f964b",
         "24c9d2eb7b878a6c62f624ebb74333635cf1d437637f4b2b0f2646aae3d3892f"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-split.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-split.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -378,7 +378,7 @@
         "3e3503621db2fcbde15988311f2e573285c5e05dba08269d39cc01f6ca30a92c",
         "98bea4c8d451572c42b3092198518a803a3d79d3ffd97e26fc6059dcc949e727"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm2js.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-arm64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm2js.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -414,7 +414,7 @@
         "6d731fef19413f9ac006c4586bf3161ec88da2da27196a5cbc8b9dc04647d992",
         "4d347afdd5418711de136886174755e584abfdc6e958edf38680b16e6943a0cb"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/python.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/python.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -432,7 +432,7 @@
         "acd7276b9cfa0bd94432c62f9b326a3e66c830363f3b36d9fdb9bce5a8e120eb",
         "15ae71defec4266ed20a8eb28fda74b1f3cfb43186430a3f481416e78f3352d2"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/python311.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/python311.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -450,7 +450,7 @@
         "51b2ecd833f05ca811b6923762ceba8496e50ec11b5530cfc26cda7fb9d92a2a",
         "02539c9d22ab44bcb1db2196a17c03bdf5c281671ff52b4bfb2c1878f6d17518"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/pythonw.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/pythonw.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -486,7 +486,7 @@
         "8ccf53924b6dedf7a3447f743a50f531411dc4c1ae3f7c0b6f0d737050b0f294",
         "73389f7cd0fd388ff77ef71b761b81eca602b675780a4a7a578033826bbacb19"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Node.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/node.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Node.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/node.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -504,7 +504,7 @@
         "51b313cce6d03d24e8dceeb7d28ce3c094d8fb5bec0458094c6f875ee4495eb8",
         "ac8837b467fe5add3c59aef47ae9cff13a04c1770d6b7c9ce0d500afa177f2b7"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libcrypto-1_1.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libcrypto-1_1.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -522,7 +522,7 @@
         "ef47f1e23ca1e5a41cda52c9459f5b3dcd9dd86adb4f3da79d324d57c46d46b4",
         "16ff21da809c36674b75564c8c66e32c94b3f95c234e309fd3a0e20fa39b5c65"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libffi-8.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libffi-8.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -540,7 +540,7 @@
         "4a731e9f772be8b686a35999ca088acc8b07d462e970f7ee3b52e7100aff5ded",
         "d4529f38c20ba9a70028c2e64c890c8ee7c91b636785d842998ce2ec53af5e84"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libssl-1_1.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/libssl-1_1.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -558,7 +558,7 @@
         "b79f17a2d0cc22969436fc10435cd873af7810a961145342b4dacaa579ee3035",
         "a4125ab35ae8ca92c14d4e5ec7bdcdaefa5d6c1a44ad1aee0bc229f8b6130c54"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/sqlite3.dll",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Python.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/DLLs/sqlite3.dll",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -576,7 +576,7 @@
         "4aab751873caa4ad38e7a526504bc88dfd320d049c88ea1aaf9427f8ea52d759",
         "156bdfb90923411269c4c995741314cf1d9c7c7c53d3299b0aa45e4733a0b3be"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-as.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-as.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -594,7 +594,7 @@
         "66233cd2226d7bd787c9bf82024f80941da7808d07f93adccbe4c8d4d5cde30d",
         "be821d45a5a06a8eecebc398905fa6ec0f7507340d60a5da0d07c8880426df0c"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-ctor-eval.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-ctor-eval.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -612,7 +612,7 @@
         "1a2d354c352fd852016f5f3a8e3d68cde26f63343b570babbf53a3ec9f5a2e61",
         "2461f90210a89ea3c5bff00d71f5fdbf68b2b52401384837085844b15da35879"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-dis.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-dis.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -630,7 +630,7 @@
         "14b3deca55d75584ffbd399aabbb70a9d2ae89b69ea206102d99bed422c36a88",
         "8c2c91070945b1dc10dc4f1332713606612a7cfbc000b78fa4d0c9feae3f3fc1"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-emscripten-finalize.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-emscripten-finalize.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -648,7 +648,7 @@
         "e811e708f8e46ac781228e064307bbda3fc3c358c85feda3bd912a33ff67d184",
         "9a6a9aa5e81972b28a30a097767c0e6bc1546a81df853d2d718b6f36d8809706"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-lattices.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-lattices.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -666,7 +666,7 @@
         "82f6b07d8d5ca1822fbb7b9bfad7b34b371c35de0aef61b34595690825ddc068",
         "6f7dcc3b09b54abe03d60224b5de5523d255b72ea652f710f6f3449b3fb69f6e"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-types.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-fuzz-types.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -684,7 +684,7 @@
         "f577e355df6fa18e1c6693a3eb075d43c8e2c5c6778951143a5b71f54b24cff8",
         "143d6c7fbeebf8607598d16f7ef16e0e6893eaf342a07c916adc07637ecf54c8"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-merge.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-merge.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -702,7 +702,7 @@
         "a6d84e3a311f1292c2c081daf3e06a922a0ebe59ac9905cf41a6716657ef7d0c",
         "631a150a970992fc5044b8546a4f0a22b078b7002891771ab3038d5c42db686b"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-metadce.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-metadce.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -720,7 +720,7 @@
         "0279335d6f442edaa7d367c97b69db372a1c3adbd774504a7e8275af37cf2cff",
         "4f84c8c70a2a978bdfb06b83c5a5397b1f1703c274ca891629f44a77d1c88690"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-opt.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-opt.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -738,7 +738,7 @@
         "3faef2cc499e33f2c515d21ba29d91e22fb692979d7cee33dc5c6a5e23ab3fd4",
         "9a2d6fa6cf0815d2ada3ad946eb03c7cfb4046bf0ebf82a75159564807e0bc6a"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-reduce.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-reduce.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -756,7 +756,7 @@
         "27903cf8b4a75dd1723277664479065b73d83934f3517a6f1923e62c2cc210de",
         "674f23f6f8542daccfd657725fb35ca27fb146b62c03d706533f55523dd2d537"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-shell.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-shell.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -774,7 +774,7 @@
         "e8331f086e8016931f0a11afc45e92a35f351e833238285de4e538bcdc5a9a8e",
         "74efb37e351c42ad7093afaabfae6453c683ae4b0d6f2178029bba915ee9e2c8"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-split.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm-split.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"
@@ -792,7 +792,7 @@
         "8d256ece86ab28256587c6d09bea68c511673d41971e4df375961df559e718c3",
         "50939a5c1b3bba6ef29371a70b22813402d7b2926a0f3f0247f92977aca4f401"
       ],
-      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.5.0.6.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm2js.exe",
+      "target": "artifacts/packages/Release/Shipping/emsdk/gdn-Microsoft.NET.Runtime.Emscripten.6.0.2.Sdk.win-x64.11.0.0-preview.5.26258.107.nupkg/tools/bin/wasm2js.exe",
       "uriBaseId": "file:///D:/a/_work/1/a/",
       "memberOf": [
         "default"

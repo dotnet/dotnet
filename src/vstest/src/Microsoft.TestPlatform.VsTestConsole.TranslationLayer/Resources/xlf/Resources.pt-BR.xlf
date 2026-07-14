@@ -32,16 +32,6 @@
         <target state="translated">O Processamento de Anexos de Execução de Teste ativo foi anulado.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">A operação Iniciar a Sessão de Teste foi anulada.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">A operação Parar a Sessão de Teste foi anulada.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

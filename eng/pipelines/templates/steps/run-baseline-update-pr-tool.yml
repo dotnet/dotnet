@@ -34,6 +34,12 @@ parameters:
   type: string
   default: Update Test Baselines
 
+# Optional discriminator folded into the generated PR head branch name so that multiple
+# jobs of the same pipeline targeting the same branch produce distinct PRs.
+- name: identifier
+  type: string
+  default: ''
+
 steps:
   - script: |
       restoreSources="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"
@@ -41,6 +47,11 @@ steps:
       restoreSources+="%3Bhttps://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json"
 
       branchName=$(echo "$(Build.SourceBranch)" | sed 's/refs\/heads\///g')
+
+      identifierArgs=()
+      if [[ -n "${{ parameters.identifier }}" ]]; then
+        identifierArgs=(--identifier "${{ parameters.identifier }}")
+      fi
 
       ${{ parameters.dotnetPath }}/dotnet run \
         --project eng/tools/CreateBaselineUpdatePR/ \
@@ -51,7 +62,8 @@ steps:
         "${{ parameters.updatedFilesDirectory }}" \
         "$(Build.BuildId)" \
         --title "${{ parameters.pullRequestTitle }}" \
-        --branch "$branchName"
+        --branch "$branchName" \
+        "${identifierArgs[@]}"
     displayName: Publish Test Results PR
     workingDirectory: $(Build.SourcesDirectory)
     condition: succeededOrFailed()

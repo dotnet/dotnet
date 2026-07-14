@@ -15,31 +15,31 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class FrameworkArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly FrameworkArgumentExecutor _executor;
     private readonly TestableRunSettingsProvider _runSettingsProvider;
 
     public FrameworkArgumentProcessorTests()
     {
         _runSettingsProvider = new TestableRunSettingsProvider();
-        _executor = new FrameworkArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider);
+        _executor = new FrameworkArgumentExecutor(_commandLineOptions, _runSettingsProvider);
     }
     [TestCleanup]
     public void TestCleanup()
     {
-        CommandLineOptions.Reset();
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnFrameworkArgumentProcessorCapabilities()
     {
-        var processor = new FrameworkArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
+        var processor = new FrameworkArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is FrameworkArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnFrameworkArgumentExecutor()
     {
-        var processor = new FrameworkArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider());
+        var processor = new FrameworkArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is FrameworkArgumentExecutor);
     }
 
@@ -91,7 +91,7 @@ public class FrameworkArgumentProcessorTests
     public void InitializeShouldSetCommandLineOptionsAndRunSettingsFramework()
     {
         _executor.Initialize(".NETCoreApp,Version=v1.0");
-        Assert.AreEqual(".NETCoreApp,Version=v1.0", CommandLineOptions.Instance.TargetFrameworkVersion!.Name);
+        Assert.AreEqual(".NETCoreApp,Version=v1.0", _commandLineOptions.TargetFrameworkVersion!.Name);
         Assert.AreEqual(".NETCoreApp,Version=v1.0", _runSettingsProvider.QueryRunSettingsNode(FrameworkArgumentExecutor.RunSettingsPath));
     }
 
@@ -99,7 +99,7 @@ public class FrameworkArgumentProcessorTests
     public void InitializeShouldSetCommandLineOptionsFrameworkForOlderFrameworks()
     {
         _executor.Initialize("Framework35");
-        Assert.AreEqual(".NETFramework,Version=v3.5", CommandLineOptions.Instance.TargetFrameworkVersion!.Name);
+        Assert.AreEqual(".NETFramework,Version=v3.5", _commandLineOptions.TargetFrameworkVersion!.Name);
         Assert.AreEqual(".NETFramework,Version=v3.5", _runSettingsProvider.QueryRunSettingsNode(FrameworkArgumentExecutor.RunSettingsPath));
     }
 
@@ -107,7 +107,7 @@ public class FrameworkArgumentProcessorTests
     public void InitializeShouldSetCommandLineOptionsFrameworkForCaseInsensitiveFramework()
     {
         _executor.Initialize(".netcoreApp,Version=v1.0");
-        Assert.AreEqual(".NETCoreApp,Version=v1.0", CommandLineOptions.Instance.TargetFrameworkVersion!.Name);
+        Assert.AreEqual(".NETCoreApp,Version=v1.0", _commandLineOptions.TargetFrameworkVersion!.Name);
         Assert.AreEqual(".NETCoreApp,Version=v1.0", _runSettingsProvider.QueryRunSettingsNode(FrameworkArgumentExecutor.RunSettingsPath));
     }
 
@@ -115,9 +115,9 @@ public class FrameworkArgumentProcessorTests
     public void InitializeShouldNotSetFrameworkIfSettingsFileIsLegacy()
     {
         _runSettingsProvider.UpdateRunSettingsNode(FrameworkArgumentExecutor.RunSettingsPath, nameof(FrameworkVersion.Framework45));
-        CommandLineOptions.Instance.SettingsFile = @"c:\tmp\settings.testsettings";
+        _commandLineOptions.SettingsFile = @"c:\tmp\settings.testsettings";
         _executor.Initialize(".NETFramework,Version=v3.5");
-        Assert.AreEqual(".NETFramework,Version=v3.5", CommandLineOptions.Instance.TargetFrameworkVersion!.Name);
+        Assert.AreEqual(".NETFramework,Version=v3.5", _commandLineOptions.TargetFrameworkVersion!.Name);
         Assert.AreEqual(nameof(FrameworkVersion.Framework45), _runSettingsProvider.QueryRunSettingsNode(FrameworkArgumentExecutor.RunSettingsPath));
     }
 

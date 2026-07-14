@@ -7,7 +7,7 @@
                 "type": "git",
                 "git": {
                     "repositoryUrl": "https://github.com/emscripten-core/emsdk",
-                    "commitHash": "948c31acd3f369a5da276e33ab2ed57108c165e5"
+                    "commitHash": "7f06d88dc04b71a08d0c275df9cb68337e7128fd"
                 }
             },
             "developmentDependency": false

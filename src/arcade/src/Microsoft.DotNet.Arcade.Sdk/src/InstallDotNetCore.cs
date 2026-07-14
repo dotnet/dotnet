@@ -122,7 +122,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                     {
                                         string normalizedVersion = version.ToNormalizedString();
                                         string runtime = runtimeItem.Key;
-                                        string arguments = $"-runtime \"{runtime}\" -version \"{normalizedVersion}\"";
+                                        string arguments = $"-runtime \"{runtime}\" -version \"{normalizedVersion}\" -dotnetPath \"{DotNetPath}\"";
                                         if (!string.IsNullOrEmpty(architecture))
                                         {
                                             arguments += $" -architecture {architecture}";

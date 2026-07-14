@@ -70,7 +70,7 @@ internal class TestObjectBaseConverter : JsonConverter<TestObject>
             if (!prop.TryGetProperty("Key", out var keyElement))
                 continue;
 
-            var testProperty = StjSafe.Deserialize<TestProperty>(keyElement.GetRawText(), options);
+            var testProperty = StjSafe.Deserialize<TestProperty>(keyElement, options);
             if (testProperty is null)
                 continue;
 

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Net;
+using System.Reflection;
 
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollector.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
@@ -215,5 +216,23 @@ public class DataCollectionTestCaseEventHandlerTests
         _mockCommunicationManager.Setup(x => x.ReceiveMessage()).Throws<Exception>();
 
         Assert.ThrowsExactly<Exception>(() => _requestHandler.ProcessRequests());
+    }
+
+    [TestMethod]
+    public void ConstructorShouldForwardTestCaseEventsToTheInjectedDataCollectionManager()
+    {
+        // DataCollectionRequestHandler.Create hands the DataCollectionManager it built to this handler
+        // through the (messageSink, dataCollectionManager) ctor. Guard that the handler keeps exactly that
+        // instance to forward test-case events to, instead of reaching back to DataCollectionManager.Instance.
+        // If a future edit reverted to the static, the writer (the datacollector-host root) and the reader
+        // (this handler) could drift onto two different managers with nothing turning red.
+        var injectedManager = new Mock<IDataCollectionManager>();
+
+        var requestHandler = new DataCollectionTestCaseEventHandler(_messageSink.Object, injectedManager.Object);
+
+        var managerField = typeof(DataCollectionTestCaseEventHandler)
+            .GetField("_dataCollectionManager", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(managerField);
+        Assert.AreSame(injectedManager.Object, managerField.GetValue(requestHandler));
     }
 }

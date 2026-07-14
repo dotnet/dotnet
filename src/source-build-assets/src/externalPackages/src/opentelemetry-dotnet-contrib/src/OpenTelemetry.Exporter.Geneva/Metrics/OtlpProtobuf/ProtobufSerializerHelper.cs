@@ -79,15 +79,11 @@ internal static class ProtobufSerializerHelper
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteLengthCustom(byte[] buffer, ref int cursor, int length)
-    {
-        WriteVarintCustom(buffer, ref cursor, (uint)length);
-    }
+        => WriteVarintCustom(buffer, ref cursor, (uint)length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteLength(byte[] buffer, ref int cursor, int length)
-    {
-        WriteVarint32(buffer, ref cursor, (uint)length);
-    }
+        => WriteVarint32(buffer, ref cursor, (uint)length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteVarintCustom(byte[] buffer, ref int cursor, uint value)
@@ -150,9 +146,7 @@ internal static class ProtobufSerializerHelper
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteTag(byte[] buffer, ref int cursor, int fieldNumber, WireType type)
-    {
-        WriteVarint32(buffer, ref cursor, GetTagValue(fieldNumber, type));
-    }
+        => WriteVarint32(buffer, ref cursor, GetTagValue(fieldNumber, type));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteTagAndLengthPrefix(byte[] buffer, ref int cursor, int contentLength, int fieldNumber, WireType type)
@@ -164,22 +158,20 @@ internal static class ProtobufSerializerHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteFixed64LittleEndianFormat(byte[] buffer, ref int cursor, ulong value)
     {
-        if (cursor < buffer.Length)
+        if (cursor + Fixed64Size > buffer.Length)
         {
-            var span = new Span<byte>(buffer, cursor, Fixed64Size);
-
-            BinaryPrimitives.WriteUInt64LittleEndian(span, value);
-
-            cursor += Fixed64Size;
+            // Surface the overflow with the shared message instead of silently dropping the value
+            // so it can be detected and reported by GenevaBufferOverflowExceptionHelper.
+            throw new ArgumentOutOfRangeException(nameof(cursor), cursor, GenevaBufferOverflowExceptionHelper.MetricBufferTooSmallMessage);
         }
-        else
-        {
-            // TODO: handle insufficient space.
-        }
+
+        var span = new Span<byte>(buffer, cursor, Fixed64Size);
+
+        BinaryPrimitives.WriteUInt64LittleEndian(span, value);
+
+        cursor += Fixed64Size;
     }
 
     internal static uint GetTagValue(int fieldNumber, WireType wireType)
-    {
-        return ((uint)(fieldNumber << 3)) | (uint)wireType;
-    }
+        => ((uint)(fieldNumber << 3)) | (uint)wireType;
 }

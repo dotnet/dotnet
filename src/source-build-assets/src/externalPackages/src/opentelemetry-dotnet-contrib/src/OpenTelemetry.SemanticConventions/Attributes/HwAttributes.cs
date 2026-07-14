@@ -15,7 +15,7 @@ namespace OpenTelemetry.SemanticConventions;
 public static class HwAttributes
 {
     /// <summary>
-    /// Design capacity in Watts-hours or Amper-hours.
+    /// Design capacity in Watts-hours or Ampere-hours.
     /// </summary>
     public const string AttributeHwBatteryCapacity = "hw.battery.capacity";
 

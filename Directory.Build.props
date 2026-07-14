@@ -91,4 +91,8 @@
     <ShellExtension Condition="'$(BuildOS)' != 'windows'">.sh</ShellExtension>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EmbedInBinlog Include="$(RepoRoot)NuGet.config" />
+  </ItemGroup>
+
 </Project>

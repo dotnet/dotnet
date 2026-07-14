@@ -19,7 +19,7 @@ internal class SamplingRule : IComparable<SamplingRule>
         string serviceType,
         string urlPath,
         int version,
-        Dictionary<string, string> attributes)
+        Dictionary<string, string>? attributes)
     {
         this.RuleName = ruleName;
         this.Priority = priority;
@@ -32,7 +32,7 @@ internal class SamplingRule : IComparable<SamplingRule>
         this.ServiceType = serviceType;
         this.UrlPath = urlPath;
         this.Version = version;
-        this.Attributes = attributes;
+        this.Attributes = attributes ?? [];
     }
 
     [JsonPropertyName("RuleName")]

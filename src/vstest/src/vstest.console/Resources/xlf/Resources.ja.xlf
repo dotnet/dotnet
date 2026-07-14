@@ -1171,16 +1171,6 @@
         <target state="translated">要求ハンドラー接続の待機が {0} 秒後にタイムアウトしました。</target>
         <note />
       </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">テスト セッション開始の待機が {0} 秒後にタイムアウトしました。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">テスト セッション停止の待機が {0} 秒後にタイムアウトしました。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
         <target state="translated">通信チャネルをホスト中にエラーが発生しました。</target>

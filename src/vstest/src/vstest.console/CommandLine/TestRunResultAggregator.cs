@@ -12,24 +12,14 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine;
 /// </summary>
 internal class TestRunResultAggregator
 {
-    private static TestRunResultAggregator? s_instance;
-
     /// <summary>
     /// Initializes the TestRunResultAggregator
     /// </summary>
-    /// <remarks>Constructor is private since the factory method should be used to get the instance.</remarks>
     protected internal TestRunResultAggregator()
     {
         // Outcome is passed until we see a failure.
         Outcome = TestOutcome.Passed;
     }
-
-    /// <summary>
-    /// Gets the instance of the test run result aggregator.
-    /// </summary>
-    /// <returns>Instance of the test run result aggregator.</returns>
-    public static TestRunResultAggregator Instance
-        => s_instance ??= new TestRunResultAggregator();
 
     /// <summary>
     /// The current test run outcome.

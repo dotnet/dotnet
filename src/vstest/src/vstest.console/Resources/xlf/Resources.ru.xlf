@@ -1171,16 +1171,6 @@
         <target state="translated">Время ожидания подключения обработчика запросов истекло через {0} с.</target>
         <note />
       </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Время ожидания начала тестового сеанса истекло через {0} с.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Время ожидания остановки тестового сеанса истекло через {0} с.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">
         <source>Error hosting communication channel.</source>
         <target state="translated">Ошибка при размещении коммуникационного канала.</target>

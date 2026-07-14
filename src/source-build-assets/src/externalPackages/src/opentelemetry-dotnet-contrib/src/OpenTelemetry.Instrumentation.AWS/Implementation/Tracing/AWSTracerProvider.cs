@@ -4,24 +4,30 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Amazon.Runtime.Telemetry.Tracing;
+using OpenTelemetry.AWS;
 
 namespace OpenTelemetry.Instrumentation.AWS.Implementation.Tracing;
 
-internal sealed class AWSTracerProvider : TracerProvider
+internal sealed class AWSTracerProvider(SemanticConventionVersion version) : TracerProvider
 {
-    private static readonly ConcurrentDictionary<string, AWSTracer> TracersDictionary = new();
+    private readonly ConcurrentDictionary<string, ActivitySource> activitySources = new();
+    private readonly Version semanticConventionVersion = AWSSemanticConventions.GetVersion(version);
 
     public override Tracer GetTracer(string scope)
     {
-        if (TracersDictionary.TryGetValue(scope, out var awsTracer))
+        // We can add support for tags if https://github.com/aws/aws-sdk-net/issues/4393 is implemented
+        if (!this.activitySources.TryGetValue(scope, out var activitySource))
         {
-            return awsTracer;
+#if NET
+            activitySource = this.activitySources.GetOrAdd(scope, static (name, version) => CreateActivitySource(name, version), this.semanticConventionVersion);
+#else
+            activitySource = this.activitySources.GetOrAdd(scope, (name) => CreateActivitySource(name, this.semanticConventionVersion));
+#endif
         }
 
-        awsTracer = TracersDictionary.GetOrAdd(
-            scope,
-            new AWSTracer(new ActivitySource(scope)));
-
-        return awsTracer;
+        return new AWSTracer(activitySource);
     }
+
+    private static ActivitySource CreateActivitySource(string name, Version version)
+        => Trace.ActivitySourceFactory.Create(typeof(AWSTracerProvider), version, name: name);
 }

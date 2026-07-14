@@ -16,6 +16,7 @@ public partial class PRCreator
 {
     private readonly GitClient _gitClient;
     private readonly Pipelines _pipeline;
+    private readonly string _identifier;
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string UpdatedFilePrefix = "updated";
@@ -25,10 +26,11 @@ public partial class PRCreator
     // branch as a genuine failure.
     private const int BranchCreationVerificationAttempts = 5;
     private static readonly TimeSpan BranchCreationVerificationDelay = TimeSpan.FromSeconds(2);
-    public PRCreator(GitClient gitClient, Pipelines pipeline)
+    public PRCreator(GitClient gitClient, Pipelines pipeline, string? identifier = null)
     {
         _gitClient = gitClient;
         _pipeline = pipeline;
+        _identifier = string.IsNullOrWhiteSpace(identifier) ? string.Empty : identifier.Trim();
     }
 
     [GeneratedRegex("-+")]
@@ -534,8 +536,21 @@ public partial class PRCreator
     private string BuildHeadBranchName(string targetBranch)
     {
         string sanitized = SanitizeForBranchName(targetBranch);
-        string hash = ShortHash($"{_pipeline}|{targetBranch}");
-        return $"pr-baseline-{_pipeline.ToString().ToLowerInvariant()}-{sanitized}-{hash}";
+
+        // When no identifier is supplied, preserve the exact historical branch name and hash
+        // input so open PRs from single-job pipelines (sdk, license) are undisturbed.
+        if (_identifier.Length == 0)
+        {
+            string hashNoIdentifier = ShortHash($"{_pipeline}|{targetBranch}");
+            return $"pr-baseline-{_pipeline.ToString().ToLowerInvariant()}-{sanitized}-{hashNoIdentifier}";
+        }
+
+        // With an identifier, fold it into both the readable branch name and the hash so that
+        // multiple jobs of the same pipeline targeting the same branch (e.g. the reproducibility
+        // pipeline's SourceBuilt vs Msft jobs) resolve to distinct branches and therefore distinct PRs.
+        string sanitizedIdentifier = SanitizeForBranchName(_identifier);
+        string hash = ShortHash($"{_pipeline}|{_identifier}|{targetBranch}");
+        return $"pr-baseline-{_pipeline.ToString().ToLowerInvariant()}-{sanitizedIdentifier}-{sanitized}-{hash}";
     }
 
     private static string SanitizeForBranchName(string s)

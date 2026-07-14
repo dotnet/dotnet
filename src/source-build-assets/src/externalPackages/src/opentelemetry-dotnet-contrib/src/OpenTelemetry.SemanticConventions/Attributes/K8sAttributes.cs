@@ -373,9 +373,117 @@ public static class K8sAttributes
     public const string AttributeK8sNodeName = "k8s.node.name";
 
     /// <summary>
+    /// The name of the system container running on the K8s Node.
+    /// </summary>
+    public const string AttributeK8sNodeSystemContainerName = "k8s.node.system_container.name";
+
+    /// <summary>
     /// The UID of the Node.
     /// </summary>
     public const string AttributeK8sNodeUid = "k8s.node.uid";
+
+    /// <summary>
+    /// The annotation placed on the PersistentVolume, the <c><key></c> being the annotation name, the value being the annotation value, even if the value is empty.
+    /// </summary>
+    /// <remarks>
+    /// Examples:
+    /// <ul>
+    ///   <li>An annotation <c>pv.kubernetes.io/provisioned-by</c> with value <c>kubernetes.io/aws-ebs</c> SHOULD be recorded as
+    /// the <c>k8s.persistentvolume.annotation.pv.kubernetes.io/provisioned-by</c> attribute with value <c>"kubernetes.io/aws-ebs"</c>.</li>
+    ///   <li>An annotation <c>data</c> with empty string value SHOULD be recorded as
+    /// the <c>k8s.persistentvolume.annotation.data</c> attribute with value <c>""</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeAnnotationTemplate = "k8s.persistentvolume.annotation";
+
+    /// <summary>
+    /// The label placed on the PersistentVolume, the <c><key></c> being the label name, the value being the label value, even if the value is empty.
+    /// </summary>
+    /// <remarks>
+    /// Examples:
+    /// <ul>
+    ///   <li>A label <c>type</c> with value <c>ssd</c> SHOULD be recorded as
+    /// the <c>k8s.persistentvolume.label.type</c> attribute with value <c>"ssd"</c>.</li>
+    ///   <li>A label <c>data</c> with empty string value SHOULD be recorded as
+    /// the <c>k8s.persistentvolume.label.data</c> attribute with value <c>""</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeLabelTemplate = "k8s.persistentvolume.label";
+
+    /// <summary>
+    /// The name of the PersistentVolume.
+    /// </summary>
+    public const string AttributeK8sPersistentvolumeName = "k8s.persistentvolume.name";
+
+    /// <summary>
+    /// The reclaim policy of the PersistentVolume.
+    /// </summary>
+    /// <remarks>
+    /// This attribute aligns with the <c>persistentVolumeReclaimPolicy</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeSpec">K8s PersistentVolumeSpec</a>.
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeReclaimPolicy = "k8s.persistentvolume.reclaim_policy";
+
+    /// <summary>
+    /// The phase of the PersistentVolume.
+    /// </summary>
+    /// <remarks>
+    /// This attribute aligns with the <c>phase</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeStatus">K8s PersistentVolumeStatus</a>.
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeStatusPhase = "k8s.persistentvolume.status.phase";
+
+    /// <summary>
+    /// The UID of the PersistentVolume.
+    /// </summary>
+    public const string AttributeK8sPersistentvolumeUid = "k8s.persistentvolume.uid";
+
+    /// <summary>
+    /// The annotation placed on the PersistentVolumeClaim, the <c><key></c> being the annotation name, the value being the annotation value, even if the value is empty.
+    /// </summary>
+    /// <remarks>
+    /// Examples:
+    /// <ul>
+    ///   <li>An annotation <c>volume.beta.kubernetes.io/storage-provisioner</c> with value <c>kubernetes.io/aws-ebs</c> SHOULD be recorded as
+    /// the <c>k8s.persistentvolumeclaim.annotation.volume.beta.kubernetes.io/storage-provisioner</c> attribute with value <c>"kubernetes.io/aws-ebs"</c>.</li>
+    ///   <li>An annotation <c>data</c> with empty string value SHOULD be recorded as
+    /// the <c>k8s.persistentvolumeclaim.annotation.data</c> attribute with value <c>""</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeclaimAnnotationTemplate = "k8s.persistentvolumeclaim.annotation";
+
+    /// <summary>
+    /// The label placed on the PersistentVolumeClaim, the <c><key></c> being the label name, the value being the label value, even if the value is empty.
+    /// </summary>
+    /// <remarks>
+    /// Examples:
+    /// <ul>
+    ///   <li>A label <c>app</c> with value <c>my-app</c> SHOULD be recorded as
+    /// the <c>k8s.persistentvolumeclaim.label.app</c> attribute with value <c>"my-app"</c>.</li>
+    ///   <li>A label <c>data</c> with empty string value SHOULD be recorded as
+    /// the <c>k8s.persistentvolumeclaim.label.data</c> attribute with value <c>""</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeclaimLabelTemplate = "k8s.persistentvolumeclaim.label";
+
+    /// <summary>
+    /// The name of the PersistentVolumeClaim.
+    /// </summary>
+    public const string AttributeK8sPersistentvolumeclaimName = "k8s.persistentvolumeclaim.name";
+
+    /// <summary>
+    /// The phase of the PersistentVolumeClaim.
+    /// </summary>
+    /// <remarks>
+    /// This attribute aligns with the <c>phase</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#PersistentVolumeClaimStatus">K8s PersistentVolumeClaimStatus</a>.
+    /// </remarks>
+    public const string AttributeK8sPersistentvolumeclaimStatusPhase = "k8s.persistentvolumeclaim.status.phase";
+
+    /// <summary>
+    /// The UID of the PersistentVolumeClaim.
+    /// </summary>
+    public const string AttributeK8sPersistentvolumeclaimUid = "k8s.persistentvolumeclaim.uid";
 
     /// <summary>
     /// The annotation placed on the Pod, the <c><key></c> being the annotation name, the value being the annotation value.
@@ -535,6 +643,132 @@ public static class K8sAttributes
     /// The UID of the resource quota.
     /// </summary>
     public const string AttributeK8sResourcequotaUid = "k8s.resourcequota.uid";
+
+    /// <summary>
+    /// The annotation placed on the Service, the <c><key></c> being the annotation name, the value being the annotation value, even if the value is empty.
+    /// </summary>
+    /// <remarks>
+    /// Examples:
+    /// <ul>
+    ///   <li>An annotation <c>prometheus.io/scrape</c> with value <c>true</c> SHOULD be recorded as
+    /// the <c>k8s.service.annotation.prometheus.io/scrape</c> attribute with value <c>"true"</c>.</li>
+    ///   <li>An annotation <c>data</c> with empty string value SHOULD be recorded as
+    /// the <c>k8s.service.annotation.data</c> attribute with value <c>""</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sServiceAnnotationTemplate = "k8s.service.annotation";
+
+    /// <summary>
+    /// The address type of the service endpoint.
+    /// </summary>
+    /// <remarks>
+    /// The network address family or type of the endpoint.
+    /// This attribute aligns with the <c>addressType</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/">K8s EndpointSlice</a>.
+    /// It is used to differentiate metrics when a Service is backed by multiple address types
+    /// (e.g., in dual-stack clusters).
+    /// </remarks>
+    public const string AttributeK8sServiceEndpointAddressType = "k8s.service.endpoint.address_type";
+
+    /// <summary>
+    /// The condition of the service endpoint.
+    /// </summary>
+    /// <remarks>
+    /// The current operational condition of the service endpoint.
+    /// An endpoint can have multiple conditions set at once (e.g., both <c>serving</c> and <c>terminating</c> during rollout).
+    /// This attribute aligns with the condition fields in the <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/">K8s EndpointSlice</a>.
+    /// </remarks>
+    public const string AttributeK8sServiceEndpointCondition = "k8s.service.endpoint.condition";
+
+    /// <summary>
+    /// The zone of the service endpoint.
+    /// </summary>
+    /// <remarks>
+    /// The zone where the endpoint is located, typically corresponding to a failure domain.
+    /// This attribute aligns with the <c>zone</c> field of endpoints in the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/">K8s EndpointSlice</a>.
+    /// It enables zone-aware monitoring of service endpoint distribution and supports
+    /// features like <a href="https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/">Topology Aware Routing</a>.
+    /// <p>
+    /// If the zone is not populated (e.g., nodes without the <c>topology.kubernetes.io/zone</c> label),
+    /// the attribute value will be an empty string.
+    /// </remarks>
+    public const string AttributeK8sServiceEndpointZone = "k8s.service.endpoint.zone";
+
+    /// <summary>
+    /// The label placed on the Service, the <c><key></c> being the label name, the value being the label value, even if the value is empty.
+    /// </summary>
+    /// <remarks>
+    /// Examples:
+    /// <ul>
+    ///   <li>A label <c>app</c> with value <c>my-service</c> SHOULD be recorded as
+    /// the <c>k8s.service.label.app</c> attribute with value <c>"my-service"</c>.</li>
+    ///   <li>A label <c>data</c> with empty string value SHOULD be recorded as
+    /// the <c>k8s.service.label.data</c> attribute with value <c>""</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sServiceLabelTemplate = "k8s.service.label";
+
+    /// <summary>
+    /// The name of the Service.
+    /// </summary>
+    public const string AttributeK8sServiceName = "k8s.service.name";
+
+    /// <summary>
+    /// Whether the Service publishes not-ready endpoints.
+    /// </summary>
+    /// <remarks>
+    /// Whether the Service is configured to publish endpoints before the pods are ready.
+    /// This attribute is typically used to indicate that a Service (such as a headless
+    /// Service for a StatefulSet) allows peer discovery before pods pass their readiness probes.
+    /// It aligns with the <c>publishNotReadyAddresses</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec">K8s ServiceSpec</a>.
+    /// </remarks>
+    public const string AttributeK8sServicePublishNotReadyAddresses = "k8s.service.publish_not_ready_addresses";
+
+    /// <summary>
+    /// The selector key-value pair placed on the Service, the <c><key></c> being the selector key, the value being the selector value.
+    /// </summary>
+    /// <remarks>
+    /// These selectors are used to correlate with pod labels. Each selector key-value pair becomes a separate attribute.
+    /// <p>
+    /// Examples:
+    /// <ul>
+    ///   <li>A selector <c>app=my-app</c> SHOULD be recorded as
+    /// the <c>k8s.service.selector.app</c> attribute with value <c>"my-app"</c>.</li>
+    ///   <li>A selector <c>version=v1</c> SHOULD be recorded as
+    /// the <c>k8s.service.selector.version</c> attribute with value <c>"v1"</c>.</li>
+    /// </ul>
+    /// </remarks>
+    public const string AttributeK8sServiceSelectorTemplate = "k8s.service.selector";
+
+    /// <summary>
+    /// The traffic distribution policy for the Service.
+    /// </summary>
+    /// <remarks>
+    /// Specifies how traffic is distributed to endpoints for this Service.
+    /// This attribute aligns with the <c>trafficDistribution</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/networking/virtual-ips/#traffic-distribution">K8s ServiceSpec</a>.
+    /// Known values include <c>PreferSameZone</c> (prefer endpoints in the same zone as the client) and
+    /// <c>PreferSameNode</c> (prefer endpoints on the same node, fallback to same zone, then cluster-wide).
+    /// If this field is not set on the Service, the attribute SHOULD NOT be emitted.
+    /// When not set, Kubernetes distributes traffic evenly across all endpoints cluster-wide.
+    /// </remarks>
+    public const string AttributeK8sServiceTrafficDistribution = "k8s.service.traffic_distribution";
+
+    /// <summary>
+    /// The type of the Kubernetes Service.
+    /// </summary>
+    /// <remarks>
+    /// This attribute aligns with the <c>type</c> field of the
+    /// <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec">K8s ServiceSpec</a>.
+    /// </remarks>
+    public const string AttributeK8sServiceType = "k8s.service.type";
+
+    /// <summary>
+    /// The UID of the Service.
+    /// </summary>
+    public const string AttributeK8sServiceUid = "k8s.service.uid";
 
     /// <summary>
     /// The annotation placed on the StatefulSet, the <c><key></c> being the annotation name, the value being the annotation value, even if the value is empty.
@@ -730,6 +964,79 @@ public static class K8sAttributes
     }
 
     /// <summary>
+    /// The reclaim policy of the PersistentVolume.
+    /// </summary>
+    public static class K8sPersistentvolumeReclaimPolicyValues
+    {
+        /// <summary>
+        /// The volume will be deleted when released from its claim.
+        /// </summary>
+        public const string Delete = "Delete";
+
+        /// <summary>
+        /// The volume will be recycled (basic scrub) when released from its claim.
+        /// </summary>
+        public const string Recycle = "Recycle";
+
+        /// <summary>
+        /// The volume will be retained when released from its claim.
+        /// </summary>
+        public const string Retain = "Retain";
+    }
+
+    /// <summary>
+    /// The phase of the PersistentVolume.
+    /// </summary>
+    public static class K8sPersistentvolumeStatusPhaseValues
+    {
+        /// <summary>
+        /// The volume is available and not yet bound to a claim.
+        /// </summary>
+        public const string Available = "Available";
+
+        /// <summary>
+        /// The volume is bound to a claim.
+        /// </summary>
+        public const string Bound = "Bound";
+
+        /// <summary>
+        /// The volume has failed its automatic reclamation.
+        /// </summary>
+        public const string Failed = "Failed";
+
+        /// <summary>
+        /// The volume is being provisioned.
+        /// </summary>
+        public const string Pending = "Pending";
+
+        /// <summary>
+        /// The claim has been deleted but the volume is not yet available.
+        /// </summary>
+        public const string Released = "Released";
+    }
+
+    /// <summary>
+    /// The phase of the PersistentVolumeClaim.
+    /// </summary>
+    public static class K8sPersistentvolumeclaimStatusPhaseValues
+    {
+        /// <summary>
+        /// The claim is bound to a volume.
+        /// </summary>
+        public const string Bound = "Bound";
+
+        /// <summary>
+        /// The claim has lost its underlying volume (the volume does not exist anymore).
+        /// </summary>
+        public const string Lost = "Lost";
+
+        /// <summary>
+        /// The claim has not yet been bound to a volume.
+        /// </summary>
+        public const string Pending = "Pending";
+    }
+
+    /// <summary>
     /// The phase for the pod. Corresponds to the <c>phase</c> field of the: <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#podstatus-v1-core">K8s PodStatus</a>.
     /// </summary>
     public static class K8sPodStatusPhaseValues
@@ -789,6 +1096,74 @@ public static class K8sAttributes
         /// The pod was rejected admission to the node because of an error during admission that could not be categorized.
         /// </summary>
         public const string UnexpectedAdmissionError = "UnexpectedAdmissionError";
+    }
+
+    /// <summary>
+    /// The address type of the service endpoint.
+    /// </summary>
+    public static class K8sServiceEndpointAddressTypeValues
+    {
+        /// <summary>
+        /// IPv4 address type.
+        /// </summary>
+        public const string Ipv4 = "IPv4";
+
+        /// <summary>
+        /// IPv6 address type.
+        /// </summary>
+        public const string Ipv6 = "IPv6";
+
+        /// <summary>
+        /// FQDN address type.
+        /// </summary>
+        public const string Fqdn = "FQDN";
+    }
+
+    /// <summary>
+    /// The condition of the service endpoint.
+    /// </summary>
+    public static class K8sServiceEndpointConditionValues
+    {
+        /// <summary>
+        /// The endpoint is ready to receive new connections.
+        /// </summary>
+        public const string Ready = "ready";
+
+        /// <summary>
+        /// The endpoint is currently handling traffic.
+        /// </summary>
+        public const string Serving = "serving";
+
+        /// <summary>
+        /// The endpoint is in the process of shutting down.
+        /// </summary>
+        public const string Terminating = "terminating";
+    }
+
+    /// <summary>
+    /// The type of the Kubernetes Service.
+    /// </summary>
+    public static class K8sServiceTypeValues
+    {
+        /// <summary>
+        /// ClusterIP service type.
+        /// </summary>
+        public const string ClusterIp = "ClusterIP";
+
+        /// <summary>
+        /// NodePort service type.
+        /// </summary>
+        public const string NodePort = "NodePort";
+
+        /// <summary>
+        /// LoadBalancer service type.
+        /// </summary>
+        public const string LoadBalancer = "LoadBalancer";
+
+        /// <summary>
+        /// ExternalName service type.
+        /// </summary>
+        public const string ExternalName = "ExternalName";
     }
 
     /// <summary>

@@ -3,9 +3,6 @@
 # Files listed here have known root-cause-justified differences between two builds of the
 # same source commit.
 
-# https://github.com/dotnet/fsharp/issues/19732
-sdk/*/FSharp/FSharp.Compiler.Service.dll
-
 # https://github.com/NuGet/NuGet.Client/pull/7020
 # https://github.com/dotnet/arcade/pull/16787
 # The JSON files are included as well due to a cascade effect of sha512 hash diffs from the nupkgs

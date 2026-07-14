@@ -18,7 +18,7 @@ public static class GraphqlAttributes
     /// The GraphQL document being executed.
     /// </summary>
     /// <remarks>
-    /// The value may be sanitized to exclude sensitive information.
+    /// If instrumentation can reliably identify and redact sensitive information it SHOULD do it.
     /// </remarks>
     public const string AttributeGraphqlDocument = "graphql.document";
 

@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 #pragma warning disable SA1402 // File may only contain a single type
 #pragma warning disable SA1403 // File may only contain a single namespace
 #pragma warning disable SA1649 // File name should match first type name
+#pragma warning disable IDE0022 // Use expression body for method
 
 #if !NET
 namespace System.Runtime.CompilerServices
@@ -59,10 +60,14 @@ namespace OpenTelemetry.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ThrowIfNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
+#if NET
+            ArgumentNullException.ThrowIfNull(value, paramName);
+#else
             if (value is null)
             {
                 throw new ArgumentNullException(paramName, "Must not be null");
             }
+#endif
         }
 
         /// <summary>
@@ -75,10 +80,14 @@ namespace OpenTelemetry.Internal
         public static void ThrowIfNullOrEmpty([NotNull] string? value, [CallerArgumentExpression(nameof(value))] string? paramName = null)
 #pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
         {
+#if NET
+            ArgumentException.ThrowIfNullOrEmpty(value, paramName);
+#else
             if (string.IsNullOrEmpty(value))
             {
                 throw new ArgumentException("Must not be null or empty", paramName);
             }
+#endif
         }
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
 
@@ -92,10 +101,14 @@ namespace OpenTelemetry.Internal
         public static void ThrowIfNullOrWhitespace([NotNull] string? value, [CallerArgumentExpression(nameof(value))] string? paramName = null)
 #pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
         {
+#if NET
+            ArgumentException.ThrowIfNullOrWhiteSpace(value, paramName);
+#else
             if (string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentException("Must not be null or whitespace", paramName);
             }
+#endif
         }
 #pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
 
@@ -109,9 +122,29 @@ namespace OpenTelemetry.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ThrowIfZero(int value, string message = "Must not be zero", [CallerArgumentExpression(nameof(value))] string? paramName = null)
         {
+#if NET
+            ArgumentOutOfRangeException.ThrowIfZero(value, paramName);
+#else
             if (value == 0)
             {
                 throw new ArgumentException(message, paramName);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Throw an exception if the value is negative.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <param name="message">The message to use in the thrown exception.</param>
+        /// <param name="paramName">The parameter name to use in the thrown exception.</param>
+        [DebuggerHidden]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ThrowIfNegative(int value, string message = "Must not be negative", [CallerArgumentExpression(nameof(value))] string? paramName = null)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(paramName, message);
             }
         }
 

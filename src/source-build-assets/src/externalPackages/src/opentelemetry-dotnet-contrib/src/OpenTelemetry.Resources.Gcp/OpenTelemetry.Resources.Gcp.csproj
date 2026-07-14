@@ -16,12 +16,10 @@
   <ItemGroup>
     <PackageReference Include="Google.Api.Gax" VersionOverride="[4.8.0,)" />
     <PackageReference Include="OpenTelemetry" />
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETStandard'">
-    <PackageReference Include="System.Text.Encodings.Web" />
-    <PackageReference Update="System.Text.Json" VersionOverride="[4.7.2,)" />
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -292,11 +292,6 @@ public class ClientTracingInterceptor : Interceptor
         private static readonly Action<Metadata?, string, string> MetadataSetter = (metadata, key, value) => { metadata?.Add(new Metadata.Entry(key, value)); };
 
         /// <summary>
-        /// The context.
-        /// </summary>
-        private readonly ClientInterceptorContext<TRequest, TResponse> context;
-
-        /// <summary>
         /// The parent activity.
         /// </summary>
         private readonly Activity? parentActivity;
@@ -307,9 +302,9 @@ public class ClientTracingInterceptor : Interceptor
         /// <param name="context">The context.</param>
         /// <param name="options">The options.</param>
         public ClientRpcScope(ClientInterceptorContext<TRequest, TResponse> context, ClientTracingInterceptorOptions options)
-            : base(context.Method?.FullName, options.RecordMessageEvents, options.RecordException)
+            : base(context.Host, context.Method?.FullName, options.RecordMessageEvents, options.RecordException)
         {
-            this.context = context;
+            this.Context = context;
 
             // Capture the current activity.
             this.parentActivity = Activity.Current;
@@ -326,16 +321,24 @@ public class ClientTracingInterceptor : Interceptor
             // the callers current Activity which isn't what we want. We need to restore the original immediately after doing this.
             // If this call happened after some kind of async context await then a restore wouldn't be necessary.
             // gRPC Core just doesn't have the hooks to do this as far as I can tell.
-            var rpcActivity = GrpcCoreInstrumentation.ActivitySource.StartActivity(
+            var parentContext = this.parentActivity?.Context ?? default;
+            var rpcActivity = GrpcCoreInstrumentation.ActivitySource.CreateActivity(
                 this.FullServiceName,
                 ActivityKind.Client,
-                this.parentActivity == default ? default : this.parentActivity.Context,
+                parentContext,
                 tags: options.AdditionalTags);
 
             if (rpcActivity == null)
             {
                 return;
             }
+
+            if (!parentContext.IsValid())
+            {
+                rpcActivity.SetIdFormat(ActivityIdFormat.W3C);
+            }
+
+            rpcActivity.Start();
 
             var callOptions = context.Options;
 
@@ -355,20 +358,18 @@ public class ClientTracingInterceptor : Interceptor
 
             this.SetActivity(rpcActivity);
             options.Propagator.Inject(new PropagationContext(rpcActivity.Context, Baggage.Current), callOptions.Headers, MetadataSetter);
-            this.context = new ClientInterceptorContext<TRequest, TResponse>(context.Method!, context.Host, callOptions);
+            this.Context = new ClientInterceptorContext<TRequest, TResponse>(context.Method!, context.Host, callOptions);
         }
 
         /// <summary>
         /// Gets the context.
         /// </summary>
-        public ClientInterceptorContext<TRequest, TResponse> Context => this.context;
+        public ClientInterceptorContext<TRequest, TResponse> Context { get; }
 
         /// <summary>
         /// Restores the parent activity.
         /// </summary>
         public void RestoreParentActivity()
-        {
-            Activity.Current = this.parentActivity;
-        }
+            => Activity.Current = this.parentActivity;
     }
 }

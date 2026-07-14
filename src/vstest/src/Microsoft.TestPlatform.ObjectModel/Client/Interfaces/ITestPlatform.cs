@@ -66,24 +66,4 @@ public interface ITestPlatform : IDisposable
         TestPlatformOptions? options,
         Dictionary<string, SourceDetail> sourceToSourceDetailMap,
         IWarningLogger warningLogger);
-
-    /// <summary>
-    /// Starts a test session.
-    /// </summary>
-    ///
-    /// <param name="requestData">
-    /// Providing common services and data for test session start.
-    /// </param>
-    /// <param name="criteria">Specifies the start test session criteria.</param>
-    /// <param name="eventsHandler">Events handler for handling session events.</param>
-    /// <param name="sourceToSourceDetailMap">Details of each dll (source).</param>
-    /// <param name="warningLogger">Logger to use for warnings.</param>
-    ///
-    /// <returns>True if the operation succeeded, false otherwise.</returns>
-    bool StartTestSession(
-        IRequestData requestData,
-        StartTestSessionCriteria criteria,
-        ITestSessionEventsHandler eventsHandler,
-        Dictionary<string, SourceDetail> sourceToSourceDetailMap,
-        IWarningLogger warningLogger);
 }

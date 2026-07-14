@@ -65,5 +65,24 @@ namespace NuGet.Protocol.Tests
             Assert.NotNull(httpSourceResource);
             Assert.Equal(maxHttpRequestsPerSource, sourceRepository.PackageSource.MaxHttpRequestsPerSource);
         }
+
+        [Fact]
+        public void ResetThrottle_ClearsThrottle()
+        {
+            IThrottle? original = HttpSourceResourceProvider.Throttle;
+            try
+            {
+                HttpSourceResourceProvider.Throttle = SemaphoreSlimThrottle.CreateBinarySemaphore();
+
+                HttpSourceResourceProvider.ResetThrottle();
+
+                // A per-restore throttle must not leak into the next restore on a reused process.
+                Assert.Null(HttpSourceResourceProvider.Throttle);
+            }
+            finally
+            {
+                HttpSourceResourceProvider.Throttle = original;
+            }
+        }
     }
 }

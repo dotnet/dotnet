@@ -27,6 +27,36 @@ namespace NuGet.Protocol.Plugins.Tests
         }
 
         [Fact]
+        public void ResetDefaultInstance_ReReadsEnableLogFromEnvironment()
+        {
+            // DefaultInstance freezes its IsEnabled when created; in a process reused across builds, ResetDefaultInstance
+            // must rebuild it so a toggled NUGET_PLUGIN_ENABLE_LOG takes effect on the next restore.
+            string original = Environment.GetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG");
+            using (var testDirectory = TestDirectory.Create())
+            {
+                string originalLogDir = Environment.GetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH");
+                try
+                {
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH", testDirectory.Path);
+
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", bool.TrueString);
+                    PluginLogger.ResetDefaultInstance();
+                    Assert.True(PluginLogger.DefaultInstance.IsEnabled);
+
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", bool.FalseString);
+                    PluginLogger.ResetDefaultInstance();
+                    Assert.False(PluginLogger.DefaultInstance.IsEnabled);
+                }
+                finally
+                {
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", original);
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH", originalLogDir);
+                    PluginLogger.ResetDefaultInstance();
+                }
+            }
+        }
+
+        [Fact]
         public void IsEnabled_WhenLoggingIsNotEnabled_ReturnsTrue()
         {
             var environmentVariableReader = CreateEnvironmentVariableReaderMock(isLoggingEnabled: false);

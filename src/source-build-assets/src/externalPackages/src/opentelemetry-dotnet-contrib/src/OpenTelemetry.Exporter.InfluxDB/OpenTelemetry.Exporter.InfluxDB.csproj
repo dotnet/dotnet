@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksForLibraries)</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Description>An OpenTelemetry .NET exporter that exports to InfluxDB.</Description>
     <MinVerTagPrefix>Exporter.InfluxDB-</MinVerTagPrefix>
   </PropertyGroup>
@@ -18,8 +17,7 @@
     <PackageReference Include="OpenTelemetry" />
   </ItemGroup>
 
-  <!-- Upgrade transitive references to resolve NuGet Audit warnings -->
-  <ItemGroup>
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 

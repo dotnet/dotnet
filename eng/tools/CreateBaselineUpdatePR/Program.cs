@@ -58,6 +58,15 @@ public class Program
         DefaultValueFactory = _ => Environment.GetEnvironmentVariable("GIT_TOKEN")
     };
 
+    public static readonly Option<string?> Identifier = new("--identifier", "-i")
+    {
+        Description = "An optional discriminator folded into the generated head branch name so that " +
+            "multiple jobs of the same pipeline targeting the same branch produce distinct PRs " +
+            "(e.g. the reproducibility pipeline's SourceBuilt vs Msft jobs).",
+        Arity = ArgumentArity.ZeroOrOne,
+        DefaultValueFactory = _ => null
+    };
+
     public static readonly Option<LogLevel> Level = new("--log-level", "-l")
     {
         Description = "The log level to run the tool in.",
@@ -99,7 +108,8 @@ public class Program
             BuildId,
             Title,
             Branch,
-            Token
+            Token,
+            Identifier
         };
     }
 
@@ -120,7 +130,7 @@ public class Program
                 }
                 GitClient client = GitClient.Create(repoUri, token);
 
-                var creator = new PRCreator(client, pipeline);
+                var creator = new PRCreator(client, pipeline, result.GetValue(Identifier));
 
                 await creator.ExecuteAsync(
                     result.GetValue(OriginalFilesDirectory)!,
