@@ -23,7 +23,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// <param name="accessToken">An access token that contains the 'cnf' claim.</param>
         /// <param name="httpRequestData">A structure that represents an outgoing http request.</param>
         /// <param name="signingCredentials">A security key and algorithm that will be used to sign the (Signed)HttpRequest.</param>
-        public SignedHttpRequestDescriptor(string accessToken, HttpRequestData httpRequestData, SigningCredentials signingCredentials) 
+        public SignedHttpRequestDescriptor(string accessToken, HttpRequestData httpRequestData, SigningCredentials signingCredentials)
             : this(accessToken, httpRequestData, signingCredentials, new SignedHttpRequestCreationParameters())
         {
         }
@@ -39,7 +39,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// <param name="httpRequestData">A structure that represents an outgoing http request.</param>
         /// <param name="signingCredentials">A security key and algorithm that will be used to sign the (Signed)HttpRequest.</param>
         /// <param name="signedHttpRequestCreationParameters">A set of parameters required for creating a SignedHttpRequest.</param>
-        public SignedHttpRequestDescriptor(string accessToken, HttpRequestData httpRequestData, SigningCredentials signingCredentials, SignedHttpRequestCreationParameters signedHttpRequestCreationParameters) 
+        public SignedHttpRequestDescriptor(string accessToken, HttpRequestData httpRequestData, SigningCredentials signingCredentials, SignedHttpRequestCreationParameters signedHttpRequestCreationParameters)
         {
             AccessToken = !string.IsNullOrEmpty(accessToken) ? accessToken : throw LogHelper.LogArgumentNullException(nameof(accessToken));
             HttpRequestData = httpRequestData ?? throw LogHelper.LogArgumentNullException(nameof(httpRequestData));

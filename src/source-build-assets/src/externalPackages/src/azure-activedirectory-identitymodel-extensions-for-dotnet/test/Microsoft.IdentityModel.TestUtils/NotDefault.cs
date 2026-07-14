@@ -73,7 +73,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public static string ClaimsIdentityLabel
         {
-            get {  return Default.ClaimsIdentityLabel.Replace("Default", "NotDefault"); }
+            get { return Default.ClaimsIdentityLabel.Replace("Default", "NotDefault"); }
         }
 
         public static string Issuer
@@ -100,7 +100,7 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             get { return Default.RoleClaimType.Replace("Default", "NotDefault"); }
         }
-        
+
         public static EncryptingCredentials SymmetricEncryptionCredentials
         {
             get { return new EncryptingCredentials(new SymmetricSecurityKey(KeyingMaterial.SymmetricKeyBytes2_256), "dir", SecurityAlgorithms.Aes128CbcHmacSha256); }

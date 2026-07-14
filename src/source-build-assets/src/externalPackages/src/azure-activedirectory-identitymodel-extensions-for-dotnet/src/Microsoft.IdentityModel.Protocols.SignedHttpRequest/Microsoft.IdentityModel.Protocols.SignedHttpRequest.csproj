@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\build\common.props" />
 
@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.Protocols.SignedHttpRequest</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;IdentityModel;PoP;ProofOfPossession;SignedHttpRequest</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -16,10 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -32,7 +33,12 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
-    <PackageReference Include="System.Text.Json" Version="$(SystemTextJson)" />
+    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="InternalAPI.Shipped.txt" />
+    <AdditionalFiles Include="InternalAPI.Unshipped.txt" />
   </ItemGroup>
 
 </Project>

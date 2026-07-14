@@ -56,4 +56,3 @@ scenarios:
       job: benchmarks
       variables:
         filterArg: "*ValidateTokenAsyncTests*"
-

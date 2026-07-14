@@ -1,0 +1,8 @@
+root = false
+
+# C# files
+[*.cs]
+
+# Not internal visible to other assemblies, so don't need to limit changes to internal API.
+
+dotnet_diagnostic.RS0051.severity = none

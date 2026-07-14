@@ -1,14 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 
-/// <summary>
-/// Derived types to simplify testing.
-/// Helpful when throwing
-/// </summary>
+// Derived types to simplify testing.
+// Helpful when throwing
 namespace Microsoft.IdentityModel.TestUtils
 {
     public class CustomRsaSecurityKey : RsaSecurityKey
@@ -38,7 +35,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public override int KeySize => _keySize;
 
-        internal override string InternalId  => "";
+        internal override string InternalId => "";
     }
 
 }

@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.Validators</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;OpenIdConnect;Validation;AzureAD;Microsoft identity platform</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -16,10 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +33,11 @@
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="InternalAPI.Shipped.txt" />
+    <AdditionalFiles Include="InternalAPI.Unshipped.txt" />
   </ItemGroup>
 
 </Project>

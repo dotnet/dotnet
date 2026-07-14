@@ -2,7 +2,7 @@ param([string]$targetNetFramework)
 
 $projectName='Microsoft.IdentityModel.AotCompatibility.TestApp'
 $rootDirectory = Split-Path $PSScriptRoot -Parent
-$publishOutput = dotnet publish $rootDirectory/test/$projectName/$projectName.csproj --self-contained -nodeReuse:false /p:UseSharedCompilation=false
+$publishOutput = dotnet publish $rootDirectory/test/$projectName/$projectName.csproj --self-contained --framework $targetNetFramework -nodeReuse:false /p:UseSharedCompilation=false
 
 $actualWarningCount = 0
 
@@ -27,7 +27,7 @@ if ($LastExitCode -ne 0)
 $runtime = if ($IsWindows) {  "win-x64" } elseif ($IsMacOS) { "macos-x64"} else {"linux-x64"}
 $app = if ($IsWindows ) {"./$projectName.exe" } else {"./projectName" }
 
-Push-Location $rootDirectory/test/$projectName/bin/Release/$targetNetFramework/win-x64
+Push-Location $rootDirectory/test/$projectName/bin/Release/$targetNetFramework/$runtime
 
 Write-Host "Executing test App..."
 $app

@@ -3,12 +3,16 @@
 
 using System;
 using System.Buffers;
+#if NET9_0_OR_GREATER
+using System.Buffers.Text;
+#endif
 using Microsoft.IdentityModel.Logging;
 
 namespace Microsoft.IdentityModel.Tokens
 {
     /// <summary>
-    /// Base64 encode/decode implementation for as per https://tools.ietf.org/html/rfc4648#section-5.
+    /// For Non-Net9.0 Targets: Base64 encode/decode implementation for as per https://tools.ietf.org/html/rfc4648#section-5.
+    /// For Net9.0 Targets: Uses System.Buffers.Text.Base64Url to perform the encoding/decoding.
     /// Uses ArrayPool[T] to minimize memory usage.
     /// </summary>
     internal static class Base64UrlEncoding
@@ -58,8 +62,8 @@ namespace Microsoft.IdentityModel.Tokens
             _ = input ?? throw LogHelper.LogArgumentNullException(nameof(input));
 
             ReadOnlySpan<char> inputSpan = input.AsSpan();
-            int outputsize = ValidateAndGetOutputSize(inputSpan, offset, length);
-            byte[] output = new byte[outputsize];
+            int outputSize = ValidateAndGetOutputSize(inputSpan, offset, length);
+            byte[] output = new byte[outputSize];
             Decode(inputSpan, offset, length, output);
             return output;
         }
@@ -85,16 +89,17 @@ namespace Microsoft.IdentityModel.Tokens
             _ = action ?? throw new ArgumentNullException(nameof(action));
 
             ReadOnlySpan<char> inputSpan = input.AsSpan();
-            int outputsize = ValidateAndGetOutputSize(inputSpan, offset, length);
-            byte[] output = ArrayPool<byte>.Shared.Rent(outputsize);
+            int outputSize = ValidateAndGetOutputSize(inputSpan, offset, length);
+            byte[] output = ArrayPool<byte>.Shared.Rent(outputSize);
+
             try
             {
                 Decode(inputSpan, offset, length, output);
-                return action(output, outputsize, argx);
+                return action(output, outputSize, argx);
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(output);
+                ArrayPool<byte>.Shared.Return(output, true);
             }
         }
 
@@ -118,16 +123,17 @@ namespace Microsoft.IdentityModel.Tokens
             _ = action ?? throw new ArgumentNullException(nameof(action));
 
             ReadOnlySpan<char> inputSpan = input.AsSpan();
-            int outputsize = ValidateAndGetOutputSize(inputSpan, offset, length);
-            byte[] output = ArrayPool<byte>.Shared.Rent(outputsize);
+            int outputSize = ValidateAndGetOutputSize(inputSpan, offset, length);
+            byte[] output = ArrayPool<byte>.Shared.Rent(outputSize);
+
             try
             {
                 Decode(inputSpan, offset, length, output);
-                return action(output, outputsize);
+                return action(output, outputSize);
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(output);
+                ArrayPool<byte>.Shared.Return(output, true);
             }
         }
 
@@ -163,19 +169,22 @@ namespace Microsoft.IdentityModel.Tokens
             _ = action ?? throw LogHelper.LogArgumentNullException(nameof(action));
 
             ReadOnlySpan<char> inputSpan = input.AsSpan();
-            int outputsize = ValidateAndGetOutputSize(inputSpan, offset, length);
-            byte[] output = ArrayPool<byte>.Shared.Rent(outputsize);
+            int outputSize = ValidateAndGetOutputSize(inputSpan, offset, length);
+            byte[] output = ArrayPool<byte>.Shared.Rent(outputSize);
+
             try
             {
                 Decode(inputSpan, offset, length, output);
-                return action(output, outputsize, argx, argy, argz);
+                return action(output, outputSize, argx, argy, argz);
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(output);
+                ArrayPool<byte>.Shared.Return(output, true);
             }
         }
 
+
+#if NET9_0_OR_GREATER
         /// <summary>
         /// Decodes a Base64Url encoded substring of a string into a byte array.
         /// </summary>
@@ -183,6 +192,9 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="offset">The index of the character in <paramref name="input"/> to start decoding from.</param>
         /// <param name="length">The number of characters beginning from <paramref name="offset"/> to decode.</param>
         /// <param name="output">The byte array to place the decoded results into.</param>
+        internal static void Decode(ReadOnlySpan<char> input, int offset, int length, byte[] output) =>
+            Base64Url.DecodeFromChars(input.Slice(offset, length), output);
+#else
         /// <remarks>
         /// Changes from Base64UrlEncoder implementation:
         /// 1. Padding is optional.
@@ -264,6 +276,7 @@ namespace Microsoft.IdentityModel.Tokens
                 }
             }
         }
+#endif
 
         /// <summary>
         /// Encodes a byte array into a base64url encoded string.
@@ -320,6 +333,9 @@ namespace Microsoft.IdentityModel.Tokens
                         LogHelper.MarkAsNonPII(input.Length))));
 #pragma warning restore CA2208 // Instantiate argument exceptions correctly
 
+#if NET9_0_OR_GREATER
+            return Base64Url.EncodeToString(input.AsSpan().Slice(offset, length));
+#else
             int outputsize = length % 3;
             if (outputsize > 0)
                 outputsize++;
@@ -329,6 +345,7 @@ namespace Microsoft.IdentityModel.Tokens
             char[] output = new char[outputsize];
             WriteEncodedOutput(input, offset, length, output);
             return new string(output);
+#endif
         }
 
         /// <summary>
@@ -393,6 +410,7 @@ namespace Microsoft.IdentityModel.Tokens
             return outputSize;
         }
 
+#if !NET9_0_OR_GREATER
         private static void WriteEncodedOutput(byte[] inputBytes, int offset, int length, Span<char> output)
         {
             uint curBlock = 0x000000FFu;
@@ -427,5 +445,6 @@ namespace Microsoft.IdentityModel.Tokens
                 output[outputPointer++] = Base64Table[(curBlock & 0x00000003u) << 4];
             }
         }
+#endif
     }
 }

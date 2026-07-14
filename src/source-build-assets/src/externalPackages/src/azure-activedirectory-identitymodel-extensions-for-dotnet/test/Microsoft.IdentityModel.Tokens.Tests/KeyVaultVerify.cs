@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class KeyVaultVerify
     {
-        [Theory, MemberData(nameof(KeyWrapTheoryData))]
+        [Theory, MemberData(nameof(KeyWrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void DecryptValidate(KeyWrapTestParams testParams)
         {
             if (testParams.Algorithm.Equals(SecurityAlgorithms.Aes128KW, StringComparison.OrdinalIgnoreCase)
@@ -40,7 +40,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(KeyWrapTheoryData))]
+        [Theory, MemberData(nameof(KeyWrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void EncryptValidate(KeyWrapTestParams testParams)
         {
             if (testParams.Algorithm.Equals(SecurityAlgorithms.Aes128KW, StringComparison.OrdinalIgnoreCase)
@@ -111,7 +111,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             public override string ToString()
             {
-                    return TestId + ", " + Algorithm + ", " + Key.KeyId;
+                return TestId + ", " + Algorithm + ", " + Key.KeyId;
             }
         }
     }

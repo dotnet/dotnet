@@ -1,0 +1,20 @@
+{
+  "solution": {
+    "path": "Wilson.sln",
+    "projects": [
+      "src\\Microsoft.IdentityModel.Protocols\\Microsoft.IdentityModel.Protocols.csproj",
+      "src\\Microsoft.IdentityModel.Tokens\\Microsoft.IdentityModel.Tokens.csproj",
+      "src\\System.IdentityModel.Tokens.Jwt\\System.IdentityModel.Tokens.Jwt.csproj",
+      "src\\Microsoft.IdentityModel.Protocols.WsFederation\\Microsoft.IdentityModel.Protocols.WsFederation.csproj",
+      "src\\Microsoft.IdentityModel.Protocols.OpenIdConnect\\Microsoft.IdentityModel.Protocols.OpenIdConnect.csproj",
+      "src\\Microsoft.IdentityModel.Tokens.Saml\\Microsoft.IdentityModel.Tokens.Saml.csproj",
+      "src\\Microsoft.IdentityModel.Xml\\Microsoft.IdentityModel.Xml.csproj",
+      "src\\Microsoft.IdentityModel.Logging\\Microsoft.IdentityModel.Logging.csproj",
+      "src\\Microsoft.IdentityModel.JsonWebTokens\\Microsoft.IdentityModel.JsonWebTokens.csproj",
+      "src\\Microsoft.IdentityModel.Protocols.SignedHttpRequest\\Microsoft.IdentityModel.Protocols.SignedHttpRequest.csproj",
+      "src\\Microsoft.IdentityModel.Validators\\Microsoft.IdentityModel.Validators.csproj",
+      "src\\Microsoft.IdentityModel.Abstractions\\Microsoft.IdentityModel.Abstractions.csproj",
+      "src\\Microsoft.IdentityModel.LoggingExtensions\\Microsoft.IdentityModel.LoggingExtensions.csproj"
+    ]
+  }
+}

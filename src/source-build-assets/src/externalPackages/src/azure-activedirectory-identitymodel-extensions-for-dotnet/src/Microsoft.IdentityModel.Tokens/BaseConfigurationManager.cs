@@ -19,7 +19,7 @@ namespace Microsoft.IdentityModel.Tokens
         private TimeSpan _refreshInterval = DefaultRefreshInterval;
         private TimeSpan _lastKnownGoodLifetime = DefaultLastKnownGoodConfigurationLifetime;
         private BaseConfiguration _lastKnownGoodConfiguration;
-        private DateTime? _lastKnownGoodConfigFirstUse = null;
+        private DateTime? _lastKnownGoodConfigFirstUse;
 
         internal EventBasedLRUCache<BaseConfiguration, DateTime> _lastKnownGoodConfigurationCache;
 

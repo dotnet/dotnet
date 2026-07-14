@@ -15,7 +15,7 @@
 	url = https://github.com/microsoft/MSBuildLocator
 [submodule "azure-activedirectory-identitymodel-extensions-for-dotnet"]
 	path = src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet
-	url = https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git
+	url = https://dnceng@dev.azure.com/dnceng/internal/_git/azure-identitymodel
 [submodule "docker-creds-provider"]
 	path = src/externalPackages/src/docker-creds-provider
 	url = https://github.com/mthalman/docker-creds-provider
