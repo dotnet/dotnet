@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Microsoft.Extensions.DependencyInjection;
+#if !NETFRAMEWORK
+using Microsoft.Extensions.DependencyInjection.Extensions;
+#endif
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Instrumentation.Http;
 using OpenTelemetry.Instrumentation.Http.Implementation;
@@ -61,6 +64,12 @@ public static class HttpClientInstrumentationTracerProviderBuilderExtensions
             }
 
             services.RegisterOptionsFactory(configuration => new HttpClientTraceInstrumentationOptions(configuration));
+
+#if !NETFRAMEWORK
+            // Guard against duplicate DiagnosticSource subscriptions when AddHttpClientInstrumentation
+            // is called multiple times with the same name (e.g., by a distro package and the user).
+            services.TryAddSingleton<HttpClientInstrumentationProvider>();
+#endif
         });
 
 #if NETFRAMEWORK
@@ -79,11 +88,7 @@ public static class HttpClientInstrumentationTracerProviderBuilderExtensions
         AddHttpClientInstrumentationSource(builder);
 
         builder.AddInstrumentation(sp =>
-        {
-            var options = sp.GetRequiredService<IOptionsMonitor<HttpClientTraceInstrumentationOptions>>().Get(name);
-
-            return new HttpClientInstrumentation(options);
-        });
+            sp.GetRequiredService<HttpClientInstrumentationProvider>().GetOrCreate(name));
 #endif
         return builder;
     }

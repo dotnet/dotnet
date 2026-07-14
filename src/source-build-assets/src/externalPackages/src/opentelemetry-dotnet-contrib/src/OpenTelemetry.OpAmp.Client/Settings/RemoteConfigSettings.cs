@@ -16,4 +16,17 @@ public sealed class RemoteConfigSettings
     /// Default is <c>false</c>.
     /// </value>
     public bool AcceptsRemoteConfig { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the client reports remote configuration status.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if remote configuration status should be reported to the server; otherwise, <c>false</c>.
+    /// Default is <c>false</c>.
+    /// </value>
+    /// <remarks>
+    /// Typically set alongside <see cref="AcceptsRemoteConfig"/>. Without that capability the server
+    /// will not send any remote configuration, so the agent will have no configuration hash to report.
+    /// </remarks>
+    public bool ReportsRemoteConfigStatus { get; set; }
 }

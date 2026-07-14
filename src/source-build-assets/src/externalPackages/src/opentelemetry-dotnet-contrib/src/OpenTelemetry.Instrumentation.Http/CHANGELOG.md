@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 1.16.0
+
+Released 2026-Jun-24
+
+* Fix enrich methods being called multiple times.
+  ([#4018](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4018))
+
+* Add instrumentation scope version and schema URL to metrics and traces.
+  ([#4082](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4082))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
 ## 1.15.1
 
 Released 2026-Apr-21
@@ -108,6 +121,7 @@ Released 2024-Apr-12
   `?key1=value1&key2=value2` becomes `?key1=Redacted&key2=Redacted`. You can
   disable this redaction by setting the environment variable
   `OTEL_DOTNET_EXPERIMENTAL_HTTPCLIENT_DISABLE_URL_QUERY_REDACTION` to `true`.
+  Resolves [GHSA-vh2m-22xx-q94f](https://github.com/advisories/GHSA-vh2m-22xx-q94f).
   ([#5532](https://github.com/open-telemetry/opentelemetry-dotnet/pull/5532))
 
 ## 1.8.0

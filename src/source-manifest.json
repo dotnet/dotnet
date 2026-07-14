@@ -91,10 +91,10 @@
       "commitSha": "5a074f36f6e910328105113b71acc451bb0a8e2c"
     },
     {
-      "barId": 320957,
+      "barId": 322650,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "26a7a9d326ae72803df4056c4ae5381db43585b3"
+      "commitSha": "37aee533b723a455006fa8a21137f410cc38e4cc"
     },
     {
       "barId": 319269,
@@ -203,12 +203,12 @@
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
-      "commitSha": "d622e6c7c899527638b53a6b06919859f5752add"
+      "commitSha": "611868a27afda59761da60b98610f8d3b85497dc"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-contrib",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet-contrib",
-      "commitSha": "b89c765905dbc6db1421ff0a098127d44665c71f"
+      "commitSha": "0f4a2340b6ea7e5cad83efe2d6d73574794d6388"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/spectre-console",

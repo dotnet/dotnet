@@ -17,7 +17,7 @@ public static class AWSLambdaWrapper
 {
     internal const string ActivitySourceName = "OpenTelemetry.Instrumentation.AWSLambda";
 
-    private static readonly ActivitySource AWSLambdaActivitySource = new(ActivitySourceName, typeof(AWSLambdaWrapper).Assembly.GetPackageVersion());
+    private static readonly Lazy<ActivitySource> AWSLambdaActivitySource = new(CreateActivitySource);
 
     private static bool isColdStart = true;
 
@@ -172,7 +172,7 @@ public static class AWSLambdaWrapper
 
         // We assume that functionTags and httpTags have no intersection.
         var activityName = AWSLambdaUtils.GetFunctionName(context) ?? "AWS Lambda Invoke";
-        var activity = AWSLambdaActivitySource.StartActivity(activityName, ActivityKind.Server, parentContext, functionTags.Concat(httpTags)!, links);
+        var activity = AWSLambdaActivitySource.Value.StartActivity(activityName, ActivityKind.Server, parentContext, functionTags.Concat(httpTags)!, links);
 
         return activity;
     }
@@ -255,4 +255,7 @@ public static class AWSLambdaWrapper
             OnFunctionStop(activity, tracerProvider);
         }
     }
+
+    private static ActivitySource CreateActivitySource() =>
+        ActivitySourceFactory.Create(typeof(AWSLambdaWrapper), AWSSemanticConventions.Version);
 }

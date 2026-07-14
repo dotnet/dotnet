@@ -7,7 +7,7 @@ using OpenTelemetry.Internal;
 
 namespace OpenTelemetry.Instrumentation.Wcf.Implementation;
 
-internal sealed class InstrumentedRequestChannel : InstrumentedChannel<IRequestChannel>, IRequestSessionChannel
+internal class InstrumentedRequestChannel : InstrumentedChannel<IRequestChannel>, IRequestChannel
 {
     public InstrumentedRequestChannel(IRequestChannel inner)
         : base(inner)
@@ -17,8 +17,6 @@ internal sealed class InstrumentedRequestChannel : InstrumentedChannel<IRequestC
     EndpointAddress IRequestChannel.RemoteAddress => this.Inner.RemoteAddress;
 
     Uri IRequestChannel.Via => this.Inner.Via;
-
-    IOutputSession ISessionChannel<IOutputSession>.Session => ((ISessionChannel<IOutputSession>)this.Inner).Session;
 
     Message IRequestChannel.Request(Message message)
     {
@@ -108,10 +106,13 @@ internal sealed class InstrumentedRequestChannel : InstrumentedChannel<IRequestC
         var executionContext = ExecutionContext.Capture();
         if (executionContext == null)
         {
-            throw new InvalidOperationException("Cannot fetch execution context");
+            ExecuteInChildContext(null);
+        }
+        else
+        {
+            ExecutionContext.Run(executionContext, ExecuteInChildContext, null);
         }
 
-        ExecutionContext.Run(executionContext, ExecuteInChildContext, null);
         return result!;
     }
 }

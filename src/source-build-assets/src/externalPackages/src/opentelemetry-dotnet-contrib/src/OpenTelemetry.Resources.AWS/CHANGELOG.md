@@ -2,11 +2,22 @@
 
 ## Unreleased
 
+* Update `System.Text.Json` for `netstandard2.0` to `8.0.5`.
+  ([#4154](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4154))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 1.15.1
+
+Released 2026-Apr-21
+
 * Extract `container.id` from the ECS Metadata V4 `DockerId` field for
   Windows containers running on AWS ECS.
   ([#4028](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4028))
 
-* Limit how much of the response body is consumed from metadata service HTTP responses.
+* Limit how much of the response body is consumed from metadata service HTTP responses
+  to resolve [GHSA-28xm-prxc-5866](https://github.com/advisories/GHSA-28xm-prxc-5866).
   ([#4122](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4122))
 
 * Fix ECS Metadata V4 cluster ARN normalization when the `Cluster` field returns

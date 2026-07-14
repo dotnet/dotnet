@@ -24,6 +24,7 @@ public static class ErrorAttributes
     /// <p>
     /// <c>error.message</c> is NOT RECOMMENDED for metrics or spans due to its unbounded cardinality and overlap with span status.
     /// </remarks>
+    [Obsolete("Use domain-specific error message attribute. For example, use <c>feature_flag.error.message</c> for feature flag errors.")]
     public const string AttributeErrorMessage = "error.message";
 
     /// <summary>
@@ -34,6 +35,12 @@ public static class ErrorAttributes
     /// <p>
     /// When <c>error.type</c> is set to a type (e.g., an exception type), its
     /// canonical class name identifying the type within the artifact SHOULD be used.
+    /// <p>
+    /// If the recorded error type is a wrapper that is not meaningful for
+    /// failure classification, instrumentation MAY use the type of the inner
+    /// error instead. For example, in Go, errors created with <c>fmt.Errorf</c>
+    /// using <c>%w</c> MAY be unwrapped when the wrapper type does not help
+    /// classify the failure.
     /// <p>
     /// Instrumentations SHOULD document the list of errors they report.
     /// <p>

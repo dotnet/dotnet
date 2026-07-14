@@ -47,7 +47,7 @@ public static class TracerProviderBuilderExtensions
             {
                 OwinInstrumentationActivitySource.Options = sp.GetRequiredService<IOptionsMonitor<OwinInstrumentationOptions>>().Get(name: null);
 
-                builder.AddSource(OwinInstrumentationActivitySource.ActivitySourceName);
+                builder.AddSource(OwinInstrumentationActivitySource.ActivitySource.Name);
             });
         });
     }
