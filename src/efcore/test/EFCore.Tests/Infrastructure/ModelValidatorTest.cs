@@ -1239,11 +1239,7 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
             modelBuilder);
     }
 
-    [System.Runtime.CompilerServices.Union]
-    protected class UnionEntity
-    {
-        public int Id { get; set; }
-    }
+    protected union UnionEntity(int);
 
     protected class WithUnionComplexProperty
     {
