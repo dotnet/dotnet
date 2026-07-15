@@ -1230,7 +1230,7 @@ int16 errCode = NO_ERROR;
     ulnGroups = CmapFormat12.nGroups;
 
 /* zip through cmap entries,counting the char code entries */
-
+    ulCharCodeCount = 0;
     {
         ULONGLONG ullCharCodeCount64 = 0;
         for ( i = 0; i < ulnGroups; i++ )

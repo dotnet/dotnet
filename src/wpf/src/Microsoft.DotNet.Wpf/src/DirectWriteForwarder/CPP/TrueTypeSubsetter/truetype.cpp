@@ -160,3 +160,4 @@ array<System::Byte> ^ TrueTypeSubsetter::ComputeSubset(void * fontData, int file
 }
 
 } } // MS.Internal
+

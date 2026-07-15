@@ -89,3 +89,4 @@ __declspec(noinline) static System::IntPtr CreateCModuleInitialize()
 // a safe static method that initialzes it. If this variable was declared as CModuleInitialize
 // Then the generated method is unsafe, fails NGENing and causes Jitting.
 __declspec(appdomain) static System::IntPtr cmiStartupRunner = CreateCModuleInitialize();
+
