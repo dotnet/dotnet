@@ -353,6 +353,15 @@ function GetDotNetInstallScript {
 }
 
 function InitializeBuildTool {
+  # Allow a caller (e.g. a bootstrap script running out-of-proc) to inject the build tool via
+  # environment variables instead of the in-proc _InitializeBuildTool variable. Only the tool path and
+  # command are consumed by the MSBuild function below, so those are all that's needed.
+  if [[ -n "${_BuildToolPath:-}" ]]; then
+    _InitializeBuildTool="$_BuildToolPath"
+    _InitializeBuildToolCommand="$_BuildToolCommand"
+    return
+  fi
+
   if [[ -n "${_InitializeBuildTool:-}" ]]; then
     return
   fi
@@ -423,7 +432,7 @@ function InitializeToolset {
   if [[ -z "$nuget_config" ]]; then
     # Search for any variation of nuget.config in the RepoRoot
     local found_config
-    found_config=$(find "$repo_root" -maxdepth 1 -type f -iname "nuget.config" -print -quit)
+    found_config=$(find "$repo_root" -maxdepth 1 -type f -iname nuget.config | head -n 1)
 
     if [[ -n "$found_config" ]]; then
       nuget_config="$found_config"
@@ -457,7 +466,7 @@ function InitializeToolset {
 }
 
 function ExitWithExitCode {
-  if [[ "$ci" == true && "$prepare_machine" == true ]]; then
+  if [[ "$prepare_machine" == true ]]; then
     StopProcesses
   fi
   exit $1
