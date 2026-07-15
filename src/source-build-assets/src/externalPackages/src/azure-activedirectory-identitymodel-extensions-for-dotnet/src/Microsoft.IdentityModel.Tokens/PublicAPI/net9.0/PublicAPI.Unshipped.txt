@@ -1,0 +1,2 @@
+Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CacheCustomProviders.get -> bool
+Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CacheCustomProviders.set -> void

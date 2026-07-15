@@ -1,0 +1,43 @@
+const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Ath = "ath" -> string
+const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Htm = "htm" -> string
+const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Htu = "htu" -> string
+const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Iat = "iat" -> string
+const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Jti = "jti" -> string
+const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Nonce = "nonce" -> string
+const Microsoft.IdentityModel.Dpop.DPoPConstants.DPoPNonceHeaderName = "DPoP-Nonce" -> string
+const Microsoft.IdentityModel.Dpop.DPoPConstants.DPoPProofTokenType = "dpop+jwt" -> string
+const Microsoft.IdentityModel.Dpop.DPoPConstants.DPoPTokenType = "DPoP" -> string
+const Microsoft.IdentityModel.Dpop.DPoPErrorCodes.InvalidRequest = "invalid_request" -> string
+const Microsoft.IdentityModel.Dpop.DPoPErrorCodes.InvalidToken = "invalid_token" -> string
+const Microsoft.IdentityModel.Dpop.DPoPErrorCodes.UseDPoPNonce = "use_dpop_nonce" -> string
+Microsoft.IdentityModel.Dpop.DPoPClaimTypes
+Microsoft.IdentityModel.Dpop.DPoPConstants
+Microsoft.IdentityModel.Dpop.DPoPErrorCodes
+Microsoft.IdentityModel.Dpop.DPoPProofValidator
+Microsoft.IdentityModel.Dpop.DPoPProofValidator.DPoPProofValidator() -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.AllowedSigningAlgorithms.get -> System.Collections.Generic.ISet<string>
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.AllowedSigningAlgorithms.set -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ClockSkewInSeconds.get -> int
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ClockSkewInSeconds.set -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.DPoPValidationOptions() -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ExpectedNonce.get -> string
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ExpectedNonce.set -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.JtiReplayCache.get -> Microsoft.IdentityModel.Dpop.IJtiReplayCache
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.JtiReplayCache.set -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.MaxLifetimeInSeconds.get -> int
+Microsoft.IdentityModel.Dpop.DPoPValidationOptions.MaxLifetimeInSeconds.set -> void
+Microsoft.IdentityModel.Dpop.DPoPValidationResult
+Microsoft.IdentityModel.Dpop.DPoPValidationResult.Error.get -> string
+Microsoft.IdentityModel.Dpop.DPoPValidationResult.ErrorCode.get -> string
+Microsoft.IdentityModel.Dpop.DPoPValidationResult.Exception.get -> System.Exception
+Microsoft.IdentityModel.Dpop.DPoPValidationResult.IsNonceRequired.get -> bool
+Microsoft.IdentityModel.Dpop.DPoPValidationResult.IsValid.get -> bool
+Microsoft.IdentityModel.Dpop.DPoPValidationResult.Nonce.get -> string
+Microsoft.IdentityModel.Dpop.IJtiReplayCache
+Microsoft.IdentityModel.Dpop.IJtiReplayCache.TryAddAsync(string jti, System.DateTimeOffset expiration, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>
+static Microsoft.IdentityModel.Dpop.DPoPValidationResult.Failed(string error, System.Exception exception = null) -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+static Microsoft.IdentityModel.Dpop.DPoPValidationResult.NonceRequired() -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+static Microsoft.IdentityModel.Dpop.DPoPValidationResult.NonceValidationFailed() -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+static Microsoft.IdentityModel.Dpop.DPoPValidationResult.Success(string nonce = null) -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+virtual Microsoft.IdentityModel.Dpop.DPoPProofValidator.ValidateAsync(string dpopProofJwt, string httpMethod, System.Uri requestUri, string accessToken, string expectedCnfJkt, Microsoft.IdentityModel.Dpop.DPoPValidationOptions options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Dpop.DPoPValidationResult>

@@ -42,9 +42,9 @@ namespace Microsoft.IdentityModel.Logging.Tests
         public void MarkAsSecurityArtifact_ArgumentIsNull_NoException()
         {
             // Asserting no exception is thrown for a null argument
-             LogHelper.MarkAsSecurityArtifact(null,
-                obj => string.Format(SafeFormat, obj),
-                obj => string.Format(UnsafeFormat, obj));
+            LogHelper.MarkAsSecurityArtifact(null,
+               obj => string.Format(SafeFormat, obj),
+               obj => string.Format(UnsafeFormat, obj));
         }
 
         [Fact]
@@ -436,6 +436,234 @@ namespace Microsoft.IdentityModel.Logging.Tests
 
             // Assert
             Assert.Equal("This is a string with no arguments.", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_NonPIIArgument_SanitizesSpecialCharacters()
+        {
+            string format = "Value: {0}";
+            object[] args = new object[] { LogHelper.MarkAsNonPII("A\rB\nC\tD\r\nE" + (char)2) };
+
+            string result = LogHelper.FormatInvariant(format, args);
+
+            Assert.Equal("Value: A\\rB\\nC\\tD\\r\\nE\\u0002", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_PIIArgument_DoesNotSanitizeWhenShowPIIDisabled()
+        {
+            string format = "Value: {0}";
+            object[] args = new object[] { "A\rB\nC\tD\r\nE" + (char)2 };
+            IdentityModelEventSource.ShowPII = false;
+
+            string result = LogHelper.FormatInvariant(format, args);
+
+            Assert.Equal($"Value: {string.Format(IdentityModelEventSource.HiddenPIIString, typeof(string).ToString())}", result);
+
+            IdentityModelEventSource.ShowPII = false;
+        }
+
+        [Fact]
+        public void FormatInvariant_PIIArgument_SanitizeWhenShowPIIEnabled()
+        {
+            string format = "Value: {0}";
+            object[] args = new object[] { "A\rB\nC\tD\r\nE" + (char)2 };
+            IdentityModelEventSource.ShowPII = true;
+
+            string result = LogHelper.FormatInvariant(format, args);
+
+            Assert.Equal("Value: A\\rB\\nC\\tD\\r\\nE\\u0002", result);
+
+            IdentityModelEventSource.ShowPII = false;
+        }
+
+        [Fact]
+        public void FormatInvariant_NonPIIArgument_SanitizesUnicodeFormatCharacters()
+        {
+            // U+200B ZERO WIDTH SPACE and U+2060 WORD JOINER are Unicode format characters
+            string format = "Value: {0}";
+            string input = "A" + '\u200B' + "B" + '\u2060' + "C";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            // Both format characters should be replaced with their \uXXXX representation
+            Assert.Equal("Value: A\\u200BB\\u2060C", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_EmptyString_ReturnsEmptyString()
+        {
+            string format = "Value: {0}";
+            string input = "";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: ", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_NoSpecialCharacters_ReturnsUnchanged()
+        {
+            string format = "Value: {0}";
+            string input = "This is a normal string with no special characters.";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: This is a normal string with no special characters.", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_OnlyControlCharacters_SanitizesAll()
+        {
+            string format = "Value: {0}";
+            string input = "\u0000\u0001\u0002\u0003";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: \\u0000\\u0001\\u0002\\u0003", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_MixedNormalAndControlCharacters()
+        {
+            string format = "Value: {0}";
+            string input = "Start\u0000Middle\u0001End";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: Start\\u0000Middle\\u0001End", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_AllASCIIControlCharacters()
+        {
+            string format = "Value: {0}";
+            // Test all ASCII control characters (0x00-0x1F and 0x7F-0x9F)
+            string input = "A\u007FB\u0080C\u009FD";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\u007FB\\u0080C\\u009FD", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_DirectionalFormatCharacters()
+        {
+            string format = "Value: {0}";
+            // U+200E (Left-to-Right Mark), U+200F (Right-to-Left Mark), U+202A-U+202E (Directional formatting)
+            string input = "A\u200EB\u200FC\u202AD\u202EE";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\u200EB\\u200FC\\u202AD\\u202EE", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_ZeroWidthCharacters()
+        {
+            string format = "Value: {0}";
+            // U+200B (Zero Width Space), U+200C (Zero Width Non-Joiner), U+200D (Zero Width Joiner), U+FEFF (Zero Width No-Break Space)
+            string input = "A\u200BB\u200CC\u200DD\uFEFFE";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\u200BB\\u200CC\\u200DD\\uFEFFE", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_MultipleConsecutiveSpecialCharacters()
+        {
+            string format = "Value: {0}";
+            string input = "A\r\n\tB";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\r\\n\\tB", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_SpecialCharactersAtStartAndEnd()
+        {
+            string format = "Value: {0}";
+            string input = "\rStart and End\n";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: \\rStart and End\\n", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_LongStringWithSparseSpecialCharacters()
+        {
+            string format = "Value: {0}";
+            string input = "This is a long string " + '\u200B' + " with some " + '\r' + " special " + '\n' + " characters " + '\t' + " scattered throughout.";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: This is a long string \\u200B with some \\r special \\n characters \\t scattered throughout.", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_ArabicFormatCharacters()
+        {
+            string format = "Value: {0}";
+            // U+0600-U+0605, U+061C (Arabic format characters)
+            string input = "A\u0600B\u061CC";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\u0600B\\u061CC", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_SoftHyphen()
+        {
+            string format = "Value: {0}";
+            // U+00AD (Soft Hyphen) is a format character
+            string input = "A\u00ADB";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\u00ADB", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_VariousFormatCharacters()
+        {
+            string format = "Value: {0}";
+            // U+2060-U+206F (Various format characters)
+            string input = "A\u2060B\u2061C\u206FD";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\u2060B\\u2061C\\u206FD", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_InterlinearAnnotationCharacters()
+        {
+            string format = "Value: {0}";
+            // U+FFF9-U+FFFB (Interlinear annotation characters)
+            string input = "A\uFFF9B\uFFFAC\uFFFBD";
+
+            string result = LogHelper.FormatInvariant(format, LogHelper.MarkAsNonPII(input));
+
+            Assert.Equal("Value: A\\uFFF9B\\uFFFAC\\uFFFBD", result);
+        }
+
+        [Fact]
+        public void FormatInvariant_PIIArgument_SanitizesWhenShowPIIEnabledWithAllCharacterTypes()
+        {
+            string format = "Value: {0}";
+            // Mix of all character types: control, format, zero-width, directional
+            string input = "A\rB\nC\tD\u0000E\u200BF\u200EG\u202AH\uFEFFI";
+            IdentityModelEventSource.ShowPII = true;
+
+            string result = LogHelper.FormatInvariant(format, input);
+
+            Assert.Equal("Value: A\\rB\\nC\\tD\\u0000E\\u200BF\\u200EG\\u202AH\\uFEFFI", result);
+
+            IdentityModelEventSource.ShowPII = false;
         }
     }
 

@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
     public class WsFederationMetadataSerializer
     {
         private DSigSerializer _dsigSerializer = DSigSerializer.Default;
-        private string _preferredPrefix =  WsFederationConstants.PreferredPrefix;
+        private string _preferredPrefix = WsFederationConstants.PreferredPrefix;
 
         /// <summary>
         /// Metadata serializer for WsFed.
@@ -91,7 +91,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
                 if (IsSecurityTokenServiceTypeRoleDescriptor(reader))
                 {
                     var roleDescriptor = ReadSecurityTokenServiceTypeRoleDescriptor(reader);
-                    foreach(var keyInfo in roleDescriptor.KeyInfos)
+                    foreach (var keyInfo in roleDescriptor.KeyInfos)
                     {
                         configuration.KeyInfos.Add(keyInfo);
                         if (keyInfo.X509Data != null)
@@ -100,7 +100,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
                             {
                                 foreach (var certificate in data.Certificates)
                                 {
-                                    var cert = new X509Certificate2(Convert.FromBase64String(certificate));
+                                    X509Certificate2 cert = CertificateHelper.LoadX509Certificate(certificate);
                                     configuration.SigningKeys.Add(new X509SecurityKey(cert));
                                 }
                             }
@@ -225,7 +225,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
 
             reader.ReadStartElement(WsAddressing.Elements.EndpointReference, WsAddressing.Namespace);
             reader.MoveToContent();
-       
+
             if (reader.IsEmptyElement)
                 throw XmlUtil.LogReadException(LogMessages.IDX22803);
 
@@ -380,7 +380,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
 
             if (string.IsNullOrEmpty(configuration.TokenEndpoint))
                 throw XmlUtil.LogWriteException(LogMessages.IDX22811);
-            
+
             if (configuration.SigningCredentials != null)
                 writer = new EnvelopedSignatureWriter(writer, configuration.SigningCredentials, "id");
 

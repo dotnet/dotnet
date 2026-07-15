@@ -2,6 +2,7 @@
 
   <Import Project="dependencies.props" />
   <Import Project="targets.props" />
+  <Import Project="version.props" />
 
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
@@ -24,25 +25,10 @@
     <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(SrcTargets)</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(SrcStandardTargets)</TargetFrameworks>
+    <TargetFrameworks>$(SrcTargets)</TargetFrameworks>
     <NetStandardImplicitPackageVersion>$(NetStandardVersion)</NetStandardImplicitPackageVersion>
-    <LangVersion>12</LangVersion>
-  </PropertyGroup>
-
-  <!-- Wilson version  -->
-  <PropertyGroup>
-    <WilsonCurrentVersion>8.0.0</WilsonCurrentVersion>
-
-    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHHmmss"))</PreviewVersionSuffix>
-    <!--VS re-evaluates the variables, so having seconds or minutes creates an infinite loop of package updates-->
-    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHH"))</PreviewVersionSuffix>
-    <IsCustomPreview>$(WilsonVersion.Contains("-"))</IsCustomPreview>
-    <Version Condition="'$(WilsonVersion)' != ''">$(WilsonVersion)</Version>
-    <VersionSuffix Condition="'$(WilsonVersion)' == ''">$(PreviewVersionSuffix)</VersionSuffix>
-    <VersionPrefix Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion)</VersionPrefix>
-    <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
-    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
+    <LangVersion>13</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -61,8 +47,34 @@
 
   <ItemGroup>
      <!-- Protects against sync-over-async: https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md. -->
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.9.28" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(BannedApiAnalyzersVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\BannedSymbols.txt" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+  
 </Project>

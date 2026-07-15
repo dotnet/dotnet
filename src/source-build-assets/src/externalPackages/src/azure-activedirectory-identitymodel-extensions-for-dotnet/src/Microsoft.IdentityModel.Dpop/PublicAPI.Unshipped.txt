@@ -1,0 +1,129 @@
+const Microsoft.IdentityModel.Dpop.DpopClaimTypes.Ath = "ath" -> string
+const Microsoft.IdentityModel.Dpop.DpopClaimTypes.Htm = "htm" -> string
+const Microsoft.IdentityModel.Dpop.DpopClaimTypes.Htu = "htu" -> string
+const Microsoft.IdentityModel.Dpop.DpopClaimTypes.Iat = "iat" -> string
+const Microsoft.IdentityModel.Dpop.DpopClaimTypes.Jti = "jti" -> string
+const Microsoft.IdentityModel.Dpop.DpopClaimTypes.Nonce = "nonce" -> string
+const Microsoft.IdentityModel.Dpop.DpopConstants.DefaultClockSkewInSeconds = 300 -> int
+const Microsoft.IdentityModel.Dpop.DpopConstants.DefaultMaxLifetimeInSeconds = 300 -> int
+const Microsoft.IdentityModel.Dpop.DpopConstants.DefaultMaxProofTokenSizeInBytes = 8192 -> int
+const Microsoft.IdentityModel.Dpop.DpopConstants.DefaultMaxRsaKeySizeInBits = 4096 -> int
+const Microsoft.IdentityModel.Dpop.DpopConstants.DefaultMinRsaKeySizeInBits = 2048 -> int
+const Microsoft.IdentityModel.Dpop.DpopConstants.DpopNonceHeaderName = "DPoP-Nonce" -> string
+const Microsoft.IdentityModel.Dpop.DpopConstants.DpopProofTokenType = "dpop+jwt" -> string
+const Microsoft.IdentityModel.Dpop.DpopConstants.DpopTokenType = "DPoP" -> string
+const Microsoft.IdentityModel.Dpop.DpopErrorCodes.InvalidRequest = "invalid_request" -> string
+const Microsoft.IdentityModel.Dpop.DpopErrorCodes.InvalidToken = "invalid_token" -> string
+const Microsoft.IdentityModel.Dpop.DpopErrorCodes.UseDpopNonce = "use_dpop_nonce" -> string
+Microsoft.IdentityModel.Dpop.DpopClaimTypes
+Microsoft.IdentityModel.Dpop.DpopConstants
+Microsoft.IdentityModel.Dpop.DpopErrorCodes
+Microsoft.IdentityModel.Dpop.DpopProofValidator
+Microsoft.IdentityModel.Dpop.DpopProofValidator.DpopProofValidator() -> void
+Microsoft.IdentityModel.Dpop.DpopValidationError
+Microsoft.IdentityModel.Dpop.DpopValidationError.DpopValidationError(Microsoft.IdentityModel.Dpop.DpopValidationFailureType failureType, string message, System.Exception exception = null) -> void
+Microsoft.IdentityModel.Dpop.DpopValidationError.Exception.get -> System.Exception
+Microsoft.IdentityModel.Dpop.DpopValidationError.FailureType.get -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+Microsoft.IdentityModel.Dpop.DpopValidationError.Message.get -> string
+Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+Microsoft.IdentityModel.Dpop.DpopValidationFailureType.DpopValidationFailureType(string name) -> void
+Microsoft.IdentityModel.Dpop.DpopValidationFailureType.Name.get -> string
+Microsoft.IdentityModel.Dpop.DpopValidationOptions
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.AllowedSigningAlgorithms.get -> System.Collections.Generic.ISet<string>
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.AllowedSigningAlgorithms.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.ClockSkewInSeconds.get -> int
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.ClockSkewInSeconds.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.DpopValidationOptions() -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.ExpectedNonce.get -> string
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.ExpectedNonce.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.JtiReplayCache.get -> Microsoft.IdentityModel.Dpop.IJtiReplayCache
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.JtiReplayCache.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MaxLifetimeInSeconds.get -> int
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MaxLifetimeInSeconds.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MaxProofTokenSizeInBytes.get -> int
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MaxProofTokenSizeInBytes.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MaxRsaKeySizeInBits.get -> int
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MaxRsaKeySizeInBits.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MinRsaKeySizeInBits.get -> int
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.MinRsaKeySizeInBits.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.ReplayProtectionHandledExternally.get -> bool
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.ReplayProtectionHandledExternally.set -> void
+Microsoft.IdentityModel.Dpop.DpopValidationResult
+Microsoft.IdentityModel.Dpop.DpopValidationResult.Error.get -> Microsoft.IdentityModel.Dpop.DpopValidationError
+Microsoft.IdentityModel.Dpop.DpopValidationResult.ErrorCode.get -> string
+Microsoft.IdentityModel.Dpop.DpopValidationResult.IsNonceRequired.get -> bool
+Microsoft.IdentityModel.Dpop.DpopValidationResult.IsValid.get -> bool
+Microsoft.IdentityModel.Dpop.DpopValidationResult.Nonce.get -> string
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.AccessTokenMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.AlgorithmDisallowed -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.AthMismatch -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.AthMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.CnfJktMismatch -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.CnfJktMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.HtmMismatch -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.HtmMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.HtuMismatch -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.HtuMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.IatMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.InvalidConfiguration -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.JtiMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.JtiReplayDetected -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.JwkInvalid -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.JwkMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.NonceMismatch -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.NonceRequired -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.ProofExceedsMaxSize -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.ProofExpired -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.ProofIssuedInFuture -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.ProofMissing -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.ProofParseFailure -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.ReplayProtectionNotConfigured -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.SignatureInvalid -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.TokenTypeInvalid -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static readonly Microsoft.IdentityModel.Dpop.DpopValidationFailureType.UnexpectedError -> Microsoft.IdentityModel.Dpop.DpopValidationFailureType
+static Microsoft.IdentityModel.Dpop.DpopValidationResult.Failed(string message, Microsoft.IdentityModel.Dpop.DpopValidationFailureType failureType, System.Exception exception = null) -> Microsoft.IdentityModel.Dpop.DpopValidationResult
+static Microsoft.IdentityModel.Dpop.DpopValidationResult.NonceRequired() -> Microsoft.IdentityModel.Dpop.DpopValidationResult
+static Microsoft.IdentityModel.Dpop.DpopValidationResult.NonceValidationFailed() -> Microsoft.IdentityModel.Dpop.DpopValidationResult
+static Microsoft.IdentityModel.Dpop.DpopValidationResult.Success(string nonce = null) -> Microsoft.IdentityModel.Dpop.DpopValidationResult
+virtual Microsoft.IdentityModel.Dpop.DpopProofValidator.ValidateAsync(string dpopProofJwt, string httpMethod, System.Uri requestUri, string accessToken, string expectedCnfJkt, Microsoft.IdentityModel.Dpop.DpopValidationOptions options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Dpop.DpopValidationResult>
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Ath = "ath" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Htm = "htm" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Htu = "htu" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Iat = "iat" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Jti = "jti" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPClaimTypes.Nonce = "nonce" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPConstants.DPoPNonceHeaderName = "DPoP-Nonce" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPConstants.DPoPProofTokenType = "dpop+jwt" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPConstants.DPoPTokenType = "DPoP" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPErrorCodes.InvalidRequest = "invalid_request" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPErrorCodes.InvalidToken = "invalid_token" -> string
+*REMOVED*const Microsoft.IdentityModel.Dpop.DPoPErrorCodes.UseDPoPNonce = "use_dpop_nonce" -> string
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPClaimTypes
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPConstants
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPErrorCodes
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPProofValidator
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPProofValidator.DPoPProofValidator() -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.AllowedSigningAlgorithms.get -> System.Collections.Generic.ISet<string>
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.AllowedSigningAlgorithms.set -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ClockSkewInSeconds.get -> int
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ClockSkewInSeconds.set -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.DPoPValidationOptions() -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ExpectedNonce.get -> string
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.ExpectedNonce.set -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.JtiReplayCache.get -> Microsoft.IdentityModel.Dpop.IJtiReplayCache
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.JtiReplayCache.set -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.MaxLifetimeInSeconds.get -> int
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.MaxLifetimeInSeconds.set -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult.Error.get -> string
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult.ErrorCode.get -> string
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult.Exception.get -> System.Exception
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult.IsNonceRequired.get -> bool
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult.IsValid.get -> bool
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationResult.Nonce.get -> string
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPValidationResult.Failed(string error, System.Exception exception = null) -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPValidationResult.NonceRequired() -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPValidationResult.NonceValidationFailed() -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+*REMOVED*static Microsoft.IdentityModel.Dpop.DPoPValidationResult.Success(string nonce = null) -> Microsoft.IdentityModel.Dpop.DPoPValidationResult
+*REMOVED*virtual Microsoft.IdentityModel.Dpop.DPoPProofValidator.ValidateAsync(string dpopProofJwt, string httpMethod, System.Uri requestUri, string accessToken, string expectedCnfJkt, Microsoft.IdentityModel.Dpop.DPoPValidationOptions options, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Dpop.DPoPValidationResult>

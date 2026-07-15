@@ -147,11 +147,11 @@ namespace Microsoft.IdentityModel.Tokens
         /// Verifies that a signature created over the 'input' matches the signature. Using <see cref="SecurityKey"/> and 'algorithm' passed to <see cref="SignatureProvider( SecurityKey, string )"/>.
         /// </summary>
         /// <param name="input">The bytes to verify.</param>
-        /// <param name="inputOffset">offset in to input bytes to caculate hash.</param>
+        /// <param name="inputOffset">offset in to input bytes to calculate hash.</param>
         /// <param name="inputLength">number of bytes of signature to use.</param>
         /// <param name="signature">signature to compare against.</param>
         /// <param name="signatureOffset">offset into signature array.</param>
-        /// <param name="signatureLength">how many bytes to verfiy.</param>
+        /// <param name="signatureLength">how many bytes to verify.</param>
         /// <returns>true if computed signature matches the signature parameter, false otherwise.</returns>
         /// <exception cref="ArgumentNullException">'input' is null.</exception>
         /// <exception cref="ArgumentNullException">'signature' is null.</exception>

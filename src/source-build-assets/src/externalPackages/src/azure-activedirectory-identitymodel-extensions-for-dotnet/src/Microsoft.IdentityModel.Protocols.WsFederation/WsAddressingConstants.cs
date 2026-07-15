@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Xml
             public const string EndpointReference = "EndpointReference";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,6 +15,7 @@ using System.Xml;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Telemetry;
 using Microsoft.IdentityModel.Tokens;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
@@ -32,10 +34,12 @@ namespace System.IdentityModel.Tokens.Jwt
         private const string _namespace = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties";
         private const string _className = "System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler";
         private IDictionary<string, string> _outboundClaimTypeMap;
-        private Dictionary<string, string> _outboundAlgorithmMap = null;
+        private Dictionary<string, string> _outboundAlgorithmMap;
         private static string _shortClaimType = _namespace + "/ShortTypeName";
         private bool _mapInboundClaims = DefaultMapInboundClaims;
-       
+
+        internal Microsoft.IdentityModel.Telemetry.ITelemetryClient TelemetryClient = new TelemetryClient();
+
         /// <summary>
         /// Default claim type mapping for inbound claims.
         /// </summary>
@@ -346,18 +350,16 @@ namespace System.IdentityModel.Tokens.Jwt
             DateTime? notBefore,
             DateTime? expires,
             DateTime? issuedAt,
-            SigningCredentials signingCredentials)
-        {
-            return CreateJwtSecurityTokenPrivate(
-                issuer,
-                audience,
-                subject,
-                notBefore,
-                expires,
-                issuedAt,
-                signingCredentials,
-                null, null, null, null, null).RawData;
-        }
+            SigningCredentials signingCredentials) => CreateJwtSecurityTokenPrivate(new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = subject,
+                NotBefore = notBefore,
+                Expires = expires,
+                IssuedAt = issuedAt,
+                SigningCredentials = signingCredentials
+            }).RawData;
 
         /// <summary>
         /// Creates a JWT in 'Compact Serialization Format'.
@@ -385,18 +387,17 @@ namespace System.IdentityModel.Tokens.Jwt
             DateTime? expires,
             DateTime? issuedAt,
             SigningCredentials signingCredentials,
-            EncryptingCredentials encryptingCredentials)
-        {
-            return CreateJwtSecurityTokenPrivate(
-                issuer,
-                audience,
-                subject,
-                notBefore,
-                expires,
-                issuedAt,
-                signingCredentials,
-                encryptingCredentials, null, null, null, null).RawData;
-        }
+            EncryptingCredentials encryptingCredentials) => CreateJwtSecurityTokenPrivate(new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = subject,
+                NotBefore = notBefore,
+                Expires = expires,
+                IssuedAt = issuedAt,
+                SigningCredentials = signingCredentials,
+                EncryptingCredentials = encryptingCredentials
+            }).RawData;
 
         /// <summary>
         /// Creates a JWT in 'Compact Serialization Format'.
@@ -426,19 +427,18 @@ namespace System.IdentityModel.Tokens.Jwt
             DateTime? issuedAt,
             SigningCredentials signingCredentials,
             EncryptingCredentials encryptingCredentials,
-            IDictionary<string, object> claimCollection)
-        {
-            return CreateJwtSecurityTokenPrivate(
-                issuer,
-                audience,
-                subject,
-                notBefore,
-                expires,
-                issuedAt,
-                signingCredentials,
-                encryptingCredentials,
-                claimCollection, null, null, null).RawData;
-        }
+            IDictionary<string, object> claimCollection) => CreateJwtSecurityTokenPrivate(new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = subject,
+                NotBefore = notBefore,
+                Expires = expires,
+                IssuedAt = issuedAt,
+                SigningCredentials = signingCredentials,
+                EncryptingCredentials = encryptingCredentials,
+                Claims = claimCollection
+            }).RawData;
 
         /// <summary>
         /// Creates a Json Web Token (JWT).
@@ -450,20 +450,7 @@ namespace System.IdentityModel.Tokens.Jwt
             if (tokenDescriptor == null)
                 throw LogHelper.LogArgumentNullException(nameof(tokenDescriptor));
 
-            return CreateJwtSecurityTokenPrivate(
-                tokenDescriptor.Issuer,
-                tokenDescriptor.Audience,
-                tokenDescriptor.Audiences,
-                tokenDescriptor.Subject,
-                tokenDescriptor.NotBefore,
-                tokenDescriptor.Expires,
-                tokenDescriptor.IssuedAt,
-                tokenDescriptor.SigningCredentials,
-                tokenDescriptor.EncryptingCredentials,
-                tokenDescriptor.Claims,
-                tokenDescriptor.TokenType,
-                tokenDescriptor.AdditionalHeaderClaims,
-                tokenDescriptor.AdditionalInnerHeaderClaims);
+            return CreateJwtSecurityTokenPrivate(tokenDescriptor);
         }
 
         /// <summary>
@@ -495,18 +482,17 @@ namespace System.IdentityModel.Tokens.Jwt
             DateTime? expires,
             DateTime? issuedAt,
             SigningCredentials signingCredentials,
-            EncryptingCredentials encryptingCredentials)
-        {
-            return CreateJwtSecurityTokenPrivate(
-                issuer,
-                audience,
-                subject,
-                notBefore,
-                expires,
-                issuedAt,
-                signingCredentials,
-                encryptingCredentials, null, null, null, null);
-        }
+            EncryptingCredentials encryptingCredentials) => CreateJwtSecurityTokenPrivate(new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = subject,
+                NotBefore = notBefore,
+                Expires = expires,
+                IssuedAt = issuedAt,
+                SigningCredentials = signingCredentials,
+                EncryptingCredentials = encryptingCredentials
+            });
 
         /// <summary>
         /// Creates a <see cref="JwtSecurityToken"/>
@@ -539,19 +525,18 @@ namespace System.IdentityModel.Tokens.Jwt
             DateTime? issuedAt,
             SigningCredentials signingCredentials,
             EncryptingCredentials encryptingCredentials,
-            IDictionary<string, object> claimCollection)
-        {
-            return CreateJwtSecurityTokenPrivate(
-                issuer,
-                audience,
-                subject,
-                notBefore,
-                expires,
-                issuedAt,
-                signingCredentials,
-                encryptingCredentials,
-                claimCollection, null, null, null);
-        }
+            IDictionary<string, object> claimCollection) => CreateJwtSecurityTokenPrivate(new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = subject,
+                NotBefore = notBefore,
+                Expires = expires,
+                IssuedAt = issuedAt,
+                SigningCredentials = signingCredentials,
+                EncryptingCredentials = encryptingCredentials,
+                Claims = claimCollection
+            });
 
         /// <summary>
         /// Creates a <see cref="JwtSecurityToken"/>
@@ -579,17 +564,16 @@ namespace System.IdentityModel.Tokens.Jwt
             DateTime? notBefore = null,
             DateTime? expires = null,
             DateTime? issuedAt = null,
-            SigningCredentials signingCredentials = null)
-        {
-            return CreateJwtSecurityTokenPrivate(
-                issuer,
-                audience,
-                subject,
-                notBefore,
-                expires,
-                issuedAt,
-                signingCredentials, null, null, null, null, null);
-        }
+            SigningCredentials signingCredentials = null) => CreateJwtSecurityTokenPrivate(new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Subject = subject,
+                NotBefore = notBefore,
+                Expires = expires,
+                IssuedAt = issuedAt,
+                SigningCredentials = signingCredentials
+            });
 
         /// <summary>
         /// Creates a Json Web Token (JWT).
@@ -601,56 +585,14 @@ namespace System.IdentityModel.Tokens.Jwt
             if (tokenDescriptor == null)
                 throw LogHelper.LogArgumentNullException(nameof(tokenDescriptor));
 
-            return CreateJwtSecurityTokenPrivate(
-                tokenDescriptor.Issuer,
-                tokenDescriptor.Audience,
-                tokenDescriptor.Audiences,
-                tokenDescriptor.Subject,
-                tokenDescriptor.NotBefore,
-                tokenDescriptor.Expires,
-                tokenDescriptor.IssuedAt,
-                tokenDescriptor.SigningCredentials,
-                tokenDescriptor.EncryptingCredentials,
-                tokenDescriptor.Claims,
-                tokenDescriptor.TokenType,
-                tokenDescriptor.AdditionalHeaderClaims,
-                tokenDescriptor.AdditionalInnerHeaderClaims);
+            return CreateJwtSecurityTokenPrivate(tokenDescriptor);
         }
 
-        private JwtSecurityToken CreateJwtSecurityTokenPrivate(
-            string issuer,
-            string audience,
-            ClaimsIdentity subject,
-            DateTime? notBefore,
-            DateTime? expires,
-            DateTime? issuedAt,
-            SigningCredentials signingCredentials,
-            EncryptingCredentials encryptingCredentials,
-            IDictionary<string, object> claimCollection,
-            string tokenType,
-            IDictionary<string, object> additionalHeaderClaims,
-            IDictionary<string, object> additionalInnerHeaderClaims)
+        private JwtSecurityToken CreateJwtSecurityTokenPrivate(SecurityTokenDescriptor tokenDescriptor)
         {
-            return CreateJwtSecurityTokenPrivate(
-                issuer, audience, [], subject, notBefore, expires, issuedAt, signingCredentials, encryptingCredentials,
-                claimCollection, tokenType, additionalHeaderClaims, additionalInnerHeaderClaims);
-        }
-
-        private JwtSecurityToken CreateJwtSecurityTokenPrivate(
-            string issuer,
-            string audience,
-            IList<string> audiences,
-            ClaimsIdentity subject,
-            DateTime? notBefore,
-            DateTime? expires,
-            DateTime? issuedAt,
-            SigningCredentials signingCredentials,
-            EncryptingCredentials encryptingCredentials,
-            IDictionary<string, object> claimCollection,
-            string tokenType,
-            IDictionary<string, object> additionalHeaderClaims,
-            IDictionary<string, object> additionalInnerHeaderClaims)
-        {
+            DateTime? expires = tokenDescriptor.Expires;
+            DateTime? issuedAt = tokenDescriptor.IssuedAt;
+            DateTime? notBefore = tokenDescriptor.NotBefore;
             if (SetDefaultTimesOnTokenCreation && (!expires.HasValue || !issuedAt.HasValue || !notBefore.HasValue))
             {
                 DateTime now = DateTime.UtcNow;
@@ -664,8 +606,13 @@ namespace System.IdentityModel.Tokens.Jwt
                     notBefore = now;
             }
 
-            JwtPayload payload = new JwtPayload(issuer, audience, audiences, (subject == null ? null : OutboundClaimTypeTransform(subject.Claims)), (claimCollection == null ? null : OutboundClaimTypeTransform(claimCollection)), notBefore, expires, issuedAt);
-            JwtHeader header = new JwtHeader(signingCredentials, OutboundAlgorithmMap, tokenType, additionalInnerHeaderClaims);
+            string issuer = tokenDescriptor.Issuer;
+            ClaimsIdentity subject = tokenDescriptor.Subject;
+            IDictionary<string, object> claimCollection = tokenDescriptor.Claims;
+            JwtPayload payload = new JwtPayload(issuer, tokenDescriptor.Audience, tokenDescriptor.Audiences, (subject == null ? null : OutboundClaimTypeTransform(subject.Claims)), (claimCollection == null ? null : OutboundClaimTypeTransform(claimCollection)), notBefore, expires, issuedAt);
+            SigningCredentials signingCredentials = tokenDescriptor.SigningCredentials;
+            string tokenType = tokenDescriptor.TokenType;
+            JwtHeader header = new JwtHeader(signingCredentials, OutboundAlgorithmMap, tokenType, tokenDescriptor.AdditionalInnerHeaderClaims, tokenDescriptor.IncludeKeyIdInHeader);
 
             if (LogHelper.IsEnabled(EventLogLevel.Verbose))
                 LogHelper.LogVerbose(LogMessages.IDX12721, LogHelper.MarkAsNonPII(issuer ?? "null"), LogHelper.MarkAsNonPII(payload.Aud.ToString() ?? "null"));
@@ -685,13 +632,14 @@ namespace System.IdentityModel.Tokens.Jwt
             if (LogHelper.IsEnabled(EventLogLevel.Informational))
                 LogHelper.LogInformation(LogMessages.IDX12722, rawHeader, rawPayload);
 
+            EncryptingCredentials encryptingCredentials = tokenDescriptor.EncryptingCredentials;
             if (encryptingCredentials != null)
             {
                 return EncryptToken(
                         new JwtSecurityToken(header, payload, rawHeader, rawPayload, rawSignature),
                         encryptingCredentials,
                         tokenType,
-                        additionalHeaderClaims);
+                        tokenDescriptor.AdditionalHeaderClaims);
             }
 
             return new JwtSecurityToken(header, payload, rawHeader, rawPayload, rawSignature);
@@ -742,7 +690,8 @@ namespace System.IdentityModel.Tokens.Jwt
                 }
                 catch (Exception ex)
                 {
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenEncryptionFailedException(LogHelper.FormatInvariant(TokenLogMessages.IDX10616, LogHelper.MarkAsNonPII(encryptingCredentials.Enc), encryptingCredentials.Key), ex));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenEncryptionFailedException(
+                        LogHelper.FormatInvariant(TokenLogMessages.IDX10616, LogHelper.MarkAsNonPII(encryptingCredentials.Enc), LogHelper.MarkAsNonPII(encryptingCredentials.Key.KeyId)), ex));
                 }
             }
         }
@@ -935,7 +884,7 @@ namespace System.IdentityModel.Tokens.Jwt
 
                     return claimsPrincipal;
                 }
-                else if (TokenUtilities.IsRecoverableException(exceptionThrown.SourceException))
+                else if (TokenUtilities.IsRecoverableException(exceptionThrown.SourceException, (currentConfiguration != null && currentConfiguration.TokenDecryptionKeys.Count > 0)))
                 {
                     // If we were still unable to validate, attempt to refresh the configuration and validate using it
                     // but ONLY if the currentConfiguration is not null. We want to avoid refreshing the configuration on
@@ -943,6 +892,11 @@ namespace System.IdentityModel.Tokens.Jwt
                     // where a new valid configuration was somehow published during validation time.
                     if (currentConfiguration != null)
                     {
+                        TelemetryClient.IncrementConfigurationRefreshRequestCounter(
+                            validationParameters.ConfigurationManager.MetadataAddress,
+                            TelemetryConstants.Protocols.Lkg,
+                            TelemetryConstants.Protocols.ConfigurationSourceUnknown);
+
                         validationParameters.ConfigurationManager.RequestRefresh();
                         validationParameters.RefreshBeforeValidation = true;
                         var lastConfig = currentConfiguration;
@@ -1268,7 +1222,7 @@ namespace System.IdentityModel.Tokens.Jwt
             var header = jwtToken.EncryptingCredentials == null ? jwtToken.Header : new JwtHeader(jwtToken.SigningCredentials);
             encodedHeader = header.Base64UrlEncode();
             if (jwtToken.SigningCredentials != null)
-                encodedSignature =  JwtTokenUtilities.CreateEncodedSignature(string.Concat(encodedHeader, ".", encodedPayload), jwtToken.SigningCredentials);
+                encodedSignature = JwtTokenUtilities.CreateEncodedSignature(string.Concat(encodedHeader, ".", encodedPayload), jwtToken.SigningCredentials);
 
             if (jwtToken.EncryptingCredentials != null)
                 return EncryptToken(
@@ -1285,6 +1239,23 @@ namespace System.IdentityModel.Tokens.Jwt
                 return string.Concat(encodedHeader, ".", encodedPayload, ".", encodedSignature);
         }
 
+        private static void RecordSignatureValidationTelemetry(
+            Microsoft.IdentityModel.Telemetry.ITelemetryClient telemetryClient,
+            string errorType,
+            SecurityToken securityToken,
+            string algorithm,
+            SecurityKey key)
+        {
+            if (CryptoTelemetry.RecordSignatureValidationTelemetry)
+            {
+                telemetryClient.IncrementSignatureValidationCounter(
+                    errorType,
+                    securityToken.Issuer,
+                    algorithm,
+                    key);
+            }
+        }
+
         /// <summary>
         /// Obtains a <see cref="SignatureProvider "/> and validates the signature.
         /// </summary>
@@ -1294,19 +1265,75 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <param name="algorithm">Crypto algorithm to use.</param>
         /// <param name="securityToken">The <see cref="SecurityToken"/> being validated.</param>
         /// <param name="validationParameters">Priority will be given to <see cref="TokenValidationParameters.CryptoProviderFactory"/> over <see cref="SecurityKey.CryptoProviderFactory"/>.</param>
+        /// <param name="telemetryClient">The telemetry client for recording metrics.</param>
         /// <returns>'true' if signature is valid.</returns>
-        private static bool ValidateSignature(byte[] encodedBytes, byte[] signature, SecurityKey key, string algorithm, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        private static bool ValidateSignature(byte[] encodedBytes, byte[] signature, SecurityKey key, string algorithm, SecurityToken securityToken, TokenValidationParameters validationParameters, Microsoft.IdentityModel.Telemetry.ITelemetryClient telemetryClient)
         {
-            Validators.ValidateAlgorithm(algorithm, key, securityToken, validationParameters);
-
-            var cryptoProviderFactory = validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory;
-            var signatureProvider = cryptoProviderFactory.CreateForVerifying(key, algorithm);
-            if (signatureProvider == null)
-                throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(TokenLogMessages.IDX10636, key == null ? "Null" : key.ToString(), LogHelper.MarkAsNonPII(algorithm))));
+            CryptoProviderFactory cryptoProviderFactory = null;
+            SignatureProvider signatureProvider = null;
 
             try
             {
-                return signatureProvider.Verify(encodedBytes, signature);
+                Validators.ValidateAlgorithm(algorithm, key, securityToken, validationParameters);
+            }
+            catch (Exception)
+            {
+                RecordSignatureValidationTelemetry(
+                    telemetryClient,
+                    TelemetryConstants.SignatureValidationErrors.AlgorithmNotSupported,
+                    securityToken,
+                    algorithm,
+                    key);
+
+                throw;
+            }
+
+            try
+            {
+                cryptoProviderFactory = validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory;
+                signatureProvider = cryptoProviderFactory.CreateForVerifying(key, algorithm);
+
+                if (signatureProvider == null)
+                {
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(TokenLogMessages.IDX10636, LogHelper.MarkAsNonPII(key == null ? "Null" : key.KeyId), LogHelper.MarkAsNonPII(algorithm))));
+                }
+            }
+            catch (Exception)
+            {
+                RecordSignatureValidationTelemetry(
+                    telemetryClient,
+                    TelemetryConstants.SignatureValidationErrors.SignatureProviderCreationFailed,
+                    securityToken,
+                    algorithm,
+                    key);
+                throw;
+            }
+
+            try
+            {
+                bool isValid = signatureProvider.Verify(encodedBytes, signature);
+
+                RecordSignatureValidationTelemetry(
+                    telemetryClient,
+                    isValid ? TelemetryConstants.SignatureValidationErrors.None : TelemetryConstants.SignatureValidationErrors.SignatureVerificationFailed,
+                    securityToken,
+                    algorithm,
+                    key);
+
+                return isValid;
+            }
+            catch
+            {
+                RecordSignatureValidationTelemetry(
+                    telemetryClient,
+                    TelemetryConstants.SignatureValidationErrors.SignatureVerificationFailed,
+                    securityToken,
+                    algorithm,
+                    key);
+
+                throw;
             }
             finally
             {
@@ -1355,7 +1382,7 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 keys = validationParameters.IssuerSigningKeyResolverUsingConfiguration(token, jwtToken, jwtToken.Header.Kid, validationParameters, configuration);
             }
-            if (validationParameters.IssuerSigningKeyResolver != null)
+            else if (validationParameters.IssuerSigningKeyResolver != null)
             {
                 keys = validationParameters.IssuerSigningKeyResolver(token, jwtToken, jwtToken.Header.Kid, validationParameters);
             }
@@ -1400,7 +1427,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 {
                     try
                     {
-                        if (ValidateSignature(encodedBytes, signatureBytes, key, jwtToken.Header.Alg, jwtToken, validationParameters))
+                        if (ValidateSignature(encodedBytes, signatureBytes, key, jwtToken.Header.Alg, jwtToken, validationParameters, TelemetryClient))
                         {
                             if (LogHelper.IsEnabled(EventLogLevel.Informational))
                                 LogHelper.LogInformation(TokenLogMessages.IDX10242, jwtToken);
@@ -1416,7 +1443,7 @@ namespace System.IdentityModel.Tokens.Jwt
 
                     if (key != null)
                     {
-                        (keysAttempted ??= new StringBuilder()).Append(key.ToString()).Append(" , KeyId: ").AppendLine(key.KeyId);
+                        (keysAttempted ??= new StringBuilder()).Append(key.ToString());
                         if (kidExists && !kidMatched && key.KeyId != null)
                             kidMatched = jwtToken.Header.Kid.Equals(key.KeyId, key is X509SecurityKey ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
                     }
@@ -1484,6 +1511,13 @@ namespace System.IdentityModel.Tokens.Jwt
                         jwtToken)));
                 }
             }
+
+            RecordSignatureValidationTelemetry(
+                    TelemetryClient,
+                    TelemetryConstants.SignatureValidationErrors.SigningKeyNotFound,
+                    jwtToken,
+                    jwtToken.SignatureAlgorithm,
+                    null);
 
             throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(TokenLogMessages.IDX10500));
         }
@@ -1808,7 +1842,14 @@ namespace System.IdentityModel.Tokens.Jwt
 
             var keys = GetContentEncryptionKeys(jwtToken, validationParameters);
 
-            return JwtTokenUtilities.DecryptJwtToken(jwtToken, validationParameters, new JwtTokenDecryptionParameters
+            var decryptionParameters = CreateJwtTokenDecryptionParameters(jwtToken, keys);
+
+            return JwtTokenUtilities.DecryptJwtToken(jwtToken, validationParameters, decryptionParameters);
+        }
+
+        private JwtTokenDecryptionParameters CreateJwtTokenDecryptionParameters(JwtSecurityToken jwtToken, IEnumerable<SecurityKey> keys)
+        {
+            return new JwtTokenDecryptionParameters
             {
                 Alg = jwtToken.Header.Alg,
                 AuthenticationTagBytes = Base64UrlEncoder.DecodeBytes(jwtToken.RawAuthenticationTag),
@@ -1821,7 +1862,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 MaximumDeflateSize = MaximumTokenSizeInBytes,
                 Keys = keys,
                 Zip = jwtToken.Header.Zip,
-            });
+            };
         }
 
         internal IEnumerable<SecurityKey> GetContentEncryptionKeys(JwtSecurityToken jwtToken, TokenValidationParameters validationParameters)
@@ -1848,9 +1889,15 @@ namespace System.IdentityModel.Tokens.Jwt
                 return keys;
 
             var unwrappedKeys = new List<SecurityKey>();
-            // keep track of exceptions thrown, keys that were tried
-            var exceptionStrings = new StringBuilder();
-            var keysAttempted = new StringBuilder();
+
+            // Pre-generate a placeholder key used as a fallback when an unwrap call
+            // does not yield a usable key, so that downstream processing follows a
+            // single uniform path regardless of which key was tried.
+            int expectedCekSizeInBytes = GetExpectedCekSizeInBytes(jwtToken.Header.Enc);
+            byte[] fallbackCek = new byte[expectedCekSizeInBytes];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+                rng.GetBytes(fallbackCek);
+
             foreach (var key in keys)
             {
                 try
@@ -1865,7 +1912,7 @@ namespace System.IdentityModel.Tokens.Jwt
                         // is treated as opt-in. When the library is at the point where it is able to make breaking changes
                         // (such as the next major version update) we should consider whether or not this app-compat switch
                         // needs to be maintained.
-                        if (AppContext.TryGetSwitch(AppCompatSwitches.UseRfcDefinitionOfEpkAndKid, out bool isEnabled) && isEnabled)
+                        if (AppContextSwitches.UseRfcDefinitionOfEpkAndKid)
                         {
                             //// on decryption we get the public key from the EPK value see: https://datatracker.ietf.org/doc/html/rfc7518#appendix-C
                             string epk = jwtToken.Header.GetStandardClaim(JwtHeaderParameterNames.Epk);
@@ -1888,9 +1935,10 @@ namespace System.IdentityModel.Tokens.Jwt
                         var unwrappedKey = kwp.UnwrapKey(Base64UrlEncoder.DecodeBytes(jwtToken.RawEncryptedKey));
                         unwrappedKeys.Add(new SymmetricSecurityKey(unwrappedKey));
                     }
-                    else
-#endif
+                    else if (key.CryptoProviderFactory.IsSupportedAlgorithm(jwtToken.Header.Alg, key))
+#else
                     if (key.CryptoProviderFactory.IsSupportedAlgorithm(jwtToken.Header.Alg, key))
+#endif
                     {
                         var kwp = key.CryptoProviderFactory.CreateKeyWrapProviderForUnwrap(key, jwtToken.Header.Alg);
                         var unwrappedKey = kwp.UnwrapKey(Base64UrlEncoder.DecodeBytes(jwtToken.RawEncryptedKey));
@@ -1899,15 +1947,39 @@ namespace System.IdentityModel.Tokens.Jwt
                 }
                 catch (Exception ex)
                 {
-                    exceptionStrings.AppendLine(ex.ToString());
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        LogHelper.LogWarning(ex.ToString());
+
+                    // Use the placeholder key so the downstream code path is the
+                    // same regardless of whether unwrap succeeded.
+                    unwrappedKeys.Add(new SymmetricSecurityKey(fallbackCek));
                 }
-                keysAttempted.AppendLine(key.ToString());
             }
 
-            if (unwrappedKeys.Count > 0 || exceptionStrings.Length == 0)
-                return unwrappedKeys;
-            else
-                throw LogHelper.LogExceptionMessage(new SecurityTokenKeyWrapException(LogHelper.FormatInvariant(TokenLogMessages.IDX10618, keysAttempted, exceptionStrings, jwtToken)));
+            return unwrappedKeys;
+        }
+
+        /// <summary>
+        /// Returns the expected Content Encryption Key (CEK) size in bytes for
+        /// the given content encryption algorithm (JWE "enc" header value).
+        /// </summary>
+        private static int GetExpectedCekSizeInBytes(string encAlgorithm)
+        {
+            if (SecurityAlgorithms.Aes128CbcHmacSha256.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 32;
+            if (SecurityAlgorithms.Aes192CbcHmacSha384.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 48;
+            if (SecurityAlgorithms.Aes256CbcHmacSha512.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 64;
+
+            if (SecurityAlgorithms.Aes128Gcm.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 16;
+            if (SecurityAlgorithms.Aes192Gcm.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 24;
+            if (SecurityAlgorithms.Aes256Gcm.Equals(encAlgorithm, StringComparison.Ordinal))
+                return 32;
+
+            return 32;
         }
 
         private static byte[] GetSymmetricSecurityKey(SecurityKey key)

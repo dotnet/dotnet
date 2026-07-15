@@ -1,0 +1,4 @@
+Microsoft.IdentityModel.LoggingExtensions.IdentityLoggerAdapter
+Microsoft.IdentityModel.LoggingExtensions.IdentityLoggerAdapter.IdentityLoggerAdapter(Microsoft.Extensions.Logging.ILogger logger) -> void
+Microsoft.IdentityModel.LoggingExtensions.IdentityLoggerAdapter.IsEnabled(Microsoft.IdentityModel.Abstractions.EventLogLevel eventLogLevel) -> bool
+Microsoft.IdentityModel.LoggingExtensions.IdentityLoggerAdapter.Log(Microsoft.IdentityModel.Abstractions.LogEntry entry) -> void

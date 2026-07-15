@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -23,7 +21,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Instantiates a new <see cref="TokenContext"/> with an activity ID.
         /// </summary>
-        public TokenContext(Guid activityId) : base (activityId)
+        public TokenContext(Guid activityId) : base(activityId)
         {
         }
     }

@@ -29,7 +29,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     /// </summary>
     public class RsaKeyWrapProviderTests
     {
-        [Theory, MemberData(nameof(RsaKeyWrapConstructorTheoryData))]
+        [Theory, MemberData(nameof(RsaKeyWrapConstructorTheoryData), DisableDiscoveryEnumeration = true)]
         public void Constructors(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Constructors", theoryData);
@@ -159,7 +159,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             Assert.True(provider.WrapKeyCalled);
         }
 
-        [Theory, MemberData(nameof(RsaUnwrapMismatchTheoryData))]
+        [Theory, MemberData(nameof(RsaUnwrapMismatchTheoryData), DisableDiscoveryEnumeration = true)]
         public void RsaUnwrapMismatch(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RsaUnwrapParameterCheck", theoryData);
@@ -214,7 +214,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             };
         }
 
-        [Theory, MemberData(nameof(RsaUnwrapTamperedTheoryData))]
+        [Theory, MemberData(nameof(RsaUnwrapTamperedTheoryData), DisableDiscoveryEnumeration = true)]
         public void RsaUnwrapTamperedData(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RsaUnwrapParameterCheck", theoryData);
@@ -273,7 +273,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             });
         }
 
-        [Theory, MemberData(nameof(RsaUnwrapTheoryData))]
+        [Theory, MemberData(nameof(RsaUnwrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void RsaUnwrapParameterCheck(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RsaUnwrapParameterCheck", theoryData);
@@ -315,7 +315,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             };
         }
 
-        [Theory, MemberData(nameof(RsaWrapUnwrapTheoryData))]
+        [Theory, MemberData(nameof(RsaWrapUnwrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void RsaWrapUnwrapKey(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RsaWrapUnwrapKey", theoryData);

@@ -1,0 +1,4 @@
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.TimeProvider.get -> System.TimeProvider
+Microsoft.IdentityModel.Dpop.DpopValidationOptions.TimeProvider.set -> void
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.TimeProvider.get -> System.TimeProvider
+*REMOVED*Microsoft.IdentityModel.Dpop.DPoPValidationOptions.TimeProvider.set -> void

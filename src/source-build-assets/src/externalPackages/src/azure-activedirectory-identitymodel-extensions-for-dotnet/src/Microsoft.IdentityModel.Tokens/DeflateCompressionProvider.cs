@@ -77,8 +77,16 @@ namespace Microsoft.IdentityModel.Tokens
                     {
                         using (var reader = new StreamReader(deflateStream, Encoding.UTF8))
                         {
+                            int totalCharsRead = 0;
+                            int charsRead;
+
+                            // Read from the stream until all data is consumed or max size is reached
+                            while (totalCharsRead <= MaximumDeflateSize && (charsRead = reader.Read(chars, totalCharsRead, MaximumDeflateSize - totalCharsRead)) > 0)
+                            {
+                                totalCharsRead += charsRead;
+                            }
+
                             // if there is one more char to read, then the token is too large.
-                            int bytesRead = reader.Read(chars, 0, MaximumDeflateSize);
                             if (reader.Peek() != -1)
                             {
                                 throw LogHelper.LogExceptionMessage(
@@ -88,7 +96,7 @@ namespace Microsoft.IdentityModel.Tokens
                                             LogHelper.MarkAsNonPII(MaximumDeflateSize))));
                             }
 
-                            return Encoding.UTF8.GetBytes(chars, 0, bytesRead);
+                            return Encoding.UTF8.GetBytes(chars, 0, totalCharsRead);
                         }
                     }
                 }
@@ -96,7 +104,7 @@ namespace Microsoft.IdentityModel.Tokens
             finally
             {
                 if (chars != null)
-                    ArrayPool<char>.Shared.Return(chars);
+                    ArrayPool<char>.Shared.Return(chars, clearArray: true);
             }
         }
 
