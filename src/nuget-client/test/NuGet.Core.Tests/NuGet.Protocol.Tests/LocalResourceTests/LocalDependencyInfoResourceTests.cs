@@ -336,8 +336,8 @@ namespace NuGet.Protocol.Tests
                     CancellationToken.None));
 
                 // Assert
-                Assert.Equal(packageA.Identity, result, PackageIdentity.Comparer);
-                Assert.True(result.Listed);
+                Assert.Equal(packageA.Identity, result!, PackageIdentity.Comparer);
+                Assert.True(result!.Listed);
                 Assert.Contains("a.1.0.0.nupkg", result.DownloadUri!.LocalPath);
                 Assert.Equal(1, result.Dependencies.Count());
                 Assert.Equal("x", result.Dependencies.Single().Id);
@@ -481,9 +481,9 @@ namespace NuGet.Protocol.Tests
                     CancellationToken.None));
 
                 // Assert
-                Assert.Equal(0, resultNet462.Dependencies.Count());
-                Assert.Equal(1, resultNet46.Dependencies.Count());
-                Assert.Equal(1, resultWin8.Dependencies.Count());
+                Assert.Equal(0, resultNet462!.Dependencies.Count());
+                Assert.Equal(1, resultNet46!.Dependencies.Count());
+                Assert.Equal(1, resultWin8!.Dependencies.Count());
 
                 Assert.Equal("x", resultNet46.Dependencies.Single().Id);
                 Assert.Equal(VersionRange.All, resultNet46.Dependencies.Single().VersionRange);

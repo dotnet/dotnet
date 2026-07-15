@@ -105,5 +105,46 @@ namespace NuGet.Common.Test
             // Assert
             Assert.Equal(expected, actual);
         }
+
+        // A relative source is resolved against the fully qualified root, producing a deterministic absolute path that
+        // does not depend on the process current directory. Windows-only for the backslash-normalized expected values.
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("sub/child", @"C:\root\sub\child")]
+        [InlineData("nested/../child", @"C:\root\child")]
+        [InlineData("./relative", @"C:\root\relative")]
+        public void UriUtility_GetAbsolutePath_WithFullyQualifiedRoot_ResolvesRelativeSourceToExpectedPath(string source, string expected)
+        {
+            Assert.Equal(expected, UriUtility.GetAbsolutePath(@"C:\root", source));
+        }
+
+#if !NETFRAMEWORK
+        // Drive-relative ("C:") and root-relative ("\foo") sources are rooted but not fully qualified: historically they
+        // resolved against the process current directory/drive. On .NET they must anchor to the fully qualified root.
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("C:", @"C:\root")]
+        [InlineData(@"\foo", @"C:\foo")]
+        public void UriUtility_GetAbsolutePath_WithFullyQualifiedRoot_AnchorsRootedRelativeSourceToRoot(string source, string expected)
+        {
+            Assert.Equal(expected, UriUtility.GetAbsolutePath(@"C:\root", source));
+        }
+#endif
+
+        // An already-absolute source path is returned canonicalized; the root is ignored.
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(@"C:\absolute\source", @"C:\absolute\source")]
+        [InlineData(@"C:\absolute\..\source", @"C:\source")]
+        public void UriUtility_GetAbsolutePath_WithAbsoluteSource_ReturnsCanonicalSourceIgnoringRoot(string source, string expected)
+        {
+            Assert.Equal(expected, UriUtility.GetAbsolutePath(@"C:\other\root", source));
+        }
+
+        // Non-file sources (http/ftp) are returned unchanged regardless of the root.
+        [Theory]
+        [InlineData("https://api.nuget.org/v3/index.json")]
+        [InlineData("ftp://example.org/path")]
+        public void UriUtility_GetAbsolutePath_WithNonFileSource_ReturnsSourceUnchanged(string source)
+        {
+            Assert.Equal(source, UriUtility.GetAbsolutePath(@"C:\root", source));
+        }
     }
 }

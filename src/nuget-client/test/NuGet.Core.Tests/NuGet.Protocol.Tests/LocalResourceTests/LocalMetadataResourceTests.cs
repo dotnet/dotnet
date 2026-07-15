@@ -181,9 +181,9 @@ namespace NuGet.Protocol.Tests
 
                 // Assert
                 Assert.Equal("a", result[0].Key);
-                Assert.Equal("1.0.0", result[0].Value.ToFullString());
+                Assert.Equal("1.0.0", result[0].Value!.ToFullString());
                 Assert.Equal("b", result[1].Key);
-                Assert.Equal("2.0.1+githash.0faef", result[1].Value.ToFullString());
+                Assert.Equal("2.0.1+githash.0faef", result[1].Value!.ToFullString());
                 Assert.Equal("c", result[2].Key);
                 Assert.Null(result[2].Value);
             }
