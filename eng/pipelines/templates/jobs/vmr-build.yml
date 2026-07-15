@@ -490,7 +490,6 @@ jobs:
         targetType: 'inline'
         script: |
           $sourcesPath = "$(sourcesPath)"
-          $token = $env:Token
           
           Get-ChildItem -Path "$sourcesPath/src" -Directory | ForEach-Object {
             $repoDir = $_.FullName
@@ -500,11 +499,12 @@ jobs:
             $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
             
             Write-Host "Setting up internal NuGet feeds for $($_.Name)"
-            & $setupScript $nugetConfig $token
+            & $setupScript $nugetConfig
             Write-Host ""
           }
-      env:
-        Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+    # Necessary for PAT-less authentication
+    - task: NuGetAuthenticate@1
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -635,7 +635,10 @@ jobs:
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
           else
-            customPreBuildArgs="$customPreBuildArgs sudo -E unshare -n"
+            # Preserve HOME across the sudo boundary so the Azure Artifacts credential
+            # provider provisioned by NuGetAuthenticate can locate the credentials it
+            # cached for internal-feed restore. See https://github.com/dotnet/source-build/issues/5612
+            customPreBuildArgs="$customPreBuildArgs sudo -E --preserve-env=HOME unshare -n"
           fi
 
           if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
@@ -761,7 +764,10 @@ jobs:
 
           customPreBuildArgs=""
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
-            customPreBuildArgs="sudo -E"
+            # Preserve HOME across the sudo boundary so the Azure Artifacts credential
+            # provider provisioned by NuGetAuthenticate can locate the credentials it
+            # cached for internal-feed restore. See https://github.com/dotnet/source-build/issues/5612
+            customPreBuildArgs="sudo -E --preserve-env=HOME"
             export MICROBUILDOUTPUTFOLDEROVERRIDE
           fi
 
