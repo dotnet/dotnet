@@ -36,4 +36,22 @@ public class UnitTests
     {
         Assert.Fail("should never run");
     }
+
+    // Verifies that environment variables declared in a runsettings RunConfiguration/EnvironmentVariables
+    // block are injected into the self-hosted MTP process. The check is opted into by the
+    // CHECK_RUNSETTINGS_VAR control variable, which the env-var acceptance test passes as a *process*
+    // environment variable (inherited by the host regardless of the fix), so the guard is decisive: when
+    // runsettings injection works MTP_FROM_RUNSETTINGS carries the expected value and the test passes; when
+    // it is broken the variable is absent and the assert fails. In every other run the control variable is
+    // unset, so the test is a no-op and stays green.
+    [TestMethod]
+    public void RunSettingsEnvironmentVariableIsInjected()
+    {
+        if (System.Environment.GetEnvironmentVariable("CHECK_RUNSETTINGS_VAR") != "1")
+        {
+            return;
+        }
+
+        Assert.AreEqual("mtp-runsettings-value", System.Environment.GetEnvironmentVariable("MTP_FROM_RUNSETTINGS"));
+    }
 }
