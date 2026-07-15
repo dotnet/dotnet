@@ -55,7 +55,7 @@
   </Target>
 
   <!--
-    Inject SCCSID in AOT apps which we include in libcoreclr and other runtime native libs.
+    Inject SCCSID in AOT apps.
   -->
   <Target Name="AddSccsidMetadata"
           Condition="'$(PublishAot)' == 'true' and '$(OS)' != 'Windows_NT'"
