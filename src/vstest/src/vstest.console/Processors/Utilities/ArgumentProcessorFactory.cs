@@ -52,8 +52,8 @@ internal class ArgumentProcessorFactory
     /// </param>
     /// <param name="runSettingsProvider">
     /// The run settings provider that the created argument processors read from and write to.
-    /// Defaults to the ambient <see cref="RunSettingsManager.Instance"/> when not provided, so that
-    /// callers (and the composition root) can inject an isolated instance instead of sharing static state.
+    /// When not provided a fresh, request-scoped instance is created, so that callers never
+    /// share run settings state through a static singleton.
     /// </param>
     /// <param name="runSettingsHelper">
     /// The run settings helper that the created argument processors write request-scoped flags to.
@@ -74,7 +74,7 @@ internal class ArgumentProcessorFactory
     /// <returns>ArgumentProcessorFactory.</returns>
     internal static ArgumentProcessorFactory Create(IFeatureFlag? featureFlag = null, IRunSettingsProvider? runSettingsProvider = null, IRunSettingsHelper? runSettingsHelper = null, CommandLineOptions? commandLineOptions = null, ITestRequestManager? testRequestManager = null)
     {
-        runSettingsProvider ??= RunSettingsManager.Instance;
+        runSettingsProvider ??= new RunSettingsManager();
         runSettingsHelper ??= RunSettingsHelper.Instance;
         commandLineOptions ??= new CommandLineOptions();
         testRequestManager ??= new LazyTestRequestManager(() => new TestRequestManager(commandLineOptions, new TestRunResultAggregator()));

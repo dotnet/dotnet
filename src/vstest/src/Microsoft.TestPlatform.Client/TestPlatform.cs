@@ -246,7 +246,13 @@ internal class TestPlatform : ITestPlatform
         // Otherwise we will always get a "No suitable test runtime provider found for this run." error.
         // I (@haplois) will modify this behavior later on, but we also need to consider legacy adapters
         // and make sure they still work after modification.
-        string? runSettings = RunSettingsManager.Instance.ActiveRunSettings.SettingsXml;
+        //
+        // The inbox extensions are loaded once, at type initialization, using the default adapter
+        // loading strategy. We intentionally do not read the ambient RunSettingsManager singleton
+        // here: this runs before any request's run settings are known (see the note above), so it
+        // could only ever observe the default settings anyway. Request-specific test adapter paths
+        // are still loaded later, per request, through the normal PopulateExtensions flow.
+        string? runSettings = null;
         RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);
         TestAdapterLoadingStrategy strategy = runConfiguration.TestAdapterLoadingStrategy;
 
