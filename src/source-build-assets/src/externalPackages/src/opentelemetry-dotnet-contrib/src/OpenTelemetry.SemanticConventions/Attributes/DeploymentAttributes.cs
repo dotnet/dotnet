@@ -51,6 +51,32 @@ public static class DeploymentAttributes
     public const string AttributeDeploymentStatus = "deployment.status";
 
     /// <summary>
+    /// Name of the <a href="https://wikipedia.org/wiki/Deployment_environment">deployment environment</a> (aka deployment tier).
+    /// </summary>
+    public static class DeploymentEnvironmentNameValues
+    {
+        /// <summary>
+        /// Production environment.
+        /// </summary>
+        public const string Production = "production";
+
+        /// <summary>
+        /// Staging environment.
+        /// </summary>
+        public const string Staging = "staging";
+
+        /// <summary>
+        /// Testing environment.
+        /// </summary>
+        public const string Test = "test";
+
+        /// <summary>
+        /// Development environment.
+        /// </summary>
+        public const string Development = "development";
+    }
+
+    /// <summary>
     /// The status of the deployment.
     /// </summary>
     public static class DeploymentStatusValues

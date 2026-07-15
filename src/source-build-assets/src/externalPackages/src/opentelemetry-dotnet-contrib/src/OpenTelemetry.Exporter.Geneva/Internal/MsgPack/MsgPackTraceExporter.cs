@@ -313,6 +313,97 @@ internal sealed class MsgPackTraceExporter : MsgPackExporter, IDisposable
         return urlStringBuilder.ToString();
     }
 
+    // Serializes the composed HTTP url (scheme://address:port/path?query) for a
+    // server span directly into the msgpack buffer, avoiding the intermediate
+    // interpolated strings, StringBuilder, and ToString() that GetHttpUrl
+    // allocates. The fast path writes each url segment's UTF-8 straight into the
+    // buffer and back-patches the STR16 length header (exactly mirroring
+    // MessagePackSerializer.SerializeUnicodeString's wire format). The rare
+    // over-limit case delegates to GetHttpUrl + SerializeUnicodeString so the
+    // existing char-count truncation semantics are preserved byte-for-byte.
+    internal static int SerializeHttpUrl(byte[] buffer, int cursor, object?[] httpUrlParts, ref ushort fieldCount)
+    {
+        static int WriteUtf8(byte[] target, int at, string value)
+        {
+            if (value.Length == 0)
+            {
+                return 0;
+            }
+#if NETSTANDARD2_1_OR_GREATER || NET
+            return Encoding.UTF8.GetBytes(value, target.AsSpan(at));
+#else
+            return Encoding.UTF8.GetBytes(value, 0, value.Length, target, at);
+#endif
+        }
+
+        var scheme = httpUrlParts[0]?.ToString() ?? string.Empty;   // url.scheme
+        var address = httpUrlParts[1]?.ToString() ?? string.Empty;  // server.address
+        var port = httpUrlParts[2]?.ToString();                     // server.port (null => no ':' prefix, even for "")
+        var path = httpUrlParts[3]?.ToString() ?? string.Empty;     // url.path
+        var query = httpUrlParts[4]?.ToString();                    // url.query
+
+        var hasQuery = !string.IsNullOrEmpty(query);
+        var queryNeedsPrefix = hasQuery && query![0] != '?';
+
+        // Combined char count, mirroring GetHttpUrl's `length` exactly so the
+        // empty-detection and the over-limit threshold stay consistent.
+        var combinedCharCount = scheme.Length
+            + Uri.SchemeDelimiter.Length
+            + address.Length
+            + (port != null ? 1 + port.Length : 0)
+            + path.Length
+            + (hasQuery ? (queryNeedsPrefix ? 1 + query!.Length : query!.Length) : 0);
+
+        // No URL elements found (only "://").
+        if (combinedCharCount == Uri.SchemeDelimiter.Length)
+        {
+            return cursor;
+        }
+
+        cursor = MessagePackSerializer.SerializeAsciiString(buffer, cursor, "httpUrl");
+
+        if (combinedCharCount > MessagePackSerializer.DEFAULT_STRING_SIZE_LIMIT_CHAR_COUNT)
+        {
+            // Rare: preserve the exact truncation + "..." semantics by reusing
+            // the original builder and serializer.
+            cursor = MessagePackSerializer.SerializeUnicodeString(buffer, cursor, GetHttpUrl(httpUrlParts));
+            fieldCount += 1;
+            return cursor;
+        }
+
+        var start = cursor;
+        cursor += 3; // Reserve the STR16 header; back-patched once the byte length is known.
+
+        cursor += WriteUtf8(buffer, cursor, scheme);
+        buffer[cursor++] = (byte)':';
+        buffer[cursor++] = (byte)'/';
+        buffer[cursor++] = (byte)'/';
+        cursor += WriteUtf8(buffer, cursor, address);
+        if (port != null)
+        {
+            buffer[cursor++] = (byte)':';
+            cursor += WriteUtf8(buffer, cursor, port);
+        }
+
+        cursor += WriteUtf8(buffer, cursor, path);
+        if (hasQuery)
+        {
+            if (queryNeedsPrefix)
+            {
+                buffer[cursor++] = (byte)'?';
+            }
+
+            cursor += WriteUtf8(buffer, cursor, query!);
+        }
+
+        var cb = cursor - start - 3;
+        buffer[start] = MessagePackSerializer.STR16;
+        buffer[start + 1] = unchecked((byte)(cb >> 8));
+        buffer[start + 2] = unchecked((byte)cb);
+        fieldCount += 1;
+        return cursor;
+    }
+
     /// <summary>
     /// Populates this.bufferPrologue and this.bufferEpilogue.
     /// </summary>
@@ -611,14 +702,9 @@ internal sealed class MsgPackTraceExporter : MsgPackExporter, IDisposable
 
         if (isServerActivity)
         {
-            var httpUrl = GetHttpUrl(httpUrlParts);
-            if (httpUrl != null)
-            {
-                // If the activity is a server activity and has http.url, we need to add it as a dedicated field.
-                cursor = MessagePackSerializer.SerializeAsciiString(buffer, cursor, "httpUrl");
-                cursor = MessagePackSerializer.SerializeUnicodeString(buffer, cursor, httpUrl);
-                cntFields += 1;
-            }
+            // Serializes the "httpUrl" field directly into the buffer (no
+            // intermediate URL string) when the server span carries url parts.
+            cursor = SerializeHttpUrl(buffer, cursor, httpUrlParts, ref cntFields);
         }
 
         if (hasEnvProperties)

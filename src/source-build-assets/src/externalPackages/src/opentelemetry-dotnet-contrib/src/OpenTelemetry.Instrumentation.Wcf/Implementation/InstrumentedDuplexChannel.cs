@@ -7,7 +7,7 @@ using OpenTelemetry.Internal;
 
 namespace OpenTelemetry.Instrumentation.Wcf.Implementation;
 
-internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexChannel>, IDuplexSessionChannel
+internal class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexChannel>, IDuplexChannel
 {
     private readonly TimeSpan telemetryTimeout;
 
@@ -22,8 +22,6 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
     public EndpointAddress RemoteAddress => this.Inner.RemoteAddress;
 
     public Uri Via => this.Inner.Via;
-
-    public IDuplexSession Session => ((IDuplexSessionChannel)this.Inner).Session;
 
     public void Send(Message message)
     {
@@ -176,15 +174,17 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
             executeSend(telemetryState);
         }
 
-        var executionContext = ExecutionContext.Capture();
-        if (executionContext == null)
-        {
-            throw new InvalidOperationException("Cannot fetch execution context");
-        }
-
         try
         {
-            ExecutionContext.Run(executionContext, ExecuteInChildContext, null);
+            var executionContext = ExecutionContext.Capture();
+            if (executionContext == null)
+            {
+                ExecuteInChildContext(null);
+            }
+            else
+            {
+                ExecutionContext.Run(executionContext, ExecuteInChildContext, null);
+            }
         }
         catch (Exception ex)
         {

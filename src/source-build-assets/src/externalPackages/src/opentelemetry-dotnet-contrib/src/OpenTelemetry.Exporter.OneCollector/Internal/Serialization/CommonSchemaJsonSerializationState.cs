@@ -17,6 +17,7 @@ internal sealed class CommonSchemaJsonSerializationState
     private readonly List<KeyValuePair<ExtensionFieldInformation, object?>> allValues = new(16);
     private string itemType;
     private KeyValueLookup[] keysToAllValuesLookup = new KeyValueLookup[4];
+    private int[] valueIndices = new int[4 * MaxNumberOfExtensionValuesPerKey];
 
     public CommonSchemaJsonSerializationState(string itemType, Utf8JsonWriter writer)
     {
@@ -45,18 +46,32 @@ internal sealed class CommonSchemaJsonSerializationState
         Debug.Assert(fieldInformation?.FieldName != null, "fieldInformation.FieldName was null");
         Debug.Assert(fieldInformation?.EncodedFieldName.EncodedUtf8Bytes.Length > 0, "fieldInformation.EncodedFieldName was empty");
 
+#pragma warning disable IDE0370 // Remove unnecessary suppression
+        var extensionName = fieldInformation!.ExtensionName!;
+#pragma warning restore IDE0370 // Remove unnecessary suppression
+
 #if NET
-        ref var lookupIndex = ref CollectionsMarshal.GetValueRefOrAddDefault(this.keys, fieldInformation.ExtensionName, out var existed);
+        ref var lookupIndexRef = ref CollectionsMarshal.GetValueRefOrAddDefault(this.keys, extensionName, out var existed);
+        var lookupIndex = lookupIndexRef;
         if (!existed)
         {
-            this.AssignNewExtensionToLookupIndex(ref lookupIndex);
+            this.AssignNewExtensionToLookupIndex(ref lookupIndexRef);
+            lookupIndex = lookupIndexRef;
+
+            if (lookupIndex == -1)
+            {
+                this.keys.Remove(extensionName);
+            }
         }
 #else
 #pragma warning disable IDE0370 // Suppression is unnecessary
-        if (!this.keys.TryGetValue(fieldInformation!.ExtensionName!, out var lookupIndex))
+        if (!this.keys.TryGetValue(extensionName, out var lookupIndex))
         {
             this.AssignNewExtensionToLookupIndex(ref lookupIndex);
-            this.keys[fieldInformation.ExtensionName!] = lookupIndex;
+            if (lookupIndex != -1)
+            {
+                this.keys[extensionName] = lookupIndex;
+            }
         }
 #pragma warning restore IDE0370 // Suppression is unnecessary
 #endif
@@ -77,11 +92,7 @@ internal sealed class CommonSchemaJsonSerializationState
 
         var index = this.allValues.Count;
         this.allValues.Add(new KeyValuePair<ExtensionFieldInformation, object?>(fieldInformation, attribute.Value));
-
-        unsafe
-        {
-            keyLookup.ValueIndices[keyLookup.Count++] = index;
-        }
+        this.valueIndices[(lookupIndex * MaxNumberOfExtensionValuesPerKey) + keyLookup.Count++] = index;
     }
 
     public void SerializeExtensionPropertiesToJson(bool writeExtensionObjectEnvelope)
@@ -103,28 +114,32 @@ internal sealed class CommonSchemaJsonSerializationState
         {
             var wroteStartObject = false;
 
-            ref var keyLookup = ref this.keysToAllValuesLookup[extensionPropertyKey.Value];
+            var lookupIndex = extensionPropertyKey.Value;
+            if (lookupIndex < 0)
+            {
+                continue;
+            }
+
+            ref var keyLookup = ref this.keysToAllValuesLookup[lookupIndex];
+            var valueIndicesOffset = lookupIndex * MaxNumberOfExtensionValuesPerKey;
 
             for (var i = 0; i < keyLookup.Count; i++)
             {
-                unsafe
-                {
 #if NET
-                    ref var attribute = ref allValues[keyLookup.ValueIndices[i]];
+                ref var attribute = ref allValues[this.valueIndices[valueIndicesOffset + i]];
 #else
-                    var attribute = allValues[keyLookup.ValueIndices[i]];
+                var attribute = allValues[this.valueIndices[valueIndicesOffset + i]];
 #endif
-                    var fieldInformation = attribute.Key;
+                var fieldInformation = attribute.Key;
 
-                    if (!wroteStartObject)
-                    {
-                        writer.WriteStartObject(fieldInformation.EncodedExtensionName);
-                        wroteStartObject = true;
-                    }
-
-                    writer.WritePropertyName(fieldInformation.EncodedFieldName);
-                    CommonSchemaJsonSerializationHelper.SerializeValueToJson(attribute.Value, writer);
+                if (!wroteStartObject)
+                {
+                    writer.WriteStartObject(fieldInformation.EncodedExtensionName);
+                    wroteStartObject = true;
                 }
+
+                writer.WritePropertyName(fieldInformation.EncodedFieldName);
+                CommonSchemaJsonSerializationHelper.SerializeValueToJson(attribute.Value, writer);
             }
 
             if (wroteStartObject)
@@ -177,17 +192,21 @@ internal sealed class CommonSchemaJsonSerializationState
                 return;
             }
 
-            var newKeysToAllValuesLookup = new KeyValueLookup[this.keysToAllValuesLookup.Length * 2];
+            var newLength = this.keysToAllValuesLookup.Length * 2;
+            var newKeysToAllValuesLookup = new KeyValueLookup[newLength];
             this.keysToAllValuesLookup.CopyTo(newKeysToAllValuesLookup, 0);
             this.keysToAllValuesLookup = newKeysToAllValuesLookup;
+
+            var newValueIndices = new int[newLength * MaxNumberOfExtensionValuesPerKey];
+            this.valueIndices.CopyTo(newValueIndices, 0);
+            this.valueIndices = newValueIndices;
         }
 
         this.ExtensionPropertyCount++;
     }
 
-    private unsafe struct KeyValueLookup
+    private struct KeyValueLookup
     {
         public int Count;
-        public fixed int ValueIndices[MaxNumberOfExtensionValuesPerKey];
     }
 }

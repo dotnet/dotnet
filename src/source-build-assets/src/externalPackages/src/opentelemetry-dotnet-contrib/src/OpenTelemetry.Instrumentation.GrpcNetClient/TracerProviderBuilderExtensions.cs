@@ -55,7 +55,7 @@ public static class TracerProviderBuilderExtensions
             builder.ConfigureServices(services => services.Configure(name, configure));
         }
 
-        builder.AddSource(GrpcClientDiagnosticListener.ActivitySourceName);
+        builder.AddSource(GrpcClientDiagnosticListener.ActivitySource.Name);
         builder.AddLegacySource("Grpc.Net.Client.GrpcOut");
 
         return builder.AddInstrumentation(sp =>

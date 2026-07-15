@@ -145,6 +145,21 @@ public static class GcpAttributes
     public const string AttributeGcpGceInstanceName = "gcp.gce.instance.name";
 
     /// <summary>
+    /// The name of the Instance Group Manager (IGM) that manages this VM, if any.
+    /// </summary>
+    public const string AttributeGcpGceInstanceGroupManagerName = "gcp.gce.instance_group_manager.name";
+
+    /// <summary>
+    /// The region of a <strong>regional</strong> Instance Group Manager (e.g., <c>us-central1</c>). Set this <strong>only</strong> when the IGM is regional.
+    /// </summary>
+    public const string AttributeGcpGceInstanceGroupManagerRegion = "gcp.gce.instance_group_manager.region";
+
+    /// <summary>
+    /// The zone of a <strong>zonal</strong> Instance Group Manager (e.g., <c>us-central1-a</c>). Set this <strong>only</strong> when the IGM is zonal.
+    /// </summary>
+    public const string AttributeGcpGceInstanceGroupManagerZone = "gcp.gce.instance_group_manager.zone";
+
+    /// <summary>
     /// Criticality of a service indicates its importance to the business.
     /// </summary>
     public static class GcpApphubServiceCriticalityTypeValues

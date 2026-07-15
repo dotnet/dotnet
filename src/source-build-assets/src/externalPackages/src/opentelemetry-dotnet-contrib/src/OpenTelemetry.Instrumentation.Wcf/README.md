@@ -22,7 +22,7 @@ Other configurations may work as well but have not been tested.
 
 > [!CAUTION]
 > This component is based on the OpenTelemetry semantic conventions for
-[traces](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/rpc/rpc-spans.md).
+> [traces](https://github.com/open-telemetry/semantic-conventions/tree/v1.42.0/docs/rpc#semantic-conventions-for-rpc).
 > These conventions are
 > [in Development](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/document-status.md),
 > and hence, this package is a [pre-release](https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/VERSIONING.md#pre-releases).

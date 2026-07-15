@@ -21,7 +21,6 @@ internal static class HttpContextExtensions
         var endpoint = GetOriginalEndpoint(context);
         var route = endpoint?.Metadata.GetMetadata<IRouteDiagnosticsMetadata>()?.Route;
 
-#if !NET11_0_OR_GREATER
         if (string.IsNullOrEmpty(route))
         {
             // For Razor Pages, the route template may be empty (e.g., for the Index page mapped to root "/").
@@ -32,7 +31,6 @@ internal static class HttpContextExtensions
                 return pageValue;
             }
         }
-#endif
 
         return route is not null ? ResolveHttpRoute(route) : null;
     }

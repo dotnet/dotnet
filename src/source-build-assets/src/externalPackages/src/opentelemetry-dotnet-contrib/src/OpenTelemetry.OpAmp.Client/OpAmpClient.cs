@@ -45,6 +45,7 @@ public sealed class OpAmpClient : IDisposable
     /// </summary>
     /// <param name="token">Cancellation token.</param>
     /// <returns>A task that represents the asynchronous start operation.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
     public async Task StartAsync(CancellationToken token = default)
     {
         this.ThrowIfDisposed();
@@ -74,6 +75,7 @@ public sealed class OpAmpClient : IDisposable
     /// server that it is disconnecting. In particular, for WebSocket transport this attempts a
     /// graceful close handshake after sending the agent disconnect message.
     /// </remarks>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
     public async Task StopAsync(CancellationToken token = default)
     {
         this.ThrowIfDisposed();
@@ -98,6 +100,8 @@ public sealed class OpAmpClient : IDisposable
     /// </summary>
     /// <typeparam name="T">The <see cref="OpAmpMessage"/> to subscribe to.</typeparam>
     /// <param name="listener">A listener capable of handling messages of type <typeparamref name="T"/>.</param>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="listener"/> is null.</exception>
     public void Subscribe<T>(IOpAmpListener<T> listener)
         where T : OpAmpMessage
     {
@@ -111,6 +115,8 @@ public sealed class OpAmpClient : IDisposable
     /// </summary>
     /// <typeparam name="T">The <see cref="OpAmpMessage"/> to unsubscribe from.</typeparam>
     /// <param name="listener">A listener capable of handling messages of type <typeparamref name="T"/>.</param>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="listener"/> is null.</exception>
     public void Unsubscribe<T>(IOpAmpListener<T> listener)
         where T : OpAmpMessage
     {
@@ -132,6 +138,9 @@ public sealed class OpAmpClient : IDisposable
     /// before reporting files that may contain sensitive data such as passwords or tokens.
     /// </para>
     /// </remarks>
+    /// <exception cref="InvalidOperationException">Thrown if effective configuration reporting is not enabled in settings.</exception>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="files"/> contains two or more files with the same file name.</exception>
     public Task SendEffectiveConfigAsync(IEnumerable<EffectiveConfigFile> files, CancellationToken cancellationToken = default)
     {
         this.ThrowIfDisposed();
@@ -145,11 +154,34 @@ public sealed class OpAmpClient : IDisposable
     }
 
     /// <summary>
+    /// Reports the status of a remote configuration previously received from the OpAMP server.
+    /// </summary>
+    /// <param name="statusReport">The remote configuration status report.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A task that represents the asynchronous send operation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if remote configuration status reporting is not enabled in settings.</exception>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="statusReport"/> is null.</exception>
+    public Task SendRemoteConfigStatusAsync(RemoteConfigStatusReport statusReport, CancellationToken cancellationToken = default)
+    {
+        this.ThrowIfDisposed();
+        Guard.ThrowIfNull(statusReport);
+
+        if (!this.settings.RemoteConfiguration.ReportsRemoteConfigStatus)
+        {
+            throw new InvalidOperationException("Remote configuration status reporting is not enabled in settings.");
+        }
+
+        return this.dispatcher.DispatchRemoteConfigStatusAsync(statusReport, cancellationToken);
+    }
+
+    /// <summary>
     /// Reports custom capabilities supported by the agent.
     /// </summary>
     /// <param name="capabilities">Capabilities list.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A task that represents the asynchronous send operation.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
     public Task SendCustomCapabilitiesAsync(IEnumerable<string> capabilities, CancellationToken cancellationToken = default)
     {
         this.ThrowIfDisposed();
@@ -165,6 +197,7 @@ public sealed class OpAmpClient : IDisposable
     /// <param name="data">Contents of the message.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A task that represents the asynchronous send operation.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown if the client has already been disposed.</exception>
     public Task SendCustomMessageAsync(string capability, string type, ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
         this.ThrowIfDisposed();

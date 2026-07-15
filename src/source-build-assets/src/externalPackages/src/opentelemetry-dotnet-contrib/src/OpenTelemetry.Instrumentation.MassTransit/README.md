@@ -1,5 +1,9 @@
 # MassTransit Instrumentation for OpenTelemetry .NET
 
+| Status | |
+| ------ | --- |
+| Stability | [Deprecated](../../README.md#deprecated) |
+
 [![NuGet version badge](https://img.shields.io/nuget/v/OpenTelemetry.Instrumentation.MassTransit)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.MassTransit)
 [![NuGet download count badge](https://img.shields.io/nuget/dt/OpenTelemetry.Instrumentation.MassTransit)](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.MassTransit)
 

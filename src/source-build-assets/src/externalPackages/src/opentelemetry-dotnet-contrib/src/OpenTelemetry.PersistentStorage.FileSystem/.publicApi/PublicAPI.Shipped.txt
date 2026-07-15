@@ -9,8 +9,11 @@ override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryDelete() -> bo
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryLease(int leasePeriodMilliseconds) -> bool
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryRead(out byte[]? buffer) -> bool
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryWrite(byte[]! buffer, int leasePeriodMilliseconds = 0) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlob.OnTryWriteSpan(System.ReadOnlySpan<byte> buffer, int leasePeriodMilliseconds) -> bool
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnGetBlobs() -> System.Collections.Generic.IEnumerable<OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob!>!
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryCreateBlob(byte[]! buffer, int leasePeriodMilliseconds, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryCreateBlob(byte[]! buffer, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryCreateBlob(System.ReadOnlySpan<byte> buffer, int leasePeriodMilliseconds, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
+override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryCreateBlob(System.ReadOnlySpan<byte> buffer, out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
 override OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.OnTryGetBlob(out OpenTelemetry.PersistentStorage.Abstractions.PersistentBlob? blob) -> bool
 virtual OpenTelemetry.PersistentStorage.FileSystem.FileBlobProvider.Dispose(bool disposing) -> void

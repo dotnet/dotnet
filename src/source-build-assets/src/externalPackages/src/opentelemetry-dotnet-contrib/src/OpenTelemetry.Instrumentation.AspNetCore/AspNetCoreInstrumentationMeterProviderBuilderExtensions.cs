@@ -31,7 +31,7 @@ public static class AspNetCoreInstrumentationMeterProviderBuilderExtensions
         _ = TelemetryHelper.BoxedStatusCodes;
         _ = TelemetryHelper.RequestDataHelper;
 
-        builder.AddMeter(HttpInMetricsListener.InstrumentationName);
+        builder.AddMeter(HttpInMetricsListener.Meter.Name);
 
 #pragma warning disable CA2000
         builder.AddInstrumentation(new AspNetCoreMetrics());
@@ -41,6 +41,7 @@ public static class AspNetCoreInstrumentationMeterProviderBuilderExtensions
 #endif
     }
 
+#if NET
     internal static MeterProviderBuilder ConfigureMeters(this MeterProviderBuilder builder)
     {
         // There is no cost to listen for meters that aren't used. For example, listening for Kestrel meter in an app that doesn't use Kestrel is fine.
@@ -64,4 +65,5 @@ public static class AspNetCoreInstrumentationMeterProviderBuilderExtensions
 
         return builder.AddMeter(builtInAspNetCoreMeters);
     }
+#endif
 }

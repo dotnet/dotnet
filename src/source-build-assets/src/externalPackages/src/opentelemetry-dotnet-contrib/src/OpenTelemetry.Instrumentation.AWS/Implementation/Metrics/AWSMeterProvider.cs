@@ -4,31 +4,29 @@
 using System.Collections.Concurrent;
 using Amazon.Runtime.Telemetry;
 using Amazon.Runtime.Telemetry.Metrics;
+using OpenTelemetry.AWS;
 
 namespace OpenTelemetry.Instrumentation.AWS.Implementation.Metrics;
 
-internal sealed class AWSMeterProvider : MeterProvider
+internal sealed class AWSMeterProvider(SemanticConventionVersion version) : MeterProvider
 {
-    private static readonly ConcurrentDictionary<string, AWSMeter> MetersDictionary = new();
+    private readonly ConcurrentDictionary<string, System.Diagnostics.Metrics.Meter> meters = new();
+    private readonly Version semanticConventionVersion = AWSSemanticConventions.GetVersion(version);
 
     public override Meter GetMeter(string scope, Attributes? attributes = null)
     {
-        // Passing attributes to the Meter is currently not possible due to version limitations
-        // in the dependencies. Since none of the SDK operations utilize attributes at this level,
-        // so we will omit the attributes for now.
-        // This will be revisited after the release of OpenTelemetry.Extensions.AWS which will
-        // update OpenTelemetry core component version(s) to `1.9.0` and allow passing tags to
-        // the meter constructor.
-
-        if (MetersDictionary.TryGetValue(scope, out var meter))
+        if (!this.meters.TryGetValue(scope, out var meter))
         {
-            return meter;
+#if NET
+            meter = this.meters.GetOrAdd(scope, static (name, state) => CreateMeter(name, state), (this.semanticConventionVersion, attributes?.AllAttributes));
+#else
+            meter = this.meters.GetOrAdd(scope, (name) => CreateMeter(name, (this.semanticConventionVersion, attributes?.AllAttributes)));
+#endif
         }
 
-        var awsMeter = MetersDictionary.GetOrAdd(
-            scope,
-            new AWSMeter(new System.Diagnostics.Metrics.Meter(scope)));
-
-        return awsMeter;
+        return new AWSMeter(meter);
     }
+
+    private static System.Diagnostics.Metrics.Meter CreateMeter(string name, (Version Version, IEnumerable<KeyValuePair<string, object?>>? Attributes) state)
+        => OpenTelemetry.Metrics.MeterFactory.Create(typeof(AWSMeterProvider), state.Version, state.Attributes, name);
 }

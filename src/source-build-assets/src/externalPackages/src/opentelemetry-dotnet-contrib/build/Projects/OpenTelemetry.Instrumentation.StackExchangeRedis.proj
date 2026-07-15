@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <SolutionProjects Include="$(RepoRoot)\src\OpenTelemetry.Instrumentation.StackExchangeRedis\OpenTelemetry.Instrumentation.StackExchangeRedis.csproj" />
+    <SolutionProjects Include="$(RepoRoot)\test\OpenTelemetry.Instrumentation.StackExchangeRedis.Benchmarks\OpenTelemetry.Instrumentation.StackExchangeRedis.Benchmarks.csproj" />
     <SolutionProjects Include="$(RepoRoot)\test\OpenTelemetry.Instrumentation.StackExchangeRedis.Tests\OpenTelemetry.Instrumentation.StackExchangeRedis.Tests.csproj" />
     <SolutionProjects Include="$(RepoRoot)\examples\redis\**\*.csproj" />
 

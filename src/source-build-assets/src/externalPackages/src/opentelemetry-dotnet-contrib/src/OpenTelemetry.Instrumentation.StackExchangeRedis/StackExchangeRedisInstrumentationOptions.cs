@@ -34,7 +34,9 @@ public class StackExchangeRedisInstrumentationOptions
     public TimeSpan FlushInterval { get; set; } = TimeSpan.FromSeconds(10);
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="StackExchangeRedisConnectionInstrumentation"/> should use reflection to get more detailed <see cref="SemanticConventions.AttributeDbStatement"/> tag values. Default value: <see langword="false"/>.
+    /// Gets or sets a value indicating whether the <see cref="StackExchangeRedisConnectionInstrumentation"/> should use reflection to get more detailed
+    /// <see cref="SemanticConventions.AttributeDbStatement"/> and <see cref="SemanticConventions.AttributeDbQueryText"/> tag values. Default value:
+    /// <see langword="false"/>.
     /// </summary>
     public bool SetVerboseDatabaseStatements { get; set; }
 
@@ -74,4 +76,13 @@ public class StackExchangeRedisInstrumentationOptions
     /// Gets or sets a value indicating whether the new database attributes should be emitted.
     /// </summary>
     internal bool EmitNewAttributes { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether commands should be drained from profiling sessions prior to parent <see cref="Activity"/> completion.
+    /// Filter and Enrich callbacks have historically been passed completed parent <see cref="Activity"/> instances.
+    /// If both callbacks are null, commands may be drained prior to the parent <see cref="Activity"/> completion,
+    /// lowering memory pressure and improving performance.
+    /// If either callback is set, the old behavior is used to ensure the callbacks are passed completed parent <see cref="Activity"/> instances.
+    /// </summary>
+    internal bool EnableEarlyCommandDrain => this.Filter == null && this.Enrich == null;
 }

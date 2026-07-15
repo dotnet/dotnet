@@ -1,6 +1,9 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#if NET
+using System.Collections.Frozen;
+#endif
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,7 +14,8 @@ namespace OpenTelemetry.Exporter.Geneva.Tld;
 internal static class TldExporter
 {
     internal const int StringLengthLimit = (1 << 14) - 1; // 16 * 1024 - 1 = 16383
-    internal static readonly IReadOnlyDictionary<string, string> V40_PART_A_TLD_MAPPING = new Dictionary<string, string>
+
+    internal static readonly Dictionary<string, string> V40_PART_A_TLD_MAPPING_DICTIONARY = new()
     {
         // Part A
         [Schema.V40.PartA.IKey] = "iKey",
@@ -31,6 +35,12 @@ internal static class TldExporter
         [Schema.V40.PartA.Extensions.Os.Name] = "ext_os_name",
         [Schema.V40.PartA.Extensions.Os.Ver] = "ext_os_ver",
     };
+
+#if NET
+    internal static readonly FrozenDictionary<string, string> V40_PART_A_TLD_MAPPING = V40_PART_A_TLD_MAPPING_DICTIONARY.ToFrozenDictionary();
+#else
+    internal static readonly Dictionary<string, string> V40_PART_A_TLD_MAPPING = V40_PART_A_TLD_MAPPING_DICTIONARY;
+#endif
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Serialize(EventBuilder eb, string key, object value)

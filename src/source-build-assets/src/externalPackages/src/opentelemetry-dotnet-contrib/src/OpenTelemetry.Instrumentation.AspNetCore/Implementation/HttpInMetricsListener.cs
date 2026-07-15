@@ -1,10 +1,11 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#if !NET
+
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
@@ -18,12 +19,7 @@ internal sealed class HttpInMetricsListener : ListenerHandler
     internal const string OnUnhandledHostingExceptionEvent = "Microsoft.AspNetCore.Hosting.UnhandledException";
     internal const string OnUnhandledDiagnosticsExceptionEvent = "Microsoft.AspNetCore.Diagnostics.UnhandledException";
 
-    internal static readonly AssemblyName AssemblyName = typeof(HttpInListener).Assembly.GetName();
-#pragma warning disable IDE0370 // Suppression is unnecessary
-    internal static readonly string InstrumentationName = AssemblyName.Name!;
-    internal static readonly string InstrumentationVersion = AssemblyName.Version!.ToString();
-#pragma warning restore IDE0370 // Suppression is unnecessary
-    internal static readonly Meter Meter = new(InstrumentationName, InstrumentationVersion);
+    internal static readonly Meter Meter = Metrics.MeterFactory.Create<HttpInMetricsListener>(AspNetCoreInstrumentation.SemanticConventionsVersion);
 
     private const string OnStopEvent = "Microsoft.AspNetCore.Hosting.HttpRequestIn.Stop";
 
@@ -42,7 +38,7 @@ internal sealed class HttpInMetricsListener : ListenerHandler
     {
     }
 
-    public static void OnExceptionEventWritten(string name, object? payload)
+    public static void OnExceptionEventWritten(object? payload)
     {
         // We need to use reflection here as the payload type is not a defined public type.
         if (!TryFetchException(payload, out var exc) || !TryFetchHttpContext(payload, out var ctx))
@@ -56,23 +52,18 @@ internal sealed class HttpInMetricsListener : ListenerHandler
         // See https://github.com/dotnet/aspnetcore/blob/690d78279e940d267669f825aa6627b0d731f64c/src/Hosting/Hosting/src/Internal/HostingApplicationDiagnostics.cs#L252
         // and https://github.com/dotnet/aspnetcore/blob/690d78279e940d267669f825aa6627b0d731f64c/src/Middleware/Diagnostics/src/DeveloperExceptionPage/DeveloperExceptionPageMiddlewareImpl.cs#L174
         // this makes sure that top-level properties on the payload object are always preserved.
-#if NET
-        [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "The ASP.NET Core framework guarantees that top level properties are preserved")]
-#endif
         static bool TryFetchException(object? payload, [NotNullWhen(true)] out Exception? exc)
         {
             return ExceptionPropertyFetcher.TryFetch(payload, out exc) && exc != null;
         }
-#if NET
-        [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "The ASP.NET Core framework guarantees that top level properties are preserved")]
-#endif
+
         static bool TryFetchHttpContext(object? payload, [NotNullWhen(true)] out HttpContext? ctx)
         {
             return HttpContextPropertyFetcher.TryFetch(payload, out ctx) && ctx != null;
         }
     }
 
-    public static void OnStopEventWritten(string name, object? payload)
+    public static void OnStopEventWritten(object? payload)
     {
         if (payload is not HttpContext context)
         {
@@ -82,25 +73,17 @@ internal sealed class HttpInMetricsListener : ListenerHandler
 
         TagList tags = default;
 
-        // see the spec https://github.com/open-telemetry/semantic-conventions/blob/v1.21.0/docs/http/http-spans.md
-        tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeNetworkProtocolVersion, RequestDataHelper.GetHttpProtocolVersion(context.Request.Protocol)));
-        tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeUrlScheme, context.Request.Scheme));
-        tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpResponseStatusCode, TelemetryHelper.GetBoxedStatusCode(context.Response.StatusCode)));
+        // See the spec https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-metrics.md
+        tags.Add(new(SemanticConventions.AttributeNetworkProtocolVersion, RequestDataHelper.GetHttpProtocolVersion(context.Request.Protocol)));
+        tags.Add(new(SemanticConventions.AttributeUrlScheme, context.Request.Scheme));
+        tags.Add(new(SemanticConventions.AttributeHttpResponseStatusCode, TelemetryHelper.GetBoxedStatusCode(context.Response.StatusCode)));
 
         var httpMethod = TelemetryHelper.RequestDataHelper.GetNormalizedHttpMethod(context.Request.Method);
-        tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpRequestMethod, httpMethod));
+        tags.Add(new(SemanticConventions.AttributeHttpRequestMethod, httpMethod));
 
-#if NET
-        // Check the exception handler feature first in case the endpoint was overwritten
-        var routePattern = context.GetHttpRoute();
-        if (!string.IsNullOrEmpty(routePattern))
-        {
-            tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpRoute, routePattern));
-        }
-#endif
         if (context.Items.TryGetValue(ErrorTypeHttpContextItemsKey, out var errorType))
         {
-            tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeErrorType, errorType));
+            tags.Add(new(SemanticConventions.AttributeErrorType, errorType));
         }
 
         // We are relying here on ASP.NET Core to set duration before writing the stop event.
@@ -115,19 +98,16 @@ internal sealed class HttpInMetricsListener : ListenerHandler
         {
             case OnUnhandledDiagnosticsExceptionEvent:
             case OnUnhandledHostingExceptionEvent:
-                {
-                    OnExceptionEventWritten(name, payload);
-                }
-
+                OnExceptionEventWritten(payload);
                 break;
+
             case OnStopEvent:
-                {
-                    OnStopEventWritten(name, payload);
-                }
-
+                OnStopEventWritten(payload);
                 break;
+
             default:
                 break;
         }
     }
 }
+#endif

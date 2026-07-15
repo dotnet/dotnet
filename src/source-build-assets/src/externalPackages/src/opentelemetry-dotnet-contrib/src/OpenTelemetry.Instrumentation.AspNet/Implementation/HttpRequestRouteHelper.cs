@@ -23,7 +23,11 @@ internal sealed class HttpRequestRouteHelper
     /// <returns>The route template or <see langword="null"/>.</returns>
     internal string? GetRouteTemplate(HttpRequestBase request)
     {
-        var routeData = request.RequestContext.RouteData;
+        var routeData = request.RequestContext?.RouteData;
+        if (routeData == null)
+        {
+            return null;
+        }
 
         string? template = null;
         if (routeData.Values.TryGetValue("MS_SubRoutes", out var msSubRoutes))
@@ -51,8 +55,13 @@ internal sealed class HttpRequestRouteHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool CompareStringToSubstring(string example, string target, int start)
+    private static bool CompareStringToSubstring(string example, string target, int start, int end)
     {
+        if (end - start - 1 != example.Length)
+        {
+            return false;
+        }
+
         for (var i = 0; i < example.Length; i++)
         {
             if (target[start + 1 + i] != example[i])
@@ -70,8 +79,13 @@ internal sealed class HttpRequestRouteHelper
         const string actionToken = "action";
 
         var template = route.Url;
-        var controller = (string)routeData.Values[controllerToken];
-        var action = (string)routeData.Values[actionToken];
+        if (string.IsNullOrEmpty(template))
+        {
+            return template;
+        }
+
+        var controller = routeData.Values[controllerToken] as string;
+        var action = routeData.Values[actionToken] as string;
         var hasController = !string.IsNullOrWhiteSpace(controller);
         var hasAction = !string.IsNullOrWhiteSpace(action);
         var sb = new StringBuilder(template.Length);
@@ -84,11 +98,11 @@ internal sealed class HttpRequestRouteHelper
                 var end = template.IndexOf('}', i + 1);
                 if (end != -1)
                 {
-                    if (hasController && CompareStringToSubstring(controllerToken, template, i))
+                    if (hasController && CompareStringToSubstring(controllerToken, template, i, end))
                     {
                         sb.Append(controller);
                     }
-                    else if (hasAction && CompareStringToSubstring(actionToken, template, i))
+                    else if (hasAction && CompareStringToSubstring(actionToken, template, i, end))
                     {
                         sb.Append(action);
                     }
@@ -98,7 +112,7 @@ internal sealed class HttpRequestRouteHelper
                         var values = routeData.Values;
                         var token = template.Substring(i + 1, end - i - 1);
 
-                        if (defaults.ContainsKey(token) && !values.ContainsKey(token))
+                        if (defaults != null && defaults.ContainsKey(token) && !values.ContainsKey(token))
                         {
                             // Ignore defaults with no values.
                         }
