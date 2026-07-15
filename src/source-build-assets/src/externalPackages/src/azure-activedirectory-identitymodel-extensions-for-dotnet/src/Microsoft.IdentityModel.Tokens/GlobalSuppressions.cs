@@ -28,7 +28,10 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryConvertToSymmetricSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryConvertToX509SecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryCreateToRsaSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryConvertToMlDsaSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as platform test", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.RsaSecurityKey.PrivateKeyStatus")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as platform test", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.PrivateKeyStatus")]
+[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as platform test", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.HasPrivateKey")]
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Appropriate exception will be caught.", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InMemoryCryptoProviderCache.TryRemove(Microsoft.IdentityModel.Tokens.SignatureProvider)~System.Boolean")]
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as validation", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InternalValidators.ValidateLifetimeAndIssuerAfterSignatureNotValidatedSaml(Microsoft.IdentityModel.Tokens.SecurityToken,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,Microsoft.IdentityModel.Tokens.TokenValidationParameters,System.Text.StringBuilder)")]
 [assembly: SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "Not using Globalization", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.Interop.Kernel32.GetMessage(System.Int32,System.IntPtr)~System.String")]
@@ -45,3 +48,10 @@ using System.Diagnostics.CodeAnalysis;
 #if !NET472
 [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as validation", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.ECDsaAdapter.SupportsECParameters~System.Boolean")]
 #endif
+
+// This file is used by Code Analysis to maintain SuppressMessage
+// attributes that are applied to the project.
+// Project-level suppressions either have no target or are given
+// a specific target and scoped to a namespace, type, member, etc.
+[assembly: SuppressMessage("ApiDesign", "RS0041:Public members should not use oblivious types", Justification = "Nullability annotations are partially implemented.", Scope = "namespaceanddescendants", Target = "~N:Microsoft.IdentityModel.Tokens")]
+[assembly: SuppressMessage("ApiDesign", "RS0036:Annotate nullability of public types and members in the declared API", Justification = "Nullability annotations are partially implemented.", Scope = "namespaceanddescendants", Target = "~N:Microsoft.IdentityModel.Tokens")]

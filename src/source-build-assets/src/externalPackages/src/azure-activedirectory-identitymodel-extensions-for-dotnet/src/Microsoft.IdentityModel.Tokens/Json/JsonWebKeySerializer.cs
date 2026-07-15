@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 #if NET8_0_OR_GREATER
@@ -46,6 +45,8 @@ namespace Microsoft.IdentityModel.Tokens.Json
             "N",
             "OTH",
             "P",
+            "PRIV",
+            "PUB",
             "Q",
             "QI",
             "USE",
@@ -108,7 +109,7 @@ namespace Microsoft.IdentityModel.Tokens.Json
                         LogHelper.MarkAsNonPII(reader.CurrentDepth),
                         LogHelper.MarkAsNonPII(reader.BytesConsumed))));
 
-            while(true)
+            while (true)
             {
                 #region Check property name using ValueTextEquals
                 // common names are tried first
@@ -163,6 +164,10 @@ namespace Microsoft.IdentityModel.Tokens.Json
                         JsonSerializerPrimitives.ReadStrings(ref reader, jsonWebKey.Oth, JsonWebKeyParameterNames.Oth, JsonWebKey.ClassName, true);
                     else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.P))
                         jsonWebKey.P = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.P, JsonWebKey.ClassName, true);
+                    else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.Priv))
+                        jsonWebKey.Priv = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.Priv, JsonWebKey.ClassName, true);
+                    else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.Pub))
+                        jsonWebKey.Pub = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.Pub, JsonWebKey.ClassName, true);
                     else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.Q))
                         jsonWebKey.Q = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.Q, JsonWebKey.ClassName, true);
                     else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.QI))
@@ -377,6 +382,12 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
             if (!string.IsNullOrEmpty(jsonWebKey.P))
                 writer.WriteString(JsonWebKeyParameterUtf8Bytes.P, jsonWebKey.P);
+
+            if (!string.IsNullOrEmpty(jsonWebKey.Priv))
+                writer.WriteString(JsonWebKeyParameterUtf8Bytes.Priv, jsonWebKey.Priv);
+
+            if (!string.IsNullOrEmpty(jsonWebKey.Pub))
+                writer.WriteString(JsonWebKeyParameterUtf8Bytes.Pub, jsonWebKey.Pub);
 
             if (!string.IsNullOrEmpty(jsonWebKey.Q))
                 writer.WriteString(JsonWebKeyParameterUtf8Bytes.Q, jsonWebKey.Q);

@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
 
         internal static string DefaultEncodedAccessTokenWithCnfThumprint = CreateAt(DefaultCnfJwkThumprint, false);
 
-        internal static SigningCredentials DefaultSigningCredentials => new SigningCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256){ CryptoProviderFactory = new CryptoProviderFactory()};
+        internal static SigningCredentials DefaultSigningCredentials => new SigningCredentials(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSha256, SecurityAlgorithms.Sha256) { CryptoProviderFactory = new CryptoProviderFactory() };
 
         internal static EncryptingCredentials DefaultEncryptingCredentials => KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes128_Sha2;
 
@@ -235,7 +235,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             using (var client = new HttpClient())
             {
                 var headers = client.DefaultRequestHeaders;
-                foreach(var headerKeyValuePair in headerKeyValuePairs)
+                foreach (var headerKeyValuePair in headerKeyValuePairs)
                     headers.Add(headerKeyValuePair.Key, headerKeyValuePair.Value);
 
                 return headers;
@@ -257,7 +257,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
 
             foreach (var header in headers)
-            { 
+            {
                 message.Headers.Add(header.Key, header.Value);
             }
 

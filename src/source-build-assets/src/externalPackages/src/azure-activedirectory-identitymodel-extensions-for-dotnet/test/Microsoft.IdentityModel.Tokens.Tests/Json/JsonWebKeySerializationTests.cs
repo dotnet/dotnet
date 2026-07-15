@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         /// This test is designed to ensure that JsonDeserialize and Utf8Reader are consistent w.r.t. exceptions.
         /// </summary>
         /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(DeserializeTheoryData))]
+        [Theory, MemberData(nameof(DeserializeTheoryData), DisableDiscoveryEnumeration = true)]
         public void DeserializeExceptions(JsonSerializerTheoryData theoryData)
         {
             var context = new CompareContext(theoryData);
@@ -184,24 +184,13 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         /// comparing the results JsonSerializer.Deserialize and Utf8JsonReader.
         /// </summary>
         /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(DeserializeDataSet))]
+        [Theory, MemberData(nameof(DeserializeDataSet), DisableDiscoveryEnumeration = true)]
         public void Deserialize(JsonWebKeyTheoryData theoryData)
         {
             CompareContext context = new CompareContext(theoryData);
 
-            JsonWebKey6x jsonWebKey6x = null;
             JsonWebKey jsonWebKeyDeserialize = null;
             JsonWebKey jsonWebKeyUtf8Reader = null;
-
-            try
-            {
-                jsonWebKey6x = new JsonWebKey6x(theoryData.Json);
-                theoryData.ExpectedException.ProcessNoException(context);
-            }
-            catch (Exception ex)
-            {
-                theoryData.ExpectedException.ProcessException(ex, context);
-            }
 
             try
             {
@@ -226,21 +215,8 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             // when comparing JsonWebKey (JsonSerializer.Deserialize) and (Newtonsoft.Json) ignore the AdditionalData, Oth, X5c, KeyOps properties are they have no getter.
             // We will need to adjust for a 8.0
             CompareContext localContext = new CompareContext(theoryData);
-            localContext.PropertiesToIgnoreWhenComparing.Add(typeof(JsonWebKey), new List<string> { "AdditionalData", "Oth", "X5c", "KeyOps" });
-            if (!IdentityComparer.AreEqual(jsonWebKeyDeserialize, jsonWebKey6x, localContext))
-            {
-                localContext.Diffs.Add("jsonWebKeyDeserialize != jsonWebKey6x");
-                localContext.Diffs.Add("=========================================");
-            }
 
-            context.Merge(localContext);
-
-            // when comparing JsonWebKey (JsonSerializer.Deserialize) and (utf8Reader) ignore the AdditionalData, Oth, X5c, KeyOps properties are they have no getter.
-            // We will need to adjust for a 8.0
-            localContext.Diffs.Clear();
-            localContext.PropertiesToIgnoreWhenComparing.Clear();
-
-            //RELNOTE: JsonSerializer.Deserialize does not handle mixed case
+            // RELNOTE: JsonSerializer.Deserialize does not handle mixed case
             // DataSets.JsonWebKeyMixedCaseString
             if (theoryData.TestId == "JsonWebKeyMixedCase")
                 localContext.PropertiesToIgnoreWhenComparing.Add(typeof(JsonWebKey), new List<string> { "AdditionalData", "Oth", "X5c", "KeyOps", "Alg", "E", "X5tS256" });
@@ -250,19 +226,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             if (!IdentityComparer.AreEqual(jsonWebKeyDeserialize, jsonWebKeyUtf8Reader, localContext))
             {
                 localContext.Diffs.Add("jsonWebKeyDeserialize != jsonWebKeyUtf8");
-                localContext.Diffs.Add("=========================================");
-            }
-
-            context.Merge(localContext);
-
-            // when comparing JsonWebKey (NewtonSoft) and (utf8Reader) ignore the AdditionalData
-            // (Newtonsoft.Json) sets an Newtonsoft object, utf8Reader sets JsonElement.
-            localContext.Diffs.Clear();
-            localContext.PropertiesToIgnoreWhenComparing.Clear();
-            localContext.AddDictionaryKeysToIgnoreWhenComparing("Object", "Array", "int");
-            if (!IdentityComparer.AreEqual(jsonWebKeyUtf8Reader, jsonWebKey6x, localContext))
-            {
-                localContext.Diffs.Add("jsonWebKeyUtf8Reader != jsonWebKey6x");
                 localContext.Diffs.Add("=========================================");
             }
 
@@ -317,30 +280,20 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         }
 
         /// <summary>
-        /// This test is to ensure that a JsonWebKey from 6x == 7x.
-        /// This is different that Deserialize as we are roundtripping objects in AdditionalData.
+        /// This test is to ensure that a JsonWebKey serializes roundtripping objects in AdditionalData.
         /// </summary>
         /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(RoundTripDataSet))]
+        [Theory, MemberData(nameof(RoundTripDataSet), DisableDiscoveryEnumeration = true)]
         public void RoundTrip(JsonWebKeyTheoryData theoryData)
         {
             var context = new CompareContext(theoryData);
             try
             {
-                string json6x = JsonConvert.SerializeObject(theoryData.JsonWebKey6x, Formatting.None);
                 string jsonSerialize = System.Text.Json.JsonSerializer.Serialize<JsonWebKey>(theoryData.JsonWebKey);
                 string jsonUtf8Writer = JsonWebKeySerializer.Write(theoryData.JsonWebKey);
 
-                JsonWebKey6x jsonWebKey6x = JsonConvert.DeserializeObject<JsonWebKey6x>(json6x);
                 JsonWebKey jsonWebKeyDeserialize = System.Text.Json.JsonSerializer.Deserialize<JsonWebKey>(jsonUtf8Writer);
                 JsonWebKey jsonWebKeyUtf8Reader = new JsonWebKey(jsonUtf8Writer);
-
-                // ensure that our utf8writer and newtonsoft are the same
-                if (!IdentityComparer.AreEqual(jsonUtf8Writer, json6x, context))
-                {
-                    context.Diffs.Add("jsonUtf8Writer != json6x");
-                    context.Diffs.Add("=========================================");
-                }
 
                 // RELNOTE: ensure that the output from our utf8writer is consummable by JsonSerializer.Deserialize since our collections are not settable, ignore the AdditionalData, KeyOps, Oth, X5c properties are they have no getter.
                 // We will need to adjust for a 8.0 target
@@ -368,20 +321,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     JsonElement? jsonElement = jsonWebKey as JsonElement?;
                     if (jsonElement.HasValue)
                         jsonWebKeyUtf8Reader.AdditionalData["JsonWebKey"] = JsonWebKeySerializer.Read(jsonElement.Value.GetRawText());
-
-                    jsonWebKey6x.AdditionalData["JsonWebKey"] = JsonConvert.DeserializeObject<JsonWebKey6x>(jsonWebKey6x.AdditionalData["JsonWebKey"].ToString());
-                }
-
-                // ensure what our utf8reader and newtonsoft are the same
-                // RELNOTE:
-                // WriteObject for Newtonsoft will be 'Newtonsoft.Json.Linq.JObject', System.Text.Json 'System.Text.Json.JsonElement'
-                // Array  for Newtonsoft will be 'Newtonsoft.Json.Linq.JArray', System.Text.Json 'System.Text.Json.JsonElement'
-                // int for Newtonsoft will be 'System.Int64', System.Text.Json 'System.Int32'
-                context.AddDictionaryKeysToIgnoreWhenComparing("Object", "Array", "int");
-                if (!IdentityComparer.AreEqual(jsonWebKeyUtf8Reader, jsonWebKey6x, context))
-                {
-                    context.Diffs.Add("jsonWebKeyUtf8Reader != jsonWebKey6x");
-                    context.Diffs.Add("=========================================");
                 }
             }
             catch (Exception ex)
@@ -400,19 +339,16 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 theoryData.Add(new JsonWebKeyTheoryData("AdditionalDataWithJsonWebKey")
                 {
                     JsonWebKey = AdditionalData("JsonWebKey", JsonUtilities.CreateJsonElement(JsonWebKeySerializer.Write(new JsonWebKey { Alg = "Alg" }))),
-                    JsonWebKey6x = AdditionalData6x("JsonWebKey", new JsonWebKey6x { Alg = "Alg" })
                 });
 
                 theoryData.Add(new JsonWebKeyTheoryData("AdditionalData")
                 {
                     JsonWebKey = AdditionalData(),
-                    JsonWebKey6x = AdditionalData6x()
                 });
 
                 theoryData.Add(new JsonWebKeyTheoryData("FullyPopulated")
                 {
                     JsonWebKey = JsonUtilities.FullyPopulatedJsonWebKey(),
-                    JsonWebKey6x = JsonUtilities.FullyPopulatedJsonWebKey6x()
                 });
 
                 return theoryData;
@@ -423,13 +359,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         {
             JsonWebKey jsonWebKey = new JsonWebKey();
             JsonUtilities.SetAdditionalData(jsonWebKey.AdditionalData, key, obj);
-            return jsonWebKey;
-        }
-
-        private static JsonWebKey6x AdditionalData6x(string key = null, object obj = null)
-        {
-            JsonWebKey6x jsonWebKey = new JsonWebKey6x();
-            JsonUtilities.SetAdditionalData6x(jsonWebKey.AdditionalData, key, obj);
             return jsonWebKey;
         }
     }

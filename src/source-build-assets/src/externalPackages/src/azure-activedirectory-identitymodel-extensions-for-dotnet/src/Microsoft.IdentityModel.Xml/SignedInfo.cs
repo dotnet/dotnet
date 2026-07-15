@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -15,7 +14,7 @@ namespace Microsoft.IdentityModel.Xml
     /// <summary>
     /// Represents a XmlDsig SignedInfo element as per: https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-SignedInfo
     /// </summary>
-    public class SignedInfo : DSigElement
+    public partial class SignedInfo : DSigElement
     {
         private DSigSerializer _dsigSerializer = DSigSerializer.Default;
         private string _canonicalizationMethod = SecurityAlgorithms.ExclusiveC14n;
@@ -67,7 +66,7 @@ namespace Microsoft.IdentityModel.Xml
                 if (string.IsNullOrEmpty(value))
                     throw LogArgumentNullException(nameof(value));
 
-                if (!string.Equals(value,SecurityAlgorithms.ExclusiveC14n) && !string.Equals(value, SecurityAlgorithms.ExclusiveC14nWithComments))
+                if (!string.Equals(value, SecurityAlgorithms.ExclusiveC14n) && !string.Equals(value, SecurityAlgorithms.ExclusiveC14nWithComments))
                     throw LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX30204, LogHelper.MarkAsNonPII(CanonicalizationMethod), LogHelper.MarkAsNonPII(SecurityAlgorithms.ExclusiveC14n), LogHelper.MarkAsNonPII(SecurityAlgorithms.ExclusiveC14nWithComments))));
 
                 _canonicalizationMethod = value;

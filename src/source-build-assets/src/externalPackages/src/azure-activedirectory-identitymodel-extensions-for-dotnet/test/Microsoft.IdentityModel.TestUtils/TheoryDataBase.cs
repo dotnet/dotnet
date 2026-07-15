@@ -38,7 +38,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public ExpectedException ExpectedException { get; set; } = ExpectedException.NoExceptionExpected;
 
-        public bool First { get; set; } = false;
+        public bool First { get; set; }
 
         public Dictionary<Type, List<string>> PropertiesToIgnoreWhenComparing { get; set; } = new Dictionary<Type, List<string>>();
 

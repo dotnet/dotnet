@@ -1,0 +1,327 @@
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11100 = "IDX11100: Saml Only one element of type '{0}' is supported." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11102 = "IDX11102: Saml An AuthorizationDecisionStatement must have at least one Action." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11104 = "IDX11104: Saml Name cannot be null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11107 = "IDX11107: Saml A Subject requires a NameIdentifier or ConfirmationMethod." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11108 = "IDX11108: Saml AuthorityBinding.AuthorityKind is not well formed. Is should be of the form str:str, it is '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11110 = "IDX11110: The SamlSecurityToken must have a value for its Assertion property." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11111 = "IDX11111: When reading '{0}', '{1}' was not a Absolute Uri, was: '{2}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11112 = "IDX11112: Exception thrown while reading '{0}' for SamlSecurityToken. Inner exception: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11114 = "IDX11114: Unable to read SamlSecurityToken. Expecting XmlReader sto be at element: '{0}', found 'Empty Element'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11115 = "IDX11115: Unable to read SamlSecurityToken. Element: '{0}' was missing Attribute: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11116 = "IDX11116: Unable to read SamlSecurityToken. MajorVersion must be '1' was: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11117 = "IDX11117: Unable to read SamlSecurityToken. MinorVersion must be '1' was: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11118 = "IDX11118: Unable to read condition : '{0}'. SamlSecurityToken only support AudienceRestrictionCondition and DoNotCacheCondition." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11120 = "IDX11120: Unable to read SamlSecurityToken. Expecting XmlReader to be at element: '{0}', found: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11121 = "IDX11121: Invalid SAML AssertionID: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11122 = "IDX11122: Exception thrown while reading '{0}' for SamlSecurityToken. Inner exception: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11123 = "IDX11123: Unable to read SamlSecurityToken. Expecting XmlReader to be at element: '{0}', found 'Empty Element'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11124 = "IDX11124: Unable to read SamlSecurityToken. Unexpecting element: '{0}' in element: '{1}' has been found." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11125 = "IDX11125: Unable to read SamlSecurityToken. Missing data in element: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11126 = "IDX11126: A <saml:'{0}'> contained unrecognized content: '{1}'.The schema allows arbitrary XML elements on this element without explicit schema extension.To handle the content, extend SamlSerializer." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11127 = "IDX11127: Saml unable to read Conditions." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11128 = "IDX11128: Saml unable to read Advice." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11129 = "IDX11129: Saml unable to read Statement." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11130 = "IDX11130: When reading '{0}', no Statements were found." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11131 = "IDX11131: Unable to read for SamlSecurityToken, the AttributeStatement does not contain any Attributes." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11132 = "IDX11132: The Attribute in SamlSecurityToken does not contain any AttributeValue." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11133 = "IDX11133: The <saml:Evidence> element must contain at least one assertion or assertion reference." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11134 = "IDX11134: Unable to read SamlSecurityToken. Expecting XmlReader to be at element: '{0}', found: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11135 = "IDX11135: Unable to read SamlSecurityToken. Saml element '{0}' must have value." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11136 = "IDX11136: 'AuthorizationDecisionStatement' cannot be empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11137 = "IDX11137: 'SamlAction' must have a value." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11312 = "IDX11312: Unable to validate token. A SamlSamlAttributeStatement can only have one SamlAttribute of type 'Actor'. This special SamlAttribute is used in delegation scenarios." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11313 = "IDX11313: Unable to process Saml attribute. A SamlSubject must contain either or both of Name and ConfirmationMethod." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11314 = "IDX11314: The AttributeValueXsiType of a SAML Attribute must be a string of the form 'prefix#suffix', where prefix and suffix are non-empty strings. Found: '{0}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11315 = "IDX11315: Unable to validate token. SamlSecurityToken.Assertion is null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11400 = "IDX11400: The '{0}', can only process SecurityTokens of type: '{1}'. The SecurityToken received is of type: '{2}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11401 = "IDX11401: Unable to validate token. TokenValidationParameters.RequireAudience is true but no AudienceRestrictions were found in the inbound token." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11402 = "IDX11402: Unable to read SamlSecurityToken. Exception thrown: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11501 = "IDX11501: SamlAssertion Id cannot be null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11502 = "IDX11502: Value is not an AbsoluteUri: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11503 = "IDX11503: SamlAssertion Id is not well formed: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11504 = "IDX11504: Issuer cannot be null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11505 = "IDX11505: A SamlAssertion must have at least one statement." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11506 = "IDX11506: A SamlAttribute Value cannot be null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11507 = "IDX11507: SAML AuthorityKind missing name." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11508 = "IDX11508: SAML AuthorizationDecision should have one Action." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11509 = "IDX11509: SAML Evidence should have one Assertion." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11510 = "IDX11510: SAML Subject requires ConfirmationMethod when ConfirmationData or KeyInfo is specified." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11511 = "IDX11511: SAML unable to read Attribute." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11512 = "IDX11512: SAML AuthorityBinding missing Binding on read." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11513 = "IDX11513: SAML AuthorityBinding missing Location on read." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11514 = "IDX11514: SamlSubjectEqualityComparer cannot be null." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11515 = "IDX11515: Each statement in Assertion.Statements has to be a SamlSubjectStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11516 = "IDX11516: We could not write the SamlStatement of type:'{0}'. You will need to override this method to write this statement." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11517 = "IDX11517: Exception thrown while writing '{0}' for SamlSecurityToken. Inner exception: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11518 = "IDX11518: Unable to writen SamlAssertion: SamlSubject.Name and SamlSubject.ConfirmationMethods.Count == 0." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11521 = "IDX11521: Multiple name identifier claim is not allowed in tokenDescriptor.Subject.Claims." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11522 = "IDX11522: More than one delegates acting as an identity are found in Saml attribute." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11523 = "IDX11523: The claim type must have namespace and name which separated by slash. Input claim: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11800 = "IDX11800: Unable to write SamlAssertion: {0} is required, {1}.{2} is null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11900 = "IDX11900: Unable to write SamlAssertion: {0} is required, {1}.{2} is null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11901 = "IDX11901: Unable to write SamlAssertion: {0}.{1} is empty. This statement must contain at least one Action." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11902 = "IDX11902: Unable to write SamlAssertion: SamlEvidence must have at least one assertion or assertion reference." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11950 = "IDX11950: API is not supported" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.ActionNamespaceAttribute = "Namespace" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AssertionID = "AssertionID" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AttributeName = "AttributeName" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AttributeNamespace = "AttributeNamespace" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AuthenticationInstant = "AuthenticationInstant" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AuthenticationMethod = "AuthenticationMethod" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AuthorityBinding = "AuthorityBinding" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.AuthorityKind = "AuthorityKind" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Binding = "Binding" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Decision = "Decision" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.DNSAddress = "DNSAddress" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Format = "Format" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.IPAddress = "IPAddress" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.IssueInstant = "IssueInstant" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Issuer = "Issuer" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Location = "Location" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.MajorVersion = "MajorVersion" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.MinorVersion = "MinorVersion" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.NameQualifier = "NameQualifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Namespace = "Namespace" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.NamespaceAttributePrefix = "xmlns" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.NotBefore = "NotBefore" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.NotOnOrAfter = "NotOnOrAfter" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.OriginalIssuer = "OriginalIssuer" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes.Resource = "Resource" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.ClaimType2009Namespace = "http://schemas.xmlsoap.org/ws/2009/09/identity/claims" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Action = "Action" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Advice = "Advice" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Assertion = "Assertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AssertionIDReference = "AssertionIDReference" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Attribute = "Attribute" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AttributeStatement = "AttributeStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AttributeValue = "AttributeValue" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Audience = "Audience" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AudienceRestrictionCondition = "AudienceRestrictionCondition" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AuthenticationStatement = "AuthenticationStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AuthorityBinding = "AuthorityBinding" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.AuthorizationDecisionStatement = "AuthorizationDecisionStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Conditions = "Conditions" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.ConfirmationMethod = "ConfirmationMethod" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.DNSAddress = "DNSAddress" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.DoNotCacheCondition = "DoNotCacheCondition" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Evidence = "Evidence" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.IPAddress = "IPAddress" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.NameIdentifier = "NameIdentifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.Subject = "Subject" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.SubjectConfirmation = "SubjectConfirmation" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.SubjectConfirmationData = "SubjectConfirmationData" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements.SubjectLocality = "SubjectLocality" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.MsIdentityNamespaceUri = "http://schemas.microsoft.com/ws/2008/06/identity" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.Actor = "Actor" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13001 = "IDX13001: A SAML2 assertion that specifies an AuthenticationContext DeclarationReference is not supported.To handle DeclarationReference, extend the Saml2SecurityTokenHandler and override ProcessAuthenticationStatement." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13002 = "IDX13002: Unable to validate token. TokenValidationParameters.RequireAudience is true but no AudienceRestrictions were found in the inbound token." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13003 = "IDX13003: Unable to read Saml2SecurityToken. Exception thrown: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13102 = "IDX13102: Exception thrown while reading '{0}' for Saml2SecurityToken. Inner exception: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13103 = "IDX13103: Unable to read '{0}' for Saml2SecurityToken. The element type '{1}' appears to have a custom format that cannot be parsed. If this is expected, you will need to override '{2}.{3}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13104 = "IDX13104: Unable to read Saml2SecurityToken. Expecting XmlReader to be at element: '{0}', found 'Empty Element'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13105 = "IDX13105: Unable to read Saml2SecurityToken. Expecting XmlReader to be at element: '{0}', found: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13106 = "IDX13106: Unable to read for Saml2SecurityToken. Element: '{0}' as missing Attribute: '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13107 = "IDX13107: When reading '{0}', '{1}' was not a Absolute Uri, was: '{2}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13108 = "IDX13108: When reading '{0}', Assertion.Subject is null and no Statements were found. [Saml2Core, line 585]." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13109 = "IDX13109: When reading '{0}', Assertion.Subject is null and an Authentication, Attribute or AuthorizationDecision Statement was found. and no Statements were found. [Saml2Core, lines 1050, 1168, 1280]." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13110 = "IDX13110: The Saml2SecurityToken must have a value for its Assertion property." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13117 = "IDX13117: A <saml:EncryptedAttribute> was encountered while processing the attribute statement.To handle encrypted attributes, extend the Saml2SecurityTokenHandler and override ReadAttributeStatement." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13118 = "IDX13118: A <saml:AuthnContextDecl> element was encountered.To handle by-value authentication context declarations, extend Saml2SecurityTokenHandler and override ReadAuthenticationContext.In addition, it may be necessary to extend Saml2AuthenticationContext so that its data model can accommodate the declaration value." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13119 = "IDX13119: An abstract element was encountered which does not specify its concrete type. Element name: '{0}' Namespace: '{1}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13120 = "IDX13120: A <saml:Conditions> element contained more than one '{0}' condition." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13121 = "IDX13121: A <saml:Condition> was encountered which specifies an unrecognized concrete type.To handle a custom Condition, extend Saml2SecurityTokenHandler and override ReadConditions." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13122 = "IDX13122: The <saml:Evidence> element must contain at least one assertion or assertion reference." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13124 = "IDX13124: The SAML NameIdentifier '{0}' is of format '{1}' and NameQualifier/SPNameQualifier/SPProvidedID is not omitted." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13125 = "IDX13125: A Saml2Subject that does not specify an NameId cannot have an empty SubjectConfirmations collection." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13126 = "IDX13126: A <saml:SubjectConfirmationData> element of an unexpected type was encountered.The SubjectConfirmationDataType and KeyInfoConfirmationDataType are handled by default. To handle other types, extend Saml2SecurityTokenHandler and override ReadSubjectConfirmationData. Name: '{0}' Namespace: '{1}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13127 = "IDX13127: A <saml:SubjectConfirmationData> element cannot be empty when of type KeyInfoConfirmationDataType." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13128 = "IDX13128: A <saml:'{0}'> contained unrecognized content.The schema allows arbitrary XML elements on this element without explicit schema extension.To handle the content, extend Saml2Serializer." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13129 = "IDX13129: The SAML2:AttributeStatement must contain at least one SAML2:Attribute." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13130 = "IDX13130: A Saml2AudienceRestriction must specify at least one Audience." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13133 = "IDX13133: The Saml2Assertion Statements collection contains an unrecognized Saml2Statement.To handle custom Saml2Statement objects, extend Saml2SecurityTokenHandler and override WriteStatement. Type: '{0}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13136 = "IDX13136: Unable to read for Saml2SecurityToken. Required Element: '{0}' is missing or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13137 = "IDX13137: Unable to read for Saml2SecurityToken. Version must be '2.0' was: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13138 = "IDX13138: Unable to read for Saml2SecurityToken. the AttributeStatement does not contain any Attributes." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13139 = "IDX13139: Uri must be an AbsoluteUri is: '{0}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13140 = "IDX13140: EncryptedId is not supported. You will need to override ReadEncryptedId and provide support." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13141 = "IDX13141: EncryptedAssertion is not supported. You will need to override ReadAssertion and provide support." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13142 = "IDX13142: A Saml2SamlAttributeStatement can only have one Saml2Attribute of type 'Actor'. This special Saml2Attribute is used in delegation scenarios." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13149 = "IDX13149: Both AuthenticationContext ClassReference DeclarationReference can not be null." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13150 = "IDX13150: The Saml2SecurityTokenHandler can only write a token was of type: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13151 = "IDX13151: Cannot write '{0}' because '{1}' is null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13300 = "IDX13300: '{0}' must be an absolute Uri, was: '{1}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13302 = "IDX13302: An assertion with no statements must contain a 'Subject' element." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13303 = "IDX13303: 'Subject' is required in Saml2Assertion for built-in statement type." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13304 = "IDX13304: Encryption is not supported in writing saml2 nameIdentifier." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13305 = "IDX13305: Both id and subjectconfirmation are null in saml2 subject: '{0}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13306 = "IDX13306: Multiple name identifier claim is not allowed in tokenDescriptor.Subject.Claims." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13310 = "IDX13310: SAML2 AuthorizationDecision DecisionType must be 'Permit', 'Deny' or 'Indeterminate'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13312 = "IDX13312: 'AuthnContext' cannot be empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13313 = "IDX13313: 'AuthnStatement' cannot be empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13314 = "IDX13314: 'AuthzDecisionStatement' cannot be empty (must have at least one 'Subject')." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13400 = "IDX13400: The '{0}', can only process SecurityTokens of type: '{1}'. The SecurityToken received is of type: '{2}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13509 = "IDX13509: Unable to validate token, Subject is null." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13510 = "IDX13510: The Saml2SecurityToken cannot be validated because the Assertion specifies a OneTimeUse condition.Enforcement of the OneTimeUse condition is not supported by default.To customize the enforcement of OneTimeUse condition, extend Saml2SecurityTokenHandler and override ValidateOneTimeUseCondition." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13511 = "IDX13511: The Saml2SecurityToken cannot be validated because the Assertion specifies a ProxyRestriction condition.Enforcement of the ProxyRestriction condition is not supported by default. To customize the enforcement of Saml2Conditions, extend Saml2SecurityTokenHandler and override ValidateConditions." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13512 = "IDX13512: Unable to validate token. A Saml2SamlAttributeStatement can only have one Saml2Attribute of type 'Actor'. This special Saml2Attribute is used in delegation scenarios." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13513 = "IDX13513: NotBefore '{0}', is after NotOnOrAfter '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13514 = "IDX13514: NotOnOrAfter '{0}', is before NotBefore '{1}'." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13515 = "IDX13515: SamlId value threw on XmlConvert.VerifyNCName. value: '{0}'" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13516 = "IDX13516: A Saml2Statement of type: '{0}' was found when ProcessingStatements and creating the ClaimsIdentity. These claims have been skipped. If you need to process this Statement, you will need to derive a custom Saml2SecurityTokenHandler and override ProcessStatements." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13900 = "IDX13900: Unable to write Saml2Assertion: {0} is required, {1} is null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13901 = "IDX13901: Unable to write Saml2Assertion: {0}.{1} is empty. This statement must contain at least one Action." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13902 = "IDX13902: Unable to write Saml2Assertion: Saml2Evidence must have at least one assertion or assertion reference." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13950 = "IDX13950: API is not supported" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13951 = "IDX13951: Validation of confirmation data is currently not supported by default. To customize SubjectConfirmationData processing, extend Saml2SecurityTokenHandler and override ValidateConfirmationData." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ClaimType2009Namespace = "http://schemas.xmlsoap.org/ws/2009/09/identity/claims" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ClaimValueTypeSerializationPrefix = "tn" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ClaimValueTypeSerializationPrefixWithColon = "tn:" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.GeneratedDateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.MsIdentityNamespaceUri = "http://schemas.microsoft.com/ws/2008/06/identity" -> string
+Microsoft.IdentityModel.Tokens.Saml.LogMessages
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.CanonicalString.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.XmlTokenStream.get -> Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.XmlTokenStream.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.SamlAttribute() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.FriendlyName.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.Name.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.NameFormat.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.Namespace.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.OriginalIssuer.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.ValueType.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement.SamlAttributeStatement() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition.SamlAudienceRestrictionCondition() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.SamlAuthenticationStatement() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.SamlAuthorityBinding() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.SamlAuthorizationDecisionStatement() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.SamlConditions() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Attributes
+Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Elements
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence.SamlEvidence() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateClaimsIdentity(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateClaimsIdentity(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.TelemetryClient -> Microsoft.IdentityModel.Telemetry.ITelemetryClient
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions.ValidatedAudience.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions.ValidatedAudience.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions.ValidatedConditions() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions.ValidatedConditions(string ValidatedAudience, Microsoft.IdentityModel.Tokens.ValidatedLifetime? ValidatedLifetime) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions.ValidatedLifetime.get -> Microsoft.IdentityModel.Tokens.ValidatedLifetime?
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions.ValidatedLifetime.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+Microsoft.IdentityModel.Tokens.Saml.SamlSubjectEqualityComparer
+Microsoft.IdentityModel.Tokens.Saml.SamlSubjectEqualityComparer.SamlSubjectEqualityComparer() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities
+Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.SamlTokenUtilities() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlValidationError
+Microsoft.IdentityModel.Tokens.Saml.SamlValidationError.SamlValidationError(Microsoft.IdentityModel.Tokens.MessageDetail messageDetail, Microsoft.IdentityModel.Tokens.ValidationFailure validationFailure, System.Type exceptionType, System.Diagnostics.StackFrame stackFrame, System.Exception innerException = null) -> void
+Microsoft.IdentityModel.Tokens.Saml2.AbsoluteUriCollection
+Microsoft.IdentityModel.Tokens.Saml2.AbsoluteUriCollection.AbsoluteUriCollection() -> void
+Microsoft.IdentityModel.Tokens.Saml2.LogMessages
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.CanonicalString.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.XmlTokenStream.get -> Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.XmlTokenStream.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.AttributeKey(Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute attribute) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.Equals(Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey other) -> bool
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.FriendlyName.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.Name.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.NameFormat.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.OriginalIssuer.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.ValueType.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.Equals(Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey x, Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey y) -> bool
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.GetHashCode(Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey obj) -> int
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateClaimsIdentity(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateClaimsIdentity(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.TelemetryClient -> Microsoft.IdentityModel.Telemetry.ITelemetryClient
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.Deconstruct(out string ValidatedAudience, out Microsoft.IdentityModel.Tokens.Experimental.ValidatedLifetime? ValidatedLifetime) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.Equals(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions other) -> bool
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ValidatedAudience.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ValidatedAudience.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ValidatedConditions() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ValidatedConditions(string ValidatedAudience, Microsoft.IdentityModel.Tokens.ValidatedLifetime? ValidatedLifetime) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ValidatedLifetime.get -> Microsoft.IdentityModel.Tokens.ValidatedLifetime?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ValidatedLifetime.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject.Saml2Subject() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality.Saml2SubjectLocality() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ValidationError
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ValidationError.Saml2ValidationError(Microsoft.IdentityModel.Tokens.MessageDetail messageDetail, Microsoft.IdentityModel.Tokens.ValidationFailure validationFailure, System.Type exceptionType, System.Diagnostics.StackFrame stackFrame, System.Exception innerException = null) -> void
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateClaimsIdentityInternal(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateClaimsIdentityInternal(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.Experimental.ValidatedToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>>
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.Experimental.ValidatedToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>>
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+override Microsoft.IdentityModel.Tokens.Saml.SamlSubjectEqualityComparer.Equals(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject1, Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject2) -> bool
+override Microsoft.IdentityModel.Tokens.Saml.SamlSubjectEqualityComparer.GetHashCode(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject) -> int
+override Microsoft.IdentityModel.Tokens.Saml.SamlValidationError.CreateException() -> System.Exception
+override Microsoft.IdentityModel.Tokens.Saml.SamlValidationError.GetException() -> System.Exception
+override Microsoft.IdentityModel.Tokens.Saml2.AbsoluteUriCollection.InsertItem(int index, System.Uri item) -> void
+override Microsoft.IdentityModel.Tokens.Saml2.AbsoluteUriCollection.SetItem(int index, System.Uri item) -> void
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.AttributeKey.GetHashCode() -> int
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateClaimsIdentityInternal(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateClaimsIdentityInternal(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.GetHashCode() -> int
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.ToString() -> string
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.Experimental.ValidatedToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>>
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.Experimental.ValidatedToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>>
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.ValidatedToken>>
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2ValidationError.CreateException() -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.StackFrames.SignatureValidationFailed -> System.Diagnostics.StackFrame
+static Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateSignature(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.SecurityKey>
+static Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.CanCreateValidUri(string uriString, System.UriKind uriKind) -> bool
+static Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.IsAssertionIdValid(string assertionId) -> bool
+static Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.LogReadException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.LogReadException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.LogWriteException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.LogWriteException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.CreateClaimsFromDictionary(System.Collections.Generic.IDictionary<string, object> claimsCollection) -> System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.GetAllClaims(System.Collections.Generic.IDictionary<string, object> claims, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> subjectClaims) -> System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.GetXsiTypeForValue(object value) -> string
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.PopulateValidationParametersWithCurrentConfigurationAsync(Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.TokenValidationParameters>
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.PopulateValidationParametersWithCurrentConfigurationAsync(Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.ValidationParameters>
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.ResolveTokenSigningKey(Microsoft.IdentityModel.Xml.KeyInfo keyInfo, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.SecurityKey> signingKeys) -> Microsoft.IdentityModel.Tokens.SecurityKey
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.ResolveTokenSigningKey(Microsoft.IdentityModel.Xml.KeyInfo tokenKeyInfo, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityKey
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.ResolveTokenSigningKey(Microsoft.IdentityModel.Xml.KeyInfo tokenKeyInfo, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityKey
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.SafeLogSamlToken(object obj) -> string
+static Microsoft.IdentityModel.Tokens.Saml.SamlTokenUtilities.ValidateSignature(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Xml.Signature signature, string canonicalString, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.BaseConfiguration configuration, Microsoft.IdentityModel.Tokens.CallContext callContext, Microsoft.IdentityModel.Telemetry.ITelemetryClient telemetryClient) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.SecurityKey, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.IsSaml2Assertion(System.Xml.XmlReader reader) -> bool
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.operator !=(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions left, Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions right) -> bool
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions.operator ==(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions left, Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions right) -> bool
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateSignature(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.SecurityKey>
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.CanCreateValidUri(string uriString, System.UriKind uriKind) -> bool
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogReadException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogReadException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogReadException(string message, System.Exception ex) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogReadException(string message) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogWriteException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogWriteException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogWriteException(string message, System.Exception ex) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.LogWriteException(string message) -> System.Exception
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadEmptyContentElement(System.Xml.XmlDictionaryReader reader) -> void
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadNameIdType(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadSimpleNCNameElement(System.Xml.XmlDictionaryReader reader, string name) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Id
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadSimpleUriElement(System.Xml.XmlDictionaryReader reader, string element, System.UriKind kind, bool requireUri) -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer.Instance -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeKeyComparer
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.EmptyResource -> System.Uri
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessStatements(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, string issuer, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters) -> System.Collections.Generic.IEnumerable<System.Security.Claims.ClaimsIdentity>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessStatements(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, string issuer, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters) -> System.Collections.Generic.IEnumerable<System.Security.Claims.ClaimsIdentity>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadSamlToken(string token, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.SecurityToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadSamlToken(string token, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateConditions(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidatedConditions>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadSaml2Token(string token, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<Microsoft.IdentityModel.Tokens.SecurityToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationError>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadSaml2Token(string token, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateConditions(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationResult<Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidatedConditions>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateOneTimeUseCondition(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationError
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateOneTimeUseCondition(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationError
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateProxyRestriction(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationError
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateProxyRestriction(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.ValidationError

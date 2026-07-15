@@ -7,12 +7,9 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
@@ -150,7 +147,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             Type type = typeof(OpenIdConnectConfiguration);
             PropertyInfo[] properties = type.GetProperties();
             if (properties.Length != 68)
-                Assert.True(false, "Number of properties has changed from 68 to: " + properties.Length + ", adjust tests");
+                Assert.Fail("Number of properties has changed from 68 to: " + properties.Length + ", adjust tests");
 
             TestUtilities.CallAllPublicInstanceAndStaticPropertyGets(configuration, "OpenIdConnectConfiguration_GetSets");
 
@@ -308,7 +305,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         [Fact]
         public void EmptyCollectionSerialization()
         {
-            var context = new CompareContext {Title = "EmptyCollectionSerialization"};
+            var context = new CompareContext { Title = "EmptyCollectionSerialization" };
             // Initialize an OpenIdConnectConfiguration object with all collections empty.
             var oidcWithEmptyCollections = new OpenIdConnectConfiguration();
             var oidcWithEmptyCollectionsJson = OpenIdConnectConfiguration.Write(oidcWithEmptyCollections);
@@ -323,7 +320,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         {
             using MemoryStream stream = new();
 
-            var context = new CompareContext {Title = "EmptyCollectionSerialization"};
+            var context = new CompareContext { Title = "EmptyCollectionSerialization" };
             // Initialize an OpenIdConnectConfiguration object with all collections empty.
             var oidcWithEmptyCollections = new OpenIdConnectConfiguration();
             OpenIdConnectConfiguration.Write(oidcWithEmptyCollections, stream);
@@ -405,7 +402,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             OpenIdConnectConfiguration.Write(oidcWithAllCollections, stream);
 
             IdentityComparer.AreBytesEqual(oidcWithAllCollectionsBytes, stream.GetBuffer(), context);
-                
+
             TestUtilities.AssertFailIfErrors(context);
         }
     }

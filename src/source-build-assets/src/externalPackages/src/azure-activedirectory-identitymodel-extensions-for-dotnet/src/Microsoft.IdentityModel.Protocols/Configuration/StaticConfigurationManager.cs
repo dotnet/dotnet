@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Protocols.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Protocols
@@ -16,7 +15,7 @@ namespace Microsoft.IdentityModel.Protocols
     /// </summary>
     /// <typeparam name="T">must be a class.</typeparam>
     public class StaticConfigurationManager<T> : BaseConfigurationManager, IConfigurationManager<T> where T : class
-    { 
+    {
         private T _configuration;
 
         /// <summary>

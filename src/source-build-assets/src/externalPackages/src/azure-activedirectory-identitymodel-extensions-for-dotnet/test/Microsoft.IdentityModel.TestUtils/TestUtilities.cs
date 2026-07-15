@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using Xunit;
 
 namespace Microsoft.IdentityModel.TestUtils
@@ -35,6 +36,77 @@ namespace Microsoft.IdentityModel.TestUtils
 
     public static class TestUtilities
     {
+        internal static ValidationParameters CreateFromTokenValidationParameters(TokenValidationParameters tokenValidationParameters)
+        {
+            ValidationParameters validationParameters = new();
+
+            if (tokenValidationParameters.AuthenticationType != null)
+                validationParameters.AuthenticationType = tokenValidationParameters.AuthenticationType;
+
+            validationParameters.ClockSkew = tokenValidationParameters.ClockSkew;
+            validationParameters.ConfigurationManager = tokenValidationParameters.ConfigurationManager;
+            validationParameters.CryptoProviderFactory = tokenValidationParameters.CryptoProviderFactory;
+            validationParameters.DebugId = tokenValidationParameters.DebugId;
+            validationParameters.IncludeTokenOnFailedValidation = tokenValidationParameters.IncludeTokenOnFailedValidation;
+            validationParameters.IgnoreTrailingSlashWhenValidatingAudience = tokenValidationParameters.IgnoreTrailingSlashWhenValidatingAudience;
+
+            //validationParameters.IssuerSigningKeyResolver = tokenValidationParameters.IssuerSigningKeyResolver;
+            if (tokenValidationParameters.IssuerSigningKeys != null)
+                foreach (SecurityKey key in tokenValidationParameters.IssuerSigningKeys)
+                    validationParameters.SigningKeys.Add(key);
+
+            if (tokenValidationParameters.IssuerSigningKey != null)
+                validationParameters.SigningKeys.Add(tokenValidationParameters.IssuerSigningKey);
+
+            validationParameters.LogTokenId = tokenValidationParameters.LogTokenId;
+            validationParameters.NameClaimType = tokenValidationParameters.NameClaimType;
+            validationParameters.NameClaimTypeRetriever = tokenValidationParameters.NameClaimTypeRetriever;
+            if (tokenValidationParameters.PropertyBag != null)
+                foreach (var item in tokenValidationParameters.PropertyBag)
+                    validationParameters.PropertyBag.Add(item.Key, item.Value);
+
+            validationParameters.RefreshBeforeValidation = tokenValidationParameters.RefreshBeforeValidation;
+            validationParameters.RoleClaimType = tokenValidationParameters.RoleClaimType;
+            validationParameters.RoleClaimTypeRetriever = tokenValidationParameters.RoleClaimTypeRetriever;
+            validationParameters.SaveSigninToken = tokenValidationParameters.SaveSigninToken;
+
+            if (tokenValidationParameters.TokenDecryptionKey != null)
+                validationParameters.DecryptionKeys.Add(tokenValidationParameters.TokenDecryptionKey);
+
+            if (tokenValidationParameters.TokenDecryptionKeys != null)
+                foreach (SecurityKey key in tokenValidationParameters.TokenDecryptionKeys)
+                    validationParameters.DecryptionKeys.Add(key);
+
+            validationParameters.TokenReplayCache = tokenValidationParameters.TokenReplayCache;
+            validationParameters.TryAllSigningKeys = tokenValidationParameters.TryAllIssuerSigningKeys;
+            validationParameters.ValidateActor = tokenValidationParameters.ValidateActor;
+            validationParameters.ValidateWithLKG = tokenValidationParameters.ValidateWithLKG;
+
+            if (tokenValidationParameters.ValidAlgorithms != null)
+                foreach (string algorithms in tokenValidationParameters.ValidAlgorithms)
+                    validationParameters.ValidAlgorithms.Add(algorithms);
+
+            if (tokenValidationParameters.ValidAudiences != null)
+                foreach (string audience in tokenValidationParameters.ValidAudiences)
+                    validationParameters.ValidAudiences.Add(audience);
+
+            if (tokenValidationParameters.ValidAudience != null)
+                validationParameters.ValidAudiences.Add(tokenValidationParameters.ValidAudience);
+
+            if (tokenValidationParameters.ValidIssuers != null)
+                foreach (string issuer in tokenValidationParameters.ValidIssuers)
+                    validationParameters.ValidIssuers.Add(issuer);
+
+            if (tokenValidationParameters.ValidIssuer != null)
+                validationParameters.ValidIssuers.Add(tokenValidationParameters.ValidIssuer);
+
+            if (tokenValidationParameters.ValidTypes != null)
+                foreach (string type in tokenValidationParameters.ValidTypes)
+                    validationParameters.ValidTypes.Add(type);
+
+            return validationParameters;
+        }
+
         /// <summary>
         /// Calls all public instance and static properties on an object
         /// </summary>
@@ -73,8 +145,6 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <summary>
         /// Gets a named field on an object
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="field"></param>
         public static object GetField(object obj, string field)
         {
             Type type = obj.GetType();
@@ -85,8 +155,6 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <summary>
         /// Sets a named field on an object
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="field"></param>
         public static void SetField(object obj, string field, object fieldValue)
         {
             Type type = obj.GetType();
@@ -97,9 +165,6 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <summary>
         /// Gets a named property on an object
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="property"></param>
-        /// <param name="propertyValue"></param>
         public static object GetProperty(object obj, string property)
         {
             Type type = obj.GetType();
@@ -171,10 +236,6 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <summary>
         /// Gets and sets a named property on an object. Checks: initial value.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="property"></param>
-        /// <param name="initialPropertyValue"></param>
-        /// <param name="setPropertyValue"></param>
         public static void GetSet(object obj, string property, object initialPropertyValue, object[] setPropertyValues, List<string> errors)
         {
             Type type = obj.GetType();
@@ -244,6 +305,7 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <param name="property">the name of the property.</param>
         /// <param name="propertyValue">value to set on the property.</param>
         /// <param name="expectedException">checks that exception is correct.</param>
+        /// <param name="context">The context for this call.</param>
         public static void SetGet(object obj, string property, object propertyValue, ExpectedException expectedException, GetSetContext context)
         {
             if (obj == null)
@@ -468,6 +530,8 @@ namespace Microsoft.IdentityModel.TestUtils
 
     public class TokenReplayCache : ITokenReplayCache
     {
+        public TokenReplayCache() { }
+
         public bool OnAddReturnValue { get; set; }
 
         public bool OnFindReturnValue { get; set; }

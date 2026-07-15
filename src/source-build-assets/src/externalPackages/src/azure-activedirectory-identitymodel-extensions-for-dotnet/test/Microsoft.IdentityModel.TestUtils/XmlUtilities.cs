@@ -55,7 +55,7 @@ namespace Microsoft.IdentityModel.TestUtils
         public static XmlTokenStream CreateXmlTokenStream(string xml)
         {
             var xmlTokenStreamReader = new XmlTokenStreamReader(CreateDictionaryReader(xml));
-            while (xmlTokenStreamReader.Read());
+            while (xmlTokenStreamReader.Read()) ;
             return xmlTokenStreamReader.TokenStream;
         }
 
@@ -96,5 +96,111 @@ namespace Microsoft.IdentityModel.TestUtils
                 return provider.Sign(stream.ToArray());
             }
         }
+
+        public static string RemoveSignature(string xml)
+        {
+            // Remove the <ds:Signature>...</ds:Signature> element from the XML
+            // This works for both indented and non-indented XML
+            int signatureStart = xml.IndexOf("<ds:Signature");
+            if (signatureStart != -1)
+                return RemoveElement(xml, "ds:Signature");
+
+            signatureStart = xml.IndexOf("<Signature");
+            if (signatureStart == -1)
+                throw new System.Xml.XmlException($"Start element not found to remove:'Signature', xml '{xml}'.");
+
+            return RemoveElement(xml, "Signature");
+        }
+
+        public static string RemoveElement(string xml, string elementName)
+        {
+            // Remove the specified element from the XML
+            // This works for both indented and non-indented XML
+            int elementStart = xml.IndexOf($"<{elementName}");
+            if (elementStart == -1)
+                throw new System.Xml.XmlException($"Start element not found to remove:'{elementName}', xml '{xml}'.");
+
+            int elementEnd = xml.IndexOf($"</{elementName}>", elementStart);
+            if (elementEnd == -1)
+                throw new System.Xml.XmlException($"End element not found to remove:'{elementName}', xml '{xml}'.");
+
+            elementEnd += $"</{elementName}>".Length;
+
+            // Remove the element
+            string xmlWithoutElement = xml.Remove(elementStart, elementEnd - elementStart);
+            return xmlWithoutElement;
+        }
+
+        /// <summary>
+        /// Take the attribute statements from the source XML and swap them into the destination XML.
+        /// </summary>
+        /// <param name="xmlSource"></param>
+        /// <param name="xmlDestination"></param>
+        /// <returns></returns>
+        /// <exception cref="System.Xml.XmlException"></exception>
+        public static string SwapAttributeStatements(string xmlSource, string xmlDestination)
+        {
+            int destinationSigStart = xmlDestination.IndexOf("<saml:AttributeStatement>");
+            if (destinationSigStart != -1)
+                return SwapXmlElement(xmlSource, xmlDestination, "<saml:AttributeStatement>", "</saml:AttributeStatement>");
+            else
+            {
+                destinationSigStart = xmlDestination.IndexOf("<AttributeStatement>");
+                if (destinationSigStart == -1)
+                    throw new System.Xml.XmlException($"AttributeStatement not found to swap: {xmlDestination}");
+
+                return SwapXmlElement(xmlSource, xmlDestination, "<AttributeStatement>", "</AttributeStatement>");
+            }
+        }
+
+        public static string SwapSignatureValueElements(string xmlSource, string xmlDestination)
+        {
+            // Find the <SignatureValue> element in destination
+            int destinationSigStart = xmlDestination.IndexOf("<SignatureValue");
+            if (destinationSigStart != -1)
+                return SwapXmlElement(xmlSource, xmlDestination, "<SignatureValue", "</SignatureValue>");
+            else
+            {
+                destinationSigStart = xmlDestination.IndexOf("<ds:SignatureValue");
+                if (destinationSigStart == -1)
+                    throw new System.Xml.XmlException($"No SignatureValue element found in {xmlDestination}");
+
+                return SwapXmlElement(xmlSource, xmlDestination, "<ds:SignatureValue", "</ds:SignatureValue>");
+            }
+        }
+
+        public static string SwapXmlElement(string xmlSource, string xmlDestination, string startElement, string endElement)
+        {
+            int destinationStart = xmlDestination.IndexOf(startElement);
+            if (destinationStart == -1)
+                return xmlDestination;
+
+            int destinationEnd = xmlDestination.IndexOf(endElement);
+            if (destinationEnd == -1)
+                return xmlDestination;
+
+            destinationEnd += endElement.Length;
+
+            int sourceEnd = -1;
+            int sourceStart = xmlSource.IndexOf(startElement);
+            if (sourceStart == -1)
+                return xmlSource;
+
+            sourceEnd = xmlSource.IndexOf(endElement);
+            if (sourceEnd == -1)
+                return xmlSource;
+
+            sourceEnd += endElement.Length;
+
+            // Extract the element from xmlSource
+            string newElement = xmlSource.Substring(sourceStart, sourceEnd - sourceStart);
+
+            // Replace the element in xmlDestination
+            string transformedElement = $"{xmlDestination.Substring(0, destinationStart)}{newElement}{xmlDestination
+                .Substring(destinationEnd)}";
+
+            return transformedElement;
+        }
+
     }
 }

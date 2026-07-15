@@ -1,0 +1,5 @@
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11315 = "IDX11315: Unable to validate token. SamlSecurityToken.Assertion is null or empty." -> string
+const Microsoft.IdentityModel.Tokens.Saml.LogMessages.IDX11138 = "IDX11138: SAML assertion nesting bound exceeded (depth: '{0}', bound: '{1}')." -> string
+const Microsoft.IdentityModel.Tokens.Saml2.LogMessages.IDX13111 = "IDX13111: SAML2 assertion nesting bound exceeded (depth: '{0}', bound: '{1}')." -> string
+Microsoft.IdentityModel.Tokens.Saml.BoundedXmlDictionaryReaderQuotas
+static Microsoft.IdentityModel.Tokens.Saml.BoundedXmlDictionaryReaderQuotas.Quotas.get -> System.Xml.XmlDictionaryReaderQuotas
