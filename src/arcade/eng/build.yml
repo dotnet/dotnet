@@ -5,6 +5,22 @@ parameters:
 - name: microbuildUseESRP
   default: false
   type: boolean
+# When true (default), run the Validate Arcade SDK stage: three parallel validations of the newly
+# produced SDK - signing validation, self-build (self-bootstrap), and promotion to a test channel
+# with the new Arcade. Set to false as a bootstrap-breakage escape hatch to ship a new Arcade when
+# the current one cannot self-validate; the promotion to '.NET Eng - Latest' still runs on build
+# success.
+- name: runValidateSdk
+  default: true
+  type: boolean
+# The channel successful builds are promoted to, and the source branch the promotion gate runs on.
+# Defined once here so they aren't duplicated throughout the promotion stage below.
+- name: promotionChannel
+  default: '.NET Eng - Latest'
+  type: string
+- name: promotionSourceBranch
+  default: 'refs/heads/main'
+  type: string
 
 stages:
 - stage: build
@@ -49,17 +65,25 @@ stages:
             /p:Test=false
           displayName: Windows Build / Publish
 
-- stage: ValidateSdk
-  displayName: Validate Arcade SDK
-  dependsOn: build
-  jobs:
-  - template: /eng/validate-sdk.yml@self
-    parameters:
-      microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
-      buildArgs: -configuration $(_BuildConfig)
-        -prepareMachine
-        $(_InternalBuildArgs)
-        /p:Test=false
+- ${{ if eq(parameters.runValidateSdk, true) }}:
+  - stage: ValidateSdk
+    displayName: Validate Arcade SDK
+    dependsOn: build
+    jobs:
+    # Self-bootstrap: rebuild arcade with the newly produced SDK (build + sign + pack + publish).
+    - template: /eng/validate-sdk.yml@self
+      parameters:
+        microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+        buildArgs: -configuration $(_BuildConfig)
+          -prepareMachine
+          $(_InternalBuildArgs)
+          /p:Test=false
+    # Sign a curated set of artifact types with the newly built SignTool.
+    - template: /eng/validate-signing.yml@self
+      parameters:
+        microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+    # Validate that build promotion works when driven by the newly built Arcade.
+    - template: /eng/validate-promotion.yml@self
 
 - template: /eng/common/templates-official/post-build/post-build.yml@self
   parameters:
@@ -68,4 +92,72 @@ stages:
     enableSigningValidation: false
     publishDependsOn:
     - Validate
-    - ValidateSdk
+    - ${{ if eq(parameters.runValidateSdk, true) }}:
+      - ValidateSdk
+
+# Promote the build to '.NET Eng - Latest' using the current/default Arcade. Runs after a successful
+# build, and - when validation is enabled - after ValidateSdk passes, so a build can still be promoted
+# when validation is disabled. Main only: release branches keep using dotnet/arcade-validation for
+# this gate (see #17046). The assets were already published to '.NET Eng - Validation' by the
+# post-build publish stage, so this uses --skip-assets-publishing.
+- ${{ if eq(variables['Build.SourceBranch'], parameters.promotionSourceBranch) }}:
+  - stage: PromoteToLatest
+    displayName: Promote to '${{ parameters.promotionChannel }}'
+    dependsOn:
+    - publish_using_darc
+    - ${{ if eq(parameters.runValidateSdk, true) }}:
+      - ValidateSdk
+    jobs:
+    - template: /eng/common/templates-official/job/job.yml@self
+      parameters:
+        name: PromoteToLatest
+        displayName: Promote to '${{ parameters.promotionChannel }}'
+        enableMicrobuild: false
+        timeoutInMinutes: 60
+        # The publish-build-assets job writes the BAR build id as the first line of ReleaseConfigs.txt.
+        artifacts:
+          download:
+            name: ReleaseConfigs
+            path: release_configs
+        variables:
+        - group: Publish-Build-Assets
+        - template: /eng/common/templates-official/variables/pool-providers.yml@self
+        pool:
+          name: $(DncEngInternalBuildPool)
+          demands: ImageOverride -equals windows.vs2026.amd64
+        preSteps:
+        - checkout: self
+          clean: true
+        steps:
+        - powershell: |
+            $releaseConfigs = Get-Content "$(System.DefaultWorkingDirectory)/release_configs/ReleaseConfigs.txt"
+            $barId = ($releaseConfigs | Select-Object -First 1).Trim()
+            if ([string]::IsNullOrEmpty($barId)) { Write-Error "Could not read BAR build id from ReleaseConfigs.txt"; exit 1 }
+            Write-Host "BAR build id: $barId"
+            Write-Host "##vso[task.setvariable variable=BARBuildId]$barId"
+          displayName: Read BAR build id
+        - task: AzureCLI@2
+          displayName: Get AzDO token (WIF)
+          name: GetAzDoToken
+          inputs:
+            azureSubscription: "dnceng-build-rw-code-rw-wif"
+            scriptType: ps
+            scriptLocation: inlineScript
+            inlineScript: |
+              $azdoToken = az account get-access-token --resource "499b84ac-1321-427f-aa17-267ca6975798" --query accessToken -o tsv
+              if ($LASTEXITCODE -ne 0) { Write-Error "Failed to get AzDO token"; exit 1 }
+              Write-Host "##vso[task.setvariable variable=WifAzDoToken;issecret=true]$azdoToken"
+        - task: AzureCLI@2
+          displayName: Promote to '${{ parameters.promotionChannel }}'
+          inputs:
+            azureSubscription: "Darc: Maestro Production"
+            scriptType: ps
+            scriptLocation: inlineScript
+            inlineScript: |
+              $ci = $true
+              $disableConfigureToolsetImport = $true
+              . $(Build.SourcesDirectory)/eng/common/tools.ps1
+              $darc = Get-Darc
+              # Assets were already published to '.NET Eng - Validation'; this is the promotion gate.
+              & $darc add-build-to-channel --id $(BARBuildId) --channel '${{ parameters.promotionChannel }}' --azdev-pat $(WifAzDoToken) --ci --skip-assets-publishing
+              if ($LASTEXITCODE -ne 0) { Write-Error "Failed to promote build $(BARBuildId) to '${{ parameters.promotionChannel }}'."; exit 1 }

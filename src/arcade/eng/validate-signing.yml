@@ -1,0 +1,229 @@
+# Validates that the *newly built* Arcade SDK's SignTool can sign a curated set of artifact types
+# (packages, VSIXes, .deb/.rpm/.pkg, loose assemblies, nested containers, ...). Ported from
+# dotnet/arcade-validation's Validate_Signing_{Windows,Linux,MacOS} jobs, with an added step that
+# bootstraps the newly produced SDK (use-built-sdk.ps1) before signing so the new SignTool is used.
+#
+# The signing inputs are the existing SignTool unit-test resources
+# (src/Microsoft.DotNet.SignTool.Tests/Resources) - a superset of arcade-validation's - so no binary
+# assets are duplicated here. The signingTestPackages / signingTestVSIXes lists below are the curated
+# set of clean, signable inputs (that folder also holds deliberately-malformed/non-signable inputs
+# used by the unit tests), defined once and shared by all three jobs.
+#
+# One of the parallel jobs of the official build's ValidateSdk stage.
+#
+# NOTE: real signing uses MicroBuild/ESRP and only runs in the internal official build; not testable
+# locally or in PR. Needs @dotnet/dnceng review and a real official-build run to confirm (especially
+# the cross-platform use-built-sdk and Mac/Linux real-signing wiring).
+
+parameters:
+  microbuildUseESRP: false
+  # Curated, clean signable inputs from src/Microsoft.DotNet.SignTool.Tests/Resources, shared by all
+  # jobs (CopyFiles 'contents' minimatch, one pattern per line).
+  signingTestPackages: |
+    ContainerOne.1.0.0.nupkg
+    CustomTargetFrameworkAttribute.dll
+    EmptyPKT.dll
+    NestedContainer.1.0.0.nupkg
+    NestedZip.zip
+    PackageWithZip.nupkg
+    SignedLibrary.dll
+    test.deb
+    test.mpack
+    test.pkg
+    test.rpm
+    test.tgz
+    test.zip
+  signingTestVSIXes: |
+    PackageWithRelationships.vsix
+    test.vsix
+
+jobs:
+- template: /eng/common/templates-official/job/job.yml@self
+  parameters:
+    name: Validate_Signing_Windows
+    displayName: Validate Signing (Windows)
+    enableMicrobuild: true
+    microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+    artifacts:
+      download:
+        name: Artifacts_Windows_NT_Release
+        path: build_stage_artifacts
+      publish:
+        logs:
+          name: Logs_ValidateSigning_Windows_$(_BuildConfig)
+    timeoutInMinutes: 90
+    variables:
+    - group: Publish-Build-Assets
+    - name: TeamName
+      value: DotNetCore
+    - template: /eng/common/templates-official/variables/pool-providers.yml@self
+    pool:
+      name: $(DncEngInternalBuildPool)
+      demands: ImageOverride -equals windows.vs2026.amd64
+    strategy:
+      matrix:
+        Test_Signing:
+          _BuildConfig: Debug
+          _SignType: test
+        Real_Signing:
+          _BuildConfig: Release
+          _SignType: real
+    preSteps:
+    - checkout: self
+      clean: true
+    steps:
+    # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
+    # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
+    - powershell: >
+        .\eng\validation\use-built-sdk.ps1
+        -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
+      displayName: Use newly built SDK
+    - task: CopyFiles@2
+      displayName: Stage signing test packages
+      inputs:
+        sourceFolder: $(Build.SourcesDirectory)\src\Microsoft.DotNet.SignTool.Tests\Resources
+        targetFolder: $(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\NonShipping
+        contents: ${{ parameters.signingTestPackages }}
+    - task: CopyFiles@2
+      displayName: Stage signing test VSIXes
+      inputs:
+        sourceFolder: $(Build.SourcesDirectory)\src\Microsoft.DotNet.SignTool.Tests\Resources
+        targetFolder: $(Build.SourcesDirectory)\artifacts\VSSetup\$(_BuildConfig)
+        contents: ${{ parameters.signingTestVSIXes }}
+    - powershell: eng\common\build.ps1
+        -configuration $(_BuildConfig)
+        -restore
+        -prepareMachine
+        -sign
+        -ci
+        /p:DotNetSignType=$(_SignType)
+        /p:TeamName=$(TeamName)
+        /p:OfficialBuildId=$(Build.BuildNumber)
+      displayName: Sign with the newly built SignTool
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+- template: /eng/common/templates-official/job/job.yml@self
+  parameters:
+    name: Validate_Signing_Linux
+    displayName: Validate Signing (Linux)
+    enableMicrobuild: true
+    enableMicrobuildForMacAndLinux: true
+    microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+    artifacts:
+      download:
+        name: Artifacts_Windows_NT_Release
+        path: build_stage_artifacts
+      publish:
+        logs:
+          name: Logs_ValidateSigning_Linux_$(_BuildConfig)
+    timeoutInMinutes: 90
+    variables:
+    - group: Publish-Build-Assets
+    - name: TeamName
+      value: DotNetCore
+    - name: _BuildConfig
+      value: Release
+    - name: _SignType
+      value: real
+    - template: /eng/common/templates-official/variables/pool-providers.yml@self
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: build.azurelinux.3.amd64
+      os: linux
+    preSteps:
+    - checkout: self
+      clean: true
+    steps:
+    # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
+    # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
+    - pwsh: >
+        ./eng/validation/use-built-sdk.ps1
+        -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
+      displayName: Use newly built SDK
+    - task: CopyFiles@2
+      displayName: Stage signing test packages
+      inputs:
+        sourceFolder: $(Build.SourcesDirectory)/src/Microsoft.DotNet.SignTool.Tests/Resources
+        targetFolder: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping
+        contents: ${{ parameters.signingTestPackages }}
+    - task: CopyFiles@2
+      displayName: Stage signing test VSIXes
+      inputs:
+        sourceFolder: $(Build.SourcesDirectory)/src/Microsoft.DotNet.SignTool.Tests/Resources
+        targetFolder: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)
+        contents: ${{ parameters.signingTestVSIXes }}
+    - script: eng/common/build.sh
+        --configuration $(_BuildConfig)
+        --restore
+        --prepareMachine
+        --sign
+        --ci
+        /p:DotNetSignType=$(_SignType)
+        /p:TeamName=$(TeamName)
+        /p:OfficialBuildId=$(Build.BuildNumber)
+      displayName: Sign with the newly built SignTool
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+- template: /eng/common/templates-official/job/job.yml@self
+  parameters:
+    name: Validate_Signing_MacOS
+    displayName: Validate Signing (macOS)
+    enableMicrobuild: true
+    enableMicrobuildForMacAndLinux: true
+    microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+    artifacts:
+      download:
+        name: Artifacts_Windows_NT_Release
+        path: build_stage_artifacts
+      publish:
+        logs:
+          name: Logs_ValidateSigning_MacOS_$(_BuildConfig)
+    timeoutInMinutes: 90
+    variables:
+    - group: Publish-Build-Assets
+    - name: TeamName
+      value: DotNetCore
+    - name: _BuildConfig
+      value: Release
+    - name: _SignType
+      value: real
+    pool:
+      name: Azure Pipelines
+      image: macos-latest
+      os: macOS
+    preSteps:
+    - checkout: self
+      clean: true
+    steps:
+    # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
+    # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
+    - pwsh: >
+        ./eng/validation/use-built-sdk.ps1
+        -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
+      displayName: Use newly built SDK
+    - task: CopyFiles@2
+      displayName: Stage signing test packages
+      inputs:
+        sourceFolder: $(Build.SourcesDirectory)/src/Microsoft.DotNet.SignTool.Tests/Resources
+        targetFolder: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/NonShipping
+        contents: ${{ parameters.signingTestPackages }}
+    - task: CopyFiles@2
+      displayName: Stage signing test VSIXes
+      inputs:
+        sourceFolder: $(Build.SourcesDirectory)/src/Microsoft.DotNet.SignTool.Tests/Resources
+        targetFolder: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)
+        contents: ${{ parameters.signingTestVSIXes }}
+    - script: eng/common/build.sh
+        --configuration $(_BuildConfig)
+        --restore
+        --prepareMachine
+        --sign
+        --ci
+        /p:DotNetSignType=$(_SignType)
+        /p:TeamName=$(TeamName)
+        /p:OfficialBuildId=$(Build.BuildNumber)
+      displayName: Sign with the newly built SignTool
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
