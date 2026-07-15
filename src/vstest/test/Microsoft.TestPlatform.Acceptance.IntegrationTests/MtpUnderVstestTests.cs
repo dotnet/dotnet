@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.IO;
 
 using Microsoft.TestPlatform.TestUtilities;
@@ -45,7 +46,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        ValidateSummaryStatus(2, 1, 1);
+        ValidateSummaryStatus(3, 1, 1);
     }
 
     [TestMethod]
@@ -67,13 +68,13 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        // Classic 1/1/1 + MTP 2/1/1 aggregated into one run summary.
-        ValidateSummaryStatus(3, 2, 2);
+        // Classic 1/1/1 + MTP 3/1/1 aggregated into one run summary.
+        ValidateSummaryStatus(4, 2, 2);
     }
 
     [TestMethod]
     // Prove a TRX logger aggregates results from both the classic and the MTP source in a mixed run into a
-    // single .trx with all seven tests.
+    // single .trx with all eight tests.
     [TestMatrix(testHost: Target.Net)]
     public void RunMixedClassicAndMtpApplicationsWritesSingleTrx(RunnerInfo runnerInfo)
     {
@@ -91,7 +92,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        ValidateSummaryStatus(3, 2, 2);
+        ValidateSummaryStatus(4, 2, 2);
 
         var trxPath = Path.Combine(TempDirectory.Path, trxFileName);
         Assert.IsTrue(File.Exists(trxPath), "Expected a single TRX to be written for the mixed run at '{0}'.", trxPath);
@@ -120,6 +121,47 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        ValidateSummaryStatus(2, 1, 1);
+        ValidateSummaryStatus(3, 1, 1);
+    }
+
+    [TestMethod]
+    // Environment variables declared in a runsettings RunConfiguration/EnvironmentVariables block must be
+    // injected into the self-hosted MTP process. There is no testhost here, so vstest.console applies them
+    // to the MTP application launch. The guarded RunSettingsEnvironmentVariableIsInjected test asserts the
+    // injected value; CHECK_RUNSETTINGS_VAR is passed as a process env var (inherited by the host) to opt
+    // the check in, so the run passes only when runsettings injection actually delivered the value. If the
+    // value did not reach the host that test fails and the summary would be 2/2/1 instead of 3/1/1.
+    [TestMatrix(testHost: Target.Net)]
+    public void RunMtpApplicationInjectsRunSettingsEnvironmentVariables(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var runsettingsXml = @"<RunSettings>
+                                    <RunConfiguration>
+                                      <EnvironmentVariables>
+                                        <MTP_FROM_RUNSETTINGS>mtp-runsettings-value</MTP_FROM_RUNSETTINGS>
+                                      </EnvironmentVariables>
+                                    </RunConfiguration>
+                                   </RunSettings>";
+        var runsettingsPath = Path.Combine(TempDirectory.Path, "mtp_env_" + System.Guid.NewGuid() + ".runsettings");
+        File.WriteAllText(runsettingsPath, runsettingsXml);
+
+        var arguments = PrepareArguments(
+            GetAssetFullPath(MtpApp),
+            testAdapterPath: null,
+            runSettings: runsettingsPath,
+            FrameworkArgValue,
+            runnerInfo.InIsolationValue,
+            resultsDirectory: TempDirectory.Path);
+
+        var env = new Dictionary<string, string?>
+        {
+            ["CHECK_RUNSETTINGS_VAR"] = "1",
+        };
+
+        InvokeVsTest(arguments, env);
+
+        // The guarded test passes only if MTP_FROM_RUNSETTINGS reached the host with the runsettings value.
+        ValidateSummaryStatus(3, 1, 1);
     }
 }

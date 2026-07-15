@@ -47,6 +47,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.ArcadeLogging\Microsoft.DotNet.ArcadeLogging.csproj"
+      ReferenceOutputAssembly="false"
+      SkipGetTargetFrameworkProperties="true"
+      Publish="false"
+      Private="false"
+      PrivateAssets="all"
+      ExcludeAssets="runtime" />
   </ItemGroup>
 
   <!--
@@ -104,5 +111,11 @@
       <FileWrites Include="$(_GeneratedVersionFilePath)" />
     </ItemGroup>
   </Target>
+
+  <ItemGroup>
+    <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\netstandard2.0\Microsoft.DotNet.ArcadeLogging.dll"
+          Pack="true"
+          PackagePath="toolset\net\Microsoft.DotNet.ArcadeLogging.dll" />
+  </ItemGroup>
 
 </Project>

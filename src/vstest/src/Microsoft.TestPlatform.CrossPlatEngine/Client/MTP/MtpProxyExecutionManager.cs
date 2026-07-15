@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfa
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP;
 
@@ -78,6 +79,13 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
         var invokedDataCollectors = new List<InvokedDataCollector>();
         int processId = 0;
         bool aborted = false;
+
+        // Inject environment variables declared in the runsettings RunConfiguration/EnvironmentVariables
+        // into the MTP application launch. On the classic path ProxyOperationManager reads these from the
+        // runsettings and passes them to the testhost process; the MTP application is its own host, so we
+        // apply them here. Done before BeforeTestRun so datacollector-provided profiler variables merge on
+        // top and win on collision (matching the classic ordering).
+        ApplyRunSettingsEnvironmentVariables(testRunCriteria.TestRunSettings);
 
         BeforeTestRun(eventHandler);
 
@@ -369,6 +377,27 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
 
         return (criteria.Sources ?? Enumerable.Empty<string>())
             .Select(source => (source, (List<TestCase>?)null));
+    }
+
+    /// <summary>
+    /// Reads the environment variables declared in the runsettings
+    /// <c>RunConfiguration/EnvironmentVariables</c> and merges them into <see cref="EnvironmentVariables"/>
+    /// so they are applied to the MTP application launch.
+    /// </summary>
+    private void ApplyRunSettingsEnvironmentVariables(string? runSettings)
+    {
+        Dictionary<string, string?>? runSettingsEnvironmentVariables = InferRunSettingsHelper.GetEnvironmentVariables(runSettings);
+        if (runSettingsEnvironmentVariables is null || runSettingsEnvironmentVariables.Count == 0)
+        {
+            return;
+        }
+
+        EnvironmentVariables ??= new Dictionary<string, string?>(
+            Environment.OSVersion.Platform == PlatformID.Win32NT ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        foreach (KeyValuePair<string, string?> variable in runSettingsEnvironmentVariables)
+        {
+            EnvironmentVariables[variable.Key] = variable.Value;
+        }
     }
 
     private static List<Dictionary<string, object?>> BuildTestsFilter(List<TestCase> tests)

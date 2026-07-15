@@ -40,10 +40,31 @@
   </Target>
 
   <PropertyGroup>
-    <GenerateNativeVersionFileDependsOn>_InitializeAssemblyVersion</GenerateNativeVersionFileDependsOn>
-    <GenerateNativeVersionFileDependsOn Condition="'$(DisableSourceLink)' != 'true'">$(GenerateNativeVersionFileDependsOn);
-                                                                                     InitializeSourceControlInformationFromSourceControlManager</GenerateNativeVersionFileDependsOn>
+    <_GenerateVersionInfoDependsOn>_InitializeAssemblyVersion</_GenerateVersionInfoDependsOn>
+    <_GenerateVersionInfoDependsOn Condition="'$(DisableSourceLink)' != 'true'">$(_GenerateVersionInfoDependsOn);
+                                                                                InitializeSourceControlInformationFromSourceControlManager</_GenerateVersionInfoDependsOn>
   </PropertyGroup>
+
+  <Target Name="_GenerateVersionInfo"
+          DependsOnTargets="$(_GenerateVersionInfoDependsOn)">
+    <PropertyGroup>
+      <!-- To support builds without a source control provider available, allow this property to be unset. -->
+      <_SourceBuildInfo Condition="'$(SourceRevisionId)' != ''"> %40Commit: $(SourceRevisionId)</_SourceBuildInfo>
+      <_SccsIdString>@(#)Version $(FileVersion)$(_SourceBuildInfo)</_SccsIdString>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+    Inject SCCSID in AOT apps.
+  -->
+  <Target Name="AddSccsidMetadata"
+          Condition="'$(PublishAot)' == 'true' and '$(OS)' != 'Windows_NT'"
+          DependsOnTargets="_GenerateVersionInfo"
+          BeforeTargets="BeforeCompile">
+    <ItemGroup>
+      <AssemblyMetadata Include="sccsid" Value="$(_SccsIdString)" />
+    </ItemGroup>
+  </Target>
 
   <!--
     GenerateNativeVersionFile target is a standalone target intended to be pulled into a build once as
@@ -51,12 +72,7 @@
     on the OS it is targeting.
   -->
   <Target Name="GenerateNativeVersionFile"
-          DependsOnTargets="$(GenerateNativeVersionFileDependsOn)">
-
-    <!-- To support builds without a source control provider available, allow this property to be unset. -->
-    <PropertyGroup Condition="'$(SourceRevisionId)' != ''">
-      <_SourceBuildInfo> %40Commit: $(SourceRevisionId)</_SourceBuildInfo>
-    </PropertyGroup>
+          DependsOnTargets="_GenerateVersionInfo">
 
    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
       <NativeVersionFile Condition="'$(NativeVersionFile)' == ''">$(IntermediateOutputPath)_version.h</NativeVersionFile>
@@ -119,10 +135,10 @@
       <_NativeVersionFileContents>
 <![CDATA[
 #if defined(__GNUC__) && !defined(__clang__) && defined(TARGET_SUNOS) && defined(TARGET_AMD64)
-char sccsid[] __attribute__((used, weak)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+char sccsid[] __attribute__((used, weak)) = "$(_SccsIdString)";
 __asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");
 #else
-static char sccsid[] __attribute__((used, retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";
+static char sccsid[] __attribute__((used, retain)) = "$(_SccsIdString)";
 #endif
  ]]>
       </_NativeVersionFileContents>

@@ -20,6 +20,15 @@ trigger:
     - THIRD-PARTY-NOTICES.TXT
 pr: none
 
+parameters:
+# Bootstrap-breakage escape hatch. The ValidateSdk stage self-bootstraps arcade with the newly
+# produced SDK and validates signing + promotion using that SDK; publishing depends on it.
+# Override to false at queue time to ship a new Arcade when the current one cannot self-validate.
+- name: runValidateSdk
+  displayName: Run the Validate Arcade SDK stage (signing + self-build + promotion validation)
+  type: boolean
+  default: true
+
 variables:
 - template: /eng/common-variables.yml@self
   parameters:
@@ -59,3 +68,4 @@ extends:
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
           oneLocEnabled: true
         microbuildUseESRP: true
+        runValidateSdk: ${{ parameters.runValidateSdk }}
