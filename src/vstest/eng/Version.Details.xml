@@ -20,9 +20,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
-    <Dependency Name="System.Collections.Immutable" Version="10.0.0">
+    <Dependency Name="System.Collections.Immutable" Version="9.0.11">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>60629d14374c56f1cb51819049ad1fa529307f8d</Sha>
+      <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
