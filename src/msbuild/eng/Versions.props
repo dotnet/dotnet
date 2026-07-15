@@ -55,6 +55,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <MicrosoftVisualStudioOpenTelemetryVersion>0.2.104-beta</MicrosoftVisualStudioOpenTelemetryVersion>
+    <!-- Pinned above the version brought in transitively by the Microsoft.VisualStudio.OpenTelemetry.*
+         packages to pick up the fix for GHSA-g94r-2vxg-569j (CVE-2026-40894). -->
+    <OpenTelemetryApiVersion>1.15.3</OpenTelemetryApiVersion>
     <!-- Microsoft.VisualStudio.SolutionPersistence is maintained in eng/dependabot/Packages.props -->
   </PropertyGroup>
   <!-- Toolset Dependencies -->

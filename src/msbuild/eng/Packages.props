@@ -42,6 +42,7 @@
     <PackageVersion Include="xunit.console" Version="$(XUnitVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.OpenTelemetry.Collector" Version="$(MicrosoftVisualStudioOpenTelemetryVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.OpenTelemetry.ClientExtensions" Version="$(MicrosoftVisualStudioOpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="$(OpenTelemetryApiVersion)" />
 
     <!-- Microsoft.VisualStudio.SolutionPersistence is maintained in eng/dependabot/Packages.props -->
   </ItemGroup>

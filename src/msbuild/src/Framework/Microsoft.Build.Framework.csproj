@@ -27,6 +27,9 @@
     <!-- Telemetry in Framework-->
     <PackageReference Include="Microsoft.VisualStudio.OpenTelemetry.Collector" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.OpenTelemetry.ClientExtensions" PrivateAssets="all" />
+    <!-- Pin the transitive OpenTelemetry.Api above the vulnerable version brought in by the packages above
+         (GHSA-g94r-2vxg-569j / CVE-2026-40894). -->
+    <PackageReference Include="OpenTelemetry.Api" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- Framework and standard don't have these. -->

@@ -18,7 +18,7 @@ This file should be imported by eng/Versions.props
     <SystemResourcesExtensionsPackageVersion>9.0.0</SystemResourcesExtensionsPackageVersion>
     <SystemSecurityCryptographyPkcsPackageVersion>9.0.6</SystemSecurityCryptographyPkcsPackageVersion>
     <SystemSecurityCryptographyProtectedDataPackageVersion>9.0.6</SystemSecurityCryptographyProtectedDataPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>9.0.0</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>9.0.15</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>9.0.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemTextJsonPackageVersion>9.0.0</SystemTextJsonPackageVersion>
     <SystemThreadingChannelsPackageVersion>9.0.0</SystemThreadingChannelsPackageVersion>
