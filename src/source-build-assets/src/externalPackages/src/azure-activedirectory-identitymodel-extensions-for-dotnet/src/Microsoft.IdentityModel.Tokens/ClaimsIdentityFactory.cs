@@ -6,6 +6,8 @@ using System.Security.Claims;
 
 namespace Microsoft.IdentityModel.Tokens
 {
+#pragma warning disable RS0030 // Do not use banned APIs
+
     /// <summary>
     /// Facilitates the creation of <see cref="ClaimsIdentity"/> and <see cref="CaseSensitiveClaimsIdentity"/> instances based on the <see cref="AppContextSwitches.UseClaimsIdentityTypeSwitch"/>.
     /// </summary>
@@ -38,4 +40,6 @@ namespace Microsoft.IdentityModel.Tokens
             };
         }
     }
+
+#pragma warning restore RS0030 // Do not use banned APIs
 }

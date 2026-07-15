@@ -1,0 +1,11 @@
+~Microsoft.IdentityModel.Tokens.CaseSensitiveClaimsIdentity.SecurityToken.set -> void
+Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider
+Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.EcdhKeyExchangeProvider(Microsoft.IdentityModel.Tokens.SecurityKey privateKey, Microsoft.IdentityModel.Tokens.SecurityKey publicKey, string alg, string enc) -> void
+Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.GenerateKdf(string apu = null, string apv = null) -> Microsoft.IdentityModel.Tokens.SecurityKey
+Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.KeyDataLen.get -> int
+Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.KeyDataLen.set -> void
+override Microsoft.IdentityModel.Tokens.AsymmetricSignatureProvider.Sign(System.ReadOnlySpan<byte> input, System.Span<byte> signature, out int bytesWritten) -> bool
+override Microsoft.IdentityModel.Tokens.SecurityTokenException.GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+override Microsoft.IdentityModel.Tokens.SymmetricSignatureProvider.Sign(System.ReadOnlySpan<byte> input, System.Span<byte> signature, out int bytesWritten) -> bool
+static Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.ConvertFromECDsaSecurityKey(Microsoft.IdentityModel.Tokens.ECDsaSecurityKey key) -> Microsoft.IdentityModel.Tokens.JsonWebKey
+virtual Microsoft.IdentityModel.Tokens.SignatureProvider.Sign(System.ReadOnlySpan<byte> data, System.Span<byte> destination, out int bytesWritten) -> bool

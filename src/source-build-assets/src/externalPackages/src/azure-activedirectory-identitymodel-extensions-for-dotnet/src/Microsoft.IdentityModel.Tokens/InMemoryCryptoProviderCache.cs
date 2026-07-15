@@ -12,10 +12,10 @@ namespace Microsoft.IdentityModel.Tokens
     /// Defines a cache for crypto providers.
     /// Current support is limited to <see cref="SignatureProvider"/> only.
     /// </summary>
-    public class InMemoryCryptoProviderCache: CryptoProviderCache, IDisposable
+    public class InMemoryCryptoProviderCache : CryptoProviderCache, IDisposable
     {
         internal CryptoProviderCacheOptions _cryptoProviderCacheOptions;
-        private bool _disposed = false;
+        private bool _disposed;
         private readonly EventBasedLRUCache<string, SignatureProvider> _signingSignatureProviders;
         private readonly EventBasedLRUCache<string, SignatureProvider> _verifyingSignatureProviders;
 
@@ -250,7 +250,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
         }
 
-#region FOR TESTING (INTERNAL ONLY)
+        #region FOR TESTING (INTERNAL ONLY)
         /// <summary>
         /// FOR TESTING ONLY.
         /// </summary>

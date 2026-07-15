@@ -79,6 +79,47 @@ namespace Microsoft.IdentityModel.Tokens
             return sb.ToString();
         }
 
+
+        /// <summary>
+        /// Serializes the list of strings into string as follows:
+        /// 'str1','str2','str3' ...
+        /// </summary>
+        /// <param name="strings">
+        /// The strings used to build a comma delimited string.
+        /// </param>
+        /// <returns>
+        /// The single <see cref="string"/>.
+        /// </returns>
+        internal static string SerializeAsSingleCommaDelimitedString(IList<string> strings)
+        {
+            if (strings == null)
+            {
+                return Utility.Null;
+            }
+
+            StringBuilder sb = new();
+            bool first = true;
+            for (int i = 0; i < strings.Count; i++)
+            {
+                if (first)
+                {
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}", strings[i] ?? Utility.Null);
+                    first = false;
+                }
+                else
+                {
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", strings[i] ?? Utility.Null);
+                }
+            }
+
+            if (first)
+            {
+                return Utility.Empty;
+            }
+
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Returns whether the input string is https.
         /// </summary>
@@ -133,7 +174,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns>
         /// true if the bytes are equal, false otherwise.
         /// </returns>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         public static bool AreEqual(byte[] a, byte[] b)
         {
             ReadOnlySpan<byte> a1, a2;
@@ -151,13 +192,16 @@ namespace Microsoft.IdentityModel.Tokens
                 a2 = b.AsSpan();
             }
 
+#if NET
+            return System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(a1, a2);
+#else
             int result = 0;
             for (int i = 0; i < a1.Length; i++)
             {
                 result |= a1[i] ^ a2[i];
             }
-
             return result == 0;
+#endif
         }
 
         /// <summary>
@@ -174,7 +218,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns>
         /// true if the bytes are equal, false otherwise.
         /// </returns>
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         internal static bool AreEqual(ReadOnlySpan<byte> a, ReadOnlySpan<byte> b, int length)
         {
             if ((a.Length < length || b.Length < length))
@@ -189,13 +233,16 @@ namespace Microsoft.IdentityModel.Tokens
                 b = b.Slice(0, length);
             }
 
+#if NET
+            return System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(a, b);
+#else
             int result = 0;
             for (int i = 0; i < a.Length; i++)
             {
                 result |= a[i] ^ b[i];
             }
-
             return result == 0;
+#endif
         }
 
         internal static byte[] ConvertToBigEndian(long i)

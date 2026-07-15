@@ -33,7 +33,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException">if 'certificate' is null.</exception>
         /// <exception cref="ArgumentNullException">if 'algorithm' is null or empty.</exception>
         public X509SigningCredentials(X509Certificate2 certificate, string algorithm)
-            :base(certificate, algorithm)
+            : base(certificate, algorithm)
         {
             Certificate = certificate;
         }
