@@ -1219,7 +1219,7 @@ public partial class ModelValidatorTest : ModelValidatorTestBase
     {
         var modelBuilder = CreateConventionModelBuilder();
 
-        modelBuilder.Entity<UnionEntity>();
+        modelBuilder.Entity(typeof(UnionEntity));
 
         VerifyError(
             CoreStrings.UnionTypeNotSupported(nameof(UnionEntity)),
