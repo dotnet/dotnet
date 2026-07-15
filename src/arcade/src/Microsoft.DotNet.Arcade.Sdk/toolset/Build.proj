@@ -5,10 +5,10 @@
 
   Required parameters:
     RepoRoot                        Repository root.
-    Projects                        List of projects to build. Semicolon separated, may include globs.
 
   Optional parameters:
     Configuration                   Build configuration: "Debug", "Release", etc.
+    Projects                        List of projects to build. Semicolon separated, may include globs.
 
     DotNetBuild                     Build the repo as part of the entire .NET stack.
     DotNetBuildFromVMR              Identifies that the the repo is built from within the VMR.
@@ -34,6 +34,13 @@
 
   <PropertyGroup>
     <_OriginalProjectsValue>$(Projects)</_OriginalProjectsValue>
+    <_RepoToolManifest>$([MSBuild]::NormalizePath('$(RepoRoot)', '.config', 'dotnet-tools.json'))</_RepoToolManifest>
+
+    <!-- VisualStudio.InsertionManifests.targets: Keep condition in sync with import in AfterSigning.proj. -->
+    <RestoreInternalTooling Condition="'$(UsingToolVSSDK)' == 'true' and '$(GenerateSbom)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'">true</RestoreInternalTooling>
+    <RestoreInternalToolingAfterTargets Condition="'$(RestoreInternalTooling)' == 'true'">Restore</RestoreInternalToolingAfterTargets>
+
+    <_RemoveProps>Projects;Restore;Deploy;Sign;Publish</_RemoveProps>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
@@ -45,8 +52,18 @@
     </ProjectToBuild>
   </ItemDefinitionGroup>
 
+  <!-- Allow for repo specific Tools properties such as the list of tools to restore -->
+  <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />
   <!-- Allow for repo specific Build properties such as the list of Projects to build -->
   <Import Project="$(RepositoryEngineeringDir)Build.props" Condition="Exists('$(RepositoryEngineeringDir)Build.props')" />
+
+  <!-- Central package management extension point support -->
+  <ItemGroup>
+    <PackageReference Update="@(PackageReference->HasMetadata('Version'))"
+                      VersionOverride="%(Version)" />
+    <PackageReference Update="@(PackageReference->HasMetadata('VersionOverride'))"
+                      Version="" />
+  </ItemGroup>
 
   <PropertyGroup>
     <_ProjectsPropertyWasUpdatedInBuildProps Condition="'$(_OriginalProjectsValue)' != '$(Projects)'">true</_ProjectsPropertyWasUpdatedInBuildProps>
@@ -90,49 +107,51 @@
     <ProjectToBuild Include="@(RepoRootSlnxFile)" Condition="'@(ProjectToBuild)' == ''"/>
   </ItemGroup>
 
-  <Target Name="InitializeSolutionBuildInputs">
-    <ItemGroup>
-      <_SolutionBuildTargets Include="Rebuild" Condition="'$(Rebuild)' == 'true'" />
-      <_SolutionBuildTargets Include="Build" Condition="'$(Build)' == 'true' and '$(Rebuild)' != 'true'" />
-      <!-- Deploy target is set up to chain after Build so that F5 in VS works. -->
-      <_SolutionBuildTargets Include="Test" Condition="'$(Test)' == 'true'" />
-      <!-- Pack before running integration and performance tests so that these tests can test packages produced by the repo. -->
-      <_SolutionBuildTargets Include="Pack" Condition="'$(Pack)' == 'true'" />
-      <_SolutionBuildTargets Include="IntegrationTest" Condition="'$(IntegrationTest)' == 'true'" />
-      <_SolutionBuildTargets Include="PerformanceTest" Condition="'$(PerformanceTest)' == 'true'" />
-    </ItemGroup>
+  <ItemGroup>
+    <_SolutionBuildTargets Include="Rebuild" Condition="'$(Rebuild)' == 'true'" />
+    <_SolutionBuildTargets Include="Build" Condition="'$(Build)' == 'true' and '$(Rebuild)' != 'true'" />
+    <!-- Deploy target is set up to chain after Build so that F5 in VS works. -->
+    <_SolutionBuildTargets Include="Test" Condition="'$(Test)' == 'true'" />
+    <!-- Pack before running integration and performance tests so that these tests can test packages produced by the repo. -->
+    <_SolutionBuildTargets Include="Pack" Condition="'$(Pack)' == 'true'" />
+    <_SolutionBuildTargets Include="IntegrationTest" Condition="'$(IntegrationTest)' == 'true'" />
+    <_SolutionBuildTargets Include="PerformanceTest" Condition="'$(PerformanceTest)' == 'true'" />
+  </ItemGroup>
 
-    <PropertyGroup>
-      <_RemoveProps>Projects;Restore;Deploy;Sign;Publish;@(_SolutionBuildTargets)</_RemoveProps>
-    </PropertyGroup>
+  <ItemGroup>
+    <_CommonProps Include="Configuration=$(Configuration)"/>
+    <_CommonProps Include="ContinuousIntegrationBuild=$(ContinuousIntegrationBuild)"/>
+    <_CommonProps Include="RepoRoot=$(RepoRoot)"/>
+    <_CommonProps Include="VersionsPropsPath=$(VersionsPropsPath)"/>
 
-    <ItemGroup>
-      <_CommonProps Include="Configuration=$(Configuration)"/>
-      <_CommonProps Include="ContinuousIntegrationBuild=$(ContinuousIntegrationBuild)"/>
-      <_CommonProps Include="RepoRoot=$(RepoRoot)"/>
-      <_CommonProps Include="VersionsPropsPath=$(VersionsPropsPath)"/>
+    <!--
+      In .NET product build mode, some projects may have set ExcludeFromSourceOnlyBuild or ExcludeFromDotNetBuild to true.
+      NuGet Restore task reports a warning for such projects, which we suppress here.
+    -->
+    <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuild)' == 'true'"/>
 
-      <!--
-        In .NET product build mode, some projects may have set ExcludeFromSourceOnlyBuild or ExcludeFromDotNetBuild to true.
-        NuGet Restore task reports a warning for such projects, which we suppress here.
-      -->
-      <_CommonProps Include="DisableWarnForInvalidRestoreProjects=true" Condition="'$(DotNetBuild)' == 'true'"/>
+    <!--
+      C++ projects expect VCTargetsPath property to be set. MSBuild generates this property to solution
+      metaproject when solution is build directly, but doesn't do so when the solution is built using MSBuild task.
+    -->
+    <_CommonProps Include="VCTargetsPath=$([MSBuild]::ValueOrDefault('$(VCTargetsPath)', '$([MSBuild]::GetVsInstallRoot())\Common7\IDE\VC\VCTargets\'))" Condition="'$(MSBuildRuntimeType)' != 'Core'"/>
+  </ItemGroup>
 
-      <!--
-        C++ projects expect VCTargetsPath property to be set. MSBuild generates this property to solution
-        metaproject when solution is build directly, but doesn't do so when the solution is built using MSBuild task.
-      -->
-      <_CommonProps Include="VCTargetsPath=$([MSBuild]::ValueOrDefault('$(VCTargetsPath)', '$([MSBuild]::GetVsInstallRoot())\Common7\IDE\VC\VCTargets\'))" Condition="'$(MSBuildRuntimeType)' != 'Core'"/>
-    </ItemGroup>
+  <ItemGroup>
+    <_SolutionBuildProps Include="@(_CommonProps)"/>
+    <_SolutionBuildProps Include="__DeployProjectOutput=$(Deploy)" Condition="'$(Deploy)' != ''"/>
+    <_SolutionBuildProps Include="__ImportPackTargets=true" Condition="'$(Pack)' == 'true'" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <_SolutionBuildProps Include="@(_CommonProps)"/>
-      <_SolutionBuildProps Include="__DeployProjectOutput=$(Deploy)" Condition="'$(Deploy)' != ''"/>
-      <_SolutionBuildProps Include="__ImportPackTargets=true" Condition="'$(Pack)' == 'true'" />
-    </ItemGroup>
-  </Target>
+  <!-- Restore toolset projects -->
+  <ItemGroup Condition="'$(MSBuildRestoreSessionId)' != ''">
+    <ProjectReference Include="AfterSolutionBuild.proj" Condition="'@(_SolutionBuildTargets)' != ''" />
+    <ProjectReference Include="Sign.proj" Condition="'$(Sign)' == 'true'" />
+    <ProjectReference Include="AfterSigning.proj" Condition="'@(_SolutionBuildTargets)' != ''" />
+    <ProjectReference Include="Publish.proj" Condition="'$(Publish)' == 'true' or '$(RestoreBuildTaskFeed)' == 'true'" />
+  </ItemGroup>
 
-  <Target Name="Execute" DependsOnTargets="InitializeSolutionBuildInputs">
+  <Target Name="Execute">
     <Error Text="Both .sln and .slnx files found. Please specify one to use in the eng/Build.props file." Condition="'@(RepoRootSlnFile)' != '' and '@(RepoRootSlnxFile)' != ''" />
     <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
     <Error Text="Property 'RepoRoot' must be specified" Condition="'$(RepoRoot)' == ''"/>
@@ -143,29 +162,6 @@
       <_NuGetRestoreTargets Condition="Exists('$(MSBuildToolsPath)\NuGet.targets')" >$(MSBuildToolsPath)\NuGet.targets</_NuGetRestoreTargets>
       <_NuGetRestoreTargets Condition="'$([MSBuild]::IsRunningFromVisualStudio())' == 'true' And Exists('$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets')">$(MSBuildToolsPath32)\..\..\..\Common7\IDE\CommonExtensions\Microsoft\NuGet\NuGet.targets</_NuGetRestoreTargets>
     </PropertyGroup>
-
-    <ItemGroup Condition="'$(Restore)' == 'true'">
-      <_RestoreToolsProps Include="@(_CommonProps)"/>
-      <_RestoreToolsProps Include="ExcludeRestorePackageImports=true"/>
-      <_RestoreToolsProps Condition="'@(_SolutionBuildTargets)' != ''" Include="_SolutionBuildTargets=true"/>
-    </ItemGroup>
-
-    <!--
-      Builds from the 'internal' project, and only those, can download the .net Runtime
-      from a private location.
-    -->
-    <ItemGroup Condition="'$(SYSTEM_TEAMPROJECT)' == 'internal'">
-      <_RestoreToolsProps Include="DotNetRuntimeSourceFeed=$(DotNetRuntimeSourceFeed)"/>
-      <_RestoreToolsProps Include="DotNetRuntimeSourceFeedKey=$(DotNetRuntimeSourceFeedKey)"/>
-    </ItemGroup>
-
-    <!--
-      Restore built-in tools.
-    -->
-    <MSBuild Projects="Tools.proj"
-             Targets="Restore"
-             Properties="@(_RestoreToolsProps)"
-             Condition="'$(Restore)' == 'true'"/>
 
     <!--
       Restore solutions and projects.
@@ -205,7 +201,7 @@
     -->
     <MSBuild Projects="@(ProjectToBuild)"
              Properties="@(_SolutionRestoreProps)"
-             RemoveProperties="$(_RemoveProps)"
+             RemoveProperties="$(_RemoveProps);@(_SolutionBuildTargets)"
              Targets="_IsProjectRestoreSupported"
              SkipNonexistentTargets="true"
              BuildInParallel="true"
@@ -248,7 +244,7 @@
       Don't ignore it when it set to 'false' to apply '-warnaserror false' from CLI script builds.
     -->
     <PropertyGroup>
-      <_RestoreRemoveProps>$(_RemoveProps)</_RestoreRemoveProps>
+      <_RestoreRemoveProps>$(_RemoveProps);@(_SolutionBuildTargets)</_RestoreRemoveProps>
       <_RestoreRemoveProps Condition="'$(TreatWarningsAsErrors)' != 'false'">$(_RestoreRemoveProps);TreatWarningsAsErrors</_RestoreRemoveProps>
     </PropertyGroup>
 
@@ -294,13 +290,41 @@
 
   <Target Name="ExecuteBuildTargets"
           Inputs="%(ProjectToBuild.BuildStep)"
-          Outputs="unused"
-          DependsOnTargets="InitializeSolutionBuildInputs">
+          Outputs="unused">
     <MSBuild Projects="@(ProjectToBuild)"
              Properties="@(_SolutionBuildProps);__BuildPhase=SolutionBuild"
-             RemoveProperties="$(_RemoveProps)"
+             RemoveProperties="$(_RemoveProps);@(_SolutionBuildTargets)"
              Targets="@(_SolutionBuildTargets)"
              BuildInParallel="%(ProjectToBuild.BuildInParallel)" />
   </Target>
+
+  <Target Name="RestoreRepoTools"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and Exists('$(_RepoToolManifest)')"
+          BeforeTargets="Restore">
+    <!-- Respect a restore config file passed in via /p:RestoreConfigFile, common in VMR builds -->
+    <PropertyGroup>
+      <RestoreConfigFileOption></RestoreConfigFileOption>
+      <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile "$(RestoreConfigFile)"</RestoreConfigFileOption>
+    </PropertyGroup>
+
+    <Exec Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)' WorkingDirectory="$(RepoRoot)" />
+  </Target>
+
+  <!-- Set as DependsOnTargets when internal tools (e.g. IBC data, optprof) is required -->
+  <Target Name="RestoreInternalTooling"
+          AfterTargets="$(RestoreInternalToolingAfterTargets)">
+    <PropertyGroup>
+      <InternalToolsRestoreProject>$(RepositoryEngineeringDir)common/internal/Tools.csproj</InternalToolsRestoreProject>
+      <InternalToolsRestoreConfig>$(RepositoryEngineeringDir)common/internal/NuGet.config</InternalToolsRestoreConfig>
+    </PropertyGroup>
+
+    <MSBuild Projects="$(InternalToolsRestoreProject)"
+      Targets="Restore"
+      Properties="@(_CommonProps);RestoreConfigFile=$(InternalToolsRestoreConfig)"
+      Condition="'$(Restore)' == 'true'" />
+  </Target>
+
+  <Import Project="InstallDotNetCore.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+  <Import Project="VisualStudio.AcquireOptimizationData.targets" Condition="'$(UsingToolVisualStudioIbcTraining)' == 'true'" />
 
 </Project>

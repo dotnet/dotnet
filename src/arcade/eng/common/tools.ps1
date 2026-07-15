@@ -775,7 +775,7 @@ function MSBuild() {
 
   $buildTool = InitializeBuildTool
 
-  $cmdArgs = "$($buildTool.Command) /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
+  $cmdArgs = "$($buildTool.Command) /restore /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
 
   # Add -mt flag for MSBuild multithreaded mode if enabled via environment variable
   if ($env:MSBUILD_MT_ENABLED -eq "1") {
