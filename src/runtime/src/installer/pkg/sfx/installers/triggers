@@ -1,0 +1,10 @@
+# dpkg triggers for dotnet-host (dotnet/sdk#55303).
+#
+# Re-run the postinst repair whenever any package installs, upgrades, or removes files under
+# these paths. In particular, a released dotnet-sdk-10.0 package that is installed or
+# reinstalled after dotnet-host would overwrite /usr/share/dotnet/dnx and replace
+# /usr/bin/dnx with its own (broken) regular file; activating this trigger lets the host
+# repair both entries afterwards. 'noawait' avoids introducing processing-order constraints
+# between the host and the SDK within a single dpkg transaction.
+interest-noawait /usr/share/dotnet/dnx
+interest-noawait /usr/bin/dnx

@@ -51,6 +51,16 @@
       <FilesToPublish Include="$(MSBuildThisFileDirectory)dnx"
             Destination="$(OutputPath)dnx"
             Condition="'$(TargetsUnix)' == 'true'" />
+      <!--
+        Private, non-conflicting copy of the robust dnx dispatcher used as the repair source by
+        the Linux package post-install and file-trigger scriptlets (dotnet/sdk#55303). Only laid
+        out for the native Linux packages (via _PublishLinuxPackageContent, set only by the deb/rpm
+        layout target); macOS/archive/MSI behavior is unchanged. Note that GenerateDeb/GenerateRpm
+        are stripped from this nested PublishToDisk invocation, so they cannot be used here.
+      -->
+      <FilesToPublish Include="$(MSBuildThisFileDirectory)dnx"
+            Destination="$(OutputPath)dnx.dispatcher"
+            Condition="'$(TargetsUnix)' == 'true' and '$(_PublishLinuxPackageContent)' == 'true'" />
     </ItemGroup>
 
     <Copy SourceFiles="@(FilesToPublish)"
@@ -58,6 +68,9 @@
 
     <Exec Command="chmod 755 &quot;$(OutputPath)dnx&quot;"
           Condition="'$(TargetsUnix)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
+
+    <Exec Command="chmod 755 &quot;$(OutputPath)dnx.dispatcher&quot;"
+          Condition="'$(TargetsUnix)' == 'true' and '$(_PublishLinuxPackageContent)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
   </Target>
 
   <Target Name="PublishSymbolsToDisk">
@@ -81,6 +94,45 @@
     <LinuxPackageSymlink Include="/usr/bin/dnx" LinkTarget="../share/dotnet/dnx" />
     <LinuxPackageConflicts Include="dotnet;dotnet-nightly" />
     <RpmOwnedDirectory Include="/usr/share/dotnet" />
+  </ItemGroup>
+
+  <!--
+    dnx file-ownership fix for native Linux packages (dotnet/sdk#55303).
+
+    Released dotnet-sdk-10.0 packages own /usr/share/dotnet/dnx and /usr/bin/dnx with different
+    RPM/DEB records than dotnet-host, which makes co-installing the host (pulled in as a newer
+    dependency) fail. dotnet-host owns the authoritative, robust dnx dispatcher, so the fix lives
+    here. The public entries are (re)created/repaired from a private source copy shipped by the
+    host (see dnx.dispatcher in PublishToDisk) so that SDK 10 and SDK 11 remain usable
+    side-by-side and a direct 'dnx' invocation always works.
+
+    - Both formats: an idempotent post-install repair (also run on trigger activation) restores
+      /usr/share/dotnet/dnx and points /usr/bin/dnx at it, and a final-removal cleanup removes the
+      generated public entries.
+    - DEB: a bounded 'Replaces' lets the host take over the dnx files from released dotnet-sdk-10.0
+      without a conflict (narrowly scoped so it never affects SDK 11), and a dpkg path trigger
+      re-runs the repair if an SDK is installed/reinstalled after the host and overwrites them.
+    - RPM: the public paths are owned as '%ghost' entries (not shipped in the payload, since rpm
+      rejects a non-identical file owned by two installed packages) and a file trigger re-runs the
+      repair when an SDK install/reinstall touches them.
+  -->
+  <ItemGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
+    <LinuxPostInstallScript Include="$(MSBuildThisFileDirectory)dnx-postinst.sh" />
+    <LinuxPostRemoveScript Include="$(MSBuildThisFileDirectory)dnx-postremove.sh" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(GenerateDeb)' == 'true'">
+    <!-- Narrowly scoped to released dotnet-sdk-10.0 (all 10.0.x feature bands); excludes SDK 11 (>= 10.1.0). -->
+    <DebControlProperty Include="Replaces" Value="dotnet-sdk-10.0 (&lt;&lt; 10.1.0)" />
+    <DebControlFile Include="$(MSBuildThisFileDirectory)triggers" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(GenerateRpm)' == 'true'">
+    <RpmGhostFile Include="/usr/share/dotnet/dnx" />
+    <RpmGhostFile Include="/usr/bin/dnx" />
+    <RpmFileTrigger Include="$(MSBuildThisFileDirectory)dnx-postinst.sh"
+                    Kind="FileTriggerIn"
+                    Paths="/usr/share/dotnet/dnx;/usr/bin/dnx" />
   </ItemGroup>
 
   <PropertyGroup>
