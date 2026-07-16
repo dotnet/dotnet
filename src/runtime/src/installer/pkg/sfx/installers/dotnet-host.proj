@@ -113,8 +113,8 @@
       without a conflict (narrowly scoped so it never affects SDK 11), and a dpkg path trigger
       re-runs the repair if an SDK is installed/reinstalled after the host and overwrites them.
     - RPM: the public paths are owned as '%ghost' entries (not shipped in the payload, since rpm
-      rejects a non-identical file owned by two installed packages) and a file trigger re-runs the
-      repair when an SDK install/reinstall touches them.
+      rejects a non-identical file owned by two installed packages) and a transaction file trigger
+      re-runs the repair after an SDK install/reinstall finishes extracting its payload.
   -->
   <ItemGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
     <LinuxPostInstallScript Include="$(MSBuildThisFileDirectory)dnx-postinst.sh" />
@@ -131,8 +131,8 @@
     <RpmGhostFile Include="/usr/share/dotnet/dnx" />
     <RpmGhostFile Include="/usr/bin/dnx" />
     <RpmFileTrigger Include="$(MSBuildThisFileDirectory)dnx-postinst.sh"
-                    Kind="FileTriggerIn"
-                    Paths="/usr/share/dotnet/dnx;/usr/bin/dnx" />
+                    Kind="TransFileTriggerIn"
+                    Paths="/usr/share/dotnet/sdk" />
   </ItemGroup>
 
   <PropertyGroup>

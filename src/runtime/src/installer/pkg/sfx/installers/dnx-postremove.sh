@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 # Remove the public dnx entry points that dotnet-host generates and repairs, but only on the
 # final removal of the host.
 #
@@ -15,10 +17,8 @@
 # dotnet-host is a hard dependency of the SDK packages, so it can only be removed once no SDK
 # remains; cleaning these paths here therefore does not disturb a still-installed SDK.
 case "$1" in
-    0|remove|purge)
-        rm -f /usr/bin/dnx 2>/dev/null || :
-        rm -f /usr/share/dotnet/dnx 2>/dev/null || :
-    ;;
+  0|remove|purge)
+    rm -f /usr/bin/dnx
+    rm -f /usr/share/dotnet/dnx
+  ;;
 esac
-
-exit 0

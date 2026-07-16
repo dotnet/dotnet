@@ -165,6 +165,37 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
         }
 
         [Fact]
+        public void TransactionFileTrigger_IsEmitted()
+        {
+            string payload = WritePayload(
+                RegularFile("usr/share/dotnet/dnx", "#!/bin/sh\nrobust dispatcher\n"));
+
+            ITaskItem[] rawKinds =
+            [
+                new TaskItem("./usr/share/dotnet/dnx: a /bin/sh script"),
+            ];
+
+            string scriptPath = Path.Combine(_tempDir, "repair.sh");
+            File.WriteAllText(scriptPath, "#!/bin/sh\nrepair after transaction\n");
+
+            MockBuildEngine engine = new();
+            CreateRpmPackage task = CreateTask(payload, rawKinds, engine);
+            ITaskItem trigger = new TaskItem(scriptPath);
+            trigger.SetMetadata("Kind", "TransFileTriggerIn");
+            trigger.SetMetadata("Paths", "/usr/share/dotnet/sdk");
+            task.FileTriggers = [trigger];
+
+            task.Execute().Should().BeTrue(BuildErrors(engine));
+
+            using FileStream rpmStream = File.OpenRead(task.OutputRpmPackagePath);
+            using RpmPackage package = RpmPackage.Read(rpmStream);
+
+            string[] triggerNames = (string[])package.Header.Entries
+                .First(e => e.Tag == RpmHeaderTag.TransFileTriggerName).Value;
+            triggerNames.Should().Equal("/usr/share/dotnet/sdk");
+        }
+
+        [Fact]
         public void GhostFileNotInPayload_LogsErrorAndFails()
         {
             string payload = WritePayload(

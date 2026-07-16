@@ -178,6 +178,31 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
 
             HasTag(package, RpmHeaderTag.FileTriggerScripts).Should().BeFalse();
             HasTag(package, RpmHeaderTag.FileTriggerName).Should().BeFalse();
+            HasTag(package, RpmHeaderTag.TransFileTriggerScripts).Should().BeFalse();
+            HasTag(package, RpmHeaderTag.TransFileTriggerName).Should().BeFalse();
+        }
+
+        [Fact]
+        public void TransactionFileTrigger_EmitsExpectedParallelHeaderArrays()
+        {
+            RpmBuilder builder = CreateBuilder();
+            builder.AddFile(RegularFile("./usr/share/dotnet/dnx", "dispatcher"), "a /bin/sh script");
+            const string script = "#!/bin/sh\nrepair dnx after transaction\n";
+            builder.AddFileTrigger("TransFileTriggerIn", script, new[] { "/usr/share/dotnet/sdk" });
+
+            using RpmPackage package = RoundTrip(builder);
+
+            GetArray<string>(package, RpmHeaderTag.TransFileTriggerScripts).Should().Equal(script);
+            GetArray<string>(package, RpmHeaderTag.TransFileTriggerScriptProg).Should().Equal("/bin/sh");
+            GetArray<int>(package, RpmHeaderTag.TransFileTriggerScriptFlags).Should().Equal(0);
+            GetArray<int>(package, RpmHeaderTag.TransFileTriggerPriorities).Should().Equal(RpmDefaultFileTriggerPriority);
+            GetArray<string>(package, RpmHeaderTag.TransFileTriggerName).Should().Equal("/usr/share/dotnet/sdk");
+            GetArray<string>(package, RpmHeaderTag.TransFileTriggerVersion).Should().Equal("");
+            GetArray<int>(package, RpmHeaderTag.TransFileTriggerFlags).Should().Equal(RpmSenseTriggerIn);
+            GetArray<int>(package, RpmHeaderTag.TransFileTriggerIndex).Should().Equal(0);
+
+            HasTag(package, RpmHeaderTag.FileTriggerScripts).Should().BeFalse();
+            HasTag(package, RpmHeaderTag.FileTriggerName).Should().BeFalse();
         }
 
         [Fact]

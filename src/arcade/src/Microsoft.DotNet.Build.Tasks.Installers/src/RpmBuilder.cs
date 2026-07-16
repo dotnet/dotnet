@@ -171,28 +171,38 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         }
 
         private readonly List<(string script, int senseFlags, IReadOnlyList<string> paths)> _fileTriggers = [];
+        private readonly List<(string script, int senseFlags, IReadOnlyList<string> paths)> _transFileTriggers = [];
 
         /// <summary>
         /// Adds a file trigger scriptlet that runs when any package on the system installs, upgrades,
         /// or removes a file under one of the specified <paramref name="paths"/> prefixes.
         /// </summary>
-        /// <param name="kind">One of <c>FileTriggerIn</c>, <c>FileTriggerUn</c>, or <c>FileTriggerPostUn</c>.</param>
+        /// <param name="kind">
+        /// One of <c>FileTriggerIn</c>, <c>FileTriggerUn</c>, <c>FileTriggerPostUn</c>,
+        /// <c>TransFileTriggerIn</c>, <c>TransFileTriggerUn</c>, or <c>TransFileTriggerPostUn</c>.
+        /// </param>
         /// <param name="script">The shell script body to execute.</param>
         /// <param name="paths">The file path prefixes that arm the trigger. Must be non-empty.</param>
         public void AddFileTrigger(string kind, string script, IReadOnlyList<string> paths)
         {
-            int senseFlags = kind switch
+            (int senseFlags, bool isTransactionTrigger) = kind switch
             {
-                "FileTriggerIn" => RpmSenseTriggerIn,
-                "FileTriggerUn" => RpmSenseTriggerUn,
-                "FileTriggerPostUn" => RpmSenseTriggerPostUn,
-                _ => throw new ArgumentException($"Unknown file trigger kind: '{kind}'. Expected 'FileTriggerIn', 'FileTriggerUn', or 'FileTriggerPostUn'.", nameof(kind))
+                "FileTriggerIn" => (RpmSenseTriggerIn, false),
+                "FileTriggerUn" => (RpmSenseTriggerUn, false),
+                "FileTriggerPostUn" => (RpmSenseTriggerPostUn, false),
+                "TransFileTriggerIn" => (RpmSenseTriggerIn, true),
+                "TransFileTriggerUn" => (RpmSenseTriggerUn, true),
+                "TransFileTriggerPostUn" => (RpmSenseTriggerPostUn, true),
+                _ => throw new ArgumentException(
+                    $"Unknown file trigger kind: '{kind}'. Expected 'FileTriggerIn', 'FileTriggerUn', " +
+                    "'FileTriggerPostUn', 'TransFileTriggerIn', 'TransFileTriggerUn', or 'TransFileTriggerPostUn'.",
+                    nameof(kind))
             };
             if (paths is null || paths.Count == 0)
             {
                 throw new ArgumentException("A file trigger must specify at least one path.", nameof(paths));
             }
-            _fileTriggers.Add((script, senseFlags, paths));
+            (isTransactionTrigger ? _transFileTriggers : _fileTriggers).Add((script, senseFlags, paths));
         }
 
         private readonly Dictionary<string, string> _scripts = [];
@@ -224,6 +234,76 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         // Default priority rpm assigns to a file trigger when none is specified (RPMTRIGGER_DEFAULT_PRIORITY).
         private const int RpmDefaultFileTriggerPriority = 1000000;
+
+        private static void AddFileTriggerEntries(
+            List<RpmHeader<RpmHeaderTag>.Entry> entries,
+            List<(string script, int senseFlags, IReadOnlyList<string> paths)> triggers,
+            bool isTransactionTrigger)
+        {
+            if (triggers.Count == 0)
+            {
+                return;
+            }
+
+            // RPM stores trigger scriptlets and their matching path conditions in parallel arrays.
+            List<string> triggerScripts = [];
+            List<string> triggerScriptProgs = [];
+            List<int> triggerScriptFlags = [];
+            List<int> triggerPriorities = [];
+            List<string> triggerNames = [];
+            List<string> triggerVersions = [];
+            List<int> triggerFlags = [];
+            List<int> triggerIndices = [];
+
+            for (int tix = 0; tix < triggers.Count; tix++)
+            {
+                (string script, int senseFlags, IReadOnlyList<string> paths) = triggers[tix];
+                triggerScripts.Add(script);
+                triggerScriptProgs.Add("/bin/sh");
+                triggerScriptFlags.Add(0);
+                triggerPriorities.Add(RpmDefaultFileTriggerPriority);
+                foreach (string path in paths)
+                {
+                    triggerNames.Add(path);
+                    triggerVersions.Add("");
+                    triggerFlags.Add(senseFlags);
+                    triggerIndices.Add(tix);
+                }
+            }
+
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerScripts : RpmHeaderTag.FileTriggerScripts,
+                RpmHeaderEntryType.StringArray,
+                triggerScripts.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerScriptProg : RpmHeaderTag.FileTriggerScriptProg,
+                RpmHeaderEntryType.StringArray,
+                triggerScriptProgs.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerScriptFlags : RpmHeaderTag.FileTriggerScriptFlags,
+                RpmHeaderEntryType.Int32,
+                triggerScriptFlags.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerPriorities : RpmHeaderTag.FileTriggerPriorities,
+                RpmHeaderEntryType.Int32,
+                triggerPriorities.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerName : RpmHeaderTag.FileTriggerName,
+                RpmHeaderEntryType.StringArray,
+                triggerNames.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerVersion : RpmHeaderTag.FileTriggerVersion,
+                RpmHeaderEntryType.StringArray,
+                triggerVersions.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerFlags : RpmHeaderTag.FileTriggerFlags,
+                RpmHeaderEntryType.Int32,
+                triggerFlags.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerIndex : RpmHeaderTag.FileTriggerIndex,
+                RpmHeaderEntryType.Int32,
+                triggerIndices.ToArray()));
+        }
 
         public RpmPackage Build()
         {
@@ -269,47 +349,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), $"{script.Key}prog"), RpmHeaderEntryType.String, "/bin/sh"));
             }
 
-            if (_fileTriggers.Count != 0)
-            {
-                // File triggers are stored as two parallel families of arrays in the RPM header:
-                //  - Per-script (indexed by the trigger index "tix"):
-                //    FileTriggerScripts, FileTriggerScriptProg, FileTriggerScriptFlags, FileTriggerPriorities.
-                //  - Per-condition/name (the dependency set):
-                //    FileTriggerName, FileTriggerVersion, FileTriggerFlags, FileTriggerIndex (the tix pointing back to the script).
-                List<string> triggerScripts = [];
-                List<string> triggerScriptProgs = [];
-                List<int> triggerScriptFlags = [];
-                List<int> triggerPriorities = [];
-                List<string> triggerNames = [];
-                List<string> triggerVersions = [];
-                List<int> triggerFlags = [];
-                List<int> triggerIndices = [];
-
-                for (int tix = 0; tix < _fileTriggers.Count; tix++)
-                {
-                    (string script, int senseFlags, IReadOnlyList<string> paths) = _fileTriggers[tix];
-                    triggerScripts.Add(script);
-                    triggerScriptProgs.Add("/bin/sh");
-                    triggerScriptFlags.Add(0);
-                    triggerPriorities.Add(RpmDefaultFileTriggerPriority);
-                    foreach (string path in paths)
-                    {
-                        triggerNames.Add(path);
-                        triggerVersions.Add("");
-                        triggerFlags.Add(senseFlags);
-                        triggerIndices.Add(tix);
-                    }
-                }
-
-                entries.Add(new(RpmHeaderTag.FileTriggerScripts, RpmHeaderEntryType.StringArray, triggerScripts.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerScriptProg, RpmHeaderEntryType.StringArray, triggerScriptProgs.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerScriptFlags, RpmHeaderEntryType.Int32, triggerScriptFlags.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerPriorities, RpmHeaderEntryType.Int32, triggerPriorities.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerName, RpmHeaderEntryType.StringArray, triggerNames.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerVersion, RpmHeaderEntryType.StringArray, triggerVersions.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerFlags, RpmHeaderEntryType.Int32, triggerFlags.ToArray()));
-                entries.Add(new(RpmHeaderTag.FileTriggerIndex, RpmHeaderEntryType.Int32, triggerIndices.ToArray()));
-            }
+            AddFileTriggerEntries(entries, _fileTriggers, isTransactionTrigger: false);
+            AddFileTriggerEntries(entries, _transFileTriggers, isTransactionTrigger: true);
 
             MemoryStream cpioArchive = new();
             using (CpioWriter writer = new(cpioArchive, leaveOpen: true))

@@ -54,7 +54,7 @@ To own a path as a "ghost" file (recorded in the RPM file list with the `RPMFILE
 
 To register an [RPM file trigger](https://rpm-software-management.github.io/rpm/manual/file_triggers.html), add an `RpmFileTrigger` item whose identity is the path to the trigger's shell script. Supported metadata:
 
-- `Kind`: one of `FileTriggerIn`, `FileTriggerUn`, or `FileTriggerPostUn`. Defaults to `FileTriggerIn`.
+- `Kind`: one of `FileTriggerIn`, `FileTriggerUn`, `FileTriggerPostUn`, `TransFileTriggerIn`, `TransFileTriggerUn`, or `TransFileTriggerPostUn`. Defaults to `FileTriggerIn`. Transaction file triggers run once at the end of the package transaction, after all matching payload files have been installed or removed.
 - `Paths`: a semicolon-separated list of path prefixes that arm the trigger. The trigger's script runs whenever any package on the system installs, upgrades, or removes a file under one of these prefixes.
 
 ### MacOS Pkg configuration

@@ -90,6 +90,8 @@ public partial class LinuxInstallerTests : IDisposable
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
     private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
+    private const int RpmFileGhost = 1 << 6;
+    private const int RpmTransFileTriggerNameTag = 5079;
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -643,6 +645,51 @@ public partial class LinuxInstallerTests : IDisposable
     {
         List<string> list = GetPackageList(image, packageType);
         ValidatePackageDependencies(list, packageType);
+        ValidateDnxPackageMetadata(packageType);
+    }
+
+    private void ValidateDnxPackageMetadata(PackageType packageType)
+    {
+        string hostPackage = GetContentPackage(DotnetHostPrefix, packageType);
+        string hostPackagePath = Path.Combine(_contextDir, hostPackage);
+
+        if (packageType == PackageType.Rpm)
+        {
+            using FileStream rpmStream = File.OpenRead(hostPackagePath);
+            using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
+
+            string[] baseNames = (string[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.BaseNames).Value;
+            string[] directoryNames = (string[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.DirectoryNames).Value;
+            int[] directoryNameIndices = (int[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.DirectoryNameIndices).Value;
+            int[] fileFlags = (int[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.FileFlags).Value;
+
+            string[] filePaths = baseNames
+                .Select((baseName, index) => directoryNames[directoryNameIndices[index]] + baseName)
+                .ToArray();
+
+            foreach (string ghostPath in new[] { "/usr/share/dotnet/dnx", "/usr/bin/dnx" })
+            {
+                int index = Array.IndexOf(filePaths, ghostPath);
+                Assert.True(index >= 0, $"RPM package does not own expected dnx path '{ghostPath}'.");
+                Assert.True((fileFlags[index] & RpmFileGhost) != 0, $"RPM path '{ghostPath}' is not ghost-owned.");
+            }
+
+            string[] triggerNames = (string[])rpmPackage.Header.Entries
+                .First(e => e.Tag == (RpmHeaderTag)RpmTransFileTriggerNameTag).Value;
+            Assert.Contains("/usr/share/dotnet/sdk", triggerNames);
+        }
+        else
+        {
+            Dictionary<string, string> controlFiles = GetDebianControlFiles(hostPackagePath);
+            Assert.True(controlFiles.TryGetValue("control", out string? control), "DEB package has no control file.");
+            Assert.Contains("Replaces: dotnet-sdk-10.0 (<< 10.1.0)", control);
+
+            Assert.True(controlFiles.TryGetValue("triggers", out string? triggers), "DEB package has no triggers file.");
+            Assert.Contains("interest-noawait /usr/share/dotnet/dnx", triggers);
+            Assert.Contains("interest-noawait /usr/bin/dnx", triggers);
+            Assert.Contains("postinst", controlFiles.Keys);
+            Assert.Contains("postrm", controlFiles.Keys);
+        }
     }
 
     private void ValidatePackageDependencies(List<string> list, PackageType packageType)
@@ -731,6 +778,14 @@ public partial class LinuxInstallerTests : IDisposable
 
     private List<string> GetDebianPackageDependencies(string packagePath)
     {
+        Dictionary<string, string> controlFiles = GetDebianControlFiles(packagePath);
+        return controlFiles.TryGetValue("control", out string? control)
+            ? ParseDebControlDependencies(control)
+            : [];
+    }
+
+    private Dictionary<string, string> GetDebianControlFiles(string packagePath)
+    {
         try
         {
             using FileStream debStream = File.OpenRead(packagePath);
@@ -756,22 +811,19 @@ public partial class LinuxInstallerTests : IDisposable
 
                 using (decompressed)
                 {
-                    // Read tar entries to find "control" file
+                    Dictionary<string, string> controlFiles = [];
                     using TarReader tarReader = new TarReader(decompressed, leaveOpen: false);
                     TarEntry? entry;
                     while ((entry = tarReader.GetNextEntry()) is not null)
                     {
-                        if (entry.Name
-                            .TrimStart('.', '/')
-                            .Equals("control", StringComparison.Ordinal))
+                        if (entry.DataStream is not null)
                         {
-                            using MemoryStream controlFileData = new MemoryStream();
-                            entry.DataStream?.CopyTo(controlFileData);
-                            string controlContent = Encoding.UTF8.GetString(controlFileData.ToArray());
-                            File.WriteAllText(Path.Combine(Path.GetTempPath(), "control.txt"), controlContent);
-                            return ParseDebControlDependencies(controlContent);
+                            using StreamReader reader = new(entry.DataStream, Encoding.UTF8, leaveOpen: true);
+                            controlFiles[entry.Name.TrimStart('.', '/')] = reader.ReadToEnd();
                         }
                     }
+
+                    return controlFiles;
                 }
             }
 
