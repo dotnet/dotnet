@@ -548,5 +548,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>b25932e8d128b5242f1d89691f8e8171b82774c0</Sha>
     </Dependency>
+    <Dependency Name="MSTest.Sdk" Version="4.4.0-preview.26360.5">
+      <Uri>https://github.com/microsoft/testfx</Uri>
+      <Sha>f19af28482c9d0101cc2a380fb05e2483460d703</Sha>
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>
