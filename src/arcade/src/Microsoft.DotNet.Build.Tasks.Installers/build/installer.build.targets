@@ -125,7 +125,7 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="PublishToDisk"
-             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'));_PublishLinuxPackageContent=true"
              RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
 
     <Copy
