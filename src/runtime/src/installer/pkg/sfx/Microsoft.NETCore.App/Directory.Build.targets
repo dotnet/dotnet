@@ -24,22 +24,26 @@
           AfterTargets="_GenerateFrameworkList"
           Condition="'$(PlatformPackageType)' == 'RuntimePack'">
     <PropertyGroup>
-      <_JsCatalogOutputPath>$(ArtifactsObjDir)$(OutDirName)/runtime-js.cat</_JsCatalogOutputPath>
+      <_JsCatalogOutputPath>$(IntermediateOutputPath)runtime-js.cat</_JsCatalogOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
       <_JsCatalogFile Include="@(FilesToPackage)" Condition="'%(Extension)' == '.js'" />
     </ItemGroup>
 
+    <!-- Remove a stale catalog from a previous build so a pack without .js can't ship one. -->
+    <Delete Condition="'@(_JsCatalogFile)' == '' and Exists('$(_JsCatalogOutputPath)')"
+            Files="$(_JsCatalogOutputPath)" />
+
     <GenerateFileCatalog Condition="'@(_JsCatalogFile)' != ''"
                          Files="@(_JsCatalogFile)"
                          OutputPath="$(_JsCatalogOutputPath)" />
 
-    <ItemGroup Condition="Exists('$(_JsCatalogOutputPath)')">
+    <ItemGroup Condition="'@(_JsCatalogFile)' != '' and Exists('$(_JsCatalogOutputPath)')">
       <FilesToPackage Include="$(_JsCatalogOutputPath)"
                       TargetPath="data/runtime-js.cat" />
     </ItemGroup>
-    <Message Condition="Exists('$(_JsCatalogOutputPath)')" Importance="High" Text="Generated JS catalog file: $(_JsCatalogOutputPath)" />
+    <Message Condition="'@(_JsCatalogFile)' != '' and Exists('$(_JsCatalogOutputPath)')" Importance="High" Text="Generated JS catalog file: $(_JsCatalogOutputPath)" />
   </Target>
 
   <Target Name="AddLongNameDacToPlatformManifest" DependsOnTargets="GetAssemblyVersion" BeforeTargets="GetFilesToPackage">

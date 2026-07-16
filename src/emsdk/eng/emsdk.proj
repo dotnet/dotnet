@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.Build.Traversal">
+  <!-- FileCatalog is restored via eng/Tools.props but, unlike a normal SDK project, the
+       Traversal build does not auto-import package build assets, so import the UsingTask
+       for GenerateFileCatalog explicitly. -->
+  <Import Project="$(NuGetPackageRoot)\microsoft.dotnet.build.tasks.filecatalog\$(MicrosoftDotNetBuildTasksFileCatalogVersion)\build\Microsoft.DotNet.Build.Tasks.FileCatalog.props" />
+
   <PropertyGroup>
     <LLVMPkgVersion Condition="'$(BuildOS)' == 'linux'">$(runtimelinuxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion)</LLVMPkgVersion>
     <LLVMPkgVersion Condition="'$(BuildOS)' == 'windows'">$(runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion)</LLVMPkgVersion>
