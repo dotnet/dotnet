@@ -5,6 +5,8 @@
 using Microsoft.DotNet.ScenarioTests.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using System.Xml;
@@ -295,6 +297,91 @@ internal partial class DotNetSdkHelper
 
     public void ExecuteTest(string projectDirectory) =>
         ExecuteCmd($"test {GetBinLogOption(projectDirectory, "test")}", workingDirectory: projectDirectory);
+
+    /// <summary>
+    /// Runs <c>dotnet test</c> for a generated project while collecting code coverage, then verifies a
+    /// coverage artifact was produced. Supports both the VSTest runner and Microsoft.Testing.Platform (MTP).
+    /// </summary>
+    public void ExecuteTestWithCoverage(string projectDirectory, bool useMicrosoftTestingPlatform)
+    {
+        string resultsDirectory = Path.Combine(projectDirectory, "TestResults");
+
+        string coverageArgs;
+        if (useMicrosoftTestingPlatform)
+        {
+            // On the .NET 10+ SDK the VSTest bridge was removed from Microsoft.Testing.Platform, so
+            // `dotnet test` has to run in its dedicated MTP mode. That mode is opted into via a global.json
+            // that EnableTestingPlatformRunner writes before `dotnet new` (see its remarks for why the
+            // ordering matters).
+            //
+            // MTP mode uses --coverage (Microsoft.Testing.Extensions.CodeCoverage) rather than the VSTest
+            // --collect data collector. Unknown switches are forwarded to the test app, so only MTP options
+            // are passed here (notably no --nologo, which the app rejects with "Zero tests ran").
+            coverageArgs = "--coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml";
+        }
+        else
+        {
+            coverageArgs = "--collect \"Code Coverage\"";
+        }
+
+        ExecuteCmd(
+            $"test {coverageArgs} --results-directory \"{resultsDirectory}\" {GetBinLogOption(projectDirectory, "test")}",
+            workingDirectory: projectDirectory);
+
+        IReadOnlyList<string> coverageFiles = FindCoverageFiles(resultsDirectory);
+        if (coverageFiles.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Expected a code coverage artifact under '{resultsDirectory}' but none was produced.");
+        }
+
+        foreach (string coverageFile in coverageFiles)
+        {
+            if (new FileInfo(coverageFile).Length == 0)
+            {
+                throw new InvalidOperationException($"Code coverage artifact was empty: '{coverageFile}'.");
+            }
+
+            _outputHelper.WriteLine($"Produced code coverage artifact: {coverageFile}");
+        }
+    }
+
+    private static IReadOnlyList<string> FindCoverageFiles(string resultsDirectory)
+    {
+        if (!Directory.Exists(resultsDirectory))
+        {
+            return Array.Empty<string>();
+        }
+
+        return Directory.EnumerateFiles(resultsDirectory, "*", SearchOption.AllDirectories)
+            .Where(file =>
+                file.EndsWith(".coverage", StringComparison.OrdinalIgnoreCase) ||
+                file.EndsWith(".cobertura.xml", StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Opts a generated project into the Microsoft.Testing.Platform mode of <c>dotnet test</c> by merging
+    /// <c>"test": { "runner": "Microsoft.Testing.Platform" }</c> into a global.json in the project directory,
+    /// preserving any keys already present (for example an SDK version pin).
+    /// </summary>
+    /// <remarks>
+    /// This MUST be called before <c>dotnet new ... --test-runner Microsoft.Testing.Platform</c>. That
+    /// template switch opts in by <em>modifying the nearest global.json</em> it finds walking up from the
+    /// output directory. With no local global.json it rewrites the repo-root one that every generated test
+    /// project shares, which forces the sibling VSTest template tests into MTP mode and breaks them. Writing
+    /// the local file first keeps the template's modification scoped to this project.
+    /// </remarks>
+    public static void EnableTestingPlatformRunner(string projectDirectory)
+    {
+        string globalJsonPath = Path.Combine(projectDirectory, "global.json");
+        JsonObject root = File.Exists(globalJsonPath)
+            ? JsonNode.Parse(File.ReadAllText(globalJsonPath)) as JsonObject ?? new JsonObject()
+            : new JsonObject();
+
+        root["test"] = new JsonObject { ["runner"] = "Microsoft.Testing.Platform" };
+        File.WriteAllText(globalJsonPath, root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+    }
 
     private string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
     {

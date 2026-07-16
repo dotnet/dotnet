@@ -36,9 +36,9 @@ where `additionalargs.runsettings` is:
 </RunSettings> 
 ```
 
-The syntax in (1) is another way of passing runsettings configuration and you need not author a runsetting file while using `Runsettings arguments`. More details about runsettings can be found [here](https://msdn.microsoft.com/library/jj635153.aspx).
+The syntax in (1) is another way of passing runsettings configuration and you need not author a `.runsettings` file while using `RunSettings arguments`. More details about runsettings can be found [here](https://learn.microsoft.com/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file).
 
-`Runsettings arguments` takes precedence over `runsettings`.
+`RunSettings arguments` takes precedence over `runsettings`.
 
 For example, in below command the final value for `MapInconclusiveToFailed` will be `False` and value for `DeploymentEnabled` will be unchanged, that is `False`.
 

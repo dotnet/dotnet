@@ -846,7 +846,10 @@ jobs:
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
           else
-            customPreBuildArgs="$customPreBuildArgs sudo -E unshare -n"
+            # Preserve HOME across the sudo boundary so the Azure Artifacts credential
+            # provider provisioned by NuGetAuthenticate can locate the credentials it
+            # cached for internal-feed restore.
+            customPreBuildArgs="$customPreBuildArgs sudo -E --preserve-env=HOME unshare -n"
           fi
 
           if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
@@ -943,7 +946,10 @@ jobs:
           extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
 
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
-            customPreBuildArgs="$customPreBuildArgs sudo -E"
+            # Preserve HOME across the sudo boundary so the Azure Artifacts credential
+            # provider provisioned by NuGetAuthenticate can locate the credentials it
+            # cached for internal-feed restore.
+            customPreBuildArgs="$customPreBuildArgs sudo -E --preserve-env=HOME"
           fi
 
           if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then

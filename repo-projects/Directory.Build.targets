@@ -11,9 +11,9 @@
     <BuildServerShutdownTimeoutInSeconds Condition="'$(BuildServerShutdownTimeoutInSeconds)' == ''">$([MSBuild]::Divide($(BuildServerShutdownTimeoutInMilliseconds), 1000))</BuildServerShutdownTimeoutInSeconds>
     <RepoVBCSCompilerPath>$([MSBuild]::NormalizePath('$(DotNetRoot)', 'sdk', '$(NETCoreSdkVersion)', 'Roslyn', 'bincore', 'VBCSCompiler.dll'))</RepoVBCSCompilerPath>
     <RepoBuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList 'exec','$(RepoVBCSCompilerPath)','-shutdown','-pipename:$(RepoSharedCompilationId)' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Repo compiler server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</RepoBuildServerShutdownCommand>
-    <RepoBuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; exec &quot;$(RepoVBCSCompilerPath)&quot; -shutdown -pipename:$(RepoSharedCompilationId) &amp; _repo_build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); if kill -0 $_repo_build_server_shutdown_pid 2&gt;/dev/null; then echo 'Repo compiler server shutdown timed out; terminating process.' &gt;&amp;2; kill $_repo_build_server_shutdown_pid 2&gt;/dev/null; fi) &amp; _repo_build_server_shutdown_watchdog_pid=$!; wait $_repo_build_server_shutdown_pid; _repo_build_server_shutdown_exit_code=$?; kill $_repo_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_repo_build_server_shutdown_exit_code</RepoBuildServerShutdownCommand>
+    <RepoBuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; exec &quot;$(RepoVBCSCompilerPath)&quot; -shutdown -pipename:$(RepoSharedCompilationId) &amp; _repo_build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_repo_build_server_shutdown_pid 2&gt;/dev/null) &amp; _repo_build_server_shutdown_watchdog_pid=$!; wait $_repo_build_server_shutdown_pid; _repo_build_server_shutdown_exit_code=$?; kill $_repo_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_repo_build_server_shutdown_exit_code</RepoBuildServerShutdownCommand>
     <BuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--vbcscompiler' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Build server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</BuildServerShutdownCommand>
-    <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); if kill -0 $_build_server_shutdown_pid 2&gt;/dev/null; then echo 'Build server shutdown timed out; terminating process.' &gt;&amp;2; kill $_build_server_shutdown_pid 2&gt;/dev/null; fi) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
+    <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_build_server_shutdown_pid 2&gt;/dev/null) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
 
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
@@ -821,15 +821,19 @@
       but the required features to read in binary files as input to a source generator don't exist.
       To work around these source generators, shut down the compiler server so we can delete the obj directories.
       Don't fail the build when shutdown returns a failure.
+
+      Don't run when source building to prevent the build from hanging indefinitely - https://github.com/dotnet/source-build/issues/4796
     -->
     <!-- Use an external timeout wrapper so timeout failures are absorbed by IgnoreExitCode instead of logged as MSBuild task errors. -->
     <Exec Command="$(RepoBuildServerShutdownCommand)"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
           ContinueOnError="WarnAndContinue"
           IgnoreStandardErrorWarningFormat="true"
           IgnoreExitCode="true" />
 
     <Exec Command="$(BuildServerShutdownCommand)"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
           ContinueOnError="WarnAndContinue"
           IgnoreStandardErrorWarningFormat="true"

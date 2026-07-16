@@ -719,7 +719,16 @@ namespace NuGetVSExtension
             string parameterString = (e as OleMenuCmdEventArgs)?.InValue as string;
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
             {
-                await ShowManageLibraryPackageDialogAsync(GetSearchText(parameterString));
+                try
+                {
+                    await ShowManageLibraryPackageDialogAsync(GetSearchText(parameterString));
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (Exception exception)
+#pragma warning restore CA1031 // Do not catch general exception types
+                {
+                    await OnPackageManagerOpenFailureAsync(exception, nameof(ShowManageLibraryPackageDialog));
+                }
             }).PostOnFailure(nameof(NuGetPackage), nameof(ShowManageLibraryPackageDialog));
         }
 
@@ -1045,7 +1054,16 @@ namespace NuGetVSExtension
 
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
             {
-                await ShowManageLibraryPackageForSolutionDialogAsync(options);
+                try
+                {
+                    await ShowManageLibraryPackageForSolutionDialogAsync(options);
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (Exception exception)
+#pragma warning restore CA1031 // Do not catch general exception types
+                {
+                    await OnPackageManagerOpenFailureAsync(exception, nameof(ShowManageLibraryPackageForSolutionDialog));
+                }
             }).PostOnFailure(nameof(NuGetPackage), nameof(ShowManageLibraryPackageForSolutionDialog));
         }
 

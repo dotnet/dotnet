@@ -248,7 +248,7 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>331fbbd197e21c8ec9d3eef292df8bbcd4deec0d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="11.0.0-beta.26359.117">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.FileCatalog" Version="11.0.0-beta.26359.117">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>331fbbd197e21c8ec9d3eef292df8bbcd4deec0d</Sha>
     </Dependency>
