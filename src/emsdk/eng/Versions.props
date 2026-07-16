@@ -3,7 +3,7 @@
   <PropertyGroup>
     <MajorVersion>8</MajorVersion>
     <MinorVersion>0</MinorVersion>
-    <PatchVersion>28</PatchVersion>
+    <PatchVersion>29</PatchVersion>
     <VersionPrefix>$(MajorVersion).$(MinorVersion).$(PatchVersion)</VersionPrefix>
     <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>
@@ -14,12 +14,12 @@
     <EmscriptenVersionNet7>3.1.12</EmscriptenVersionNet7>
     <PackageVersionNet7>7.0.20</PackageVersionNet7>
     <PackageVersionNet6>6.0.36</PackageVersionNet6>
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26256.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26256.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26256.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26256.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26256.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26256.1</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26281.1</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26281.1</runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26281.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26281.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26281.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>8.0.0-rtm.26281.1</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportVersion>
     <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>8.0.0-rtm.26230.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
     <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>8.0.0-rtm.26230.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>8.0.0-rtm.26230.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
@@ -36,17 +36,17 @@
     <runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>16.0.5-alpha.1.25311.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
     <runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>16.0.5-alpha.1.25311.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
     <runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>16.0.5-alpha.1.25311.1</runtimewinx64MicrosoftNETCoreRuntimeWasmLLVMTransportVersion>
-    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>8.0.0-rtm.26230.2</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
+    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>8.0.0-rtm.26281.3</MicrosoftNETCoreRuntimeWasmEmscriptenTransportVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StabilizePackageVersion Condition="'$(StabilizePackageVersion)' == ''">true</StabilizePackageVersion>
     <DotNetFinalVersionKind Condition="'$(StabilizePackageVersion)' == 'true'">release</DotNetFinalVersionKind>
   </PropertyGroup>
   <PropertyGroup>
-    <MicrosoftDotNetBuildTasksPackagingVersion>8.0.0-beta.26224.3</MicrosoftDotNetBuildTasksPackagingVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.26224.3</MicrosoftDotNetBuildTasksTemplatingVersion>
-    <MicrosoftDotNetBuildTasksInstallersPackageVersion>8.0.0-beta.26224.3</MicrosoftDotNetBuildTasksInstallersPackageVersion>
-    <MicrosoftDotNetBuildTasksWorkloadsPackageVersion>8.0.0-beta.26224.3</MicrosoftDotNetBuildTasksWorkloadsPackageVersion>
+    <MicrosoftDotNetBuildTasksPackagingVersion>8.0.0-beta.26278.3</MicrosoftDotNetBuildTasksPackagingVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.26278.3</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetBuildTasksInstallersPackageVersion>8.0.0-beta.26278.3</MicrosoftDotNetBuildTasksInstallersPackageVersion>
+    <MicrosoftDotNetBuildTasksWorkloadsPackageVersion>8.0.0-beta.26278.3</MicrosoftDotNetBuildTasksWorkloadsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SwixPackageVersion>1.1.87-gba258badda</SwixPackageVersion>
