@@ -22,9 +22,9 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
+    <MicrosoftDotNetSignCheckTaskVersion>$(MicrosoftDotNetSignCheckTaskPackageVersion)</MicrosoftDotNetSignCheckTaskVersion>
     <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCorePlatformsVersion>$(MicrosoftNETCorePlatformsPackageVersion)</MicrosoftNETCorePlatformsVersion>
-    <MicrosoftDotNetSignCheckTaskVersion>$(MicrosoftDotNetSignCheckTaskPackageVersion)</MicrosoftDotNetSignCheckTaskVersion>
   </PropertyGroup>
 </Project>
