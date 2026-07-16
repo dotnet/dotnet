@@ -127,6 +127,44 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
         }
 
         [Fact]
+        public void PostInAndPostUnScripts_AreEmittedAsRpmScriptletHeaders()
+        {
+            // The host dnx fix relies on wiring LinuxPostRemoveScript to the RPM Postun
+            // scriptlet (final-removal cleanup). Prove both Postin and Postun scripts flow
+            // through to real RPMTAG_POSTIN / RPMTAG_POSTUN header entries.
+            string payload = WritePayload(
+                RegularFile("usr/share/dotnet/dnx", "#!/bin/sh\nrobust dispatcher\n"));
+
+            ITaskItem[] rawKinds =
+            [
+                new TaskItem("./usr/share/dotnet/dnx: a /bin/sh script"),
+            ];
+
+            string postinPath = Path.Combine(_tempDir, "postin.sh");
+            File.WriteAllText(postinPath, "#!/bin/sh\npostin repair marker\n");
+            string postunPath = Path.Combine(_tempDir, "postun.sh");
+            File.WriteAllText(postunPath, "#!/bin/sh\npostun cleanup marker\n");
+
+            MockBuildEngine engine = new();
+            CreateRpmPackage task = CreateTask(payload, rawKinds, engine);
+            ITaskItem postin = new TaskItem(postinPath);
+            postin.SetMetadata("Kind", "Postin");
+            ITaskItem postun = new TaskItem(postunPath);
+            postun.SetMetadata("Kind", "Postun");
+            task.Scripts = [postin, postun];
+
+            task.Execute().Should().BeTrue(BuildErrors(engine));
+
+            using FileStream rpmStream = File.OpenRead(task.OutputRpmPackagePath);
+            using RpmPackage package = RpmPackage.Read(rpmStream);
+
+            string postinValue = (string)package.Header.Entries.First(e => e.Tag == RpmHeaderTag.Postin).Value;
+            string postunValue = (string)package.Header.Entries.First(e => e.Tag == RpmHeaderTag.Postun).Value;
+            postinValue.Should().Contain("postin repair marker");
+            postunValue.Should().Contain("postun cleanup marker");
+        }
+
+        [Fact]
         public void GhostFileNotInPayload_LogsErrorAndFails()
         {
             string payload = WritePayload(
