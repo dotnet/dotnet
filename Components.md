@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@643e406](https://github.com/dotnet/installer/tree/643e406f28897e45aae61498b65768a44c66f293)*
+*[dotnet/installer@d1958b8](https://github.com/dotnet/installer/tree/d1958b82f0fe1747d82fff1807f43ad7799520af)*
 - `src/msbuild`  
 *[dotnet/msbuild@7806cbf](https://github.com/dotnet/msbuild/tree/7806cbf7b0fd91ea6ab55c2e42d8ed973114e197)*
 - `src/nuget-client`  
@@ -52,13 +52,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@2bb24ee](https://github.com/dotnet/source-build-assets/tree/2bb24ee4d15de5a4550abed0265ca9e0ef0beae3)*
 - `src/source-build-externals`  
-*[_git/dotnet-source-build-externals@513485b](https://dev.azure.com/dnceng/internal/_git/dotnet-source-build-externals/?version=GC513485b2bbf1bd0f77d69f388221fd0905b5dc65)*
+*[dotnet/source-build-externals@f6ae6a6](https://github.com/dotnet/source-build-externals/tree/f6ae6a604f59a1f59d0fbf7fec68367404ed53d1)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/tree/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[_git/azure-identitymodel@566d71b](https://dnceng@dev.azure.com/dnceng/internal/_git/azure-identitymodel/?version=GC566d71bdade809137bdde7df837e7368ebef323d)*
+    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@ff96e25](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/ff96e2534408a4b7dfafc5c1edf4151c30affac9)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/tree/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  
