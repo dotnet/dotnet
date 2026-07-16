@@ -1,26 +1,23 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using BenchmarkDotNet.Attributes;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.TestUtils;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BenchmarkDotNet.Attributes;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Benchmarks
 {
-    [Config(typeof(AntiVirusFriendlyConfig))]
-    [HideColumns("Type", "Job", "WarmupCount", "LaunchCount")]
-    [MemoryDiagnoser]
+    // dotnet run -c release -f net8.0 --filter Microsoft.IdentityModel.Benchmarks.ValidateJWEAsyncTests*
+
     public class ValidateJWEAsyncTests
     {
         private JsonWebTokenHandler _jsonWebTokenHandler;
         private JwtSecurityTokenHandler _jwtSecurityTokenHandler;
         private SecurityTokenDescriptor _tokenDescriptor;
-        private string _jweFromJsonHandler;
-        private string _jweFromJwtHandler;
+        private string _jwe;
         private TokenValidationParameters _validationParameters;
 
         [GlobalSetup]
@@ -30,26 +27,26 @@ namespace Microsoft.IdentityModel.Benchmarks
             _jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             _tokenDescriptor = new SecurityTokenDescriptor
             {
-                SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
-                Subject = new ClaimsIdentity(Default.PayloadClaims),
-                TokenType = "TokenType"
+                SigningCredentials = BenchmarkUtils.SigningCredentialsRsaSha256,
+                EncryptingCredentials = BenchmarkUtils.EncryptingCredentialsAes256Sha512,
+                Claims = BenchmarkUtils.Claims,
+                TokenType = JsonWebTokens.JwtHeaderParameterNames.Jwk
             };
-            _jweFromJsonHandler = _jsonWebTokenHandler.CreateToken(_tokenDescriptor);
-            _jweFromJwtHandler = _jwtSecurityTokenHandler.CreateEncodedJwt(_tokenDescriptor);
+
+            _jwe = _jsonWebTokenHandler.CreateToken(_tokenDescriptor);
             _validationParameters = new TokenValidationParameters
             {
-                IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
-                TokenDecryptionKey = KeyingMaterial.DefaultSymmetricSecurityKey_512,
-                ValidAudience = Default.Audience,
-                ValidIssuer = Default.Issuer
+                IssuerSigningKey = BenchmarkUtils.SigningCredentialsRsaSha256.Key,
+                TokenDecryptionKey = BenchmarkUtils.SymmetricEncryptionKey512,
+                ValidAudience = BenchmarkUtils.Audience,
+                ValidIssuer = BenchmarkUtils.Issuer
             };
         }
 
         [Benchmark]
-        public async Task<TokenValidationResult> JsonWebTokenHandler_ValidateJWEAsync() => await _jsonWebTokenHandler.ValidateTokenAsync(_jweFromJsonHandler, _validationParameters);
+        public async Task<TokenValidationResult> JsonWebTokenHandler_ValidateJWEAsync() => await _jsonWebTokenHandler.ValidateTokenAsync(_jwe, _validationParameters);
 
         [Benchmark]
-        public ClaimsPrincipal JwtSecurityTokenHandler_ValidateJWEAsync() => _jwtSecurityTokenHandler.ValidateToken(_jweFromJwtHandler, _validationParameters, out _);
+        public ClaimsPrincipal JwtSecurityTokenHandler_ValidateJWEAsync() => _jwtSecurityTokenHandler.ValidateToken(_jwe, _validationParameters, out SecurityToken _securityToken);
     }
 }

@@ -297,7 +297,7 @@ namespace Microsoft.IdentityModel.TestUtils
         public static IEnumerable<Claim> SimpleShortClaimtypes(string issuer, string originalIssuer)
         {
             return new List<Claim>()
-            {                
+            {
                 NewClaimWithShortType(ClaimTypes.Country, "USA", ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer),
                 NewClaimWithShortType(ClaimTypes.Email, "user@contoso.com", ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer),
                 NewClaimWithShortType(ClaimTypes.GivenName, "Tony", ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer ),
@@ -376,7 +376,7 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             return DuplicateTypes(Default.Issuer, Default.Issuer);
         }
-        
+
         /// <summary>
         /// Returns an enumeration containing duplicate claims. Used to test duplicates.
         /// </summary>

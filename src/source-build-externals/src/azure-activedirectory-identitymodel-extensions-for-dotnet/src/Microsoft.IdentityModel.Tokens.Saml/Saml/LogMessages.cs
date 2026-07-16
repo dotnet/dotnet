@@ -54,6 +54,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         internal const string IDX11135 = "IDX11135: Unable to read SamlSecurityToken. Saml element '{0}' must have value.";
         internal const string IDX11136 = "IDX11136: 'AuthorizationDecisionStatement' cannot be empty.";
         internal const string IDX11137 = "IDX11137: 'SamlAction' must have a value.";
+        internal const string IDX11138 = "IDX11138: SAML assertion nesting bound exceeded (depth: '{0}', bound: '{1}').";
 
         // Saml writting
         internal const string IDX11501 = "IDX11501: SamlAssertion Id cannot be null or empty.";

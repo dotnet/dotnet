@@ -1,0 +1,22 @@
+From a3634e73bc93999f692f62acd2246b4c58b93ecd Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Fri, 19 Jun 2026 08:51:37 -0500
+Subject: [PATCH] Patch for source-build: System.Text.Json 8.0.6
+
+---
+ .../Valleysoft.DockerCredsProvider.csproj                       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Valleysoft.DockerCredsProvider/Valleysoft.DockerCredsProvider.csproj b/src/Valleysoft.DockerCredsProvider/Valleysoft.DockerCredsProvider.csproj
+index 962fb57..2179f40 100644
+--- a/src/Valleysoft.DockerCredsProvider/Valleysoft.DockerCredsProvider.csproj
++++ b/src/Valleysoft.DockerCredsProvider/Valleysoft.DockerCredsProvider.csproj
+@@ -21,7 +21,7 @@
+   </PropertyGroup>
+ 
+   <ItemGroup>
+-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
++    <PackageReference Include="System.Text.Json" Version="8.0.6" />
+   </ItemGroup>
+ 
+ </Project>

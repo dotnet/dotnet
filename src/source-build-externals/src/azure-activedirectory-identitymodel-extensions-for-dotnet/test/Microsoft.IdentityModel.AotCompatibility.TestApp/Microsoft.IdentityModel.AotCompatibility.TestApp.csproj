@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <TargetFramework Condition="'$(TargetNet8)' == 'True'">net8.0</TargetFramework>
-    <TargetFramework Condition="'$(TargetNet8)' != 'True'">net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks Condition="'$(TargetNet9)' == 'True'">$(TargetFramework); net9.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>full</TrimMode>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

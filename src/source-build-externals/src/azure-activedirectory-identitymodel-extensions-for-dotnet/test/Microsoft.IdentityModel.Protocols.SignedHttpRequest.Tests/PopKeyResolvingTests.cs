@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -29,7 +30,10 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 var signedHttpRequestValidationContext = theoryData.BuildSignedHttpRequestValidationContext();
                 var handler = new SignedHttpRequestHandlerPublic();
 
-                Cnf cnf = theoryData.ConfirmationClaim != null ? new Cnf(theoryData.ConfirmationClaim.ToString(Formatting.None)) : null;
+                Cnf cnf = null;
+                if (theoryData.Json != null)
+                    cnf = new Cnf(theoryData.Json);
+
                 _ = await handler.ResolvePopKeyFromCnfClaimAsync(cnf, theoryData.SignedHttpRequestToken, theoryData.ValidatedAccessToken, signedHttpRequestValidationContext, CancellationToken.None).ConfigureAwait(false);
 
                 if ((bool)signedHttpRequestValidationContext.CallContext.PropertyBag[theoryData.MethodToCall] == false)
@@ -52,11 +56,10 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                 var accessToken = new JsonWebToken(SignedHttpRequestTestUtils.DefaultEncodedAccessToken);
                 return new TheoryData<ResolvePopKeyTheoryData>
                 {
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("ValidJwk")
                     {
-                        First = true,
                         MethodToCall = "trackResolvePopKeyFromJwk",
-                        ConfirmationClaim = SignedHttpRequestTestUtils.DefaultCnfJwk,
+                        Json = SignedHttpRequestTestUtils.DefaultCnfJwk.ToString(Formatting.None),
                         CallContext = new CallContext()
                         {
                             PropertyBag = new Dictionary<string, object>()
@@ -64,13 +67,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                                 { "trackResolvePopKeyFromJwk", false }
                             }
                         },
-                        ValidatedAccessToken = accessToken,
-                        TestId = "ValidJwk",
+                        ValidatedAccessToken = accessToken
                     },
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("ValidJwe")
                     {
                         MethodToCall = "trackResolvePopKeyFromJwe",
-                        ConfirmationClaim = SignedHttpRequestTestUtils.DefaultCnfJwe,
+                        Json = SignedHttpRequestTestUtils.DefaultCnfJwe.ToString(Formatting.None),
                         CallContext = new CallContext()
                         {
                             PropertyBag = new Dictionary<string, object>()
@@ -78,13 +80,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                                 { "trackResolvePopKeyFromJwe", false }
                             }
                         },
-                        ValidatedAccessToken = accessToken,
-                        TestId = "ValidJwe",
+                        ValidatedAccessToken = accessToken
                     },
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("ValidJku")
                     {
                         MethodToCall = "trackResolvePopKeyFromJku",
-                        ConfirmationClaim = SignedHttpRequestTestUtils.DefaultJku,
+                        Json = SignedHttpRequestTestUtils.DefaultJku.ToString(Formatting.None),
                         CallContext = new CallContext()
                         {
                             PropertyBag = new Dictionary<string, object>()
@@ -92,13 +93,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                                 { "trackResolvePopKeyFromJku", false }
                             }
                         },
-                        ValidatedAccessToken = accessToken,
-                        TestId = "ValidJku",
+                        ValidatedAccessToken = accessToken
                     },
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("ValidJkuKid")
                     {
                         MethodToCall = "trackResolvePopKeyFromJku",
-                        ConfirmationClaim = SignedHttpRequestTestUtils.DefaultJkuKid,
+                        Json = SignedHttpRequestTestUtils.DefaultJkuKid.ToString(Formatting.None),
                         CallContext = new CallContext()
                         {
                             PropertyBag = new Dictionary<string, object>()
@@ -106,13 +106,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                                 { "trackResolvePopKeyFromJku", false }
                             }
                         },
-                        ValidatedAccessToken = accessToken,
-                        TestId = "ValidJkuKid",
+                        ValidatedAccessToken = accessToken
                     },
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("ValidKid")
                     {
                         MethodToCall = "trackResolvePopKeyFromKid",
-                        ConfirmationClaim = SignedHttpRequestTestUtils.DefaultKid,
+                        Json = SignedHttpRequestTestUtils.DefaultKid.ToString(Formatting.None),
                         CallContext = new CallContext()
                         {
                             PropertyBag = new Dictionary<string, object>()
@@ -120,22 +119,24 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                                 { "trackResolvePopKeyFromKid", false }
                             }
                         },
-                        ValidatedAccessToken = accessToken,
-                        TestId = "ValidKid",
+                        ValidatedAccessToken = accessToken
                     },
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("StartArray")
                     {
-                        ConfirmationClaim = JObject.Parse(@"{""unknown_claim"": 1}"),
+                        Json = @"[1]",
                         ValidatedAccessToken = accessToken,
-                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidCnfClaimException), "IDX23014"),
-                        TestId = "UnknownCnfClaim",
+                        ExpectedException = new ExpectedException(typeof( System.Text.Json.JsonException), "IDX11023"),
                     },
-                    new ResolvePopKeyTheoryData
+                    new ResolvePopKeyTheoryData("UnknownCnfClaim")
                     {
-                        ConfirmationClaim = null,
+                        Json = @"{""unknown_claim"": 1}",
                         ValidatedAccessToken = accessToken,
-                        ExpectedException = ExpectedException.ArgumentNullException(),
-                        TestId = "InvalidCnfClaim",
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidCnfClaimException), "IDX23014")
+                    },
+                    new ResolvePopKeyTheoryData("CnfClaimNull")
+                    {
+                        ValidatedAccessToken = accessToken,
+                        ExpectedException = ExpectedException.ArgumentNullException()
                     },
                 };
             }
@@ -489,17 +490,11 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                     },
                     new ResolvePopKeyTheoryData
                     {
-                        CallContext = new CallContext()
-                        {
-                            PropertyBag = new Dictionary<string, object>()
-                            {
-                                // to simulate http call and satisfy test requirements
-                                {"mockGetPopKeysFromJkuAsync_return1Key", null }
-                            }
-                        },
+                        // TLD-only entries should NOT match arbitrary domains (security fix)
                         JkuSetUrl = "https://www.contoso.com",
                         SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { ".com" }},
-                        TestId = "JkuTurnedOnTopLevelDomainMatch"
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidPopKeyException), string.Format(LogMessages.IDX23038, "https://www.contoso.com", ".com")),
+                        TestId = "JkuTurnedOnTopLevelDomainNoMatch"
                     },
                     new ResolvePopKeyTheoryData
                     {
@@ -556,6 +551,59 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                         JkuSetUrl = "https://localhost/keys",
                         SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { "localhost" }},
                         TestId = "JkuTurnedOnLocalUrl"
+                    },
+                    // Security fix: Malicious domain suffix bypass attempts should fail
+                    new ResolvePopKeyTheoryData
+                    {
+                        // evilcontoso.com should NOT match allowlist entry "contoso.com"
+                        JkuSetUrl = "https://evilcontoso.com/jwks",
+                        SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { "contoso.com" }},
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidPopKeyException), string.Format(LogMessages.IDX23038, "https://evilcontoso.com/jwks", "contoso.com")),
+                        TestId = "JkuDomainBypassAttempt_SuffixWithoutDot_ShouldFail"
+                    },
+                    new ResolvePopKeyTheoryData
+                    {
+                        // evil-contoso.com should NOT match allowlist entry "contoso.com"
+                        JkuSetUrl = "https://evil-contoso.com/jwks",
+                        SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { "contoso.com" }},
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidPopKeyException), string.Format(LogMessages.IDX23038, "https://evil-contoso.com/jwks", "contoso.com")),
+                        TestId = "JkuDomainBypassAttempt_HyphenatedSuffix_ShouldFail"
+                    },
+                    new ResolvePopKeyTheoryData
+                    {
+                        // notcontoso.com should NOT match allowlist entry "contoso.com"
+                        JkuSetUrl = "https://notcontoso.com/jwks",
+                        SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { "contoso.com" }},
+                        ExpectedException = new ExpectedException(typeof(SignedHttpRequestInvalidPopKeyException), string.Format(LogMessages.IDX23038, "https://notcontoso.com/jwks", "contoso.com")),
+                        TestId = "JkuDomainBypassAttempt_PrefixedSuffix_ShouldFail"
+                    },
+                    new ResolvePopKeyTheoryData
+                    {
+                        CallContext = new CallContext()
+                        {
+                            PropertyBag = new Dictionary<string, object>()
+                            {
+                                {"mockGetPopKeysFromJkuAsync_return1Key", null }
+                            }
+                        },
+                        // Legitimate subdomain keys.contoso.com SHOULD match allowlist entry "contoso.com"
+                        JkuSetUrl = "https://keys.contoso.com/jwks",
+                        SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { "contoso.com" }},
+                        TestId = "JkuLegitimateSubdomain_ShouldPass"
+                    },
+                    new ResolvePopKeyTheoryData
+                    {
+                        CallContext = new CallContext()
+                        {
+                            PropertyBag = new Dictionary<string, object>()
+                            {
+                                {"mockGetPopKeysFromJkuAsync_return1Key", null }
+                            }
+                        },
+                        // Exact domain match contoso.com SHOULD match allowlist entry "contoso.com"
+                        JkuSetUrl = "https://contoso.com/jwks",
+                        SignedHttpRequestValidationParameters = { AllowResolvingPopKeyFromJku = true, AllowedDomainsForJkuRetrieval = { "contoso.com" }},
+                        TestId = "JkuExactDomainMatch_ShouldPass"
                     }
                 };
             }
@@ -948,6 +996,14 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
     }
     public class ResolvePopKeyTheoryData : TheoryDataBase
     {
+        public ResolvePopKeyTheoryData()
+        {
+        }
+
+        public ResolvePopKeyTheoryData(string testId) : base(testId)
+        {
+        }
+
         public SignedHttpRequestValidationContext BuildSignedHttpRequestValidationContext()
         {
             var httpRequestData = new HttpRequestData()
@@ -982,6 +1038,8 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
         public IDictionary<string, IEnumerable<string>> HttpRequestHeaders { get; set; } = new Dictionary<string, IEnumerable<string>>();
 
         public byte[] HttpRequestBody { get; set; }
+
+        public string Json { get; set; }
 
         public SignedHttpRequestValidationParameters SignedHttpRequestValidationParameters { get; set; } = new SignedHttpRequestValidationParameters()
         {

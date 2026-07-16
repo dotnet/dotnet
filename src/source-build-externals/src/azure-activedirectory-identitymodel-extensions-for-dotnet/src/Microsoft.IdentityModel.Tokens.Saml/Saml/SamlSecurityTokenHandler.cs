@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.IdentityModel.Abstractions;
@@ -726,7 +727,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             if (token.Length > MaximumTokenSizeInBytes)
                 throw LogExceptionMessage(new ArgumentException(FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
 
-            using (var reader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(token), XmlDictionaryReaderQuotas.Max))
+            using (var reader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(token), BoundedXmlDictionaryReaderQuotas.Quotas))
             {
                 return ReadSamlToken(reader);
             }
@@ -821,7 +822,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             {
                 if (attributeValue != null && attributeValue.Length > 0)
                 {
-                    using (var xmlReader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(attributeValue), XmlDictionaryReaderQuotas.Max))
+                    using (var xmlReader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(attributeValue), BoundedXmlDictionaryReaderQuotas.Quotas))
                     {
                         xmlReader.MoveToContent();
                         xmlReader.ReadStartElement(Actor);
@@ -869,7 +870,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 }
             }
 
-            subject.Actor = new ClaimsIdentity(claims, "Federation");
+            subject.Actor = ClaimsIdentityFactory.Create(claims, "Federation");
             SetDelegateFromAttribute(actingAsAttribute, subject.Actor, issuer);
         }
 
@@ -1036,7 +1037,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 {
                     // remember that key was matched for throwing exception SecurityTokenSignatureKeyNotFoundException
                     keyMatched = true;
-                    keys = new List<SecurityKey> { securityKey };
+                    keys = [securityKey];
                 }
             }
 
@@ -1139,6 +1140,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             if (validationParameters == null)
                 throw LogArgumentNullException(nameof(validationParameters));
 
+            validationParameters = SamlTokenUtilities.PopulateValidationParametersWithCurrentConfigurationAsync(validationParameters).ConfigureAwait(false).GetAwaiter()
+                .GetResult();
+
             var samlToken = ReadSamlToken(reader);
             if (samlToken == null)
                 throw LogExceptionMessage(
@@ -1150,25 +1154,41 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         }
 
         /// <inheritdoc/>
-        public override Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters)
+        public override async Task<TokenValidationResult> ValidateTokenAsync(string token, TokenValidationParameters validationParameters)
         {
             try
             {
-                var claimsPrincipal = ValidateToken(token, validationParameters, out var validatedToken);
-                return Task.FromResult(new TokenValidationResult
+                if (string.IsNullOrWhiteSpace(token))
+                    throw LogArgumentNullException(nameof(token));
+
+                if (validationParameters == null)
+                    throw LogArgumentNullException(nameof(validationParameters));
+
+                if (token.Length > MaximumTokenSizeInBytes)
+                    throw LogExceptionMessage(new ArgumentException(FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
+
+                validationParameters = await SamlTokenUtilities.PopulateValidationParametersWithCurrentConfigurationAsync(validationParameters).ConfigureAwait(false);
+
+                var samlToken = ValidateSignature(token, validationParameters);
+                if (samlToken == null)
+                    throw LogExceptionMessage(new SecurityTokenValidationException(
+                        FormatInvariant(TokenLogMessages.IDX10254, LogHelper.MarkAsNonPII(_className), LogHelper.MarkAsNonPII("ValidateToken"), LogHelper.MarkAsNonPII(GetType()), LogHelper.MarkAsNonPII("ValidateSignature"), LogHelper.MarkAsNonPII(typeof(SamlSecurityToken)))));
+
+                var claimsPrincipal = ValidateToken(samlToken, token, validationParameters, out var validatedToken);
+                return new TokenValidationResult
                 {
                     SecurityToken = validatedToken,
                     ClaimsIdentity = claimsPrincipal?.Identities.First(),
                     IsValid = true,
-                });
+                };
             }
             catch (Exception ex)
             {
-                return Task.FromResult(new TokenValidationResult
+                return new TokenValidationResult
                 {
                     IsValid = false,
                     Exception = ex
-                });
+                };
             }
         }
 
@@ -1192,6 +1212,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml
 
             if (token.Length > MaximumTokenSizeInBytes)
                 throw LogExceptionMessage(new ArgumentException(FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
+
+            validationParameters = SamlTokenUtilities.PopulateValidationParametersWithCurrentConfigurationAsync(validationParameters).ConfigureAwait(false).GetAwaiter()
+                .GetResult();
 
             var samlToken = ValidateSignature(token, validationParameters);
             if (samlToken == null)

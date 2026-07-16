@@ -41,7 +41,7 @@ namespace System.IdentityModel.Tokens.Jwt
 
             Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json));
 
-            if (!JsonPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
+            if (!JsonPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, true))
                 throw LogHelper.LogExceptionMessage(
                     new JsonException(
                         LogHelper.FormatInvariant(
@@ -53,7 +53,7 @@ namespace System.IdentityModel.Tokens.Jwt
                         LogHelper.MarkAsNonPII(reader.CurrentDepth),
                         LogHelper.MarkAsNonPII(reader.BytesConsumed))));
 
-            while (reader.Read())
+            while (true)
             {
                 if (reader.TokenType == JsonTokenType.PropertyName)
                 {
@@ -66,6 +66,11 @@ namespace System.IdentityModel.Tokens.Jwt
 
                      this[propertyName] = obj;
                 }
+                // We read a JsonTokenType.StartObject above, exiting and positioning reader at next token.
+                else if (JsonPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.EndObject, true))
+                    break;
+                else if (!reader.Read())
+                    break;
             }
         }
 
@@ -390,6 +395,36 @@ namespace System.IdentityModel.Tokens.Jwt
 
                 if (value is string str)
                     return str;
+
+                if (value is JsonElement jsonElement)
+                    return jsonElement.ToString();
+                else if (value is IList<string> list)
+                {
+                    JsonElement json = JsonPrimitives.CreateJsonElement(list);
+                    return json.ToString();
+                }
+                else if (value is IList<object> objectList)
+                {
+                    var stringList = new List<string>(objectList.Count);
+                    foreach (object item in objectList)
+                    {
+                        if (item is string strItem)
+                            stringList.Add(strItem);
+                        else
+                        {
+                            // It isn't safe to ToString() an arbitrary object, so we throw here.
+                            // We could end up with a string that doesn't represent the object's value, for example a collection type.
+                            throw LogHelper.LogExceptionMessage(
+                                new JsonException(
+                                    LogHelper.FormatInvariant(
+                                    Microsoft.IdentityModel.Tokens.LogMessages.IDX11026,
+                                    LogHelper.MarkAsNonPII(claimType),
+                                    LogHelper.MarkAsNonPII(item.GetType()))));
+                        }
+                    }
+                    JsonElement json = JsonPrimitives.CreateJsonElement(stringList);
+                    return json.ToString();
+                }
 
                 // TODO - review dev
                 return string.Empty;

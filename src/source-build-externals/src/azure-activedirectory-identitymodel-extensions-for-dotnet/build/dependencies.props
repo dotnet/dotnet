@@ -10,6 +10,13 @@
     <NewtonsoftVersion>13.0.3</NewtonsoftVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' != 'net461'">
+    <SystemTextJson>8.0.5</SystemTextJson>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
     <SystemTextEncodingsWeb>4.7.2</SystemTextEncodingsWeb>
     <SystemTextJson>4.7.2</SystemTextJson>
   </PropertyGroup>

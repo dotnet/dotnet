@@ -31,7 +31,7 @@ namespace Microsoft.IdentityModel.TestUtils
             var originalClaim = new Claim(ClaimTypes.Country, Default.Country, ClaimValueTypes.String, Default.Issuer, Default.OriginalIssuer);
 
             var claimsToCompare = new List<Claim>()
-            {    
+            {
                 // Claim with different value for 'type'
                 new Claim(Guid.NewGuid().ToString(), Default.Country, ClaimValueTypes.String, Default.Issuer, Default.OriginalIssuer),
                 // Claim with different value for 'value'
@@ -480,10 +480,10 @@ namespace Microsoft.IdentityModel.TestUtils
             var context = new CompareContext($"{this}.CompareSamlAuthorizationDecisionStatements");
             var samlAction = new SamlAction(Guid.NewGuid().ToString());
             var samlAttributeStatement1 =
-                new SamlAuthorizationDecisionStatement(new SamlSubject(), 
+                new SamlAuthorizationDecisionStatement(new SamlSubject(),
                     Guid.NewGuid().ToString(), Default.SamlAccessDecision, new List<SamlAction> { samlAction });
             var samlAttributeStatement2 =
-                new SamlAuthorizationDecisionStatement(new SamlSubject(), 
+                new SamlAuthorizationDecisionStatement(new SamlSubject(),
                     Guid.NewGuid().ToString(), Default.SamlAccessDecision, new List<SamlAction> { samlAction });
             IdentityComparer.AreEqual(samlAttributeStatement1, samlAttributeStatement2, context);
 
@@ -503,7 +503,7 @@ namespace Microsoft.IdentityModel.TestUtils
                         new SamlAttributeStatement(new SamlSubject(),
                             new List<SamlAttribute> {new SamlAttribute("1", "2", "3")})
                     }));
-            var samlSecurityToken2 = 
+            var samlSecurityToken2 =
                 new SamlSecurityToken(new SamlAssertion(Guid.NewGuid().ToString(), Default.Issuer,
                     DateTime.Parse(Default.IssueInstantString), null, new SamlAdvice(),
                     new List<SamlStatement>
@@ -577,7 +577,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
             Assert.True(context.Diffs.Count(s => s == "str1 != str2, StringComparison: 'Ordinal'") == 1);
             Assert.True(context.Diffs[1] == string1);
-            Assert.True(context.Diffs[2] == string2);
+            Assert.True(context.Diffs[3] == string2);
         }
 
         [Fact]

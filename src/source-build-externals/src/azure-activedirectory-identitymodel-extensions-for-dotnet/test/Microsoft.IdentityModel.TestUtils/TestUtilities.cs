@@ -447,7 +447,8 @@ namespace Microsoft.IdentityModel.TestUtils
             Console.WriteLine($">>>> {testcase}, Id: {testId}.");
             return new CompareContext
             {
-                Title = $"{testcase} : {testId}"
+                Title = $"{testcase} : {testId}",
+                TestId = testId
             };
         }
 

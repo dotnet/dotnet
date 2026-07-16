@@ -1,24 +1,27 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.TestUtils;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
 
 namespace Microsoft.IdentityModel.Benchmarks
 {
-    [Config(typeof(AntiVirusFriendlyConfig))]
-    [HideColumns("Type", "Job", "WarmupCount", "LaunchCount")]
-    [MemoryDiagnoser]
+    // dotnet run -c release -f net8.0 --filter Microsoft.IdentityModel.Benchmarks.ValidateTokenAsyncTests*
+
     public class ValidateTokenAsyncTests
     {
         private JsonWebTokenHandler _jsonWebTokenHandler;
         private JwtSecurityTokenHandler _jwtSecurityTokenHandler;
         private SecurityTokenDescriptor _tokenDescriptor;
-        private string _jsonWebToken;
+        private SecurityTokenDescriptor _tokenDescriptorExtendedClaims;
+        private string _jws;
+        private string _jwsExtendedClaims;
         private TokenValidationParameters _validationParameters;
 
         [GlobalSetup]
@@ -26,38 +29,46 @@ namespace Microsoft.IdentityModel.Benchmarks
         {
             _tokenDescriptor = new SecurityTokenDescriptor
             {
-                Claims = BenchmarkUtils.SimpleClaims,
-                SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
+                Claims = BenchmarkUtils.Claims,
+                SigningCredentials = BenchmarkUtils.SigningCredentialsRsaSha256,
             };
-            _jsonWebToken = _jsonWebTokenHandler.CreateToken(_tokenDescriptor);
-            _validationParameters = new TokenValidationParameters()
+
+            _tokenDescriptorExtendedClaims = new SecurityTokenDescriptor
             {
-                ValidAudience = Default.Audience,
-                ValidateLifetime = true,
-                ValidIssuer = Default.Issuer,
-                IssuerSigningKey = KeyingMaterial.JsonWebKeyRsa256SigningCredentials.Key,
+                Claims = BenchmarkUtils.ClaimsExtendedExample,
+                SigningCredentials = BenchmarkUtils.SigningCredentialsRsaSha256,
             };
-        }
 
-        [GlobalSetup(Targets = new[] { nameof(JsonWebTokenHandler_ValidateTokenAsync) })]
-        public void JsonWebTokenSetup()
-        {
             _jsonWebTokenHandler = new JsonWebTokenHandler();
-            _jsonWebTokenHandler.SetDefaultTimesOnTokenCreation = false;
-        }
+            _jws = _jsonWebTokenHandler.CreateToken(_tokenDescriptor);
+            _jwsExtendedClaims = _jsonWebTokenHandler.CreateToken(_tokenDescriptorExtendedClaims);
 
-        [Benchmark]
-        public async Task<TokenValidationResult> JsonWebTokenHandler_ValidateTokenAsync() => await _jsonWebTokenHandler.ValidateTokenAsync(_jsonWebToken, _validationParameters).ConfigureAwait(false);
-
-        [GlobalSetup(Targets = new[] { nameof(JwtSecurityTokenHandler_ValidateTokenAsync) })]
-        public void JwtSecurityTokenSetup()
-        {
             _jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             _jwtSecurityTokenHandler.SetDefaultTimesOnTokenCreation = false;
+
+            _validationParameters = new TokenValidationParameters()
+            {
+                ValidAudience = BenchmarkUtils.Audience,
+                ValidateLifetime = true,
+                ValidIssuer = BenchmarkUtils.Issuer,
+                IssuerSigningKey = BenchmarkUtils.SigningCredentialsRsaSha256.Key,
+            };
         }
 
         [Benchmark]
-        public async Task<TokenValidationResult> JwtSecurityTokenHandler_ValidateTokenAsync() => await _jwtSecurityTokenHandler.ValidateTokenAsync(_jsonWebToken, _validationParameters).ConfigureAwait(false);
+        public async Task<List<Claim>> JsonWebTokenHandler_ValidateTokenAsync_CreateClaims()
+        {
+            var result = await _jsonWebTokenHandler.ValidateTokenAsync(_jwsExtendedClaims, _validationParameters).ConfigureAwait(false);
+            var claimsIdentity = result.ClaimsIdentity;
+            var claims = claimsIdentity.Claims;
+            return claims.ToList();
+        }
+
+        [Benchmark]
+        public async Task<TokenValidationResult> JsonWebTokenHandler_ValidateTokenAsync() => await _jsonWebTokenHandler.ValidateTokenAsync(_jws, _validationParameters).ConfigureAwait(false);
+
+        [Benchmark]
+        public async Task<TokenValidationResult> JwtSecurityTokenHandler_ValidateTokenAsync() => await _jwtSecurityTokenHandler.ValidateTokenAsync(_jws, _validationParameters).ConfigureAwait(false);
 
     }
 }

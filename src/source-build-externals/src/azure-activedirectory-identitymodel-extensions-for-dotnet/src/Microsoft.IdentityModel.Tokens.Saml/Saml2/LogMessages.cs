@@ -37,6 +37,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         internal const string IDX13108 = "IDX13108: When reading '{0}', Assertion.Subject is null and no Statements were found. [Saml2Core, line 585].";
         internal const string IDX13109 = "IDX13109: When reading '{0}', Assertion.Subject is null and an Authentication, Attribute or AuthorizationDecision Statement was found. and no Statements were found. [Saml2Core, lines 1050, 1168, 1280].";
         internal const string IDX13110 = "IDX13110: The Saml2SecurityToken must have a value for its Assertion property.";
+        internal const string IDX13111 = "IDX13111: SAML2 assertion nesting bound exceeded (depth: '{0}', bound: '{1}').";
         internal const string IDX13117 = "IDX13117: A <saml:EncryptedAttribute> was encountered while processing the attribute statement.To handle encrypted attributes, extend the Saml2SecurityTokenHandler and override ReadAttributeStatement.";
         internal const string IDX13118 = "IDX13118: A <saml:AuthnContextDecl> element was encountered.To handle by-value authentication context declarations, extend Saml2SecurityTokenHandler and override ReadAuthenticationContext.In addition, it may be necessary to extend Saml2AuthenticationContext so that its data model can accommodate the declaration value.";
         internal const string IDX13119 = "IDX13119: An abstract element was encountered which does not specify its concrete type. Element name: '{0}' Namespace: '{1}'";

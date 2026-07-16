@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
+using System.Threading;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Json.Tests;
@@ -116,7 +116,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        // Test checks to make sure that the JsonWebToken.GetClaim() method is able to retrieve every Claim returned by the Claims property (with the exception 
+        // Test checks to make sure that the JsonWebToken.GetClaim() method is able to retrieve every Claim returned by the Claims property (with the exception
         // of Claims that are JObjects or arrays, as those are converted to strings by the GetClaim() method).
         [Fact]
         public void CompareGetClaimAndClaims()
@@ -363,14 +363,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     PropertyName = "aud",
                     PropertyValue = new List<string>(),
                     PropertyType = typeof(List<string>),
-                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string>{ null, null })
+                    Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { null, null })
                 });
 
                 theoryData.Add(new GetPayloadValueTheoryData("singleNonNull")
                 {
                     ClaimValue = new List<string> { "audience" },
                     PropertyName = "aud",
-                    PropertyValue = new List<string> { "audience"},
+                    PropertyValue = new List<string> { "audience" },
                     PropertyType = typeof(List<string>),
                     Json = JsonUtilities.CreateUnsignedToken("aud", "audience")
                 });
@@ -379,7 +379,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 {
                     ClaimValue = new List<string> { "audience1" },
                     PropertyName = "aud",
-                    PropertyValue = new List<string> { "audience1"},
+                    PropertyValue = new List<string> { "audience1" },
                     PropertyType = typeof(List<string>),
                     Json = JsonUtilities.CreateUnsignedToken("aud", new List<string> { null, "audience1", null })
                 });
@@ -429,7 +429,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 theoryData.Add(new GetPayloadValueTheoryData("Alg_Int")
                 {
-                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020:"),
+                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022:"),
                     PropertyName = "Alg",
                     PropertyType = typeof(string),
                     PropertyValue = null,
@@ -512,7 +512,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 theoryData.Add(new GetPayloadValueTheoryData("Azp_Int")
                 {
-                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020:"),
+                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022:"),
                     PropertyName = "Azp",
                     PropertyType = typeof(string),
                     Json = JsonUtilities.CreateUnsignedToken("azp", 1)
@@ -726,7 +726,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 return theoryData;
             }
-            
+
         }
 
         // This test ensures that accessing claims from the payload works as expected.
@@ -963,6 +963,15 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     PropertyValue = "option1",
                     Json = JsonUtilities.CreateUnsignedToken("enum", "option1")
                 });
+
+                Guid guid = Guid.NewGuid();
+                theoryData.Add(new GetPayloadValueTheoryData("guid")
+                {
+                    PropertyName = "guid",
+                    PropertyType = typeof(string),
+                    PropertyValue = guid.ToString(),
+                    Json = JsonUtilities.CreateUnsignedToken("guid", guid)
+                });
                 #endregion
 
                 #region collection of strings from simple types
@@ -972,7 +981,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                 {
                     PropertyName = "dateTime",
                     PropertyType = typeof(string[]),
-                    PropertyValue = new string[] {dateTime.ToString("o", CultureInfo.InvariantCulture)},
+                    PropertyValue = new string[] { dateTime.ToString("o", CultureInfo.InvariantCulture) },
                     Json = JsonUtilities.CreateUnsignedToken("dateTime", dateTime)
                 });
 
@@ -1598,6 +1607,30 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     Token = EncodedJwts.JWEEmptyAuthenticationTag,
                 });
 
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidHeader))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14102:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidHeader,
+                });
+
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidIV))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14309:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidIV,
+                });
+
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidCiphertext))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14312:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidCiphertext,
+                });
+
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidAuthenticationTag))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14311:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidAuthenticationTag,
+                });
+
                 return theoryData;
             }
         }
@@ -1630,6 +1663,79 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             string jsonEncoded = Base64UrlEncoder.Encode("{}") + "." + Base64UrlEncoder.Encode(json) + ".";
             JsonWebToken encodedToken = new JsonWebToken(jsonEncoded);
             _ = encodedToken.Claims;
+        }
+
+        [Fact]
+        public void DifferentCultureJsonWebToken()
+        {
+            string numericClaim = string.Empty;
+            List<Claim> numericList = null;
+
+            var thread = new Thread(() =>
+            {
+                CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+
+                var handler = new JsonWebTokenHandler();
+                var tokenStr = handler.CreateToken(new SecurityTokenDescriptor
+                {
+                    Claims = new Dictionary<string, object>
+                    {
+                        { "numericClaim", 10.9d },
+                        { "numericList", new List<object> { 12.2, 11.1 } }
+                    }
+                });
+
+                var token = new JsonWebToken(tokenStr);
+                var claim = token.Claims.First(c => c.Type == "numericClaim");
+                numericClaim = claim.Value;
+                numericList = token.Claims.Where(c => c.Type == "numericList").ToList();
+            });
+
+            thread.Start();
+            thread.Join();
+
+            Assert.Equal("10.9", numericClaim);
+            Assert.Equal("12.2", numericList[0].Value);
+            Assert.Equal("11.1", numericList[1].Value);
+        }
+
+        // Test to verify equality between JsonWebTokens created from a string and an equivalent span
+        [Theory, MemberData(nameof(ParseTokenTheoryData))]
+        public void StringAndMemoryConstructors_CreateEquivalentTokens(JwtTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.CompareJsonWebToken", theoryData);
+            try
+            {
+                var tokenFromMemory = new JsonWebToken(theoryData.Token.AsMemory());
+                var tokenFromString = new JsonWebToken(theoryData.Token);
+
+                theoryData.ExpectedException.ProcessNoException(context);
+                IdentityComparer.AreEqual(tokenFromMemory, tokenFromString, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Fact]
+        public void DerivedJsonWebToken_IsCreatedCorrectly()
+        {
+            var expectedCustomClaim = "customclaim";
+            var tokenStr = new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
+            {
+                Issuer = Default.Issuer,
+                Claims = new Dictionary<string, object>
+                {
+                    { "CustomClaim", expectedCustomClaim },
+                }
+            });
+
+            var derivedToken = new CustomJsonWebToken(tokenStr);
+
+            Assert.Equal(expectedCustomClaim, derivedToken.CustomClaim);
+            Assert.Equal(Default.Issuer, derivedToken.Issuer);
         }
     }
 

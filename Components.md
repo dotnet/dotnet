@@ -52,13 +52,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@2bb24ee](https://github.com/dotnet/source-build-assets/tree/2bb24ee4d15de5a4550abed0265ca9e0ef0beae3)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@f537cc2](https://github.com/dotnet/source-build-externals/tree/f537cc21040df4a14d26a3045a0d4b6fdc1efc3b)*
+*[dotnet/source-build-externals@f6ae6a6](https://github.com/dotnet/source-build-externals/tree/f6ae6a604f59a1f59d0fbf7fec68367404ed53d1)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
     *[Microsoft/ApplicationInsights-dotnet@5e2e7dd](https://github.com/Microsoft/ApplicationInsights-dotnet/tree/5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@a607fa5](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/a607fa5e0005a6178cf1d2fed4fa0f8179cdb186)*
+    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@ff96e25](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/ff96e2534408a4b7dfafc5c1edf4151c30affac9)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/tree/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  
