@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -91,7 +90,7 @@ namespace NuGet.Protocol
             private readonly PackageSearchResource _packageSearchResource;
 
 
-            private IEnumerator<IPackageSearchMetadata> _currentEnumerator;
+            private IEnumerator<IPackageSearchMetadata>? _currentEnumerator;
 
             public EnumeratorAsync(PackageSearchResource feedParser, string searchTerm, SearchFilter filter, ILogger logger, CancellationToken token)
             {
@@ -106,7 +105,8 @@ namespace NuGet.Protocol
             {
                 get
                 {
-                    return _currentEnumerator?.Current;
+                    // Non-null guaranteed by IEnumerableAsync contract: callers only read Current after MoveNextAsync() returns true.
+                    return _currentEnumerator?.Current!;
                 }
             }
 

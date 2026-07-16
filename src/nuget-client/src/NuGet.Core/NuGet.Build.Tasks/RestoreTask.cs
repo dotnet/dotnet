@@ -21,6 +21,7 @@ namespace NuGet.Build.Tasks
     /// <summary>
     /// .NET Core compatible restore task for PackageReference and UWP project.json projects.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class RestoreTask : Microsoft.Build.Utilities.Task, ICancelableTask, IDisposable
     {
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -147,11 +148,6 @@ namespace NuGet.Build.Tasks
 
             try
             {
-                // Re-read environment-variable-derived caches at the start of restore so a process reused across builds
-                // (e.g. MSBuild Server) observes the current environment instead of the values cached on the first build.
-                // RestoreTask runs once per restore on the entry node.
-                // Once RestoreTask runs in the same process as the auxiliary NuGet Tasks it should be moved earlier.
-                StaticState.RaiseStartMSBuildRestoreTasks();
                 return ExecuteAsync(log).Result;
             }
             catch (AggregateException ex) when (_cts.Token.IsCancellationRequested && ex.InnerException is OperationCanceledException)
