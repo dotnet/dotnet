@@ -262,6 +262,48 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="$(MicrosoftVisualStudioThreadingVersion)" PrivateAssets="all" ExcludeAssets="runtime;contentFiles;build;analyzers;native" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+
+    <!-- Provides the GenerateFileCatalog task used by the GenerateContentCatalog target below. -->
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.FileCatalog" Version="$(MicrosoftDotNetBuildTasksFileCatalogVersion)" />
   </ItemGroup>
+
+  <!--
+    Generate a single catalog (.cat) file covering the non-PE content files (XML docs/templates)
+    that ship loose in the VSIX and include it in the VSIX itself, so the VS signing scan does not
+    flag those files as unsigned. This runs for every VSIX that imports these shared targets
+    (VisualFSharpFull and VisualFSharpDebug), producing one catalog per VSIX.
+
+    It hooks BeforeTargets="GenerateFileManifest" so the catalog is added to @(VSIXSourceItem)
+    before the VSIX file manifest is generated, ensuring the .cat lands inside the .vsix container.
+    GenerateFileCatalog is cross-platform (no makecat.exe / Windows SDK dependency). -->
+  <Target Name="GenerateContentCatalog"
+          BeforeTargets="GenerateFileManifest"
+          Condition="'$(CreateVsixContainer)' == 'true'">
+    <ItemGroup>
+      <!-- Loose non-PE content that can't be Authenticode-signed directly, chiefly the XML
+           doc files shipped next to the assemblies (e.g. FSharp.Core.xml). VS item/project
+           templates are packaged as .zip by TemplateProjectOutputGroup, so their .vstemplate
+           and .xml payloads are inside the .zip and never appear here. -->
+      <_CatalogContentFile Include="@(VSIXSourceItem)" Condition="'%(Extension)' == '.xml'" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_ContentCatalogPath>$(IntermediateOutputPath)FSharpVsixTemplateContent.cat</_ContentCatalogPath>
+    </PropertyGroup>
+
+    <!-- Run unconditionally: with no input files the task deletes any stale catalog from a
+         previous build, so an out-of-date .cat is never packaged. -->
+    <GenerateFileCatalog Files="@(_CatalogContentFile)"
+                         OutputPath="$(_ContentCatalogPath)" />
+
+    <!-- Include the generated catalog at the root of the VSIX. -->
+    <ItemGroup Condition="Exists('$(_ContentCatalogPath)')">
+      <VSIXSourceItem Include="$(_ContentCatalogPath)">
+        <VSIXSubPath></VSIXSubPath>
+      </VSIXSourceItem>
+    </ItemGroup>
+
+    <Message Condition="Exists('$(_ContentCatalogPath)')" Importance="High" Text="Generated content catalog: $(_ContentCatalogPath)" />
+  </Target>
 
 </Project>

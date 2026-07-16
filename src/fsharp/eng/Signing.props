@@ -3,6 +3,8 @@
   <ItemGroup>
     <FileSignInfo Include="Nerdbank.Streams.dll" CertificateName="None" />
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="None" />
+    <!-- Sign the catalog covering non-PE content files (XML docs/templates) in the VisualFSharp VSIXes. -->
+    <FileSignInfo Include="FSharpVsixTemplateContent.cat" CertificateName="Microsoft400" />
   </ItemGroup>
 
   <PropertyGroup>

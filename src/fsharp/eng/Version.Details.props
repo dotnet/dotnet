@@ -7,6 +7,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26324.4</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogPackageVersion>10.0.0-beta.26324.4</MicrosoftDotNetBuildTasksFileCatalogPackageVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildPackageVersion>18.10.0-preview-26357-08</MicrosoftBuildPackageVersion>
     <MicrosoftBuildFrameworkPackageVersion>18.10.0-preview-26357-08</MicrosoftBuildFrameworkPackageVersion>
@@ -38,6 +39,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogVersion>$(MicrosoftDotNetBuildTasksFileCatalogPackageVersion)</MicrosoftDotNetBuildTasksFileCatalogVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkVersion>
