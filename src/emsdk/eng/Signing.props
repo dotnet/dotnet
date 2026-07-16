@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <FileExtensionSignInfo Include=".pyd" CertificateName="MicrosoftDotNet500" />
-    <FileExtensionSignInfo Include=".cat" CertificateName="MicrosoftDotNet500" />
     <FileExtensionSignInfo Include=".vbs" CertificateName="MicrosoftDotNet500" />
 
     <!-- JS files are customer-modifiable Emscripten toolchain files. They cannot be
@@ -14,6 +13,10 @@
          Instead, a catalog file (emscripten-js.cat) is generated and signed to provide
          integrity verification. See the GenerateCatalogFiles target in eng/emsdk.proj. -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
+    <FileSignInfo Include="emscripten-js.cat" CertificateName="MicrosoftDotNet500" />
+
+    <!-- python.cat ships in the Python transport package. -->
+    <FileSignInfo Include="python.cat" CertificateName="MicrosoftDotNet500" />
 
     <!--
       Zero length files should not be signed because it breaks signing/ESRP.

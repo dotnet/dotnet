@@ -15,6 +15,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildTasksArchivesPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetBuildTasksArchivesPackageVersion>
     <MicrosoftDotNetBuildTasksFeedPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetBuildTasksFeedPackageVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetBuildTasksFileCatalogPackageVersion>
     <MicrosoftDotNetBuildTasksInstallersPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetBuildTasksInstallersPackageVersion>
     <MicrosoftDotNetBuildTasksPackagingPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetBuildTasksPackagingPackageVersion>
     <MicrosoftDotNetBuildTasksTargetFrameworkPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetBuildTasksTargetFrameworkPackageVersion>
@@ -130,6 +131,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildTasksArchivesVersion>$(MicrosoftDotNetBuildTasksArchivesPackageVersion)</MicrosoftDotNetBuildTasksArchivesVersion>
     <MicrosoftDotNetBuildTasksFeedVersion>$(MicrosoftDotNetBuildTasksFeedPackageVersion)</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogVersion>$(MicrosoftDotNetBuildTasksFileCatalogPackageVersion)</MicrosoftDotNetBuildTasksFileCatalogVersion>
     <MicrosoftDotNetBuildTasksInstallersVersion>$(MicrosoftDotNetBuildTasksInstallersPackageVersion)</MicrosoftDotNetBuildTasksInstallersVersion>
     <MicrosoftDotNetBuildTasksPackagingVersion>$(MicrosoftDotNetBuildTasksPackagingPackageVersion)</MicrosoftDotNetBuildTasksPackagingVersion>
     <MicrosoftDotNetBuildTasksTargetFrameworkVersion>$(MicrosoftDotNetBuildTasksTargetFrameworkPackageVersion)</MicrosoftDotNetBuildTasksTargetFrameworkVersion>
