@@ -45,6 +45,8 @@ internal static class MtpConstants
     public const string TimeDurationMs = "time.duration-ms";
     public const string ErrorMessage = "error.message";
     public const string ErrorStackTrace = "error.stacktrace";
+    public const string StandardOutput = "standardOutput";
+    public const string StandardError = "standardError";
     public const string LocationFile = "location.file";
     public const string LocationLineStart = "location.line-start";
     public const string Traits = "traits";

@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,7 +21,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestClass]
 public class MtpUnderVstestTests : AcceptanceTestBase
 {
-    // MtpMSTestProject is an MSTest project built as an MTP application (EnableMSTestRunner): two tests
+    // MtpMSTestProject is an MSTest project built as an MTP application (EnableMSTestRunner): three tests
     // pass, one fails, one is skipped.
     private const string MtpApp = "MtpMSTestProject.dll";
 
@@ -163,5 +165,100 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         // The guarded test passes only if MTP_FROM_RUNSETTINGS reached the host with the runsettings value.
         ValidateSummaryStatus(3, 1, 1);
+    }
+
+    [TestMethod]
+    // A test's captured standard output/error must be surfaced to the loggers. The MTP node carries the
+    // per-test standardOutput/standardError; MtpTestNodeConverter now maps them onto the vstest result so
+    // the console and TRX show them. Before this the markers appeared nowhere. TestPassesToo writes the
+    // markers; the run produces a TRX that must contain them.
+    [TestMatrix(testHost: Target.Net)]
+    public void RunMtpApplicationSurfacesPerTestStandardOutput(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var trxFileName = "stdout.trx";
+        var arguments = PrepareArguments(
+            GetAssetFullPath(MtpApp),
+            testAdapterPath: null,
+            runSettings: string.Empty,
+            FrameworkArgValue,
+            runnerInfo.InIsolationValue,
+            resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, $" /logger:trx;LogFileName={trxFileName}");
+
+        InvokeVsTest(arguments);
+
+        // MtpMSTestProject has five test cases: three pass, one fails, one is skipped.
+        ValidateSummaryStatus(3, 1, 1);
+
+        var trxPath = Path.Combine(TempDirectory.Path, trxFileName);
+        Assert.IsTrue(File.Exists(trxPath), "Expected a TRX at '{0}'.", trxPath);
+        var trx = File.ReadAllText(trxPath);
+        Assert.Contains("MTP_STDOUT_MARKER", trx, "Expected the test's standard output to be surfaced into the TRX.");
+        Assert.Contains("MTP_STDERR_MARKER", trx, "Expected the test's standard error to be surfaced into the TRX.");
+    }
+
+    [TestMethod]
+    // A generic out-of-process data collector (SampleDataCollector) subscribes to per-test-case
+    // start/end events, emits per-test-case attachments and reports the launched test-host PID. In the
+    // classic path the testhost drives all of that; under MTP there is no testhost, so vstest.console
+    // owns the datacollector lifecycle and forwards the per-test-case events itself. Blame is the
+    // most visible collector that needs this, but the wiring must work for ANY out-of-process
+    // collector (Blame, Event Log, custom ones). This guards that a generic collector on the MTP path
+    // completes the run (no shutdown hang), reports the collector lifecycle (SessionStarted,
+    // TestHostLaunched, per-test-case events, SessionEnded) and produces its attachments.
+    [TestMatrix(testHost: Target.Net)]
+    public void RunMtpApplicationWithGenericOutOfProcDataCollectorCompletesRun(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var extensionsPath = Path.GetDirectoryName(GetTestDllForFramework("OutOfProcDataCollector.dll", "netstandard2.0"));
+        var arguments = PrepareArguments(
+            GetAssetFullPath(MtpApp),
+            testAdapterPath: null,
+            runSettings: string.Empty,
+            FrameworkArgValue,
+            runnerInfo.InIsolationValue,
+            resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, " /Collect:SampleDataCollector", $" /TestAdapterPath:{extensionsPath}");
+
+        // The collector writes its per-test-case source files here and then hands them to the sink with
+        // deleteFile:true, so the sink moves them into the results directory as attachments. Keep this
+        // source directory separate from the results directory so a leftover source file (e.g. if the sink
+        // ever failed to delete it) cannot be mistaken for a produced attachment.
+        var collectorSourceDirectory = Path.Combine(TempDirectory.Path, "collector-source");
+        Directory.CreateDirectory(collectorSourceDirectory);
+        var env = new Dictionary<string, string?>
+        {
+            ["TEST_ASSET_SAMPLE_COLLECTOR_PATH"] = collectorSourceDirectory,
+        };
+
+        InvokeVsTest(arguments, env);
+
+        // The run must complete with the usual summary rather than hang at shutdown. MtpMSTestProject has
+        // five test cases: three pass, one fails, one is skipped.
+        ValidateSummaryStatus(3, 1, 1);
+
+        // The datacollector lifecycle must be driven end to end even though there is no testhost: the
+        // session events, the launched-process notification and the forwarded per-test-case events all
+        // have to reach the out-of-process collector. Match the full datacollector message prefix so the
+        // assertions cannot be satisfied by unrelated console output.
+        StdOutputContains("Data collector 'SampleDataCollector' message: SessionStarted");
+        StdOutputContains("Data collector 'SampleDataCollector' message: TestHostLaunched");
+        StdOutputContains("Data collector 'SampleDataCollector' message: SessionEnded");
+        StdOutputContains("Data collector 'SampleDataCollector' message: TestCaseStarted");
+        StdOutputContains("Data collector 'SampleDataCollector' message: TestCaseEnded");
+
+        // The collector emits one attachment per started test case through the forwarded TestCaseStart
+        // events. All five MtpMSTestProject test cases surface a start on this path (the skipped one still
+        // reports a TestCaseStart), so five attachments must land in the results directory. Exclude the
+        // collector's own source directory so only the moved attachments are counted.
+        var collectorSourceDirectoryPrefix = collectorSourceDirectory + Path.DirectorySeparatorChar;
+        var testCaseAttachments = Directory
+            .GetFiles(TempDirectory.Path, "testcasefilename*.txt", SearchOption.AllDirectories)
+            .Where(file => !file.StartsWith(collectorSourceDirectoryPrefix, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        Assert.HasCount(5, testCaseAttachments, "Expected one per-test-case attachment for each started MtpMSTestProject test case forwarded on the MTP path.");
     }
 }

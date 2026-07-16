@@ -1,6 +1,6 @@
 # VSTest Environment Variables
 
-This document lists all environment variables that are understood and handled by the Visual Studio Test Platform (VSTest). These variables can be used to configure various aspects of test execution, debugging, diagnostics, and feature behavior.
+This document lists environment variables that are currently handled by VSTest source code, plus a few historical variables that are called out as removed or obsolete. It is not an exhaustive list of every variable used by every adapter or hosting environment.
 
 ## Connection and Timeout Variables
 
@@ -31,7 +31,8 @@ This document lists all environment variables that are understood and handled by
 - **Example**: `VSTEST_DIAG_VERBOSITY=Info`
 
 ### VSTEST_LOGFOLDER
-- **Description**: Specifies the folder where test logs should be written.
+- **Status**: Not used by product code under `src/`; referenced only in `test/` assets.
+- **Previous description**: Specified the folder where test logs should be written.
 - **Example**: `VSTEST_LOGFOLDER=C:\TestLogs`
 
 ## Debug Variables
@@ -91,7 +92,7 @@ This document lists all environment variables that are understood and handled by
 - **Example**: `VSTEST_DEBUG_ATTACHVS_PATH=C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.exe`
 
 ### VSTEST_DEBUG_NOBP
-- **Description**: Disables breakpoints on executable entry points, to for more seemless debugging when using AttachVS.
+- **Description**: Disables breakpoints on executable entry points for more seamless debugging when using AttachVS.
 - **Values**: Set to "1" to disable breakpoints
 - **Example**: `VSTEST_DEBUG_NOBP=1`
 
@@ -130,14 +131,12 @@ This document lists all environment variables that are understood and handled by
 - **Description**: Disables artifact post-processing functionality.
 - **Values**: Set to any non-zero value to disable
 - **Example**: `VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING=1`
-- **Added**: Version 17.2-preview, 7.0-preview
 
 ### VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX
 - **Description**: Disables new SDK UX for artifact post-processing, showing old output format.
 - **Values**: Set to any non-zero value to disable
 - **Example**: `VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX=1`
 - **Usage**: Useful when parsing console output and need to maintain compatibility
-- **Added**: Version 17.2-preview, 7.0-preview
 
 ### VSTEST_DISABLE_FASTER_JSON_SERIALIZATION
 - **Description**: Disables the faster JSON serialization mechanism and falls back to standard serialization.
@@ -215,7 +214,7 @@ This document lists all environment variables that are understood and handled by
 ## Configuration and Path Variables
 
 ### VSTEST_CONSOLE_PATH
-- **Description**: Specifies the path to the vstest.console executable.
+- **Description**: Specifies the path to the vstest.console executable. This variable is read by the .NET SDK's `dotnet test` forwarding app (not by vstest product code under `src/` in this repo), which is why there are no `src/` references here. It is equivalent to specifying `-p:VSTestConsolePath` when using `dotnet test` with a project.
 - **Example**: `VSTEST_CONSOLE_PATH=C:\Tools\VSTest\vstest.console.exe`
 
 ### VSTEST_IGNORE_DOTNET_ROOT
@@ -242,16 +241,10 @@ This document lists all environment variables that are understood and handled by
 ## Windows App Host Variables
 
 ### VSTEST_WINAPPHOST_*
-- **Description**: Various environment variables related to Windows App Host configuration.
+- **Description**: Prefix historically read by `DotnetTestHostManager` when launching the custom Windows app host (`testhost.exe`). The .NET SDK set `VSTEST_WINAPPHOST_DOTNET_ROOT` / `VSTEST_WINAPPHOST_DOTNET_ROOT(x86)` to support private-install scenarios; vstest forwarded them (stripping the prefix) as `DOTNET_ROOT` / `DOTNET_ROOT(x86)` so the app host could locate the runtime. Here "app host" means the native `testhost.exe` launcher — this is **not** related to the Windows App SDK, UWP, or .NET MAUI. This mechanism existed in older versions (up to ~17.7); it is **not** referenced anywhere under this repository's current `src/`, because current source sets the standard `DOTNET_ROOT` / `DOTNET_ROOT(x86)` / `DOTNET_ROOT_<ARCH>` variables directly.
 - **Pattern**: Variables following the pattern `VSTEST_WINAPPHOST_{VARIABLE_NAME}`
-- **Usage**: Used internally for Windows App Host test execution scenarios
 
 ## Legacy/Experimental Variables
-
-### VSTEST_EXPERIMENTAL_FORWARD_OUTPUT_FEATURE
-- **Description**: (Deprecated) Previously used to enable output forwarding feature.
-- **Status**: Replaced by VSTEST_DISABLE_STANDARD_OUTPUT_CAPTURING and VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING
-- **Note**: This variable is no longer used as the feature is now enabled by default
 
 ### VSTEST_DISABLE_PROTOCOL_3_VERSION_DOWNGRADE
 - **Description**: Disables automatic downgrade to protocol version 3 for compatibility.
