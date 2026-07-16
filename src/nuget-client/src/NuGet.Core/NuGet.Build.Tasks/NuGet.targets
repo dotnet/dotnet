@@ -177,6 +177,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   <UsingTask TaskName="NuGet.Build.Tasks.NuGetMessageTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.CheckForDuplicateNuGetItemsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetGlobalPropertyValueTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
+  <UsingTask TaskName="NuGet.Build.Tasks.RefreshNuGetStaticStateTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
 
   <!--
     ============================================================
@@ -551,12 +552,23 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <!--
     ============================================================
+    _RefreshNuGetStaticState
+    Refreshes NuGet's environment-derived static caches before any other restore task runs. Relevant in
+    multithreaded MSBuild. It must run on every restore and never be skipped, so it declares no Inputs/Outputs.
+    ============================================================
+  -->
+  <Target Name="_RefreshNuGetStaticState">
+    <RefreshNuGetStaticStateTask />
+  </Target>
+
+  <!--
+    ============================================================
     _GenerateRestoreGraph
     Entry point for creating the project to project restore graph.
     ============================================================
   -->
   <Target Name="_GenerateRestoreGraph"
-        DependsOnTargets="_FilterRestoreGraphProjectInputItems;_GetAllRestoreProjectPathItems"
+        DependsOnTargets="_RefreshNuGetStaticState;_FilterRestoreGraphProjectInputItems;_GetAllRestoreProjectPathItems"
         Returns="@(_RestoreGraphEntry)">
     <Message Text="Generating dg file" Importance="low" />
     <Message Text="%(_RestoreProjectPathItems.Identity)" Importance="low" />

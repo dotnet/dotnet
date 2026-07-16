@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+#if !NETFRAMEWORK
+using System.Diagnostics;
+#endif
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
@@ -18,6 +21,7 @@ namespace NuGet.Build.Tasks
     /// <summary>
     /// Get all the settings to be used for project restore.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class GetRestoreSettingsTask : Microsoft.Build.Utilities.Task
     {
         private readonly IEnvironmentVariableReader _environmentVariableReader;
@@ -132,6 +136,13 @@ namespace NuGet.Build.Tasks
                     // Fail due to invalid fallback combination
                     return false;
                 }
+
+#if !NETFRAMEWORK
+                Debug.Assert(Path.IsPathFullyQualified(ProjectUniqueName));
+                Debug.Assert(Path.IsPathFullyQualified(MSBuildStartupDirectory));
+                Debug.Assert(string.IsNullOrEmpty(RestoreRootConfigDirectory) || Path.IsPathFullyQualified(RestoreRootConfigDirectory));
+                Debug.Assert(string.IsNullOrEmpty(RestoreSolutionDirectory) || Path.IsPathFullyQualified(RestoreSolutionDirectory));
+#endif
 
                 // Settings
                 // Find the absolute path of nuget.config, this should only be set on the command line. Setting the path in project files

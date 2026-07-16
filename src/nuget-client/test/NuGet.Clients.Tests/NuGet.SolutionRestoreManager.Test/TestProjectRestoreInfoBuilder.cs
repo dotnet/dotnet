@@ -46,10 +46,7 @@ internal class TestProjectRestoreInfoBuilder
     {
         TargetFrameworkBuilder tfBuilder = new TargetFrameworkBuilder()
             .WithProperty(ProjectBuildProperties.MSBuildProjectExtensionsPath, @"y:\src\some\project\obj")
-            .WithProperty("MSBuildProjectFullPath", @"y:\src\some\project\project.csproj")
-            .WithProperty("MSBuildProjectName", "project")
-            .WithProperty("BuildingInsideVisualStudio", "true")
-            .WithProperty(ProjectBuildProperties.RestoreProjectStyle, "PackageReference");
+            .WithProperty("MSBuildProjectFullPath", @"y:\src\some\project\project.csproj");
 
         var tf = NuGetFramework.Parse(targetFramework);
         var tfi = tf.Framework;
@@ -153,16 +150,6 @@ internal class TestProjectRestoreInfoBuilder
 
             var itemMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             itemMetadata.AddRange(metadata);
-
-            // MSBuild automatically provides FullPath metadata on ProjectReference items.
-            // Synthesize it here so tests match real MSBuild behavior.
-            if (string.Equals(itemType, ProjectItems.ProjectReference, StringComparison.OrdinalIgnoreCase)
-                && !itemMetadata.ContainsKey("FullPath")
-                && Properties.TryGetValue("MSBuildProjectFullPath", out var projectFullPath))
-            {
-                var projectDirectory = System.IO.Path.GetDirectoryName(projectFullPath);
-                itemMetadata["FullPath"] = System.IO.Path.GetFullPath(System.IO.Path.Combine(projectDirectory, itemName));
-            }
 
             var newItem = new VsReferenceItem2
             {
