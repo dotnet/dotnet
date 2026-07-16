@@ -4,6 +4,7 @@
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
     <Nullable>enable</Nullable>
+    <!-- TEST -->
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)eng/RuntimeIdentifier.props" />
