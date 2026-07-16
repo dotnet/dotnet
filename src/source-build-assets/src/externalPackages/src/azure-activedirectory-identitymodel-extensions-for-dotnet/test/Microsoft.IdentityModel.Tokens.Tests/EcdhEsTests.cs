@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class EcdhEsTests
     {
-        [Theory, MemberData(nameof(CreateEcdhEsTestCases))]
+        [Theory, MemberData(nameof(CreateEcdhEsTestCases), DisableDiscoveryEnumeration = true)]
         public void EcdhEsKeyExchangeProviderTests(EcdhEsTheoryData theoryData)
         {
             var context = new CompareContext();
@@ -43,7 +43,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         }
 
 
-        [Theory, MemberData(nameof(CreateEcdhEsTestCases))]
+        [Theory, MemberData(nameof(CreateEcdhEsTestCases), DisableDiscoveryEnumeration = true)]
         public void CreateEcdhEsTests(EcdhEsTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateEcdhEsTests", theoryData);

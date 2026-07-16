@@ -1,0 +1,64 @@
+const Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.skuTelemetry = "x-client-SKU" -> string
+const Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.versionTelemetry = "x-client-Ver" -> string
+const Microsoft.IdentityModel.Logging.LogMessages.MIML10000 = "MIML10000: eventData.Payload is null or empty. Not logging any messages." -> string
+const Microsoft.IdentityModel.Logging.LogMessages.MIML10001 = "MIML10001: Cannot create the fileStream or StreamWriter to write logs. See inner exception." -> string
+const Microsoft.IdentityModel.Logging.LogMessages.MIML10002 = "MIML10002: Unknown log level: {0}." -> string
+const Microsoft.IdentityModel.Logging.LogMessages.MIML10003 = "MIML10003: Sku and version telemetry cannot be manipulated. They are added by default." -> string
+Microsoft.IdentityModel.Logging.LogMessages
+Microsoft.IdentityModel.Logging.NonPII
+Microsoft.IdentityModel.Logging.NonPII.Argument.get -> object
+Microsoft.IdentityModel.Logging.NonPII.Argument.set -> void
+Microsoft.IdentityModel.Logging.NonPII.NonPII() -> void
+Microsoft.IdentityModel.Logging.NonPII.NonPII(object argument) -> void
+Microsoft.IdentityModel.Logging.SecurityArtifact
+Microsoft.IdentityModel.Logging.SecurityArtifact.SecurityArtifact() -> void
+Microsoft.IdentityModel.Logging.SecurityArtifact.SecurityArtifact(object argument, System.Func<object, string> toStringCallback, System.Func<object, string> toStringCallbackUnsafe) -> void
+Microsoft.IdentityModel.Logging.SecurityArtifact.SecurityArtifact(object argument, System.Func<object, string> toStringCallback) -> void
+Microsoft.IdentityModel.Logging.SecurityArtifact.UnsafeToString() -> string
+override Microsoft.IdentityModel.Logging.NonPII.ToString() -> string
+override Microsoft.IdentityModel.Logging.SecurityArtifact.ToString() -> string
+static Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.SetTelemetryData(System.Net.Http.HttpRequestMessage request, System.Collections.Generic.IDictionary<string, string> additionalHeaders) -> void
+static Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.UpdateDefaultTelemetryData(string key, string value) -> bool
+static Microsoft.IdentityModel.Logging.LogHelper.HeaderWritten.get -> bool
+static Microsoft.IdentityModel.Logging.LogHelper.HeaderWritten.set -> void
+static Microsoft.IdentityModel.Logging.LogHelper.IsCustomException(System.Exception ex) -> bool
+static Microsoft.IdentityModel.Logging.SecurityArtifact.UnknownSafeTokenCallback(object _) -> string
+static readonly Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.defaultTelemetryValues -> System.Collections.Generic.List<string>
+static readonly Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.telemetryData -> System.Collections.Concurrent.ConcurrentDictionary<string, string>
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute.DynamicallyAccessedMembersAttribute(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes memberTypes) -> void
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute.MemberTypes.get -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All = -1 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.Interfaces = 8192 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.None = 0 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicConstructors = 4 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicEvents = 4096 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicFields = 64 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicMethods = 16 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicNestedTypes = 256 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicProperties = 1024 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors = 3 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicEvents = 2048 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicFields = 32 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicMethods = 8 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicNestedTypes = 128 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor = 1 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicProperties = 512 -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute
+System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute.Message.get -> string
+System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute.RequiresUnreferencedCodeAttribute(string message) -> void
+System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute.Url.get -> string
+System.Diagnostics.CodeAnalysis.RequiresUnreferencedCodeAttribute.Url.set -> void
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Category.get -> string
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.CheckId.get -> string
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Justification.get -> string
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Justification.set -> void
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.MessageId.get -> string
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.MessageId.set -> void
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Scope.get -> string
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Scope.set -> void
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Target.get -> string
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Target.set -> void
+System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.UnconditionalSuppressMessageAttribute(string category, string checkId) -> void

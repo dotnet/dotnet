@@ -38,7 +38,7 @@ namespace Microsoft.IdentityModel.Logging.Tests
             LogHelper.LogInformation(infoMessage, LogHelper.MarkAsNonPII(arg));
             LogHelper.LogVerbose(verboseMessage, LogHelper.MarkAsNonPII(arg));
             LogHelper.LogWarning(warnMessage, LogHelper.MarkAsNonPII(arg));
-           
+
             Assert.True(logger.ContainsLogOfSpecificLevel("IDX10000:", EventLogLevel.Error));
             Assert.True(logger.ContainsLogOfSpecificLevel(string.Format(infoMessage, arg), EventLogLevel.Informational));
             Assert.True(logger.ContainsLogOfSpecificLevel(string.Format(verboseMessage, arg), EventLogLevel.Verbose));
@@ -173,7 +173,7 @@ namespace Microsoft.IdentityModel.Logging.Tests
             // default log file cannot be accessed because it is in use. Should throw an IO exception.
             string fileName = Guid.NewGuid().ToString() + ".txt";
             FileStream fileStream = File.Create(fileName);
-            Assert.Throws<IOException>(() => { new TextWriterEventListener(fileName);  });
+            Assert.Throws<IOException>(() => { new TextWriterEventListener(fileName); });
             Assert.Contains("MIML10001: ", listener.TraceBuffer);
             fileStream.Dispose();
             File.Delete(fileName);
@@ -244,10 +244,10 @@ namespace Microsoft.IdentityModel.Logging.Tests
             IdentityModelEventSource.Logger.LogLevel = EventLevel.Error;
             listener.EnableEvents(IdentityModelEventSource.Logger, EventLevel.Error);
 
-             var exception = LogHelper.LogExceptionMessage(new ArgumentException("This is the first parameter '{0}'. This is the second parameter '{1}'."));
+            var exception = LogHelper.LogExceptionMessage(new ArgumentException("This is the first parameter '{0}'. This is the second parameter '{1}'."));
         }
 
-        [Theory, MemberData(nameof(LoggerTestTheoryData))]
+        [Theory, MemberData(nameof(LoggerTestTheoryData), DisableDiscoveryEnumeration = true)]
         public void LoggerInstanceTests(LoggerTheoryData theoryData)
         {
             LogHelper.Logger = theoryData.Logger;
@@ -295,7 +295,7 @@ namespace Microsoft.IdentityModel.Logging.Tests
         public LoggerTheoryData() : base(false)
         { }
 
-        public IIdentityLogger Logger { get; set; } = null;
+        public IIdentityLogger Logger { get; set; }
 
         public bool ShouldMessageBeLogged { get; set; }
 

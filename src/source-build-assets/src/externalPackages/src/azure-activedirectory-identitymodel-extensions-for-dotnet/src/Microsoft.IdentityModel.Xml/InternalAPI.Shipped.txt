@@ -1,0 +1,97 @@
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30011 = "IDX30011: Unable to read XML. Expecting XmlReader to be at ns.element: '{0}.{1}', found: '{2}.{3}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30013 = "IDX30013: Unable to read XML. While reading element '{0}', Required attribute was not found : '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30015 = "IDX30015: Only a single '{0}' element is supported. Found more than one." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30016 = "IDX30016: Exception thrown while reading '{0}'. See inner exception for more details." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30017 = "IDX30017: Exception thrown while reading '{0}'. Caught exception: '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30019 = "IDX30019: Unable to read XML. A second <Signature> element was found. The EnvelopedSignatureReader can only process one <Signature>." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30020 = "IDX30020: Unable to read XML. A second <Reference> element was found. The EnvelopedSignatures can only have one <Reference>." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30022 = "IDX30022: Unable to read XML. Expecting XmlReader to be at a StartElement, NodeType is: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30024 = "IDX30024: Unable to read XML. Expecting XmlReader to be at element: '{0}', found: '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30025 = "IDX30025: Unable to read XML. Expecting XmlReader to be at EndElement: '{0}'. Found XmlNode 'type.name': '{1}.{2}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30026 = "IDX30026: The reader must be pointing to a StartElement. NodeType is: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30027 = "IDX30027: InnerReader is null. It is necessary to set InnerReader before making calls to DelegatingXmlDictionaryReader." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30028 = "IDX30028: InnerWriter is null. It is necessary to set InnerWriter before making calls to DelegatingXmlDictionaryWriter." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30029 = "IDX30029: The Reference '{0}' has exceeded the number of Transforms that will be processed: '{1}'. If there is a need to increase the number of Transforms, the DSigSerializer.MaximumReferenceTransforms can be increased. The default value is 10." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30100 = "IDX30100: Unable to process the {0} element. This canonicalization method is not supported: '{1}'. Supported methods are: '{2}', '{3}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30105 = "IDX30105: Transform must specify an algorithm none was found." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30107 = "IDX30107: 'InclusiveNamespaces' is not supported." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30108 = "IDX30108: 'X509Data' cannot be empty." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30200 = "IDX30200: The 'Signature' did not validate. CryptoProviderFactory: '{0}', SecurityKey: '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30201 = "IDX30201: The 'Reference' did not validate: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30202 = "IDX30202: The Reference does not have a XmlTokenStream set: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30203 = "IDX30203: The CryptoProviderFactory: '{0}', CreateForVerifying returned null for key: '{1}', SignatureMethod: '{2}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30204 = "IDX30204: Canonicalization algorithm is not supported: '{0}'. Supported methods are: '{1}', '{2}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30206 = "IDX30206: The reference '{0}' did not contain a digest." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30207 = "IDX30207: SignatureMethod is not supported: '{0}'. CryptoProviderFactory: '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30208 = "IDX30208: DigestMethod is not supported: '{0}'. CryptoProviderFactory: '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30209 = "IDX30209: The CryptoProviderFactory: '{0}', CreateHashAlgorithm, returned null for DigestMethod: '{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30210 = "IDX30210: The TransformFactory does not support the transform: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30211 = "IDX30211: The TransfromFactory does not support the canonicalizing transform: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30212 = "IDX30212: Unable to verify Signature as Signature.SignedInfo is null." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30213 = "IDX30213: The CryptoProviderFactory: '{0}', CreateForSigning returned null for key: '{1}', SignatureMethod: '{2}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30300 = "IDX30300: KeyInfo skipped unknown element: '{0}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30401 = "IDX30401: Unable to write XML. {0}.{1} is null or empty." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30403 = "IDX30403: Unable to write XML. One of the values in Reference.Transforms is null or empty." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30404 = "IDX30404: Unable to write XML. Signature.SignedInfo is null." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30405 = "IDX30405: Unable to write XML. SignedInfo.Reference is null." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30406 = "IDX30406: Unsupported NodeType: {0}." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30500 = "IDX30500: xsi:type attribute was not found. Expected: '{0}':'{1}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30501 = "IDX30501: xsi:type attribute was did not match. Expected: '{0}':'{1}', Found: '{2}':'{3}'." -> string
+const Microsoft.IdentityModel.Xml.LogMessages.IDX30600 = "IDX30600: MaximumReferenceTransforms can not be a negative value. value: '{0}'." -> string
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.InternalWriter.get -> System.Xml.XmlDictionaryWriter
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.InternalWriter.set -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.XmlTokenStream.get -> Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Xml.KeyInfo.MatchesKey(Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
+Microsoft.IdentityModel.Xml.LogMessages
+Microsoft.IdentityModel.Xml.Reference.Verify(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationError
+Microsoft.IdentityModel.Xml.Reference.Verify(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.SignatureValidationError
+Microsoft.IdentityModel.Xml.Signature.Verify(Microsoft.IdentityModel.Tokens.SecurityKey key, Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationError
+Microsoft.IdentityModel.Xml.Signature.Verify(Microsoft.IdentityModel.Tokens.SecurityKey key, Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.SignatureValidationError
+Microsoft.IdentityModel.Xml.SignedInfo.CanonicalStream.get -> System.IO.MemoryStream
+Microsoft.IdentityModel.Xml.SignedInfo.CanonicalStream.set -> void
+Microsoft.IdentityModel.Xml.SignedInfo.Verify(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.Experimental.ValidationError
+Microsoft.IdentityModel.Xml.SignedInfo.Verify(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.SignatureValidationError
+Microsoft.IdentityModel.Xml.XmlToken
+Microsoft.IdentityModel.Xml.XmlToken.IsEmptyElement.get -> bool
+Microsoft.IdentityModel.Xml.XmlToken.IsEmptyElement.set -> void
+Microsoft.IdentityModel.Xml.XmlToken.LocalName.get -> string
+Microsoft.IdentityModel.Xml.XmlToken.Namespace.get -> string
+Microsoft.IdentityModel.Xml.XmlToken.NodeType.get -> System.Xml.XmlNodeType
+Microsoft.IdentityModel.Xml.XmlToken.Prefix.get -> string
+Microsoft.IdentityModel.Xml.XmlToken.Value.get -> string
+Microsoft.IdentityModel.Xml.XmlToken.XmlToken(System.Xml.XmlNodeType nodeType, string prefix, string localName, string namespace, bool isEmptyElement) -> void
+Microsoft.IdentityModel.Xml.XmlToken.XmlToken(System.Xml.XmlNodeType nodeType, string prefix, string localName, string namespace, string value) -> void
+Microsoft.IdentityModel.Xml.XmlToken.XmlToken(System.Xml.XmlNodeType nodeType, string value) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.SignatureElement.get -> int
+Microsoft.IdentityModel.Xml.XmlTokenStream.SignatureElement.set -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.XmlTokens.get -> System.Collections.ObjectModel.ReadOnlyCollection<Microsoft.IdentityModel.Xml.XmlToken>
+Microsoft.IdentityModel.Xml.XmlTokenStreamReader.Read(bool recordSignaturePosition) -> bool
+Microsoft.IdentityModel.Xml.XmlTokenStreamReader.XmlDictionaryReader.get -> System.Xml.XmlDictionaryReader
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.Count.get -> int
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.IsEmptyElement.get -> bool
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.LocalName.get -> string
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.MoveToFirst() -> bool
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.MoveToFirstAttribute() -> bool
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.MoveToNext() -> bool
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.MoveToNextAttribute() -> bool
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.Namespace.get -> string
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.NodeType.get -> System.Xml.XmlNodeType
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.Position.get -> int
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.Prefix.get -> string
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.Tokens.get -> System.Collections.Generic.IList<Microsoft.IdentityModel.Xml.XmlToken>
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.TokenStream.get -> Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.Value.get -> string
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.WriteAndReplaceSignature(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Xml.Signature signature, Microsoft.IdentityModel.Xml.DSigSerializer dSigSerializer) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.WriteTo(System.Xml.XmlWriter writer, string excludedElement, string excludedNamespace) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.WriteTo(System.Xml.XmlWriter writer) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStreamWriter.XmlTokenStreamWriter(Microsoft.IdentityModel.Xml.XmlTokenStream tokenStream) -> void
+Microsoft.IdentityModel.Xml.XmlValidationError
+Microsoft.IdentityModel.Xml.XmlValidationError.XmlValidationError(Microsoft.IdentityModel.Tokens.MessageDetail messageDetail, Microsoft.IdentityModel.Tokens.ValidationFailure validationFailure, System.Type exceptionType, System.Diagnostics.StackFrame stackFrame, System.Exception innerException = null) -> void
+Microsoft.IdentityModel.Xml.XmlValidationException.SetValidationError(Microsoft.IdentityModel.Tokens.Experimental.ValidationError validationError) -> void
+Microsoft.IdentityModel.Xml.XmlValidationException.SetValidationError(Microsoft.IdentityModel.Tokens.ValidationError validationError) -> void
+override Microsoft.IdentityModel.Xml.XmlValidationError.GetException() -> System.Exception
+static Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.GetString(Microsoft.IdentityModel.Xml.XmlTokenStream tokenStream, bool includeComments, string[] inclusiveNamespacesPrefixList) -> string
+static Microsoft.IdentityModel.Xml.XmlUtil.GenerateHexString(byte[] bytes) -> string
+static Microsoft.IdentityModel.Xml.XmlUtil.OnRequiredAttributeMissing(string element, string attribute) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.TokenizeInclusiveNamespacesPrefixList(string inclusiveNamespacesPrefixList) -> string[]

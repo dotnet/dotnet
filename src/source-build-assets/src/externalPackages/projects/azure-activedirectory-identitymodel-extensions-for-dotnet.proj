@@ -9,7 +9,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
-    <SourceRevisionId>e67b25be77532af9ba405670b34b4d263d505fde</SourceRevisionId>
+    <SourceRevisionId>ee19952f21d5c170a778bdca901b67076a1cd8f8</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">
@@ -28,6 +28,10 @@
            Without it, the build falls back to the hardcoded WilsonCurrentVersion which may not match the release version. -->
       <BuildCommandArgs>$(BuildCommandArgs) /p:WilsonVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:FileVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion).$(FileVersionRevision)</BuildCommandArgs>
+      <!-- Disable trimming/AOT analysis. On net8.0+ IsAotCompatible=true pulls in the
+           Microsoft.NET.ILLink.Tasks/.Analyzers packages, which are not available in the
+           offline source-build package feed. -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false /p:IsTrimmable=false</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>

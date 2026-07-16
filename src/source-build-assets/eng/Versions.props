@@ -19,7 +19,7 @@
     <NewtonsoftJsonBootstrapVersion>13.0.4</NewtonsoftJsonBootstrapVersion>
 
     <Antlr4Version>4.13.1</Antlr4Version>
-    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
+    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.19.2</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.10.2</MSBuildLocatorReleaseVersion>

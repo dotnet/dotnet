@@ -1,0 +1,6 @@
+Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.GetEncryptionAlgorithm() -> string
+Microsoft.IdentityModel.Tokens.IssuerValidationError.IssuerValidationError(Microsoft.IdentityModel.Tokens.MessageDetail messageDetail, System.Type exceptionType, System.Diagnostics.StackFrame stackFrame, string invalidIssuer) -> void
+Microsoft.IdentityModel.Tokens.SignUsingSpanDelegate
+override Microsoft.IdentityModel.Tokens.IssuerValidationError.GetException() -> System.Exception
+static Microsoft.IdentityModel.Tokens.Base64UrlEncoder.Decode(System.ReadOnlySpan<char> strSpan, System.Span<byte> output) -> int
+static readonly Microsoft.IdentityModel.Tokens.Json.JsonWebKeySerializer.JsonWebKeyParameterNamesUpperCase -> System.Collections.Frozen.FrozenSet<string>

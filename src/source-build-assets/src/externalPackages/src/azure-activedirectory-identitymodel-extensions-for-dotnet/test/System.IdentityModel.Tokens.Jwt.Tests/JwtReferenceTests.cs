@@ -12,7 +12,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 {
     public class JwtReferenceTests
     {
-        [Theory, MemberData(nameof(Base64UrlEncodingTheoryData))]
+        [Theory, MemberData(nameof(Base64UrlEncodingTheoryData), DisableDiscoveryEnumeration = true)]
         public void Base64UrlEncoding(string testId, string dataToEncode, string encodedData)
         {
             TestUtilities.WriteHeader($"Base64UrlEncoding - {testId}", true);
@@ -35,7 +35,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
         }
 
-        [Theory, MemberData(nameof(JwtEncodingTheoryData))]
+        [Theory, MemberData(nameof(JwtEncodingTheoryData), DisableDiscoveryEnumeration = true)]
         public void JwtEncoding(string testId, JwtHeader header, string encodedData)
         {
             TestUtilities.WriteHeader($"JwtEncoding - {testId}", true);
@@ -56,7 +56,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
         }
 
-        [Theory, MemberData(nameof(JwtSigningTheoryData))]
+        [Theory, MemberData(nameof(JwtSigningTheoryData), DisableDiscoveryEnumeration = true)]
         public void JwtSigning(JwtSigningTestParams testParams)
         {
             var providerForSigning = CryptoProviderFactory.Default.CreateForSigning(testParams.PrivateKey, testParams.Algorithm);

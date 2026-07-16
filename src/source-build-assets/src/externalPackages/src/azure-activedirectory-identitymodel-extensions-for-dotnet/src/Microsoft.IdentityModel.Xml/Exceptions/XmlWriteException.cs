@@ -17,24 +17,24 @@ namespace Microsoft.IdentityModel.Xml
         /// </summary>
         public XmlWriteException()
             : base()
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlWriteException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         public XmlWriteException(string message)
             : base(message)
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlWriteException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         /// <param name="innerException">A <see cref="Exception"/> that represents the root cause of the exception.</param>
         public XmlWriteException(string message, Exception innerException)
             : base(message, innerException)
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlWriteException"/> class.
@@ -43,6 +43,6 @@ namespace Microsoft.IdentityModel.Xml
         /// <param name="context">The contextual information about the source or destination.</param>
         protected XmlWriteException(SerializationInfo info, StreamingContext context)
             : base(info, context)
-        {}
+        { }
     }
 }

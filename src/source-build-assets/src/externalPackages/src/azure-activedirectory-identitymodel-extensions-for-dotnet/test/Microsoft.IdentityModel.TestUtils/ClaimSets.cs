@@ -62,6 +62,15 @@ namespace Microsoft.IdentityModel.TestUtils
                 new Claim("roles", "roles1", ClaimValueTypes.String, Default.Issuer),
             };
 
+            // these can be used for Saml, Saml2 and Jwt tokens
+            ClaimsWithLongName = new List<Claim>
+            {
+                new Claim(ClaimTypes.Country, "USA", ClaimValueTypes.String, Default.Issuer),
+                new Claim(ClaimTypes.NameIdentifier, "Bob", ClaimValueTypes.String, Default.Issuer),
+                new Claim(ClaimTypes.Email, "Bob@contoso.com", ClaimValueTypes.String, Default.Issuer),
+                new Claim(ClaimTypes.GivenName, "Bob", ClaimValueTypes.String, Default.Issuer),
+            };
+
             DerivedGlobalClaims = new List<Claim>()
             {
                 new Claim("Arabic", @"?????", ClaimValueTypes.String, Default.Issuer),
@@ -138,6 +147,12 @@ namespace Microsoft.IdentityModel.TestUtils
             private set;
         }
 
+        public static List<Claim> ClaimsWithLongName
+        {
+            get;
+            private set;
+        }
+
         public static List<Claim> DefaultClaims
         {
             get;
@@ -201,9 +216,6 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <summary>
         /// Claims containing global Unicode chars. Gleamed from a number of sources.
         /// </summary>
-        /// <param name="issuer"></param>
-        /// <param name="originalIssuer"></param>
-        /// <returns></returns>
         public static List<Claim> GlobalClaims
         {
             get;
@@ -229,7 +241,7 @@ namespace Microsoft.IdentityModel.TestUtils
         public static List<Claim> MultipleAudiences(string issuer, string orignalIssuer)
         {
             var claims = new List<Claim>();
-            foreach(var aud in Default.Audiences)
+            foreach (var aud in Default.Audiences)
             {
                 claims.Add(new Claim(JwtRegisteredClaimNames.Aud, aud, ClaimValueTypes.String, issuer ?? Default.Issuer, orignalIssuer ?? Default.Issuer));
             }
@@ -249,18 +261,18 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public static List<string> GetDefaultRoles()
         {
-            return new List<string>{"role1", "roles1"};
+            return new List<string> { "role1", "roles1" };
         }
 
         public static Dictionary<string, string> GetDefaultRolePairs()
         {
-            return new Dictionary<string, string> {{"role","role1"},{"roles","roles1"}};
+            return new Dictionary<string, string> { { "role", "role1" }, { "roles", "roles1" } };
         }
 
         public static List<Claim> GetDefaultRoleClaims(JwtSecurityTokenHandler handler)
         {
             var claims = new List<Claim>();
-            foreach(var kv in GetDefaultRolePairs())
+            foreach (var kv in GetDefaultRolePairs())
                 AddMappedClaim(kv.Key, kv.Value, handler, claims);
 
             return claims;
@@ -297,7 +309,7 @@ namespace Microsoft.IdentityModel.TestUtils
         public static IEnumerable<Claim> SimpleShortClaimtypes(string issuer, string originalIssuer)
         {
             return new List<Claim>()
-            {                
+            {
                 NewClaimWithShortType(ClaimTypes.Country, "USA", ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer),
                 NewClaimWithShortType(ClaimTypes.Email, "user@contoso.com", ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer),
                 NewClaimWithShortType(ClaimTypes.GivenName, "Tony", ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer ),
@@ -312,7 +324,7 @@ namespace Microsoft.IdentityModel.TestUtils
             return new Claim(JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.ContainsKey(ClaimTypes.Country) ? JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap[ClaimTypes.Country] : ClaimTypes.Country, claimValue, claimValueType, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer);
         }
 
-        public static IEnumerable<Claim> ActorClaimNotJwt(string issuer, string originalIssuer )
+        public static IEnumerable<Claim> ActorClaimNotJwt(string issuer, string originalIssuer)
         {
             return new List<Claim>()
             {
@@ -340,14 +352,14 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public static IEnumerable<Claim> AllInboundShortClaimTypes(string issuer, string originalIssuer, IEnumerable<Claim> extraClaims = null)
         {
-            foreach ( KeyValuePair<string, string> pair in JwtSecurityTokenHandler.DefaultInboundClaimTypeMap )
+            foreach (KeyValuePair<string, string> pair in JwtSecurityTokenHandler.DefaultInboundClaimTypeMap)
             {
-                yield return new Claim( pair.Key, pair.Value, ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer );
+                yield return new Claim(pair.Key, pair.Value, ClaimValueTypes.String, issuer ?? Default.Issuer, originalIssuer ?? Default.OriginalIssuer);
             }
 
-            if ( extraClaims != null )
+            if (extraClaims != null)
             {
-                foreach ( Claim c in extraClaims )
+                foreach (Claim c in extraClaims)
                 {
                     yield return c;
                 }
@@ -376,7 +388,7 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             return DuplicateTypes(Default.Issuer, Default.Issuer);
         }
-        
+
         /// <summary>
         /// Returns an enumeration containing duplicate claims. Used to test duplicates.
         /// </summary>
@@ -400,7 +412,7 @@ namespace Microsoft.IdentityModel.TestUtils
             };
         }
 
-        public static List<Claim> EntityAsJsonClaim( string issuer, string originalIssuer )
+        public static List<Claim> EntityAsJsonClaim(string issuer, string originalIssuer)
         {
             return new List<Claim> {
                 new Claim(
@@ -460,9 +472,9 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public string Urn { get; set; }
 
-        public long   Exp { get; set; }
+        public long Exp { get; set; }
 
-        public double pi  { get; set; }
+        public double pi { get; set; }
 
         public string Nothing { get; set; }
 
@@ -478,7 +490,7 @@ namespace Microsoft.IdentityModel.TestUtils
     /// </summary>
     public class AuthTime
     {
-        public bool Essential { get; set;}
+        public bool Essential { get; set; }
     }
 
     /// <summary>
@@ -486,7 +498,7 @@ namespace Microsoft.IdentityModel.TestUtils
     /// </summary>
     public class Acr
     {
-        public string[] Values{ get; set;}
+        public string[] Values { get; set; }
     }
 
     /// <summary>
@@ -508,8 +520,8 @@ namespace Microsoft.IdentityModel.TestUtils
     {
         public string Locality { get; set; }
 
-        public string Region   { get; set; }
+        public string Region { get; set; }
 
-        public string Country  { get; set; }
+        public string Country { get; set; }
     }
 }

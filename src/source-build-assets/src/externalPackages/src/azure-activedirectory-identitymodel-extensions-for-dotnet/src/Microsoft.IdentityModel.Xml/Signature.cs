@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using static Microsoft.IdentityModel.Logging.LogHelper;
 using static Microsoft.IdentityModel.Xml.XmlUtil;
@@ -12,7 +13,7 @@ namespace Microsoft.IdentityModel.Xml
     /// <summary>
     /// Represents a XmlDsig Signature element as per: https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-Signature
     /// </summary>
-    public class Signature : DSigElement
+    public partial class Signature : DSigElement
     {
         private string _signatureValue;
         private SignedInfo _signedInfo;
@@ -105,7 +106,7 @@ namespace Microsoft.IdentityModel.Xml
 
             var signatureProvider = cryptoProviderFactory.CreateForVerifying(key, SignedInfo.SignatureMethod);
             if (signatureProvider == null)
-                throw LogValidationException(LogMessages.IDX30203, cryptoProviderFactory, key, SignedInfo.SignatureMethod);
+                throw LogValidationException(LogMessages.IDX30203, cryptoProviderFactory, LogHelper.MarkAsNonPII(key.KeyId), SignedInfo.SignatureMethod);
 
             try
             {
@@ -113,7 +114,7 @@ namespace Microsoft.IdentityModel.Xml
                 {
                     SignedInfo.GetCanonicalBytes(memoryStream);
                     if (!signatureProvider.Verify(memoryStream.ToArray(), Convert.FromBase64String(SignatureValue)))
-                        throw LogValidationException(LogMessages.IDX30200, cryptoProviderFactory, key);
+                        throw LogValidationException(LogMessages.IDX30200, cryptoProviderFactory, LogHelper.MarkAsNonPII(key.KeyId));
                 }
 
                 SignedInfo.Verify(cryptoProviderFactory);

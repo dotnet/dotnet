@@ -42,7 +42,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         private static bool ContainsKeyWithInternalId(BaseConfiguration config, string internalId)
         {
-            foreach(var key in config.SigningKeys)
+            foreach (var key in config.SigningKeys)
                 if (key.InternalId == internalId)
                     return true;
 

@@ -14,7 +14,7 @@
   <PropertyGroup>
     <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
          when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
-    <FileVersionRevision>50722</FileVersionRevision>
+    <FileVersionRevision>26195</FileVersionRevision>
   </PropertyGroup>
 
   <ItemGroup>

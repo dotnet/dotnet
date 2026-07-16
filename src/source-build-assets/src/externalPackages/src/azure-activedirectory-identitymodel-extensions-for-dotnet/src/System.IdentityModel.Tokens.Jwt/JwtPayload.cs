@@ -464,7 +464,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// <remarks>If the 'notbefore' claim is not found OR could not be converted to <see cref="long"/>, null is returned.</remarks>
         public long? NotBefore
         {
-            get => GetLongClaim(JwtRegisteredClaimNames.Nbf); 
+            get => GetLongClaim(JwtRegisteredClaimNames.Nbf);
         }
 
         /// <summary>
