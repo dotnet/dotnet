@@ -295,9 +295,21 @@
       <Output TaskParameter="ConsoleOutput" ItemName="_RawFileKindInfo" />
     </Exec>
 
+    <!--
+      Wire the RPM Postun scriptlet from the documented 'LinuxPostRemoveScript' item.
+      Historically only the undocumented 'LinuxPostRmScript' item fed the RPM Postun scriptlet, so a project
+      that set the documented item (which is used for the Debian 'postrm') silently got no RPM Postun.
+      Support both, deterministically preferring 'LinuxPostRemoveScript' when both are provided.
+    -->
+    <Warning
+      Condition="'@(LinuxPostRemoveScript)' != '' and '@(LinuxPostRmScript)' != ''"
+      Text="Both LinuxPostRemoveScript and LinuxPostRmScript are set; using LinuxPostRemoveScript for the RPM Postun scriptlet. Prefer LinuxPostRemoveScript; LinuxPostRmScript is a compatibility alias." />
+
     <ItemGroup>
+      <_RpmPostRemoveScript Include="@(LinuxPostRemoveScript)" />
+      <_RpmPostRemoveScript Include="@(LinuxPostRmScript)" Condition="'@(LinuxPostRemoveScript)' == ''" />
       <_RpmScriptlet Include="@(LinuxPostInstallScript)" Kind="Postin" />
-      <_RpmScriptlet Include="@(LinuxPostRmScript)" Kind="Postun" />
+      <_RpmScriptlet Include="@(_RpmPostRemoveScript)" Kind="Postun" />
     </ItemGroup>
 
     <CreateRpmPackage
@@ -320,6 +332,8 @@
       Description="$(_PackageLongDescription)"
       PackageUrl="https://github.com/dotnet/core"
       Scripts="@(_RpmScriptlet)"
+      GhostFiles="@(RpmGhostFile)"
+      FileTriggers="@(RpmFileTrigger)"
        />
 
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFile)" Importance="high" />

@@ -38,17 +38,24 @@ To add symlinks that should be installed on the system, add a `LinuxPackageSymli
 > As the vast majority of symlinks in a package are from system locations to the install root, this provides an easier UX for defining symlinks.
 
 Add a `LinuxPostInstallScript` item to specify an sh script that should be run after the package is installed.
-Add a `LinuxPostRemoveScript` item to specify an sh script that should be run after the package is removed.
+Add a `LinuxPostRemoveScript` item to specify an sh script that should be run after the package is removed. This item is used for both the Debian `postrm` maintainer script and the RPM `%postun` scriptlet. (`LinuxPostRmScript` is a deprecated alias that only fed the RPM `%postun` scriptlet; prefer `LinuxPostRemoveScript`.)
 
 #### Deb package configuration
 
 To add additional properties for the deb control file, add `DebControlProperty` items with the value of the field in the `Value` metadata.
 
-To add additional files to the `control` tarball in the package, add `DebControlFile` items for each file.
+To add additional files to the `control` tarball in the package, add `DebControlFile` items for each file. For example, add a `DebControlFile` named `triggers` to register [dpkg triggers](https://wiki.debian.org/DpkgTriggers).
 
 #### Rpm package configuration
 
 To specify directories owned by the package, add `RpmOwnedDirectory` items for each directory. These are provided automatically for any non-ToolPack packages produced by the Shared Framework SDK.
+
+To own a path as a "ghost" file (recorded in the RPM file list with the `RPMFILE_GHOST` flag but not shipped in the payload), add an `RpmGhostFile` item whose identity is the installed path (for example `/usr/bin/dnx`). Ghost files are typically materialized or repaired by a scriptlet or file trigger. The file's mode, type, and (for symlinks) link target are harvested from the matching entry in the package layout, so the path must still be laid out by the `PublishToDisk` target; that layout entry is then omitted from the payload.
+
+To register an [RPM file trigger](https://rpm-software-management.github.io/rpm/manual/file_triggers.html), add an `RpmFileTrigger` item whose identity is the path to the trigger's shell script. Supported metadata:
+
+- `Kind`: one of `FileTriggerIn`, `FileTriggerUn`, or `FileTriggerPostUn`. Defaults to `FileTriggerIn`.
+- `Paths`: a semicolon-separated list of path prefixes that arm the trigger. The trigger's script runs whenever any package on the system installs, upgrades, or removes a file under one of these prefixes.
 
 ### MacOS Pkg configuration
 

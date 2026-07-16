@@ -64,6 +64,21 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         [Required]
         public ITaskItem[] Scripts { get; set; } = [];
 
+        /// <summary>
+        /// Paths that the package owns as "ghost" files: they are recorded in the RPM file list
+        /// (with the RPMFILE_GHOST flag) but are not shipped in the payload. Each item's ItemSpec is the
+        /// installed path (e.g. <c>/usr/bin/dnx</c>). The file's mode/type/link target are harvested from the
+        /// matching entry in the payload, which is then omitted from the CPIO archive.
+        /// </summary>
+        public ITaskItem[] GhostFiles { get; set; } = [];
+
+        /// <summary>
+        /// File trigger scriptlets. Each item's ItemSpec is a path to the script file. Supported metadata:
+        /// <c>Kind</c> (one of <c>FileTriggerIn</c>, <c>FileTriggerUn</c>, <c>FileTriggerPostUn</c>; defaults to
+        /// <c>FileTriggerIn</c>) and <c>Paths</c> (a semicolon-separated list of path prefixes that arm the trigger).
+        /// </summary>
+        public ITaskItem[] FileTriggers { get; set; } = [];
+
         public override bool Execute()
         {
             var arch = PackageArchitecture switch
@@ -114,6 +129,37 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 builder.AddScript(script.GetMetadata("Kind"), File.ReadAllText(script.ItemSpec));
             }
 
+            foreach (ITaskItem trigger in FileTriggers)
+            {
+                string kind = trigger.GetMetadata("Kind");
+                if (string.IsNullOrEmpty(kind))
+                {
+                    kind = "FileTriggerIn";
+                }
+
+                string[] paths = trigger.GetMetadata("Paths")
+                    .Split([';'], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(p => p.Trim())
+                    .Where(p => p.Length > 0)
+                    .ToArray();
+                if (paths.Length == 0)
+                {
+                    Log.LogError($"File trigger '{trigger.ItemSpec}' does not specify any paths in its 'Paths' metadata.");
+                    return false;
+                }
+                if (!File.Exists(trigger.ItemSpec))
+                {
+                    Log.LogError($"File trigger script '{trigger.ItemSpec}' does not exist.");
+                    return false;
+                }
+
+                builder.AddFileTrigger(kind, File.ReadAllText(trigger.ItemSpec), paths);
+            }
+
+            // Normalize ghost paths (e.g. "/usr/bin/dnx") to the CPIO-relative form used for payload entries ("./usr/bin/dnx").
+            Dictionary<string, ITaskItem> ghostFiles = GhostFiles.ToDictionary(g => $"./{g.ItemSpec.TrimStart('/')}", g => g);
+            HashSet<string> ghostFilesFound = new();
+
             using (CpioReader reader = new(File.OpenRead(Payload), leaveOpen: false))
             {
                 Dictionary<string, string> filePathToKind = RawPayloadFileKinds.Select(k => k.ItemSpec.Split(':')).ToDictionary(k => k[0], k => k[1].Trim());
@@ -134,8 +180,29 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                     // Symlinks may be broken when we are assembling the package, but will not be when we install the package.
                     // Update the file kinds to not say "broken symlink".
                     kind = kind.Replace("broken symlink", "symlink");
-                    builder.AddFile(entry, kind);
+
+                    // A ghost file is owned by the package but not shipped in the payload. We harvest the
+                    // real layout entry's mode/type/link target, record it as a ghost, and omit it from the CPIO.
+                    if (ghostFiles.ContainsKey(entry.Name))
+                    {
+                        builder.AddGhostFile(entry, kind);
+                        ghostFilesFound.Add(entry.Name);
+                    }
+                    else
+                    {
+                        builder.AddFile(entry, kind);
+                    }
                 }
+            }
+
+            string[] missingGhostFiles = ghostFiles.Keys.Where(k => !ghostFilesFound.Contains(k)).ToArray();
+            if (missingGhostFiles.Length > 0)
+            {
+                Log.LogError(
+                    "The following ghost file paths were not found in the package payload and cannot be harvested: " +
+                    string.Join(", ", missingGhostFiles.Select(k => "/" + k.Substring("./".Length))) +
+                    ". A ghost file must be laid out in the package layout so its mode/type/link target can be harvested.");
+                return false;
             }
 
             RpmPackage package = builder.Build();
