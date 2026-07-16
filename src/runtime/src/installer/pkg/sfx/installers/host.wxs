@@ -26,7 +26,7 @@
         </File>
       </Component>
 
-      <Component Id="cmpDnxCmd" Directory="DOTNETHOME" Guid="{2E5090DD-84E9-5983-A4D7-1222CDAE23B9}">
+      <Component Id="cmpDnxCmd" Directory="DOTNETHOME">
         <File Id="fileDnxCmd" KeyPath="yes" Source="$(var.HostSrc)\dnx.cmd">
           <CopyFile Id="copyFileDnxCmd" DestinationDirectory="PROGRAMFILES_DOTNET" />
         </File>
