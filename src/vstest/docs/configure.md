@@ -8,8 +8,8 @@ There are three different ways to configure various aspects of a test run.
 
 1. **Using command line arguments**
 Various configuration options can be provided to the `vstest.console` or `dotnet
-test` command line. For example, `--framework` can specify the runtime framework
-version, or `--platform` can specify the architecture of test run (`x86` or
+test` command line. For example, `--framework` can specify the target framework,
+or `--platform` can specify the architecture of test run (`x86` or
 `x64`).
 
 1. **Using a runsettings file**
@@ -61,6 +61,10 @@ The `runsettings` file is a xml file with following sections:
 1. Adapter Configuration
 1. Legacy Settings
 
+TestSettings (`*.testsettings`) are deprecated. Prefer `*.runsettings`; legacy settings
+are supported only for MSTest v1 and ordered-test scenarios that explicitly opt into
+legacy mode.
+
 We will cover these sections in detail later in the document. Let's discuss few
 core principles for runsettings.
 
@@ -93,8 +97,8 @@ document.
     <!-- [x86] | x64: architecture of test host -->  
     <TargetPlatform>x86</TargetPlatform>
   
-    <!-- Framework35 | [Framework40] | Framework45 -->  
-    <TargetFrameworkVersion>Framework40</TargetFrameworkVersion>
+    <!-- net462 | net8.0 | net9.0 | net10.0 (or a valid FrameworkName such as .NETFramework,Version=v4.8) -->
+    <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
   
     <!-- Path to Test Adapters -->  
     <TestAdaptersPaths>%SystemDrive%\Temp\foo;%SystemDrive%\Temp\bar</TestAdaptersPaths>
@@ -109,7 +113,7 @@ document.
     <!-- Specify timeout in milliseconds. A valid value should be >= 0. If 0, timeout will be infinity-->
     <TestSessionTimeout>10000</TestSessionTimeout>
 
-    <!-- STA | MTA  default is STA for .NET Full and MTA for .NET Core-->
+    <!-- STA | MTA  default is STA for .NET Framework and MTA for .NET -->
     <ExecutionThreadApartmentState>STA</ExecutionThreadApartmentState>
 
     <!-- 2. Hints to adapters to behave in a specific way -->
@@ -150,7 +154,7 @@ document.
   <!-- Configurations for in-proc data collectors -->  
   <InProcDataCollectionRunSettings>  
     <InProcDataCollectors>
-      <InProcDataCollector friendlyName="InProcDataCollectionExample" uri="InProcDataCollector://Vstest.Datacollectors/InProcDataCollectionExample/1.0" codebase="C:\Users\samadala\src\vstest.datacollectors\Examples\bin\Debug\net46\ExamplesDataCollector.dll" assemblyQualifiedName="Vstest.Datacollectors.Examples.InProcDataCollectionExample, ExamplesDataCollector, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" >
+      <InProcDataCollector friendlyName="InProcDataCollectionExample" uri="InProcDataCollector://Vstest.Datacollectors/InProcDataCollectionExample/1.0" codebase="C:\Users\samadala\src\vstest.datacollectors\Examples\bin\Debug\net462\ExamplesDataCollector.dll" assemblyQualifiedName="Vstest.Datacollectors.Examples.InProcDataCollectionExample, ExamplesDataCollector, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" >
       <Configuration>
           <Port>4312</Port>
         </Configuration>
@@ -209,7 +213,7 @@ _Example_
 <RunSettings>  
   <RunConfiguration>  
     <TargetPlatform>x86</TargetPlatform>  
-    <TargetFrameworkVersion>.NET Framework, Version=v4.6</TargetFrameworkVersion>  
+    <TargetFrameworkVersion>net8.0</TargetFrameworkVersion>
     <TestAdaptersPaths>%SystemDrive%\Temp\foo;%SystemDrive%\Temp\bar</TestAdaptersPaths>  
     <ResultsDirectory>.\TestResults</ResultsDirectory>  
     <SolutionDirectory>.\TestResults</SolutionDirectory>  
@@ -230,16 +234,19 @@ _Description_
 | ResultsDirectory  | string | Directory for test run reports. E.g. trx, coverage etc.                                         |
 | SolutionDirectory | string | Working directory for test invocation. Results directory can be relative to this. Used by IDEs. |
 | MaxCpuCount       | int    | Degree of parallelization, spawns `n` test hosts to run tests. Default: 1. Max: Number of cpu cores. |
-| TestSessionTimeout | int   | Testplatform will cancel the test run after it exceeded given TestSessionTimeout in milliseconds and will show the results of tests which ran till that point. **Required Version: 15.5+.** |
-| ExecutionThreadApartmentState       | string    | Apartment state of thread which calls adapter's RunTests and Cancel APIs. Possible values: (MTA, STA). default is STA for .NET Full and MTA for .NET Core.  STA supported only for .NET Full **Required Version: 15.5+.** [More details.](#execution-thread-apartment-state) |
+| TestSessionTimeout | int   | Test Platform will cancel the test run after it exceeded given TestSessionTimeout in milliseconds and will show the results of tests which ran till that point. |
+| ExecutionThreadApartmentState       | string    | Apartment state of thread which calls adapter's RunTests and Cancel APIs. Possible values: (MTA, STA). Default is STA for .NET Framework and MTA for .NET. STA is supported only for .NET Framework. [More details.](#execution-thread-apartment-state) |
 
 Examples of valid `TargetFrameworkVersion`:
 
-* .NETCoreApp, Version=v1.0
-* .NETCoreApp, Version=v1.1
-* .NETFramework, Version=v4.5
+* net462
+* net8.0
+* net9.0
+* net10.0
+* .NETFramework,Version=v4.8
+* .NETCoreApp,Version=v8.0
 
-[FrameworkName]: https://msdn.microsoft.com/en-us/library/dd414023(v=vs.110).aspx
+[FrameworkName]: https://learn.microsoft.com/dotnet/standard/frameworks
 
 2. **Adapter settings**
 These settings are a hint to adapters to behave in a particular way. These are
@@ -482,7 +489,7 @@ This section explains usage of ExecutionThreadApartmentState element in runsetti
 
 vstest.console.exe a.dll -- RunConfiguration.ExecutionThreadApartmentState=STA
 
-dotnet test -f net46 -- RunConfiguration.ExecutionThreadApartmentState=STA
+dotnet test -f net462 -- RunConfiguration.ExecutionThreadApartmentState=STA
 
 ### History
 
@@ -490,8 +497,8 @@ In Test Platform V1 ExecutionThreadApartmentState property can be set from vstes
 
 ### Behavior
 
-In Test platform V2 ExecutionThreadApartmentState property default value is `MTA` for .NET Core and `STA` for .NET Full. `STA` value is only supported for .NET Framework.
-Warning should be shown on trying to set value `STA` for .NET Core and UAP10.0 frameworks tests.
+In Test Platform V2 ExecutionThreadApartmentState property default value is `MTA` for .NET and `STA` for .NET Framework. `STA` value is only supported for .NET Framework.
+Warning should be shown on trying to set value `STA` for .NET and UAP10.0 framework tests.
 
 * To support adapters which depends on thread test platform creates may need STA apartment state to run UI tests. `ExecutionThreadApartmentState` option can be used to set apartment state. Example: MSTest v1, MSTest v2 and MSCPPTest adapters.
 

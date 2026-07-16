@@ -70,7 +70,7 @@ TestPlatform is also known as vstest, or by the names of the tools that use it: 
 
 ## How it works?
 
-TestPlatform consists of multiple processes that communicate over sockets, by sending JSON serialized messages. There are 4 processes that usually work together run tests:
+TestPlatform consists of multiple components that communicate by sending JSON serialized messages. A classic VSTest run usually involves these processes:
 
 - Client
 - Runner
@@ -83,7 +83,9 @@ The runner receives the request from the client, and starts an appropriate testh
 
 Testhost receives the request to run tests, and runs them via an appropriate test framework. The most often used .NET test frameworks are XUnit, MSTest and NUnit.
 
-Datacollector observes the testhost to collect additional information about the run.
+Datacollector observes the testhost to collect additional information about the run when data collection is enabled.
+
+Microsoft.Testing.Platform (MTP) test applications are an emerging model. For those applications, the application hosts itself and TestPlatform drives discovery and execution over the MTP protocol instead of launching a VSTest testhost.
 
 While the tests execute, the results are reported back to the runner, aggregated, and forwarded to the client.
 
@@ -248,7 +250,7 @@ The version is negotiated between the components at the beginning of every workf
 
 #### Request, Notification and Response Ordering
 
-The server supports processing only a single request at a time. Unless the request is [Cancel](#cancel) or [Abort](#abort) request.
+The server supports processing only a single request at a time, unless the request is a Cancel or Abort request.
 
 All notifications are sent before a response is sent.
 
@@ -293,7 +295,7 @@ The version is determined by choosing the highest common supported version. When
 
 The receiving side should remember the agreed value, and use it as the highest supported version for any downstream component. In the case above runner should send 6 to testhost, even though the runner supports versions up to 7.
 
-The request was introduced in TestPlatform version `16.0.0`. Runners before this version are not allowed. Testhosts before this version are allowed, the version of testhost is figured out by scanning the assembly, and the request is not sent to them. Version 0 is used for communication.
+The current source defines `Version0` as the lowest supported protocol version and `Version7` as the highest supported protocol version.
 
 Versions:
 

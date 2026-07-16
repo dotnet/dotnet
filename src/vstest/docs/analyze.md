@@ -160,54 +160,35 @@ In TPv2, DataCollectors are loaded from `TestAdaptersPaths` specified in runSett
 
 ## Working with Code Coverage<a name="coverage"></a>
 
-> **Requirements:**
-> Code Coverage requires the machine to have Visual Studio 2017 Enterprise ([15.3.0](https://www.visualstudio.com/vs) or later installed and a Windows operating system.
+Code coverage can be collected from the command line with `dotnet test` or from Visual Studio Test Explorer. For current .NET projects, choose the collector that matches your platform and report format needs:
 
-### Setup a project
+- `dotnet test --collect "Code Coverage"` uses the built-in Visual Studio code coverage collector. It produces Visual Studio coverage output and is supported on Windows.
+- `dotnet test --collect "XPlat Code Coverage"` uses the cross-platform Coverlet collector (requires the `coverlet.collector` NuGet package). It works on Windows, Linux, and macOS and produces coverage files such as Cobertura XML.
 
-Here's a sample project file, please note the xml entity marked as `Required`. Previously, the `Microsoft.VisualStudio.CodeCoverage` was required, but is now shipped with the SDK.
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
-    
-    <!-- Required in both test/product projects. This is a temporary workaround for https://github.com/Microsoft/vstest/issues/800 -->
-    <DebugType>Full</DebugType>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.1.17" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.1.17" />
-  </ItemGroup>
-
-</Project>
-```
-
+For complete command-line examples, package requirements, report generation, and customization options, see [Unit testing code coverage for .NET](https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage).
 
 ### Analyze coverage with Visual Studio
 
-> **Version note:**
->
-> Try this feature with [Visual Studio 2017 15.3.0](https://www.visualstudio.com/vs) or later.
-
-Use the `Analyze Code Coverage` context menu available in `Test Explorer` tool window to start a coverage run.
+Use the `Analyze Code Coverage` context menu available in the `Test Explorer` tool window to start a coverage run.
 
 After the coverage run is complete, a detailed report will be available in the `Code Coverage Results` tool window.
 
-Please refer the documentation for additional details: <https://learn.microsoft.com/en-us/visualstudio/test/using-code-coverage-to-determine-how-much-code-is-being-tested>
+For Visual Studio-specific details, see [Use code coverage to determine how much code is being tested](https://learn.microsoft.com/visualstudio/test/using-code-coverage-to-determine-how-much-code-is-being-tested).
 
 ### Collect coverage with command line runner
 
-Use the following command line to collect coverage data for tests:
+Use one of the following commands to collect coverage data for tests:
 
 ```shell
-> "%vsinstalldir%\Common7\IDE\Extensions\TestPlatform\vstest.console.exe" --collect:"Code Coverage" --framework:".NETCoreApp,Version=v1.1" d:\testproject\bin\Debug\netcoreapp1.1\testproject.dll
+dotnet test --collect "Code Coverage"
+dotnet test --collect "XPlat Code Coverage"
 ```
 
-This will generate a `*.coverage` file in the `<Current working directory>\TestResults` directory.
+### Collect coverage in Azure Pipelines
+
+In Azure DevOps pipelines you can run tests and collect coverage with the Visual Studio Test task, which wraps `vstest.console.exe`. Enable coverage via the task's `codeCoverageEnabled` input (or pass `/collect:"Code Coverage"` through `otherConsoleOptions`). See [VSTest@2 - Visual Studio Test task](https://learn.microsoft.com/azure/devops/pipelines/tasks/reference/vstest-v2).
+
+Coverage attachments are written under the test run's `TestResults` directory.
 
 ### Event Log Data Collector
 

@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfa
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP;
 
@@ -79,6 +80,13 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
         int processId = 0;
         bool aborted = false;
 
+        // Inject environment variables declared in the runsettings RunConfiguration/EnvironmentVariables
+        // into the MTP application launch. On the classic path ProxyOperationManager reads these from the
+        // runsettings and passes them to the testhost process; the MTP application is its own host, so we
+        // apply them here. Done before BeforeTestRun so datacollector-provided profiler variables merge on
+        // top and win on collision (matching the classic ordering).
+        ApplyRunSettingsEnvironmentVariables(testRunCriteria.TestRunSettings);
+
         BeforeTestRun(eventHandler);
 
         foreach (var (source, tests) in BuildWork(testRunCriteria))
@@ -105,6 +113,13 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
         }
 
         AfterTestRun(attachments, invokedDataCollectors);
+
+        // Surface the data collector messages produced during the run and at session end (e.g.
+        // per-test-case notifications, warnings/errors, the Blame sequence-file path, disposal). They
+        // are buffered on the run events handler while the run is in flight and delivered during the
+        // AfterTestRunEnd exchange; the classic path relays them live, so on this path we flush them
+        // once the run is done. Without this they are silently dropped.
+        SurfaceDataCollectionMessages(eventHandler);
 
         TestRunStatistics finalStats = aggregate.Snapshot();
         var completeArgs = new TestRunCompleteEventArgs(
@@ -180,12 +195,43 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
         }
 
         // Surface any messages the data collector produced while starting up.
-        foreach (Tuple<ObjectModel.Logging.TestMessageLevel, string?> message in _dataCollectionEventsHandler!.Messages)
+        SurfaceDataCollectionMessages(eventHandler);
+    }
+
+    /// <summary>
+    /// Flushes any data collector log and raw messages buffered on the run events handler to the run's
+    /// event handler. On the classic path the datacollector's messages are relayed to the console live; on
+    /// this path there is no live pump, so we drain the buffers at the points where new messages have
+    /// arrived (data collector startup and after the run completes). Both the human-readable log messages
+    /// and the raw (e.g. telemetry) messages are surfaced and cleared, mirroring
+    /// <see cref="ProxyExecutionManagerWithDataCollection"/> on the classic path.
+    /// </summary>
+    private void SurfaceDataCollectionMessages(IInternalTestRunEventsHandler eventHandler)
+    {
+        if (_dataCollectionEventsHandler is null)
         {
-            eventHandler.HandleLogMessage(message.Item1, message.Item2);
+            return;
         }
 
-        _dataCollectionEventsHandler.Messages.Clear();
+        if (_dataCollectionEventsHandler.Messages.Count > 0)
+        {
+            foreach (Tuple<ObjectModel.Logging.TestMessageLevel, string?> message in _dataCollectionEventsHandler.Messages)
+            {
+                eventHandler.HandleLogMessage(message.Item1, message.Item2);
+            }
+
+            _dataCollectionEventsHandler.Messages.Clear();
+        }
+
+        if (_dataCollectionEventsHandler.RawMessages.Count > 0)
+        {
+            foreach (string rawMessage in _dataCollectionEventsHandler.RawMessages)
+            {
+                eventHandler.HandleRawMessage(rawMessage);
+            }
+
+            _dataCollectionEventsHandler.RawMessages.Clear();
+        }
     }
 
     /// <summary>
@@ -369,6 +415,27 @@ internal sealed class MtpProxyExecutionManager : IProxyExecutionManager, IDispos
 
         return (criteria.Sources ?? Enumerable.Empty<string>())
             .Select(source => (source, (List<TestCase>?)null));
+    }
+
+    /// <summary>
+    /// Reads the environment variables declared in the runsettings
+    /// <c>RunConfiguration/EnvironmentVariables</c> and merges them into <see cref="EnvironmentVariables"/>
+    /// so they are applied to the MTP application launch.
+    /// </summary>
+    private void ApplyRunSettingsEnvironmentVariables(string? runSettings)
+    {
+        Dictionary<string, string?>? runSettingsEnvironmentVariables = InferRunSettingsHelper.GetEnvironmentVariables(runSettings);
+        if (runSettingsEnvironmentVariables is null || runSettingsEnvironmentVariables.Count == 0)
+        {
+            return;
+        }
+
+        EnvironmentVariables ??= new Dictionary<string, string?>(
+            Environment.OSVersion.Platform == PlatformID.Win32NT ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        foreach (KeyValuePair<string, string?> variable in runSettingsEnvironmentVariables)
+        {
+            EnvironmentVariables[variable.Key] = variable.Value;
+        }
     }
 
     private static List<Dictionary<string, object?>> BuildTestsFilter(List<TestCase> tests)

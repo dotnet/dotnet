@@ -412,6 +412,8 @@ NuGet.ProjectModel.ProjectRestoreMetadata.ProjectStyle.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.ProjectWideWarningProperties.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.get -> NuGet.ProjectModel.RestoreAuditProperties
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreAuditProperties.set -> void
+NuGet.ProjectModel.ProjectRestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.RestoreDoNotWriteDependencyGraphSpec.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.get -> NuGet.ProjectModel.RestoreLockProperties
 ~NuGet.ProjectModel.ProjectRestoreMetadata.RestoreLockProperties.set -> void
 ~NuGet.ProjectModel.ProjectRestoreMetadata.SdkAnalysisLevel.get -> NuGet.Versioning.NuGetVersion

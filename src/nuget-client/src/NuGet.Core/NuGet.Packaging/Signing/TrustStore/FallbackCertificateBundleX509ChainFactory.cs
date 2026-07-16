@@ -59,6 +59,11 @@ namespace NuGet.Packaging.Signing
 
         private static string GetThisAssemblyDirectoryPath()
         {
+            if (AppContext.GetData("Microsoft.DotNet.Sdk.Root") is string sdkRoot && sdkRoot.Length > 0)
+            {
+                return sdkRoot;
+            }
+
             return AppContext.BaseDirectory;
         }
     }

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -240,7 +242,7 @@ namespace NuGet.VisualStudio
         /// <summary>
         /// Two projects are equal if they share the same FullNames.
         /// </summary>
-        public bool Equals(ProjectNames? other)
+        public bool Equals(ProjectNames other)
         {
             if (ReferenceEquals(null, other))
             {

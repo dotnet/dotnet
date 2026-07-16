@@ -5,7 +5,7 @@ In this walkthrough, you will learn how to create your first `DataCollector` and
 
 ## Extend DataCollector
 The very first thing you will need to create is a Class Library project and add reference to `Microsoft.TestPlatform.ObjectModel` nuget package.
-Class Library project can target Desktop clr or dotnet core clr or both frameworks.
+Class Library project can target .NET Framework (for example `net462`) or .NET (for example `net8.0`, `net9.0`, or `net10.0`), or multi-target both families when the collector needs to run in both environments.
 
 > **DataCollector Assembly Naming Convention**
 >
@@ -19,39 +19,52 @@ Class Library project can target Desktop clr or dotnet core clr or both framewor
 A new data collector can be implemented by extending the abstract `DataCollector` class. 
 
 ```csharp
+using System;
+using System.IO;
+using System.Xml;
+
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
 [DataCollectorFriendlyName("NewDataCollector")]
 [DataCollectorTypeUri("my://new/datacollector")]
 public class NewDataCollector : DataCollector
 {
-    private string logFileName;
-    private DataCollectionEnvironmentContext context;
+    private string logFileName = "DataCollectorLogs.txt";
+    private DataCollectionEnvironmentContext? context;
+    private DataCollectionSink dataSink = null!;
+    private DataCollectionLogger logger = null!;
 
     public override void Initialize(
-            System.Xml.XmlElement configurationElement,
+            XmlElement? configurationElement,
             DataCollectionEvents events,
             DataCollectionSink dataSink,
             DataCollectionLogger logger,
-            DataCollectionEnvironmentContext environmentContext)
+            DataCollectionEnvironmentContext? environmentContext)
     {
+        this.context = environmentContext;
+        this.dataSink = dataSink;
+        this.logger = logger;
+
         events.SessionStart += this.SessionStarted_Handler;
         events.TestCaseStart += this.Events_TestCaseStart;
-        logFileName = configurationElement["LogFileName"];
+        logFileName = configurationElement?["LogFileName"]?.InnerText ?? logFileName;
     }
-    
-    private void SessionStarted_Handler(object sender, SessionStartEventArgs args)
+
+    private void SessionStarted_Handler(object? sender, SessionStartEventArgs args)
     {
         var filename = Path.Combine(AppContext.BaseDirectory, logFileName);
         File.WriteAllText(filename, "SessionStarted");
-        this.dataCollectionSink.SendFileAsync(this.context.SessionDataCollectionContext, filename, true);
-        this.logger.LogWarning(this.context.SessionDataCollectionContext, "SessionStarted");
+
+        if (context is not null)
+        {
+            dataSink.SendFileAsync(context.SessionDataCollectionContext, filename, true);
+            logger.LogWarning(context.SessionDataCollectionContext, "SessionStarted");
+        }
     }
 
-
-    private void Events_TestCaseStart(object sender, TestCaseStartEventArgs e)
+    private void Events_TestCaseStart(object? sender, TestCaseStartEventArgs e)
     {
-        this.logger.LogWarning(this.context.SessionDataCollectionContext, "TestCaseStarted " + e.TestCaseName);
+        logger.LogWarning(e.Context, "TestCaseStarted " + e.TestCaseName);
     }
 }
 ```
@@ -77,9 +90,11 @@ For supporting those scenarios, configuration xml can be passed to DataCollector
 </RunSettings>
 ```
 ```csharp
-XmlElement logFileElement = configurationElement[LogFileName];
-string logFile = logFileElement != null ? logFileElement.InnerText : string.Empty;
-if (!File.Exists(logFile))
+XmlElement? logFileElement = configurationElement?["LogFileName"];
+string logFile = logFileElement?.InnerText ?? "DataCollectorLogs.txt";
+string path = Path.Combine(AppContext.BaseDirectory, logFile);
+
+if (!File.Exists(path))
 {
     // Create a file to write to.
     string createText = "Hello and Welcome" + Environment.NewLine;
@@ -93,14 +108,14 @@ DataCollectors can choose to subscribe to the following events exposed by `DataC
 2. TestSessionEnd : Raised when test execution session ends.
 3. TestCaseStart : Raised when test case execution starts.
 4. TestCaseEnd : Raised when test case execution ends.
-5. TestHostLaunched : Raised when test host process has been initialized. **Note: This will be available from 15.7**
+5. TestHostLaunched : Raised when test host process has been initialized.
 
 ```csharp
 events.SessionStart += this.SessionStarted_Handler;
 events.SessionEnd += this.SessionEnded_Handler;
 events.TestCaseStart += this.Events_TestCaseStart;
 events.TestCaseEnd += this.Events_TestCaseEnd;
-events.TestHostLaunched += this.TestHostLaunched_Handler
+events.TestHostLaunched += this.TestHostLaunched_Handler;
 ```
 ```csharp
 private void Events_TestCaseStart(object sender, TestCaseStartEventArgs e)
@@ -117,25 +132,33 @@ dataSink.SendFileAsync(context, filename, true);
 Files sent using above api get associated with session level attachments or test case level attachments based on the context passed.
 
 ### DataCollectionEnvironmentContext
-DataCollector framework maintains a session level context for test exectuion session and test level contexts for each test that gets executed.
+DataCollector framework maintains a session level context for test execution session and test level contexts for each test that gets executed.
 `DataCollectionEnvironmentContext` passed as argument in constructor has session level context that can be accessed through property `SessionDataCollectionContext`.
 Test case level context can be accessed through `TestCaseStartEventArgs.Context` or `TestCaseEndEventArgs.Context`.
 
 ```csharp
 private void Events_TestCaseStart(object sender, TestCaseStartEventArgs e)
 {
-    // Session level attachment
-    this.dataCollectionSink.SendFileAsync(this.context.SessionDataCollectionContext, filename, true);
+    // Session level attachment. environmentContext can be null, so guard before using it.
+    if (this.context is not null)
+    {
+        this.dataSink.SendFileAsync(this.context.SessionDataCollectionContext, filename, true);
+    }
+
     // TestCase level attachment
-    this.dataCollectionSink.SendFileAsync(e.Context, filename, true);
+    this.dataSink.SendFileAsync(e.Context, filename, true);
 }
 ```
 
 ### DataCollectionLogger
 DataCollectors can also log errors or warnings using `DataCollectionLogger`.
 ```csharp
-logger.LogError(this.context.SessionDataCollectionContext, new Exception("my exception"));
-logger.LogWarning(this.context.SessionDataCollectionContext, "my warning");
+// environmentContext can be null, so guard before using the session context.
+if (this.context is not null)
+{
+    logger.LogError(this.context.SessionDataCollectionContext, new Exception("my exception"));
+    logger.LogWarning(this.context.SessionDataCollectionContext, "my warning");
+}
 ```
 
 ### DataCollection Environment Variables
@@ -143,24 +166,35 @@ DataCollectors can choose to specify information about how the test execution en
 E.g. setting up the Environment Variables required by profiler engine for code coverage.
 
 ```csharp
+using System.Collections.Generic;
+
 [DataCollectorFriendlyName("NewDataCollector")]
 [DataCollectorTypeUri("my://new/datacollector")]
 class NewDataCollector : DataCollector, ITestExecutionEnvironmentSpecifier
 {
     public IEnumerable<KeyValuePair<string, string>> GetTestExecutionEnvironmentVariables()
     {
+        return new[] { new KeyValuePair<string, string>("MY_PROFILER_SETTING", "1") };
     }
 }
 ```
-Environment variables returned by the above method are set in the test execution process while bootstraping.
+Environment variables returned by the above method are set in the test execution process while bootstrapping.
 
 ## Using DataCollector
 Once the DataCollector is compiled, it can be used to monitor test execution. There are two ways by which datacollectors can be plugged in:
 1. Using /collect switch :
 `vstest.console.exe <TestLibrary> /collect:<DataCollector FriendlyName> /testadapterpath:<Path to test adapter> /testadapterpath:<Path to DataCollector>`
 
+The equivalent `dotnet test` command uses `--collect` and passes adapter paths through runsettings:
+`dotnet test <ProjectOrSolution> --collect:"<DataCollector FriendlyName>" -- RunConfiguration.TestAdaptersPaths=<Path to DataCollector>`
+
 2. Using runsettings :
-`vstest.console.exe <TestLibrary> /settings:<Path to runsettings file>
+`vstest.console.exe <TestLibrary> /settings:<Path to runsettings file>`
+
+or
+
+`dotnet test <ProjectOrSolution> --settings <Path to runsettings file>`
+
 ```xml
 <RunSettings>
     <DataCollectionRunSettings>
