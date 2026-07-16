@@ -52,7 +52,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             Assert.True(inCollection);
         }
 
-        [Theory, MemberData(nameof(X509DataComparisonData))]
+        [Theory, MemberData(nameof(X509DataComparisonData), DisableDiscoveryEnumeration = true)]
         public void X509Data_HashCodeTests(X509DataComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(X509Data_HashCodeTests)}", theoryData);
@@ -72,7 +72,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
         }
 
 
-        [Theory, MemberData(nameof(X509DataComparisonData))]
+        [Theory, MemberData(nameof(X509DataComparisonData), DisableDiscoveryEnumeration = true)]
         public void X509Data_EqualsTests(X509DataComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(X509Data_EqualsTests)}", theoryData);

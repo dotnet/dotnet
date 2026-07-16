@@ -23,4 +23,9 @@
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttp)" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressions)" />
+  </ItemGroup>
+
 </Project>

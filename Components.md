@@ -8,9 +8,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@f843e65](https://github.com/dotnet/arcade/tree/f843e65cdfc9e9af05d987f2f7f2e6f6a6106eb5)*
+*[dotnet/arcade@efce34e](https://github.com/dotnet/arcade/tree/efce34e9f9f25af27e2b471fbbf8c21f1ac2e318)*
 - `src/aspire`  
-*[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
+*[microsoft/aspire@5fa9337](https://github.com/microsoft/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@3c5c32a](https://github.com/dotnet/aspnetcore/tree/3c5c32a79a7269c8ee7649d0ea1630f115d8400b)*
     - `src/aspnetcore/src/submodules/googletest`  
@@ -48,17 +48,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@623d5a2](https://github.com/dotnet/scenario-tests/tree/623d5a21e18d6d1f370b5b9d1ebaf8d687464c0b)*
 - `src/sdk`  
-*[dotnet/sdk@d1ed80a](https://github.com/dotnet/sdk/tree/d1ed80a895f3a425334c2b12be1e7b7b163bc10f)*
+*[dotnet/sdk@86e1c8d](https://github.com/dotnet/sdk/tree/86e1c8d7c4c13335e82dacbc982aafec4c1a782f)*
 - `src/source-build-assets`  
-*[dotnet/source-build-assets@8af4d74](https://github.com/dotnet/source-build-assets/tree/8af4d7484999046095bf7670641b25f2dbb158f0)*
+*[dotnet/source-build-assets@898cae0](https://github.com/dotnet/source-build-assets/tree/898cae04468e9be69ab78fcc27bb70d676ae16b6)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@16c380d](https://github.com/dotnet/source-build-externals/tree/16c380d1ce5fa0b24e232251c31cb013bbf3365f)*
+*[dotnet/source-build-externals@1c80016](https://github.com/dotnet/source-build-externals/tree/1c800169e674c7becf88434a0d2817453cf91dd7)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
     *[microsoft/ApplicationInsights-dotnet@43825e0](https://github.com/microsoft/ApplicationInsights-dotnet/tree/43825e06a22cdfb702fc199a7ba99a7d541d48c6)*
     - `src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet`  
-    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@e67b25b](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/e67b25be77532af9ba405670b34b4d263d505fde)*
+    *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@ee19952](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/ee19952f21d5c170a778bdca901b67076a1cd8f8)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/tree/0d59611784841735a7778a67aa6e9d8d000c861f)*
     - `src/source-build-externals/src/docker-creds-provider`  

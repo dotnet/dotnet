@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.26220.3",
+      "packageVersion": "9.0.0-beta.26301.4",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "f843e65cdfc9e9af05d987f2f7f2e6f6a6106eb5"
+      "commitSha": "efce34e9f9f25af27e2b471fbbf8c21f1ac2e318"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -106,19 +106,19 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d1ed80a895f3a425334c2b12be1e7b7b163bc10f"
+      "commitSha": "86e1c8d7c4c13335e82dacbc982aafec4c1a782f"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.26309.1",
+      "packageVersion": "9.0.0-alpha.1.26319.1",
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "8af4d7484999046095bf7670641b25f2dbb158f0"
+      "commitSha": "898cae04468e9be69ab78fcc27bb70d676ae16b6"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.26055.1",
+      "packageVersion": "9.0.0-alpha.1.26366.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "16c380d1ce5fa0b24e232251c31cb013bbf3365f"
+      "commitSha": "1c800169e674c7becf88434a0d2817453cf91dd7"
     },
     {
       "packageVersion": "8.0.0-alpha.1.24415.1",
@@ -216,7 +216,7 @@
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
+      "commitSha": "ee19952f21d5c170a778bdca901b67076a1cd8f8"
     },
     {
       "path": "source-build-externals/src/cssparser",

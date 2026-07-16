@@ -11,7 +11,7 @@ namespace System.IdentityModel.Tokens.Jwt
     /// </summary>
     internal static class LogMessages
     {
-        #pragma warning disable 1591
+#pragma warning disable 1591
         // token creation
         internal const string IDX12401 = "IDX12401: Expires: '{0}' must be after NotBefore: '{1}'.";
 

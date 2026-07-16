@@ -18,5 +18,12 @@
      <!-- This package is upgraded to latest versions in product build and can be baselined for 
       the repo build. -->
     <UsagePattern IdentityGlob="System.IO.Packaging/*7.0.0*" />
+
+    <!-- These packages are updated for security patching (CVE-2026-33116, CVE-2026-26171) and
+      will be source-built in the product build. -->
+    <UsagePattern IdentityGlob="Microsoft.Bcl.Cryptography/*9.0.15*" />
+    <UsagePattern IdentityGlob="System.Formats.Asn1/*9.0.15*" />
+    <UsagePattern IdentityGlob="System.Security.Cryptography.Pkcs/*9.0.15*" />
+    <UsagePattern IdentityGlob="System.Security.Cryptography.Xml/*9.0.15*" />
   </IgnorePatterns>
 </UsageData>

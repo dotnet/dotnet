@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -37,7 +37,7 @@ namespace Microsoft.IdentityModel.Logging
         /// Gets or sets a boolean controlling if logs are written into the context.
         /// Useful when debugging.
         /// </summary>
-        public bool CaptureLogs { get; set; } = false;
+        public bool CaptureLogs { get; set; }
 
         /// <summary>
         /// Gets or sets a string that helps with setting breakpoints when debugging.

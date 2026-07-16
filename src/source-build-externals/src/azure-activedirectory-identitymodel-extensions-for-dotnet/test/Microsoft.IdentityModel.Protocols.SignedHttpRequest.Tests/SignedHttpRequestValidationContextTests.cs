@@ -53,7 +53,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             Assert.Equal(tokenValidationParameters, signedHttpRequestDescriptor.AccessTokenValidationParameters);
             Assert.Equal(callContext, signedHttpRequestDescriptor.CallContext);
             Assert.NotNull(signedHttpRequestDescriptor.SignedHttpRequestValidationParameters);
-            
+
 
             signedHttpRequestDescriptor = new SignedHttpRequestValidationContext(signedHttpRequest, httpRequestData, tokenValidationParameters, validationParameters);
             Assert.Equal(httpRequestData, signedHttpRequestDescriptor.HttpRequestData);

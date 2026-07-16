@@ -35,11 +35,11 @@
     <!-- nuget -->
     <!-- Important: Don't version higher than what's available in the toolset SDK as
          NuGet assemblies aren't redistributed with .NETCoreApp msbuild tasks. -->
-    <NuGetCommandsVersion>6.11.0</NuGetCommandsVersion>
-    <NuGetFrameworksVersion>6.11.0</NuGetFrameworksVersion>
-    <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
-    <NuGetProjectModelVersion>6.11.0</NuGetProjectModelVersion>
-    <NuGetVersioningVersion>6.11.0</NuGetVersioningVersion>
+    <NuGetCommandsVersion>6.11.2</NuGetCommandsVersion>
+    <NuGetFrameworksVersion>6.11.2</NuGetFrameworksVersion>
+    <NuGetPackagingVersion>6.11.2</NuGetPackagingVersion>
+    <NuGetProjectModelVersion>6.11.2</NuGetProjectModelVersion>
+    <NuGetVersioningVersion>6.11.2</NuGetVersioningVersion>
     <!-- roslyn -->
     <MicrosoftCodeAnalysisCSharpVersion>4.8.0</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftNetCompilersToolsetVersion>4.8.0</MicrosoftNetCompilersToolsetVersion>
@@ -68,11 +68,11 @@
     <SystemCompositionVersion>9.0.0-preview.6.24327.7</SystemCompositionVersion>
     <SystemIOPackagingVersion>9.0.0-rc.2.24473.5</SystemIOPackagingVersion>
     <SystemReflectionMetadataVersion>9.0.0-rc.2.24473.5</SystemReflectionMetadataVersion>
-    <SystemSecurityCryptographyPkcsVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyPkcsVersion>
-    <SystemSecurityCryptographyXmlVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityCryptographyPkcsVersion>9.0.15</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyXmlVersion>9.0.15</SystemSecurityCryptographyXmlVersion>
     <SystemTextEncodingsWebVersion>9.0.0-rc.2.24473.5</SystemTextEncodingsWebVersion>
     <SystemTextJsonVersion>9.0.0-rc.2.24473.5</SystemTextJsonVersion>
-    <SystemFormatsAsn1Version>9.0.0-rc.2.24473.5</SystemFormatsAsn1Version>
+    <SystemFormatsAsn1Version>9.0.15</SystemFormatsAsn1Version>
     <!-- sdk -->
     <MicrosoftNETSdkWorkloadManifestReaderVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderVersion>
     <!-- source-build-externals -->
@@ -86,6 +86,6 @@
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>11.0.0-prerelease.26217.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>11.0.0-prerelease.26279.1</MicrosoftDotNetXHarnessCLIVersion>
   </PropertyGroup>
 </Project>

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.IdentityModel.Abstractions;
@@ -8,6 +11,12 @@ namespace Microsoft.IdentityModel.Logging.Tests
     public class TestLogger : IIdentityLogger
     {
         readonly List<Tuple<string, EventLogLevel>> _logs = new List<Tuple<string, EventLogLevel>>();
+        bool _saveLogs = true;
+
+        public TestLogger(bool saveLogs = true)
+        {
+            _saveLogs = saveLogs;
+        }
 
         public bool IsLoggerEnabled { get; set; } = true;
 
@@ -18,7 +27,8 @@ namespace Microsoft.IdentityModel.Logging.Tests
 
         public void Log(LogEntry entry)
         {
-            _logs.Add(new Tuple<string, EventLogLevel>(entry.Message, entry.EventLogLevel));
+            if (_saveLogs)
+                _logs.Add(new Tuple<string, EventLogLevel>(entry.Message, entry.EventLogLevel));
         }
 
         public bool LogStartsWith(string prefix, EventLogLevel logLevel)
