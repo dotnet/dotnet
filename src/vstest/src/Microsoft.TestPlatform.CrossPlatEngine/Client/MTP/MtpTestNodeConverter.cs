@@ -82,6 +82,21 @@ internal static class MtpTestNodeConverter
             result.Duration = TimeSpan.FromMilliseconds(durationMs);
         }
 
+        // Surface the test's captured standard output/error (when the MTP node carries it) as result
+        // messages so the console and TRX loggers show it, matching the classic path where a test's
+        // stdout/stderr is attached to its result.
+        string? standardOutput = MtpJson.GetString(node, MtpConstants.StandardOutput);
+        if (!string.IsNullOrEmpty(standardOutput))
+        {
+            result.Messages.Add(new TestResultMessage(TestResultMessage.StandardOutCategory, standardOutput));
+        }
+
+        string? standardError = MtpJson.GetString(node, MtpConstants.StandardError);
+        if (!string.IsNullOrEmpty(standardError))
+        {
+            result.Messages.Add(new TestResultMessage(TestResultMessage.StandardErrorCategory, standardError));
+        }
+
         return result;
     }
 
