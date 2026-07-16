@@ -55,7 +55,7 @@
          verification. See the GenerateJsFileCatalog target in
          src/installer/pkg/sfx/Microsoft.NETCore.App/Directory.Build.targets. -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
-    <FileSignInfo Include="runtime-js.cat" CertificateName="Microsoft400" />
+    <FileSignInfo Include="runtime-js.cat" CertificateName="MicrosoftDotNet500" />
 
     <!-- Third-party components which should be signed.  -->
     <FileSignInfo Include="Antlr4.Runtime.Standard.dll" CertificateName="3PartySHA2" />
