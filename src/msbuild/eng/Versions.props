@@ -57,6 +57,10 @@
   <PropertyGroup>
     <!-- dotnet/runtime packages -->
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
+    <!-- Manually pinned above the vulnerable 4.3.0 versions brought in transitively
+         (System.Net.Http: GHSA-7jgj-8wvc-jh57, System.Text.RegularExpressions: GHSA-cmhx-cq75-c4mj). -->
+    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
+    <SystemTextRegularExpressionsVersion>4.3.1</SystemTextRegularExpressionsVersion>
   </PropertyGroup>
 
   <PropertyGroup>
