@@ -18,14 +18,10 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=7.1.2</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=7.7.3</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>
-
-    <!-- Update project assembly info (see https://github.com/dotnet/source-build/issues/3565).
-         The script being executed is being injected into the repo via a patch. -->
-    <Exec Command="./updateAssemblyInfo.sh" WorkingDirectory="$(ProjectDirectory)" IgnoreStandardErrorWarningFormat="true" />
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"

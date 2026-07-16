@@ -19,7 +19,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
     {
         // Used for formatting a message for testing with one parameter.
         private const string TestMessageOneParam = "This is the parameter: '{0}'.";
-        
+
         [Fact]
         public void LogSecurityArtifactTest()
         {

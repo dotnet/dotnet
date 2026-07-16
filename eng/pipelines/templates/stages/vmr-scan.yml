@@ -41,6 +41,16 @@ stages:
       displayName: Tag the build
       workingDirectory: $(Build.SourcesDirectory)/src/installer
 
+    - script: |
+        set -e
+        legacyRepoPath="$(Build.SourcesDirectory)/src/source-build-reference-packages"
+        if [ ! -d "$legacyRepoPath" ]; then
+          mkdir -p "$legacyRepoPath"
+          touch "$legacyRepoPath/_"
+        fi
+      displayName: Work around legacy binary scanner path
+      workingDirectory: $(Build.SourcesDirectory)/src/installer
+
     - script: >
         $(DotNetPath)/dotnet darc vmr scan-binary-files
         --vmr "$(Build.SourcesDirectory)"

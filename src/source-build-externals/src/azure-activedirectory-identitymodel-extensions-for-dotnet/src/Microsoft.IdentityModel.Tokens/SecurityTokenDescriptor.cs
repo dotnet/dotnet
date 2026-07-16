@@ -57,7 +57,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         /// <summary>
         /// Gets or sets the <see cref="Dictionary{TKey, TValue}"/> which represents the claims that will be used when creating a security token.
-        /// If both <cref see="Claims"/> and <see cref="Subject"/> are set, the claim values in Subject will be combined with the values
+        /// If both <see cref="Claims"/> and <see cref="Subject"/> are set, the claim values in Subject will be combined with the values
         /// in Claims. The values found in Claims take precedence over those found in Subject, so any duplicate
         /// values will be overridden.
         /// </summary>
@@ -90,7 +90,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         /// <summary>
         /// Gets or sets the <see cref="ClaimsIdentity"/>.
-        /// If both <cref see="Claims"/> and <see cref="Subject"/> are set, the claim values in Subject will be combined with the values
+        /// If both <see cref="Claims"/> and <see cref="Subject"/> are set, the claim values in Subject will be combined with the values
         /// in Claims. The values found in Claims take precedence over those found in Subject, so any duplicate
         /// values will be overridden.
         /// </summary>

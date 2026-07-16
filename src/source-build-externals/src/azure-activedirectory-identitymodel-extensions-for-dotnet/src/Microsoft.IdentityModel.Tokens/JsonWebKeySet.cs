@@ -82,7 +82,7 @@ namespace Microsoft.IdentityModel.Tokens
 #if NET8_0_OR_GREATER
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
 #endif
-        public IList<JsonWebKey> Keys { get; } = new List<JsonWebKey>();
+        public IList<JsonWebKey> Keys { get; internal set; } = new List<JsonWebKey>();
 
         /// <summary>
         /// Default value for the flag that controls whether unresolved JsonWebKeys will be included in the resulting collection of <see cref="GetSigningKeys"/> method.

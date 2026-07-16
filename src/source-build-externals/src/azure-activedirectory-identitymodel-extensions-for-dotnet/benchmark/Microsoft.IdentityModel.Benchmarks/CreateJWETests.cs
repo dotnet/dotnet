@@ -2,17 +2,14 @@
 // Licensed under the MIT License.
 
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using BenchmarkDotNet.Attributes;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.Benchmarks
 {
-    [Config(typeof(AntiVirusFriendlyConfig))]
-    [HideColumns("Type", "Job", "WarmupCount", "LaunchCount")]
-    [MemoryDiagnoser]
+    // dotnet run -c release -f net8.0 --filter Microsoft.IdentityModel.Benchmarks.CreateJWETests*
+
     public class CreateJWETests
     {
         private JsonWebTokenHandler _jsonWebTokenHandler;
@@ -26,10 +23,9 @@ namespace Microsoft.IdentityModel.Benchmarks
             _jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             _tokenDescriptor = new SecurityTokenDescriptor
             {
-                SigningCredentials = KeyingMaterial.JsonWebKeyRsa256SigningCredentials,
-                EncryptingCredentials = KeyingMaterial.DefaultSymmetricEncryptingCreds_Aes256_Sha512_512,
-                Subject = new ClaimsIdentity(Default.PayloadClaims),
-                TokenType = "TokenType"
+                SigningCredentials = BenchmarkUtils.SigningCredentialsRsaSha256,
+                EncryptingCredentials = BenchmarkUtils.EncryptingCredentialsAes256Sha512,
+                Claims = BenchmarkUtils.Claims
             };
         }
 
@@ -38,5 +34,6 @@ namespace Microsoft.IdentityModel.Benchmarks
 
         [Benchmark]
         public string JwtSecurityTokenHandler_CreateJWE() => _jwtSecurityTokenHandler.CreateEncodedJwt(_tokenDescriptor);
+
     }
 }
