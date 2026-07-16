@@ -6,7 +6,6 @@
   <ItemGroup>
     <!-- arcade -->
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Packaging" Version="$(MicrosoftDotNetBuildTasksPackagingVersion)" />
-    <PackageReference Include="Microsoft.DotNet.Build.Tasks.FileCatalog" Version="$(MicrosoftDotNetBuildTasksFileCatalogVersion)" />
   </ItemGroup>
 </Project>
 
