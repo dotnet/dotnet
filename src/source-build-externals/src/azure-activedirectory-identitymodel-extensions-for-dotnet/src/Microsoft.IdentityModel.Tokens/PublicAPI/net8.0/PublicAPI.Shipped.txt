@@ -1,4 +1,6 @@
 ~Microsoft.IdentityModel.Tokens.CaseSensitiveClaimsIdentity.SecurityToken.set -> void
+Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CacheCustomProviders.get -> bool
+Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CacheCustomProviders.set -> void
 Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider
 Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.EcdhKeyExchangeProvider(Microsoft.IdentityModel.Tokens.SecurityKey privateKey, Microsoft.IdentityModel.Tokens.SecurityKey publicKey, string alg, string enc) -> void
 Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider.GenerateKdf(string apu = null, string apv = null) -> Microsoft.IdentityModel.Tokens.SecurityKey

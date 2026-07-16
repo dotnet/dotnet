@@ -9,7 +9,6 @@ Subject: [PATCH] Resolve conflicts
  .../AsymmetricAdapter.cs                      |  194 ---
  .../AsymmetricSignatureProvider.cs            |   16 +-
  .../GlobalSuppressions.cs                     |    3 -
- .../InternalAPI.Unshipped.txt                 |   14 -
  .../Json/JsonWebKeySerializer.cs              |   12 -
  .../JsonWebAlgorithmsKeyTypes.cs              |    3 -
  .../JsonWebKey.cs                             |   63 +-
@@ -19,7 +18,6 @@ Subject: [PATCH] Resolve conflicts
  .../Microsoft.IdentityModel.Tokens.csproj     |    1 -
  .../MlDsaAdapter.cs                           |  160 ---
  .../MlDsaSecurityKey.cs                       |  158 ---
- .../PublicAPI.Unshipped.txt                   |   21 -
  .../SecurityAlgorithms.cs                     |    5 -
  .../SupportedAlgorithms.cs                    |   55 +-
  .../Telemetry/CryptoTelemetry.cs              |   66 +-
@@ -29,7 +27,7 @@ Subject: [PATCH] Resolve conflicts
  .../AsymmetricSignatureTestData.cs            |   37 -
  .../AsymmetricSignatureTests.cs               |   58 +-
  .../MlDsaSecurityKeyTests.cs                  | 1151 -----------------
- 25 files changed, 34 insertions(+), 2490 deletions(-)
+ 23 files changed, 34 insertions(+), 2455 deletions(-)
  delete mode 100644 Directory.Build.targets
  delete mode 100644 src/Microsoft.IdentityModel.Tokens/MlDsaAdapter.cs
  delete mode 100644 src/Microsoft.IdentityModel.Tokens/MlDsaSecurityKey.cs
@@ -395,28 +393,6 @@ index dd15d709..b45866a8 100644
  [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Appropriate exception will be caught.", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InMemoryCryptoProviderCache.TryRemove(Microsoft.IdentityModel.Tokens.SignatureProvider)~System.Boolean")]
  [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as validation", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InternalValidators.ValidateLifetimeAndIssuerAfterSignatureNotValidatedSaml(Microsoft.IdentityModel.Tokens.SecurityToken,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,Microsoft.IdentityModel.Tokens.TokenValidationParameters,System.Text.StringBuilder)")]
  [assembly: SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "Not using Globalization", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.Interop.Kernel32.GetMessage(System.Int32,System.IntPtr)~System.String")]
-diff --git a/src/Microsoft.IdentityModel.Tokens/InternalAPI.Unshipped.txt b/src/Microsoft.IdentityModel.Tokens/InternalAPI.Unshipped.txt
-index b1feb68a..9b0a95e2 100644
---- a/src/Microsoft.IdentityModel.Tokens/InternalAPI.Unshipped.txt
-+++ b/src/Microsoft.IdentityModel.Tokens/InternalAPI.Unshipped.txt
-@@ -107,17 +107,3 @@ virtual Microsoft.IdentityModel.Tokens.SignUsingOffsetDelegate.Invoke(byte[] byt
- virtual Microsoft.IdentityModel.Tokens.SignUsingSpanDelegate.Invoke(System.ReadOnlySpan<byte> bytes, System.Span<byte> signature, out int bytesWritten) -> bool
- virtual Microsoft.IdentityModel.Tokens.VerifyDelegate.Invoke(byte[] bytes, byte[] signature) -> bool
- virtual Microsoft.IdentityModel.Tokens.VerifyUsingOffsetDelegate.Invoke(byte[] bytes, int offset, int count, byte[] signature) -> bool
--
--~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MlDsaSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey webKey, bool usePrivateKey) -> void
--static Microsoft.IdentityModel.Tokens.MlDsaAdapter.CreateMlDsa(Microsoft.IdentityModel.Tokens.JsonWebKey jsonWebKey, bool usePrivateKey) -> System.Security.Cryptography.MLDsa
--static Microsoft.IdentityModel.Tokens.MlDsaAdapter.GetMLDsaAlgorithm(string algorithm) -> System.Security.Cryptography.MLDsaAlgorithm
--static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedMlDsaAlgorithm(string algorithm) -> bool
--static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.TryGetHashAlgorithmName(string algorithm, out System.Security.Cryptography.HashAlgorithmName hashAlgorithmName) -> bool
--internal static Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.GetAlgorithmName(System.Security.Cryptography.MLDsaAlgorithm algorithm) -> string
--Microsoft.IdentityModel.Tokens.X509SecurityKey.MlDsaPrivateKey.get -> System.Security.Cryptography.MLDsa
--Microsoft.IdentityModel.Tokens.X509SecurityKey.MlDsaPublicKey.get -> System.Security.Cryptography.MLDsa
--const Microsoft.IdentityModel.Tokens.LogMessages.IDX10721 = "IDX10721: Unable to create a key from the AKP JsonWebKey (alg: '{0}'). The required parameter '{1}' is missing or empty." -> string
--const Microsoft.IdentityModel.Tokens.LogMessages.IDX10722 = "IDX10722: The AKP JsonWebKey (alg: '{0}') has inconsistent key material. The 'pub' parameter does not match the public key derived from 'priv'." -> string
--const Microsoft.IdentityModel.Tokens.LogMessages.IDX10723 = "IDX10723: Unable to extract the private key from the X.509 certificate for algorithm '{0}' (Key: '{1}'). Private key extraction may not be supported on this platform." -> string
--const Microsoft.IdentityModel.Tokens.LogMessages.IDX10724 = "IDX10724: Unable to compute a JWK thumbprint, public key extraction from the X.509 certificate is not supported on this platform (Key: '{0}')." -> string
--const Microsoft.IdentityModel.Tokens.LogMessages.IDX10725 = "IDX10725: Unable to create a SignatureProvider for algorithm '{0}' (Key: '{1}'). The X.509 certificate key could not be extracted. This may indicate the platform does not support the certificate's key type." -> string
 diff --git a/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs b/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs
 index 76644e69..9429ebce 100644
 --- a/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs
@@ -1194,33 +1170,6 @@ index 23b0feac..00000000
 -        throw LogHelper.LogArgumentException<ArgumentException>(nameof(algorithm), LogMessages.IDX10652, algorithm);
 -    }
 -}
-diff --git a/src/Microsoft.IdentityModel.Tokens/PublicAPI.Unshipped.txt b/src/Microsoft.IdentityModel.Tokens/PublicAPI.Unshipped.txt
-index 2f295829..e69de29b 100644
---- a/src/Microsoft.IdentityModel.Tokens/PublicAPI.Unshipped.txt
-+++ b/src/Microsoft.IdentityModel.Tokens/PublicAPI.Unshipped.txt
-@@ -1,21 +0,0 @@
--~const Microsoft.IdentityModel.Tokens.JsonWebAlgorithmsKeyTypes.Akp = "AKP" -> string
--~const Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Priv = "priv" -> string
--~const Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Pub = "pub" -> string
--~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa44 = "ML-DSA-44" -> string
--~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa65 = "ML-DSA-65" -> string
--~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa87 = "ML-DSA-87" -> string
--Microsoft.IdentityModel.Tokens.MlDsaSecurityKey
--~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MlDsaSecurityKey(System.Security.Cryptography.MLDsa mlDsa) -> void
--~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MLDsa.get -> System.Security.Cryptography.MLDsa
--override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.HasPrivateKey.get -> bool
--override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.PrivateKeyStatus.get -> Microsoft.IdentityModel.Tokens.PrivateKeyStatus
--override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.KeySize.get -> int
--override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.CanComputeJwkThumbprint() -> bool
--~override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.ComputeJwkThumbprint() -> byte[]
--Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.Dispose() -> void
--virtual Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.Dispose(bool disposing) -> void
--~Microsoft.IdentityModel.Tokens.JsonWebKey.Pub.get -> string
--~Microsoft.IdentityModel.Tokens.JsonWebKey.Pub.set -> void
--~Microsoft.IdentityModel.Tokens.JsonWebKey.Priv.get -> string
--~Microsoft.IdentityModel.Tokens.JsonWebKey.Priv.set -> void
--~static Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(Microsoft.IdentityModel.Tokens.MlDsaSecurityKey key) -> Microsoft.IdentityModel.Tokens.JsonWebKey
-\ No newline at end of file
 diff --git a/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs b/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs
 index 66b084b0..3db07ff9 100644
 --- a/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs
