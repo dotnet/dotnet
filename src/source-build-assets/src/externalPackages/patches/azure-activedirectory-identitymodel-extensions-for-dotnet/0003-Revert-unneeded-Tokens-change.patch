@@ -1,0 +1,3126 @@
+From e65aa3e366ea34021286e02fe4983ed29749e18d Mon Sep 17 00:00:00 2001
+From: wigodbe <wigodbe@microsoft.com>
+Date: Tue, 14 Jul 2026 17:21:44 -0700
+Subject: [PATCH] Revert unneeded Tokens change
+
+---
+ Directory.Build.targets                       |   18 -
+ build/dependencies.props                      |    1 -
+ .../AsymmetricAdapter.cs                      |  194 ---
+ .../AsymmetricSignatureProvider.cs            |   16 +-
+ .../GlobalSuppressions.cs                     |    3 -
+ .../Json/JsonWebKeySerializer.cs              |   12 -
+ .../JsonWebAlgorithmsKeyTypes.cs              |    3 -
+ .../JsonWebKey.cs                             |   63 +-
+ .../JsonWebKeyConverter.cs                    |  161 +--
+ .../JsonWebKeyParameterNames.cs               |    4 -
+ .../LogMessages.cs                            |    5 -
+ .../Microsoft.IdentityModel.Tokens.csproj     |    1 -
+ .../MlDsaAdapter.cs                           |  160 ---
+ .../MlDsaSecurityKey.cs                       |  158 ---
+ .../SecurityAlgorithms.cs                     |    5 -
+ .../SupportedAlgorithms.cs                    |   55 +-
+ .../Telemetry/CryptoTelemetry.cs              |   66 +-
+ .../X509SecurityKey.cs                        |  144 +--
+ .../MlDsaConditionalAttributes.cs             |   36 -
+ .../MlDsaKeyingMaterial.cs                    |  138 --
+ .../AsymmetricSignatureTestData.cs            |   37 -
+ .../AsymmetricSignatureTests.cs               |   58 +-
+ .../MlDsaSecurityKeyTests.cs                  | 1151 -----------------
+ 23 files changed, 34 insertions(+), 2455 deletions(-)
+ delete mode 100644 Directory.Build.targets
+ delete mode 100644 src/Microsoft.IdentityModel.Tokens/MlDsaAdapter.cs
+ delete mode 100644 src/Microsoft.IdentityModel.Tokens/MlDsaSecurityKey.cs
+ delete mode 100644 test/Microsoft.IdentityModel.TestUtils/MlDsaConditionalAttributes.cs
+ delete mode 100644 test/Microsoft.IdentityModel.TestUtils/MlDsaKeyingMaterial.cs
+ delete mode 100644 test/Microsoft.IdentityModel.Tokens.Tests/MlDsaSecurityKeyTests.cs
+
+diff --git a/Directory.Build.targets b/Directory.Build.targets
+deleted file mode 100644
+index d142d2d5..00000000
+--- a/Directory.Build.targets
++++ /dev/null
+@@ -1,18 +0,0 @@
+-<!-- Directory.Build.targets is imported after NuGet package .targets files,
+-     so target overrides here take effect over package-defined InitialTargets. -->
+-<Project>
+-
+-  <!-- Microsoft.Bcl.Cryptography 10.0.2 and its transitive dependency System.Formats.Asn1
+-       emit TFM support warnings on net6.0. ML-DSA functionality is validated on net6.0
+-       via the compatibility package and covered by the cross-TFM test suite.
+-       These overrides suppress only these specific package warnings — any new package
+-       that introduces TFM warnings will still surface normally.
+-       Note: Condition="false" applies unconditionally, but the package .targets files
+-       only fire on unsupported TFMs (net6.0), so this has no effect on net8.0+.
+-       Remove when net6.0 is dropped from SrcTargets. -->
+-  <Target Name="NETStandardCompatError_Microsoft_Bcl_Cryptography_net8_0"
+-          Condition="false" />
+-  <Target Name="NETStandardCompatError_System_Formats_Asn1_net8_0"
+-          Condition="false" />
+-
+-</Project>
+diff --git a/build/dependencies.props b/build/dependencies.props
+index f47465c7..97995daf 100644
+--- a/build/dependencies.props
++++ b/build/dependencies.props
+@@ -3,7 +3,6 @@
+   <PropertyGroup>
+     <AspNetCoreMinSupportedVersion>2.1.1</AspNetCoreMinSupportedVersion>
+     <BannedApiAnalyzersVersion>4.14.0</BannedApiAnalyzersVersion>
+-    <MicrosoftBclCryptographyVersion>10.0.2</MicrosoftBclCryptographyVersion>
+     <MicrosoftBclTimeProviderVersion>8.0.1</MicrosoftBclTimeProviderVersion>
+     <MicrosoftCSharpVersion>4.7.0</MicrosoftCSharpVersion>
+     <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+diff --git a/src/Microsoft.IdentityModel.Tokens/AsymmetricAdapter.cs b/src/Microsoft.IdentityModel.Tokens/AsymmetricAdapter.cs
+index 004bda25..113a55c1 100644
+--- a/src/Microsoft.IdentityModel.Tokens/AsymmetricAdapter.cs
++++ b/src/Microsoft.IdentityModel.Tokens/AsymmetricAdapter.cs
+@@ -31,7 +31,6 @@ namespace Microsoft.IdentityModel.Tokens
+ #endif
+         private bool _disposeCryptoOperators;
+         private bool _disposed;
+-        private object _mlDsaSyncLock;
+         private DecryptDelegate _decryptFunction = DecryptFunctionNotFound;
+         private EncryptDelegate _encryptFunction = EncryptFunctionNotFound;
+         private SignDelegate _signFunction = SignFunctionNotFound;
+@@ -88,8 +87,6 @@ namespace Microsoft.IdentityModel.Tokens
+                         InitializeUsingX509SecurityKey(x509SecurityKeyFromJsonWebKey, algorithm, requirePrivateKey);
+                     else if (securityKey is ECDsaSecurityKey edcsaSecurityKeyFromJsonWebKey)
+                         InitializeUsingEcdsaSecurityKey(edcsaSecurityKeyFromJsonWebKey);
+-                    else if (securityKey is MlDsaSecurityKey mlDsaSecurityKeyFromJsonWebKey)
+-                        InitializeUsingMlDsaSecurityKey(mlDsaSecurityKeyFromJsonWebKey, requirePrivateKey);
+                     else
+                         throw LogHelper.LogExceptionMessage(
+                             new NotSupportedException(
+@@ -102,10 +99,6 @@ namespace Microsoft.IdentityModel.Tokens
+             {
+                 InitializeUsingEcdsaSecurityKey(ecdsaKey);
+             }
+-            else if (key is MlDsaSecurityKey mlDsaKey)
+-            {
+-                InitializeUsingMlDsaSecurityKey(mlDsaKey, requirePrivateKey);
+-            }
+             else
+                 throw LogHelper.LogExceptionMessage(
+                     new NotSupportedException(
+@@ -145,9 +138,6 @@ namespace Microsoft.IdentityModel.Tokens
+                     {
+                         if (ECDsa != null)
+                             ECDsa.Dispose();
+-
+-                        if (MLDsa != null)
+-                            MLDsa.Dispose();
+ #if DESKTOP
+                         if (RsaCryptoServiceProviderProxy != null)
+                             RsaCryptoServiceProviderProxy.Dispose();
+@@ -161,8 +151,6 @@ namespace Microsoft.IdentityModel.Tokens
+ 
+         private ECDsa ECDsa { get; set; }
+ 
+-        private MLDsa MLDsa { get; set; }
+-
+         internal byte[] Encrypt(byte[] data)
+         {
+             return _encryptFunction(data);
+@@ -188,41 +176,6 @@ namespace Microsoft.IdentityModel.Tokens
+             _verifyUsingOffsetFunction = VerifyUsingOffsetECDsa;
+         }
+ 
+-        private void InitializeUsingMlDsaSecurityKey(MlDsaSecurityKey mlDsaSecurityKey, bool requirePrivateKey)
+-        {
+-            InitializeUsingMlDsa(mlDsaSecurityKey.MLDsa, requirePrivateKey);
+-        }
+-
+-        private void InitializeUsingMlDsa(MLDsa mlDsa, bool includePrivateKey)
+-        {
+-            // Clone the MLDsa instance so each adapter holds an independent copy.
+-            // MLDsa instance methods are not guaranteed thread-safe, and multiple
+-            // adapters from the object pool may reference the same source key.
+-            MLDsa clone = MlDsaAdapter.CloneMlDsa(mlDsa, includePrivateKey);
+-
+-            if (clone is not null)
+-            {
+-                // Clone succeeded — each adapter owns its independent instance.
+-                MLDsa = clone;
+-                _disposeCryptoOperators = true;
+-            }
+-            else
+-            {
+-                // Key is non-exportable (e.g., HSM-backed) — share the original
+-                // instance and serialize access with a lock.
+-                MLDsa = mlDsa;
+-                _mlDsaSyncLock = new object();
+-            }
+-
+-            _signFunction = SignMlDsa;
+-            _signUsingOffsetFunction = SignUsingOffsetMlDsa;
+-#if NET6_0_OR_GREATER
+-            _signUsingSpanFunction = SignUsingSpanMlDsa;
+-#endif
+-            _verifyFunction = VerifyMlDsa;
+-            _verifyUsingOffsetFunction = VerifyUsingOffsetMlDsa;
+-        }
+-
+         private void InitializeUsingRsa(RSA rsa, string algorithm)
+         {
+             // The return value for X509Certificate2.GetPrivateKey OR X509Certificate2.GetPublicKey.Key is a RSACryptoServiceProvider
+@@ -304,68 +257,11 @@ namespace Microsoft.IdentityModel.Tokens
+             X509SecurityKey x509SecurityKey,
+             string algorithm,
+             bool requirePrivateKey)
+-        {
+-            if (x509SecurityKey.MlDsaPublicKey != null)
+-            {
+-                InitializeUsingX509MlDsa(x509SecurityKey, algorithm, requirePrivateKey);
+-            }
+-            else if (x509SecurityKey.PublicKey is RSA)
+-            {
+-                InitializeUsingX509Rsa(x509SecurityKey, algorithm, requirePrivateKey);
+-            }
+-            else if (x509SecurityKey.PublicKey is ECDsa ecDsa)
+-            {
+-                InitializeUsingEcdsaSecurityKey(new ECDsaSecurityKey(ecDsa));
+-            }
+-            else
+-            {
+-                // Certificate key type is not recognized (not RSA, ECDSA, or ML-DSA).
+-                throw LogHelper.LogExceptionMessage(
+-                    new NotSupportedException(
+-                        LogHelper.FormatInvariant(
+-                            LogMessages.IDX10725,
+-                            LogHelper.MarkAsNonPII(algorithm),
+-                            LogHelper.MarkAsNonPII(x509SecurityKey.KeyId))));
+-            }
+-        }
+-
+-        private void InitializeUsingX509MlDsa(
+-            X509SecurityKey x509SecurityKey,
+-            string algorithm,
+-            bool requirePrivateKey)
+-        {
+-            MLDsa mlDsa = requirePrivateKey ? x509SecurityKey.MlDsaPrivateKey : x509SecurityKey.MlDsaPublicKey;
+-            if (mlDsa == null)
+-                throw LogHelper.LogExceptionMessage(
+-                    new InvalidOperationException(
+-                        LogHelper.FormatInvariant(
+-                            LogMessages.IDX10723,
+-                            LogHelper.MarkAsNonPII(algorithm),
+-                            LogHelper.MarkAsNonPII(x509SecurityKey.KeyId))));
+-
+-            InitializeUsingMlDsa(mlDsa, requirePrivateKey);
+-        }
+-
+-        private void InitializeUsingX509Rsa(
+-            X509SecurityKey x509SecurityKey,
+-            string algorithm,
+-            bool requirePrivateKey)
+         {
+             if (requirePrivateKey)
+-            {
+-                if (x509SecurityKey.PrivateKey == null)
+-                    throw LogHelper.LogExceptionMessage(
+-                        new InvalidOperationException(
+-                            LogHelper.FormatInvariant(
+-                                LogMessages.IDX10638,
+-                                LogHelper.MarkAsNonPII(x509SecurityKey.KeyId))));
+-
+                 InitializeUsingRsa(x509SecurityKey.PrivateKey as RSA, algorithm);
+-            }
+             else
+-            {
+                 InitializeUsingRsa(x509SecurityKey.PublicKey as RSA, algorithm);
+-            }
+         }
+ 
+         private RSA RSA { get; set; }
+@@ -446,68 +342,6 @@ namespace Microsoft.IdentityModel.Tokens
+             return ECDsa.SignHash(HashAlgorithm.ComputeHash(bytes, offset, count));
+         }
+ 
+-        private byte[] SignMlDsa(byte[] bytes)
+-        {
+-            if (_mlDsaSyncLock is not null)
+-            {
+-                lock (_mlDsaSyncLock)
+-                    return MLDsa.SignData(bytes, context: null);
+-            }
+-
+-            return MLDsa.SignData(bytes, context: null);
+-        }
+-
+-        internal bool SignUsingSpanMlDsa(
+-            ReadOnlySpan<byte> data,
+-            Span<byte> destination,
+-            out int bytesWritten)
+-        {
+-            int signatureSize = MLDsa.Algorithm.SignatureSizeInBytes;
+-            if (destination.Length < signatureSize)
+-            {
+-                bytesWritten = 0;
+-                return false;
+-            }
+-
+-            // MLDsa.SignData requires destination to be exactly SignatureSizeInBytes.
+-            if (_mlDsaSyncLock is not null)
+-            {
+-                lock (_mlDsaSyncLock)
+-                    MLDsa.SignData(data, destination.Slice(0, signatureSize), context: default);
+-            }
+-            else
+-            {
+-                MLDsa.SignData(data, destination.Slice(0, signatureSize), context: default);
+-            }
+-
+-            bytesWritten = signatureSize;
+-            return true;
+-        }
+-
+-        private byte[] SignUsingOffsetMlDsa(byte[] bytes, int offset, int count)
+-        {
+-            int signatureSize = MLDsa.Algorithm.SignatureSizeInBytes;
+-            byte[] signature = new byte[signatureSize];
+-
+-            if (_mlDsaSyncLock is not null)
+-            {
+-                lock (_mlDsaSyncLock)
+-                    MLDsa.SignData(
+-                        new ReadOnlySpan<byte>(bytes, offset, count),
+-                        signature.AsSpan(),
+-                        context: default);
+-            }
+-            else
+-            {
+-                MLDsa.SignData(
+-                    new ReadOnlySpan<byte>(bytes, offset, count),
+-                    signature.AsSpan(),
+-                    context: default);
+-            }
+-
+-            return signature;
+-        }
+-
+         internal bool Verify(byte[] bytes, byte[] signature)
+         {
+             return _verifyFunction(bytes, signature);
+@@ -548,34 +382,6 @@ namespace Microsoft.IdentityModel.Tokens
+ #endif
+         }
+ 
+-        private bool VerifyMlDsa(byte[] bytes, byte[] signature)
+-        {
+-            if (_mlDsaSyncLock is not null)
+-            {
+-                lock (_mlDsaSyncLock)
+-                    return MLDsa.VerifyData(bytes, signature, context: null);
+-            }
+-
+-            return MLDsa.VerifyData(bytes, signature, context: null);
+-        }
+-
+-        private bool VerifyUsingOffsetMlDsa(byte[] bytes, int offset, int count, byte[] signature)
+-        {
+-            if (_mlDsaSyncLock is not null)
+-            {
+-                lock (_mlDsaSyncLock)
+-                    return MLDsa.VerifyData(
+-                        new ReadOnlySpan<byte>(bytes, offset, count),
+-                        signature.AsSpan(),
+-                        context: default);
+-            }
+-
+-            return MLDsa.VerifyData(
+-                new ReadOnlySpan<byte>(bytes, offset, count),
+-                signature.AsSpan(),
+-                context: default);
+-        }
+-
+         private byte[] DecryptWithRsa(byte[] bytes)
+         {
+             return RSA.Decrypt(bytes, RSAEncryptionPadding);
+diff --git a/src/Microsoft.IdentityModel.Tokens/AsymmetricSignatureProvider.cs b/src/Microsoft.IdentityModel.Tokens/AsymmetricSignatureProvider.cs
+index 55f8582f..118d907f 100644
+--- a/src/Microsoft.IdentityModel.Tokens/AsymmetricSignatureProvider.cs
++++ b/src/Microsoft.IdentityModel.Tokens/AsymmetricSignatureProvider.cs
+@@ -41,10 +41,7 @@ namespace Microsoft.IdentityModel.Tokens
+             { SecurityAlgorithms.RsaSsaPssSha512, 1040 },
+             { SecurityAlgorithms.RsaSsaPssSha256Signature, 528 },
+             { SecurityAlgorithms.RsaSsaPssSha384Signature, 784 },
+-            { SecurityAlgorithms.RsaSsaPssSha512Signature, 1040 },
+-            { SecurityAlgorithms.MlDsa44, 10496 },
+-            { SecurityAlgorithms.MlDsa65, 15616 },
+-            { SecurityAlgorithms.MlDsa87, 20736 }
++            { SecurityAlgorithms.RsaSsaPssSha512Signature, 1040 }
+         };
+ 
+         /// <summary>
+@@ -69,10 +66,7 @@ namespace Microsoft.IdentityModel.Tokens
+             { SecurityAlgorithms.RsaSsaPssSha512, 1040 },
+             { SecurityAlgorithms.RsaSsaPssSha256Signature, 528 },
+             { SecurityAlgorithms.RsaSsaPssSha384Signature, 784 },
+-            { SecurityAlgorithms.RsaSsaPssSha512Signature, 1040 },
+-            { SecurityAlgorithms.MlDsa44, 10496 },
+-            { SecurityAlgorithms.MlDsa65, 15616 },
+-            { SecurityAlgorithms.MlDsa87, 20736 }
++            { SecurityAlgorithms.RsaSsaPssSha512Signature, 1040 }
+         };
+ 
+         internal AsymmetricSignatureProvider(
+@@ -196,12 +190,6 @@ namespace Microsoft.IdentityModel.Tokens
+ 
+         private AsymmetricAdapter CreateAsymmetricAdapter()
+         {
+-            // ML-DSA and other pure-signing algorithms do not use an external hash.
+-            if (SupportedAlgorithms.IsSupportedMlDsaAlgorithm(Algorithm))
+-                return new AsymmetricAdapter(Key, Algorithm, WillCreateSignatures);
+-
+-            // Preserve the protected virtual GetHashAlgorithmName extensibility point
+-            // for hash-based algorithms (RSA, ECDSA).
+             HashAlgorithmName hashAlgorithmName = GetHashAlgorithmName(Algorithm);
+             return new AsymmetricAdapter(
+                 Key,
+diff --git a/src/Microsoft.IdentityModel.Tokens/GlobalSuppressions.cs b/src/Microsoft.IdentityModel.Tokens/GlobalSuppressions.cs
+index dd15d709..b45866a8 100644
+--- a/src/Microsoft.IdentityModel.Tokens/GlobalSuppressions.cs
++++ b/src/Microsoft.IdentityModel.Tokens/GlobalSuppressions.cs
+@@ -28,10 +28,7 @@ using System.Diagnostics.CodeAnalysis;
+ [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryConvertToSymmetricSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
+ [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryConvertToX509SecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
+ [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryCreateToRsaSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
+-[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used for try pattern", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.TryConvertToMlDsaSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey,Microsoft.IdentityModel.Tokens.SecurityKey@)~System.Boolean")]
+ [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as platform test", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.RsaSecurityKey.PrivateKeyStatus")]
+-[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as platform test", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.PrivateKeyStatus")]
+-[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as platform test", Scope = "member", Target = "~P:Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.HasPrivateKey")]
+ [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Appropriate exception will be caught.", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InMemoryCryptoProviderCache.TryRemove(Microsoft.IdentityModel.Tokens.SignatureProvider)~System.Boolean")]
+ [assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Used as validation", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.InternalValidators.ValidateLifetimeAndIssuerAfterSignatureNotValidatedSaml(Microsoft.IdentityModel.Tokens.SecurityToken,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,Microsoft.IdentityModel.Tokens.TokenValidationParameters,System.Text.StringBuilder)")]
+ [assembly: SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "Not using Globalization", Scope = "member", Target = "~M:Microsoft.IdentityModel.Tokens.Interop.Kernel32.GetMessage(System.Int32,System.IntPtr)~System.String")]
+diff --git a/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs b/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs
+index 76644e69..9429ebce 100644
+--- a/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs
++++ b/src/Microsoft.IdentityModel.Tokens/Json/JsonWebKeySerializer.cs
+@@ -45,8 +45,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
+             "N",
+             "OTH",
+             "P",
+-            "PRIV",
+-            "PUB",
+             "Q",
+             "QI",
+             "USE",
+@@ -164,10 +162,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
+                         JsonSerializerPrimitives.ReadStrings(ref reader, jsonWebKey.Oth, JsonWebKeyParameterNames.Oth, JsonWebKey.ClassName, true);
+                     else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.P))
+                         jsonWebKey.P = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.P, JsonWebKey.ClassName, true);
+-                    else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.Priv))
+-                        jsonWebKey.Priv = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.Priv, JsonWebKey.ClassName, true);
+-                    else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.Pub))
+-                        jsonWebKey.Pub = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.Pub, JsonWebKey.ClassName, true);
+                     else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.Q))
+                         jsonWebKey.Q = JsonSerializerPrimitives.ReadString(ref reader, JsonWebKeyParameterNames.Q, JsonWebKey.ClassName, true);
+                     else if (reader.ValueTextEquals(JsonWebKeyParameterUtf8Bytes.QI))
+@@ -383,12 +377,6 @@ namespace Microsoft.IdentityModel.Tokens.Json
+             if (!string.IsNullOrEmpty(jsonWebKey.P))
+                 writer.WriteString(JsonWebKeyParameterUtf8Bytes.P, jsonWebKey.P);
+ 
+-            if (!string.IsNullOrEmpty(jsonWebKey.Priv))
+-                writer.WriteString(JsonWebKeyParameterUtf8Bytes.Priv, jsonWebKey.Priv);
+-
+-            if (!string.IsNullOrEmpty(jsonWebKey.Pub))
+-                writer.WriteString(JsonWebKeyParameterUtf8Bytes.Pub, jsonWebKey.Pub);
+-
+             if (!string.IsNullOrEmpty(jsonWebKey.Q))
+                 writer.WriteString(JsonWebKeyParameterUtf8Bytes.Q, jsonWebKey.Q);
+ 
+diff --git a/src/Microsoft.IdentityModel.Tokens/JsonWebAlgorithmsKeyTypes.cs b/src/Microsoft.IdentityModel.Tokens/JsonWebAlgorithmsKeyTypes.cs
+index 0244fe01..a2b22bc4 100644
+--- a/src/Microsoft.IdentityModel.Tokens/JsonWebAlgorithmsKeyTypes.cs
++++ b/src/Microsoft.IdentityModel.Tokens/JsonWebAlgorithmsKeyTypes.cs
+@@ -13,9 +13,6 @@ namespace Microsoft.IdentityModel.Tokens
+         public const string EllipticCurve = "EC";
+         public const string RSA = "RSA";
+         public const string Octet = "oct";
+-
+-        // See: https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/ (RFC 9964 pending)
+-        public const string Akp = "AKP";
+ #pragma warning restore 1591
+     }
+ }
+diff --git a/src/Microsoft.IdentityModel.Tokens/JsonWebKey.cs b/src/Microsoft.IdentityModel.Tokens/JsonWebKey.cs
+index 35192d2f..f1645a64 100644
+--- a/src/Microsoft.IdentityModel.Tokens/JsonWebKey.cs
++++ b/src/Microsoft.IdentityModel.Tokens/JsonWebKey.cs
+@@ -319,26 +319,6 @@ namespace Microsoft.IdentityModel.Tokens
+ #endif
+         public string Y { get; set; }
+ 
+-        /// <summary>
+-        /// Gets or sets the 'pub' (AKP public key).
+-        /// </summary>
+-        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+-        [JsonPropertyName(JsonWebKeyParameterNames.Pub)]
+-#if NET6_0_OR_GREATER
+-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+-#endif
+-        public string Pub { get; set; }
+-
+-        /// <summary>
+-        /// Gets or sets the 'priv' (AKP private key / seed).
+-        /// </summary>
+-        /// <remarks>Value is formatted as: Base64urlEncoding</remarks>
+-        [JsonPropertyName(JsonWebKeyParameterNames.Priv)]
+-#if NET6_0_OR_GREATER
+-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+-#endif
+-        public string Priv { get; set; }
+-
+         /// <summary>
+         /// Gets the key size of <see cref="JsonWebKey"/>.
+         /// </summary>
+@@ -353,8 +333,6 @@ namespace Microsoft.IdentityModel.Tokens
+                     return Base64UrlEncoder.DecodeBytes(X).Length * 8;
+                 else if (Kty == JsonWebAlgorithmsKeyTypes.Octet && !string.IsNullOrEmpty(K))
+                     return Base64UrlEncoder.DecodeBytes(K).Length * 8;
+-                else if (Kty == JsonWebAlgorithmsKeyTypes.Akp && !string.IsNullOrEmpty(Pub))
+-                    return Base64UrlEncoder.DecodeBytes(Pub).Length * 8;
+                 else
+                     return 0;
+             }
+@@ -373,8 +351,6 @@ namespace Microsoft.IdentityModel.Tokens
+                     return D != null && DP != null && DQ != null && P != null && Q != null && QI != null;
+                 else if (Kty == JsonWebAlgorithmsKeyTypes.EllipticCurve)
+                     return D != null;
+-                else if (Kty == JsonWebAlgorithmsKeyTypes.Akp)
+-                    return !string.IsNullOrEmpty(Priv);
+                 else
+                     return false;
+             }
+@@ -417,8 +393,6 @@ namespace Microsoft.IdentityModel.Tokens
+                 return CanComputeRsaThumbprint();
+             else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Octet))
+                 return CanComputeOctThumbprint();
+-            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Akp))
+-                return CanComputeAkpThumbprint();
+             else
+                 return false;
+         }
+@@ -438,10 +412,8 @@ namespace Microsoft.IdentityModel.Tokens
+                 return ComputeRsaThumbprint();
+             else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Octet))
+                 return ComputeOctThumbprint();
+-            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Akp))
+-                return ComputeAkpThumbprint();
+             else
+-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10706, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA, JsonWebAlgorithmsKeyTypes.Octet, JsonWebAlgorithmsKeyTypes.Akp)), LogHelper.MarkAsNonPII(nameof(Kty)))));
++                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10706, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA, JsonWebAlgorithmsKeyTypes.Octet)), LogHelper.MarkAsNonPII(nameof(Kty)))));
+         }
+ 
+         private bool CanComputeOctThumbprint()
+@@ -495,23 +467,6 @@ namespace Microsoft.IdentityModel.Tokens
+             return Utility.GenerateSha256Hash(canonicalJwk);
+         }
+ 
+-        private bool CanComputeAkpThumbprint()
+-        {
+-            return !string.IsNullOrEmpty(Alg) && !string.IsNullOrEmpty(Pub);
+-        }
+-
+-        private byte[] ComputeAkpThumbprint()
+-        {
+-            if (string.IsNullOrEmpty(Alg))
+-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10705, LogHelper.MarkAsNonPII(nameof(Alg)))));
+-
+-            if (string.IsNullOrEmpty(Pub))
+-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10705, LogHelper.MarkAsNonPII(nameof(Pub)))));
+-
+-            var canonicalJwk = $@"{{""{JsonWebKeyParameterNames.Alg}"":""{Alg}"",""{JsonWebKeyParameterNames.Kty}"":""{Kty}"",""{JsonWebKeyParameterNames.Pub}"":""{Pub}""}}";
+-            return Utility.GenerateSha256Hash(canonicalJwk);
+-        }
+-
+         /// <summary>
+         /// Creates a minimal public JWK representation for DPoP proof headers per RFC 9449 and RFC 7638.
+         /// Only the required members for the key type are included (no alg, kid, or use).
+@@ -560,7 +515,6 @@ namespace Microsoft.IdentityModel.Tokens
+ 
+         /// <summary>
+         /// Creates a JsonWebKey representation of an asymmetric public key.
+-        /// For AKP keys, the 'alg' parameter is included as it is required by the key type specification.
+         /// </summary>
+         /// <returns>JsonWebKey representation of an asymmetric public key.</returns>
+         /// <remarks>https://datatracker.ietf.org/doc/html/rfc7800#section-3.2</remarks>
+@@ -598,21 +552,8 @@ namespace Microsoft.IdentityModel.Tokens
+                         $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
+                         $@"""{JsonWebKeyParameterNames.N}"":""{N}""}}";
+             }
+-            else if (string.Equals(Kty, JsonWebAlgorithmsKeyTypes.Akp))
+-            {
+-                if (string.IsNullOrEmpty(Alg))
+-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Alg)))));
+-
+-                if (string.IsNullOrEmpty(Pub))
+-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10708, LogHelper.MarkAsNonPII(nameof(Pub)))));
+-
+-                return $@"{kid}" +
+-                        $@"""{JsonWebKeyParameterNames.Alg}"":""{Alg}""," +
+-                        $@"""{JsonWebKeyParameterNames.Kty}"":""{Kty}""," +
+-                        $@"""{JsonWebKeyParameterNames.Pub}"":""{Pub}""}}";
+-            }
+             else
+-                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10707, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA, JsonWebAlgorithmsKeyTypes.Akp)), LogHelper.MarkAsNonPII(nameof(Kty)))));
++                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10707, LogHelper.MarkAsNonPII(nameof(Kty)), LogHelper.MarkAsNonPII(string.Join(", ", JsonWebAlgorithmsKeyTypes.EllipticCurve, JsonWebAlgorithmsKeyTypes.RSA)), LogHelper.MarkAsNonPII(nameof(Kty)))));
+ 
+         }
+ 
+diff --git a/src/Microsoft.IdentityModel.Tokens/JsonWebKeyConverter.cs b/src/Microsoft.IdentityModel.Tokens/JsonWebKeyConverter.cs
+index 307d9911..6bd0ecb1 100644
+--- a/src/Microsoft.IdentityModel.Tokens/JsonWebKeyConverter.cs
++++ b/src/Microsoft.IdentityModel.Tokens/JsonWebKeyConverter.cs
+@@ -38,8 +38,6 @@ namespace Microsoft.IdentityModel.Tokens
+             else if (key is ECDsaSecurityKey ecdsaSecurityKey)
+                 return ConvertFromECDsaSecurityKey(ecdsaSecurityKey);
+ #endif
+-            else if (key is MlDsaSecurityKey mlDsaSecurityKey)
+-                return ConvertFromMlDsaSecurityKey(mlDsaSecurityKey);
+             else
+                 throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10674, LogHelper.MarkAsNonPII(key.GetType().FullName))));
+         }
+@@ -99,26 +97,6 @@ namespace Microsoft.IdentityModel.Tokens
+             if (key == null)
+                 throw LogHelper.LogArgumentNullException(nameof(key));
+ 
+-            // ML-DSA certificates: PublicKey (AsymmetricAlgorithm) is null because MLDsa
+-            // does not inherit from AsymmetricAlgorithm. Route via MlDsaPublicKey instead.
+-            if (key.MlDsaPublicKey != null)
+-            {
+-                string alg = MlDsaSecurityKey.GetAlgorithmName(key.MlDsaPublicKey.Algorithm);
+-                var jsonWebKey = new JsonWebKey
+-                {
+-                    Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                    Alg = alg, // REQUIRED for AKP keys per draft-ietf-cose-dilithium (RFC 9964 pending)
+-                    Kid = key.KeyId,
+-                    X5t = key.X5t,
+-                    ConvertedSecurityKey = key
+-                };
+-
+-                if (key.Certificate.RawData != null)
+-                    jsonWebKey.X5c.Add(Convert.ToBase64String(key.Certificate.RawData));
+-
+-                return jsonWebKey;
+-            }
+-
+             var kty = key.PublicKey switch
+             {
+                 RSA => JsonWebAlgorithmsKeyTypes.RSA,
+@@ -126,7 +104,7 @@ namespace Microsoft.IdentityModel.Tokens
+                 _ => throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10674, LogHelper.MarkAsNonPII(key.GetType().FullName))))
+             };
+ 
+-            var jwk = new JsonWebKey
++            var jsonWebKey = new JsonWebKey
+             {
+                 Kty = kty,
+                 Kid = key.KeyId,
+@@ -135,9 +113,9 @@ namespace Microsoft.IdentityModel.Tokens
+             };
+ 
+             if (key.Certificate.RawData != null)
+-                jwk.X5c.Add(Convert.ToBase64String(key.Certificate.RawData));
++                jsonWebKey.X5c.Add(Convert.ToBase64String(key.Certificate.RawData));
+ 
+-            return jwk;
++            return jsonWebKey;
+         }
+ 
+         /// <summary>
+@@ -145,7 +123,7 @@ namespace Microsoft.IdentityModel.Tokens
+         /// </summary>
+         /// <param name="key">a <see cref="X509SecurityKey"/> to convert.</param>
+         /// <param name="representAsRsaKey">
+-        /// <c>true</c> to extract the key material (RSA, ECDsa, or ML-DSA) from the <paramref name="key"/>,
++        /// <c>true</c> to represent the <paramref name="key"/> as an <see cref="RsaSecurityKey"/>,
+         /// <c>false</c> to represent the <paramref name="key"/> as an <see cref="X509SecurityKey"/>, using the "x5c" parameter.
+         /// </param>
+         /// <returns>a <see cref="JsonWebKey"/>.</returns>
+@@ -158,43 +136,6 @@ namespace Microsoft.IdentityModel.Tokens
+             if (!representAsRsaKey)
+                 return ConvertFromX509SecurityKey(key);
+ 
+-            // ML-DSA: extract key material directly from the X509SecurityKey's cached MLDsa
+-            // instance rather than wrapping in a temporary MlDsaSecurityKey. This avoids an
+-            // unnecessary allocation and keeps the data flow explicit — we only need the raw
+-            // byte exports (public key, seed), not a full SecurityKey wrapper.
+-            if (key.MlDsaPublicKey != null)
+-            {
+-                MLDsa mlDsa = key.PrivateKeyStatus == PrivateKeyStatus.Exists
+-                    ? key.MlDsaPrivateKey
+-                    : key.MlDsaPublicKey;
+-
+-                string alg = MlDsaSecurityKey.GetAlgorithmName(mlDsa.Algorithm);
+-                byte[] publicKey = mlDsa.ExportMLDsaPublicKey();
+-
+-                var jsonWebKey = new JsonWebKey
+-                {
+-                    Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                    Alg = alg,
+-                    Pub = Base64UrlEncoder.Encode(publicKey),
+-                    Kid = key.KeyId
+-                };
+-
+-                if (key.PrivateKeyStatus == PrivateKeyStatus.Exists)
+-                {
+-                    byte[] seed = mlDsa.ExportMLDsaPrivateSeed();
+-                    try
+-                    {
+-                        jsonWebKey.Priv = Base64UrlEncoder.Encode(seed);
+-                    }
+-                    finally
+-                    {
+-                        CryptographicOperations.ZeroMemory(seed);
+-                    }
+-                }
+-
+-                return jsonWebKey;
+-            }
+-
+             if (key.PrivateKeyStatus == PrivateKeyStatus.Exists)
+             {
+                 if (key.PrivateKey is RSA rsaPrivateKey)
+@@ -318,42 +259,6 @@ namespace Microsoft.IdentityModel.Tokens
+                 {
+                     return TryConvertToSymmetricSecurityKey(webKey, out key);
+                 }
+-                else if (JsonWebAlgorithmsKeyTypes.Akp.Equals(webKey.Kty))
+-                {
+-                    // alg is REQUIRED for all AKP keys per draft-ietf-cose-dilithium (RFC 9964 pending).
+-                    if (string.IsNullOrEmpty(webKey.Alg))
+-                        return false;
+-
+-                    // Only proceed if the alg is a supported AKP algorithm.
+-                    if (!SupportedAlgorithms.IsSupportedMlDsaAlgorithm(webKey.Alg))
+-                        return false;
+-
+-                    // AKP JWKs with x5c contain a certificate — convert to X509SecurityKey.
+-                    // The certificate must contain an ML-DSA key matching the claimed alg.
+-                    if (webKey.X5c != null && webKey.X5c.Count > 0)
+-                    {
+-                        if (!TryConvertToX509SecurityKey(webKey, out key))
+-                            return false;
+-
+-                        if (key is not X509SecurityKey x509Key
+-                            || x509Key.MlDsaPublicKey == null
+-                            || MlDsaSecurityKey.GetAlgorithmName(x509Key.MlDsaPublicKey.Algorithm) != webKey.Alg)
+-                        {
+-                            // Dispose the materialized MLDsa handle to avoid leaking
+-                            // the native SymCrypt handle to the finalizer queue.
+-                            if (key is X509SecurityKey rejectedKey)
+-                                rejectedKey.MlDsaPublicKey?.Dispose();
+-
+-                            key = null;
+-                            webKey.ConvertedSecurityKey = null;
+-                            return false;
+-                        }
+-
+-                        return true;
+-                    }
+-
+-                    return TryConvertToMlDsaSecurityKey(webKey, out key);
+-                }
+             }
+             catch (Exception ex)
+             {
+@@ -491,63 +396,5 @@ namespace Microsoft.IdentityModel.Tokens
+ 
+             return false;
+         }
+-
+-        /// <summary>
+-        /// Converts an <see cref="MlDsaSecurityKey"/> into a <see cref="JsonWebKey"/>.
+-        /// </summary>
+-        public static JsonWebKey ConvertFromMlDsaSecurityKey(MlDsaSecurityKey key)
+-        {
+-            if (key == null)
+-                throw LogHelper.LogArgumentNullException(nameof(key));
+-
+-            string algorithmName = MlDsaSecurityKey.GetAlgorithmName(key.MLDsa.Algorithm);
+-            byte[] publicKey = key.MLDsa.ExportMLDsaPublicKey();
+-
+-            var jsonWebKey = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Alg = algorithmName,
+-                Pub = Base64UrlEncoder.Encode(publicKey),
+-                Kid = key.KeyId
+-            };
+-
+-            if (key.PrivateKeyStatus == PrivateKeyStatus.Exists)
+-            {
+-                byte[] seed = key.MLDsa.ExportMLDsaPrivateSeed();
+-                try
+-                {
+-                    jsonWebKey.Priv = Base64UrlEncoder.Encode(seed);
+-                }
+-                finally
+-                {
+-                    CryptographicOperations.ZeroMemory(seed);
+-                }
+-            }
+-
+-            return jsonWebKey;
+-        }
+-
+-        internal static bool TryConvertToMlDsaSecurityKey(JsonWebKey webKey, out SecurityKey key)
+-        {
+-            key = null;
+-
+-            if (!SupportedAlgorithms.IsSupportedMlDsaAlgorithm(webKey.Alg))
+-                return false;
+-
+-            try
+-            {
+-                key = new MlDsaSecurityKey(webKey, !string.IsNullOrEmpty(webKey.Priv));
+-                return true;
+-            }
+-            catch (Exception ex)
+-            {
+-                string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10813, LogHelper.MarkAsNonPII(typeof(MlDsaSecurityKey)), LogHelper.MarkAsNonPII(webKey.KeyId), ex);
+-                webKey.ConvertKeyInfo = convertKeyInfo;
+-                if (LogHelper.IsEnabled(EventLogLevel.Error))
+-                    LogHelper.LogExceptionMessage(new InvalidOperationException(convertKeyInfo, ex));
+-            }
+-
+-            return false;
+-        }
+     }
+ }
+diff --git a/src/Microsoft.IdentityModel.Tokens/JsonWebKeyParameterNames.cs b/src/Microsoft.IdentityModel.Tokens/JsonWebKeyParameterNames.cs
+index e938fa6e..48d2efc1 100644
+--- a/src/Microsoft.IdentityModel.Tokens/JsonWebKeyParameterNames.cs
++++ b/src/Microsoft.IdentityModel.Tokens/JsonWebKeyParameterNames.cs
+@@ -26,8 +26,6 @@ namespace Microsoft.IdentityModel.Tokens
+         public const string N = "n";
+         public const string Oth = "oth";
+         public const string P = "p";
+-        public const string Priv = "priv";
+-        public const string Pub = "pub";
+         public const string Q = "q";
+         public const string QI = "qi";
+         public const string Use = "use";
+@@ -60,8 +58,6 @@ namespace Microsoft.IdentityModel.Tokens
+         public static ReadOnlySpan<byte> N => "n"u8;
+         public static ReadOnlySpan<byte> Oth => "oth"u8;
+         public static ReadOnlySpan<byte> P => "p"u8;
+-        public static ReadOnlySpan<byte> Priv => "priv"u8;
+-        public static ReadOnlySpan<byte> Pub => "pub"u8;
+         public static ReadOnlySpan<byte> Q => "q"u8;
+         public static ReadOnlySpan<byte> QI => "qi"u8;
+         public static ReadOnlySpan<byte> Use => "use"u8;
+diff --git a/src/Microsoft.IdentityModel.Tokens/LogMessages.cs b/src/Microsoft.IdentityModel.Tokens/LogMessages.cs
+index 1e40e56f..2cf87bc8 100644
+--- a/src/Microsoft.IdentityModel.Tokens/LogMessages.cs
++++ b/src/Microsoft.IdentityModel.Tokens/LogMessages.cs
+@@ -277,11 +277,6 @@ namespace Microsoft.IdentityModel.Tokens
+         public const string IDX10718 = "IDX10718: AlgorithmToValidate is not supported: '{0}'. Algorithm '{1}'.";
+         public const string IDX10719 = "IDX10719: SignatureSize (in bytes) was expected to be '{0}', was '{1}'.";
+         public const string IDX10720 = "IDX10720: Unable to create KeyedHashAlgorithm for algorithm '{0}', the key size must be greater than: '{1}' bits, key has '{2}' bits.";
+-        public const string IDX10721 = "IDX10721: Unable to create a key from the AKP JsonWebKey (alg: '{0}'). The required parameter '{1}' is missing or empty.";
+-        public const string IDX10722 = "IDX10722: The AKP JsonWebKey (alg: '{0}') has inconsistent key material. The 'pub' parameter does not match the public key derived from 'priv'.";
+-        public const string IDX10723 = "IDX10723: Unable to extract the private key from the X.509 certificate for algorithm '{0}' (Key: '{1}'). Private key extraction may not be supported on this platform.";
+-        public const string IDX10724 = "IDX10724: Unable to compute a JWK thumbprint, public key extraction from the X.509 certificate is not supported on this platform (Key: '{0}').";
+-        public const string IDX10725 = "IDX10725: Unable to create a SignatureProvider for algorithm '{0}' (Key: '{1}'). The X.509 certificate key could not be extracted. This may indicate the platform does not support the certificate's key type.";
+ 
+         // Json specific errors
+         //public const string IDX10801 = "IDX10801:"
+diff --git a/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj b/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj
+index dbd41b65..36ab7eec 100644
+--- a/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj
++++ b/src/Microsoft.IdentityModel.Tokens/Microsoft.IdentityModel.Tokens.csproj
+@@ -78,7 +78,6 @@
+   </ItemGroup>
+   
+   <ItemGroup>
+-    <PackageReference Include="Microsoft.Bcl.Cryptography" Version="$(MicrosoftBclCryptographyVersion)" />
+     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsLoggingAbstractionsVersion)" />
+   </ItemGroup>
+ 	
+diff --git a/src/Microsoft.IdentityModel.Tokens/MlDsaAdapter.cs b/src/Microsoft.IdentityModel.Tokens/MlDsaAdapter.cs
+deleted file mode 100644
+index 647165ce..00000000
+--- a/src/Microsoft.IdentityModel.Tokens/MlDsaAdapter.cs
++++ /dev/null
+@@ -1,160 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-using System;
+-using System.Linq;
+-using System.Security.Cryptography;
+-using Microsoft.IdentityModel.Logging;
+-
+-namespace Microsoft.IdentityModel.Tokens;
+-
+-/// <summary>
+-/// Provides helper methods for creating <see cref="MLDsa"/> instances from JWK parameters.
+-/// </summary>
+-internal static class MlDsaAdapter
+-{
+-    /// <summary>
+-    /// Creates an <see cref="MLDsa"/> instance from a <see cref="JsonWebKey"/>.
+-    /// </summary>
+-    /// <param name="jsonWebKey">The JWK containing ML-DSA key material.</param>
+-    /// <param name="usePrivateKey">Whether to include the private key (seed).</param>
+-    /// <returns>An <see cref="MLDsa"/> instance.</returns>
+-    internal static MLDsa CreateMlDsa(JsonWebKey jsonWebKey, bool usePrivateKey)
+-    {
+-        if (jsonWebKey == null)
+-            throw LogHelper.LogArgumentNullException(nameof(jsonWebKey));
+-
+-        if (string.IsNullOrEmpty(jsonWebKey.Pub))
+-            throw LogHelper.LogExceptionMessage(
+-                new ArgumentException(
+-                    LogHelper.FormatInvariant(LogMessages.IDX10721, LogHelper.MarkAsNonPII(jsonWebKey.Alg), LogHelper.MarkAsNonPII(nameof(jsonWebKey.Pub)))));
+-
+-        MLDsaAlgorithm algorithm = GetMLDsaAlgorithm(jsonWebKey.Alg);
+-
+-        if (usePrivateKey)
+-        {
+-            if (string.IsNullOrEmpty(jsonWebKey.Priv))
+-                throw LogHelper.LogExceptionMessage(
+-                    new ArgumentException(
+-                        LogHelper.FormatInvariant(LogMessages.IDX10721, LogHelper.MarkAsNonPII(jsonWebKey.Alg), LogHelper.MarkAsNonPII(nameof(jsonWebKey.Priv)))));
+-
+-            byte[] seed = Base64UrlEncoder.DecodeBytes(jsonWebKey.Priv);
+-            MLDsa key = null;
+-            bool success = false;
+-            try
+-            {
+-                key = MLDsa.ImportMLDsaPrivateSeed(algorithm, seed);
+-
+-                // Verify the claimed public key matches the key derived from the seed.
+-                // This prevents key identity confusion where thumbprint/kid is computed
+-                // from one public key but signing uses a different private key.
+-                byte[] claimedPub = Base64UrlEncoder.DecodeBytes(jsonWebKey.Pub);
+-                byte[] derivedPub = key.ExportMLDsaPublicKey();
+-                if (!claimedPub.SequenceEqual(derivedPub))
+-                {
+-                    throw LogHelper.LogExceptionMessage(
+-                        new ArgumentException(
+-                            LogHelper.FormatInvariant(
+-                                LogMessages.IDX10722,
+-                                LogHelper.MarkAsNonPII(jsonWebKey.Alg))));
+-                }
+-
+-                success = true;
+-                return key;
+-            }
+-            finally
+-            {
+-                if (!success)
+-                    key?.Dispose();
+-
+-                CryptographicOperations.ZeroMemory(seed);
+-            }
+-        }
+-
+-        byte[] publicKey = Base64UrlEncoder.DecodeBytes(jsonWebKey.Pub);
+-        return MLDsa.ImportMLDsaPublicKey(algorithm, publicKey);
+-    }
+-
+-    /// <summary>
+-    /// Maps a JWK algorithm string to the corresponding <see cref="MLDsaAlgorithm"/>.
+-    /// </summary>
+-    internal static MLDsaAlgorithm GetMLDsaAlgorithm(string algorithm)
+-    {
+-        return algorithm switch
+-        {
+-            SecurityAlgorithms.MlDsa44 => MLDsaAlgorithm.MLDsa44,
+-            SecurityAlgorithms.MlDsa65 => MLDsaAlgorithm.MLDsa65,
+-            SecurityAlgorithms.MlDsa87 => MLDsaAlgorithm.MLDsa87,
+-            _ => throw LogHelper.LogArgumentException<ArgumentException>(nameof(algorithm), LogMessages.IDX10652, algorithm)
+-        };
+-    }
+-
+-    /// <summary>
+-    /// Creates an independent clone of an <see cref="MLDsa"/> instance by re-importing key material.
+-    /// The clone is fully independent and safe for concurrent use on a separate thread.
+-    /// </summary>
+-    /// <param name="source">The source <see cref="MLDsa"/> to clone.</param>
+-    /// <param name="includePrivateKey">Whether to include the private key in the clone.</param>
+-    /// <returns>
+-    /// A new <see cref="MLDsa"/> instance with the same key material, or <see langword="null"/>
+-    /// if the key material cannot be exported (e.g., HSM-backed non-exportable keys).
+-    /// </returns>
+-    internal static MLDsa CloneMlDsa(MLDsa source, bool includePrivateKey)
+-    {
+-        if (source is null)
+-            throw LogHelper.LogArgumentNullException(nameof(source));
+-
+-        MLDsaAlgorithm algorithm = source.Algorithm;
+-
+-        if (includePrivateKey)
+-        {
+-            // Try seed first (smallest representation), then expanded private key.
+-            // Either may fail for keys that don't know the seed (imported from
+-            // expanded key) or are non-exportable (HSM/CNG-backed).
+-            try
+-            {
+-                byte[] seed = source.ExportMLDsaPrivateSeed();
+-                try
+-                {
+-                    return MLDsa.ImportMLDsaPrivateSeed(algorithm, seed);
+-                }
+-                finally
+-                {
+-                    CryptographicOperations.ZeroMemory(seed);
+-                }
+-            }
+-            catch (CryptographicException)
+-            {
+-            }
+-
+-            try
+-            {
+-                byte[] expandedKey = source.ExportMLDsaPrivateKey();
+-                try
+-                {
+-                    return MLDsa.ImportMLDsaPrivateKey(algorithm, expandedKey);
+-                }
+-                finally
+-                {
+-                    CryptographicOperations.ZeroMemory(expandedKey);
+-                }
+-            }
+-            catch (CryptographicException)
+-            {
+-                // Key is non-exportable — caller must fall back to
+-                // using the original instance with synchronization.
+-                return null;
+-            }
+-        }
+-
+-        try
+-        {
+-            byte[] publicKey = source.ExportMLDsaPublicKey();
+-            return MLDsa.ImportMLDsaPublicKey(algorithm, publicKey);
+-        }
+-        catch (CryptographicException)
+-        {
+-            return null;
+-        }
+-    }
+-}
+diff --git a/src/Microsoft.IdentityModel.Tokens/MlDsaSecurityKey.cs b/src/Microsoft.IdentityModel.Tokens/MlDsaSecurityKey.cs
+deleted file mode 100644
+index 23b0feac..00000000
+--- a/src/Microsoft.IdentityModel.Tokens/MlDsaSecurityKey.cs
++++ /dev/null
+@@ -1,158 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-using System;
+-using System.Security.Cryptography;
+-using Microsoft.IdentityModel.Logging;
+-
+-namespace Microsoft.IdentityModel.Tokens;
+-
+-/// <summary>
+-/// Represents an ML-DSA security key.
+-/// </summary>
+-public class MlDsaSecurityKey : AsymmetricSecurityKey, IDisposable
+-{
+-    private bool? _hasPrivateKey;
+-    private bool _disposed;
+-    private readonly bool _ownsMlDsa;
+-
+-    internal MlDsaSecurityKey(JsonWebKey webKey, bool usePrivateKey)
+-        : base(webKey)
+-    {
+-        MLDsa = MlDsaAdapter.CreateMlDsa(webKey, usePrivateKey);
+-        _ownsMlDsa = true;
+-        webKey.ConvertedSecurityKey = this;
+-    }
+-
+-    /// <summary>
+-    /// Initializes a new instance of the <see cref="MlDsaSecurityKey"/> class.
+-    /// </summary>
+-    /// <param name="mlDsa">The <see cref="MLDsa"/> instance. The caller is responsible for the
+-    /// lifetime of this instance; disposing the key does not dispose the MLDsa.</param>
+-    public MlDsaSecurityKey(MLDsa mlDsa)
+-    {
+-        MLDsa = mlDsa ?? throw LogHelper.LogArgumentNullException(nameof(mlDsa));
+-    }
+-
+-    /// <summary>
+-    /// The <see cref="MLDsa"/> instance used to initialize the key.
+-    /// </summary>
+-    public MLDsa MLDsa { get; private set; }
+-
+-    /// <summary>
+-    /// Releases resources held by this instance.
+-    /// Only disposes the <see cref="MLDsa"/> if this key owns the instance
+-    /// (i.e., the instance was created internally from a <see cref="JsonWebKey"/>).
+-    /// </summary>
+-    public void Dispose()
+-    {
+-        Dispose(true);
+-        GC.SuppressFinalize(this);
+-    }
+-
+-    /// <summary>
+-    /// Releases unmanaged and, optionally, managed resources.
+-    /// </summary>
+-    /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources;
+-    /// <see langword="false"/> to release only unmanaged resources.</param>
+-    protected virtual void Dispose(bool disposing)
+-    {
+-        if (!_disposed)
+-        {
+-            _disposed = true;
+-            if (disposing && _ownsMlDsa)
+-            {
+-                MLDsa?.Dispose();
+-            }
+-        }
+-    }
+-
+-    /// <summary>
+-    /// Gets a bool indicating if a private key exists.
+-    /// </summary>
+-    /// <return><see langword="true"/> if it has a private key; otherwise, <see langword="false"/>.</return>
+-    [Obsolete("HasPrivateKey method is deprecated, please use PrivateKeyStatus instead.")]
+-    public override bool HasPrivateKey => PrivateKeyStatus == PrivateKeyStatus.Exists;
+-
+-    /// <summary>
+-    /// Gets a value indicating the existence of the private key.
+-    /// </summary>
+-    /// <returns>
+-    /// <see cref="PrivateKeyStatus.Exists"/> if the private key exists.
+-    /// <see cref="PrivateKeyStatus.DoesNotExist"/> if the private key does not exist.
+-    /// <see cref="PrivateKeyStatus.Unknown"/> if the existence of the private key cannot be determined.
+-    /// </returns>
+-    public override PrivateKeyStatus PrivateKeyStatus
+-    {
+-        get
+-        {
+-            if (_hasPrivateKey == null)
+-            {
+-                try
+-                {
+-                    // Try signing to detect private key — this is the most reliable
+-                    // check because keys imported from expanded private key material
+-                    // (not seed) can sign but cannot export the seed.
+-                    byte[] dummy = new byte[1];
+-                    byte[] sig = MLDsa.SignData(dummy, context: null);
+-                    CryptographicOperations.ZeroMemory(sig);
+-                    _hasPrivateKey = true;
+-                }
+-                catch (CryptographicException)
+-                {
+-                    _hasPrivateKey = false;
+-                }
+-                catch (Exception)
+-                {
+-                    // Cannot determine private key status (e.g., platform limitation).
+-                    return PrivateKeyStatus.Unknown;
+-                }
+-            }
+-
+-            return _hasPrivateKey.Value ? PrivateKeyStatus.Exists : PrivateKeyStatus.DoesNotExist;
+-        }
+-    }
+-
+-    /// <summary>
+-    /// Gets the ML-DSA key size in bits.
+-    /// </summary>
+-    public override int KeySize => MLDsa.Algorithm.PublicKeySizeInBytes * 8;
+-
+-    /// <summary>
+-    /// Determines whether the <see cref="MlDsaSecurityKey"/> can compute a JWK thumbprint.
+-    /// </summary>
+-    /// <returns><see langword="true"/> if JWK thumbprint can be computed; otherwise, <see langword="false"/>.</returns>
+-    /// <remarks>See: <see href="https://datatracker.ietf.org/doc/html/rfc7638"/>.</remarks>
+-    public override bool CanComputeJwkThumbprint() => true;
+-
+-    /// <summary>
+-    /// Computes a SHA256 hash over the <see cref="MlDsaSecurityKey"/>.
+-    /// </summary>
+-    /// <returns>A JWK thumbprint.</returns>
+-    /// <remarks>See: <see href="https://datatracker.ietf.org/doc/html/rfc7638"/>.</remarks>
+-    public override byte[] ComputeJwkThumbprint()
+-    {
+-        string algorithmName = GetAlgorithmName(MLDsa.Algorithm);
+-        byte[] publicKey = MLDsa.ExportMLDsaPublicKey();
+-        var canonicalJwk = $@"{{""{JsonWebKeyParameterNames.Alg}"":""{algorithmName}"",""{JsonWebKeyParameterNames.Kty}"":""{JsonWebAlgorithmsKeyTypes.Akp}"",""{JsonWebKeyParameterNames.Pub}"":""{Base64UrlEncoder.Encode(publicKey)}""}}";
+-        return Utility.GenerateSha256Hash(canonicalJwk);
+-    }
+-
+-    /// <summary>
+-    /// Gets the JWK algorithm name for the specified <see cref="MLDsaAlgorithm"/>.
+-    /// </summary>
+-    /// <param name="algorithm">The ML-DSA algorithm.</param>
+-    /// <returns>The algorithm name string (e.g., "ML-DSA-44").</returns>
+-    /// <exception cref="ArgumentException">Thrown when the algorithm is not supported.</exception>
+-    internal static string GetAlgorithmName(MLDsaAlgorithm algorithm)
+-    {
+-        if (algorithm == MLDsaAlgorithm.MLDsa44)
+-            return SecurityAlgorithms.MlDsa44;
+-        if (algorithm == MLDsaAlgorithm.MLDsa65)
+-            return SecurityAlgorithms.MlDsa65;
+-        if (algorithm == MLDsaAlgorithm.MLDsa87)
+-            return SecurityAlgorithms.MlDsa87;
+-
+-        throw LogHelper.LogArgumentException<ArgumentException>(nameof(algorithm), LogMessages.IDX10652, algorithm);
+-    }
+-}
+diff --git a/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs b/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs
+index 66b084b0..3db07ff9 100644
+--- a/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs
++++ b/src/Microsoft.IdentityModel.Tokens/SecurityAlgorithms.cs
+@@ -85,11 +85,6 @@ namespace Microsoft.IdentityModel.Tokens
+         public const string RsaSsaPssSha384 = "PS384";
+         public const string RsaSsaPssSha512 = "PS512";
+ 
+-        // See: https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/ (RFC 9964 pending)
+-        public const string MlDsa44 = "ML-DSA-44";
+-        public const string MlDsa65 = "ML-DSA-65";
+-        public const string MlDsa87 = "ML-DSA-87";
+-
+         // See: https://datatracker.ietf.org/doc/html/rfc7518#section-5.1
+         public const string Aes128CbcHmacSha256 = "A128CBC-HS256";
+         public const string Aes192CbcHmacSha384 = "A192CBC-HS384";
+diff --git a/src/Microsoft.IdentityModel.Tokens/SupportedAlgorithms.cs b/src/Microsoft.IdentityModel.Tokens/SupportedAlgorithms.cs
+index 65270a52..7be591da 100644
+--- a/src/Microsoft.IdentityModel.Tokens/SupportedAlgorithms.cs
++++ b/src/Microsoft.IdentityModel.Tokens/SupportedAlgorithms.cs
+@@ -104,13 +104,6 @@ namespace Microsoft.IdentityModel.Tokens
+             SecurityAlgorithms.EcdhEsA256kw
+         };
+ 
+-        internal static readonly ICollection<string> MlDsaSigningAlgorithms = new Collection<string>
+-        {
+-            SecurityAlgorithms.MlDsa44,
+-            SecurityAlgorithms.MlDsa65,
+-            SecurityAlgorithms.MlDsa87
+-        };
+-
+         /// <summary>
+         /// Creating a Signature requires the use of a <see cref="HashAlgorithm"/>.
+         /// This method returns the <see cref="HashAlgorithmName"/>
+@@ -122,27 +115,9 @@ namespace Microsoft.IdentityModel.Tokens
+         /// <exception cref="ArgumentOutOfRangeException">if <paramref name="algorithm"/> is not supported.</exception>
+         internal static HashAlgorithmName GetHashAlgorithmName(string algorithm)
+         {
+-            if (TryGetHashAlgorithmName(algorithm, out HashAlgorithmName hashAlgorithmName))
+-                return hashAlgorithmName;
+-
+             if (string.IsNullOrWhiteSpace(algorithm))
+                 throw LogHelper.LogArgumentNullException(nameof(algorithm));
+ 
+-            throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(algorithm), LogHelper.FormatInvariant(LogMessages.IDX10652, LogHelper.MarkAsNonPII(algorithm))));
+-        }
+-
+-        /// <summary>
+-        /// Attempts to get the <see cref="HashAlgorithmName"/> for the specified signature algorithm.
+-        /// Returns <see langword="false"/> for algorithms that do not use an external hash (e.g., ML-DSA).
+-        /// </summary>
+-        internal static bool TryGetHashAlgorithmName(string algorithm, out HashAlgorithmName hashAlgorithmName)
+-        {
+-            if (string.IsNullOrWhiteSpace(algorithm))
+-            {
+-                hashAlgorithmName = default;
+-                return false;
+-            }
+-
+             switch (algorithm)
+             {
+                 case SecurityAlgorithms.EcdsaSha256:
+@@ -151,8 +126,7 @@ namespace Microsoft.IdentityModel.Tokens
+                 case SecurityAlgorithms.RsaSha256Signature:
+                 case SecurityAlgorithms.RsaSsaPssSha256:
+                 case SecurityAlgorithms.RsaSsaPssSha256Signature:
+-                    hashAlgorithmName = HashAlgorithmName.SHA256;
+-                    return true;
++                    return HashAlgorithmName.SHA256;
+ 
+                 case SecurityAlgorithms.EcdsaSha384:
+                 case SecurityAlgorithms.EcdsaSha384Signature:
+@@ -160,8 +134,7 @@ namespace Microsoft.IdentityModel.Tokens
+                 case SecurityAlgorithms.RsaSha384Signature:
+                 case SecurityAlgorithms.RsaSsaPssSha384:
+                 case SecurityAlgorithms.RsaSsaPssSha384Signature:
+-                    hashAlgorithmName = HashAlgorithmName.SHA384;
+-                    return true;
++                    return HashAlgorithmName.SHA384;
+ 
+                 case SecurityAlgorithms.EcdsaSha512:
+                 case SecurityAlgorithms.EcdsaSha512Signature:
+@@ -169,12 +142,10 @@ namespace Microsoft.IdentityModel.Tokens
+                 case SecurityAlgorithms.RsaSha512Signature:
+                 case SecurityAlgorithms.RsaSsaPssSha512:
+                 case SecurityAlgorithms.RsaSsaPssSha512Signature:
+-                    hashAlgorithmName = HashAlgorithmName.SHA512;
+-                    return true;
++                    return HashAlgorithmName.SHA512;
+             }
+ 
+-            hashAlgorithmName = default;
+-            return false;
++            throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(algorithm), LogHelper.FormatInvariant(LogMessages.IDX10652, LogHelper.MarkAsNonPII(algorithm))));
+         }
+ 
+         /// <summary>
+@@ -244,9 +215,7 @@ namespace Microsoft.IdentityModel.Tokens
+ 
+             if (key is X509SecurityKey x509Key)
+             {
+-                if (x509Key.MlDsaPublicKey != null)
+-                    return MlDsaSecurityKey.GetAlgorithmName(x509Key.MlDsaPublicKey.Algorithm) == algorithm;
+-
++                // only RSA keys are supported
+                 if (x509Key.PublicKey as RSA == null)
+                     return false;
+ 
+@@ -261,8 +230,6 @@ namespace Microsoft.IdentityModel.Tokens
+                     return IsSupportedEcdsaAlgorithm(algorithm);
+                 else if (JsonWebAlgorithmsKeyTypes.Octet.Equals(jsonWebKey.Kty))
+                     return IsSupportedSymmetricAlgorithm(algorithm);
+-                else if (JsonWebAlgorithmsKeyTypes.Akp.Equals(jsonWebKey.Kty))
+-                    return IsSupportedMlDsaAlgorithm(algorithm) && algorithm == jsonWebKey.Alg;
+ 
+                 return false;
+             }
+@@ -270,9 +237,6 @@ namespace Microsoft.IdentityModel.Tokens
+             if (key is ECDsaSecurityKey)
+                 return IsSupportedEcdsaAlgorithm(algorithm);
+ 
+-            if (key is MlDsaSecurityKey mlDsaKey)
+-                return MlDsaSecurityKey.GetAlgorithmName(mlDsaKey.MLDsa.Algorithm) == algorithm;
+-
+             if (key as SymmetricSecurityKey != null)
+                 return IsSupportedSymmetricAlgorithm(algorithm);
+ 
+@@ -324,11 +288,6 @@ namespace Microsoft.IdentityModel.Tokens
+             return EcdsaSigningAlgorithms.Contains(algorithm);
+         }
+ 
+-        internal static bool IsSupportedMlDsaAlgorithm(string algorithm)
+-        {
+-            return MlDsaSigningAlgorithms.Contains(algorithm);
+-        }
+-
+         internal static bool IsSupportedHashAlgorithm(string algorithm)
+         {
+             return HashAlgorithms.Contains(algorithm);
+@@ -435,10 +394,6 @@ namespace Microsoft.IdentityModel.Tokens
+             SecurityAlgorithms.RsaSsaPssSha512Signature or
+             SecurityAlgorithms.RsaSha512Signature => 1024,
+ 
+-            SecurityAlgorithms.MlDsa44 => 2420,
+-            SecurityAlgorithms.MlDsa65 => 3309,
+-            SecurityAlgorithms.MlDsa87 => 4627,
+-
+             // if we don't know the algorithm, report 2K twice as big as any known algorithm.
+             _ => 2048,
+         };
+diff --git a/src/Microsoft.IdentityModel.Tokens/Telemetry/CryptoTelemetry.cs b/src/Microsoft.IdentityModel.Tokens/Telemetry/CryptoTelemetry.cs
+index b8426851..dd9d63da 100644
+--- a/src/Microsoft.IdentityModel.Tokens/Telemetry/CryptoTelemetry.cs
++++ b/src/Microsoft.IdentityModel.Tokens/Telemetry/CryptoTelemetry.cs
+@@ -77,11 +77,6 @@ public static class CryptoTelemetry
+         public const string Symmetric512 = "SYM-512";
+         public const string SymmetricUnknown = "SYM-UNKNOWN";
+ 
+-        public const string MlDsa44 = "MLDSA-44";
+-        public const string MlDsa65 = "MLDSA-65";
+-        public const string MlDsa87 = "MLDSA-87";
+-        public const string MlDsaUnknown = "MLDSA-UNKNOWN";
+-
+         public const string Unknown = "UNKNOWN"; // Key type is not recognized.
+         public const string NoKey = "NO-KEY"; // Used when no key is found or provided to differentiate from unknown key types
+     }
+@@ -118,49 +113,25 @@ public static class CryptoTelemetry
+                 _ => KeyAlgorithmIds.SymmetricUnknown
+             },
+ 
+-            X509SecurityKey x509 => GetX509KeyAlgorithmId(x509),
+-
+-            JsonWebKey jwk => GetJsonWebKeyAlgorithmId(jwk),
+-
+-            MlDsaSecurityKey mlDsa => mlDsa.MLDsa.Algorithm.Name switch
++            X509SecurityKey x509 => x509.KeySize switch
+             {
+-                "ML-DSA-44" => KeyAlgorithmIds.MlDsa44,
+-                "ML-DSA-65" => KeyAlgorithmIds.MlDsa65,
+-                "ML-DSA-87" => KeyAlgorithmIds.MlDsa87,
+-                _ => KeyAlgorithmIds.MlDsaUnknown
++                2048 => KeyAlgorithmIds.Rsa2048,
++                3072 => KeyAlgorithmIds.Rsa3072,
++                4096 => KeyAlgorithmIds.Rsa4096,
++                256 => KeyAlgorithmIds.EcdsaP256,
++                384 => KeyAlgorithmIds.EcdsaP384,
++                521 => KeyAlgorithmIds.EcdsaP521,
++                _ => x509.PublicKey is RSA
++                    ? KeyAlgorithmIds.RsaUnknown
++                    : x509.PublicKey is ECDsa
++                        ? KeyAlgorithmIds.EcdsaUnknown
++                        : KeyAlgorithmIds.Unknown
+             },
+ 
+-            // EdDSA and other key types can be added here when needed.
+-            _ => KeyAlgorithmIds.Unknown
+-        };
+-    }
+-
+-    private static string GetX509KeyAlgorithmId(X509SecurityKey x509)
+-    {
+-        if (x509.MlDsaPublicKey != null)
+-        {
+-            return x509.MlDsaPublicKey.Algorithm.Name switch
+-            {
+-                "ML-DSA-44" => KeyAlgorithmIds.MlDsa44,
+-                "ML-DSA-65" => KeyAlgorithmIds.MlDsa65,
+-                "ML-DSA-87" => KeyAlgorithmIds.MlDsa87,
+-                _ => KeyAlgorithmIds.MlDsaUnknown
+-            };
+-        }
++            JsonWebKey jwk => GetJsonWebKeyAlgorithmId(jwk),
+ 
+-        return x509.KeySize switch
+-        {
+-            2048 => KeyAlgorithmIds.Rsa2048,
+-            3072 => KeyAlgorithmIds.Rsa3072,
+-            4096 => KeyAlgorithmIds.Rsa4096,
+-            256 => KeyAlgorithmIds.EcdsaP256,
+-            384 => KeyAlgorithmIds.EcdsaP384,
+-            521 => KeyAlgorithmIds.EcdsaP521,
+-            _ => x509.PublicKey is RSA
+-                ? KeyAlgorithmIds.RsaUnknown
+-                : x509.PublicKey is ECDsa
+-                    ? KeyAlgorithmIds.EcdsaUnknown
+-                    : KeyAlgorithmIds.Unknown
++            // EdDSA, MLDSA and other key types can be added here when needed.
++            _ => KeyAlgorithmIds.Unknown
+         };
+     }
+ 
+@@ -194,13 +165,6 @@ public static class CryptoTelemetry
+                 512 => KeyAlgorithmIds.Symmetric512,
+                 _ => KeyAlgorithmIds.SymmetricUnknown
+             },
+-            JsonWebAlgorithmsKeyTypes.Akp => jwk.Alg switch
+-            {
+-                SecurityAlgorithms.MlDsa44 => KeyAlgorithmIds.MlDsa44,
+-                SecurityAlgorithms.MlDsa65 => KeyAlgorithmIds.MlDsa65,
+-                SecurityAlgorithms.MlDsa87 => KeyAlgorithmIds.MlDsa87,
+-                _ => KeyAlgorithmIds.MlDsaUnknown
+-            },
+             _ => KeyAlgorithmIds.Unknown
+         };
+     }
+diff --git a/src/Microsoft.IdentityModel.Tokens/X509SecurityKey.cs b/src/Microsoft.IdentityModel.Tokens/X509SecurityKey.cs
+index 0ad4038e..8b9e9f2c 100644
+--- a/src/Microsoft.IdentityModel.Tokens/X509SecurityKey.cs
++++ b/src/Microsoft.IdentityModel.Tokens/X509SecurityKey.cs
+@@ -24,20 +24,8 @@ namespace Microsoft.IdentityModel.Tokens
+         // <see href="https://datatracker.ietf.org/doc/html/rfc3279#section-2.3.5"/> and <see href="https://datatracker.ietf.org/doc/html/rfc5480"/>
+         const string ECDsaOid = "1.2.840.10045.2.1";
+ 
+-        // OIDs for ML-DSA (FIPS 204)
+-        // <see href="https://datatracker.ietf.org/doc/rfc9881"/>
+-        const string MlDsa44Oid = "2.16.840.1.101.3.4.3.17";
+-        const string MlDsa65Oid = "2.16.840.1.101.3.4.3.18";
+-        const string MlDsa87Oid = "2.16.840.1.101.3.4.3.19";
+-
+         AsymmetricAlgorithm _privateKey;
+         AsymmetricAlgorithm _publicKey;
+-        MLDsa _mlDsaPrivateKey;
+-        MLDsa _mlDsaPublicKey;
+-        bool _isMlDsa;
+-        volatile bool _mlDsaPrivateKeyInitialized;
+-        volatile bool _mlDsaPublicKeyInitialized;
+-        volatile bool _mlDsaPrivateKeyUnsupported;
+ #if NET9_0_OR_GREATER
+         Lock _thisLock = new();
+ #else
+@@ -48,7 +36,6 @@ namespace Microsoft.IdentityModel.Tokens
+         {
+             Certificate = CertificateHelper.LoadX509Certificate(webKey.X5c[0]);
+             X5t = Base64UrlEncoder.Encode(Certificate.GetCertHash());
+-            _isMlDsa = IsMlDsaOid(Certificate.PublicKey.Oid.Value);
+             webKey.ConvertedSecurityKey = this;
+         }
+ 
+@@ -62,7 +49,6 @@ namespace Microsoft.IdentityModel.Tokens
+             Certificate = certificate ?? throw LogHelper.LogArgumentNullException(nameof(certificate));
+             KeyId = certificate.Thumbprint;
+             X5t = Base64UrlEncoder.Encode(certificate.GetCertHash());
+-            _isMlDsa = IsMlDsaOid(certificate.PublicKey.Oid.Value);
+         }
+ 
+         /// <summary>
+@@ -77,7 +63,6 @@ namespace Microsoft.IdentityModel.Tokens
+             Certificate = certificate ?? throw LogHelper.LogArgumentNullException(nameof(certificate));
+             KeyId = string.IsNullOrEmpty(keyId) ? throw LogHelper.LogArgumentNullException(nameof(keyId)) : keyId;
+             X5t = Base64UrlEncoder.Encode(certificate.GetCertHash());
+-            _isMlDsa = IsMlDsaOid(certificate.PublicKey.Oid.Value);
+         }
+ 
+         /// <summary>
+@@ -85,13 +70,7 @@ namespace Microsoft.IdentityModel.Tokens
+         /// </summary>
+         public override int KeySize
+         {
+-            get
+-            {
+-                if (_isMlDsa)
+-                    return MlDsaPublicKey?.Algorithm.PublicKeySizeInBytes * 8 ?? 0;
+-
+-                return PublicKey.KeySize;
+-            }
++            get => PublicKey.KeySize;
+         }
+ 
+         /// <summary>
+@@ -166,81 +145,6 @@ namespace Microsoft.IdentityModel.Tokens
+                 return _publicKey;
+             }
+         }
+-
+-        /// <summary>
+-        /// Gets the ML-DSA private key from the certificate, or null if the certificate
+-        /// does not contain an ML-DSA key or does not have a private key.
+-        /// </summary>
+-        internal MLDsa MlDsaPrivateKey
+-        {
+-            get
+-            {
+-                if (!_mlDsaPrivateKeyInitialized && _isMlDsa)
+-                {
+-                    lock (ThisLock)
+-                    {
+-                        if (!_mlDsaPrivateKeyInitialized)
+-                        {
+-                            try
+-                            {
+-#pragma warning disable SYSLIB5006 // GetMLDsaPrivateKey is experimental
+-                                _mlDsaPrivateKey = Certificate.GetMLDsaPrivateKey();
+-#pragma warning restore SYSLIB5006
+-                            }
+-                            catch (PlatformNotSupportedException)
+-                            {
+-                                // On .NET 6, GetMLDsaPrivateKey() from Microsoft.Bcl.Cryptography
+-                                // throws PlatformNotSupportedException. ML-DSA X.509 private key
+-                                // extraction requires .NET 8+. On .NET 6, ML-DSA certificates can
+-                                // still be used for signature verification (public key works) but
+-                                // not for signing via X509SecurityKey. Callers needing to sign on
+-                                // .NET 6 should use MlDsaSecurityKey with a standalone MLDsa key.
+-                                _mlDsaPrivateKeyUnsupported = true;
+-                            }
+-
+-                            _mlDsaPrivateKeyInitialized = true;
+-                        }
+-                    }
+-                }
+-
+-                return _mlDsaPrivateKey;
+-            }
+-        }
+-
+-        /// <summary>
+-        /// Gets the ML-DSA public key from the certificate, or null if the certificate
+-        /// does not contain an ML-DSA key or the platform does not support ML-DSA.
+-        /// </summary>
+-        internal MLDsa MlDsaPublicKey
+-        {
+-            get
+-            {
+-                if (!_mlDsaPublicKeyInitialized && _isMlDsa)
+-                {
+-                    lock (ThisLock)
+-                    {
+-                        if (!_mlDsaPublicKeyInitialized)
+-                        {
+-                            try
+-                            {
+-#pragma warning disable SYSLIB5006 // GetMLDsaPublicKey is experimental
+-                                _mlDsaPublicKey = Certificate.GetMLDsaPublicKey();
+-#pragma warning restore SYSLIB5006
+-                            }
+-                            catch (PlatformNotSupportedException)
+-                            {
+-                                // GetMLDsaPublicKey() may not be supported on all platforms.
+-                                // Return null so callers can degrade gracefully.
+-                            }
+-
+-                            _mlDsaPublicKeyInitialized = true;
+-                        }
+-                    }
+-                }
+-
+-                return _mlDsaPublicKey;
+-            }
+-        }
+ #if NET9_0_OR_GREATER
+         Lock ThisLock => _thisLock;
+ #else
+@@ -256,13 +160,7 @@ namespace Microsoft.IdentityModel.Tokens
+         [Obsolete("HasPrivateKey method is deprecated, please use PrivateKeyStatus.")]
+         public override bool HasPrivateKey
+         {
+-            get
+-            {
+-                if (_isMlDsa)
+-                    return MlDsaPrivateKey != null;
+-
+-                return PrivateKey != null;
+-            }
++            get { return PrivateKey != null; }
+         }
+ 
+         /// <summary>
+@@ -273,23 +171,6 @@ namespace Microsoft.IdentityModel.Tokens
+         {
+             get
+             {
+-                if (_isMlDsa)
+-                {
+-                    // On platforms where GetMLDsaPrivateKey() throws PlatformNotSupportedException,
+-                    // we return Unknown rather than DoesNotExist because the private key may exist
+-                    // in the certificate but the platform cannot extract it.
+-                    // Note: AsymmetricSignatureProvider only blocks signing when PrivateKeyStatus ==
+-                    // DoesNotExist, so Unknown will pass the constructor guard. However, the adapter
+-                    // will fail with a clear InvalidOperationException (IDX10723) when it attempts
+-                    // to access the null MlDsaPrivateKey during signing initialization.
+-                    MLDsa mlDsaPrivateKey = MlDsaPrivateKey;
+-
+-                    if (_mlDsaPrivateKeyUnsupported)
+-                        return PrivateKeyStatus.Unknown;
+-
+-                    return mlDsaPrivateKey != null ? PrivateKeyStatus.Exists : PrivateKeyStatus.DoesNotExist;
+-                }
+-
+                 return PrivateKey == null ? PrivateKeyStatus.DoesNotExist : PrivateKeyStatus.Exists;
+             }
+         }
+@@ -312,9 +193,6 @@ namespace Microsoft.IdentityModel.Tokens
+         /// <remarks>See: <see href="https://datatracker.ietf.org/doc/html/rfc7638"/></remarks>
+         public override bool CanComputeJwkThumbprint()
+         {
+-            if (_isMlDsa)
+-                return MlDsaPublicKey != null;
+-
+             return PublicKey is RSA || PublicKey is ECDsa;
+         }
+ 
+@@ -325,19 +203,6 @@ namespace Microsoft.IdentityModel.Tokens
+         /// <remarks>See: <see href="https://datatracker.ietf.org/doc/html/rfc7638"/></remarks>
+         public override byte[] ComputeJwkThumbprint()
+         {
+-            if (_isMlDsa)
+-            {
+-                if (MlDsaPublicKey == null)
+-                    throw LogHelper.LogExceptionMessage(
+-                        new PlatformNotSupportedException(
+-                            LogHelper.FormatInvariant(
+-                                LogMessages.IDX10724,
+-                                LogHelper.MarkAsNonPII(KeyId))));
+-
+-                using var mlDsaKey = new MlDsaSecurityKey(MlDsaPublicKey);
+-                return mlDsaKey.ComputeJwkThumbprint();
+-            }
+-
+             return PublicKey is RSA ? new RsaSecurityKey(PublicKey as RSA).ComputeJwkThumbprint() : new ECDsaSecurityKey(PublicKey as ECDsa).ComputeJwkThumbprint();
+         }
+ 
+@@ -361,10 +226,5 @@ namespace Microsoft.IdentityModel.Tokens
+         {
+             return Certificate.GetHashCode();
+         }
+-
+-        private static bool IsMlDsaOid(string oid)
+-        {
+-            return oid == MlDsa44Oid || oid == MlDsa65Oid || oid == MlDsa87Oid;
+-        }
+     }
+ }
+diff --git a/test/Microsoft.IdentityModel.TestUtils/MlDsaConditionalAttributes.cs b/test/Microsoft.IdentityModel.TestUtils/MlDsaConditionalAttributes.cs
+deleted file mode 100644
+index bf40e750..00000000
+--- a/test/Microsoft.IdentityModel.TestUtils/MlDsaConditionalAttributes.cs
++++ /dev/null
+@@ -1,36 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-using System.Security.Cryptography;
+-using Xunit;
+-
+-namespace Microsoft.IdentityModel.TestUtils
+-{
+-    /// <summary>
+-    /// A <see cref="FactAttribute"/> that skips the test when ML-DSA is not supported
+-    /// on the current platform. ML-DSA requires OS-level cryptographic support (e.g.,
+-    /// SymCrypt) that may not be present on older OS versions.
+-    /// </summary>
+-    public sealed class MlDsaFactAttribute : FactAttribute
+-    {
+-        public MlDsaFactAttribute()
+-        {
+-            if (!MLDsa.IsSupported)
+-                Skip = "ML-DSA is not supported on this platform.";
+-        }
+-    }
+-
+-    /// <summary>
+-    /// A <see cref="TheoryAttribute"/> that skips the test when ML-DSA is not supported
+-    /// on the current platform. ML-DSA requires OS-level cryptographic support (e.g.,
+-    /// SymCrypt) that may not be present on older OS versions.
+-    /// </summary>
+-    public sealed class MlDsaTheoryAttribute : TheoryAttribute
+-    {
+-        public MlDsaTheoryAttribute()
+-        {
+-            if (!MLDsa.IsSupported)
+-                Skip = "ML-DSA is not supported on this platform.";
+-        }
+-    }
+-}
+diff --git a/test/Microsoft.IdentityModel.TestUtils/MlDsaKeyingMaterial.cs b/test/Microsoft.IdentityModel.TestUtils/MlDsaKeyingMaterial.cs
+deleted file mode 100644
+index bd85a6ac..00000000
+--- a/test/Microsoft.IdentityModel.TestUtils/MlDsaKeyingMaterial.cs
++++ /dev/null
+@@ -1,138 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-using System;
+-using System.Security.Cryptography;
+-using System.Security.Cryptography.X509Certificates;
+-using Microsoft.IdentityModel.Tokens;
+-
+-namespace Microsoft.IdentityModel.TestUtils
+-{
+-    /// <summary>
+-    /// ML-DSA test keying material, separated from <see cref="KeyingMaterial"/> to avoid
+-    /// <see cref="TypeInitializationException"/> on platforms where ML-DSA is not supported.
+-    /// All members are lazily initialized; callers must check <see cref="IsSupported"/>
+-    /// before accessing key material to avoid <see cref="PlatformNotSupportedException"/>.
+-    /// </summary>
+-    public static class MlDsaKeyingMaterial
+-    {
+-        /// <summary>
+-        /// Returns true if ML-DSA is supported on the current platform.
+-        /// </summary>
+-        public static bool IsSupported => MLDsa.IsSupported;
+-
+-        /// <summary>
+-        /// Returns true if ML-DSA private keys can be extracted from X.509 certificates.
+-        /// GetMLDsaPrivateKey() throws PlatformNotSupportedException on .NET 6.
+-        /// </summary>
+-        public static bool CanExtractMlDsaPrivateKeyFromX509()
+-        {
+-            try
+-            {
+-#pragma warning disable SYSLIB5006
+-                using var key = MlDsa44Cert.GetMLDsaPrivateKey();
+-#pragma warning restore SYSLIB5006
+-                return key != null;
+-            }
+-            catch (PlatformNotSupportedException)
+-            {
+-                return false;
+-            }
+-        }
+-
+-        // ML-DSA keys — lazily generated since MLDsa.GenerateKey() requires
+-        // OS-level crypto support that may not be present on all platforms.
+-        private static MlDsaSecurityKey _mlDsa44Key;
+-        private static MlDsaSecurityKey _mlDsa65Key;
+-        private static MlDsaSecurityKey _mlDsa87Key;
+-
+-        public static MlDsaSecurityKey MlDsa44Key => _mlDsa44Key ??= new MlDsaSecurityKey(MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44));
+-        public static MlDsaSecurityKey MlDsa65Key => _mlDsa65Key ??= new MlDsaSecurityKey(MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa65));
+-        public static MlDsaSecurityKey MlDsa87Key => _mlDsa87Key ??= new MlDsaSecurityKey(MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa87));
+-
+-        private static MlDsaSecurityKey _mlDsa44KeyPublic;
+-        private static MlDsaSecurityKey _mlDsa65KeyPublic;
+-        private static MlDsaSecurityKey _mlDsa87KeyPublic;
+-
+-        public static MlDsaSecurityKey MlDsa44Key_Public => _mlDsa44KeyPublic ??= CreateMlDsaPublicKey(MlDsa44Key);
+-        public static MlDsaSecurityKey MlDsa65Key_Public => _mlDsa65KeyPublic ??= CreateMlDsaPublicKey(MlDsa65Key);
+-        public static MlDsaSecurityKey MlDsa87Key_Public => _mlDsa87KeyPublic ??= CreateMlDsaPublicKey(MlDsa87Key);
+-
+-        public static MlDsaSecurityKey CreateMlDsaPublicKey(MlDsaSecurityKey privateKey)
+-        {
+-            byte[] publicKeyBytes = privateKey.MLDsa.ExportMLDsaPublicKey();
+-            var mlDsa = MLDsa.ImportMLDsaPublicKey(privateKey.MLDsa.Algorithm, publicKeyBytes);
+-            return new MlDsaSecurityKey(mlDsa);
+-        }
+-
+-        public static JsonWebKey CreateJsonWebKeyMlDsa(string algorithm, string kid, MlDsaSecurityKey key)
+-        {
+-            byte[] publicKeyBytes = key.MLDsa.ExportMLDsaPublicKey();
+-            var jwk = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Alg = algorithm,
+-                Pub = Base64UrlEncoder.Encode(publicKeyBytes),
+-                Kid = kid,
+-                KeyId = kid
+-            };
+-
+-            if (key.PrivateKeyStatus == PrivateKeyStatus.Exists)
+-            {
+-                byte[] seedBytes = key.MLDsa.ExportMLDsaPrivateSeed();
+-                jwk.Priv = Base64UrlEncoder.Encode(seedBytes);
+-                Array.Clear(seedBytes, 0, seedBytes.Length);
+-            }
+-
+-            return jwk;
+-        }
+-
+-        public static JsonWebKey JsonWebKeyMlDsa44 => CreateJsonWebKeyMlDsa(SecurityAlgorithms.MlDsa44, "JsonWebKeyMlDsa44", MlDsa44Key);
+-        public static JsonWebKey JsonWebKeyMlDsa44_Public => CreateJsonWebKeyMlDsa(SecurityAlgorithms.MlDsa44, "JsonWebKeyMlDsa44_Public", MlDsa44Key_Public);
+-        public static JsonWebKey JsonWebKeyMlDsa65 => CreateJsonWebKeyMlDsa(SecurityAlgorithms.MlDsa65, "JsonWebKeyMlDsa65", MlDsa65Key);
+-        public static JsonWebKey JsonWebKeyMlDsa65_Public => CreateJsonWebKeyMlDsa(SecurityAlgorithms.MlDsa65, "JsonWebKeyMlDsa65_Public", MlDsa65Key_Public);
+-        public static JsonWebKey JsonWebKeyMlDsa87 => CreateJsonWebKeyMlDsa(SecurityAlgorithms.MlDsa87, "JsonWebKeyMlDsa87", MlDsa87Key);
+-        public static JsonWebKey JsonWebKeyMlDsa87_Public => CreateJsonWebKeyMlDsa(SecurityAlgorithms.MlDsa87, "JsonWebKeyMlDsa87_Public", MlDsa87Key_Public);
+-
+-        // ML-DSA X.509 certificates — pre-generated PFX bytes (password: "test").
+-        // Generated on .NET 10 using CertificateRequest(string, MLDsa).CreateSelfSigned().
+-        // Valid 2025-01-01 to 2035-01-01. Embedded as base64 for cross-TFM reuse.
+-        // Note: GetMLDsaPrivateKey() throws PlatformNotSupportedException on net6.0.
+-        private static readonly string MlDsa44CertPfx = "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";
+-        private static readonly string MlDsa65CertPfx = "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";
+-        private static readonly string MlDsa87CertPfx = "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";
+-        private const string MlDsaCertPassword = "test";
+-
+-        private static X509Certificate2 _mlDsa44Cert;
+-        private static X509Certificate2 _mlDsa65Cert;
+-        private static X509Certificate2 _mlDsa87Cert;
+-
+-        public static X509Certificate2 MlDsa44Cert => _mlDsa44Cert ??= LoadMlDsaCert(MlDsa44CertPfx);
+-        public static X509Certificate2 MlDsa65Cert => _mlDsa65Cert ??= LoadMlDsaCert(MlDsa65CertPfx);
+-        public static X509Certificate2 MlDsa87Cert => _mlDsa87Cert ??= LoadMlDsaCert(MlDsa87CertPfx);
+-
+-        private static X509Certificate2 LoadMlDsaCert(string pfxBase64)
+-        {
+-#if NET9_0_OR_GREATER
+-            return X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(pfxBase64), MlDsaCertPassword, X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable);
+-#elif NET6_0_OR_GREATER
+-#pragma warning disable SYSLIB0057
+-            return new X509Certificate2(Convert.FromBase64String(pfxBase64), MlDsaCertPassword, X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.Exportable);
+-#pragma warning restore SYSLIB0057
+-#else
+-#pragma warning disable SYSLIB0057
+-            return new X509Certificate2(Convert.FromBase64String(pfxBase64), MlDsaCertPassword, X509KeyStorageFlags.Exportable);
+-#pragma warning restore SYSLIB0057
+-#endif
+-        }
+-
+-        private static X509SecurityKey _x509MlDsa44Key;
+-        private static X509SecurityKey _x509MlDsa65Key;
+-        private static X509SecurityKey _x509MlDsa87Key;
+-
+-        public static X509SecurityKey X509MlDsa44Key => _x509MlDsa44Key ??= new X509SecurityKey(MlDsa44Cert);
+-        public static X509SecurityKey X509MlDsa65Key => _x509MlDsa65Key ??= new X509SecurityKey(MlDsa65Cert);
+-        public static X509SecurityKey X509MlDsa87Key => _x509MlDsa87Key ??= new X509SecurityKey(MlDsa87Cert);
+-    }
+-}
+-
+diff --git a/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTestData.cs b/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTestData.cs
+index 53208376..2566f01e 100644
+--- a/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTestData.cs
++++ b/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTestData.cs
+@@ -101,43 +101,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
+             { KeyingMaterial.X509SecurityKeySelfSigned2048_SHA512, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA512_Public, "X509Key3" }
+         };
+ 
+-        private static List<Tuple<MlDsaSecurityKey, MlDsaSecurityKey, string, string>> _mlDsaSecurityKeys;
+-        public static List<Tuple<MlDsaSecurityKey, MlDsaSecurityKey, string, string>> MlDsaSecurityKeys => _mlDsaSecurityKeys ??= new List<Tuple<MlDsaSecurityKey, MlDsaSecurityKey, string, string>>
+-        {
+-            Tuple.Create(MlDsaKeyingMaterial.MlDsa44Key, MlDsaKeyingMaterial.MlDsa44Key_Public, "MlDsa44Key", SecurityAlgorithms.MlDsa44),
+-            Tuple.Create(MlDsaKeyingMaterial.MlDsa65Key, MlDsaKeyingMaterial.MlDsa65Key_Public, "MlDsa65Key", SecurityAlgorithms.MlDsa65),
+-            Tuple.Create(MlDsaKeyingMaterial.MlDsa87Key, MlDsaKeyingMaterial.MlDsa87Key_Public, "MlDsa87Key", SecurityAlgorithms.MlDsa87)
+-        };
+-
+-        private static List<Tuple<JsonWebKey, JsonWebKey, string, string>> _jsonMlDsaSecurityKeys;
+-        public static List<Tuple<JsonWebKey, JsonWebKey, string, string>> JsonMlDsaSecurityKeys => _jsonMlDsaSecurityKeys ??= new List<Tuple<JsonWebKey, JsonWebKey, string, string>>
+-        {
+-            Tuple.Create(MlDsaKeyingMaterial.JsonWebKeyMlDsa44, MlDsaKeyingMaterial.JsonWebKeyMlDsa44_Public, "JsonMlDsa44Key", SecurityAlgorithms.MlDsa44),
+-            Tuple.Create(MlDsaKeyingMaterial.JsonWebKeyMlDsa65, MlDsaKeyingMaterial.JsonWebKeyMlDsa65_Public, "JsonMlDsa65Key", SecurityAlgorithms.MlDsa65),
+-            Tuple.Create(MlDsaKeyingMaterial.JsonWebKeyMlDsa87, MlDsaKeyingMaterial.JsonWebKeyMlDsa87_Public, "JsonMlDsa87Key", SecurityAlgorithms.MlDsa87)
+-        };
+-
+-        private static List<Tuple<X509SecurityKey, X509SecurityKey, string, string>> _x509MlDsaSecurityKeys;
+-        public static List<Tuple<X509SecurityKey, X509SecurityKey, string, string>> X509MlDsaSecurityKeys => _x509MlDsaSecurityKeys ??= new List<Tuple<X509SecurityKey, X509SecurityKey, string, string>>
+-        {
+-            Tuple.Create(MlDsaKeyingMaterial.X509MlDsa44Key, MlDsaKeyingMaterial.X509MlDsa44Key, "X509MlDsa44Key", SecurityAlgorithms.MlDsa44),
+-            Tuple.Create(MlDsaKeyingMaterial.X509MlDsa65Key, MlDsaKeyingMaterial.X509MlDsa65Key, "X509MlDsa65Key", SecurityAlgorithms.MlDsa65),
+-            Tuple.Create(MlDsaKeyingMaterial.X509MlDsa87Key, MlDsaKeyingMaterial.X509MlDsa87Key, "X509MlDsa87Key", SecurityAlgorithms.MlDsa87)
+-        };
+-
+-        public static void AddMlDsaAlgorithmVariations(SignatureProviderTheoryData theoryData, string algorithm, TheoryData<SignatureProviderTheoryData> variations)
+-        {
+-            // ML-DSA has a 1:1 mapping between key and algorithm — no algorithm variations like ECDSA.
+-            variations.Add(new SignatureProviderTheoryData
+-            {
+-                SigningAlgorithm = algorithm,
+-                SigningKey = theoryData.SigningKey,
+-                TestId = theoryData.TestId + algorithm,
+-                VerifyAlgorithm = algorithm,
+-                VerifyKey = theoryData.VerifyKey
+-            });
+-        }
+-
+         public static void AddECDsaAlgorithmVariations(SignatureProviderTheoryData theoryData, TheoryData<SignatureProviderTheoryData> variations)
+         {
+             foreach (var algorithm in ECDsaSigningAlgorithms)
+diff --git a/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTests.cs b/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTests.cs
+index b130a6ea..083c36a9 100644
+--- a/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTests.cs
++++ b/test/Microsoft.IdentityModel.Tokens.Tests/AsymmetricSignatureTests.cs
+@@ -236,44 +236,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
+                     },
+                     theoryData);
+ 
+-                if (MLDsa.IsSupported)
+-                {
+-                    foreach (var mlDsaKeyTuple in AsymmetricSignatureTestData.MlDsaSecurityKeys)
+-                        AsymmetricSignatureTestData.AddMlDsaAlgorithmVariations(new SignatureProviderTheoryData
+-                        {
+-                            SigningKey = mlDsaKeyTuple.Item1,
+-                            TestId = mlDsaKeyTuple.Item3,
+-                            VerifyKey = mlDsaKeyTuple.Item2
+-                        },
+-                        mlDsaKeyTuple.Item4,
+-                        theoryData);
+-
+-                    foreach (var jsonKeyTuple in AsymmetricSignatureTestData.JsonMlDsaSecurityKeys)
+-                        AsymmetricSignatureTestData.AddMlDsaAlgorithmVariations(new SignatureProviderTheoryData
+-                        {
+-                            SigningKey = jsonKeyTuple.Item1,
+-                            TestId = jsonKeyTuple.Item3,
+-                            VerifyKey = jsonKeyTuple.Item2
+-                        },
+-                        jsonKeyTuple.Item4,
+-                        theoryData);
+-                }
+-
+-                // X509 ML-DSA sign/verify requires private key extraction from PFX.
+-                // GetMLDsaPrivateKey() throws PlatformNotSupportedException on .NET 6.
+-                if (MLDsa.IsSupported && MlDsaKeyingMaterial.CanExtractMlDsaPrivateKeyFromX509())
+-                {
+-                    foreach (var x509MlDsaKeyTuple in AsymmetricSignatureTestData.X509MlDsaSecurityKeys)
+-                        AsymmetricSignatureTestData.AddMlDsaAlgorithmVariations(new SignatureProviderTheoryData
+-                        {
+-                            SigningKey = x509MlDsaKeyTuple.Item1,
+-                            TestId = x509MlDsaKeyTuple.Item3,
+-                            VerifyKey = x509MlDsaKeyTuple.Item2
+-                        },
+-                        x509MlDsaKeyTuple.Item4,
+-                        theoryData);
+-                }
+-
+                 foreach (var jsonKeyTuple in AsymmetricSignatureTestData.JsonRsaSecurityKeys)
+                     AsymmetricSignatureTestData.AddRsaAlgorithmVariations(new SignatureProviderTheoryData
+                     {
+@@ -455,18 +417,6 @@ namespace Microsoft.IdentityModel.Tokens.Tests
+                             TestId = algorithm
+                         });
+ 
+-                if (MLDsa.IsSupported)
+-                {
+-                    foreach (var algorithm in SupportedAlgorithms.MlDsaSigningAlgorithms)
+-                        theoryData.Add(
+-                            new AsymmetricSignatureProviderTheoryData
+-                            {
+-                                Algorithm = algorithm,
+-                                SecurityKey = MlDsaKeyingMaterial.MlDsa44Key,
+-                                TestId = algorithm
+-                            });
+-                }
+-
+                 return theoryData;
+             }
+         }
+@@ -485,16 +435,16 @@ namespace Microsoft.IdentityModel.Tokens.Tests
+             var context = TestUtilities.WriteHeader($"{this}.VerifyDefaultMinimumAsymmetricKeySizeAreSupported", theoryData);
+ 
+             foreach (var algorithm in AsymmetricSignatureProvider.DefaultMinimumAsymmetricKeySizeInBitsForSigningMap.Keys)
+-                if (!(SupportedAlgorithms.EcdsaSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaPssSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.MlDsaSigningAlgorithms.Contains(algorithm)))
++                if (!(SupportedAlgorithms.EcdsaSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaPssSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaSigningAlgorithms.Contains(algorithm)))
+                 {
+-                    context.AddDiff($"DefaultMinimumAsymmetricKeySizeInBitsForSigningMap, algorithm: '{algorithm}' not found in (SupportedAlgorithms.EcdsaSigningAlgorithms || SupportedAlgorithms.RsaPssSigningAlgorithms || SupportedAlgorithms.RsaSigningAlgorithms || SupportedAlgorithms.MlDsaSigningAlgorithms.");
++                    context.AddDiff($"DefaultMinimumAsymmetricKeySizeInBitsForSigningMap, algorithm: '{algorithm}' not found in (SupportedAlgorithms.EcdsaSigningAlgorithms || SupportedAlgorithms.RsaPssSigningAlgorithms || SupportedAlgorithms.RsaSigningAlgorithms.");
+                     context.AddDiff($"seems like algorithm was added somewhere: '{algorithm}'.");
+                 }
+ 
+             foreach (var algorithm in AsymmetricSignatureProvider.DefaultMinimumAsymmetricKeySizeInBitsForVerifyingMap.Keys)
+-                if (!(SupportedAlgorithms.EcdsaSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaPssSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.MlDsaSigningAlgorithms.Contains(algorithm)))
++                if (!(SupportedAlgorithms.EcdsaSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaPssSigningAlgorithms.Contains(algorithm) || SupportedAlgorithms.RsaSigningAlgorithms.Contains(algorithm)))
+                 {
+-                    context.AddDiff($"DefaultMinimumAsymmetricKeySizeInBitsForVerifyingMap, algorithm: '{algorithm}' not found in (SupportedAlgorithms.EcdsaSigningAlgorithms || SupportedAlgorithms.RsaPssSigningAlgorithms || SupportedAlgorithms.RsaSigningAlgorithms || SupportedAlgorithms.MlDsaSigningAlgorithms");
++                    context.AddDiff($"DefaultMinimumAsymmetricKeySizeInBitsForVerifyingMap, algorithm: '{algorithm}' not found in (SupportedAlgorithms.EcdsaSigningAlgorithms || SupportedAlgorithms.RsaPssSigningAlgorithms || SupportedAlgorithms.RsaSigningAlgorithms");
+                     context.AddDiff($"seems like algorithm was added somewhere: '{algorithm}'.");
+                 }
+ 
+diff --git a/test/Microsoft.IdentityModel.Tokens.Tests/MlDsaSecurityKeyTests.cs b/test/Microsoft.IdentityModel.Tokens.Tests/MlDsaSecurityKeyTests.cs
+deleted file mode 100644
+index 75166afd..00000000
+--- a/test/Microsoft.IdentityModel.Tokens.Tests/MlDsaSecurityKeyTests.cs
++++ /dev/null
+@@ -1,1151 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-using System;
+-using System.IdentityModel.Tokens.Jwt;
+-using System.Security.Claims;
+-using System.Security.Cryptography;
+-using System.Security.Cryptography.X509Certificates;
+-using System.Threading;
+-using System.Threading.Tasks;
+-using Microsoft.IdentityModel.JsonWebTokens;
+-using Microsoft.IdentityModel.TestUtils;
+-using Microsoft.IdentityModel.Tokens.Experimental;
+-using Microsoft.IdentityModel.Tokens.Json;
+-using Xunit;
+-
+-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
+-
+-namespace Microsoft.IdentityModel.Tokens.Tests
+-{
+-    public class MlDsaSecurityKeyTests
+-    {
+-        [MlDsaFact]
+-        public void Constructor_NullMlDsa_ThrowsArgumentNullException()
+-        {
+-            var ee = ExpectedException.ArgumentNullException("mlDsa");
+-            try
+-            {
+-                var key = new MlDsaSecurityKey(null);
+-                ee.ProcessNoException();
+-            }
+-            catch (Exception ex)
+-            {
+-                ee.ProcessException(ex);
+-            }
+-        }
+-
+-        [MlDsaFact]
+-        public void Constructor_ValidMlDsa()
+-        {
+-            using var mlDsa = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            var key = new MlDsaSecurityKey(mlDsa);
+-
+-            Assert.NotNull(key.MLDsa);
+-            Assert.True(key.KeySize > 0, "KeySize should be positive");
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void KeySize_MatchesExpectedBits(string algorithm)
+-        {
+-            var mlDsaAlg = MlDsaAdapter.GetMLDsaAlgorithm(algorithm);
+-            using var mlDsa = MLDsa.GenerateKey(mlDsaAlg);
+-            var key = new MlDsaSecurityKey(mlDsa);
+-
+-            int expectedBits = mlDsaAlg.PublicKeySizeInBytes * 8;
+-            Assert.Equal(expectedBits, key.KeySize);
+-        }
+-
+-        [MlDsaFact]
+-        public void HasPrivateKey_WithPrivateKey_ReturnsTrue()
+-        {
+-            using var mlDsa = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            var key = new MlDsaSecurityKey(mlDsa);
+-
+-#pragma warning disable CS0618 // Type or member is obsolete
+-            Assert.True(key.HasPrivateKey);
+-#pragma warning restore CS0618
+-            Assert.Equal(PrivateKeyStatus.Exists, key.PrivateKeyStatus);
+-        }
+-
+-        [MlDsaFact]
+-        public void HasPrivateKey_WithPublicKeyOnly_ReturnsFalse()
+-        {
+-            using var privateKey = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            byte[] publicKeyBytes = privateKey.ExportMLDsaPublicKey();
+-            using var publicOnly = MLDsa.ImportMLDsaPublicKey(MLDsaAlgorithm.MLDsa44, publicKeyBytes);
+-            var key = new MlDsaSecurityKey(publicOnly);
+-
+-#pragma warning disable CS0618 // Type or member is obsolete
+-            Assert.False(key.HasPrivateKey);
+-#pragma warning restore CS0618
+-            Assert.Equal(PrivateKeyStatus.DoesNotExist, key.PrivateKeyStatus);
+-        }
+-
+-        [MlDsaFact]
+-        public void CanComputeJwkThumbprint_ReturnsTrue()
+-        {
+-            Assert.True(MlDsaKeyingMaterial.MlDsa44Key.CanComputeJwkThumbprint());
+-            Assert.True(MlDsaKeyingMaterial.MlDsa65Key.CanComputeJwkThumbprint());
+-            Assert.True(MlDsaKeyingMaterial.MlDsa87Key.CanComputeJwkThumbprint());
+-        }
+-
+-        [MlDsaFact]
+-        public void ComputeJwkThumbprint_IsDeterministic()
+-        {
+-            byte[] thumbprint1 = MlDsaKeyingMaterial.MlDsa44Key.ComputeJwkThumbprint();
+-            byte[] thumbprint2 = MlDsaKeyingMaterial.MlDsa44Key.ComputeJwkThumbprint();
+-
+-            Assert.Equal(thumbprint1, thumbprint2);
+-        }
+-
+-        [MlDsaFact]
+-        public void ComputeJwkThumbprint_PublicAndPrivateKeysMatch()
+-        {
+-            // A key's thumbprint should be the same whether computed from the private or public key
+-            // since thumbprint only uses public key material.
+-            byte[] privateThumbprint = MlDsaKeyingMaterial.MlDsa44Key.ComputeJwkThumbprint();
+-            byte[] publicThumbprint = MlDsaKeyingMaterial.MlDsa44Key_Public.ComputeJwkThumbprint();
+-
+-            Assert.Equal(privateThumbprint, publicThumbprint);
+-        }
+-
+-        [MlDsaFact]
+-        public void ComputeJwkThumbprint_DifferentKeysProduceDifferentThumbprints()
+-        {
+-            byte[] thumbprint44 = MlDsaKeyingMaterial.MlDsa44Key.ComputeJwkThumbprint();
+-            byte[] thumbprint65 = MlDsaKeyingMaterial.MlDsa65Key.ComputeJwkThumbprint();
+-            byte[] thumbprint87 = MlDsaKeyingMaterial.MlDsa87Key.ComputeJwkThumbprint();
+-
+-            Assert.NotEqual(thumbprint44, thumbprint65);
+-            Assert.NotEqual(thumbprint44, thumbprint87);
+-            Assert.NotEqual(thumbprint65, thumbprint87);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void ConstructFromJsonWebKey_RoundTrips(string algorithm)
+-        {
+-            // Create a key, convert to JWK, then create a new key from the JWK
+-            var mlDsaAlg = MlDsaAdapter.GetMLDsaAlgorithm(algorithm);
+-            using var originalMlDsa = MLDsa.GenerateKey(mlDsaAlg);
+-            var originalKey = new MlDsaSecurityKey(originalMlDsa);
+-
+-            var jwk = JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(originalKey);
+-            Assert.True(JsonWebKeyConverter.TryConvertToSecurityKey(jwk, out SecurityKey roundTrippedKey));
+-
+-            var mlDsaKey = Assert.IsType<MlDsaSecurityKey>(roundTrippedKey);
+-            Assert.Equal(originalKey.KeySize, mlDsaKey.KeySize);
+-            Assert.Equal(PrivateKeyStatus.Exists, mlDsaKey.PrivateKeyStatus);
+-
+-            // Verify the public keys match
+-            byte[] originalPub = originalMlDsa.ExportMLDsaPublicKey();
+-            byte[] roundTrippedPub = mlDsaKey.MLDsa.ExportMLDsaPublicKey();
+-            Assert.Equal(originalPub, roundTrippedPub);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void X509SecurityKey_MlDsa_KeySize(string algorithm)
+-        {
+-            var (x509Key, expectedAlg) = GetX509MlDsaKey(algorithm);
+-            Assert.Equal(expectedAlg.PublicKeySizeInBytes * 8, x509Key.KeySize);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void X509SecurityKey_MlDsa_CanComputeJwkThumbprint(string algorithm)
+-        {
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            Assert.True(x509Key.CanComputeJwkThumbprint());
+-            byte[] thumbprint = x509Key.ComputeJwkThumbprint();
+-            Assert.NotNull(thumbprint);
+-            Assert.True(thumbprint.Length > 0);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void X509SecurityKey_MlDsa_JwkThumbprint_IsDeterministic(string algorithm)
+-        {
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            byte[] thumbprint1 = x509Key.ComputeJwkThumbprint();
+-            byte[] thumbprint2 = x509Key.ComputeJwkThumbprint();
+-            Assert.Equal(thumbprint1, thumbprint2);
+-        }
+-
+-        private static (X509SecurityKey key, MLDsaAlgorithm alg) GetX509MlDsaKey(string algorithm)
+-        {
+-            return algorithm switch
+-            {
+-                "ML-DSA-44" => (MlDsaKeyingMaterial.X509MlDsa44Key, MLDsaAlgorithm.MLDsa44),
+-                "ML-DSA-65" => (MlDsaKeyingMaterial.X509MlDsa65Key, MLDsaAlgorithm.MLDsa65),
+-                "ML-DSA-87" => (MlDsaKeyingMaterial.X509MlDsa87Key, MLDsaAlgorithm.MLDsa87),
+-                _ => throw new ArgumentException(algorithm)
+-            };
+-        }
+-
+-        #region X509-to-JWK Conversion Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void ConvertFromX509SecurityKey_X5cMode(string algorithm)
+-        {
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            var jwk = JsonWebKeyConverter.ConvertFromX509SecurityKey(x509Key);
+-
+-            Assert.Equal(JsonWebAlgorithmsKeyTypes.Akp, jwk.Kty);
+-            Assert.Equal(algorithm, jwk.Alg);
+-            Assert.Equal(x509Key.KeyId, jwk.Kid);
+-            Assert.NotNull(jwk.X5t);
+-            Assert.Single(jwk.X5c);
+-            // x5c mode should not include key material
+-            Assert.Null(jwk.Pub);
+-            Assert.Null(jwk.Priv);
+-
+-            // Verify the x5c JWK can be converted back to an X509SecurityKey
+-            // (requires ML-DSA public key extraction from a cert loaded via x5c)
+-            if (CanExtractMlDsaPublicKeyFromX509PublicOnlyCert())
+-            {
+-                Assert.True(JsonWebKeyConverter.TryConvertToSecurityKey(jwk, out var roundTripped));
+-                Assert.IsType<X509SecurityKey>(roundTripped);
+-            }
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void ConvertFromX509SecurityKey_ExtractKeyMaterial(string algorithm)
+-        {
+-            if (!MlDsaKeyingMaterial.CanExtractMlDsaPrivateKeyFromX509())
+-                return; // skip on platforms that can't extract ML-DSA private keys
+-
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            var jwk = JsonWebKeyConverter.ConvertFromX509SecurityKey(x509Key, representAsRsaKey: true);
+-
+-            Assert.Equal(JsonWebAlgorithmsKeyTypes.Akp, jwk.Kty);
+-            Assert.Equal(algorithm, jwk.Alg);
+-            Assert.NotNull(jwk.Pub);
+-            Assert.NotNull(jwk.Priv);
+-            Assert.True(jwk.HasPrivateKey);
+-
+-            // Verify round-trip: the extracted JWK should produce a working key
+-            Assert.True(JsonWebKeyConverter.TryConvertToSecurityKey(jwk, out SecurityKey roundTrippedKey));
+-            var mlDsaKey = Assert.IsType<MlDsaSecurityKey>(roundTrippedKey);
+-            Assert.Equal(x509Key.KeySize, mlDsaKey.KeySize);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void ConvertFromX509SecurityKey_ExtractKeyMaterial_PublicOnly(string algorithm)
+-        {
+-            if (!CanExtractMlDsaPublicKeyFromX509PublicOnlyCert())
+-                return; // GetMLDsaPublicKey() on public-only certs is not supported on all platforms
+-
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            // Create a public-only X509SecurityKey by loading only the certificate (no private key)
+-#if NET9_0_OR_GREATER
+-            using var publicOnlyCert = X509CertificateLoader.LoadCertificate(x509Key.Certificate.RawData);
+-#else
+-#pragma warning disable SYSLIB0057
+-            using var publicOnlyCert = new X509Certificate2(x509Key.Certificate.RawData);
+-#pragma warning restore SYSLIB0057
+-#endif
+-            var publicOnlyKey = new X509SecurityKey(publicOnlyCert);
+-
+-            var jwk = JsonWebKeyConverter.ConvertFromX509SecurityKey(publicOnlyKey, representAsRsaKey: true);
+-
+-            Assert.Equal(JsonWebAlgorithmsKeyTypes.Akp, jwk.Kty);
+-            Assert.Equal(algorithm, jwk.Alg);
+-            Assert.NotNull(jwk.Pub);
+-            Assert.Null(jwk.Priv);
+-            Assert.False(jwk.HasPrivateKey);
+-        }
+-
+-        #endregion
+-
+-        #region JWK Negative Tests
+-
+-        [MlDsaFact]
+-        public void JwkMissingAlg_FailsConversion()
+-        {
+-            var jwk = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Pub = Base64UrlEncoder.Encode(new byte[1312]) // dummy public key
+-            };
+-
+-            Assert.False(JsonWebKeyConverter.TryConvertToSecurityKey(jwk, out _));
+-        }
+-
+-        [MlDsaFact]
+-        public void JwkMissingPub_ThrowsOnConstruction()
+-        {
+-            var jwk = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Alg = SecurityAlgorithms.MlDsa44
+-            };
+-
+-            Assert.Throws<ArgumentException>(() => new MlDsaSecurityKey(jwk, false));
+-        }
+-
+-        [MlDsaFact]
+-        public void JwkInvalidAlg_FailsConversion()
+-        {
+-            var jwk = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Alg = "UNSUPPORTED-ALG",
+-                Pub = Base64UrlEncoder.Encode(new byte[1312])
+-            };
+-
+-            Assert.False(JsonWebKeyConverter.TryConvertToSecurityKey(jwk, out _));
+-        }
+-
+-        #endregion
+-
+-        #region Pub/Priv Mismatch Tests
+-
+-        [MlDsaFact]
+-        public void JwkWithMismatchedPubPriv_FailsConversion()
+-        {
+-            // Create two different ML-DSA-44 keys
+-            using var keyA = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            using var keyB = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-
+-            // Build a JWK with priv from keyA but pub from keyB
+-            var jwk = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Alg = SecurityAlgorithms.MlDsa44,
+-                Pub = Base64UrlEncoder.Encode(keyB.ExportMLDsaPublicKey()),
+-                Priv = Base64UrlEncoder.Encode(keyA.ExportMLDsaPrivateSeed())
+-            };
+-
+-            // TryConvert should fail because pub does not match the key derived from priv
+-            Assert.False(JsonWebKeyConverter.TryConvertToSecurityKey(jwk, out _));
+-        }
+-
+-        #endregion
+-
+-        #region Algorithm Mismatch Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44", "ML-DSA-65")]
+-        [InlineData("ML-DSA-44", "ML-DSA-87")]
+-        [InlineData("ML-DSA-65", "ML-DSA-44")]
+-        [InlineData("ML-DSA-65", "ML-DSA-87")]
+-        [InlineData("ML-DSA-87", "ML-DSA-44")]
+-        [InlineData("ML-DSA-87", "ML-DSA-65")]
+-        public void IsSupportedAlgorithm_RejectsKeyAlgorithmMismatch(string keyAlgorithm, string requestedAlgorithm)
+-        {
+-            var key = GetMlDsaKey(keyAlgorithm);
+-            Assert.False(
+-                SupportedAlgorithms.IsSupportedAlgorithm(requestedAlgorithm, key),
+-                $"Expected {requestedAlgorithm} to be rejected for {keyAlgorithm} key");
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void IsSupportedAlgorithm_AcceptsMatchingKeyAlgorithm(string algorithm)
+-        {
+-            var key = GetMlDsaKey(algorithm);
+-            Assert.True(
+-                SupportedAlgorithms.IsSupportedAlgorithm(algorithm, key),
+-                $"Expected {algorithm} to be accepted for matching key");
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44", "ML-DSA-65")]
+-        [InlineData("ML-DSA-65", "ML-DSA-87")]
+-        [InlineData("ML-DSA-87", "ML-DSA-44")]
+-        public void IsSupportedAlgorithm_RejectsJwkAlgorithmMismatch(string jwkAlgorithm, string requestedAlgorithm)
+-        {
+-            var jwk = new JsonWebKey
+-            {
+-                Kty = JsonWebAlgorithmsKeyTypes.Akp,
+-                Alg = jwkAlgorithm,
+-                Pub = Base64UrlEncoder.Encode(new byte[32]) // dummy
+-            };
+-            Assert.False(
+-                SupportedAlgorithms.IsSupportedAlgorithm(requestedAlgorithm, jwk),
+-                $"Expected {requestedAlgorithm} to be rejected for JWK with alg={jwkAlgorithm}");
+-        }
+-
+-        #endregion
+-
+-        #region Public-Key-Only Signing Tests
+-
+-        [MlDsaFact]
+-        public void SignWithPublicKeyOnly_Throws()
+-        {
+-            // Creating a signing provider with a public-only key should fail at construction
+-            using var privateKey = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            byte[] publicKeyBytes = privateKey.ExportMLDsaPublicKey();
+-            using var publicOnly = MLDsa.ImportMLDsaPublicKey(MLDsaAlgorithm.MLDsa44, publicKeyBytes);
+-            var publicOnlyKey = new MlDsaSecurityKey(publicOnly);
+-
+-            Assert.Throws<InvalidOperationException>(() =>
+-                new AsymmetricSignatureProvider(publicOnlyKey, SecurityAlgorithms.MlDsa44, true));
+-        }
+-
+-        [MlDsaFact]
+-        public void VerifyWithPublicKeyOnly_Succeeds()
+-        {
+-            // Verifying should work with a public-only key
+-            byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+-            var signingProvider = new AsymmetricSignatureProvider(MlDsaKeyingMaterial.MlDsa44Key, SecurityAlgorithms.MlDsa44, true);
+-            byte[] signature = signingProvider.Sign(data);
+-
+-            var verifyProvider = new AsymmetricSignatureProvider(MlDsaKeyingMaterial.MlDsa44Key_Public, SecurityAlgorithms.MlDsa44, false);
+-            Assert.True(verifyProvider.Verify(data, signature));
+-        }
+-
+-        #endregion
+-
+-        #region Signature Correctness Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void TamperedSignature_FailsVerification(string algorithm)
+-        {
+-            byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+-            var key = GetMlDsaKey(algorithm);
+-            var signingProvider = new AsymmetricSignatureProvider(key, algorithm, true);
+-            byte[] signature = signingProvider.Sign(data);
+-
+-            // Tamper with one byte of the signature
+-            signature[0] ^= 0xFF;
+-
+-            var verifyProvider = new AsymmetricSignatureProvider(GetMlDsaPublicKey(algorithm), algorithm, false);
+-            Assert.False(verifyProvider.Verify(data, signature));
+-        }
+-
+-        [MlDsaFact]
+-        public void CrossKeyVerification_Fails()
+-        {
+-            // Signature from MlDsa44 key should not verify with a different MlDsa44 key
+-            byte[] data = new byte[] { 10, 20, 30, 40 };
+-            var signingProvider = new AsymmetricSignatureProvider(MlDsaKeyingMaterial.MlDsa44Key, SecurityAlgorithms.MlDsa44, true);
+-            byte[] signature = signingProvider.Sign(data);
+-
+-            // Create a completely different key pair
+-            using var differentMlDsa = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            var differentKey = new MlDsaSecurityKey(differentMlDsa);
+-            var verifyProvider = new AsymmetricSignatureProvider(differentKey, SecurityAlgorithms.MlDsa44, false);
+-            Assert.False(verifyProvider.Verify(data, signature));
+-        }
+-
+-        #endregion
+-
+-        #region Sign/Verify Round-Trip Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void SignVerify_RoundTrip(string algorithm)
+-        {
+-            byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-
+-            var signingProvider = new AsymmetricSignatureProvider(signingKey, algorithm, true);
+-            byte[] signature = signingProvider.Sign(data);
+-
+-            Assert.NotNull(signature);
+-            Assert.True(signature.Length > 0);
+-
+-            var verifyProvider = new AsymmetricSignatureProvider(verifyKey, algorithm, false);
+-            Assert.True(verifyProvider.Verify(data, signature));
+-        }
+-
+-        #endregion
+-
+-        #region Thumbprint Consistency Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void JwkThumbprint_MatchesBetweenSecurityKeyAndJsonWebKey(string algorithm)
+-        {
+-            // MlDsaSecurityKey and its JWK representation should produce identical thumbprints.
+-            var key = GetMlDsaKey(algorithm);
+-            var jwk = JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(key);
+-
+-            byte[] keyThumbprint = key.ComputeJwkThumbprint();
+-            byte[] jwkThumbprint = jwk.ComputeJwkThumbprint();
+-
+-            Assert.Equal(keyThumbprint, jwkThumbprint);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void JwkThumbprint_X509MatchesMlDsaSecurityKey(string algorithm)
+-        {
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            // Extract the public key from the X509 cert and create a standalone MlDsaSecurityKey.
+-#pragma warning disable SYSLIB5006
+-            using var mlDsaPub = x509Key.Certificate.GetMLDsaPublicKey();
+-#pragma warning restore SYSLIB5006
+-            var standaloneKey = new MlDsaSecurityKey(mlDsaPub);
+-
+-            byte[] x509Thumbprint = x509Key.ComputeJwkThumbprint();
+-            byte[] standaloneThumbprint = standaloneKey.ComputeJwkThumbprint();
+-
+-            Assert.Equal(x509Thumbprint, standaloneThumbprint);
+-        }
+-
+-        #endregion
+-
+-        #region X509 Algorithm Enforcement Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44", "ML-DSA-65")]
+-        [InlineData("ML-DSA-44", "ML-DSA-87")]
+-        [InlineData("ML-DSA-65", "ML-DSA-44")]
+-        public void IsSupportedAlgorithm_RejectsX509KeyAlgorithmMismatch(string keyAlgorithm, string requestedAlgorithm)
+-        {
+-            var (x509Key, _) = GetX509MlDsaKey(keyAlgorithm);
+-            Assert.False(
+-                SupportedAlgorithms.IsSupportedAlgorithm(requestedAlgorithm, x509Key),
+-                $"Expected {requestedAlgorithm} to be rejected for X509 {keyAlgorithm} key");
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void IsSupportedAlgorithm_AcceptsMatchingX509KeyAlgorithm(string algorithm)
+-        {
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-            Assert.True(
+-                SupportedAlgorithms.IsSupportedAlgorithm(algorithm, x509Key),
+-                $"Expected {algorithm} to be accepted for matching X509 key");
+-        }
+-
+-        #endregion
+-
+-        #region JWK JSON Serialization Round-Trip
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void JwkJsonSerialization_RoundTrips(string algorithm)
+-        {
+-            var mlDsaAlg = MlDsaAdapter.GetMLDsaAlgorithm(algorithm);
+-            using var mlDsa = MLDsa.GenerateKey(mlDsaAlg);
+-            var key = new MlDsaSecurityKey(mlDsa);
+-
+-            // Convert to JWK
+-            var originalJwk = JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(key);
+-
+-            // Serialize to JSON using the custom serializer
+-            string json = JsonWebKeySerializer.Write(originalJwk);
+-
+-            // Deserialize back
+-            var parsedJwk = new JsonWebKey(json);
+-
+-            // Verify all key properties survived
+-            Assert.Equal(JsonWebAlgorithmsKeyTypes.Akp, parsedJwk.Kty);
+-            Assert.Equal(algorithm, parsedJwk.Alg);
+-            Assert.Equal(originalJwk.Pub, parsedJwk.Pub);
+-            Assert.Equal(originalJwk.Priv, parsedJwk.Priv);
+-            Assert.True(parsedJwk.HasPrivateKey);
+-
+-            // Verify the parsed JWK can create a working key
+-            Assert.True(JsonWebKeyConverter.TryConvertToSecurityKey(parsedJwk, out SecurityKey roundTrippedKey));
+-            var mlDsaKey = Assert.IsType<MlDsaSecurityKey>(roundTrippedKey);
+-            Assert.Equal(key.KeySize, mlDsaKey.KeySize);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void JwkJsonSerialization_PublicKeyOnly_RoundTrips(string algorithm)
+-        {
+-            var mlDsaAlg = MlDsaAdapter.GetMLDsaAlgorithm(algorithm);
+-            using var mlDsa = MLDsa.GenerateKey(mlDsaAlg);
+-            byte[] publicKeyBytes = mlDsa.ExportMLDsaPublicKey();
+-            using var publicOnly = MLDsa.ImportMLDsaPublicKey(mlDsaAlg, publicKeyBytes);
+-            var key = new MlDsaSecurityKey(publicOnly);
+-
+-            var originalJwk = JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(key);
+-            string json = JsonWebKeySerializer.Write(originalJwk);
+-            var parsedJwk = new JsonWebKey(json);
+-
+-            Assert.Equal(JsonWebAlgorithmsKeyTypes.Akp, parsedJwk.Kty);
+-            Assert.Equal(algorithm, parsedJwk.Alg);
+-            Assert.Equal(originalJwk.Pub, parsedJwk.Pub);
+-            Assert.Null(parsedJwk.Priv);
+-            Assert.False(parsedJwk.HasPrivateKey);
+-        }
+-
+-        #endregion
+-
+-        #region End-to-End JWT Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task JwtCreateAndValidate_EndToEnd(string algorithm)
+-        {
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-
+-            var handler = new JsonWebTokenHandler();
+-            var descriptor = new SecurityTokenDescriptor
+-            {
+-                Issuer = "https://test-issuer.example.com",
+-                Audience = "https://test-audience.example.com",
+-                SigningCredentials = new SigningCredentials(signingKey, algorithm),
+-                Claims = new System.Collections.Generic.Dictionary<string, object>
+-                {
+-                    { "sub", "test-user" },
+-                    { "name", "Test User" }
+-                }
+-            };
+-
+-            string token = handler.CreateToken(descriptor);
+-            Assert.False(string.IsNullOrEmpty(token));
+-
+-            // Validate
+-            var validationParams = new TokenValidationParameters
+-            {
+-                ValidIssuer = "https://test-issuer.example.com",
+-                ValidAudience = "https://test-audience.example.com",
+-                IssuerSigningKey = verifyKey,
+-                ValidateLifetime = false
+-            };
+-
+-            var result = await handler.ValidateTokenAsync(token, validationParams);
+-            Assert.True(result.IsValid, $"Token validation failed: {result.Exception?.Message}");
+-            Assert.Equal("test-user", result.Claims["sub"]);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task JwtCreateAndValidate_WithJsonWebKey(string algorithm)
+-        {
+-            var signingJwk = GetMlDsaJsonWebKey(algorithm);
+-            var verifyJwk = GetMlDsaJsonWebKeyPublic(algorithm);
+-
+-            var handler = new JsonWebTokenHandler();
+-            var descriptor = new SecurityTokenDescriptor
+-            {
+-                Issuer = "https://test-issuer.example.com",
+-                Audience = "https://test-audience.example.com",
+-                SigningCredentials = new SigningCredentials(signingJwk, algorithm),
+-                Claims = new System.Collections.Generic.Dictionary<string, object>
+-                {
+-                    { "sub", "jwk-test-user" }
+-                }
+-            };
+-
+-            string token = handler.CreateToken(descriptor);
+-            Assert.False(string.IsNullOrEmpty(token));
+-
+-            var validationParams = new TokenValidationParameters
+-            {
+-                ValidIssuer = "https://test-issuer.example.com",
+-                ValidAudience = "https://test-audience.example.com",
+-                IssuerSigningKey = verifyJwk,
+-                ValidateLifetime = false
+-            };
+-
+-            var result = await handler.ValidateTokenAsync(token, validationParams);
+-            Assert.True(result.IsValid, $"Token validation failed: {result.Exception?.Message}");
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public void JwtCreateAndValidate_WithJwtSecurityTokenHandler(string algorithm)
+-        {
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-
+-            var handler = new JwtSecurityTokenHandler();
+-            handler.InboundClaimTypeMap.Clear();
+-            var descriptor = new SecurityTokenDescriptor
+-            {
+-                Issuer = "https://test-issuer.example.com",
+-                Audience = "https://test-audience.example.com",
+-                SigningCredentials = new SigningCredentials(signingKey, algorithm),
+-                Subject = new CaseSensitiveClaimsIdentity(new[]
+-                {
+-                    new Claim("sub", "jwt-handler-user")
+-                })
+-            };
+-
+-            var securityToken = handler.CreateToken(descriptor);
+-            string token = handler.WriteToken(securityToken);
+-            Assert.False(string.IsNullOrEmpty(token));
+-
+-            var validationParams = new TokenValidationParameters
+-            {
+-                ValidIssuer = "https://test-issuer.example.com",
+-                ValidAudience = "https://test-audience.example.com",
+-                IssuerSigningKey = verifyKey,
+-                ValidateLifetime = false
+-            };
+-
+-            var principal = handler.ValidateToken(token, validationParams, out SecurityToken validatedToken);
+-            Assert.NotNull(principal);
+-            Assert.NotNull(validatedToken);
+-            Assert.Equal("jwt-handler-user", principal.FindFirst("sub")?.Value);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task JwtCreateAndValidate_WithExperimentalValidationParameters(string algorithm)
+-        {
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-
+-            var handler = new JsonWebTokenHandler();
+-            var descriptor = new SecurityTokenDescriptor
+-            {
+-                Issuer = "https://test-issuer.example.com",
+-                Audience = "https://test-audience.example.com",
+-                SigningCredentials = new SigningCredentials(signingKey, algorithm),
+-                Claims = new System.Collections.Generic.Dictionary<string, object>
+-                {
+-                    { "sub", "experimental-user" }
+-                }
+-            };
+-
+-            string token = handler.CreateToken(descriptor);
+-            Assert.False(string.IsNullOrEmpty(token));
+-
+-            var validationParameters = new ValidationParameters();
+-            validationParameters.ValidIssuers.Add("https://test-issuer.example.com");
+-            validationParameters.ValidAudiences.Add("https://test-audience.example.com");
+-            validationParameters.SigningKeys.Add(verifyKey);
+-            validationParameters.TryAllSigningKeys = true;
+-            validationParameters.LifetimeValidator = SkipValidationDelegates.SkipLifetimeValidation;
+-            validationParameters.TokenTypeValidator = SkipValidationDelegates.SkipTokenTypeValidation;
+-
+-            var result = await ((IResultBasedValidation)handler).ValidateTokenAsync(
+-                token, validationParameters, new CallContext());
+-
+-            Assert.True(result.Succeeded, $"Validation failed: {result.Error?.Message}");
+-            Assert.NotNull(result.Result);
+-        }
+-
+-        #endregion
+-
+-        #region X509 ML-DSA End-to-End JWT Tests
+-
+-        // On .NET 6, loading an ML-DSA certificate from RawData (without private key) and then
+-        // calling GetMLDsaPublicKey() throws PlatformNotSupportedException, even though the same
+-        // call works on a PFX-loaded certificate. This guards tests that create public-only certs.
+-        private static bool CanExtractMlDsaPublicKeyFromX509PublicOnlyCert()
+-        {
+-            try
+-            {
+-                // Simulate exactly what the test does: load cert from RawData (public-only)
+-                // and attempt to extract ML-DSA public key.
+-#if NET9_0_OR_GREATER
+-                using var cert = X509CertificateLoader.LoadCertificate(MlDsaKeyingMaterial.MlDsa44Cert.RawData);
+-#else
+-#pragma warning disable SYSLIB0057
+-                using var cert = new X509Certificate2(MlDsaKeyingMaterial.MlDsa44Cert.RawData);
+-#pragma warning restore SYSLIB0057
+-#endif
+-                var x509Key = new X509SecurityKey(cert);
+-                return x509Key.MlDsaPublicKey != null;
+-            }
+-            catch (Exception)
+-            {
+-                return false;
+-            }
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task JwtCreateAndValidate_WithX509SecurityKey(string algorithm)
+-        {
+-            if (!MlDsaKeyingMaterial.CanExtractMlDsaPrivateKeyFromX509())
+-                return; // skip on platforms that can't extract ML-DSA private keys from X509
+-
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            var handler = new JsonWebTokenHandler();
+-            var descriptor = new SecurityTokenDescriptor
+-            {
+-                Issuer = "https://test-issuer.example.com",
+-                Audience = "https://test-audience.example.com",
+-                SigningCredentials = new SigningCredentials(x509Key, algorithm),
+-                Claims = new System.Collections.Generic.Dictionary<string, object>
+-                {
+-                    { "sub", "x509-test-user" }
+-                }
+-            };
+-
+-            string token = handler.CreateToken(descriptor);
+-            Assert.False(string.IsNullOrEmpty(token));
+-
+-            // Validate using the same X509 key (public key only path)
+-            var validationParams = new TokenValidationParameters
+-            {
+-                ValidIssuer = "https://test-issuer.example.com",
+-                ValidAudience = "https://test-audience.example.com",
+-                IssuerSigningKey = x509Key,
+-                ValidateLifetime = false
+-            };
+-
+-            var result = await handler.ValidateTokenAsync(token, validationParams);
+-            Assert.True(result.IsValid, $"Token validation failed: {result.Exception?.Message}");
+-            Assert.Equal("x509-test-user", result.Claims["sub"]);
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task JwtCreateWithX509_ValidateWithMlDsaKey(string algorithm)
+-        {
+-            if (!MlDsaKeyingMaterial.CanExtractMlDsaPrivateKeyFromX509())
+-                return; // skip on platforms that can't extract ML-DSA private keys from X509
+-
+-            var (x509Key, _) = GetX509MlDsaKey(algorithm);
+-
+-            var handler = new JsonWebTokenHandler();
+-            var descriptor = new SecurityTokenDescriptor
+-            {
+-                Issuer = "https://test-issuer.example.com",
+-                Audience = "https://test-audience.example.com",
+-                SigningCredentials = new SigningCredentials(x509Key, algorithm),
+-                Claims = new System.Collections.Generic.Dictionary<string, object>
+-                {
+-                    { "sub", "cross-key-user" }
+-                }
+-            };
+-
+-            string token = handler.CreateToken(descriptor);
+-
+-            // Validate using an MlDsaSecurityKey created from the X509 certificate's public key
+-#pragma warning disable SYSLIB5006
+-            using var mlDsaPub = x509Key.Certificate.GetMLDsaPublicKey();
+-#pragma warning restore SYSLIB5006
+-            var mlDsaKey = new MlDsaSecurityKey(mlDsaPub);
+-
+-            var validationParams = new TokenValidationParameters
+-            {
+-                ValidIssuer = "https://test-issuer.example.com",
+-                ValidAudience = "https://test-audience.example.com",
+-                IssuerSigningKey = mlDsaKey,
+-                ValidateLifetime = false
+-            };
+-
+-            var result = await handler.ValidateTokenAsync(token, validationParams);
+-            Assert.True(result.IsValid, $"Token validation failed: {result.Exception?.Message}");
+-            Assert.Equal("cross-key-user", result.Claims["sub"]);
+-        }
+-
+-        #endregion
+-
+-        #region Clone and Dispose Tests
+-
+-        [MlDsaFact]
+-        public void CloneMlDsa_PublicKeyOnly_ProducesIndependentInstance()
+-        {
+-            // Arrange
+-            using var original = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            byte[] data = new byte[] { 1, 2, 3, 4, 5 };
+-
+-            // Act
+-            using var clone = MlDsaAdapter.CloneMlDsa(original, includePrivateKey: false);
+-
+-            // Assert — clone can verify signatures produced by original
+-            byte[] signature = original.SignData(data, context: null);
+-            Assert.True(clone.VerifyData(data, signature, context: null));
+-
+-            // Clone should NOT be able to sign (public-key only)
+-            Assert.Throws<CryptographicException>(() => clone.SignData(data, context: null));
+-        }
+-
+-        [MlDsaFact]
+-        public void CloneMlDsa_WithPrivateKey_ProducesSigningCapableInstance()
+-        {
+-            // Arrange
+-            using var original = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa65);
+-            byte[] data = new byte[] { 10, 20, 30, 40, 50 };
+-
+-            // Act
+-            using var clone = MlDsaAdapter.CloneMlDsa(original, includePrivateKey: true);
+-
+-            // Assert — clone can sign and original can verify
+-            byte[] signature = clone.SignData(data, context: null);
+-            Assert.True(original.VerifyData(data, signature, context: null));
+-        }
+-
+-        [MlDsaFact]
+-        public void CloneMlDsa_IsIndependent_DisposingCloneDoesNotAffectOriginal()
+-        {
+-            // Arrange
+-            using var original = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            byte[] data = new byte[] { 1, 2, 3 };
+-
+-            // Act — create and immediately dispose the clone
+-            var clone = MlDsaAdapter.CloneMlDsa(original, includePrivateKey: true);
+-            clone.Dispose();
+-
+-            // Assert — original still works
+-            byte[] signature = original.SignData(data, context: null);
+-            Assert.NotNull(signature);
+-            Assert.True(original.VerifyData(data, signature, context: null));
+-        }
+-
+-        [MlDsaFact]
+-        public void Dispose_OwnedKey_DisposesMLDsa()
+-        {
+-            // Arrange — internal constructor owns the MLDsa
+-            using var mlDsa = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            var jwk = JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(new MlDsaSecurityKey(mlDsa));
+-            var key = new MlDsaSecurityKey(jwk, usePrivateKey: false);
+-
+-            // Act
+-            key.Dispose();
+-
+-            // Assert — the owned MLDsa should be disposed (accessing it should throw)
+-            Assert.Throws<ObjectDisposedException>(() => key.MLDsa.ExportMLDsaPublicKey());
+-        }
+-
+-        [MlDsaFact]
+-        public void Dispose_BorrowedKey_DoesNotDisposeMLDsa()
+-        {
+-            // Arrange — public constructor does not own the MLDsa
+-            using var mlDsa = MLDsa.GenerateKey(MLDsaAlgorithm.MLDsa44);
+-            var key = new MlDsaSecurityKey(mlDsa);
+-
+-            // Act
+-            key.Dispose();
+-
+-            // Assert — the borrowed MLDsa should still be usable
+-            byte[] exported = mlDsa.ExportMLDsaPublicKey();
+-            Assert.NotNull(exported);
+-        }
+-
+-        #endregion
+-
+-        #region Concurrency Tests
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task ConcurrentSign_WithSharedProvider_ProducesValidSignatures(string algorithm)
+-        {
+-            // Arrange
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-            var signingProvider = new AsymmetricSignatureProvider(signingKey, algorithm, true);
+-            var verifyProvider = new AsymmetricSignatureProvider(verifyKey, algorithm, false);
+-            int taskCount = 100;
+-            using var barrier = new CountdownEvent(taskCount);
+-
+-            // Act — sign 100 different payloads concurrently on the same provider
+-            var tasks = new Task<(byte[] data, byte[] signature)>[taskCount];
+-            for (int i = 0; i < taskCount; i++)
+-            {
+-                int index = i;
+-                tasks[i] = Task.Run(() =>
+-                {
+-                    byte[] data = new byte[32];
+-                    byte[] indexBytes = BitConverter.GetBytes(index);
+-                    Buffer.BlockCopy(indexBytes, 0, data, 0, indexBytes.Length);
+-
+-                    // Wait until all tasks are ready before signing concurrently.
+-                    barrier.Signal();
+-                    barrier.Wait();
+-
+-                    byte[] signature = signingProvider.Sign(data);
+-                    return (data, signature);
+-                });
+-            }
+-
+-            var results = await Task.WhenAll(tasks);
+-
+-            // Assert — every signature must be valid
+-            foreach (var (data, signature) in results)
+-            {
+-                Assert.NotNull(signature);
+-                Assert.True(signature.Length > 0, "Signature should not be empty");
+-                Assert.True(verifyProvider.Verify(data, signature),
+-                    "Concurrent signature failed verification");
+-            }
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task ConcurrentVerify_WithSharedProvider_AllSucceed(string algorithm)
+-        {
+-            // Arrange — create a signature to verify
+-            byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-            var signingProvider = new AsymmetricSignatureProvider(signingKey, algorithm, true);
+-            byte[] signature = signingProvider.Sign(data);
+-            var verifyProvider = new AsymmetricSignatureProvider(verifyKey, algorithm, false);
+-            int taskCount = 100;
+-            using var barrier = new CountdownEvent(taskCount);
+-
+-            // Act — verify the same signature concurrently on the same provider
+-            var tasks = new Task<bool>[taskCount];
+-            for (int i = 0; i < taskCount; i++)
+-            {
+-                tasks[i] = Task.Run(() =>
+-                {
+-                    barrier.Signal();
+-                    barrier.Wait();
+-                    return verifyProvider.Verify(data, signature);
+-                });
+-            }
+-
+-            var results = await Task.WhenAll(tasks);
+-
+-            // Assert
+-            Assert.All(results, result => Assert.True(result,
+-                "Concurrent verification returned false"));
+-        }
+-
+-        [MlDsaTheory]
+-        [InlineData("ML-DSA-44")]
+-        [InlineData("ML-DSA-65")]
+-        [InlineData("ML-DSA-87")]
+-        public async Task ConcurrentSignAndVerify_WithSharedKey_ProducesCorrectResults(string algorithm)
+-        {
+-            // Arrange — use the same key for both sign and verify concurrently
+-            var signingKey = GetMlDsaKey(algorithm);
+-            var verifyKey = GetMlDsaPublicKey(algorithm);
+-            var signingProvider = new AsymmetricSignatureProvider(signingKey, algorithm, true);
+-            var verifyProvider = new AsymmetricSignatureProvider(verifyKey, algorithm, false);
+-            int taskCount = 50;
+-            using var signBarrier = new CountdownEvent(taskCount);
+-
+-            // Act — sign all payloads concurrently
+-            var signTasks = new Task<(byte[] data, byte[] signature)>[taskCount];
+-            for (int i = 0; i < taskCount; i++)
+-            {
+-                int index = i;
+-                signTasks[i] = Task.Run(() =>
+-                {
+-                    byte[] data = new byte[64];
+-                    byte[] indexBytes = BitConverter.GetBytes(index);
+-                    Buffer.BlockCopy(indexBytes, 0, data, 0, indexBytes.Length);
+-
+-                    signBarrier.Signal();
+-                    signBarrier.Wait();
+-
+-                    byte[] signature = signingProvider.Sign(data);
+-                    return (data, signature);
+-                });
+-            }
+-
+-            var signResults = await Task.WhenAll(signTasks);
+-
+-            // Now verify all signatures concurrently
+-            using var verifyBarrier = new CountdownEvent(taskCount);
+-            var verifyTasks = new Task<bool>[taskCount];
+-            for (int i = 0; i < taskCount; i++)
+-            {
+-                var (data, sig) = signResults[i];
+-                verifyTasks[i] = Task.Run(() =>
+-                {
+-                    verifyBarrier.Signal();
+-                    verifyBarrier.Wait();
+-                    return verifyProvider.Verify(data, sig);
+-                });
+-            }
+-
+-            var verifyResults = await Task.WhenAll(verifyTasks);
+-
+-            // Assert
+-            Assert.All(verifyResults, result => Assert.True(result,
+-                "Signature produced under concurrency failed verification"));
+-        }
+-
+-        #endregion
+-
+-        #region Helpers
+-
+-        private static MlDsaSecurityKey GetMlDsaKey(string algorithm) => algorithm switch
+-        {
+-            "ML-DSA-44" => MlDsaKeyingMaterial.MlDsa44Key,
+-            "ML-DSA-65" => MlDsaKeyingMaterial.MlDsa65Key,
+-            "ML-DSA-87" => MlDsaKeyingMaterial.MlDsa87Key,
+-            _ => throw new ArgumentException(algorithm)
+-        };
+-
+-        private static MlDsaSecurityKey GetMlDsaPublicKey(string algorithm) => algorithm switch
+-        {
+-            "ML-DSA-44" => MlDsaKeyingMaterial.MlDsa44Key_Public,
+-            "ML-DSA-65" => MlDsaKeyingMaterial.MlDsa65Key_Public,
+-            "ML-DSA-87" => MlDsaKeyingMaterial.MlDsa87Key_Public,
+-            _ => throw new ArgumentException(algorithm)
+-        };
+-
+-        private static JsonWebKey GetMlDsaJsonWebKey(string algorithm) => algorithm switch
+-        {
+-            "ML-DSA-44" => MlDsaKeyingMaterial.JsonWebKeyMlDsa44,
+-            "ML-DSA-65" => MlDsaKeyingMaterial.JsonWebKeyMlDsa65,
+-            "ML-DSA-87" => MlDsaKeyingMaterial.JsonWebKeyMlDsa87,
+-            _ => throw new ArgumentException(algorithm)
+-        };
+-
+-        private static JsonWebKey GetMlDsaJsonWebKeyPublic(string algorithm) => algorithm switch
+-        {
+-            "ML-DSA-44" => MlDsaKeyingMaterial.JsonWebKeyMlDsa44_Public,
+-            "ML-DSA-65" => MlDsaKeyingMaterial.JsonWebKeyMlDsa65_Public,
+-            "ML-DSA-87" => MlDsaKeyingMaterial.JsonWebKeyMlDsa87_Public,
+-            _ => throw new ArgumentException(algorithm)
+-        };
+-
+-        #endregion
+-    }
+-}
+-
+-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant
+-- 
+2.50.1 (Apple Git-155)
+

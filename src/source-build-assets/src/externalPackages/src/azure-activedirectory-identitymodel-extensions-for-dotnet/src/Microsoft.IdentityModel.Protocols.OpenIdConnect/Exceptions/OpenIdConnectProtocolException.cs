@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdConnectProtocolException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         public OpenIdConnectProtocolException(String message)
             : base(message)
         {
@@ -31,21 +31,21 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIdConnectProtocolException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
-        /// <param name="innerException">A <see cref="Exception"/> that represents the root cause of the exception.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="innerException">An <see cref="Exception"/> that represents the root cause of the exception.</param>
         public OpenIdConnectProtocolException(String message, Exception innerException)
             : base(message, innerException)
         {
         }
 
-       /// <summary>
-       /// Initializes a new instance of the <see cref="OpenIdConnectProtocolException"/> class.
-       /// </summary>
-       /// <param name="info">the <see cref="SerializationInfo"/> that holds the serialized object data.</param>
-       /// <param name="context">The contextual information about the source or destination.</param>
-       protected OpenIdConnectProtocolException(SerializationInfo info, StreamingContext context)
-           : base(info, context)
-       {
-       }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenIdConnectProtocolException"/> class.
+        /// </summary>
+        /// <param name="info">the <see cref="SerializationInfo"/> that holds the serialized object data.</param>
+        /// <param name="context">The contextual information about the source or destination.</param>
+        protected OpenIdConnectProtocolException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 }

@@ -78,7 +78,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         /// </summary>
         public Uri Recipient
         {
-            get { return _recipient;  }
+            get { return _recipient; }
             set
             {
                 if (value == null)

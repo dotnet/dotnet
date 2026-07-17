@@ -1,0 +1,200 @@
+From 8d8ad4227ed122d6e9581b0758a14243fdd31f75 Mon Sep 17 00:00:00 2001
+From: wigodbe <wigodbe@microsoft.com>
+Date: Tue, 14 Jul 2026 14:57:01 -0700
+Subject: [PATCH] Patch for source build
+
+---
+ CustomBeforeMicrosoftCommonTargets.targets    | 22 +++++++++++++++++
+ Directory.Build.props                         |  7 ++++++
+ .../Microsoft.IdentityModel.Benchmarks.csproj |  4 ----
+ build/common.props                            | 24 -------------------
+ build/commonTest.props                        |  4 ----
+ build/dependencies.props                      |  6 ++---
+ build/targets.props                           |  2 +-
+ buildConfiguration.xml                        |  2 +-
+ .../JwtTokenUtilities.cs                      |  7 ------
+ 9 files changed, 34 insertions(+), 44 deletions(-)
+ create mode 100644 CustomBeforeMicrosoftCommonTargets.targets
+ create mode 100644 Directory.Build.props
+
+diff --git a/CustomBeforeMicrosoftCommonTargets.targets b/CustomBeforeMicrosoftCommonTargets.targets
+new file mode 100644
+index 00000000..dde487c9
+--- /dev/null
++++ b/CustomBeforeMicrosoftCommonTargets.targets
+@@ -0,0 +1,22 @@
++<Project> 
++  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
++    <FrameworkReference Update="Microsoft.NETCore.App"
++                        TargetingPackVersion="6.0.0"
++                        RuntimeFrameworkVersion="6.0.0" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
++    <FrameworkReference Update="Microsoft.NETCore.App"
++                        TargetingPackVersion="8.0.0"
++                        RuntimeFrameworkVersion="8.0.0" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
++    <FrameworkReference Update="Microsoft.NETCore.App"
++                        TargetingPackVersion="9.0.0"
++                        RuntimeFrameworkVersion="9.0.0" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
++    <FrameworkReference Update="Microsoft.NETCore.App"
++                        TargetingPackVersion="10.0.0"
++                        RuntimeFrameworkVersion="10.0.0" />
++  </ItemGroup>
++</Project>
+\ No newline at end of file
+diff --git a/Directory.Build.props b/Directory.Build.props
+new file mode 100644
+index 00000000..5b298639
+--- /dev/null
++++ b/Directory.Build.props
+@@ -0,0 +1,7 @@
++<Project>
++
++  <PropertyGroup>
++  	<CustomBeforeMicrosoftCommonTargets>$(MSBuildThisFileDirectory)CustomBeforeMicrosoftCommonTargets.targets</CustomBeforeMicrosoftCommonTargets>
++  </PropertyGroup>
++  
++</Project>
+\ No newline at end of file
+diff --git a/benchmark/Microsoft.IdentityModel.Benchmarks/Microsoft.IdentityModel.Benchmarks.csproj b/benchmark/Microsoft.IdentityModel.Benchmarks/Microsoft.IdentityModel.Benchmarks.csproj
+index f35a224d..2d4aaeeb 100644
+--- a/benchmark/Microsoft.IdentityModel.Benchmarks/Microsoft.IdentityModel.Benchmarks.csproj
++++ b/benchmark/Microsoft.IdentityModel.Benchmarks/Microsoft.IdentityModel.Benchmarks.csproj
+@@ -33,10 +33,6 @@
+   </ItemGroup>
+ 
+   <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\..\BannedSymbols.txt" />
+   </ItemGroup>
+ 
+diff --git a/build/common.props b/build/common.props
+index 73d6abdf..1c456576 100644
+--- a/build/common.props
++++ b/build/common.props
+@@ -46,33 +46,9 @@
+   </PropertyGroup>
+ 
+   <ItemGroup>
+-     <!-- Protects against sync-over-async: https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md. -->
+-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" PrivateAssets="all" />
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(BannedApiAnalyzersVersion)">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\BannedSymbols.txt" />
+   </ItemGroup>
+ 
+-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+   <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+     <IsAotCompatible>true</IsAotCompatible>
+   </PropertyGroup>
+diff --git a/build/commonTest.props b/build/commonTest.props
+index d8c5478f..759475a0 100644
+--- a/build/commonTest.props
++++ b/build/commonTest.props
+@@ -48,10 +48,6 @@
+       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+       <PrivateAssets>all</PrivateAssets>
+     </PackageReference>
+-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="$(BannedApiAnalyzersVersion)">
+-      <PrivateAssets>all</PrivateAssets>
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+-    </PackageReference>
+     <AdditionalFiles Include="$(MSBuildThisFileDirectory)..\BannedSymbols.txt" />
+   </ItemGroup>
+ 
+diff --git a/build/dependencies.props b/build/dependencies.props
+index ea8ba36e..f47465c7 100644
+--- a/build/dependencies.props
++++ b/build/dependencies.props
+@@ -5,14 +5,14 @@
+     <BannedApiAnalyzersVersion>4.14.0</BannedApiAnalyzersVersion>
+     <MicrosoftBclCryptographyVersion>10.0.2</MicrosoftBclCryptographyVersion>
+     <MicrosoftBclTimeProviderVersion>8.0.1</MicrosoftBclTimeProviderVersion>
+-    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>
++    <MicrosoftCSharpVersion>4.7.0</MicrosoftCSharpVersion>
+     <MicrosoftSourceLinkGitHubVersion>1.0.0</MicrosoftSourceLinkGitHubVersion>
+     <NetStandardVersion>2.0.3</NetStandardVersion>
+     <NewtonsoftVersion>13.0.3</NewtonsoftVersion>
+     <SystemDiagnosticSourceVersion>6.0.2</SystemDiagnosticSourceVersion>
+     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
+-    <SystemSecurityCryptographyCngVersion>4.5.0</SystemSecurityCryptographyCngVersion>
++    <SystemSecurityCryptographyCngVersion>5.0.0</SystemSecurityCryptographyCngVersion>
+     <SystemTextJsonVersion>8.0.5</SystemTextJsonVersion>
+   </PropertyGroup>
+ 
+   <PropertyGroup Condition="'$(TargetNetNext)' == 'True'">
+diff --git a/build/targets.props b/build/targets.props
+index df624017..8d027795 100644
+--- a/build/targets.props
++++ b/build/targets.props
+@@ -5,7 +5,7 @@
+   </PropertyGroup> -->
+ 
+   <PropertyGroup>
+-    <SrcTargets Condition="'$(LocalBuild)' != 'True'">net462;net472;netstandard2.0;net6.0;net8.0;net9.0;net10.0</SrcTargets>
++    <SrcTargets Condition="'$(LocalBuild)' != 'True'">netstandard2.0;net6.0;net8.0;net9.0;net10.0</SrcTargets>
+     <SrcTargets Condition="'$(LocalBuild)' == 'True'">netstandard2.0;net8.0;net9.0;net10.0</SrcTargets>
+     <SrcTargets Condition="'$(TargetNetNext)'== 'True'">$(SrcTargets)</SrcTargets>
+   </PropertyGroup>
+diff --git a/buildConfiguration.xml b/buildConfiguration.xml
+index 75915816..eb46e137 100644
+--- a/buildConfiguration.xml
++++ b/buildConfiguration.xml
+@@ -1,7 +1,7 @@
+ <root>
+   <dotnetArchitecture>x64</dotnetArchitecture>
+   <nugetVersion>3.5.0-rc-1285</nugetVersion>
+-  <runtimes>net461,netstandard2.0</runtimes>
++  <runtimes>netstandard2.0</runtimes>
+   <projects>
+     <src>
+       <project name="Microsoft.IdentityModel.Logging" />
+diff --git a/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs b/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs
+index ff7d7a01..05ca6a12 100644
+--- a/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs
++++ b/src/Microsoft.IdentityModel.JsonWebTokens/JwtTokenUtilities.cs
+@@ -36,15 +36,8 @@ namespace Microsoft.IdentityModel.JsonWebTokens
+         /// </summary>
+         public static Regex RegexJwe = CreateJweRegex();
+ 
+-#if NET7_0_OR_GREATER
+-        [GeneratedRegex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.CultureInvariant, _regexMatchTimeoutMilliseconds)]
+-        private static partial Regex CreateJwsRegex();
+-        [GeneratedRegex(JwtConstants.JweCompactSerializationRegex, RegexOptions.CultureInvariant, _regexMatchTimeoutMilliseconds)]
+-        private static partial Regex CreateJweRegex();
+-#else
+         private static Regex CreateJwsRegex() => new Regex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
+         private static Regex CreateJweRegex() => new Regex(JwtConstants.JweCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
+-#endif
+ 
+         internal static List<string> DefaultHeaderParameters = new List<string>()
+         {
+-- 
+2.50.1 (Apple Git-155)
+

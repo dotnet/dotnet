@@ -1,0 +1,28 @@
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.Audience.get -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.Audience.set -> void
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateClaimsSetWithInstanceOverrides() -> System.Collections.Generic.Dictionary<string, object>
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateDefaultValidToken() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateExpiredToken() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateNotYetValidToken() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateToken(System.Collections.Generic.Dictionary<string, object> claims) -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenDescriptorWithInstanceOverrides() -> Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithBadAudience() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithBadIssuer() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithBadSignatureKey() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithFutureIssuedAt() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithInvalidSignature() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithMissingAudience() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithMissingExpires() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithMissingIssuedAt() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithMissingIssuer() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithMissingKey() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithMissingNotBefore() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateTokenWithNoSignature() -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.Issuer.get -> string
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.Issuer.set -> void
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.SigningCredentials.get -> Microsoft.IdentityModel.Tokens.SigningCredentials
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.SigningCredentials.set -> void
+Microsoft.IdentityModel.TestExtensions.TestTokenCreator.TestTokenCreator() -> void
+static Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateJsonPayload(System.Collections.Generic.IDictionary<string, object> claims) -> string
+static Microsoft.IdentityModel.TestExtensions.TestTokenCreator.CreateToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor securityTokenDescriptor) -> string

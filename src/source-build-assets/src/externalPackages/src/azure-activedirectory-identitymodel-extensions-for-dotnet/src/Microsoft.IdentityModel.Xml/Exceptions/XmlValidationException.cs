@@ -3,6 +3,9 @@
 
 using System;
 using System.Runtime.Serialization;
+#pragma warning disable IDE0005 // Using directive is unnecessary.
+using System.Text;
+#pragma warning restore IDE0005 // Using directive is unnecessary.
 
 namespace Microsoft.IdentityModel.Xml
 {
@@ -10,7 +13,7 @@ namespace Microsoft.IdentityModel.Xml
     /// This exception is thrown when a problem occurs when validating the XML &lt;Signature>.
     /// </summary>
     [Serializable]
-    public class XmlValidationException : XmlException
+    public partial class XmlValidationException : XmlException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlValidationException"/> class.

@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Xml
             public const string Issue = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+
