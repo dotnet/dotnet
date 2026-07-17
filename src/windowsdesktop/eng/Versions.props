@@ -35,7 +35,7 @@
     <!-- wcf -->
     <SystemServiceModelVersion>8.1.2</SystemServiceModelVersion>
     <!-- WiX -->
-    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.4</MicrosoftWixToolsetSdkVersion>
+    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.6</MicrosoftWixToolsetSdkVersion>
     
     <!-- Transport package version for VS insertion packages is defined in Version.Details.props -->
   </PropertyGroup>

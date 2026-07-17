@@ -25,6 +25,6 @@
     "Microsoft.DotNet.Helix.Sdk": "10.0.0-beta.26356.112",
     "Microsoft.Build.NoTargets": "3.7.0",
     "Microsoft.Build.Traversal": "3.4.0",
-    "Microsoft.WixToolset.Sdk": "6.0.3-dotnet.4"
+    "Microsoft.WixToolset.Sdk": "6.0.3-dotnet.6"
   }
 }
