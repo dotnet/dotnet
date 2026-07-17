@@ -221,6 +221,21 @@ jobs:
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
+
+  # CodeQL database finalization is disk-intensive. On the Windows build legs the agent work + temp
+  # directories live on the D: resource disk (~200 GB on the pool's Standard_D8a_v4 VMs), which fills
+  # to ~95% during CodeQL finalize and risks out-of-disk failures. Redirect the CodeQL CLI download +
+  # database location to C: (which has free headroom) on Windows only; other platforms are unaffected
+  # and keep the default Agent.TempDirectory.
+  #
+  # This must be conditioned on the compile-time pool.os parameter, not a runtime expression:
+  # pipeline-level 'variables:' with $[ ] expressions evaluate before an agent is assigned, so
+  # Agent.OS / Agent.TempDirectory are empty at that scope and the redirect silently no-ops.
+  # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-pipeline-templates/features/sdlanalysis/codeql
+  - ${{ if eq(parameters.pool.os, 'windows') }}:
+    - name: Codeql.ADO.Agent.TempDirectory
+      value: 'C:\codeql_temp'
+
   - ${{ if ne(parameters.enableIBCOptimization, 'true') }}:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
