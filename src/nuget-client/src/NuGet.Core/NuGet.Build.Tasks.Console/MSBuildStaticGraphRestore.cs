@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -98,6 +99,9 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="globalProperties">The global properties to use when evaluation MSBuild projects.</param>
         /// <param name="options">The set of options to use when restoring.  These options come from the main MSBuild process and control how restore functions.</param>
         /// <returns><code>true</code> if the restore succeeded, otherwise <code>false</code>.</returns>
+#if NET
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
+#endif
         [MethodImpl(MethodImplOptions.NoInlining)]
         public async Task<bool> RestoreAsync(string entryProjectFilePath, IDictionary<string, string> globalProperties, IReadOnlyDictionary<string, string> options)
         {
@@ -186,6 +190,9 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="globalProperties">The global properties to use when evaluation MSBuild projects.</param>
         /// <param name="options">The set of options to use to generate the graph, including the restore graph output path.</param>
         /// <returns><code>true</code> if the dependency graph spec was generated and written, otherwise <code>false</code>.</returns>
+#if NET
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
+#endif
         public bool WriteDependencyGraphSpec(string entryProjectFilePath, IDictionary<string, string> globalProperties, IReadOnlyDictionary<string, string> options)
         {
             bool interactive = IsOptionTrue(nameof(RestoreTaskEx.Interactive), options);
@@ -806,6 +813,9 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="globalProperties">An <see cref="IDictionary{String,String}" /> containing the global properties to use when evaluation MSBuild projects.</param>
         /// <param name="interactive"><see langword="true" /> if the build is allowed to interact with the user, otherwise <see langword="false" />.</param>
         /// <returns>A <see cref="DependencyGraphSpec" /> for the specified project if they could be loaded, otherwise <code>null</code>.</returns>
+#if NET
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
+#endif
         private (DependencyGraphSpec DependencyGraphSpec, IReadOnlyList<IAssetsLogMessage> AdditionalMessages) GetDependencyGraphSpec(string entryProjectPath, IDictionary<string, string> globalProperties, bool interactive, string binaryLoggerParameters, IEnvironmentVariableReader environmentVariableReader)
         {
             var additionalMessages = new ConcurrentBag<IAssetsLogMessage>();
@@ -937,6 +947,9 @@ namespace NuGet.Build.Tasks.Console
             };
         }
 
+#if NET
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
+#endif
         private DependencyGraphSpec GetDependencyGraphSpec<TProject>(
             string entryProjectPath,
             IDictionary<string, string> globalProperties,
@@ -1224,8 +1237,8 @@ namespace NuGet.Build.Tasks.Console
         /// <param name="updateProjectFactory">A factory method that updates a project adapter with a target framework and MSBuild ProjectInstance.</param>
         /// <param name="projectFinalizeDelegate">An option delegate to finalize a project adapter once all projects have been evaluated.</param>
         /// <returns>An <see cref="ICollection{ProjectWithInnerNodes}" /> object containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
-#if NET5_0_OR_GREATER
-        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Temporary VMR unblock: static graph restore intentionally runs full MSBuild in-process. Replace with proper annotations in NuGet/Home#14987.")]
+#if NET
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
 #endif
         private ConcurrentDictionary<string, TProject> LoadProjects<TProject>(
             IEnumerable<ProjectGraphEntryPoint> entryProjects,
@@ -1480,3 +1493,4 @@ namespace NuGet.Build.Tasks.Console
         }
     }
 }
+

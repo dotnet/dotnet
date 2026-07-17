@@ -201,4 +201,8 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
     <value>Fix with GitHub Copilot</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
+  <data name="Title_FixVulnerabilitiesWithCopilot" xml:space="preserve">
+    <value>Ask Copilot to fix NuGet package vulnerabilities</value>
+    <comment>Do not translate Copilot or NuGet</comment>
+  </data>
 </root>

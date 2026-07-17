@@ -6734,11 +6734,7 @@ namespace ClassLibrary
             _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
             var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
 
-#if SDK_NEXT
             result.AllOutput.Should().Contain("NU5052");
-#else
-            result.AllOutput.Should().NotContain("NU5052");
-#endif
         }
     }
 }
