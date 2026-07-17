@@ -725,7 +725,10 @@ jobs:
           extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
 
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
-            customPreBuildArgs="$customPreBuildArgs sudo"
+            # Preserve HOME across the sudo boundary so the Azure Artifacts credential
+            # provider provisioned by NuGetAuthenticate can locate the credentials it
+            # cached for internal-feed restore. See https://github.com/dotnet/source-build/issues/5612
+            customPreBuildArgs="$customPreBuildArgs sudo -E --preserve-env=HOME"
           fi
 
           if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
