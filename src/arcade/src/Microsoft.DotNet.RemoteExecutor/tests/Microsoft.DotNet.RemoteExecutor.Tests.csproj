@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="10.0.7" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" VersionOverride="10.0.7" />
     <PackageReference Include="System.Collections.Immutable" VersionOverride="10.0.7" />
+    <PackageReference Include="System.Memory" VersionOverride="4.6.3" />
     <PackageReference Include="System.Text.Encodings.Web" VersionOverride="10.0.7" />
     <PackageReference Include="System.Text.Json" VersionOverride="10.0.7" />
   </ItemGroup>
