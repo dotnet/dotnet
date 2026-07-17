@@ -172,7 +172,7 @@ public partial class LinuxInstallerTests : IDisposable
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
-    [InlineData("fedora:42")]
+    [InlineData("mcr.microsoft.com/azurelinux/base/core:3.0")]
     public async Task RpmDnxPackageLifecycleTest(string image)
     {
         await InitializeContextAsync(PackageType.Rpm, initializeSharedContext: false);
@@ -444,9 +444,16 @@ public partial class LinuxInstallerTests : IDisposable
 
         StringBuilder dockerfile = new();
         dockerfile.AppendLine($"FROM {baseImage}");
-        if (packageType == PackageType.Rpm)
+        if (packageType == PackageType.Deb)
         {
-            dockerfile.AppendLine("RUN dnf install -y rpm-build && dnf clean all");
+            dockerfile.AppendLine(
+                "RUN apt-get update && apt-get install -y ca-certificates curl gpg && " +
+                "curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | " +
+                "gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && " +
+                "architecture=\"$(dpkg --print-architecture)\" && " +
+                "echo \"deb [arch=${architecture} signed-by=/usr/share/keyrings/microsoft-prod.gpg] " +
+                "https://packages.microsoft.com/debian/12/prod bookworm main\" " +
+                "> /etc/apt/sources.list.d/microsoft-prod.list && apt-get update");
         }
         dockerfile.AppendLine($"COPY {hostPackage} /packages/{hostPackage}");
         dockerfile.AppendLine($"COPY {DnxPackageLifecycleScript} /{DnxPackageLifecycleScript}");
