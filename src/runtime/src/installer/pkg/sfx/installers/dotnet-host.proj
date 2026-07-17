@@ -110,8 +110,9 @@
       /usr/share/dotnet/dnx and points /usr/bin/dnx at it, and a final-removal cleanup removes the
       generated public entries.
     - DEB: a bounded 'Replaces' lets the host take over the dnx files from released dotnet-sdk-10.0
-      without a conflict (narrowly scoped so it never affects SDK 11), and a dpkg path trigger
-      re-runs the repair if an SDK is installed/reinstalled after the host and overwrites them.
+      without a conflict in either install order (narrowly scoped so it never affects SDK 11).
+      A dpkg path trigger re-runs the repair as a backstop whenever a package transaction touches
+      either public path.
     - RPM: the public paths are owned as '%ghost' entries (not shipped in the payload, since rpm
       rejects a non-identical file owned by two installed packages) and a transaction file trigger
       re-runs the repair after an SDK install/reinstall finishes extracting its payload.

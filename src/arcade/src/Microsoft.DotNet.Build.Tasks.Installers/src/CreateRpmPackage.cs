@@ -74,7 +74,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         /// <summary>
         /// File trigger scriptlets. Each item's ItemSpec is a path to the script file. Supported metadata:
-        /// <c>Kind</c> (one of <c>FileTriggerIn</c>, <c>FileTriggerUn</c>, <c>FileTriggerPostUn</c>; defaults to
+        /// <c>Kind</c> (one of <c>FileTriggerIn</c>, <c>FileTriggerUn</c>, <c>FileTriggerPostUn</c>,
+        /// <c>TransFileTriggerIn</c>, <c>TransFileTriggerUn</c>, or <c>TransFileTriggerPostUn</c>; defaults to
         /// <c>FileTriggerIn</c>) and <c>Paths</c> (a semicolon-separated list of path prefixes that arm the trigger).
         /// </summary>
         public ITaskItem[] FileTriggers { get; set; } = [];
@@ -157,7 +158,18 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
 
             // Normalize ghost paths (e.g. "/usr/bin/dnx") to the CPIO-relative form used for payload entries ("./usr/bin/dnx").
-            Dictionary<string, ITaskItem> ghostFiles = GhostFiles.ToDictionary(g => $"./{g.ItemSpec.TrimStart('/')}", g => g);
+            Dictionary<string, ITaskItem> ghostFiles = [];
+            foreach (ITaskItem ghostFile in GhostFiles)
+            {
+                string normalizedPath = $"./{ghostFile.ItemSpec.TrimStart('/')}";
+                if (!ghostFiles.TryAdd(normalizedPath, ghostFile))
+                {
+                    Log.LogError(
+                        $"Duplicate ghost file path '{ghostFile.ItemSpec}'. Multiple RpmGhostFile items normalize to " +
+                        $"the installed path '/{normalizedPath.Substring("./".Length)}'.");
+                    return false;
+                }
+            }
             HashSet<string> ghostFilesFound = new();
 
             using (CpioReader reader = new(File.OpenRead(Payload), leaveOpen: false))

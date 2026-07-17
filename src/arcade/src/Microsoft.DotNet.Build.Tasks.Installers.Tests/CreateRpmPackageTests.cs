@@ -215,6 +215,30 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
                 .Which.Message.Should().Contain("/usr/bin/dnx");
         }
 
+        [Fact]
+        public void DuplicateNormalizedGhostFilePaths_LogErrorAndFail()
+        {
+            string payload = WritePayload(
+                SymbolicLink("usr/bin/dnx", "../share/dotnet/dnx"));
+
+            ITaskItem[] rawKinds =
+            [
+                new TaskItem("./usr/bin/dnx: symbolic link"),
+            ];
+
+            MockBuildEngine engine = new();
+            CreateRpmPackage task = CreateTask(payload, rawKinds, engine);
+            task.GhostFiles =
+            [
+                new TaskItem("/usr/bin/dnx"),
+                new TaskItem("usr/bin/dnx"),
+            ];
+
+            task.Execute().Should().BeFalse();
+            engine.BuildErrorEvents.Should().ContainSingle()
+                .Which.Message.Should().Contain("Multiple RpmGhostFile items normalize to the installed path '/usr/bin/dnx'");
+        }
+
         private static string BuildErrors(MockBuildEngine engine) =>
             string.Join(Environment.NewLine, engine.BuildErrorEvents.Select(e => e.Message));
     }

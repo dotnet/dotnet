@@ -90,6 +90,7 @@ public partial class LinuxInstallerTests : IDisposable
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
     private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
+    private const string DnxPackageLifecycleScript = "dnx-package-lifecycle.sh";
     private const int RpmFileGhost = 1 << 6;
     private const int RpmTransFileTriggerNameTag = 5079;
 
@@ -168,6 +169,24 @@ public partial class LinuxInstallerTests : IDisposable
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
 
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
+    }
+
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [InlineData("fedora:42")]
+    public async Task RpmDnxPackageLifecycleTest(string image)
+    {
+        await InitializeContextAsync(PackageType.Rpm, initializeSharedContext: false);
+
+        DnxPackageLifecycleTest(image, PackageType.Rpm);
+    }
+
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [InlineData("debian:bookworm")]
+    public async Task DebDnxPackageLifecycleTest(string image)
+    {
+        await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
+
+        DnxPackageLifecycleTest(image, PackageType.Deb);
     }
 
     [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
@@ -371,7 +390,9 @@ public partial class LinuxInstallerTests : IDisposable
         string containerLogDir = "/logs";
         string containerLogPath = Path.Combine(containerLogDir, $"scenario-tests-{GetSanitizedImageName(baseImage)}.xml");
 
-        string testCommand = $"dotnet {GetScenarioTestsBinaryPath()} --dotnet-root /usr/share/dotnet/ --xml {containerLogPath} --no-traits Category=RequiresNonTargetRidPackages";
+        string testCommand =
+            $"sh -c \"dnx --help && dotnet {GetScenarioTestsBinaryPath()} --dotnet-root /usr/share/dotnet/ " +
+            $"--xml {containerLogPath} --no-traits Category=RequiresNonTargetRidPackages\"";
 
         string tag = $"test-{Path.GetRandomFileName()}";
         string output = "";
@@ -405,6 +426,41 @@ public partial class LinuxInstallerTests : IDisposable
                 output = e.Message;
             }
             Assert.Fail($"{(buildCompleted ? "Build" : "Test")} failed: {output}");
+        }
+        finally
+        {
+            if (!Config.KeepDockerImages)
+            {
+                _dockerHelper.DeleteImage(tag);
+            }
+        }
+    }
+
+    private void DnxPackageLifecycleTest(string baseImage, PackageType packageType)
+    {
+        string hostPackage = Path.GetFileName(GetContentPackage(DotnetHostPrefix, packageType));
+        string lifecycleScript = Path.Combine(GetAssetsDirectory(), DnxPackageLifecycleScript);
+        File.Copy(lifecycleScript, Path.Combine(_contextDir, DnxPackageLifecycleScript));
+
+        StringBuilder dockerfile = new();
+        dockerfile.AppendLine($"FROM {baseImage}");
+        if (packageType == PackageType.Rpm)
+        {
+            dockerfile.AppendLine("RUN dnf install -y rpm-build && dnf clean all");
+        }
+        dockerfile.AppendLine($"COPY {hostPackage} /packages/{hostPackage}");
+        dockerfile.AppendLine($"COPY {DnxPackageLifecycleScript} /{DnxPackageLifecycleScript}");
+        dockerfile.AppendLine(
+            $"RUN chmod +x /{DnxPackageLifecycleScript} && /{DnxPackageLifecycleScript} " +
+            $"{packageType.ToString().ToLowerInvariant()} /packages/{hostPackage}");
+
+        string dockerfilePath = Path.Combine(_contextDir, $"Dockerfile-{Path.GetRandomFileName()}");
+        File.WriteAllText(dockerfilePath, dockerfile.ToString());
+        string tag = $"dnx-lifecycle-{Path.GetRandomFileName()}";
+
+        try
+        {
+            _dockerHelper.Build(tag, dockerfile: dockerfilePath, contextDir: _contextDir);
         }
         finally
         {
