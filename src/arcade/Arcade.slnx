@@ -82,6 +82,8 @@
   <Project Path="src/SignCheck/Microsoft.SignCheck/Microsoft.DotNet.SignCheckLibrary.csproj" />
   <Project Path="src/SignCheck/SignCheck/Microsoft.DotNet.SignCheck.csproj" />
   <Project Path="src/SignCheck/SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog/Microsoft.DotNet.Build.Tasks.FileCatalog.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests.csproj" />
   <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
   <Project Path="src/WinShimmer/WinShimmer.csproj" />
 </Solution>
