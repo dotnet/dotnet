@@ -1,0 +1,11 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <MicrosoftDotNetBuildTasksFileCatalogTaskAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\Microsoft.DotNet.Build.Tasks.FileCatalog.dll</MicrosoftDotNetBuildTasksFileCatalogTaskAssembly>
+    <MicrosoftDotNetBuildTasksFileCatalogTaskAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\Microsoft.DotNet.Build.Tasks.FileCatalog.dll</MicrosoftDotNetBuildTasksFileCatalogTaskAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.FileCatalog.GenerateFileCatalog" AssemblyFile="$(MicrosoftDotNetBuildTasksFileCatalogTaskAssembly)" />
+
+</Project>
