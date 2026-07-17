@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(LibraryTargetFrameworks)</TargetFrameworks>
+    <!-- Drop net472 targeting to avoid the vulnerable OpenTelemetry.* transitive dependency
+         (GHSA-g94r-2vxg-569j / CVE-2026-40894). The Microsoft.VisualStudio.OpenTelemetry.*
+         telemetry references that pull it in live in the '.NETFramework'-only ItemGroup below,
+         so building only .NET Core + netstandard2.0 removes the NuGet audit failure without an
+         OpenTelemetry.Api upgrade. NOTE: the net472 flavor of Microsoft.Build.Framework is
+         consumed by the rest of MSBuild's net472 (Visual Studio) build; dropping it here is a
+         deliberate trade-off explored as an alternative to bumping OpenTelemetry.Api. -->
+    <TargetFrameworks>$(LatestDotNetCoreForMSBuild);netstandard2.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateReferenceAssemblySource>true</GenerateReferenceAssemblySource>
     <!-- Do not create Tlbs when building in .NET product mode. The packages are not shipped to VS,
