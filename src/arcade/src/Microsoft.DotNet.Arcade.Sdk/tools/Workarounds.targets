@@ -258,7 +258,7 @@
   <UsingTask TaskName="NormalizeSdkRootDriveCasing"
              TaskFactory="RoslynCodeTaskFactory"
              AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
-             Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != ''">
+             Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '18.9'))">
     <ParameterGroup>
       <SdkRoot ParameterType="System.String" Required="true" />
       <Override ParameterType="System.String" />
@@ -514,7 +514,7 @@ public class NormalizeSdkRootDriveCasing : Task
   </UsingTask>
 
   <Target Name="NormalizeNetCoreSdkRootCasing"
-          Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true'">
+          Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '18.9'))">
     <NormalizeSdkRootDriveCasing SdkRoot="$(NetCoreSdkRoot)" Override="$(NetCoreSdkRootDriveCasingOverride)">
       <Output TaskParameter="Result" PropertyName="NetCoreSdkRoot" />
     </NormalizeSdkRootDriveCasing>
