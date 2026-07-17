@@ -34,7 +34,7 @@ namespace Microsoft.DotNet.SignTool
 
         public override SigningStatus VerifyStrongNameSign(string fileFullPath) => SigningStatus.Signed;
 
-        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath)
+        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false)
             => buildEngine.BuildProjectFile(projectFilePath, null, null, null);
 
         internal static void SignFile(string path)

@@ -17,7 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <MicrosoftBclHashCodeVersion>1.1.1</MicrosoftBclHashCodeVersion>
-    <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
+    <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <MicrosoftIORedistVersion>6.0.1</MicrosoftIORedistVersion>
   </PropertyGroup>
   <PropertyGroup>
